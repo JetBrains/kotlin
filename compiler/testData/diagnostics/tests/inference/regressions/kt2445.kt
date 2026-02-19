@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 //KT-2445 Calling method with function with generic parameter causes compile-time exception
 package a
 
@@ -10,3 +10,5 @@ fun main() {
 }
 
 fun <R> test(callback: (R) -> Unit):Unit = callback(null!!)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter */

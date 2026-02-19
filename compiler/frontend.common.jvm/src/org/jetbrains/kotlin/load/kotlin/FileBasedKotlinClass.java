@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -77,7 +77,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     @Nullable
     public static <T> T create(
             @NotNull byte[] fileContents,
-            @NotNull JvmMetadataVersion jvmMetadataVersionFromLanguageVersion,
+            @NotNull MetadataVersion metadataVersionFromLanguageVersion,
             @NotNull Function4<ClassId, Integer, KotlinClassHeader, InnerClassesInfo, T> factory
     ) {
         ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
@@ -110,7 +110,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         String className = classNameRef.get();
         if (className == null) return null;
 
-        KotlinClassHeader header = readHeaderVisitor.createHeader(jvmMetadataVersionFromLanguageVersion);
+        KotlinClassHeader header = readHeaderVisitor.createHeader(metadataVersionFromLanguageVersion);
         if (header == null) return null;
 
         ClassId id = resolveNameByInternalName(className, innerClasses);

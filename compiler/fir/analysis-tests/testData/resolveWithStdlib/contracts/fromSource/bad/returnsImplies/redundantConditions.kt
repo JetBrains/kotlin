@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: BACKEND
+// OPT_IN: kotlin.RequiresOptIn
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)
@@ -18,3 +19,6 @@ fun testAlwaysAny(x: String?): Any? {
 
     return x
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classReference, contractConditionalEffect, contracts, disjunctionExpression,
+equalityExpression, functionDeclaration, isExpression, lambdaLiteral, nullableType, smartcast */

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
@@ -28,9 +29,8 @@ class IdeBinaryDependencyResolverTest {
     fun `test - MVIKotlin - on jvm and linux platform source sets`() {
         val project = buildProject {
             enableDefaultStdlibDependency(false)
-            enableDependencyVerification(false)
+            configureRepositoriesForTests()
             applyMultiplatformPlugin()
-            repositories.mavenCentralCacheRedirector()
         }
 
         val kotlin = project.multiplatformExtension
@@ -92,13 +92,14 @@ class IdeBinaryDependencyResolverTest {
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
             plugins.apply("com.android.library")
-            androidExtension.compileSdkVersion(33)
+            androidExtension.configureDefaults()
             repositories.mavenCentralCacheRedirector()
         }
 
         /* Setup android target and add MVIKotlin dependency */
         val kotlin = project.multiplatformExtension
         kotlin.applyDefaultHierarchyTemplate()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         commonMain.dependencies {

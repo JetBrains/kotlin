@@ -24,7 +24,6 @@ import kotlin.jvm.Throws
  * or an empty string if this path has zero path elements.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 public val Path.name: String
     get() = fileName?.toString().orEmpty()
 
@@ -33,7 +32,6 @@ public val Path.name: String
  * or an empty string if this path has zero path elements.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 public val Path.nameWithoutExtension: String
     get() = fileName?.toString()?.substringBeforeLast(".") ?: ""
 
@@ -42,7 +40,6 @@ public val Path.nameWithoutExtension: String
  * or an empty string if it doesn't have one.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 public val Path.extension: String
     get() = fileName?.toString()?.substringAfterLast('.', "") ?: ""
 
@@ -55,7 +52,6 @@ public val Path.extension: String
  * This property is a synonym to [Path.toString] function.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline val Path.pathString: String
     get() = toString()
@@ -65,7 +61,6 @@ public inline val Path.pathString: String
  * to separate names in the path.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 public val Path.invariantSeparatorsPathString: String
     get() {
         val separator = fileSystem.separator
@@ -91,7 +86,6 @@ public inline val Path.invariantSeparatorsPath: String
  * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.absolute(): Path = toAbsolutePath()
 
@@ -105,7 +99,6 @@ public inline fun Path.absolute(): Path = toAbsolutePath()
  * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.absolutePathString(): String = toAbsolutePath().toString()
 
@@ -120,7 +113,6 @@ public inline fun Path.absolutePathString(): String = toAbsolutePath().toString(
  * @throws IllegalArgumentException if this and base paths have different roots.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 public fun Path.relativeTo(base: Path): Path = try {
     PathRelativizer.tryRelativeTo(this, base)
 } catch (e: IllegalArgumentException) {
@@ -136,7 +128,6 @@ public fun Path.relativeTo(base: Path): Path = try {
  * @return the relative path from [base] to this, or `this` if this and base paths have different roots.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 public fun Path.relativeToOrSelf(base: Path): Path =
     relativeToOrNull(base) ?: this
 
@@ -149,7 +140,6 @@ public fun Path.relativeToOrSelf(base: Path): Path =
  * @return the relative path from [base] to this, or `null` if this and base paths have different roots.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 public fun Path.relativeToOrNull(base: Path): Path? = try {
     PathRelativizer.tryRelativeTo(this, base)
 } catch (e: IllegalArgumentException) {
@@ -214,9 +204,9 @@ private object PathRelativizer {
  * @see Files.copy
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
     return Files.copy(this, target, *options)
@@ -254,9 +244,9 @@ public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * @see Files.copy
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
     return Files.copy(this, target, *options)
 }
@@ -272,7 +262,6 @@ public inline fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
  * @see Files.exists
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
 
@@ -287,7 +276,6 @@ public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exist
  * @see Files.notExists
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.notExists(this, *options)
 
@@ -299,7 +287,6 @@ public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.no
  * @see Files.isRegularFile
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isRegularFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
 
@@ -313,7 +300,6 @@ public inline fun Path.isRegularFile(vararg options: LinkOption): Boolean = File
  * @see Files.isDirectory
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.isDirectory(this, *options)
 
@@ -323,7 +309,6 @@ public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.
  * @see Files.isSymbolicLink
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
 
@@ -333,7 +318,6 @@ public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
  * @see Files.isExecutable
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
 
@@ -346,7 +330,6 @@ public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
  * @see Files.isHidden
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
@@ -357,7 +340,6 @@ public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
  * @see Files.isReadable
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
 
@@ -367,7 +349,6 @@ public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
  * @see Files.isWritable
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
 
@@ -377,7 +358,6 @@ public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
  * @see Files.isSameFile
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isSameFileAs(other: Path): Boolean = Files.isSameFile(this, other)
@@ -394,7 +374,6 @@ public inline fun Path.isSameFileAs(other: Path): Boolean = Files.isSameFile(thi
  * @see Files.newDirectoryStream
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun Path.listDirectoryEntries(glob: String = "*"): List<Path> {
     return Files.newDirectoryStream(this, glob).use { it.toList() }
@@ -414,9 +393,9 @@ public fun Path.listDirectoryEntries(glob: String = "*"): List<Path> {
  * @see Files.newDirectoryStream
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue // KT-72691
 public inline fun <T> Path.useDirectoryEntries(glob: String = "*", block: (Sequence<Path>) -> T): T {
     return Files.newDirectoryStream(this, glob).use { block(it.asSequence()) }
 }
@@ -433,7 +412,6 @@ public inline fun <T> Path.useDirectoryEntries(glob: String = "*", block: (Seque
  * @see Files.newDirectoryStream
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.forEachDirectoryEntry(glob: String = "*", action: (Path) -> Unit) {
@@ -447,7 +425,6 @@ public inline fun Path.forEachDirectoryEntry(glob: String = "*", action: (Path) 
  * @see Files.size
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.fileSize(): Long =
@@ -462,7 +439,6 @@ public inline fun Path.fileSize(): Long =
  * @see Files.delete
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.deleteExisting() {
@@ -479,10 +455,10 @@ public inline fun Path.deleteExisting() {
  * @see Files.deleteIfExists
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-public inline fun Path.deleteIfExists() =
+@IgnorableReturnValue
+public inline fun Path.deleteIfExists(): Boolean =
     Files.deleteIfExists(this)
 
 /**
@@ -504,9 +480,9 @@ public inline fun Path.deleteIfExists() =
  * @see Path.createParentDirectories
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectory(this, *attributes)
 
@@ -531,9 +507,9 @@ public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Pat
  * @see Path.createParentDirectories
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectories(this, *attributes)
 
@@ -562,6 +538,7 @@ public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): P
  */
 @SinceKotlin("1.9")
 @Throws(IOException::class)
+@IgnorableReturnValue
 public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Path = also {
     val parent = it.parent
     if (parent != null && !parent.isDirectory()) {
@@ -578,6 +555,8 @@ public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Pa
  *
  * @param options options specifying how the move should be done, see [StandardCopyOption], [LinkOption].
  *
+ * @return the [target] path.
+ *
  * @throws FileAlreadyExistsException if the target file exists but cannot be replaced because the
  *   [StandardCopyOption.REPLACE_EXISTING] option is not specified (optional specific exception).
  * @throws DirectoryNotEmptyException the [StandardCopyOption.REPLACE_EXISTING] option is specified but the file
@@ -588,9 +567,9 @@ public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Pa
  * @see Files.move
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
     Files.move(this, target, *options)
 
@@ -598,6 +577,8 @@ public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
  * Moves or renames the file located by this path to the [target] path.
  *
  * @param overwrite allows to overwrite the target if it already exists.
+ *
+ * @return the [target] path.
  *
  * @throws FileAlreadyExistsException if the target file exists but cannot be replaced because the
  *   `overwrite = true` option is not specified (optional specific exception).
@@ -609,9 +590,9 @@ public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
  * @see Files.move
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.moveTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
     return Files.move(this, target, *options)
@@ -623,7 +604,6 @@ public inline fun Path.moveTo(target: Path, overwrite: Boolean = false): Path {
  * @see Files.getFileStore
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.fileStore(): FileStore =
@@ -643,7 +623,6 @@ public inline fun Path.fileStore(): FileStore =
  * @see Files.getAttribute
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getAttribute(attribute: String, vararg options: LinkOption): Any? =
@@ -658,6 +637,7 @@ public inline fun Path.getAttribute(attribute: String, vararg options: LinkOptio
  * ```
  * When the view name is not specified, it defaults to `basic`.
  *
+ * @return [this] path.
  * @throws UnsupportedOperationException if the attribute view is not supported.
  * @throws IllegalArgumentException if the attribute name is not specified or is not recognized, or
  *   the attribute value is of the correct type but has an inappropriate value.
@@ -665,9 +645,9 @@ public inline fun Path.getAttribute(attribute: String, vararg options: LinkOptio
  * @see Files.setAttribute
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.setAttribute(attribute: String, value: Any?, vararg options: LinkOption): Path =
     Files.setAttribute(this, attribute, value, *options)
 
@@ -682,7 +662,6 @@ public inline fun Path.setAttribute(attribute: String, value: Any?, vararg optio
  * @see Files.getFileAttributeView
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <reified V : FileAttributeView> Path.fileAttributesViewOrNull(vararg options: LinkOption): V? =
     Files.getFileAttributeView(this, V::class.java, *options)
@@ -698,7 +677,6 @@ public inline fun <reified V : FileAttributeView> Path.fileAttributesViewOrNull(
  * @see Files.getFileAttributeView
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <reified V : FileAttributeView> Path.fileAttributesView(vararg options: LinkOption): V =
     Files.getFileAttributeView(this, V::class.java, *options) ?: fileAttributeViewNotAvailable(this, V::class.java)
@@ -716,7 +694,6 @@ internal fun fileAttributeViewNotAvailable(path: Path, attributeViewClass: Class
  * @see Files.readAttributes
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun <reified A : BasicFileAttributes> Path.readAttributes(vararg options: LinkOption): A =
@@ -738,7 +715,6 @@ public inline fun <reified A : BasicFileAttributes> Path.readAttributes(vararg o
  * @see Files.readAttributes
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.readAttributes(attributes: String, vararg options: LinkOption): Map<String, Any?> =
@@ -752,7 +728,6 @@ public inline fun Path.readAttributes(attributes: String, vararg options: LinkOp
  * @see Files.getLastModifiedTime
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getLastModifiedTime(vararg options: LinkOption): FileTime =
@@ -766,7 +741,6 @@ public inline fun Path.getLastModifiedTime(vararg options: LinkOption): FileTime
  * @see Files.setLastModifiedTime
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.setLastModifiedTime(value: FileTime): Path =
@@ -780,7 +754,6 @@ public inline fun Path.setLastModifiedTime(value: FileTime): Path =
  * @see Files.getOwner
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getOwner(vararg options: LinkOption): UserPrincipal? =
@@ -789,14 +762,15 @@ public inline fun Path.getOwner(vararg options: LinkOption): UserPrincipal? =
 /**
  * Sets the file owner to the specified [value].
  *
+ * @return [this] path.
  * @throws UnsupportedOperationException if the associated file system does not support the [FileOwnerAttributeView].
  *
  * @see Files.setOwner
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.setOwner(value: UserPrincipal): Path =
     Files.setOwner(this, value)
 
@@ -808,7 +782,6 @@ public inline fun Path.setOwner(value: UserPrincipal): Path =
  * @see Files.getPosixFilePermissions
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getPosixFilePermissions(vararg options: LinkOption): Set<PosixFilePermission> =
@@ -822,7 +795,6 @@ public inline fun Path.getPosixFilePermissions(vararg options: LinkOption): Set<
  * @see Files.setPosixFilePermissions
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>): Path =
@@ -834,6 +806,7 @@ public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>):
  * Calling this function may require the process to be started with implementation specific privileges to create hard links
  * or to create links to directories.
  *
+ * @return [this] path to the link.
  * @throws FileAlreadyExistsException if a file with this name already exists
  *   (optional specific exception, some implementations may throw a more general one).
  * @throws  UnsupportedOperationException if the implementation does not support creating a hard link.
@@ -841,9 +814,9 @@ public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>):
  * @see Files.createLink
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createLinkPointingTo(target: Path): Path =
     Files.createLink(this, target)
 
@@ -853,6 +826,7 @@ public inline fun Path.createLinkPointingTo(target: Path): Path =
  * Calling this function may require the process to be started with implementation specific privileges to
  * create symbolic links.
  *
+ * @return [this] path to the link.
  * @throws FileAlreadyExistsException if a file with this name already exists
  *   (optional specific exception, some implementations may throw a more general one).
  * @throws UnsupportedOperationException if the implementation does not support symbolic links or the
@@ -861,9 +835,9 @@ public inline fun Path.createLinkPointingTo(target: Path): Path =
  * @see Files.createSymbolicLink
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createSymbolicLinkPointingTo(target: Path, vararg attributes: FileAttribute<*>): Path =
     Files.createSymbolicLink(this, target, *attributes)
 
@@ -877,7 +851,6 @@ public inline fun Path.createSymbolicLinkPointingTo(target: Path, vararg attribu
  * @see Files.readSymbolicLink
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.readSymbolicLink(): Path =
@@ -888,6 +861,7 @@ public inline fun Path.readSymbolicLink(): Path =
  *
  * @param attributes an optional list of file attributes to set atomically when creating the file.
  *
+ * @return [this] path.
  * @throws  FileAlreadyExistsException if a file specified by this path already exists
  *   (optional specific exception, some implementations may throw more general [IOException]).
  * @throws  UnsupportedOperationException if the [attributes] array contains an attribute that cannot be set atomically
@@ -896,9 +870,9 @@ public inline fun Path.readSymbolicLink(): Path =
  * @see Files.createFile
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
     Files.createFile(this, *attributes)
 
@@ -915,7 +889,6 @@ public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
  * @see Files.createTempFile
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun createTempFile(prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
@@ -936,7 +909,6 @@ public inline fun createTempFile(prefix: String? = null, suffix: String? = null,
  * @see Files.createTempFile
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun createTempFile(directory: Path?, prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
     if (directory != null)
@@ -956,7 +928,6 @@ public fun createTempFile(directory: Path?, prefix: String? = null, suffix: Stri
  * @see Files.createTempDirectory
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun createTempDirectory(prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
@@ -976,7 +947,6 @@ public inline fun createTempDirectory(prefix: String? = null, vararg attributes:
  * @see Files.createTempDirectory
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun createTempDirectory(directory: Path?, prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
     if (directory != null)
@@ -990,7 +960,6 @@ public fun createTempDirectory(directory: Path?, prefix: String? = null, vararg 
  * This operator is a shortcut for the [Path.resolve] function.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline operator fun Path.div(other: Path): Path =
     this.resolve(other)
@@ -1001,7 +970,6 @@ public inline operator fun Path.div(other: Path): Path =
  * This operator is a shortcut for the [Path.resolve] function.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline operator fun Path.div(other: String): Path =
     this.resolve(other)
@@ -1013,7 +981,6 @@ public inline operator fun Path.div(other: String): Path =
  * @see Paths.get
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path(path: String): Path =
     Paths.get(path)
@@ -1025,7 +992,6 @@ public inline fun Path(path: String): Path =
  * @see Paths.get
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path(base: String, vararg subpaths: String): Path =
     Paths.get(base, *subpaths)
@@ -1036,50 +1002,118 @@ public inline fun Path(base: String, vararg subpaths: String): Path =
  * @see Paths.get
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun URI.toPath(): Path =
     Paths.get(this)
 
 
 /**
- * Returns a sequence of paths for visiting this directory and all its content.
+ * Returns a sequence of paths for visiting this directory and all its contents.
  *
- * By default, only files are visited, in depth-first order, and symbolic links are not followed.
- * The combination of [options] overrides the default behavior. See [PathWalkOption].
+ * By default, the returned sequence includes **only files** in the file tree, in **depth-first** order.
+ * Symbolic links are not followed; if encountered, they are included in the sequence as-is,
+ * and the contents of the directories they point to are not visited.
+ * The combination of [options] overrides this default behavior. See [PathWalkOption] for details.
  *
- * The order in which sibling files are visited is unspecified.
+ * The order in which sibling entries are visited is unspecified.
  *
- * If after calling this function new files get added or deleted from the file tree rooted at this directory,
- * the changes may or may not appear in the returned sequence.
+ * If, after calling this function, new entries get added or deleted from the file tree rooted at this directory,
+ * the changes may or may not be reflected in the returned sequence.
  *
- * If the file located by this path does not exist, an empty sequence is returned.
- * if the file located by this path is not a directory, a sequence containing only this path is returned.
+ * If the entry located by this path does not exist, an empty sequence is returned.
+ * If the entry located by this path is not a directory, a sequence containing only this path is returned.
+ *
+ * Example:
+ * ```kotlin
+ * val startDirectory = createTempDirectory()
+ * run {
+ *     (startDirectory / "1" / "2" / "3" / "4").createDirectories()
+ *     (startDirectory / "1" / "2" / "3" / "a.txt").createFile()
+ *     (startDirectory / "1" / "2" / "b.txt").createFile()
+ *     (startDirectory / "c.txt").createFile()
+ * }
+ *
+ * // Default walk options. Prints:
+ * //    1/2/b.txt
+ * //    1/2/3/a.txt
+ * //    c.txt
+ * startDirectory.walk().forEach { path ->
+ *     println(path.relativeTo(startDirectory))
+ * }
+ *
+ * // Custom walk options. Prints:
+ * //    1
+ * //    c.txt
+ * //    1/2
+ * //    1/2/b.txt
+ * //    1/2/3
+ * //    1/2/3/a.txt
+ * //    1/2/3/4
+ * startDirectory.walk(PathWalkOption.INCLUDE_DIRECTORIES, PathWalkOption.BREADTH_FIRST).forEach { path ->
+ *     println(path.relativeTo(startDirectory))
+ * }
+ * ```
+ *
+ * When iterating the returned sequence, the following exceptions could be thrown:
+ *   * [FileSystemException] if the traversal reaches an entry with an illegal name such as "." or "..".
+ *   * [FileSystemLoopException] if the traversal reaches a cycle.
+ *   * [SecurityException] if a security manager is installed and it denies access to an entry reached during traversal.
+ *   * [IOException] if any errors arise while opening a directory.
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeWalk(this, options)
 
 /**
- * Visits this directory and all its content with the specified [visitor].
+ * Visits this directory and all its contents with the specified [visitor].
  *
- * The traversal is in depth-first order and starts at this directory. The specified [visitor] is invoked on each file encountered.
+ * The traversal is in **depth-first** order and starts at this directory.
+ * The specified [visitor] is invoked on each entry encountered.
+ *
+ * Example:
+ *
+ * ```kotlin
+ * val cleanVisitor = fileVisitor {
+ *     onPreVisitDirectory { directory, _ ->
+ *         if (directory.name == "build") {
+ *             directory.deleteRecursively()
+ *             FileVisitResult.SKIP_SUBTREE
+ *         } else {
+ *             FileVisitResult.CONTINUE
+ *         }
+ *     }
+ *
+ *     onVisitFile { file, _ ->
+ *         if (file.extension == "class") {
+ *             file.deleteExisting()
+ *         }
+ *         FileVisitResult.CONTINUE
+ *     }
+ * }
+ *
+ * projectDirectory.visitFileTree(cleanVisitor)
+ * ```
  *
  * @param visitor the [FileVisitor] that receives callbacks.
  * @param maxDepth the maximum depth to traverse. By default, there is no limit.
  * @param followLinks specifies whether to follow symbolic links, `false` by default.
+ *   If `true`, the traversal follows symbolic links and visits the contents of the directories they point to.
+ *
+ * @throws IllegalArgumentException if [maxDepth] is negative.
+ * @throws SecurityException if a security manager is installed and it denies access to an entry reached during traversal.
+ * @throws IOException if a visitor function throws an I/O exception.
  *
  * @see Files.walkFileTree
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MAX_VALUE, followLinks: Boolean = false): Unit {
     val options = if (followLinks) setOf(FileVisitOption.FOLLOW_LINKS) else setOf()
     Files.walkFileTree(this, options, maxDepth, visitor)
 }
 
 /**
- * Visits this directory and all its content with the [FileVisitor] defined in [builderAction].
+ * Visits this directory and all its contents with the [FileVisitor] defined in [builderAction].
  *
  * This function works the same as [Path.visitFileTree]. It is introduced to streamline
  * the cases when a [FileVisitor] is created only to be immediately used for a file tree traversal.
@@ -1087,11 +1121,11 @@ public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MA
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * projectDirectory.visitFileTree {
  *     onPreVisitDirectory { directory, _ ->
  *         if (directory.name == "build") {
- *             directory.toFile().deleteRecursively()
+ *             directory.deleteRecursively()
  *             FileVisitResult.SKIP_SUBTREE
  *         } else {
  *             FileVisitResult.CONTINUE
@@ -1109,13 +1143,20 @@ public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MA
  *
  * @param maxDepth the maximum depth to traverse. By default, there is no limit.
  * @param followLinks specifies whether to follow symbolic links, `false` by default.
- * @param builderAction the function that defines [FileVisitor].
+ *   If `true`, the traversal follows symbolic links and visits the contents of the directories they point to.
+ * @param builderAction the function that defines the callbacks for handling entry visit events.
  *
- * @see Path.visitFileTree
+ * @throws IllegalArgumentException if [maxDepth] is negative.
+ * @throws SecurityException if a security manager is installed and it denies access to an entry reached during traversal.
+ * @throws IOException if a visitor function throws an I/O exception.
+ * @throws IllegalStateException if the provided [builderAction] defines a [FileVisitor] incorrectly.
+ *   See [fileVisitor] for details.
+ *
+ * @see Files.walkFileTree
  * @see fileVisitor
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun Path.visitFileTree(
     maxDepth: Int = Int.MAX_VALUE,
     followLinks: Boolean = false,
@@ -1133,7 +1174,7 @@ public fun Path.visitFileTree(
  *   * [FileVisitor.visitFile] returns [FileVisitResult.CONTINUE].
  *   * [FileVisitor.visitFileFailed] re-throws the I/O exception that prevented the file from being visited.
  *   * [FileVisitor.postVisitDirectory] returns [FileVisitResult.CONTINUE] if the directory iteration completes without an I/O exception;
- *     otherwise it re-throws the I/O exception that caused the iteration of the directory to terminate prematurely.
+ *     otherwise, it re-throws the I/O exception that caused the iteration to complete prematurely.
  *
  * To override a function provide its implementation to the corresponding
  * function of the [FileVisitorBuilder] that was passed as a receiver to [builderAction].
@@ -1145,11 +1186,11 @@ public fun Path.visitFileTree(
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * val cleanVisitor = fileVisitor {
  *     onPreVisitDirectory { directory, _ ->
  *         if (directory.name == "build") {
- *             directory.toFile().deleteRecursively()
+ *             directory.deleteRecursively()
  *             FileVisitResult.SKIP_SUBTREE
  *         } else {
  *             FileVisitResult.CONTINUE
@@ -1164,9 +1205,12 @@ public fun Path.visitFileTree(
  *     }
  * }
  * ```
+ *
+ * @see FileVisitor
+ * @see FileVisitorBuilder
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun fileVisitor(builderAction: FileVisitorBuilder.() -> Unit): FileVisitor<Path> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return FileVisitorBuilderImpl().apply(builderAction).build()

@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.fir.declarations
 
@@ -16,15 +19,32 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Represents a common base for Kotlin function-like declarations in FIR (all kinds of functions, property accessors, and constructors).
+ *
+ * This element is inherited by [FirNamedFunction], [FirAnonymousFunction], [FirPropertyAccessor], and [FirConstructor].
+ *
+ * Notable properties common to functions:
+ * - [symbol] — the symbol which serves as a pointer to this function-like declaration.
+ * - [valueParameters] — the list of value parameters.
+ * - [dispatchReceiverType] — dispatch receiver type for member functions, or null for top-level or static functions.
+ * Dispatch receiver type is a type of `this` based on the member function's owner class and used to determine accessible scopes.
+ * - [contextParameters] — context parameters of the function, if any.
+ * - [receiverParameter] — the extension receiver parameter if present, otherwise null.
+ * - [returnTypeRef] — the declared return type of the function-like declaration.
+ * - [body] — the function body, if present, otherwise null.
+ * - [annotations] — annotations present on the declaration, if any.
+ * - [isLocal] — the function is non-local (isLocal = false) iff all its ancestors (containing declarations) are
+ * either files (see [FirFile]) or classes. A property accessor inherits isLocal from its owner property, 
+ * otherwise with any callable or anonymous initializer among ancestors, the declaration is local (isLocal = true).
+ * In particular, it means that any member function of a local class is also local. 
+ *
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.function]
  */
-
 sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirControlFlowGraphOwner, FirStatement {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
@@ -33,18 +53,20 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
+    abstract override val isLocal: Boolean
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
-    abstract override val contextReceivers: List<FirContextReceiver>
+    abstract override val contextParameters: List<FirValueParameter>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val symbol: FirFunctionSymbol<out FirFunction>
+    abstract override val symbol: FirFunctionSymbol<FirFunction>
     abstract val valueParameters: List<FirValueParameter>
     abstract val body: FirBlock?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitFunction(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
@@ -60,7 +82,7 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
-    abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
+    abstract override fun replaceContextParameters(newContextParameters: List<FirValueParameter>)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
@@ -77,6 +99,8 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirFunction
+
+    abstract override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirFunction
 
     abstract fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction
 

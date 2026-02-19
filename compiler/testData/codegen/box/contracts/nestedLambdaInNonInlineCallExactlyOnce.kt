@@ -1,5 +1,4 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: JVM
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 // KT-38849
 

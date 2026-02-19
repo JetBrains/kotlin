@@ -12,6 +12,5 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 Intrinsics.areEqual
 // 1 TABLESWITCH

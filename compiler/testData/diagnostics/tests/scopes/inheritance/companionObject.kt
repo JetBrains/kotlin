@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 interface A {
     companion object {
@@ -39,3 +40,6 @@ class C: B(), A {
         C.<!UNRESOLVED_REFERENCE!>B_<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, interfaceDeclaration, nestedClass,
+objectDeclaration */

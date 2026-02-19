@@ -11,6 +11,12 @@ repositories {
 }
 
 kotlin {
+    sourceSets.all {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
+
     val platformTarget = when {
         HostManager.hostIsMac -> macosX64("platform")
         HostManager.hostIsMingw -> mingwX64("platform")
@@ -25,16 +31,4 @@ kotlin {
     val platformTest by sourceSets.getting
     val nativeTest = sourceSets.create("nativeTest")
     platformTest.dependsOn(nativeTest)
-
-    tasks.create("listNativeTestDependencies") {
-        nativeTest as DefaultKotlinSourceSet
-        val nativeTestMetadataConfiguration = configurations[nativeTest.intransitiveMetadataConfigurationName]
-        dependsOn(nativeTestMetadataConfiguration)
-
-        doFirst {
-            nativeTestMetadataConfiguration.files.forEach { dependencyFile ->
-                logger.quiet("Dependency: ${dependencyFile.path}")
-            }
-        }
-    }
 }

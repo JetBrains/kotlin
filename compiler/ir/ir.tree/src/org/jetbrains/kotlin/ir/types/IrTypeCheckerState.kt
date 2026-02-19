@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.types.AbstractTypePreparator
 import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 
-fun createIrTypeCheckerState(typeSystemContext: IrTypeSystemContext): TypeCheckerState {
+fun createIrTypeCheckerState(typeSystemContext: TypeSystemContext): TypeCheckerState {
     return TypeCheckerState(
         isErrorTypeEqualsToAnything = false,
         isStubTypeEqualsToAnything = false,
+        isDnnTypesEqualToFlexible = false,
         allowedTypeVariable = false,
         typeSystemContext = typeSystemContext,
         kotlinTypePreparator = AbstractTypePreparator.Default,

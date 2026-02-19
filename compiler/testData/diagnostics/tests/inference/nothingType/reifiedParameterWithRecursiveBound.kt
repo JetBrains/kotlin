@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 // Issue: KT-37621
 
 class Inv<T>
@@ -32,3 +34,6 @@ inline fun <reified T : Out<T>> testOut(): T {
         throw Exception()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inline, localProperty, nullableType, out,
+propertyDeclaration, reified, tryExpression, typeConstraint, typeParameter */

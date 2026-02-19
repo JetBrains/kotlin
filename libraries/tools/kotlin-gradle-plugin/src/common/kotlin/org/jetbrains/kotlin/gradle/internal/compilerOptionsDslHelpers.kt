@@ -5,23 +5,24 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.utils.newInstance
 
-internal fun KotlinMultiplatformExtension.syncCommonOptions(
+internal fun KotlinMultiplatformExtension.syncCommonMultiplatformOptions(
     extensionCompilerOptions: KotlinCommonCompilerOptions
 ) {
     targets.configureEach { target ->
         KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(
             extensionCompilerOptions,
-            target.compilerOptions
+            target.targetCompilerOptions
         )
     }
 
@@ -43,3 +44,11 @@ internal fun KotlinMultiplatformExtension.syncCommonOptions(
         }
     }
 }
+
+internal val KotlinTarget.targetCompilerOptions: KotlinCommonCompilerOptions
+    get() = when (this) {
+        is HasConfigurableKotlinCompilerOptions<*> -> compilerOptions
+        // Required for external targets that do not implement 'HasConfigurableCompilerOptions' interface
+        is DecoratedExternalKotlinTarget -> delegate.compilerOptions
+        else -> throw IllegalStateException("'KotlinTarget' type ${this.javaClass} does not allow to configure compiler options!")
+    }

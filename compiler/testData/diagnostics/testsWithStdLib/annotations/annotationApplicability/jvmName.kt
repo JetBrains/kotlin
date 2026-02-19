@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
 
 @JvmName("a")
 fun foo() {}
@@ -126,3 +127,8 @@ interface Intf {
     <!INAPPLICABLE_JVM_NAME!>@set:JvmName("setBar")<!> // no error in IDE
     var foo: Int
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, annotationUseSiteTargetPropertySetter, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, interfaceDeclaration, localFunction,
+localProperty, override, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, secondaryConstructor,
+setter, stringLiteral */

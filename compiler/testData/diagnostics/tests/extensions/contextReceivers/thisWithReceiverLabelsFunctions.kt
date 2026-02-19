@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 class A<T>(val a: T)
 class B(val b: Any)
@@ -27,3 +29,6 @@ context(A<Int>, A<String>, B) fun C.f() {
     this@f.c
     this.c
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+nullableType, primaryConstructor, propertyDeclaration, thisExpression, typeParameter */

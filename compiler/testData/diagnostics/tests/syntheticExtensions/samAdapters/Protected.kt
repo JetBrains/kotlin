@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 package k
 
@@ -22,3 +23,5 @@ fun bar(){}
 public class JavaClass {
     protected void doSomething(Runnable runnable) { runnable.run(); }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

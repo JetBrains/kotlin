@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-43603
 
 import kotlin.reflect.KClass
@@ -25,3 +26,7 @@ val A.extProp2
         is C -> this::class.extProp2
         else -> "I don't know who I am.."
     }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, classReference, getter, interfaceDeclaration,
+isExpression, propertyDeclaration, propertyWithExtensionReceiver, smartcast, stringLiteral, thisExpression,
+typeConstraint, typeParameter, whenExpression, whenWithSubject */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-774
 fun box() : Int {
     var a : Int? = 1
@@ -8,4 +9,7 @@ fun box() : Int {
     } else {
         return a + d
     }
-} 
+}
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

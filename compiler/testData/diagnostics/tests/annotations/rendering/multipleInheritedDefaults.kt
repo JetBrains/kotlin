@@ -1,5 +1,6 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
-// !DIAGNOSTICS: -ABSTRACT_MEMBER_NOT_IMPLEMENTED
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
+// DIAGNOSTICS: -ABSTRACT_MEMBER_NOT_IMPLEMENTED
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.VALUE_PARAMETER,  AnnotationTarget.PROPERTY,  AnnotationTarget.EXPRESSION)
 @Retention( AnnotationRetention.SOURCE)
@@ -24,3 +25,6 @@ class AB2 : A, B {
     @An
     override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES("value-parameter a: Int = ... defined in AB2.foo")!>@An a: @An Int<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, override */

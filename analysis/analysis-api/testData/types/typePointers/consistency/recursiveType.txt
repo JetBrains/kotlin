@@ -1,0 +1,57 @@
+Restored type is the same as the original one
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: NestedExample
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: NestedExample
+      symbol: KaNamedClassSymbol(NestedExample)
+      typeArguments: [
+        out KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: Recursive
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Recursive
+              symbol: KaNamedClassSymbol(Recursive)
+              typeArguments: [
+                *
+              ]
+          ]
+          symbol: KaNamedClassSymbol(Recursive)
+          typeArguments: [
+            *
+          ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(NestedExample)
+  typeArguments: [
+    out KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: Recursive
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Recursive
+          symbol: KaNamedClassSymbol(Recursive)
+          typeArguments: [
+            *
+          ]
+      ]
+      symbol: KaNamedClassSymbol(Recursive)
+      typeArguments: [
+        *
+      ]
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false

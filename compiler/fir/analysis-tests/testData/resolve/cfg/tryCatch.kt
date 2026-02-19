@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 fun test_1() {
     try {
         val x = 1
@@ -32,3 +33,6 @@ fun test_3(b: Boolean) {
     }
     val z = 3
 }
+
+/* GENERATED_FIR_TAGS: break, continue, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, tryExpression, whileLoop */

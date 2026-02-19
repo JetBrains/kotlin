@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: KotlinFile.kt
 abstract class KotlinClass : JavaInterface1, JavaInterface2 {
@@ -24,3 +25,6 @@ public interface JavaInterface1 {
 public interface JavaInterface2 {
     void setSomething(String value);
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression, javaFunction,
+javaProperty, javaType, override, stringLiteral */

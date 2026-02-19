@@ -1,0 +1,13 @@
+KtNameReferenceExpression(69,71): 'AA'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in foo.bar.baz) class AA
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

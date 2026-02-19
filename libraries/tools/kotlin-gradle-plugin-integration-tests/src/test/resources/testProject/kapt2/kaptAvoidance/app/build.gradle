@@ -11,4 +11,5 @@ dependencies {
 
     // actually unused, but kapt skips AP when annotation processing classpath is empty (see checkOptions)
     kapt "com.google.auto.service:auto-service:1.0-rc4"
+    testImplementation 'junit:junit:4.13.2'
 }

@@ -1,0 +1,36 @@
+Module: m1
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <m1>
+abstract class <#A: kotlin/Any?> /Base { // /Base|null[0]
+    abstract var bar // /Base.bar|{}bar[0]
+        abstract fun <get-bar>(): #A // /Base.bar.<get-bar>|<get-bar>(){}[0]
+        abstract fun <set-bar>(#A) // /Base.bar.<set-bar>|<set-bar>(1:0){}[0]
+    abstract var exn // /Base.exn|@0:0{0§<kotlin.Any?>}exn[0]
+        abstract fun <#A2: kotlin/Any?> (#A2).<get-exn>(): #A // /Base.exn.<get-exn>|<get-exn>@0:0(){0§<kotlin.Any?>}[0]
+        abstract fun <#A2: kotlin/Any?> (#A2).<set-exn>(#A) // /Base.exn.<set-exn>|<set-exn>@0:0(1:0){0§<kotlin.Any?>}[0]
+    final val x // /Base.x|{}x[0]
+        final fun <get-x>(): #A // /Base.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(#A) // /Base.<init>|<init>(1:0){}[0]
+    abstract fun <#A1: kotlin/Any?> foo(#A1): #A // /Base.foo|foo(0:0){0§<kotlin.Any?>}[0]
+}
+Module: m2
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <m2>
+final class <#A: kotlin/Any?> /Derived1 : /Base<#A> { // /Derived1|null[0]
+    final var bar // /Derived1.bar|{}bar[0]
+        final fun <get-bar>(): #A // /Derived1.bar.<get-bar>|<get-bar>(){}[0]
+        final fun <set-bar>(#A) // /Derived1.bar.<set-bar>|<set-bar>(1:0){}[0]
+    final var exn // /Derived1.exn|@0:0{0§<kotlin.Any?>}exn[0]
+        final fun <#A2: kotlin/Any?> (#A2).<get-exn>(): #A // /Derived1.exn.<get-exn>|<get-exn>@0:0(){0§<kotlin.Any?>}[0]
+        final fun <#A2: kotlin/Any?> (#A2).<set-exn>(#A) // /Derived1.exn.<set-exn>|<set-exn>@0:0(1:0){0§<kotlin.Any?>}[0]
+    constructor <init>(#A) // /Derived1.<init>|<init>(1:0){}[0]
+    final fun <#A1: kotlin/Any?> foo(#A1): #A // /Derived1.foo|foo(0:0){0§<kotlin.Any?>}[0]
+}

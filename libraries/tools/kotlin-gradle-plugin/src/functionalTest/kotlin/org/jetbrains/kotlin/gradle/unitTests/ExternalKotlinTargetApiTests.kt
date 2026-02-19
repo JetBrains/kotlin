@@ -180,12 +180,12 @@ class ExternalKotlinTargetApiTests {
             defaults()
             sourcesElements.configure { target, configuration ->
                 assertEquals(target.sourcesElementsConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "sourcesElements")
+                configuration.attributes.attributeProvider(testAttribute, provider { "sourcesElements" })
             }
 
             sourcesElementsPublished.configure { target, configuration ->
                 assertEquals(target.sourcesElementsPublishedConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "sourcesElements-published")
+                configuration.attributes.attributeProvider(testAttribute, provider { "sourcesElements-published" })
             }
         }
         target.createCompilation<FakeCompilation> { defaults(kotlin) }
@@ -272,6 +272,7 @@ class ExternalKotlinTargetApiTests {
         }
 
         kotlin.linuxX64()
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64()
 
         fun KotlinHierarchyBuilder.withFakeTarget() = withCompilations { it == mainCompilation || it == testCompilation }
@@ -306,7 +307,7 @@ class ExternalKotlinTargetApiTests {
 
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         target.createCompilation<FakeCompilation> { defaults(kotlin) }
-        target.attributes.attribute(userAttribute, "foo")
+        target.attributes.attributeProvider(userAttribute, target.project.provider { "foo" })
 
         project.evaluate()
 

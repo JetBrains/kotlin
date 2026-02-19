@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -14,16 +15,14 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.linkage.partial.*
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 fun createPartialLinkageSupportForLowerings(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
-    messageLogger: IrMessageLogger
+    messageCollector: MessageCollector
 ): PartialLinkageSupportForLowerings = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(messageLogger, partialLinkageConfig.logLevel))
+    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
 else
     PartialLinkageSupportForLowerings.DISABLED
 
@@ -57,10 +56,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
         file: PLFile,
         doNotLog: Boolean
     ): IrCall {
-        val errorMessage = if (doNotLog)
-            renderLinkageError(partialLinkageCase) // Just render a message.
-        else
-            renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
+        val errorMessage = prepareLinkageError(doNotLog, partialLinkageCase, element, file)
 
         throwExpressionsGenerated++ // Track each generated `throw` expression.
 
@@ -70,12 +66,21 @@ internal class PartialLinkageSupportForLoweringsImpl(
             type = builtIns.nothingType,
             symbol = builtIns.linkageErrorSymbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = 1,
             origin = IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
         ).apply {
-            putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage))
+            arguments[0] = IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage)
         }
     }
+
+    override fun prepareLinkageError(
+        doNotLog: Boolean,
+        partialLinkageCase: PartialLinkageCase,
+        element: IrElement,
+        file: PLFile,
+    ): String = if (doNotLog)
+        renderLinkageError(partialLinkageCase) // Just render a message.
+    else
+        renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
 
     fun renderAndLogLinkageError(partialLinkageCase: PartialLinkageCase, element: IrElement, file: PLFile): String {
         val errorMessage = renderLinkageError(partialLinkageCase)
@@ -100,7 +105,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
                 startOffset
             }
 
-            else -> if (origin is PartiallyLinkedDeclarationOrigin) {
+            else -> if (origin in PartiallyLinkedDeclarationOrigin.entries) {
                 // There is no sense to take coordinates from the declaration that does not exist in the code.
                 // Let's take the coordinates of the parent.
                 parent.startOffsetOfFirstDenotableIrElement()

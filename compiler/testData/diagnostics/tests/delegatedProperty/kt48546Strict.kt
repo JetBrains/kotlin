@@ -1,4 +1,5 @@
-// !LANGUAGE: +ReportErrorsOnRecursiveTypeInsidePlusAssignment
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ReportErrorsOnRecursiveTypeInsidePlusAssignment
 // WITH_STDLIB
 // FIR: KT-51648
 
@@ -39,3 +40,6 @@ object DelegateTest2 {
         0
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, integerLiteral, lambdaLiteral, multiplicativeExpression,
+objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral */

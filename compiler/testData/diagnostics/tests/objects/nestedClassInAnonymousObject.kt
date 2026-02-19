@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class X {
     val foo = object {
@@ -10,3 +11,6 @@ class X {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, nestedClass,
+propertyDeclaration */

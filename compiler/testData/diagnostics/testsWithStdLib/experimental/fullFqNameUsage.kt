@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 
 package test.abc
 
@@ -12,3 +13,5 @@ fun f() {}
 
 @test.abc.E
 fun g() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration */

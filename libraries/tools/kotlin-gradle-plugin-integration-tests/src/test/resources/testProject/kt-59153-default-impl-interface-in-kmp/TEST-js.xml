@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <testsuite name="AppCommonTest" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="testUsageOfAppInterface[js, node]" classname="AppCommonTest" time="..." />
+    <system-out />
+    <system-err />
+  </testsuite>
+</results>

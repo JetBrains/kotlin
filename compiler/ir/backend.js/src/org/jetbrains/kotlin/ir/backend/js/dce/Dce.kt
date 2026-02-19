@@ -7,25 +7,30 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.mainFunctionWrapper
+import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
+    moduleKind: ModuleKind,
     removeUnusedAssociatedObjects: Boolean = true,
     dceDumpNameCache: DceDumpNameCache,
 ) {
-    val allRoots = buildRoots(modules, context)
+    val allRoots = buildRoots(modules, context, moduleKind)
 
     val printReachabilityInfo =
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
@@ -49,7 +54,7 @@ private fun IrField.isConstant(): Boolean =
     correspondingPropertySymbol?.owner?.isConst ?: false
 
 private fun IrDeclaration.addRootsTo(
-    nestedVisitor: IrElementVisitorVoid,
+    nestedVisitor: IrVisitorVoid,
     context: JsIrBackendContext
 ) {
     when {
@@ -91,8 +96,12 @@ private fun IrDeclaration.addRootsTo(
     }
 }
 
-private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext): List<IrDeclaration> = buildList {
-    val declarationsCollector = object : IrElementVisitorVoid {
+private fun buildRoots(
+    modules: Iterable<IrModuleFragment>,
+    context: JsIrBackendContext,
+    moduleKind: ModuleKind
+): List<IrDeclaration> = buildList {
+    val declarationsCollector = object : IrVisitorVoid() {
         override fun visitElement(element: IrElement): Unit = element.acceptChildrenVoid(this)
         override fun visitBody(body: IrBody): Unit = Unit // Skip
 
@@ -114,23 +123,24 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         dceRuntimeDiagnostic.unreachableDeclarationMethod(context).owner.acceptVoid(declarationsCollector)
     }
 
-    // TODO: Generate calls to main as IR->IR lowering and reference coroutineEmptyContinuation directly
-    JsMainFunctionDetector(context).getMainFunctionOrNull(modules.last())?.let { mainFunction ->
-        add(mainFunction)
-        if (mainFunction.isLoweredSuspendFunction(context)) {
-            context.coroutineEmptyContinuation.owner.acceptVoid(declarationsCollector)
-        }
+    JsMainFunctionDetector(context).getMainFunctionOrNull(modules.last())
+        ?.mainFunctionWrapper
+        ?.let { add(it) }
+
+    addIfNotNull(context.symbols.void.owner.backingField)
+
+    if (moduleKind == ModuleKind.UMD) {
+        add(context.symbols.globalThis.owner)
     }
 
-    addIfNotNull(context.intrinsics.void.owner.backingField)
     addAll(context.testFunsPerFile.values)
     addAll(context.additionalExportedDeclarations)
 }
 
 internal fun RuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =
     when (this) {
-        RuntimeDiagnostic.LOG -> context.intrinsics.jsUnreachableDeclarationLog
-        RuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsUnreachableDeclarationException
+        RuntimeDiagnostic.LOG -> context.symbols.jsUnreachableDeclarationLog
+        RuntimeDiagnostic.EXCEPTION -> context.symbols.jsUnreachableDeclarationException
     }
 
 internal fun IrField.isKotlinPackage() =

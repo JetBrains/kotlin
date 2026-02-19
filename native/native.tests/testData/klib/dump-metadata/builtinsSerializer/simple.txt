@@ -1,6 +1,26 @@
-    class Class constructor() {
-        fun member(): Nothing?
+library {
+  // module name: <simple.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Class
+
+    public final class test/Class : kotlin/Any {
+
+      public constructor()
+
+      public final fun member(): kotlin/Nothing?
     }
-    fun <T> T.extension(): T?
-    fun function(int: Int, string: String = ...): Class
-    val property: Unit
+
+    package {
+
+      public final fun <T#0 /* T */> T#0.extension(): T#0?
+
+      public final fun function(int: kotlin/Int, string: kotlin/String /* = ... */): test/Class
+
+      public final val property: kotlin/Unit
+        public final get
+    }
+  }
+}

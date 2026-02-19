@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 class A {
     fun h1() {}
@@ -19,3 +20,5 @@ fun B.bar() {
     h1()
     h2()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext */

@@ -1,6 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1403
-// IGNORE_BACKEND: JS
-
 package foo
 
 object RegularKotlinObject

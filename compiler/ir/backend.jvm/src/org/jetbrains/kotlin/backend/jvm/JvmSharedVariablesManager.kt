@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -21,7 +20,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -30,8 +30,8 @@ class JvmSharedVariablesManager(
     val symbols: JvmSymbols,
     val irBuiltIns: IrBuiltIns,
     irFactory: IrFactory,
-) : SharedVariablesManager {
-    private val jvmInternalPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+) : SharedVariablesManager() {
+    private val jvmInternalPackage = createEmptyExternalPackageFragment(
         module, FqName("kotlin.jvm.internal")
     )
 
@@ -56,7 +56,7 @@ class JvmSharedVariablesManager(
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = Name.identifier(primitiveType.classOrNull!!.owner.name.asString() + "Ref")
         }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         }
         primitiveType.classifierOrFail to RefProvider(refClass, primitiveType)
     }
@@ -70,7 +70,7 @@ class JvmSharedVariablesManager(
                 name = Name.identifier("T")
                 superTypes.add(irBuiltIns.anyNType)
             }
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         }
         RefProvider(refClass, refClass.typeParameters[0].defaultType)
     }
@@ -89,7 +89,9 @@ class JvmSharedVariablesManager(
         val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
             originalDeclaration.startOffset, originalDeclaration.startOffset, refType, provider.refConstructor.symbol
         ).apply {
-            typeArguments.forEachIndexed(::putTypeArgument)
+            typeArguments.forEachIndexed { index, type ->
+                this.typeArguments[index] = type
+            }
         }
         return with(originalDeclaration) {
             IrVariableImpl(
@@ -106,7 +108,7 @@ class JvmSharedVariablesManager(
     override fun defineSharedValue(originalDeclaration: IrVariable, sharedVariableDeclaration: IrVariable): IrStatement {
         val initializer = originalDeclaration.initializer ?: return sharedVariableDeclaration
         val default = IrConstImpl.defaultValueForType(initializer.startOffset, initializer.endOffset, originalDeclaration.type)
-        if (initializer is IrConst<*> && initializer.value == default.value) {
+        if (initializer is IrConst && initializer.value == default.value) {
             // The field is preinitialized to the default value, so an explicit set is not required.
             return sharedVariableDeclaration
         }
@@ -124,9 +126,9 @@ class JvmSharedVariablesManager(
 
     private fun unsafeCoerce(value: IrExpression, from: IrType, to: IrType): IrExpression =
         IrCallImpl.fromSymbolOwner(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, from)
-            putTypeArgument(1, to)
-            putValueArgument(0, value)
+            typeArguments[0] = from
+            typeArguments[1] = to
+            arguments[0] = value
         }
 
     override fun getSharedValue(sharedVariableSymbol: IrValueSymbol, originalGet: IrGetValue): IrExpression =

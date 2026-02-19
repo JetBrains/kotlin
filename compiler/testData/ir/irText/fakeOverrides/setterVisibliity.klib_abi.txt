@@ -1,0 +1,25 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /DirectChild : /KotlinBase { // /DirectChild|null[0]
+    constructor <init>() // /DirectChild.<init>|<init>(){}[0]
+}
+open class /KotlinBase { // /KotlinBase|null[0]
+    final var a // /KotlinBase.a|{}a[0]
+        final fun <get-a>(): kotlin/Int // /KotlinBase.a.<get-a>|<get-a>(){}[0]
+        final fun <set-a>(kotlin/Int) // /KotlinBase.a.<set-a>|<set-a>(kotlin.Int){}[0]
+    final var b // /KotlinBase.b|{}b[0]
+        final fun <get-b>(): kotlin/Int // /KotlinBase.b.<get-b>|<get-b>(){}[0]
+        final fun <set-b>(kotlin/Int) // /KotlinBase.b.<set-b>|<set-b>(kotlin.Int){}[0]
+    final var c // /KotlinBase.c|{}c[0]
+        final fun <get-c>(): kotlin/Int // /KotlinBase.c.<get-c>|<get-c>(){}[0]
+    final var d // /KotlinBase.d|{}d[0]
+        final fun <get-d>(): kotlin/Int // /KotlinBase.d.<get-d>|<get-d>(){}[0]
+    open var e // /KotlinBase.e|{}e[0]
+        open fun <get-e>(): kotlin/Int // /KotlinBase.e.<get-e>|<get-e>(){}[0]
+        open fun <set-e>(kotlin/Int) // /KotlinBase.e.<set-e>|<set-e>(kotlin.Int){}[0]
+    constructor <init>() // /KotlinBase.<init>|<init>(){}[0]
+}

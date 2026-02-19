@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_LIGHT_TREE
 
 // FILE: Utils.java
@@ -34,3 +35,6 @@ fun test_2() {
     }
     s.length
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, flexibleType, functionDeclaration, javaFunction,
+localProperty, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

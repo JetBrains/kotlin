@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: javapackage/PublicParentInterface.java
 
@@ -16,3 +17,5 @@ class Child : PublicParentInterface {
         return <!UNRESOLVED_REFERENCE!>publicStaticField<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType */

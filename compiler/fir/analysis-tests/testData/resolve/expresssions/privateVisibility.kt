@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: first.kt
 
 private fun foo() {}
@@ -38,7 +39,7 @@ private class Private {
 
 fun withLocals() {
     class Local {
-        <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>private fun bar()<!>
+        private <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun bar()<!>
 
         fun baz() {
             bar()
@@ -73,3 +74,6 @@ fun secondTest() {
     <!INVISIBLE_REFERENCE!>foo<!>() // hidden
     <!INVISIBLE_REFERENCE!>Private<!>() // hidden
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, localClass, nestedClass,
+objectDeclaration */

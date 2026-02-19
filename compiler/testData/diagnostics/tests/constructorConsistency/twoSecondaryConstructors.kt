@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun use(x: Any?) = x
 
 class Eap {
@@ -10,3 +11,5 @@ class Eap {
         use(foo)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, secondaryConstructor */

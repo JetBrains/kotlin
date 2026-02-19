@@ -2,11 +2,10 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(ExperimentalAnnotationsInMetadata::class)
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.*
-import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.metadata.TypeAliasExpansion.*
@@ -16,13 +15,15 @@ import org.jetbrains.kotlin.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.types.Variance
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 
 internal fun CirModule.serializeModule(
     fragments: Collection<KmModuleFragment>
 ): KlibModuleMetadata = KlibModuleMetadata(
     name = name.toStrippedString(),
     fragments = fragments.toList(),
-    annotations = emptyList()
+    metadataVersion = metadataVersion,
 )
 
 internal fun CirPackage.serializePackage(
@@ -90,8 +91,9 @@ internal fun CirClass.serializeClass(
         val shortClassName = directNestedClass.name.substringAfterLast('.')
 
         if (directNestedClass.kind == ClassKind.ENUM_ENTRY) {
-            clazz.enumEntries += shortClassName
-            clazz.klibEnumEntries += KlibEnumEntry(name = shortClassName, annotations = directNestedClass.annotations)
+            clazz.kmEnumEntries += KmEnumEntry(shortClassName).apply {
+                annotations.addAll(directNestedClass.annotations)
+            }
         } else {
             clazz.nestedClasses += shortClassName
         }
@@ -152,8 +154,8 @@ internal fun CirProperty.serializeProperty(
     this.getter?.let { property.getter.modifiersFrom(it, this, this) }
     property.setter = this.setter?.let { KmPropertyAccessorAttributes().apply { modifiersFrom(it, it, this@serializeProperty) } }
     annotations.mapTo(property.annotations) { it.serializeAnnotation() }
-    getter?.annotations?.mapTo(property.getterAnnotations) { it.serializeAnnotation() }
-    setter?.annotations?.mapTo(property.setterAnnotations) { it.serializeAnnotation() }
+    getter?.annotations?.mapTo(property.getter.annotations) { it.serializeAnnotation() }
+    setter?.annotations?.mapTo(property.setter!!.annotations) { it.serializeAnnotation() }
     // TODO unclear where to write backing/delegate field annotations, see KT-44625
     property.compileTimeValue = compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue }?.serializeConstantValue()
     typeParameters.serializeTypeParameters(context, output = property.typeParameters)
@@ -180,7 +182,7 @@ internal fun CirFunction.serializeFunction(
 ): KmFunction = KmFunction(
     name = name.name
 ).also { function ->
-    function.modifiersFrom(this, isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED)
+    function.modifiersFrom(this, isExpect = context.isCommon && kind != CirFunctionOrProperty.Kind.SYNTHESIZED)
     annotations.mapTo(function.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = function.typeParameters)
     valueParameters.mapTo(function.valueParameters) { it.serializeValueParameter(context) }
@@ -304,8 +306,7 @@ private fun CirTypeAliasType.serializeTypeAliasType(
     expansion: TypeAliasExpansion
 ): KmType = when (expansion) {
     ONLY_ABBREVIATIONS -> serializeAbbreviationType(context, expansion)
-    EXPANDED_WITHOUT_ABBREVIATIONS -> serializeExpandedType(context, expansion)
-    FOR_TOP_LEVEL_TYPE -> serializeExpandedType(context, EXPANDED_WITHOUT_ABBREVIATIONS).apply {
+    FOR_TOP_LEVEL_TYPE -> serializeExpandedType(context, FOR_TOP_LEVEL_TYPE).apply {
         abbreviatedType = serializeAbbreviationType(context, expansion)
     }
     FOR_NESTED_TYPE -> serializeExpandedType(context, expansion).apply {
@@ -357,7 +358,6 @@ private inline fun Variance.serializeVariance(): KmVariance = when (this) {
 @Suppress("SpellCheckingInspection")
 private enum class TypeAliasExpansion {
     ONLY_ABBREVIATIONS,
-    EXPANDED_WITHOUT_ABBREVIATIONS,
     FOR_TOP_LEVEL_TYPE,
     FOR_NESTED_TYPE
 }

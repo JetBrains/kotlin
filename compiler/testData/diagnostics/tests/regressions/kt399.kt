@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-399 Type argument inference not implemented for CALL_EXPRESSION
 
@@ -10,3 +11,6 @@ fun box() : String {
     if(!getSameTypeChecker<String>("mama")("lala")) return "fail"
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, isExpression, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

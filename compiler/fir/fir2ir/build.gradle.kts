@@ -1,8 +1,8 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -18,30 +18,35 @@ dependencies {
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":compiler:fir:fir-deserialization"))
+    compileOnly(project(":compiler:frontend.common.jvm"))
+    compileOnly(project(":compiler:config.jvm"))
+    compileOnly(project(":compiler:frontend"))
 
     compileOnly(intellijCore())
 
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:analysis-tests"))
+    testCompileOnly(kotlinTest("junit"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
-    testApiJUnit5()
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testRuntimeOnly(project(":core:deserialization"))
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":core:descriptors.jvm"))
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
+    testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(project(":generators"))
 
     testCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
 
+    testRuntimeOnly(toolsJar())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(libs.intellij.fastutil)
     testRuntimeOnly(commonDependency("one.util:streamex"))
 
     testRuntimeOnly(jpsModel())
@@ -50,48 +55,56 @@ dependencies {
 
 optInToObsoleteDescriptorBasedAPI()
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
-    dependsOn(":dist")
-    workingDir = rootDir
     useJUnitPlatform {
         configureJUnit()
     }
 }
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
-) {
-    configure()
-}
-
-projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5) {
-    configure {
-        excludeTags("FirPsiCodegenTest")
+projectTests {
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler:tests-spec").isolated, "testData/codegen")
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0),
+    ) {
+        configure()
     }
-}
 
-projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5) {
-    configure {
-        includeTags("FirPsiCodegenTest")
+    testTask("aggregateTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+        configure {
+            excludeTags("FirPsiCodegenTest")
+        }
+
     }
+
+    testTask("nightlyTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+        configure {
+            includeTags("FirPsiCodegenTest")
+        }
+    }
+
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt", generateTestsInBuildDirectory = true)
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
 }
 
-testsJar()
+testsJarToBeUsedAlongWithFixtures()

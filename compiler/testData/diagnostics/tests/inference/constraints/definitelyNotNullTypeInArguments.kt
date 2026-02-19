@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNUSED_VARIABLE
+// LANGUAGE: +InferenceEnhancementsIn21
 
 class Foo<T>(x: T)
 class Bar<S>
@@ -129,3 +131,7 @@ fun <L> main(x: L?, y: L) {
     foo24(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L & Any>>>")!>Foo(Foo(Bar()))<!>)
     foo24(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L & Any>>>")!>Foo(Foo(Bar()))<!>)
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, dnnType, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, in, inProjection, nullableType, out, outProjection, primaryConstructor, smartcast,
+stringLiteral, typeConstraint, typeParameter */

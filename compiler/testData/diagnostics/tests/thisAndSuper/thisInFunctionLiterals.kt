@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 class A(val a:Int) {
   inner class B() {
@@ -16,3 +17,7 @@ class A(val a:Int) {
     }
   }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+thisExpression, typeParameter, typeWithExtension */

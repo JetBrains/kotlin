@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("UCollectionsKt")
+@file:Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 
 package kotlin.collections
 
@@ -13,6 +14,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -74,7 +76,6 @@ public fun Collection<UShort>.toUShortArray(): UShortArray {
  */
 @kotlin.jvm.JvmName("sumOfUInt")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Iterable<UInt>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -88,7 +89,6 @@ public fun Iterable<UInt>.sum(): UInt {
  */
 @kotlin.jvm.JvmName("sumOfULong")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Iterable<ULong>.sum(): ULong {
     var sum: ULong = 0uL
     for (element in this) {
@@ -102,7 +102,6 @@ public fun Iterable<ULong>.sum(): ULong {
  */
 @kotlin.jvm.JvmName("sumOfUByte")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Iterable<UByte>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -116,7 +115,6 @@ public fun Iterable<UByte>.sum(): UInt {
  */
 @kotlin.jvm.JvmName("sumOfUShort")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Iterable<UShort>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {

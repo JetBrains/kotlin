@@ -63,13 +63,4 @@ public interface IrSimpleTypeOrBuilder extends
    * </pre>
    */
   long getArgument(int index);
-
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-   */
-  boolean hasAbbreviation();
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation getAbbreviation();
 }

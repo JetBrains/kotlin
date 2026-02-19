@@ -1,5 +1,8 @@
 $TESTDATA_DIR$/../kotlinPackage.kt
--no-stdlib
--Xforce-deprecated-legacy-compiler-usage
--output
-$TEMP_DIR$/out.js
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

@@ -22,48 +22,31 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinStdlibConfigurationMetrics
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
-import org.jetbrains.kotlin.gradle.utils.withType
+import org.jetbrains.kotlin.gradle.utils.forAllTargets
 
 internal const val KOTLIN_STDLIB_COMMON_MODULE_NAME = "kotlin-stdlib-common"
 internal const val KOTLIN_STDLIB_MODULE_NAME = "kotlin-stdlib"
 internal const val KOTLIN_STDLIB_JDK7_MODULE_NAME = "kotlin-stdlib-jdk7"
 internal const val KOTLIN_STDLIB_JDK8_MODULE_NAME = "kotlin-stdlib-jdk8"
 internal const val KOTLIN_STDLIB_JS_MODULE_NAME = "kotlin-stdlib-js"
+internal const val KOTLIN_STDLIB_WASM_JS_MODULE_NAME = "kotlin-stdlib-wasm-js"
+internal const val KOTLIN_STDLIB_WASM_WASI_MODULE_NAME = "kotlin-stdlib-wasm-wasi"
 internal const val KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME = KOTLIN_STDLIB_MODULE_NAME
 
 internal fun Project.configureStdlibDefaultDependency(
-    topLevelExtension: KotlinTopLevelExtension,
+    kotlinExtension: KotlinProjectExtension,
     coreLibrariesVersion: Provider<String>,
 ) {
-    when (topLevelExtension) {
-        is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
-            target?.addStdlibDependency(
-                configurations,
-                dependencies,
-                coreLibrariesVersion,
-                false,
-            )
-        }
-
-        is KotlinSingleTargetExtension<*> -> topLevelExtension
-            .target
-            .addStdlibDependency(
-                configurations,
-                dependencies,
-                coreLibrariesVersion,
-                false
-            )
-
-        is KotlinMultiplatformExtension -> topLevelExtension
-            .targets
-            .configureEach { target ->
-                target.addStdlibDependency(configurations, dependencies, coreLibrariesVersion, true)
-            }
+    kotlinExtension.forAllTargets { target ->
+        target.addStdlibDependency(
+            configurations,
+            dependencies,
+            coreLibrariesVersion,
+            isMppProject = kotlinExtension is KotlinMultiplatformExtension,
+        )
     }
 }
 
@@ -71,11 +54,11 @@ internal fun Project.configureStdlibDefaultDependency(
  * Aligning kotlin-stdlib-jdk8 and kotlin-stdlib-jdk7 dependencies versions with kotlin-stdlib (or kotlin-stdlib-jdk7)
  * when project stdlib version is >= 1.8.0
  */
-internal fun ConfigurationContainer.configureStdlibVersionAlignment() = all { configuration ->
+internal fun ConfigurationContainer.configureStdlibVersionAlignment() = configureEach { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
-            .withType<ExternalDependency>()
-            .configureEach { dependency ->
+            .filterIsInstance<ExternalDependency>()
+            .forEach { dependency ->
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
                     (dependency.name == KOTLIN_STDLIB_MODULE_NAME || dependency.name == KOTLIN_STDLIB_JDK7_MODULE_NAME) &&
                     dependency.version != null &&
@@ -151,6 +134,8 @@ private fun KotlinTarget.addStdlibDependency(
 
                 val stdlibModule = compilation.platformType.stdlibPlatformType(this, kotlinSourceSet, stdlibVersion >= kotlin1920Version)
                     ?: return@withDependencies
+
+                KotlinStdlibConfigurationMetrics.collectMetrics(project, requestedStdlibVersion)
 
                 dependencySet.addLater(
                     coreLibrariesVersion.map {

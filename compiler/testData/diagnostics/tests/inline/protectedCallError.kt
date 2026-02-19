@@ -1,5 +1,5 @@
-// !LANGUAGE: +ProhibitProtectedCallFromInline
-// !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FIR_IDENTICAL
 
@@ -102,3 +102,6 @@ private class X {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, inline, javaFunction, javaType, nestedClass,
+propertyDeclaration, setter, stringLiteral */

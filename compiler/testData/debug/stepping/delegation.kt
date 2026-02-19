@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 interface I {
@@ -18,16 +18,28 @@ fun box() {
     c.f()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:17 box
 // test.kt:14 <init>
-// EXPECTATIONS JVM
-// test.kt:8 <clinit>
-// EXPECTATIONS JVM JVM_IR
 // test.kt:17 box
 // test.kt:18 box
 // test.kt:11 f
 // test.kt:-1 f
+// test.kt:19 box
+
+// EXPECTATIONS NATIVE
+// test.kt:17 box
+// test.kt:14 <init>
+// test.kt:8 <get-$instance>
+// test.kt:1 <get-$instance>
+// test.kt:12 <get-$instance>
+// test.kt:14 <init>
+// test.kt:17 box
+// test.kt:18 box
+// test.kt:1 f
+// test.kt:9 f
+// test.kt:11 f
+// test.kt:1 f
 // test.kt:19 box
 
 // EXPECTATIONS JS_IR
@@ -40,3 +52,12 @@ fun box() {
 // test.kt:11 f
 // test.kt:1 f
 // test.kt:19 box
+
+// EXPECTATIONS WASM
+// test.kt:17 $box (12)
+// test.kt:14 $C.<init> (15)
+// test.kt:12 $O.<init> (1)
+// test.kt:14 $C.<init> (15, 16)
+// test.kt:18 $box (4, 6)
+// test.kt:11 $O.f (5)
+// test.kt:19 $box (1)

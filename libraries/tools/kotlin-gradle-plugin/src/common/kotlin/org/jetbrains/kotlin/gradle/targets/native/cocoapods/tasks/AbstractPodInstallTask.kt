@@ -7,14 +7,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
-import org.jetbrains.kotlin.gradle.utils.runCommand
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
-import java.io.IOException
 
 /**
  * The task takes the path to the Podfile and calls `pod install`
@@ -24,13 +23,18 @@ import java.io.IOException
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractPodInstallTask : CocoapodsTask() {
     init {
-        onlyIfCompat("Podfile location is set") { podfile.isPresent }
+        onlyIf("Podfile location is set") { podfile.isPresent }
     }
 
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
     abstract val podfile: Property<File?>
+
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
+    abstract val podExecutablePath: RegularFileProperty
 
     @get:Internal
     protected val workingDir: Provider<File> = podfile.map { file: File? ->
@@ -45,19 +49,7 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
 
     @TaskAction
     open fun doPodInstall() {
-        // env is used here to work around the JVM PATH caching when spawning a child process with custom environment, i.e. LC_ALL
-        // The caching causes the ProcessBuilder to ignore changes in the PATH that may occur on incremental runs of the Gradle daemon
-        // KT-60394
-        val podInstallCommand = listOf("env", "pod", "install")
-
-        runCommand(podInstallCommand,
-                   logger,
-                   errorHandler = { retCode, output, process -> sharedHandleError(podInstallCommand, retCode, output, process) },
-                   processConfiguration = {
-                       directory(workingDir.get())
-                       // CocoaPods requires to be run with Unicode external encoding
-                       environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
-                   })
+        runPodInstall(false)
 
         with(podsXcodeProjDirProvider.get()) {
             check(exists() && isDirectory) {
@@ -66,27 +58,134 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
         }
     }
 
-    private fun sharedHandleError(podInstallCommand: List<String>, retCode: Int, error: String, process: Process): String? {
-        return if (error.contains("No such file or directory")) {
-            val command = podInstallCommand.joinToString(" ")
-            """ 
-               |'$command' command failed with an exception:
-               | $error
-               |        
-               |        Full command: $command
-               |        
-               |        Possible reason: CocoaPods is not installed
-               |        Please check that CocoaPods v1.10 or above is installed.
-               |        
-               |        To check CocoaPods version type 'pod --version' in the terminal
-               |        
-               |        To install CocoaPods execute 'sudo gem install cocoapods'
-               |
-            """.trimMargin()
-        } else {
-            handleError(retCode, error, process)
+    private fun podExecutable(): String {
+        return when (val podPath = podExecutablePath.orNull?.asFile) {
+            is File -> podPath.absolutePath.ifBlank { runWhichPod() }
+            else -> runWhichPod()
         }
     }
 
-    abstract fun handleError(retCode: Int, error: String, process: Process): String?
+    private fun runWhichPod(): String {
+        val checkPodCommand = listOf("which", "pod")
+        val output = runCommand(checkPodCommand, logger, { result ->
+            if (result.retCode == 1) {
+                missingPodsError()
+            } else {
+                sharedHandleError(checkPodCommand, result)
+            }
+        })
+
+        return output.removingTrailingNewline().ifBlank {
+            throw IllegalStateException(missingPodsError())
+        }
+    }
+
+    private fun runPodInstall(updateRepo: Boolean): String {
+        val podInstallCommand = listOfNotNull(podExecutable(), "install", if (updateRepo) "--repo-update" else null)
+
+        return runCommandWithFallback(
+            podInstallCommand,
+            logger,
+            fallback = { result ->
+                val output = result.stdErr.ifBlank { result.stdOut }
+                if (output.contains("out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`") && updateRepo.not()) {
+                    CommandFallback.Action(runPodInstall(true))
+                } else {
+                    CommandFallback.Error(sharedHandleError(podInstallCommand, result))
+                }
+            },
+            processConfiguration = {
+                directory(workingDir.get())
+                // CocoaPods requires to be run with Unicode external encoding
+                environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
+            })
+    }
+
+    private fun sharedHandleError(podInstallCommand: List<String>, result: RunProcessResult): String? {
+        val command = podInstallCommand.joinToString(" ")
+        val output = result.stdErr.ifBlank { result.stdOut }
+
+        var message = """
+            |'$command' command failed with an exception:
+            | stdErr: ${result.stdErr}
+            | stdOut: ${result.stdOut}
+            | exitCode: ${result.retCode}
+            |        
+        """.trimMargin()
+
+        if (output.contains("requires Ruby version")) {
+            message += """
+               |        Your Ruby version appears to be too old for CocoaPods.
+               |        
+               |        To resolve this, either:
+               |          - Install CocoaPods via Homebrew: brew install cocoapods
+               |          - Update Ruby using a version manager like rbenv or rvm
+               |        
+               |        For more information, see: https://guides.cocoapods.org/using/getting-started.html
+               |
+            """.trimMargin()
+            return message
+        } else if (output.contains("No such file or directory")) {
+            message += """ 
+               |        Full command: $command
+               |        
+               |        Possible reason: CocoaPods is not installed
+               |        Please check that CocoaPods v1.14 or above is installed.
+               |        
+               |        To check CocoaPods version type 'pod --version' in the terminal
+               |        
+               |        You can install CocoaPods using Homebrew:
+               |        $ brew install cocoapods
+               |        
+               |        Or using RubyGems (may require updating Ruby via rbenv or rvm):
+               |        $ gem install cocoapods
+               |        
+               |        For more information, refer to the documentation: https://kotl.in/kmp-cocoapods
+               |
+            """.trimMargin()
+            return message
+        } else if (output.contains("[Xcodeproj] Unknown object version")) {
+            message += """
+               |        Your CocoaPods installation may be outdated or corrupted
+               |        
+               |        You can update CocoaPods using Homebrew:
+               |        $ brew upgrade cocoapods
+               |        
+               |        Or using RubyGems:
+               |        $ gem update cocoapods
+               |        
+               |        For more information, refer to the documentation: https://kotl.in/kmp-cocoapods
+               |
+            """.trimMargin()
+            return message
+        } else {
+            return handleError(result)
+        }
+    }
+
+    private fun missingPodsError(): String {
+        return """
+                  |        ERROR: CocoaPods executable not found in your PATH.
+                  |        Please make sure CocoaPods is installed on your system.
+                  |
+                  |        You can install CocoaPods using Homebrew:
+                  |        $ brew install cocoapods
+                  |
+                  |        Or using RubyGems (may require updating Ruby via rbenv or rvm):
+                  |        $ gem install cocoapods
+                  |
+                  |        For detailed installation instructions, see the CocoaPods Getting Started guide:
+                  |        https://guides.cocoapods.org/using/getting-started.html
+                  |
+                  |        If CocoaPods is already installed and not in your PATH, you can define the
+                  |        CocoaPods executable path in the local.properties file:
+                  |        $ echo "kotlin.apple.cocoapods.bin=$(which pod)" >> local.properties
+                  |
+                  |        For more information on CocoaPods integration with Kotlin Multiplatform:
+                  |        https://kotl.in/kmp-cocoapods
+                  |        
+               """.trimMargin()
+    }
+
+    abstract fun handleError(result: RunProcessResult): String?
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/Utils.java
 
@@ -18,3 +19,6 @@ fun <D> test(b: Boolean) {
 
     c?.foo()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression, javaFunction,
+localProperty, nullableType, propertyDeclaration, safeCall, typeConstraint, typeParameter */

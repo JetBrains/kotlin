@@ -1,7 +1,3 @@
-fun use(fn: Function1<Int, Any>): Any {
-  return fn.invoke(p1 = 42)
-}
-
 class C {
   constructor(vararg xs: Int) /* primary */ {
     super/*Any*/()
@@ -12,18 +8,18 @@ class C {
 }
 
 class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   inner class Inner {
     constructor(vararg xs: Int) /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
@@ -45,7 +41,7 @@ fun testInnerClassConstructor(outer: Outer): Any {
       return receiver.Inner(xs = [p0])
     }
 
-    outer::<init>
+    ::<init>/*(receiver = outer) */
   })
 }
 
@@ -55,6 +51,11 @@ fun testInnerClassConstructorCapturingOuter(): Any {
       return receiver.Inner(xs = [p0])
     }
 
-    Outer()::<init>
+    ::<init>/*(receiver = Outer()) */
   })
 }
+
+fun use(fn: Function1<Int, Any>): Any {
+  return fn.invoke(p1 = 42)
+}
+

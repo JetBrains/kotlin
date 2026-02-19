@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /C { // /C|null[0]
+    final val t // /C.t|{}t[0]
+        final fun <get-t>(): #A // /C.t.<get-t>|<get-t>(){}[0]
+    constructor <init>(#A) // /C.<init>|<init>(1:0){}[0]
+    final fun hashCode(): kotlin/Int // /C.hashCode|hashCode(){}[0]
+}
+final value class <#A: kotlin/Any?> /IC { // /IC|null[0]
+    final val c // /IC.c|{}c[0]
+        final fun <get-c>(): /C<#A> // /IC.c.<get-c>|<get-c>(){}[0]
+    constructor <init>(/C<#A>) // /IC.<init>|<init>(C<1:0>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /IC.equals|equals(kotlin.Any?){}[0]
+    final fun foo(): kotlin/Int // /IC.foo|foo(){}[0]
+    final fun hashCode(): kotlin/Int // /IC.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /IC.toString|toString(){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]

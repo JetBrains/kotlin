@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -25,7 +25,7 @@ fun case_2(): Boolean {
 
 // TESTCASE NUMBER: 3
 fun case_3(): Boolean {
-    contract { returns(false) implies (<!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!>"..." + "$<!UNRESOLVED_REFERENCE!>value_1<!>"<!>) }
+    contract { returns(false) implies (<!TYPE_MISMATCH!>"..." <!ERROR_IN_CONTRACT_DESCRIPTION!>+<!> "$<!UNRESOLVED_REFERENCE!>value_1<!>"<!>) }
     return true
 }
 

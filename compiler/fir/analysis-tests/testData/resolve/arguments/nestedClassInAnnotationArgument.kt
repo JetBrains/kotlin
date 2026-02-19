@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 import kotlin.reflect.KClass
 
@@ -9,3 +10,6 @@ class A {
 
     object EmptyList
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, starProjection */

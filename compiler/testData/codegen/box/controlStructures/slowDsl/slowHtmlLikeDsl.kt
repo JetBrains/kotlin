@@ -1,6 +1,6 @@
-// TARGET_BACKEND: JVM
-//  ^ this test might be rather slow
+// this test might be rather slow
 
+// FILE: lib.kt
 class Builder(var content: String)
 
 fun Builder.begin(t: String) {
@@ -33,6 +33,7 @@ inline fun Builder.t2(body: Builder.() -> Unit) {
     tag("t", body)
 }
 
+// FILE: main.kt
 val expectedLength = 1906
 
 fun doStuff(b: Builder) {

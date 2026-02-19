@@ -20,7 +20,6 @@ fun <T : CharSequence> test(sequence: T) {
 // 1 INVOKEINTERFACE java/lang/CharSequence\.charAt \(I\)C
 // 1 INVOKEINTERFACE java/lang/CharSequence\.length \(\)I
 
-// JVM_IR_TEMPLATES
 // 3 ILOAD
 // 2 ISTORE
 // 0 IADD

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.ValueWithPostCompute
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ConcurrentLinkedQueue

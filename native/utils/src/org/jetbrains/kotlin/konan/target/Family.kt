@@ -18,9 +18,7 @@ enum class Family(
     WATCHOS("kexe", "lib", "dylib", "lib", "a"),
     LINUX("kexe", "lib", "so", "lib", "a"),
     MINGW("exe", "", "dll", "lib", "a"),
-    ANDROID("kexe", "lib", "so", "lib", "a"),
-    WASM("wasm", "", "wasm", "", "wasm"),
-    ZEPHYR("o", "lib", "a", "lib", "a");
+    ANDROID("kexe", "lib", "so", "lib", "a");
 
     val isAppleFamily: Boolean
         get() = this == OSX || this == IOS || this == TVOS || this == WATCHOS

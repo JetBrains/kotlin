@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -86,7 +87,7 @@ class DefiniteInitializationInInitSection {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y: Int<!>
 
     init {
-        myRun { x = 42 }
+        myRun { <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>x<!> = 42 }
         unknownRun { <!CAPTURED_MEMBER_VAL_INITIALIZATION!>y<!> = 239 }
     }
 }
@@ -102,3 +103,7 @@ class DefiniteInitializationAfterThrow {
     }
     fun bar() = false
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, functionDeclaration, functionalType,
+ifExpression, init, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

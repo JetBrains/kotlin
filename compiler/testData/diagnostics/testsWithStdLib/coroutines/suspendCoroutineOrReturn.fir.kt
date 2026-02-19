@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 // SKIP_TXT
 
 import kotlin.coroutines.*
@@ -34,3 +35,7 @@ fun test() {
         yieldString("abc") checkType { _<Int>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, multiplicativeExpression, nullableType,
+stringLiteral, suspend, typeParameter, typeWithExtension */

@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 import kotlin.test.assertEquals
@@ -6,9 +7,9 @@ fun box(): String {
     val outerIndexList = mutableListOf<Int>()
     val innerIndexList = mutableListOf<Int>()
     val valueList = mutableListOf<Int>()
-    for ((outer, iv) in (4..7).withIndex().withIndex()) {
+    for ([outer, iv] in (4..7).withIndex().withIndex()) {
         outerIndexList += outer
-        val (inner, v) = iv
+        val [inner, v] = iv
         innerIndexList += inner
         valueList += v
     }

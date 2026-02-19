@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -13,3 +14,4 @@ fun foo(x: Promise<String?>) {
 }
 fun bar(x: CancellablePromise<String?>) {}
 
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, javaType, nullableType */

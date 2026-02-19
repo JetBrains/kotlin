@@ -1,5 +1,6 @@
-// !LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
 // FULL_JDK
 
 fun foo() {
@@ -56,3 +57,7 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, integerLiteral, javaProperty,
+lambdaLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration, tryExpression,
+unnamedLocalVariable */

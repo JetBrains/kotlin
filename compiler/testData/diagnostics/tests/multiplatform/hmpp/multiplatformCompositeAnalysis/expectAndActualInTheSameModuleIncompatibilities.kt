@@ -1,5 +1,6 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 expect fun parameterCount()
 fun parameterCount(p: String) {}
@@ -29,3 +30,6 @@ actual fun parameterCount() {}
 actual fun <T> typeParameterCount() {}
 actual fun callableKind(): Int = 1
 actual fun vararg(bar: Int) = Unit
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect, functionDeclaration, integerLiteral, nullableType,
+propertyDeclaration, typeParameter, vararg */

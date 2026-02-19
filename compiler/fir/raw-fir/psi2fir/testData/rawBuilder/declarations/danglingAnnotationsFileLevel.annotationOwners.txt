@@ -1,0 +1,7 @@
+@Suppress(String())
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirFileSymbol danglingAnnotationsFileLevel.kt
+
+@MustBeDocumented()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirFileSymbol danglingAnnotationsFileLevel.kt

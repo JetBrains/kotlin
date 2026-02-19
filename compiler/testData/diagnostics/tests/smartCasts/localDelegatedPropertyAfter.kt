@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitSmartcastsOnLocalDelegatedProperty
+// LANGUAGE: +ProhibitSmartcastsOnLocalDelegatedProperty
 
 class AlternatingDelegate {
     var counter: Int = 0
@@ -14,3 +15,7 @@ fun failsWithClassCastException() {
         <!SMARTCAST_IMPOSSIBLE!>sometimesNotInt<!>.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, isExpression, localProperty, multiplicativeExpression, nullableType,
+operator, propertyDeclaration, propertyDelegate, smartcast, stringLiteral */

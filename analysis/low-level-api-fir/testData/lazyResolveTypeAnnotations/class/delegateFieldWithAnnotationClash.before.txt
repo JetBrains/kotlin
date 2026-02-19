@@ -1,0 +1,37 @@
+@R|second/Anno|(LAZY_EXPRESSION)  second/Base
+  context -> FirRegularClassSymbol second/MyClass
+  anchor -> [FirRegularClassSymbol second/MyClass]
+
+FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.int] int: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val int: Int = R|<local>/int|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
+    public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base = LAZY_EXPRESSION
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val string: String = R|<local>/string|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+    }

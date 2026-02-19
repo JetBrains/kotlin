@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-10869, KT-56682
 
 import kotlin.reflect.KProperty
@@ -30,3 +31,6 @@ class Kaboom() {
     // No error should be here
     val after = delegated
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, init, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, starProjection, stringLiteral */

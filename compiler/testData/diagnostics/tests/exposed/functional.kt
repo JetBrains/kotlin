@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 internal class My
 
@@ -11,3 +12,5 @@ fun bar(your: Your, f: (Your) -> Unit) = f(your)
 
 // Exposed, returns My
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>gav<!>(<!EXPOSED_PARAMETER_TYPE!>f: () -> My<!>) = f()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType */

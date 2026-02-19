@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-20306
 
 // MODULE: m1-common
@@ -34,3 +36,6 @@ fun testPlatformBad(base: Base) {
         Base.B -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, equalityExpression, expect, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

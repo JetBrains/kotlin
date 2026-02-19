@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class WithIndexLoopHeader(
@@ -52,18 +53,22 @@ class WithIndexLoopHeader(
                 ownsIndexVariable = false
                 incrementIndexStatement = null
             } else {
-                indexVariable = scope.createTmpVariable(
+                indexVariable = scope.createTemporaryVariable(
                     irInt(0),
                     nameHint = "index",
-                    isMutable = true
+                    isMutable = true,
+                    inventUniqueName = false,
                 )
                 ownsIndexVariable = true
                 // `index++` during iteration initialization
                 // TODO: KT-34665: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
                 val plusFun = indexVariable.type.getClass()!!.functions.first {
                     it.name == OperatorNameConventions.PLUS &&
-                            it.valueParameters.size == 1 &&
-                            it.valueParameters[0].type.isInt()
+                            it.hasShape(
+                                dispatchReceiver = true,
+                                regularParameters = 1,
+                                parameterTypes = listOf(null, context.irBuiltIns.intType)
+                            )
                 }
                 incrementIndexStatement =
                     irSet(
@@ -83,8 +88,8 @@ class WithIndexLoopHeader(
     override val consumesLoopVariableComponents = true
 
     override fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement> =
@@ -154,9 +159,9 @@ class WithIndexLoopHeader(
             //   }
             //
             // We "wire" the 1st destructured component to index, and the 2nd to the loop variable value from the underlying iterable.
-            loopVariableComponents[1]?.initializer = irGet(indexVariable)
-            listOfNotNull(loopVariableComponents[1], incrementIndexStatement) +
-                    nestedLoopHeader.initializeIteration(loopVariableComponents[2], linkedMapOf(), builder, backendContext)
+            loopVariableComponents[1]?.forEach { it.initializer = irGet(indexVariable) }
+            loopVariableComponents[1].orEmpty() + listOfNotNull(incrementIndexStatement) +
+                    nestedLoopHeader.initializeIteration(loopVariableComponents[2].orEmpty(), linkedMapOf(), builder, backendContext)
         }
 
     // Use the nested loop header to build the loop. More info in comments in initializeIteration().

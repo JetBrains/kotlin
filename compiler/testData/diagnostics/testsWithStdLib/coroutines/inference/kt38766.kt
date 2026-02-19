@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -20,3 +21,6 @@ interface FlowCollector1<in T> {
 }
 
 interface Flow1<out T>
+
+/* GENERATED_FIR_TAGS: classReference, crossinline, functionDeclaration, functionalType, in, inline,
+interfaceDeclaration, lambdaLiteral, nullableType, out, reified, suspend, typeParameter, typeWithExtension */

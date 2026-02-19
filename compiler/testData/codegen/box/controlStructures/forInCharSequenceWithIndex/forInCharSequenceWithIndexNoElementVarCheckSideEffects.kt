@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 class CountingString(private val s: String) : CharSequence {
@@ -16,7 +17,7 @@ val cs = CountingString("abcd")
 fun box(): String {
     val s = StringBuilder()
 
-    for ((index, _) in cs.withIndex()) {
+    for ([index, _] in cs.withIndex()) {
         s.append("$index;")
     }
 

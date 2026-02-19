@@ -22,6 +22,12 @@ class MavenTestUtils {
         writeText(file, processedText);
     }
 
+    static void deleteFile(@NotNull File file) {
+        if (!file.delete()) {
+            throw new IllegalStateException("Could not delete " + file);
+        }
+    }
+
     @NotNull
     static String getNotNullSystemProperty(@NotNull String propertyName) {
         String value = System.getProperty(propertyName);

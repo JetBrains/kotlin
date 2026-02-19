@@ -3,7 +3,7 @@
 #include <dlfcn.h>
 #include <inttypes.h>
 #include <mach-o/loader.h>
-#include <CoreFoundation/CFRunLoop.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include "Natives.h"
 #include "ObjCExceptions.h"
 #include "Types.h"

@@ -9,16 +9,15 @@ import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.getArrayElementType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isNullableArray
+import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.org.objectweb.asm.Type
 
 object NewArray : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        codegen.gen(expression.getValueArgument(0)!!, Type.INT_TYPE, codegen.context.irBuiltIns.intType, data)
+        codegen.gen(expression.arguments[0]!!, Type.INT_TYPE, codegen.context.irBuiltIns.intType, data)
         return with(codegen) {
             val elementIrType = expression.type.getArrayElementType(context.irBuiltIns)
             if (expression.type.isArray() || expression.type.isNullableArray()) {

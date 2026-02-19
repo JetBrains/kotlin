@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // WITH_STDLIB
@@ -15,3 +16,6 @@ fun test() {
 
 
 fun foo(mapper: (BaseClass) -> String?) {}
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, localProperty,
+nullableType, propertyDeclaration */

@@ -25,7 +25,8 @@
 #include "Exceptions.h"
 #include "ExecFormat.h"
 #include "Memory.h"
-#include "Mutex.hpp"
+#include <std_support/Atomic.hpp>
+#include "concurrent/Mutex.hpp"
 #include "Porting.h"
 #include "Types.h"
 #include "Utils.hpp"
@@ -57,10 +58,10 @@ class {
      * If the terminate handler hangs for 5 sec it is probably fatally broken, so let's do abnormal _Exit in that case.
      */
     unsigned int timeoutSec = 5;
-    int terminatingFlag = 0;
+    std::atomic<int> terminatingFlag = 0;
   public:
     template <class Fun> RUNTIME_NORETURN void operator()(Fun block) {
-      if (compareAndSet(&terminatingFlag, 0, 1)) {
+      if (kotlin::std_support::atomic_compare_exchange_strong(terminatingFlag, 0, 1)) {
         block();
         // block() is supposed to be NORETURN, otherwise go to normal abort()
         std::abort();
@@ -77,9 +78,20 @@ void RUNTIME_NORETURN terminateWithUnhandledException(KRef exception) {
     kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
     concurrentTerminateWrapper([exception]() {
         ReportUnhandledException(exception);
+
+        // Just in case.
+        // At this stage we are more interested in the exception than in the thread state checker failure.
+        kotlin::CallsCheckerIgnoreGuard ignoreCallChecks;
+
 #if KONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG
         ReportBacktraceToIosCrashLog(exception);
 #endif
+
+        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+
+        // Best effort to make sure the reported exception gets actually printed:
+        konan::consoleFlush();
+
         std::abort();
     });
 }
@@ -95,7 +107,7 @@ void processUnhandledException(KRef exception) noexcept {
 
 } // namespace
 
-ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder) {
+PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder) {
     RETURN_OBJ(static_cast<ExceptionObjHolder*>(holder)->GetExceptionObject());
 }
 

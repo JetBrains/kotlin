@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1294
 // WITH_STDLIB
 
 fun deinitialize(foo: dynamic) {

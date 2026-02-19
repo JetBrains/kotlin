@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1345
-
 var sideEffect = ""
 
 open class A(var value: Int) {

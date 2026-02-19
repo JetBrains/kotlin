@@ -1,4 +1,5 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +DefinitelyNonNullableTypes +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 
 // FILE: A.java
 import org.jetbrains.annotations.*;
@@ -32,7 +33,7 @@ interface E : A<String> {
 }
 
 interface F : A<String?> {
-    override fun foo(x: String): String
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: String): String
     <!NOTHING_TO_OVERRIDE!>override<!> fun bar(x: String?): String?
 }
 
@@ -40,3 +41,6 @@ interface G<T3 : Any> : A<T3> {
     override fun foo(x: T3): T3
     override fun bar(x: T3): T3
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, interfaceDeclaration, javaType, nullableType, override,
+typeConstraint, typeParameter */

@@ -7,23 +7,15 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
-import org.jetbrains.kotlin.gradle.utils.targets
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
-    protected val project: Project
+    protected val project: Project,
 ) : NamedDomainObjectFactory<KotlinSourceSet> {
 
     abstract val itemClass: Class<T>
@@ -35,26 +27,20 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
     }
 
     protected open fun setUpSourceSetDefaults(sourceSet: T) {
-        sourceSet.kotlin.srcDir(defaultSourceFolder(project, sourceSet.name, "kotlin"))
+        sourceSet.kotlin.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_KOTLIN))
         defineSourceSetConfigurations(project, sourceSet)
     }
 
     private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with(project.configurations) {
-        val configurationNames = sourceSet.run {
+        sourceSet.run {
             listOfNotNull(
                 apiConfigurationName,
                 implementationConfigurationName,
                 compileOnlyConfigurationName,
                 runtimeOnlyConfigurationName,
             )
-        }
-        configurationNames.forEach { configurationName ->
-            maybeCreate(configurationName).apply {
-                if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
-                    isCanBeResolved = false
-                }
-                isCanBeConsumed = false
-            }
+        }.forEach { configurationName ->
+            maybeCreateDependencyScope(configurationName)
         }
     }
 
@@ -68,12 +54,15 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
         fun defaultSourceFolder(project: Project, sourceSetName: String, type: String): File {
             return project.file("src/$sourceSetName/$type")
         }
+
+        internal const val SOURCE_SET_TYPE_RESOURCES = "resources"
+        internal const val SOURCE_SET_TYPE_KOTLIN = "kotlin"
     }
 }
 
 
 internal class DefaultKotlinSourceSetFactory(
-    project: Project
+    project: Project,
 ) : KotlinSourceSetFactory<DefaultKotlinSourceSet>(project) {
 
     override val itemClass: Class<DefaultKotlinSourceSet>
@@ -81,92 +70,12 @@ internal class DefaultKotlinSourceSetFactory(
 
     override fun setUpSourceSetDefaults(sourceSet: DefaultKotlinSourceSet) {
         super.setUpSourceSetDefaults(sourceSet)
-        sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, "resources"))
-
-        val dependencyConfigurationWithMetadata = with(sourceSet) {
-            @Suppress("DEPRECATION")
-            listOf(
-                apiConfigurationName to apiMetadataConfigurationName,
-                implementationConfigurationName to implementationMetadataConfigurationName,
-                compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
-                null to intransitiveMetadataConfigurationName
-            )
+        sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_RESOURCES))
+        // Drop in KT-80897
+        @Suppress("DEPRECATION_ERROR")
+        project.configurations.maybeCreateResolvable(sourceSet.implementationMetadataConfigurationName) {
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
         }
-
-        dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
-            project.configurations.getOrCreate(metadataName).apply {
-                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                isVisible = false
-                isCanBeConsumed = false
-
-                if (configurationName != null) {
-                    extendsFrom(project.configurations.maybeCreate(configurationName))
-                }
-
-                if (project.isKotlinGranularMetadataEnabled) {
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                }
-
-                project.afterEvaluate {
-                    setJsCompilerIfNecessary(sourceSet, this)
-                }
-            }
-        }
-    }
-
-    // KT-47163
-    // It is necessary to set jsCompilerAttribute to configurations which associated with ONLY js source sets
-    // Otherwise configuration cannot be resolved because ambiguity between IR and Legacy variants inside one module
-    private val notOnlyJsSourceSets = mutableSetOf<KotlinSourceSet>()
-
-    private val jsOnlySourceSetsAttributes = mutableMapOf<KotlinSourceSet, KotlinJsCompilerAttribute>()
-
-    private fun setJsCompilerIfNecessary(sourceSet: KotlinSourceSet, configuration: Configuration) {
-        if (sourceSet in notOnlyJsSourceSets) return
-
-        if (sourceSet in jsOnlySourceSetsAttributes) {
-            configuration.attributes.attribute(
-                KotlinJsCompilerAttribute.jsCompilerAttribute,
-                jsOnlySourceSetsAttributes.getValue(sourceSet)
-            )
-            return
-        }
-
-        project.kotlinExtension.targets
-            .filter { it !is KotlinJsIrTarget && it !is KotlinJsTarget }
-            .forEach { target ->
-                target.compilations.forEach { compilation ->
-                    notOnlyJsSourceSets.addAll(compilation.allKotlinSourceSets)
-                }
-            }
-
-        if (sourceSet in notOnlyJsSourceSets) return
-
-        fun chooseCompilerAttribute(target: KotlinTarget): KotlinJsCompilerAttribute {
-            if (target is KotlinJsIrTarget) {
-                return KotlinJsCompilerAttribute.ir
-            }
-
-            target as KotlinJsTarget
-            return if (target.irTarget != null) KotlinJsCompilerAttribute.ir else KotlinJsCompilerAttribute.legacy
-        }
-
-        project.kotlinExtension.targets
-            .filter { it is KotlinJsTarget || (it is KotlinJsIrTarget && it.platformType == KotlinPlatformType.js) }
-            .forEach { target ->
-                target.compilations
-                    .filterIsInstance<KotlinJsCompilation>()
-                    .forEach { compilation ->
-                        if (sourceSet in compilation.allKotlinSourceSets) {
-                            val compilerAttribute = chooseCompilerAttribute(target)
-                            jsOnlySourceSetsAttributes[sourceSet] = compilerAttribute
-                            configuration.attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, compilerAttribute)
-                            return
-                        }
-                    }
-            }
     }
 
     override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet =

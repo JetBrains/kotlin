@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 //KT-731 Missing error from type inference
 package a
@@ -18,3 +19,7 @@ fun main() {
     val t: String = <!TYPE_MISMATCH!>a.foo({p -> <!TYPE_MISMATCH!>p<!>})<!>
     checkSubtype<String>(t)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, thisExpression,
+typeParameter, typeWithExtension */

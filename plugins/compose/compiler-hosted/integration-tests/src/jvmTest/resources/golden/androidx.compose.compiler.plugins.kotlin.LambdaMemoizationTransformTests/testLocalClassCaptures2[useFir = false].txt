@@ -1,0 +1,45 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+@NonRestartableComposable
+@Composable
+fun Example(z: Int) {
+    class Foo(val x: Int) { val y = z }
+    val lambda: () -> Any = {
+        Foo(1)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(z: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<{>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  class Foo(val x: Int) {
+    val y: Int = z
+  }
+  val lambda = <block>{
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(z) || %changed and 0b0110 == 0b0100) {
+      {
+        Foo(1)
+      }
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp0_group
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

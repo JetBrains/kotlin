@@ -6,33 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsFileName
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.nameWithoutExtension
-import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.path
 
 private const val EXPORTER_FILE_POSTFIX = ".export"
 
 class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModuleFragment, String>) {
-    private val externalNameToItsFile = hashMapOf<String, IrFile>()
-
     fun getExternalNameFor(file: IrFile): String {
-        return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName()).also {
-            val alreadyReservedBy = externalNameToItsFile.putIfAbsent(it.lowercase(), file)
-
-            if (alreadyReservedBy != null && alreadyReservedBy != file) {
-                error(
-                    """
-                      |There are two files in module '${file.module.name}' that have the similar package and file names.
-                      |  - Package "${file.packageFqName.asString()}" and path "${file.path}"
-                      |  - Package "${alreadyReservedBy.packageFqName.asString()}" and path "${alreadyReservedBy.path}"
-                      |Note, that if the difference is only in letter cases, it also could lead to a clash of the compiled artifacts
-                   """.trimMargin()
-                )
-            }
-        }
+        return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName())
     }
 
     fun getExternalNameFor(fileName: String, packageFqn: String, moduleName: String): String {
@@ -60,12 +43,23 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
     }
 
     private fun IrModuleFragment.getJsOutputName(): String {
-        return jsOutputNamesMapping[this] ?: sanitizeName(safeName)
+        return jsOutputNamesMapping[this] ?: makeValidES5Identifier(safeName)
     }
 
     private fun getFileStableName(fileName: String, packageFqn: String): String {
         val prefix = packageFqn.replace('.', '/')
         return "$prefix${if (prefix.isNotEmpty()) "/" else ""}$fileName"
+    }
+
+    fun getPackageFqn(externalName: String): String {
+        val endOfModuleNamePart = externalName.indexOf('/')
+        val startOfFileNamePart = externalName.lastIndexOf('/')
+        return if (endOfModuleNamePart == startOfFileNamePart) {
+            ""
+        } else {
+            externalName.substring(endOfModuleNamePart + 1, startOfFileNamePart)
+                .replace('/', '.')
+        }
     }
 
     private val IrFile.outputName: String get() = getJsFileName() ?: nameWithoutExtension

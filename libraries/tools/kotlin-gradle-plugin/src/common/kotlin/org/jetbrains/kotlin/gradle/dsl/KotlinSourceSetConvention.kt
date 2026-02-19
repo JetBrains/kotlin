@@ -46,20 +46,33 @@ object KotlinSourceSetConvention :
         thisRef: NamedDomainObjectContainer<KotlinSourceSet>, property: KProperty<*>,
     ): NamedDomainObjectProvider<KotlinSourceSet> {
         val name = property.name
-        if (name in thisRef.names) return thisRef.named(name)
-        val trace = Trace()
-        return thisRef.register(name) { sourceSet ->
-            sourceSet.isRegisteredByKotlinSourceSetConventionAt = trace
+        val sourceSet = try {
+            thisRef.maybeCreate(name)
+        } catch (e: IllegalStateException) {
+            throw IllegalStateException(
+                "Kotlin Source Set '$name' was attempted to be created during registration or configuration of another source set. " +
+                        "Please ensure Kotlin Source Set '$name' is first accessed outside configuration code block.",
+                e
+            )
         }
+        if (sourceSet.isAccessedByKotlinSourceSetConventionAt == null) {
+            sourceSet.isAccessedByKotlinSourceSetConventionAt = Trace()
+        }
+
+        // Because of this issue KT-68206 at this moment, we create & configure sourceSet eagerly here.
+        // But then we speculatively return NamedDomainObjectProvider<KotlinSourceSet> as it is lazy.
+        // We still want to keep `NamedDomainObjectProvider<KotlinSourceSet>` and when we fix KT-68206 and related
+        // problems around it, then this API would return truly lazy NamedDomainObjectProvider.
+        return thisRef.named(name)
     }
 
     /**
-     * @return the stacktrace when the user was using a [KotlinSourceSetConvention] that indeed created/registered a new SourceSet.
-     * This will be null if SourceSet already existed and was referenced using the convention, or of no convention was used at all.
+     * @return the stacktrace when the user was using a [KotlinSourceSetConvention] that was already created.
+     * This will be null if SourceSet was never accessed by convention DSL.
      */
     @Suppress("UnusedReceiverParameter") // Diagnostic is wrong
-    internal var KotlinSourceSet.isRegisteredByKotlinSourceSetConventionAt: Trace?
-            by extrasReadWriteProperty("isRegisteredByKotlinSourceSetConvention")
+    internal var KotlinSourceSet.isAccessedByKotlinSourceSetConventionAt: Trace?
+            by extrasReadWriteProperty("isAccessedByKotlinSourceSetConventionAt")
         private set
 }
 

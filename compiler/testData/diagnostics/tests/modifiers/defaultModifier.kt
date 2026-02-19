@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 <!WRONG_MODIFIER_TARGET!>companion<!> class A {
     companion object {
@@ -54,3 +55,6 @@ class J {
     <!WRONG_MODIFIER_TARGET!>companion<!> set
 
 class Z(<!WRONG_MODIFIER_TARGET!>companion<!> val c: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+integerLiteral, interfaceDeclaration, objectDeclaration, primaryConstructor, propertyDeclaration */

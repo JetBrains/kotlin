@@ -1,0 +1,34 @@
+STEP 0:
+    modifications:
+        U : m.0.kt -> m.kt
+    dependencies: lib1, lib2
+    added file: m.kt
+STEP 1:
+    modifications:
+        U : m.1.kt -> m.kt
+    dependencies: lib1, lib2
+    modified ir: m.kt
+STEP 2:
+    dependencies: lib1, lib2
+    updated imports <wasm>: m.kt
+STEP 3:
+    dependencies: lib1, lib2
+    updated imports <wasm>: m.kt
+STEP 4:
+    dependencies: lib1, lib2
+    modifications:
+        U : m.4.kt -> m.kt
+    modified ir: m.kt
+STEP 5:
+    dependencies: lib1, lib2
+STEP 6..9:
+    dependencies: lib1, lib2
+    modified ir: m.kt
+STEP 10:
+    modifications:
+        U : m.0.kt -> m.kt
+    dependencies: lib1, lib2
+    modified ir: m.kt
+STEP 11:
+    dependencies: lib1, lib2
+    updated imports <wasm>: m.kt

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+// !!! On native, the exception inside try does not seem to be cought and exits the application.
 // FILE: test.kt
 fun box() {
     val a = 1
@@ -15,7 +15,8 @@ fun throwIfLess(a: Int, b: Int) {
     if (a<b)
         throw IllegalStateException()
 }
-// EXPECTATIONS JVM JVM_IR
+
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:6 box
@@ -25,6 +26,15 @@ fun throwIfLess(a: Int, b: Int) {
 // test.kt:8 box
 // test.kt:9 box
 // test.kt:15 throwIfLess
+// test.kt:16 throwIfLess
+
+// EXPECTATIONS NATIVE
+// test.kt:4 box
+// test.kt:5 box
+// test.kt:7 box
+// test.kt:14 throwIfLess
+// test.kt:15 throwIfLess
+// test.kt:16 throwIfLess
 // test.kt:16 throwIfLess
 
 // EXPECTATIONS JS_IR
@@ -38,3 +48,13 @@ fun throwIfLess(a: Int, b: Int) {
 // test.kt:9 box
 // test.kt:15 throwIfLess
 // test.kt:16 throwIfLess
+
+// EXPECTATIONS WASM
+// test.kt:4 $box (12)
+// test.kt:5 $box (12)
+// test.kt:7 $box (20, 23, 8)
+// test.kt:15 $throwIfLess (8, 10, 8)
+// test.kt:16 $throwIfLess (14, 8)
+// test.kt:9 $box (20, 23, 8)
+// test.kt:15 $throwIfLess (8, 10, 8)
+// test.kt:16 $throwIfLess (14, 8)

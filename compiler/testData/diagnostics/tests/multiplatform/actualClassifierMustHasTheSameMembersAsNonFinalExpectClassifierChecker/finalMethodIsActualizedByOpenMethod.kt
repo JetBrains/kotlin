@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -14,3 +15,5 @@ actual open class Foo {
     actual open fun foo() {
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

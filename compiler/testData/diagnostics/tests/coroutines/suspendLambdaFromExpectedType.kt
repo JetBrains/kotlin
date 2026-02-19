@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -8,3 +9,6 @@ fun foo() = runBlocking<Unit> {
         it.length
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, suspend, typeParameter */

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun foo() = prop
@@ -9,13 +9,26 @@ fun box() {
     foo()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:9 box
 // test.kt:4 foo
 // test.kt:9 box
+// test.kt:10 box
+
+// EXPECTATIONS NATIVE
+// test.kt:9 box
+// test.kt:4 foo
+// test.kt:6 <get-prop>
+// test.kt:4 foo
 // test.kt:10 box
 
 // EXPECTATIONS JS_IR
 // test.kt:9 box
 // test.kt:4 foo
 // test.kt:10 box
+
+// EXPECTATIONS WASM
+// test.kt:9 $box (4)
+// test.kt:4 $foo (12, 16)
+// test.kt:9 $box (4)
+// test.kt:10 $box (1)

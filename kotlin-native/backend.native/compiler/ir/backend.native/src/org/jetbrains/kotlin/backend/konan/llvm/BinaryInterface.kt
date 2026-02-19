@@ -5,31 +5,36 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
-import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
-import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
+import org.jetbrains.kotlin.backend.konan.ir.externalSymbolOrThrow
+import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
-import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
-import org.jetbrains.kotlin.backend.konan.isKotlinObjCClass
 import org.jetbrains.kotlin.backend.konan.serialization.AbstractKonanIrMangler
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
-
 
 // This file describes the ABI for Kotlin descriptors of exported declarations.
 // TODO: revise the naming scheme to ensure it produces unique names.
 // TODO: do not serialize descriptors of non-exported declarations.
 
 object KonanBinaryInterface {
+
+    internal const val MANGLE_FUN_PREFIX = "kfun"
+    internal const val MANGLE_CLASS_PREFIX = "kclass"
+    internal const val MANGLE_FIELD_PREFIX = "kfield"
+
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
 
     private val exportChecker = mangler.getExportChecker(compatibleMode = true)
@@ -43,7 +48,7 @@ object KonanBinaryInterface {
             return funSymbolNameImpl(null)
         }
 
-    val IrField.symbolName: String get() = withPrefix(MangleConstant.FIELD_PREFIX, fieldSymbolNameImpl())
+    val IrField.symbolName: String get() = withPrefix(MANGLE_FIELD_PREFIX, fieldSymbolNameImpl())
 
     val IrClass.typeInfoSymbolName: String get() = typeInfoSymbolNameImpl(null)
 
@@ -57,6 +62,10 @@ object KonanBinaryInterface {
 
     private fun withPrefix(prefix: String, mangle: String) = "$prefix:$mangle"
 
+    private fun IrFunction.findManglingAnnotation() =
+        this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)
+                ?: this.annotations.findAnnotation(RuntimeNames.exportedBridge)
+
     private fun IrFunction.funSymbolNameImpl(containerName: String?): String {
         if (isExternal) {
             this.externalSymbolOrThrow()?.let {
@@ -64,13 +73,13 @@ object KonanBinaryInterface {
             }
         }
 
-        this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)?.let {
+        this.findManglingAnnotation()?.let {
             val name = it.getAnnotationStringValue() ?: this.name.asString()
             return name // no wrapping currently required
         }
 
         val mangle = mangler.run { mangleString(compatibleMode = true) }
-        return withPrefix(MangleConstant.FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
+        return withPrefix(MANGLE_FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
     }
 
     private fun IrField.fieldSymbolNameImpl(): String {
@@ -82,7 +91,7 @@ object KonanBinaryInterface {
 
     private fun IrClass.typeInfoSymbolNameImpl(containerName: String?): String {
         val fqName = fqNameForIrSerialization.toString()
-        return withPrefix(MangleConstant.CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
+        return withPrefix(MANGLE_CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
     }
 }
 
@@ -138,18 +147,11 @@ private fun String.replaceSpecialSymbols() =
 
 fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
 
-// TODO: bring here dependencies of this method?
-internal fun ContextUtils.getLlvmFunctionType(function: IrFunction): LLVMTypeRef = functionType(
-        returnType = getLlvmFunctionReturnType(function).llvmType,
-        isVarArg = false,
-        paramTypes = getLlvmFunctionParameterTypes(function).map { it.llvmType }
-)
-
 internal val IrClass.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
 
 internal val String.moduleConstructorName
     get() = "_Konan_init_${this}"
 
-internal val KonanLibrary.moduleConstructorName
+internal val KotlinLibrary.moduleConstructorName
     get() = uniqueName.moduleConstructorName

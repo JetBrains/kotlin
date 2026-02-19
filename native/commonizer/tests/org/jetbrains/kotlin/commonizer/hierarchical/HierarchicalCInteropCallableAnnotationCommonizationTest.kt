@@ -21,23 +21,42 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "a", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(0)
+
+                    @Suppress("INVISIBLE_REFERENCE")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("x", "xab", false)
                     fun x() {}
+
+                    @Suppress("INVISIBLE_REFERENCE")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("wrongSelector1", "", false)
+                    fun y() {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(1)
+
+                    @Suppress("INVISIBLE_REFERENCE")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("x", "xab", false)
                     fun x() {}
+
+                    @Suppress("INVISIBLE_REFERENCE")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("wrongSelector2", "", false)
+                    fun y() {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "c", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(2)
+
+                    @Suppress("INVISIBLE_REFERENCE")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("x", "xc", true)
                     fun x() {}
                 """.trimIndent()
             )
@@ -45,7 +64,10 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "d", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(2)
+
+                    @Suppress("INVISIBLE_REFERENCE")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("x", "xd")
                     fun x() {}
                 """.trimIndent()
             )
@@ -54,15 +76,25 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
         result.assertCommonized(
             "(a, b)", """
                 import kotlin.commonizer.*
-                @ObjCCallable
+                import kotlinx.cinterop.*
+
+                @Suppress("INVISIBLE_REFERENCE")
+                @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                @ObjCCallable @ObjCMethod("x", "xab", false)
                 expect fun x()
+                @ObjCCallable
+                expect fun y()
             """.trimIndent()
         )
 
         result.assertCommonized(
             "(c, d)", """
                 import kotlin.commonizer.*
-                @ObjCCallable
+                import kotlinx.cinterop.*
+
+                @Suppress("INVISIBLE_REFERENCE")
+                @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                @ObjCCallable @ObjCMethod("x", "")
                 expect fun x()
             """.trimIndent()
         )
@@ -70,7 +102,11 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
         result.assertCommonized(
             "(a, b, c, d)", """
                 import kotlin.commonizer.*
-                @ObjCCallable
+                import kotlinx.cinterop.*
+
+                @Suppress("INVISIBLE_REFERENCE")
+                @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                @ObjCCallable @ObjCMethod("x", "")
                 expect fun x()
             """.trimIndent()
         )
@@ -119,7 +155,9 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "a", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(0)
+
+                    @OptIn(@Suppress("INVISIBLE_REFERENCE") kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("x", "xa")
                     fun x() {}
                 """.trimIndent()
             )
@@ -127,7 +165,10 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "b", """
                     import kotlinx.cinterop.*
-                    @ObjCConstructor(1)
+
+                    @Suppress("INVISIBLE_REFERENCE", "WRONG_ANNOTATION_TARGET")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCConstructor("x", false)
                     fun x() {}
                 """.trimIndent()
             )
@@ -135,7 +176,9 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "c", """
                     import kotlinx.cinterop.*
-                    @ObjCFactory(2)
+
+                    @OptIn(@Suppress("INVISIBLE_REFERENCE") kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCFactory("x", "xa")
                     fun x() {}
                 """.trimIndent()
             )
@@ -182,8 +225,10 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "a", """
                     import kotlinx.cinterop.*
-                    
-                    @ObjCMethod(0)
+
+                    @Suppress("INVISIBLE_REFERENCE")
+                    @OptIn(kotlin.native.internal.InternalForKotlinNative::class)
+                    @ObjCMethod("x", "xa")
                     fun x() {}
                 """.trimIndent()
             )
@@ -231,9 +276,9 @@ private fun InlineSourceBuilder.ModuleBuilder.objCAnnotations() {
     source(
         """
         package kotlinx.cinterop
-        annotation class ObjCMethod(val x: Int)
-        annotation class ObjCConstructor(val x: Int)
-        annotation class ObjCFactory(val x: Int)
+        public annotation class ObjCMethod(val selector: String, val encoding: String, val isStret: Boolean = false)
+        public annotation class ObjCConstructor(val initSelector: String, val designated: Boolean)
+        public annotation class ObjCFactory(val selector: String, val encoding: String, val isStret: Boolean = false)
         """.trimIndent(),
         "kotlinx.kt"
     )

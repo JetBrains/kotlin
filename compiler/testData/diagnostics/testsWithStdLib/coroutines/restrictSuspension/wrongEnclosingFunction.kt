@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 @kotlin.coroutines.RestrictsSuspension
@@ -16,3 +17,5 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, suspend, typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package test
 
@@ -9,3 +10,5 @@ class B {
       }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass */

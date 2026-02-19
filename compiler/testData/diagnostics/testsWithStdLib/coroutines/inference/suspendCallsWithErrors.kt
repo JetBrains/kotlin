@@ -1,5 +1,6 @@
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -21,3 +22,6 @@ val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
 val test2: Int = generate {
     yield(<!TYPE_MISMATCH!>A()<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, propertyDeclaration, suspend, typeParameter, typeWithExtension */

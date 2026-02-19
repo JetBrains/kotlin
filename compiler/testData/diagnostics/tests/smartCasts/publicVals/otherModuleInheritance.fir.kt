@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClass
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClass
 // MODULE: m1
 // FILE: A.kt
 
@@ -24,3 +25,6 @@ class MyGeneric : Generic<Number>(42) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter */

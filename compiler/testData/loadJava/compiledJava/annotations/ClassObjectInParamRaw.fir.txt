@@ -5,7 +5,7 @@ public open class ClassObjectInParamRaw : R|kotlin/Any| {
         public constructor(value: R|kotlin/reflect/KClass<*>|, arg: R|kotlin/Array<kotlin/reflect/KClass<*>>|): R|test/ClassObjectInParamRaw.Anno|
 
     }
-    @R|test/ClassObjectInParamRaw.Anno|(value = <getClass>(<getClass>(R|test/ClassObjectInParamRaw!|)), arg = <implicitArrayOf>()) public open class Nested : R|kotlin/Any| {
+    @R|test/ClassObjectInParamRaw.Anno|(value = <getClass>(<getClass>(R|test/ClassObjectInParamRaw!|)), arg = <collectionLiteralCall>()) public open class Nested : R|kotlin/Any| {
         public constructor(): R|test/ClassObjectInParamRaw.Nested|
 
     }

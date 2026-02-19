@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun foo() {
@@ -48,7 +48,7 @@ fun box() {
     foo()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:42 box
 // test.kt:5 foo
 // test.kt:6 foo
@@ -107,6 +107,61 @@ fun box() {
 // test.kt:8 foo
 // test.kt:49 box
 
+// EXPECTATIONS NATIVE
+// test.kt:42 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:28 mightThrow
+// test.kt:29 mightThrow
+// test.kt:24 <get-throw1>
+// test.kt:29 mightThrow
+// test.kt:30 mightThrow
+// test.kt:6 foo
+// test.kt:12 foo
+// test.kt:32 mightThrow2
+// test.kt:33 mightThrow2
+// test.kt:25 <get-throw2>
+// test.kt:33 mightThrow2
+// test.kt:34 mightThrow2
+// test.kt:12 foo
+// test.kt:15 foo
+// test.kt:18 foo
+// test.kt:36 mightThrow3
+// test.kt:37 mightThrow3
+// test.kt:26 <get-throw3>
+// test.kt:37 mightThrow3
+// test.kt:38 mightThrow3
+// test.kt:39 mightThrow3
+// test.kt:18 foo
+// test.kt:21 foo
+// test.kt:22 foo
+// test.kt:42 box
+// test.kt:43 box
+// test.kt:26 <set-throw3>
+// test.kt:44 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:28 mightThrow
+// test.kt:29 mightThrow
+// test.kt:24 <get-throw1>
+// test.kt:29 mightThrow
+// test.kt:30 mightThrow
+// test.kt:6 foo
+// test.kt:12 foo
+// test.kt:32 mightThrow2
+// test.kt:33 mightThrow2
+// test.kt:25 <get-throw2>
+// test.kt:33 mightThrow2
+// test.kt:34 mightThrow2
+// test.kt:12 foo
+// test.kt:15 foo
+// test.kt:18 foo
+// test.kt:36 mightThrow3
+// test.kt:37 mightThrow3
+// test.kt:26 <get-throw3>
+// test.kt:37 mightThrow3
+// test.kt:37 mightThrow3
+
 // EXPECTATIONS JS_IR
 // test.kt:42 box
 // test.kt:6 foo
@@ -154,3 +209,50 @@ fun box() {
 // test.kt:7 foo
 // test.kt:8 foo
 // test.kt:49 box
+
+// EXPECTATIONS WASM
+// test.kt:42 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8)
+// test.kt:30 $mightThrow (1)
+// test.kt:6 $foo (8)
+// test.kt:12 $foo (8)
+// test.kt:33 $mightThrow2 (8)
+// test.kt:34 $mightThrow2 (1)
+// test.kt:12 $foo (8)
+// test.kt:14 $foo (8)
+// test.kt:18 $foo (8)
+// test.kt:37 $mightThrow3 (8)
+// test.kt:38 $mightThrow3 (11, 4)
+// test.kt:18 $foo (8)
+// test.kt:20 $foo (8)
+// test.kt:22 $foo (1)
+// test.kt:43 $box (13, 4)
+// test.kt:44 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8)
+// test.kt:30 $mightThrow (1)
+// test.kt:6 $foo (8)
+// test.kt:12 $foo (8)
+// test.kt:33 $mightThrow2 (8)
+// test.kt:34 $mightThrow2 (1)
+// test.kt:12 $foo (8)
+// test.kt:14 $foo (8)
+// test.kt:18 $foo (8)
+// test.kt:37 $mightThrow3 (8, 22, 16)
+// test.kt:20 $foo (8)
+// test.kt:45 $box (13, 4)
+// test.kt:46 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8)
+// test.kt:30 $mightThrow (1)
+// test.kt:6 $foo (8)
+// test.kt:12 $foo (8)
+// test.kt:33 $mightThrow2 (8, 22, 16)
+// test.kt:14 $foo (8)
+// test.kt:47 $box (13, 4)
+// test.kt:48 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8, 22, 16)
+// test.kt:8 $foo (8)
+// test.kt:49 $box (1)

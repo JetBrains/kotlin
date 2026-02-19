@@ -1,5 +1,6 @@
-// !LANGUAGE: +ContextReceivers
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 fun String.foo() {}
 
@@ -15,3 +16,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, integerLiteral,
+lambdaLiteral */

@@ -1,0 +1,4 @@
+import com.example.*
+
+fun foo(): Foo = null!!
+fun bar(): Bar = null!!

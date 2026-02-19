@@ -16,28 +16,42 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.ExternalIntegerKeyDescriptor
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
+import java.io.DataInput
+import java.io.DataOutput
 import java.io.File
 
 internal class IdToFileMap(
-    file: File,
+    storageFile: File,
     icContext: IncrementalCompilationContext,
-) : NonAppendableBasicMap<Int, String>(file, ExternalIntegerKeyDescriptor(), EnumeratorStringDescriptor.INSTANCE, icContext) {
-    override fun dumpKey(key: Int): String = key.toString()
+) : AbstractBasicMap<Int, File>(
+    storageFile,
+    LegacyIntExternalizer.toDescriptor(),
+    LegacyFileExternalizer(icContext.pathConverterForSourceFiles),
+    icContext
+)
 
-    override fun dumpValue(value: String): String = value
+/** Similar to [LegacyFileExternalizer]. */
+private val LegacyIntExternalizer = ExternalIntegerKeyDescriptor.INSTANCE
 
-    operator fun get(id: Int): File? = storage[id]?.let { pathConverter.toFile(it) }
+/**
+ * Use [LegacyFqNameExternalizer] instead of [org.jetbrains.kotlin.incremental.IncrementalCompilationContext.fileDescriptorForOutputFiles]
+ * for [IdToFileMap] for now because they internally use different types of `DataExternalizer<String>`, and the `compiler-reference-index`
+ * module in the Kotlin IDEA plugin currently can only read the old data format (see KTIJ-27258).
+ *
+ * Once we fix that bug, we can remove this class and use
+ * [org.jetbrains.kotlin.incremental.IncrementalCompilationContext.fileDescriptorForOutputFiles].
+ */
+private class LegacyFileExternalizer(private val pathConverter: FileToPathConverter) : DataExternalizer<File> {
 
-    operator fun contains(id: Int): Boolean = id in storage
-
-    operator fun set(id: Int, file: File) {
-        storage[id] = pathConverter.toPath(file)
+    override fun save(output: DataOutput, file: File) {
+        EnumeratorStringDescriptor.INSTANCE.save(output, pathConverter.toPath(file))
     }
 
-    fun remove(id: Int) {
-        storage.remove(id)
+    override fun read(input: DataInput): File {
+        return pathConverter.toFile(EnumeratorStringDescriptor.INSTANCE.read(input))
     }
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 
 abstract class Abstract
@@ -9,3 +10,6 @@ fun <D> create(fn: () -> D): D {
 fun main() {
     create(::<!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Abstract<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, nullableType,
+typeParameter */

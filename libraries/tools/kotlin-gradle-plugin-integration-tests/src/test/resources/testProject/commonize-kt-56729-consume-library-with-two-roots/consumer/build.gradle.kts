@@ -6,12 +6,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    maven(project(":producer").buildDir.resolve("repo"))
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     linuxArm64()
     linuxX64()
@@ -19,7 +13,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets.commonMain.get().dependencies {
-        implementation("org.jetbrains.sample:producer:1.0.0-SNAPSHOT")
+        implementation("org.jetbrains.sample:producer:1.0.0")
     }
 
     targets.withType<KotlinNativeTarget>().all {

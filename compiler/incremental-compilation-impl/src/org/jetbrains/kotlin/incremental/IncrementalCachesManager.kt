@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import com.google.common.io.Closer
+import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.Closeable
@@ -38,9 +39,11 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 
     private val inputSnapshotsCacheDir = File(cachesRootDir, "inputs").apply { mkdirs() }
     private val lookupCacheDir = File(cachesRootDir, "lookups").apply { mkdirs() }
+    private val compilerPluginFilesCacheDir = File(cachesRootDir, "compilerPluginFiles").apply { mkdirs() }
 
     val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, icContext).apply { registerCache() }
     val lookupCache: LookupStorage = LookupStorage(lookupCacheDir, icContext).apply { registerCache() }
+    val compilerPluginFilesCache: CompilerPluginFilesCache = CompilerPluginFilesCache(compilerPluginFilesCacheDir, icContext).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
     @Suppress("UnstableApiUsage")
@@ -50,20 +53,11 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 
         val closer = Closer.create()
         caches.forEach {
-            closer.register(CacheCloser(it))
+            closer.register(it)
         }
         closer.close()
 
         isClosed = true
-    }
-
-    private class CacheCloser(private val cache: BasicMapsOwner) : Closeable {
-
-        override fun close() {
-            // It's important to flush the cache when closing (see KT-53168)
-            cache.flush(memoryCachesOnly = false)
-            cache.close()
-        }
     }
 
 }
@@ -72,9 +66,15 @@ open class IncrementalJvmCachesManager(
     icContext: IncrementalCompilationContext,
     outputDir: File?,
     cachesRootDir: File,
+    subtypeTracker: SubtypeTracker = SubtypeTracker.DoNothing,
 ) : IncrementalCachesManager<IncrementalJvmCache>(icContext, cachesRootDir) {
     private val jvmCacheDir = File(cachesRootDir, "jvm").apply { mkdirs() }
-    override val platformCache = IncrementalJvmCache(jvmCacheDir, icContext, outputDir).apply { registerCache() }
+    override val platformCache = IncrementalJvmCache(
+        targetDataRoot = jvmCacheDir,
+        icContext = icContext,
+        targetOutputDir = outputDir,
+        subtypeTracker = subtypeTracker,
+    ).apply { registerCache() }
 }
 
 class IncrementalJsCachesManager(

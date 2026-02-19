@@ -3,11 +3,6 @@ plugins {
     id("maven-publish")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     <SingleNativeTarget>("host") {
         compilations.main.cinterops {

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Test.java
 public interface Test {
     default String test() {
@@ -40,3 +40,6 @@ class A2 : KTrait2 {
         test()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType,
+superExpression */

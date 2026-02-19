@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class A {
     constructor(): thi()
     val x: Int

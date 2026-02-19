@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import java.util.concurrent.atomic.*
 
 object JavaToKotlinClassMap {
     private val NUMBERED_FUNCTION_PREFIX: String =
@@ -38,6 +39,8 @@ object JavaToKotlinClassMap {
     private val mutableToReadOnlyClassId = HashMap<ClassId, ClassId>()
     private val readOnlyToMutableClassId = HashMap<ClassId, ClassId>()
 
+    private val mappedKotlinClassFqNames = mutableSetOf<FqName>()
+
     // describes mapping for a java class that has separate readOnly and mutable equivalents in Kotlin
     data class PlatformMutabilityMapping(
         val javaClass: ClassId,
@@ -46,7 +49,7 @@ object JavaToKotlinClassMap {
     )
 
     private inline fun <reified T> mutabilityMapping(kotlinReadOnly: ClassId, kotlinMutable: FqName): PlatformMutabilityMapping {
-        val mutableClassId = ClassId(kotlinReadOnly.packageFqName, kotlinMutable.tail(kotlinReadOnly.packageFqName), false)
+        val mutableClassId = ClassId(kotlinReadOnly.packageFqName, kotlinMutable.tail(kotlinReadOnly.packageFqName), isLocal = false)
         return PlatformMutabilityMapping(classId(T::class.java), kotlinReadOnly, mutableClassId)
     }
 
@@ -97,24 +100,30 @@ object JavaToKotlinClassMap {
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
         for (i in 0 until BuiltInFunctionArity.BIG_ARITY - 1) {
-            val kSuspendFunction = FunctionTypeKind.KSuspendFunction
-            val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
-            addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
+            addKotlinToJava(FqName(NUMBERED_K_SUSPEND_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
+
+        addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicInt"), classId(AtomicInteger::class.java))
+        addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicLong"), classId(AtomicLong::class.java))
+        addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicBoolean"), classId(AtomicBoolean::class.java))
+        addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicReference"), classId(AtomicReference::class.java))
+        addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicIntArray"), classId(AtomicIntegerArray::class.java))
+        addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicLongArray"), classId(AtomicLongArray::class.java))
+        addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicArray"), classId(AtomicReferenceArray::class.java))
 
         addKotlinToJava(FqNames.nothing.toSafe(), classId(Void::class.java))
     }
 
     /**
      * E.g.
-     * java.lang.String -> kotlin.String
-     * java.lang.Integer -> kotlin.Int
-     * kotlin.jvm.internal.IntCompanionObject -> kotlin.Int.Companion
-     * java.util.List -> kotlin.List
-     * java.util.Map.Entry -> kotlin.Map.Entry
-     * java.lang.Void -> null
-     * kotlin.jvm.functions.Function3 -> kotlin.Function3
-     * kotlin.jvm.functions.FunctionN -> null // Without a type annotation like @Arity(n), it's impossible to find out arity
+     * - java.lang.String -> kotlin.String
+     * - java.lang.Integer -> kotlin.Int
+     * - kotlin.jvm.internal.IntCompanionObject -> kotlin.Int.Companion
+     * - java.util.List -> kotlin.List
+     * - java.util.Map.Entry -> kotlin.Map.Entry
+     * - java.lang.Void -> null
+     * - kotlin.jvm.functions.Function3 -> kotlin.Function3
+     * - kotlin.jvm.functions.FunctionN -> null // Without a type annotation like @Arity(n), it's impossible to find out arity
      */
     fun mapJavaToKotlin(fqName: FqName): ClassId? {
         return javaToKotlin[fqName.toUnsafe()]
@@ -127,34 +136,45 @@ object JavaToKotlinClassMap {
 
     /**
      * E.g.
-     * kotlin.Throwable -> java.lang.Throwable
-     * kotlin.Int -> java.lang.Integer
-     * kotlin.Int.Companion -> kotlin.jvm.internal.IntCompanionObject
-     * kotlin.Nothing -> java.lang.Void
-     * kotlin.IntArray -> null
-     * kotlin.Function3 -> kotlin.jvm.functions.Function3
-     * kotlin.coroutines.SuspendFunction3 -> kotlin.jvm.functions.Function4
-     * kotlin.Function42 -> kotlin.jvm.functions.FunctionN
-     * kotlin.coroutines.SuspendFunction42 -> kotlin.jvm.functions.FunctionN
-     * kotlin.reflect.KFunction3 -> kotlin.reflect.KFunction
-     * kotlin.reflect.KSuspendFunction3 -> kotlin.reflect.KFunction
-     * kotlin.reflect.KFunction42 -> kotlin.reflect.KFunction
-     * kotlin.reflect.KSuspendFunction42 -> kotlin.reflect.KFunction
+     * - kotlin.Throwable -> java.lang.Throwable
+     * - kotlin.Int -> java.lang.Integer
+     * - kotlin.Int.Companion -> kotlin.jvm.internal.IntCompanionObject
+     * - kotlin.Nothing -> java.lang.Void
+     * - kotlin.IntArray -> null
+     * - kotlin.Function3 -> kotlin.jvm.functions.Function3
+     * - kotlin.coroutines.SuspendFunction3 -> null
+     *     - NOT kotlin.jvm.functions.Function4, to make sure that Continuation type argument is correctly added manually at the call site.
+     * - kotlin.Function23 -> kotlin.jvm.functions.FunctionN
+     * - kotlin.coroutines.SuspendFunction22 -> kotlin.jvm.functions.FunctionN
+     * - kotlin.reflect.KFunction3 -> kotlin.reflect.KFunction
+     * - kotlin.reflect.KSuspendFunction3 -> kotlin.reflect.KFunction
+     * - kotlin.reflect.KFunction23 -> kotlin.reflect.KFunction
+     * - kotlin.reflect.KSuspendFunction22 -> kotlin.reflect.KFunction
      */
     fun mapKotlinToJava(kotlinFqName: FqNameUnsafe): ClassId? = when {
         isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_FUNCTION_PREFIX) -> FUNCTION_N_CLASS_ID
-        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_SUSPEND_FUNCTION_PREFIX) -> FUNCTION_N_CLASS_ID
+        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_SUSPEND_FUNCTION_PREFIX, isSuspend = true) -> FUNCTION_N_CLASS_ID
+
+        // TODO: Simplify handling KFunction and KSuspendFunction, since they all map directly to kotlin.reflect.KFunction
         isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_FUNCTION_PREFIX) -> K_FUNCTION_CLASS_ID
-        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_SUSPEND_FUNCTION_PREFIX) -> K_FUNCTION_CLASS_ID
+        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_SUSPEND_FUNCTION_PREFIX, isSuspend = true) -> K_FUNCTION_CLASS_ID
+
         else -> kotlinToJava[kotlinFqName]
     }
 
-    private fun isKotlinFunctionWithBigArity(kotlinFqName: FqNameUnsafe, prefix: String): Boolean {
+    private fun isKotlinFunctionWithBigArity(kotlinFqName: FqNameUnsafe, prefix: String, isSuspend: Boolean = false): Boolean {
         val fqNameAsString = kotlinFqName.asString()
         if (!fqNameAsString.startsWith(prefix)) return false
         val arityString = fqNameAsString.substring(prefix.length)
         val arity = if (!arityString.startsWith('0')) arityString.toIntOrNull() else return false
-        return arity != null && arity >= BuiltInFunctionArity.BIG_ARITY
+
+        val cutOffArity = if (isSuspend) {
+            BuiltInFunctionArity.BIG_ARITY - 1
+        } else {
+            BuiltInFunctionArity.BIG_ARITY
+        }
+
+        return arity != null && arity >= cutOffArity
     }
 
     private fun addMapping(platformMutabilityMapping: PlatformMutabilityMapping) {
@@ -188,9 +208,12 @@ object JavaToKotlinClassMap {
         javaToKotlin[javaClassId.asSingleFqName().toUnsafe()] = kotlinClassId
     }
 
-    private fun addKotlinToJava(kotlinFqNameUnsafe: FqName, javaClassId: ClassId) {
-        kotlinToJava[kotlinFqNameUnsafe.toUnsafe()] = javaClassId
+    private fun addKotlinToJava(kotlinFqName: FqName, javaClassId: ClassId) {
+        mappedKotlinClassFqNames.add(kotlinFqName)
+        kotlinToJava[kotlinFqName.toUnsafe()] = javaClassId
     }
+
+    fun isMappedKotlinClass(kotlinClassId: ClassId): Boolean = mappedKotlinClassFqNames.contains(kotlinClassId.asSingleFqName())
 
     fun isJavaPlatformClass(fqName: FqName): Boolean = mapJavaToKotlin(fqName) != null
 
@@ -205,6 +228,8 @@ object JavaToKotlinClassMap {
 
     fun isMutable(classId: ClassId?): Boolean = mutableToReadOnlyClassId.containsKey(classId)
     fun isReadOnly(classId: ClassId?): Boolean = readOnlyToMutableClassId.containsKey(classId)
+
+    fun getReadOnlyAsJava(): Set<FqName> = readOnlyToMutable.keys.mapTo(mutableSetOf()) { kotlinToJava[it]!!.asSingleFqName() }
 
     private fun classId(clazz: Class<*>): ClassId {
         assert(!clazz.isPrimitive && !clazz.isArray) { "Invalid class: $clazz" }

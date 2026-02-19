@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import My.bar
 import My.baz
 import My.gau
@@ -29,3 +30,6 @@ fun test() {
     wat()
     false.watwat()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+objectDeclaration, stringLiteral, typeParameter */

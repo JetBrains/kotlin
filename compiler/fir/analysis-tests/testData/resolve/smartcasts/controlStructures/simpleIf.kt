@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun test_1(x: Any) {
     if (x is String) {
         x.length
@@ -17,10 +18,13 @@ fun test_2(x: Any) {
 fun test_3(x: Any) {
     when {
         x !is String -> {}
-        x !is Int -> {}
+        <!USELESS_IS_CHECK!>x !is Int<!> -> {}
         else -> {
             x.length
             x.inc()
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, intersectionType, isExpression, localProperty,
+propertyDeclaration, smartcast, whenExpression */

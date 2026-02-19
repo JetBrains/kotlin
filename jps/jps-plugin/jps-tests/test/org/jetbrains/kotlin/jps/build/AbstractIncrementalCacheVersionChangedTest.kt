@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 /**
  * @see [jps-plugin/testData/incremental/cacheVersionChanged/README.md]
  */
-abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalK1JvmJpsTest(allowNoFilesWithSuffixInTestData = true) {
+abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<Modification>) {
         val modifiedFiles = modifications.filterIsInstance<ModifyContent>().map { it.path }
         val targets = projectDescriptor.allModuleTargets

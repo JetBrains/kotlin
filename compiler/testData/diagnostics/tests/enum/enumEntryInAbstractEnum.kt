@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 enum class EnumClass {
     E1 {
         override fun foo() = 1
@@ -12,3 +12,5 @@ enum class EnumClass {
     abstract fun foo(): Int
     abstract val bar: String
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, propertyDeclaration */

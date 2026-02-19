@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
-import junit.framework.TestCase
+import com.intellij.openapi.util.Disposer
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -21,11 +22,14 @@ import org.jetbrains.kotlin.scripting.resolve.getScriptCollectedData
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.RunAll
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.jvm
+import kotlin.test.AfterTest
+import kotlin.test.*
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/constructAnnotations"
 
@@ -39,9 +43,17 @@ private annotation class TestAnnotation(vararg val options: String)
 @Retention(AnnotationRetention.SOURCE)
 private annotation class AnnotationWithVarArgAndArray(vararg val options: String, val moreOptions: Array<String>)
 
-class ConstructAnnotationTest : TestCase() {
-    private val testRootDisposable: Disposable = TestDisposable()
+class ConstructAnnotationTest {
+    private val testRootDisposable: Disposable = TestDisposable("${ConstructAnnotationTest::class.simpleName}.testRootDisposable")
 
+    @AfterTest
+    fun tearDown() {
+        RunAll(
+            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
+        )
+    }
+
+    @Test
     fun testAnnotationEmptyVarArg() {
         val annotations = annotations("TestAnnotationEmptyVarArg.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -51,6 +63,7 @@ class ConstructAnnotationTest : TestCase() {
         assert(annotations.first().options.isEmpty())
     }
 
+    @Test
     fun testBasicVarArgTestAnnotation() {
         val annotations = annotations("SimpleTestAnnotation.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -60,6 +73,7 @@ class ConstructAnnotationTest : TestCase() {
         assertEquals(annotations.first().options.toList(), listOf("option"))
     }
 
+    @Test
     fun testAnnotationWithArrayLiteral() {
         val annotations = annotations("TestAnnotationWithArrayLiteral.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -69,6 +83,7 @@ class ConstructAnnotationTest : TestCase() {
         assertEquals(annotations.first().options.toList(), listOf("option"))
     }
 
+    @Test
     fun testAnnotationWithArrayOfFunction() {
         val annotations = annotations("TestAnnotationWithArrayOfFunction.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -78,6 +93,7 @@ class ConstructAnnotationTest : TestCase() {
         assertEquals(annotations.first().options.toList(), listOf("option"))
     }
 
+    @Test
     fun testAnnotationWithEmptyArrayFunction() {
         val annotations = annotations("TestAnnotationWithEmptyArrayFunction.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -87,6 +103,7 @@ class ConstructAnnotationTest : TestCase() {
         assert(annotations.first().options.isEmpty())
     }
 
+    @Test
     fun testArrayAfterVarArgInAnnotation() {
         val annotations = annotations("TestAnnotationWithVarArgAndArray.kts", AnnotationWithVarArgAndArray::class)
             .valueOrThrow()
@@ -102,7 +119,7 @@ class ConstructAnnotationTest : TestCase() {
         val compilationConfiguration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
             updateWithBaseCompilerArguments()
             addKotlinSourceRoot(file.path)
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
         val configuration = ScriptCompilationConfiguration {
             defaultImports(*classes)
@@ -132,8 +149,8 @@ class ConstructAnnotationTest : TestCase() {
             return makeFailureResult(messageCollector.diagnostics)
         }
 
-        val data = getScriptCollectedData(ktFile, configuration, environment.project, null)
-        val annotations = data[ScriptCollectedData.foundAnnotations] ?: emptyList()
+        val data = getScriptCollectedData(ktFile, configuration, null)
+        val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
 
         annotations
             .filterIsInstance(InvalidScriptResolverAnnotation::class.java)

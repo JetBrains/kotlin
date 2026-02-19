@@ -7,19 +7,23 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.ir.isAny
-import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
+import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.isArray
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForSyntheticInterface
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
+import org.jetbrains.kotlin.backend.konan.lower.hasSyntheticNameToBeHiddenInReflection
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 internal class RTTIGenerator(
         override val generationState: NativeGenerationState,
-        private val referencedFunctions: Set<IrFunction>?,
+        private val referencedFunctions: Set<IrSimpleFunction>?,
 ) : ContextUtils {
 
     private val acyclicCache = mutableMapOf<IrType, Boolean>()
@@ -29,8 +33,8 @@ internal class RTTIGenerator(
             context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
             context.irBuiltIns.longClass,
             context.irBuiltIns.floatClass, context.irBuiltIns.doubleClass) +
-            context.ir.symbols.primitiveTypesToPrimitiveArrays.values +
-            context.ir.symbols.unsignedTypesToUnsignedArrays.values
+            context.irBuiltIns.primitiveTypesToPrimitiveArrays.values +
+            context.irBuiltIns.unsignedTypesToUnsignedArrays.values
 
     // TODO: extend logic here by taking into account final acyclic classes.
     private fun checkAcyclicFieldType(type: IrType): Boolean = acyclicCache.getOrPut(type) {
@@ -45,7 +49,7 @@ internal class RTTIGenerator(
     }
 
     private fun checkAcyclicClass(irClass: IrClass): Boolean = when {
-        irClass.symbol == context.ir.symbols.array -> false
+        irClass.symbol == context.irBuiltIns.arrayClass -> false
         irClass.isArray -> true
         context.getLayoutBuilder(irClass).getFields(llvm).all { checkAcyclicFieldType(it.type) } -> true
         else -> false
@@ -53,16 +57,11 @@ internal class RTTIGenerator(
 
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
-        if (irClass.isFrozen(context))
-            result = result or TF_IMMUTABLE
         // TODO: maybe perform deeper analysis to find surely acyclic types.
         if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {
             if (checkAcyclicClass(irClass)) {
                 result = result or TF_ACYCLIC
             }
-        }
-        if (irClass.hasAnnotation(KonanFqNames.leakDetectorCandidate)) {
-            result = result or TF_LEAK_DETECTOR_CANDIDATE
         }
         if (irClass.isInterface)
             result = result or TF_INTERFACE
@@ -71,12 +70,8 @@ internal class RTTIGenerator(
             result = result or TF_SUSPEND_FUNCTION
         }
 
-        if (irClass.hasAnnotation(KonanFqNames.hasFinalizer)) {
+        if (irClass.hasFinalizer) {
             result = result or TF_HAS_FINALIZER
-        }
-
-        if (irClass.hasAnnotation(KonanFqNames.hasFreezeHook)) {
-            result = result or TF_HAS_FREEZE_HOOK
         }
 
         return result
@@ -100,7 +95,7 @@ internal class RTTIGenerator(
             relativeName: String?,
             flags: Int,
             classId: Int,
-            writableTypeInfo: ConstPointer?,
+            writableTypeInfo: WritableTypeInfoPointer?,
             associatedObjects: ConstPointer?,
             processObjectInMark: ConstPointer?,
             requiredAlignment: Int,
@@ -145,7 +140,7 @@ internal class RTTIGenerator(
     )
 
     private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
-        NullPointer(runtime.objHeaderType)
+        llvm.nullPointer
     } else {
         staticData.kotlinStringLiteral(string)
     }
@@ -155,13 +150,13 @@ internal class RTTIGenerator(
         if (annotation != null) {
             val name = annotation.getAnnotationStringValue()!!
             // TODO: use LLVMAddAlias.
-            val global = addGlobal(name, pointerType(runtime.typeInfoType), isExported = true)
+            val global = addGlobal(name, llvm.pointerType, isExported = true)
             LLVMSetInitializer(global, typeInfoGlobal)
         }
     }
 
     private val arrayClasses = mapOf(
-            IdSignatureValues.array to llvm.kObjHeaderPtr,
+            IdSignatureValues.array to llvm.pointerType,
             primitiveArrayTypesSignatures[PrimitiveType.BYTE] to llvm.int8Type,
             primitiveArrayTypesSignatures[PrimitiveType.CHAR] to llvm.int16Type,
             primitiveArrayTypesSignatures[PrimitiveType.SHORT] to llvm.int16Type,
@@ -172,19 +167,19 @@ internal class RTTIGenerator(
             primitiveArrayTypesSignatures[PrimitiveType.BOOLEAN] to llvm.int8Type,
             IdSignatureValues.string to llvm.int16Type,
             getPublicSignature(KonanFqNames.packageName, "ImmutableBlob") to llvm.int8Type,
-            getPublicSignature(KonanFqNames.internalPackageName, "NativePtrArray") to llvm.int8PtrType
+            getPublicSignature(KonanFqNames.internalPackageName, "NativePtrArray") to llvm.pointerType
     )
 
     // Keep in sync with Konan_RuntimeType.
-    private val runtimeTypeMap = mapOf(
-            llvm.kObjHeaderPtr to 1,
+    private val RT_OBJECT = 1
+    private val primitiveRuntimeTypeMap = mapOf(
             llvm.int8Type to 2,
             llvm.int16Type to 3,
             llvm.int32Type to 4,
             llvm.int64Type to 5,
             llvm.floatType to 6,
             llvm.doubleType to 7,
-            llvm.int8PtrType to 8,
+            llvm.pointerType to 8,
             llvm.int1Type to 9,
             llvm.vector128Type to 10
     )
@@ -207,15 +202,15 @@ internal class RTTIGenerator(
 
         val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
 
-        val bodyType = llvmDeclarations.bodyType
+        val bodyType = llvmDeclarations.bodyType.llvmBodyType
 
         val instanceSize = getInstanceSize(bodyType, irClass)
 
         val superType = when {
-            irClass.isAny() -> NullPointer(runtime.typeInfoType)
-            irClass.isKotlinObjCClass() -> context.ir.symbols.any.owner.typeInfoPtr
+            irClass.isAny() -> llvm.nullPointer
+            irClass.isKotlinObjCClass() -> context.irBuiltIns.anyClass.owner.typeInfoPtr
             else -> {
-                val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.ir.symbols.any.owner
+                val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.irBuiltIns.anyClass.owner
                 superTypeOrAny.typeInfoPtr
             }
         }
@@ -224,9 +219,9 @@ internal class RTTIGenerator(
 
         val interfaces = implementedInterfaces.map { it.typeInfoPtr }
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
-                pointerType(runtime.typeInfoType), interfaces)
+                llvm.pointerType, interfaces)
 
-        val objOffsets = getObjOffsets(bodyType)
+        val objOffsets = getObjOffsets(llvmDeclarations.bodyType)
 
         val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", llvm.int32Type, objOffsets)
 
@@ -259,11 +254,11 @@ internal class RTTIGenerator(
                 reflectionInfo.relativeName,
                 flagsFromClass(irClass) or reflectionInfo.reflectionFlags,
                 context.getLayoutBuilder(irClass).classId,
-                llvmDeclarations.writableTypeInfoGlobal?.pointer,
+                llvmDeclarations.writableTypeInfoGlobal,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
-                    else -> genProcessObjectInMark(bodyType)
+                    irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer()
+                    else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
         )
@@ -281,16 +276,9 @@ internal class RTTIGenerator(
         exportTypeInfoIfRequired(irClass, irClass.llvmTypeInfoPtr)
     }
 
-    private fun getIndicesOfObjectFields(bodyType: LLVMTypeRef) : List<Int> =
-            getStructElements(bodyType).mapIndexedNotNull { index, type ->
-                index.takeIf {
-                    isObjectType(type)
-                }
-            }
-
-    private fun getObjOffsets(bodyType: LLVMTypeRef): List<ConstInt32> =
-            getIndicesOfObjectFields(bodyType).map { index ->
-                llvm.constInt32(LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt())
+    private fun getObjOffsets(bodyType: ObjectBodyType): List<ConstInt32> =
+            bodyType.sortedIndicesOfObjectFields.map { index ->
+                llvm.constInt32(LLVMOffsetOfElement(llvmTargetData, bodyType.llvmBodyType, index).toInt())
             }
 
     fun vtable(irClass: IrClass): ConstArray {
@@ -298,12 +286,12 @@ internal class RTTIGenerator(
         val vtableEntries = context.getLayoutBuilder(irClass).vtableEntries.map {
             val implementation = it.implementation
             if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
-                NullPointer(llvm.int8Type)
+                llvm.nullPointer
             } else {
                 implementation.entryPointAddress
             }
         }
-        return ConstArray(llvm.int8PtrType, vtableEntries)
+        return ConstArray(llvm.pointerType, vtableEntries)
     }
 
     fun interfaceTableRecords(irClass: IrClass): Pair<List<InterfaceTableRecord>, Int> {
@@ -374,46 +362,55 @@ internal class RTTIGenerator(
                     llvm.constInt32(interfaceId),
                     llvm.constInt32(iface?.interfaceVTableEntries?.size ?: 0),
                     if (iface == null)
-                        NullPointer(llvm.int8PtrType)
+                        llvm.nullPointer
                     else {
                         val vtableEntries = iface.interfaceVTableEntries.map { ifaceFunction ->
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
                             if (impl == null || referencedFunctions?.contains(impl) == false)
-                                NullPointer(llvm.int8Type)
+                                llvm.nullPointer
                             else impl.entryPointAddress
                         }
 
                         staticData.placeGlobalConstArray("kifacevtable:${className}_$interfaceId",
-                                llvm.int8PtrType, vtableEntries
+                                llvm.pointerType, vtableEntries
                         )
                     }
             )
         }
     }
 
-    private fun mapRuntimeType(type: LLVMTypeRef): Int =
-            runtimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
+    private fun mapRuntimeType(type: LLVMTypeRef, isObjectType: Boolean): Int {
+        if (isObjectType) {
+            require(type == llvm.pointerType) { "Expected object type, got ${llvmtype2string(type)}" }
+            return RT_OBJECT
+        }
+
+        return primitiveRuntimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
+    }
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
-        context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
-            parseBitcodeFile(llvm.llvmContext, it)
+        if (generationState.runtimeModulesConfig.containsDebuggingRuntime) {
+            val path = generationState.runtimeModulesConfig.absolutePathFor(RuntimeModule.DEBUG)
+            parseBitcodeFile(context, context.messageCollector, llvm.llvmContext, path)
+        } else {
+            null
         }
     }
 
     private val debugOperations: ConstValue by lazy {
-        if (debugRuntimeOrNull != null) {
-            val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
-            val local = LLVMAddGlobal(llvm.module, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
-            constPointer(LLVMConstBitCast(local, llvm.int8PtrPtrType)!!)
+        if (debugRuntimeOrNull == null) {
+            llvm.nullPointer
         } else {
-            Zero(llvm.int8PtrPtrType)
+            val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
+            val local = LLVMAddGlobal(llvm.module, LLVMGlobalGetValueType(external),"Konan_debugOperationsList")!!
+            constPointer(local)
         }
     }
 
     val debugOperationsSize: ConstValue by lazy {
         if (debugRuntimeOrNull != null) {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
-            llvm.constInt32(LLVMGetArrayLength(LLVMGetElementType(LLVMTypeOf(external))))
+            llvm.constInt32(LLVMGetArrayLength(LLVMGlobalGetValueType(external)))
         } else
             llvm.constInt32(0)
     }
@@ -421,35 +418,39 @@ internal class RTTIGenerator(
     private fun makeExtendedInfo(irClass: IrClass): ConstPointer {
         // TODO: shall we actually do that?
         if (context.shouldOptimize())
-            return NullPointer(runtime.extendedTypeInfoType)
+            return llvm.nullPointer
 
         val className = irClass.fqNameForIrSerialization.toString()
         val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
-        val bodyType = llvmDeclarations.bodyType
+        val bodyType = llvmDeclarations.bodyType.llvmBodyType
         val elementType = getElementType(irClass)
 
         val value = if (elementType != null) {
             // An array type.
-            val runtimeElementType = mapRuntimeType(elementType)
+            val isElementTypeObject = irClass.isKotlinArray()
+            val runtimeElementType = mapRuntimeType(elementType, isElementTypeObject)
             Struct(runtime.extendedTypeInfoType,
                     llvm.constInt32(-runtimeElementType),
-                    NullPointer(llvm.int32Type), NullPointer(llvm.int8Type), NullPointer(llvm.int8PtrType),
+                    llvm.nullPointer, llvm.nullPointer, llvm.nullPointer,
                     debugOperationsSize, debugOperations)
         } else {
             class FieldRecord(val offset: Int, val type: Int, val name: String)
 
+            val objectFieldIndices = llvmDeclarations.bodyType.sortedIndicesOfObjectFields.toSet()
+
             val fields = context.getLayoutBuilder(irClass).getFields(llvm).map {
                 val index = llvmDeclarations.fieldIndices[it.irFieldSymbol]!!
+                val isObjectType = index in objectFieldIndices
                 FieldRecord(
                         LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
-                        mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, index)!!),
+                        mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, index)!!, isObjectType),
                         it.name)
             }
             val offsetsPtr = staticData.placeGlobalConstArray("kextoff:$className", llvm.int32Type,
                     fields.map { llvm.constInt32(it.offset) })
             val typesPtr = staticData.placeGlobalConstArray("kexttype:$className", llvm.int8Type,
                     fields.map { llvm.constInt8(it.type.toByte()) })
-            val namesPtr = staticData.placeGlobalConstArray("kextname:$className", llvm.int8PtrType,
+            val namesPtr = staticData.placeGlobalConstArray("kextname:$className", llvm.pointerType,
                     fields.map { staticData.placeCStringLiteral(it.name) })
 
             Struct(runtime.extendedTypeInfoType, llvm.constInt32(fields.size), offsetsPtr, typesPtr, namesPtr,
@@ -469,9 +470,8 @@ internal class RTTIGenerator(
 
         val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
             val function = context.getObjectClassInstanceFunction(value)
-            val llvmFunction = generationState.llvmDeclarations.forFunction(function)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvmFunction.toConstPointer())
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())
         }
 
         return staticData.placeGlobalConstArray(
@@ -481,8 +481,8 @@ internal class RTTIGenerator(
         )
     }
 
-    private fun genProcessObjectInMark(classType: LLVMTypeRef) : ConstPointer {
-        val indicesOfObjectFields = getIndicesOfObjectFields(classType)
+    private fun genProcessObjectInMark(classType: ObjectBodyType): ConstPointer {
+        val indicesOfObjectFields = classType.sortedIndicesOfObjectFields
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
@@ -498,20 +498,20 @@ internal class RTTIGenerator(
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
-            methodImpls: Map<IrFunction, ConstPointer>,
-            bodyType: LLVMTypeRef,
+            methodImpls: Map<IrSimpleFunction, ConstPointer>,
+            bodyType: ObjectBodyType,
             immutable: Boolean = false
     ): ConstPointer {
         assert(irClass.isInterface)
 
-        val size = LLVMStoreSizeOfType(llvmTargetData, bodyType).toInt()
+        val size = LLVMStoreSizeOfType(llvmTargetData, bodyType.llvmBodyType).toInt()
 
-        val superClass = context.ir.symbols.any.owner
+        val superClass = context.irBuiltIns.anyClass.owner
 
         assert(superClass.implementedInterfaces.isEmpty())
         val interfaces = (listOf(irClass) + irClass.implementedInterfaces)
         val interfacesPtr = staticData.placeGlobalConstArray("",
-                pointerType(runtime.typeInfoType), interfaces.map { it.typeInfoPtr })
+                llvm.pointerType, interfaces.map { it.typeInfoPtr })
 
         assert(superClass.declarations.all { it !is IrProperty && it !is IrField })
 
@@ -519,18 +519,11 @@ internal class RTTIGenerator(
         val objOffsetsPtr = staticData.placeGlobalConstArray("", llvm.int32Type, objOffsets)
         val objOffsetsCount = objOffsets.size
 
-        val writableTypeInfoType = runtime.writableTypeInfoType
-        val writableTypeInfo = if (writableTypeInfoType == null) {
-            null
-        } else {
-            staticData.createGlobal(writableTypeInfoType, "")
-                    .also { it.setZeroInitializer() }
-                    .pointer
-        }
+        val writableTypeInfo = generateWritableTypeInfoForSyntheticInterface(irClass)
         val vtable = vtable(superClass)
         val typeInfoWithVtableType = llvm.structType(runtime.typeInfoType, vtable.llvmType)
         val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "", isExported = false)
-        val result = typeInfoWithVtableGlobal.pointer.getElementPtr(llvm, 0)
+        val result = typeInfoWithVtableGlobal.pointer.getElementPtr(llvm, typeInfoWithVtableType, 0)
         val typeHierarchyInfo = if (!context.ghaEnabled())
             ClassGlobalHierarchyInfo.DUMMY
         else
@@ -543,12 +536,13 @@ internal class RTTIGenerator(
             if (layoutBuilder == null) {
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
-                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.int8PtrType) }
-                val interfaceVTable = staticData.placeGlobalArray("", llvm.int8PtrType, vtableEntries)
+                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!! }
+                val interfaceVTable = staticData.placeGlobalArray("", llvm.pointerType, vtableEntries)
+                val interfaceVTableType = LLVMArrayType(llvm.pointerType, vtableEntries.size)!!
                 InterfaceTableRecord(
                         llvm.constInt32(layoutBuilder.classId),
                         llvm.constInt32(layoutBuilder.interfaceVTableEntries.size),
-                        interfaceVTable.pointer.getElementPtr(llvm, 0)
+                        interfaceVTable.pointer.getElementPtr(llvm, interfaceVTableType, 0)
                 )
             }
         }
@@ -556,7 +550,7 @@ internal class RTTIGenerator(
 
         val typeInfoWithVtable = llvm.struct(TypeInfo(
                 selfPtr = result,
-                extendedInfo = NullPointer(runtime.extendedTypeInfoType),
+                extendedInfo = llvm.nullPointer,
                 size = size,
                 superType = superClass.typeInfoPtr,
                 objOffsets = objOffsetsPtr, objOffsetsCount = objOffsetsCount,
@@ -600,18 +594,13 @@ internal class RTTIGenerator(
         val flags: Int
 
         when {
-            irClass.isAnonymousObject -> {
-                relativeName = generationState.getLocalClassName(irClass)
+            irClass.hasSyntheticNameToBeHiddenInReflection -> {
+                relativeName = irClass.name.asString()
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
-            irClass.isLocal -> {
-                relativeName = generationState.getLocalClassName(irClass)
+            irClass.isOriginallyLocal -> {
+                relativeName = irClass.name.asString()
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
-            }
-            isLoweredFunctionReference(irClass) -> {
-                // TODO: might return null so use fallback here, to be fixed in KT-47194
-                relativeName = generationState.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
-                flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
             else -> {
                 relativeName = generateDefaultRelativeName(irClass)

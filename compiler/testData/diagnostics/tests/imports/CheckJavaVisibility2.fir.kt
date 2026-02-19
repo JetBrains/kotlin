@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: j/JavaPackageLocal.java
 package j;
 
@@ -60,3 +61,5 @@ class C {
         JavaPackageLocal.javaMPackage()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaProperty, javaType, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-657 Semantic checks for when without condition
 package kt657
 
@@ -18,3 +19,6 @@ fun foo() =
 fun cond1() = false
 
 fun cond2() = true
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nullableType,
+primaryConstructor, rangeExpression, typeParameter, whenExpression */

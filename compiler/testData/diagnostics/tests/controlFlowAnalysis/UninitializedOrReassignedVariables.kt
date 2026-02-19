@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package uninitialized_reassigned_variables
 
 fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}
@@ -361,3 +362,9 @@ fun test1(m : M) {
     <!VAL_REASSIGNMENT!>m.x<!>++
     m.y--
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration, companionObject,
+comparisonExpression, enumDeclaration, enumEntry, equalityExpression, forLoop, functionDeclaration, getter, ifExpression,
+incrementDecrementExpression, init, inner, integerLiteral, isExpression, localFunction, localProperty,
+multiplicativeExpression, objectDeclaration, primaryConstructor, propertyDeclaration, rangeExpression, stringLiteral,
+whileLoop */

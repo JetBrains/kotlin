@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-5362 Compiler crashes on access to extension method from nested class
 class Outer {
     class Nested{
@@ -28,3 +29,6 @@ public class Manager {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, localProperty,
+nestedClass, override, primaryConstructor, propertyDeclaration, thisExpression, typeWithExtension */

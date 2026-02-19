@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // UNEXPECTED BEHAVIOUR
 // Issue: KT-37056
 class A()
@@ -45,3 +46,6 @@ class Case3 {
         operator fun invoke(parameterA: A) = "" //(2)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, objectDeclaration, operator, primaryConstructor, propertyDeclaration, safeCall, stringLiteral */

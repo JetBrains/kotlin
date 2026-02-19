@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -41,3 +42,5 @@ class C1 : A() {
 class C2 : F() {
     <!OVERRIDING_FINAL_MEMBER!>override<!> var foo: Int = 3
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, javaType, override, propertyDeclaration */

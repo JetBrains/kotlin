@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(first: String) {}
 fun foo2(first: String, second: Int) {}
 
@@ -11,3 +12,6 @@ fun test() {
     foo2(<!ARGUMENT_TYPE_MISMATCH!>4<!>, <!ARGUMENT_TYPE_MISMATCH!>"asdf"<!>)
     foo2(<!ARGUMENT_TYPE_MISMATCH!>5<!>, 6)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+stringLiteral */

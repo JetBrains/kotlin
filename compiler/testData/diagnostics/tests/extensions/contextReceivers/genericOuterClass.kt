@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 context(T) class A<T>
 
@@ -14,3 +15,5 @@ fun Collection<Int>.bar() {
     B<Int>()
     <!NO_CONTEXT_RECEIVER!>B<!><String>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, typeParameter */

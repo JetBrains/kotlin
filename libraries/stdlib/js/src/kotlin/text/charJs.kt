@@ -9,7 +9,7 @@ package kotlin.text
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use lowercaseChar() instead.", ReplaceWith("lowercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
 
@@ -23,7 +23,6 @@ public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercaseChar(): Char = lowercase()[0]
 
@@ -38,7 +37,6 @@ public actual inline fun Char.lowercaseChar(): Char = lowercase()[0]
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercase(): String = toString().asDynamic().toLowerCase().unsafeCast<String>()
 
@@ -46,7 +44,7 @@ public actual inline fun Char.lowercase(): String = toString().asDynamic().toLow
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use uppercaseChar() instead.", ReplaceWith("uppercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
 
@@ -60,7 +58,6 @@ public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercaseChar(): Char {
     val uppercase = uppercase()
     return if (uppercase.length > 1) this else uppercase[0]
@@ -77,7 +74,6 @@ public actual fun Char.uppercaseChar(): Char {
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.uppercase(): String = toString().asDynamic().toUpperCase().unsafeCast<String>()
 
@@ -247,7 +243,12 @@ public actual fun Char.isISOControl(): Boolean {
 }
 
 /**
- * Determines whether a character is whitespace according to the Unicode standard.
+ * Determines whether a character is whitespace.
+ *
+ * A character is considered whitespace if either its Unicode [category][Char.category]
+ * is one of [CharCategory.SPACE_SEPARATOR], [CharCategory.LINE_SEPARATOR], [CharCategory.PARAGRAPH_SEPARATOR],
+ * or it is a [CharCategory.CONTROL] character in range `U+0009..U+000D` or `U+001C..U+001F`.
+ *
  * Returns `true` if the character is whitespace.
  *
  * @sample samples.text.Chars.isWhitespace

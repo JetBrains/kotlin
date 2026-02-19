@@ -8,52 +8,31 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
-@DeprecatedTargetPresetApi
-class KotlinJvmWithJavaTargetPreset(
+@Suppress("DEPRECATION_ERROR")
+internal class KotlinJvmWithJavaTargetPreset(
     private val project: Project
 ) : InternalKotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
 
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createTargetInternal(name: String): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> {
         project.reportDiagnostic(KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic())
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        @Suppress("UNCHECKED_CAST", "DEPRECATION")
-        val target = (project.objects.newInstance(
-            KotlinWithJavaTarget::class.java,
-            project,
-            KotlinPlatformType.jvm,
-            name,
-            {
-                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
-                    override val options: KotlinJvmCompilerOptions = project.objects
-                        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-                        .configureExperimentalTryK2(project)
-                }
-            },
-            { compilerOptions: KotlinJvmCompilerOptions ->
-                object : KotlinJvmOptions {
-                    override val options: KotlinJvmCompilerOptions
-                        get() = compilerOptions
-                }
-            }
-        ) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>)
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
+        val target = project.objects.KotlinWithJavaTargetForJvm(project, name)
             .apply {
                 disambiguationClassifier = name
-                preset = this@KotlinJvmWithJavaTargetPreset
+                targetPreset = this@KotlinJvmWithJavaTargetPreset
             }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
@@ -61,6 +40,7 @@ class KotlinJvmWithJavaTargetPreset(
         }
 
         target.compilations.configureEach {
+            @Suppress("DEPRECATION")
             it.compilerOptions.options.moduleName.convention(
                 it.moduleNameForCompilation()
             )
@@ -71,12 +51,12 @@ class KotlinJvmWithJavaTargetPreset(
 
             compileDependencyFiles = project.files(
                 main.output.allOutputs,
-                project.configurations.maybeCreate(compileDependencyConfigurationName)
+                project.configurations.maybeCreateResolvable(compileDependencyConfigurationName)
             )
             runtimeDependencyFiles = project.files(
                 output.allOutputs,
                 main.output.allOutputs,
-                project.configurations.maybeCreate(runtimeDependencyConfigurationName)
+                project.configurations.maybeCreateResolvable(runtimeDependencyConfigurationName)
             )
         }
 

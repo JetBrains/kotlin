@@ -1,1 +1,0 @@
-public final fun runComposable(block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  () -> kotlin/Unit|): R|kotlin/Unit|

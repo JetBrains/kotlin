@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED, -CONTEXT_CLASS_OR_CONSTRUCTOR
+// LANGUAGE: +ContextReceivers
 
 interface Context {
     fun h() {}
@@ -19,3 +21,5 @@ class B : A() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, interfaceDeclaration, override, superExpression */

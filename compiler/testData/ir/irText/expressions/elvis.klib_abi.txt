@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /p // /p|{}p[0]
+    final fun <get-p>(): kotlin/Any? // /p.<get-p>|<get-p>(){}[0]
+final fun /foo(): kotlin/Any? // /foo|foo(){}[0]
+final fun /test1(kotlin/Any?, kotlin/Any): kotlin/Any // /test1|test1(kotlin.Any?;kotlin.Any){}[0]
+final fun /test2(kotlin/String?, kotlin/Any): kotlin/Any // /test2|test2(kotlin.String?;kotlin.Any){}[0]
+final fun /test3(kotlin/Any?, kotlin/Any?): kotlin/String // /test3|test3(kotlin.Any?;kotlin.Any?){}[0]
+final fun /test4(kotlin/Any): kotlin/Any // /test4|test4(kotlin.Any){}[0]
+final fun /test5(kotlin/Any): kotlin/Any // /test5|test5(kotlin.Any){}[0]

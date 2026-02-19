@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: AC.kt
 
 interface A {
@@ -16,3 +17,5 @@ public abstract class B implements A {
 fun main() {
     C().a
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, propertyDeclaration */

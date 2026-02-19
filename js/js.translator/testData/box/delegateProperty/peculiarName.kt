@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1382
 class X(private val x: String) {
     operator fun getValue(thisRef: Any?, property: Any): String = x
 }

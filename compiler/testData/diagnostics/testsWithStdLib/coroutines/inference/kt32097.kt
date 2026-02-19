@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -23,3 +24,6 @@ interface FlowCollector<in T> {
 }
 
 suspend fun ProducerScope<*>.awaitClose(block: () -> Unit = {}) {}
+
+/* GENERATED_FIR_TAGS: classReference, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, nullableType, out, starProjection, suspend, typeParameter, typeWithExtension */

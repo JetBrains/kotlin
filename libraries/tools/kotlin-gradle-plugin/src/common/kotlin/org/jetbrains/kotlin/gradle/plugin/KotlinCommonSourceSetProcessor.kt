@@ -30,7 +30,7 @@ internal class KotlinCommonSourceSetProcessor(
             }
         }
 
-        project.whenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) {
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
             /* Not supported in KPM yet */
             compilationInfo.tcs.compilation.let { compilation ->

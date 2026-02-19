@@ -1,0 +1,17 @@
+MODULES: lib1, lib2, lib3, main
+
+STEP 0:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, lib3, main
+    dirty js modules: lib1, lib2, lib3, main
+    dirty js files:   lib1/l11, lib1/l12, lib2/l21, lib3/l3, main/m, main/m.export, main
+STEP 1:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, lib3, main
+    dirty js modules: lib1, lib2, lib3, main
+    dirty js files:   lib2/l21, lib2/l22, lib3/l3, main/m
+STEP 2:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, lib3, main
+    dirty js modules: lib1, lib2, lib3, main
+    dirty js files:   lib1/l12_n, lib2/l21, lib3/l3, main/m

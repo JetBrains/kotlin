@@ -11,12 +11,18 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.cpp.CompilationDatabaseExtension
+import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMingw
+import org.jetbrains.kotlin.utils.reproduciblySortedFilePaths
 import java.io.File
+import javax.inject.Inject
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.addAll
@@ -35,11 +41,13 @@ import kotlin.collections.toTypedArray
 open class NativePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.apply<BasePlugin>()
+        project.apply<NativeDependenciesPlugin>()
+        project.apply<CompilationDatabasePlugin>()
         project.extensions.create("native", NativeToolsExtension::class.java, project)
     }
 }
 
-abstract class ToolExecutionTask : DefaultTask() {
+abstract class ToolExecutionTask @Inject constructor(private val execOperations: ExecOperations): DefaultTask() {
     @get:OutputFile
     abstract var output: File
 
@@ -55,7 +63,7 @@ abstract class ToolExecutionTask : DefaultTask() {
     @TaskAction
     fun action() {
         if (output.exists()) output.delete()
-        project.exec {
+        execOperations.exec {
             executable(cmd)
             args(*this@ToolExecutionTask.args.toTypedArray())
         }
@@ -79,12 +87,24 @@ class ToolPatternImpl(val extension: NativeToolsExtension, val output:String, va
 
     override fun env(name: String) = emptyArray<String>()
 
+    fun registerCompilationDatabaseEntry() {
+        extension.compilationDatabaseTarget.entry {
+            this.directory.set(extension.project.layout.projectDirectory)
+            this.files.from(*input)
+            this.arguments.addAll(tool)
+            this.arguments.addAll(args)
+            this.output.set(this@ToolPatternImpl.output)
+        }
+    }
+
     fun configure(task: ToolExecutionTask, configureDepencies:Boolean) {
         extension.cleanupFiles += output
         task.input = input.map {
             extension.project.file(it)
         }
-        task.dependsOn(":kotlin-native:dependencies:update")
+        val nativeDependenciesExtension = extension.project.extensions.getByType<NativeDependenciesExtension>()
+        task.dependsOn(nativeDependenciesExtension.hostPlatformDependency)
+        task.dependsOn(nativeDependenciesExtension.llvmDependency)
         if (configureDepencies)
             task.input.forEach { task.dependsOn(it.name) }
         val file = extension.project.file(output)
@@ -102,30 +122,32 @@ open class SourceSet(
     val initialSourceSet: SourceSet? = null,
     val rule: Pair<String, String>? = null
 ) {
-    var collection = sourceSets.project.objects.fileCollection() as FileCollection
+    val collection = sourceSets.project.objects.fileCollection()
+
     fun file(path: String) {
-        collection = collection.plus(sourceSets.project.files("${initialDirectory.absolutePath}/$path"))
+        collection.from(sourceSets.project.files("${initialDirectory.absolutePath}/$path"))
     }
 
     fun dir(path: String) {
-        sourceSets.project.fileTree("${initialDirectory.absolutePath}/$path").files.forEach {
-            collection = collection.plus(sourceSets.project.files(it))
-        }
+        collection.from(sourceSets.project.fileTree("${initialDirectory.absolutePath}/$path").files)
     }
 
     fun transform(suffixes: Pair<String, String>): SourceSet {
         return SourceSet(
             sourceSets,
             name,
-            sourceSets.project.file("${sourceSets.project.buildDir}/$name/${suffixes.first}_${suffixes.second}/"),
+            sourceSets.project.file(sourceSets.project.layout.buildDirectory.dir("$name/${suffixes.first}_${suffixes.second}/")),
             this,
             suffixes
-        )
+        ).apply {
+            resolvePatterns().forEach {
+                it.first.registerCompilationDatabaseEntry()
+            }
+        }
     }
 
-    fun implicitTasks(): Array<TaskProvider<*>> {
-        rule ?: return emptyArray()
-        initialSourceSet?.implicitTasks()
+    private fun resolvePatterns(): List<Pair<ToolPatternImpl, String>> {
+        rule ?: return emptyList()
         return initialSourceSet!!.collection
             .filter { !it.isDirectory() }
             .filter { it.name.endsWith(rule.first) }
@@ -136,12 +158,21 @@ open class SourceSet(
                 file(it.second)
                 sourceSets.project.file("${initialSourceSet.initialDirectory.path}/${it.first}") to sourceSets.project.file("${initialDirectory.path}/${it.second}")
             }.map {
-                sourceSets.project.tasks.register<ToolExecutionTask>(it.second.name, ToolExecutionTask::class.java) {
-                    val toolConfiguration = ToolPatternImpl(sourceSets.extension, it.second.path, it.first.path)
-                    sourceSets.extension.toolPatterns[rule]!!.invoke(toolConfiguration)
-                    toolConfiguration.configure(this, initialSourceSet.rule != null)
-                }
-            }.toTypedArray()
+                val toolConfiguration = ToolPatternImpl(sourceSets.extension, it.second.path, it.first.path)
+                sourceSets.extension.toolPatterns[rule]!!.invoke(toolConfiguration)
+                toolConfiguration to it.second.name
+            }
+    }
+
+    fun implicitTasks(): Array<TaskProvider<*>> {
+        initialSourceSet?.implicitTasks()
+        return resolvePatterns().map {
+            sourceSets.project.tasks.register<ToolExecutionTask>(it.second, ToolExecutionTask::class.java) {
+                val toolConfiguration = it.first
+                toolConfiguration.configure(this, initialSourceSet!!.rule != null)
+                dependsOn(initialSourceSet.collection)
+            }
+        }.toTypedArray()
     }
 }
 
@@ -183,6 +214,53 @@ class ToolConfigurationPatterns(
 
 
 open class NativeToolsExtension(val project: Project) {
+    private val nativeDependenciesExtension = project.extensions.getByType<NativeDependenciesExtension>()
+    internal val compilationDatabaseTarget =
+        project.extensions.getByType<CompilationDatabaseExtension>().hostTarget {}
+
+    val llvmDir by nativeDependenciesExtension::llvmPath
+    val hostPlatform by nativeDependenciesExtension::hostPlatform
+
+    // This is copied from `ClangArgs`
+    private val jdkDir: File
+        get() = File(System.getProperty("java.home")).canonicalFile.let { home ->
+            if (home.resolve("include").exists()) {
+                home
+            } else {
+                home.parentFile.also {
+                    check(it.resolve("include").exists())
+                }
+            }
+        }
+
+    private val reproducibilityRootsMap: Map<File, String>
+        get() = mapOf(
+                // This applies for both sources of the current project, and dependencies on other
+                // projects inside the repo.
+                project.isolated.rootProject.let {
+                    it.projectDirectory.asFile to it.name
+                },
+                // This is the common root for native dependencies: sysroots, llvm, ...
+                nativeDependenciesExtension.nativeDependenciesRoot to "NATIVE_DEPS",
+                // Not every user of `NativePlugin` uses JNI, but there's no harm to keep it for all.
+                jdkDir to "JDK",
+        )
+
+    /**
+     * Use these flags for `clang` invocations, so that the generated binaries do not contain
+     * absolute paths.
+     */
+    val reproducibilityCompilerFlags: Array<String>
+        get() = reproducibilityRootsMap.map {
+            "-ffile-prefix-map=${it.key}=${it.value}"
+        }.toTypedArray()
+
+    /**
+     * Whenever a `FileCollection` is passed as arguments, it's order must be stable sorted for reproducibility.
+     */
+    fun reproduciblySortedFilePaths(fileCollection: FileCollection): List<File> =
+            fileCollection.reproduciblySortedFilePaths(reproducibilityRootsMap)
+
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
     val cleanupFiles = mutableListOf<String>()
@@ -199,17 +277,15 @@ open class NativeToolsExtension(val project: Project) {
 
     fun target(name: String, vararg objSet: SourceSet, configuration: ToolPatternConfiguration) {
         project.tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME, Delete::class.java).configure {
-            doLast {
-                delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
-            }
+            delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
         }
 
         sourceSets.project.tasks.create(name, ToolExecutionTask::class.java) {
             objSet.forEach {
                 dependsOn(it.implicitTasks())
             }
-            val deps = objSet.flatMap { it.collection.files }.map { it.path }
-            val toolConfiguration = ToolPatternImpl(sourceSets.extension, "${project.buildDir.path}/$name", *deps.toTypedArray())
+            val deps = objSet.flatMap { reproduciblySortedFilePaths(it.collection) }.map { it.path }
+            val toolConfiguration = ToolPatternImpl(sourceSets.extension, "${project.layout.buildDirectory.get().asFile.path}/$name", *deps.toTypedArray())
             toolConfiguration.configuration()
             toolConfiguration.configure(this, false )
         }
@@ -226,4 +302,14 @@ fun solib(name: String) = when {
 fun lib(name:String) = when {
     hostIsMingw -> "$name.lib"
     else -> "lib$name.a"
+}
+
+fun libname(file: File): String = when {
+    hostIsMingw -> file.nameWithoutExtension
+    else -> file.nameWithoutExtension.removePrefix("lib")
+}
+
+fun obj(name: String) = when {
+    hostIsMingw -> "$name.obj"
+    else -> "$name.o"
 }

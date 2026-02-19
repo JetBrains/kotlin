@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: JVM
 // TARGET_BACKEND: JVM
 // EMIT_JVM_TYPE_ANNOTATIONS
-// !LANGUAGE: +ClassTypeParameterAnnotations
+// LANGUAGE: +ClassTypeParameterAnnotations
 // JVM_TARGET: 1.8
 // WITH_REFLECT
 // FULL_JDK

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // VAL
 class A(
         val

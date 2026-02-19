@@ -1,7 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57778
 
 // FILE: implicitNotNullInDestructuringAssignment.kt
 
@@ -11,7 +9,7 @@ operator fun J?.component1() = 1
 private operator fun J.component2() = 2
 
 fun test() {
-    val (a, b) = J.j()
+    val [a, b] = J.j()
 }
 
 // FILE: J.java

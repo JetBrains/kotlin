@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @file:OptIn(ExperimentalTypeInference::class)
 
@@ -33,3 +34,7 @@ val test4 = generate {
 
 // Util function
 fun <X> setOf(vararg x: X): Set<X> = TODO()
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, integerLiteral, intersectionType, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral,
+suspend, typeParameter, typeWithExtension, vararg */

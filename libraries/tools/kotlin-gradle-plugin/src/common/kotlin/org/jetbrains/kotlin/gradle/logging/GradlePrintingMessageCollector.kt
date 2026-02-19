@@ -32,29 +32,27 @@ internal class GradlePrintingMessageCollector(
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         val renderedMessage = messageRenderer.render(severity, message, location)
 
-        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         when (severity) {
-            CompilerMessageSeverity.ERROR,
-            CompilerMessageSeverity.EXCEPTION -> {
+            CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION -> {
                 hasErrors = true
                 logger.error(renderedMessage)
             }
-
-            CompilerMessageSeverity.WARNING,
-            CompilerMessageSeverity.STRONG_WARNING -> {
+            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> {
                 if (allWarningsAsErrors) {
                     logger.error(renderedMessage)
                 } else {
                     logger.warn(renderedMessage)
                 }
             }
+            CompilerMessageSeverity.FIXED_WARNING -> {
+                logger.warn(renderedMessage)
+            }
             CompilerMessageSeverity.INFO -> {
                 logger.info(renderedMessage)
             }
-            CompilerMessageSeverity.LOGGING,
-            CompilerMessageSeverity.OUTPUT -> {
+            CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT -> {
                 logger.debug(renderedMessage)
             }
-        }!! // !! is used to force compile-time exhaustiveness
+        }
     }
 }

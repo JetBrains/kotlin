@@ -1,10 +1,14 @@
 // FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
+
+// FILE: X.java
+interface X<T> {}
+
+// FILE: Y.java
+interface Y<T> {}
+
 // FILE: Outer.java
 import org.checkerframework.checker.nullness.qual.*;
-
-interface X<T> {}
-interface Y<T> {}
 
 class Outer {
     class A {

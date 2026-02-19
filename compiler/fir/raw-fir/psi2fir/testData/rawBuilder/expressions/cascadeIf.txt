@@ -4,17 +4,22 @@ FILE: cascadeIf.kt
             first# ->  {
                 ^foo IntegerLiteral(4)
             }
-            second# ->  {
-                lval x: <implicit> = IntegerLiteral(3)
-                ^foo x#.plus#(IntegerLiteral(2))
-            }
             else ->  {
                 when () {
-                    third# ->  {
-                        ^foo IntegerLiteral(0)
+                    second# ->  {
+                        lval x: <implicit> = IntegerLiteral(3)
+                        ^foo x#.plus#(IntegerLiteral(2))
                     }
                     else ->  {
-                        ^foo IntegerLiteral(-1)
+                        when () {
+                            third# ->  {
+                                ^foo IntegerLiteral(0)
+                            }
+                            else ->  {
+                                ^foo IntegerLiteral(-1)
+                            }
+                        }
+
                     }
                 }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class Outer {
     private class PrivateNested
     private inner class PrivateInner
@@ -32,3 +33,5 @@ fun foo() {
     Outer.PublicNested()
     Outer().PublicInner()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, superExpression */

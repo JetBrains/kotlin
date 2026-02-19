@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kt1805
 //KT-1805 Better diagnostic for access to private field of parent class
 
@@ -18,3 +19,6 @@ fun test() {
     val s1 = SomeSubclass()
     s1.<!INVISIBLE_MEMBER!>privateField<!> // 3. Unresolved reference
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+thisExpression */

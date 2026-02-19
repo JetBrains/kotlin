@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 // COMPILER_ARGUMENTS: -XXLanguage:+DefinitelyNonNullableTypes
 package test
 

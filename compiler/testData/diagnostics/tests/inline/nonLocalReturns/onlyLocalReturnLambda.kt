@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 
 fun <R> fun1(p: () -> R) {
     inlineFun {
@@ -42,3 +43,6 @@ fun <R> fun4ValueArgument(p: () -> R) {
 inline fun <R> inlineFun(crossinline p: () -> R) {
     p()
 }
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, nullableType,
+typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C(val x: String) {
     constructor(): this("")
 }
@@ -22,3 +23,6 @@ val test6a = <!RESOLUTION_TO_CLASSIFIER!>Interface<!>()
 
 val test7 = <!FUNCTION_EXPECTED!>TO<!>()
 val test7a = <!FUNCTION_EXPECTED!>AnObject<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, objectDeclaration, primaryConstructor,
+propertyDeclaration, secondaryConstructor, stringLiteral, typeAliasDeclaration */

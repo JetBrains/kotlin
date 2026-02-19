@@ -1,4 +1,0 @@
-package
-
-public val x: kotlin.Int = 1
-public fun getX(): kotlin.Int

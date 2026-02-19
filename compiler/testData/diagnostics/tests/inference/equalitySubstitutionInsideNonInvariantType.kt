@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <K> materialize(): K = TODO()
 
@@ -15,3 +16,5 @@ fun main() {
     test2<Foo>(materialize())
     test3<Foo>(materialize())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, nullableType, outProjection, typeParameter */

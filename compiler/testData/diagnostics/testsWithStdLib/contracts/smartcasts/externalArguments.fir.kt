@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.reflect.KProperty
 
@@ -34,3 +35,7 @@ fun testCallableRefernceSmartCast() {
 
     refernece()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, equalityExpression, functionDeclaration, functionalType,
+ifExpression, integerLiteral, lambdaLiteral, localFunction, localProperty, nullableType, operator, propertyDeclaration,
+propertyDelegate, smartcast, starProjection */

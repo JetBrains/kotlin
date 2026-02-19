@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.ir.util.irConstructorCall
 
 
 class BuiltInConstructorCalls(val context: JsIrBackendContext) : CallsTransformer {
-    val intrinsics = context.intrinsics
+    private val symbols = context.symbols
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression =
         if (call is IrConstructorCall) {
             // Do not transform Delegation calls
             when (call.symbol) {
-                intrinsics.stringConstructorSymbol -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "")
-                intrinsics.anyConstructorSymbol -> irConstructorCall(call, intrinsics.jsObjectConstructorSymbol)
+                symbols.stringConstructorSymbol -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "")
+                symbols.anyConstructorSymbol -> irConstructorCall(call, symbols.jsObjectConstructorSymbol)
                 else -> call
             }
         } else call

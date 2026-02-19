@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: 1.kt
 
@@ -18,3 +19,5 @@ package b
 
 object A
 object B
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, objectDeclaration, propertyDeclaration */

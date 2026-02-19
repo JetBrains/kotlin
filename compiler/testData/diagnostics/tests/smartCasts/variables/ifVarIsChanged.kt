@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun bar(s: String) {
     System.out.println("Length of $s is ${s.length}")
 }
@@ -9,3 +10,6 @@ public fun foo() {
         bar(<!TYPE_MISMATCH!>s<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, ifExpression, integerLiteral, isExpression,
+javaFunction, javaProperty, localProperty, propertyDeclaration, smartcast, stringLiteral */

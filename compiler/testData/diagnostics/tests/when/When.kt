@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -57,3 +58,7 @@ fun test() {
     else -> 1
   }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, isExpression, localProperty, nullableType, propertyDeclaration, rangeExpression, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

@@ -1,5 +1,7 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// DISABLE_JAVA_FACADE
 
 // FILE: enhancedNullabilityInDestructuringAssignment.kt
 
@@ -17,13 +19,13 @@ class Q<T1, T2>(val x: T1, val y: T2) {
 
 fun test1() {
     // See KT-36344
-    val (x, y) = J.notNullP()
+    val [x, y] = J.notNullP()
     use(x, y)
 }
 
 fun test2() {
     // See KT-36347
-    val (x, y) = J.notNullComponents()
+    val [x, y] = J.notNullComponents()
     use(x, y)
 }
 
@@ -36,13 +38,13 @@ fun test2Desugared() {
 
 fun test3() {
     // See KT-36347
-    val (x, y) = J.notNullQAndComponents()
+    val [x, y] = J.notNullQAndComponents()
     use(x, y)
 }
 
 fun test4() {
     // See KT-36347
-    val (x, y) = J.listOfNotNull().withIndex().first()
+    val [x, y] = J.listOfNotNull().withIndex().first()
     use(x, y)
 }
 
@@ -50,7 +52,7 @@ fun test4() {
 import java.util.*;
 import org.jetbrains.annotations.*;
 
-public static class J {
+public class J {
     public static @NotNull P notNullP() { return null; }
 
     public static Q<@NotNull String, @NotNull String> notNullComponents() { return null; }

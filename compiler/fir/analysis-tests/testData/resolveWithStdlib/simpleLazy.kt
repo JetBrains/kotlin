@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //val x = lazy { "Hello" }.getValue(null, throw null)
 val x by lazy { "Hello" }
 
@@ -15,3 +16,6 @@ class Some {
         z.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, propertyDelegate, stringLiteral */

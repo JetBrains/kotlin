@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM_IR
-
 // WITH_STDLIB
 
 package a

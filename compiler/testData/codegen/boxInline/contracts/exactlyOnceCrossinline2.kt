@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 // FILE: 1.kt
 package test

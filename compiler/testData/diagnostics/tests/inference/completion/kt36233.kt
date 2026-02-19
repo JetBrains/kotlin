@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -USELESS_CAST
+// DIAGNOSTICS: -UNUSED_PARAMETER -USELESS_CAST
 
 class Inv<T>
 class Out<out T>
@@ -11,3 +12,6 @@ fun main() {
     test<Int>(foo(null)) // type mismatch
     test<Number>(foo(1 as Int)) // type mismatch
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, integerLiteral, nullableType, out,
+typeParameter */

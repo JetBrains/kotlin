@@ -5,10 +5,13 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import org.junit.Test
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import kotlin.script.experimental.api.*
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
+@ResourceLock(Resources.SYSTEM_OUT)
 class ConstructorArgumentsOrderTest {
 
     @Test
@@ -26,6 +29,18 @@ class ConstructorArgumentsOrderTest {
     @Test
     fun testScriptWithImplicitReceiver() {
         val res = evalString<ScriptWithImplicitReceiver>("""println(receiverString)""") {
+            implicitReceivers(ImplicitReceiverClass("Hello Receiver!"))
+        }
+
+        assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.render()}"
+        )
+    }
+
+    @Test
+    fun testScriptWithImplicitReceiverWithShadowing() {
+        val res = evalString<ScriptWithImplicitReceiver>("""val receiverString1 = 42; receiverString1.toChar()""") {
             implicitReceivers(ImplicitReceiverClass("Hello Receiver!"))
         }
 

@@ -1,7 +1,7 @@
 FILE: throwableSubclass.kt
-    public final class Test1<T, B> : R|kotlin/Exception| {
+    public final class Test1<T, B> : R|{kotlin/Exception=} java/lang/Exception| {
         public constructor<T, B>(): R|Test1<T, B>| {
-            super<R|kotlin/Exception|>()
+            super<R|{kotlin/Exception=} java/lang/Exception|>()
         }
 
         public final inner class Test2<S, Outer(T), Outer(B)> : R|kotlin/Throwable| {
@@ -11,9 +11,9 @@ FILE: throwableSubclass.kt
 
         }
 
-        public final class Test3 : R|kotlin/NullPointerException| {
+        public final class Test3 : R|{kotlin/NullPointerException=} java/lang/NullPointerException| {
             public constructor(): R|Test1.Test3| {
-                super<R|kotlin/NullPointerException|>()
+                super<R|{kotlin/NullPointerException=} java/lang/NullPointerException|>()
             }
 
         }
@@ -31,9 +31,9 @@ FILE: throwableSubclass.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner class Test6<Outer(T), Outer(B)> : R|kotlin/Exception| {
+        public final inner class Test6<Outer(T), Outer(B)> : R|{kotlin/Exception=} java/lang/Exception| {
             public Test5<T, B>.constructor(): R|Test5.Test6<T, B>| {
-                super<R|kotlin/Exception|>()
+                super<R|{kotlin/Exception=} java/lang/Exception|>()
             }
 
         }
@@ -50,9 +50,9 @@ FILE: throwableSubclass.kt
 
     }
     public final fun <Z> topLevelFun(): R|kotlin/Unit| {
-        local final class Test8<Outer(Z)> : R|kotlin/Error| {
+        local final class Test8<Outer(Z)> : R|{kotlin/Error=} java/lang/Error| {
             public constructor(): R|<local>/Test8<Z>| {
-                super<R|kotlin/Error|>()
+                super<R|{kotlin/Error=} java/lang/Error|>()
             }
 
         }

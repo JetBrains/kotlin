@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-50219
 
@@ -19,3 +20,6 @@ class Derived : Base() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaProperty, javaType, nullableType, smartcast */

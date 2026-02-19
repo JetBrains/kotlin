@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: MyRunnable.java
 public interface MyRunnable {
     boolean foo(int x);
@@ -30,3 +31,6 @@ fun main() {
 
     JavaUsage.foo(x)
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, integerLiteral, javaFunction, javaType, lambdaLiteral,
+localProperty, propertyDeclaration, samConversion */

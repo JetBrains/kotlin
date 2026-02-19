@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/reportPerfWithJava.kt
+$TESTDATA_DIR$/ReportPerfJava.java
+-d
+$TEMP_DIR$
+-Xreport-perf=true

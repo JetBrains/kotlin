@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class A {
     companion object {
@@ -31,3 +32,6 @@ fun testB(b: B) {
     call(B()::foo)
     call(B.Companion::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, objectDeclaration, stringLiteral */

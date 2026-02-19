@@ -1,0 +1,16 @@
+KtNameReferenceExpression(133,137): 'test'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /test(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /test
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

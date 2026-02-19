@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/globalWarningSuppression.kt
+-d
+$TEMP_DIR$
+-Xrender-internal-diagnostic-names
+-Xsuppress-warning=UNCHECKED_CAST
+-Xsuppress-warning=REDUNDANT_PROJECTION

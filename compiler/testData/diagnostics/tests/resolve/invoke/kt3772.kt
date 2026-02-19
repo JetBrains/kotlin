@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-3772 Invoke and overload resolution ambiguity
 package bar
@@ -26,3 +27,6 @@ fun main() {
     val d = b.attr
     d {}      // no error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, localProperty,
+operator, propertyDeclaration, propertyWithExtensionReceiver, typeWithExtension */

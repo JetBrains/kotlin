@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_TYPEALIAS_PARAMETER
-// !LANGUAGE: +TrailingCommas
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_TYPEALIAS_PARAMETER
+// LANGUAGE: +TrailingCommas
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
 annotation class Anno
@@ -50,3 +51,7 @@ fun main() {
         fun <T1,T2,T3,> foo10() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+inline, inner, interfaceDeclaration, localFunction, nullableType, propertyDeclaration, propertyWithExtensionReceiver,
+reified, setter, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

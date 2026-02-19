@@ -1,26 +1,82 @@
 package org.jetbrains.kotlin
 
+import kotlinBuildProperties
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.LinkOption
-import java.nio.file.Path
-import java.nio.file.Paths
+import javax.inject.Inject
 
 /**
  * Compares SignatureIds of the current distribution and the given older one.
  * Can be used to validate that there are no unexpected breaking ABI changes.
  */
-open class CompareDistributionSignatures : DefaultTask() {
+@DisableCachingByDefault(because = "Task with no outputs")
+open class CompareDistributionSignatures @Inject constructor(
+        objectFactory: ObjectFactory,
+        private val execOperations: ExecOperations,
+) : DefaultTask() {
 
-    @Input
-    lateinit var oldDistribution: String
+    companion object {
+        @JvmStatic
+        fun registerForPlatform(project: Project, target: String) {
+            register(project, "${target}CheckPlatformAbiCompatibility") {
+                libraries = Libraries.Platform(target)
+                dependsOn(":kotlin-native:${target}PlatformLibs") // The task configures inputs on the insides of the distribution
+            }
+        }
 
-    private val newDistribution: String =
-            project.kotlinNativeDist.absolutePath
+        @JvmStatic
+        fun registerForStdlib(project: Project) {
+            register(project, "checkStdlibAbiCompatibility") {
+                libraries = Libraries.Standard
+                dependsOn(":kotlin-native:distRuntime") // The task configures inputs on the insides of the distribution
+            }
+        }
+
+        private fun register(project: Project, name: String, configure: CompareDistributionSignatures.() -> Unit) {
+            project.tasks.register(name, CompareDistributionSignatures::class.java) {
+                val property = project.kotlinBuildProperties.stringProperty("anotherDistro").orNull
+                oldDistributionRoot.set(project.layout.dir(project.provider {
+                    // `property` can only be checked for existence during task execution: during IDE import all tasks are
+                    // created eagerly, so checking it during configuration stage will cause errors.
+                    project.file(property ?: error("'anotherDistro' property must be set in order to execute '$name' task"))
+                }))
+                newDistributionRoot.set(project.nativeDistribution.map { it.root })
+                configure(this)
+            }
+        }
+    }
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    protected val oldDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    @Internal
+    private val oldDistribution: Provider<NativeDistribution> = oldDistributionRoot.asNativeDistribution()
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    protected val newDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    @Internal
+    private val newDistribution: Provider<NativeDistribution> = newDistributionRoot.asNativeDistribution()
 
     enum class OnMismatchMode {
         FAIL,
@@ -28,7 +84,7 @@ open class CompareDistributionSignatures : DefaultTask() {
     }
 
     @Input
-    var onMismatchMode: OnMismatchMode = OnMismatchMode.NOTIFY
+    var onMismatchMode: OnMismatchMode = OnMismatchMode.FAIL
 
     sealed class Libraries {
         object Standard : Libraries()
@@ -43,13 +99,13 @@ open class CompareDistributionSignatures : DefaultTask() {
         Libraries.Standard -> KlibDiff(
                 emptyList(),
                 emptyList(),
-                listOf(RemainingLibrary(newDistribution.stdlib(), oldDistribution.stdlib()))
+                listOf(RemainingLibrary(newDistribution.get().stdlib.asFile, oldDistribution.get().stdlib.asFile))
         )
 
         is Libraries.Platform -> {
-            val oldPlatformLibs = oldDistribution.platformLibs(libraries.target)
+            val oldPlatformLibs = oldDistribution.get().platformLibs(libraries.target).asFile
             val oldPlatformLibsNames = oldPlatformLibs.list().toSet()
-            val newPlatformLibs = newDistribution.platformLibs(libraries.target)
+            val newPlatformLibs = newDistribution.get().platformLibs(libraries.target).asFile
             val newPlatformLibsNames = newPlatformLibs.list().toSet()
             KlibDiff(
                     (newPlatformLibsNames - oldPlatformLibsNames).map(newPlatformLibs::resolve),
@@ -63,10 +119,16 @@ open class CompareDistributionSignatures : DefaultTask() {
 
     @TaskAction
     fun run() {
-        check(looksLikeKotlinNativeDistribution(Paths.get(oldDistribution))) {
+        check(looksLikeKotlinNativeDistribution(oldDistribution.get(), libraries)) {
             """
-            `$oldDistribution` doesn't look like Kotlin/Native distribution. 
+            `${oldDistribution.get().root.asFile}` doesn't look like Kotlin/Native distribution. 
             Make sure to provide an absolute path to it.
+            """.trimIndent()
+        }
+        check(looksLikeKotlinNativeDistribution(newDistribution.get(), libraries)) {
+            """
+                `${newDistribution.get().root.asFile}` doesn't look like Kotlin/Native distribution.
+                Check that $name has all required task dependencies.
             """.trimIndent()
         }
         val platformLibsDiff = computeDiff()
@@ -128,44 +190,26 @@ open class CompareDistributionSignatures : DefaultTask() {
             val remainingLibs: Collection<RemainingLibrary>
     )
 
-    private fun String.stdlib(): File =
-            File("$this/klib/common/stdlib").also {
-                check(it.exists()) {
-                    """
-                    `${it.absolutePath}` doesn't exists.
-                    If $oldDistribution has a different directory layout then it is time to update this comparator.
-                    """.trimIndent()
-                }
-            }
-
-    private fun String.platformLibs(target: String): File =
-            File("$this/klib/platform/$target").also {
-                check(it.exists()) {
-                    """
-                    `${it.absolutePath}` doesn't exists.
-                    Make sure that given distribution actually supports $target.
-                    """.trimIndent()
-                }
-            }
-
-
     private fun getKlibSignatures(klib: File): List<String> {
-        val tool = if (HostManager.hostIsMingw) "klib.bat" else "klib"
-        val klibTool = File("$newDistribution/bin/$tool").absolutePath
-        val args = listOf("signatures", klib.absolutePath)
-        val output = runProcess(localExecutor(project), klibTool, args)
-        if (output.exitCode != 0) {
-            logger.error(output.stdErr)
-            error("Execution failed with exit code: ${output.exitCode}")
+        val args = listOf("dump-metadata-signatures", klib.absolutePath, "-signature-version", "1")
+        ByteArrayOutputStream().use { stdout ->
+            execOperations.exec {
+                commandLine(newDistribution.get().klib.asFile, *args.toTypedArray())
+                this.standardOutput = stdout
+            }.assertNormalExitValue()
+            return stdout.toString().lines().filter { it.isNotBlank() }
         }
-        return output.stdOut.lines().filter { it.isNotBlank() }
     }
 
-    private fun looksLikeKotlinNativeDistribution(directory: Path): Boolean {
-        val distributionComponents = directory.run {
-            val konanDir = resolve("konan")
-            setOf(resolve("bin"), resolve("klib"), konanDir, konanDir.resolve("konan.properties"))
+    private fun looksLikeKotlinNativeDistribution(distribution: NativeDistribution, libraries: Libraries): Boolean {
+        val distributionComponents = buildSet {
+            add(distribution.bin.asFile)
+            add(distribution.konanProperties.asFile)
+            when (libraries) {
+                Libraries.Standard -> add(distribution.stdlib.asFile)
+                is Libraries.Platform -> add(distribution.platformLibs(libraries.target).asFile)
+            }
         }
-        return distributionComponents.all { Files.exists(it, LinkOption.NOFOLLOW_LINKS) }
+        return distributionComponents.all { Files.exists(it.toPath(), LinkOption.NOFOLLOW_LINKS) }
     }
 }

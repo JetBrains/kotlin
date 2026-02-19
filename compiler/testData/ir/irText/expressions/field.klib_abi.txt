@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final var /testAugmented // /testAugmented|{}testAugmented[0]
+    final fun <get-testAugmented>(): kotlin/Int // /testAugmented.<get-testAugmented>|<get-testAugmented>(){}[0]
+    final fun <set-testAugmented>(kotlin/Int) // /testAugmented.<set-testAugmented>|<set-testAugmented>(kotlin.Int){}[0]
+final var /testSimple // /testSimple|{}testSimple[0]
+    final fun <get-testSimple>(): kotlin/Int // /testSimple.<get-testSimple>|<get-testSimple>(){}[0]
+    final fun <set-testSimple>(kotlin/Int) // /testSimple.<set-testSimple>|<set-testSimple>(kotlin.Int){}[0]

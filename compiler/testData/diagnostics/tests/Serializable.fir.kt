@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun use(s: java.io.Serializable) {
 
 }
@@ -53,3 +54,6 @@ fun testEnums(a: Enum<*>) {
 fun testLists(a: List<Int>) {
     useList(a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral, starProjection,
+stringLiteral */

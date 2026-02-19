@@ -1,0 +1,13 @@
+KtNameReferenceExpression(31,36): 'Array'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

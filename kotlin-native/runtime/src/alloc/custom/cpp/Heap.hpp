@@ -11,14 +11,14 @@
 #include <cstring>
 
 #include "AtomicStack.hpp"
-#include "CustomAllocConstants.hpp"
-#include "ExtraObjectPage.hpp"
+#include "ExtraObjectData.hpp"
 #include "GCStatistics.hpp"
 #include "Memory.h"
 #include "SingleObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "PageStore.hpp"
 #include "FixedBlockPage.hpp"
+#include "GCApi.hpp"
 
 namespace kotlin::alloc {
 
@@ -34,26 +34,67 @@ public:
 
     FixedBlockPage* GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     NextFitPage* GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
-    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
-    ExtraObjectPage* GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
+    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount) noexcept;
+    FixedBlockPage* GetFixedBlockExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
+    SingleObjectPage* GetSingleExtraObjectPage() noexcept;
 
     void AddToFinalizerQueue(FinalizerQueue queue) noexcept;
     FinalizerQueue ExtractFinalizerQueue() noexcept;
 
     // Test method
-    std_support::vector<ObjHeader*> GetAllocatedObjects() noexcept;
+    std::vector<ObjHeader*> GetAllocatedObjects() noexcept;
     void ClearForTests() noexcept;
 
+    auto& allocatedSizeTracker() noexcept { return allocatedSizeTracker_; }
+
+    template <typename T>
+    void TraverseAllocatedObjects(T process) noexcept(noexcept(process(std::declval<ObjHeader*>()))) {
+        for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
+            fixedBlockPages_[blockSize].TraversePages([process](auto *page) {
+                page->TraverseAllocatedBlocks([process](auto *block) {
+                    process(reinterpret_cast<CustomHeapObject*>(block)->object());
+                });
+            });
+        }
+        nextFitPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedBlocks([process](auto *block) {
+                process(reinterpret_cast<CustomHeapObject*>(block)->object());
+            });
+        });
+        singleObjectPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedBlocks([process](auto *block) {
+                process(reinterpret_cast<CustomHeapObject*>(block)->object());
+            });
+        });
+    }
+
+    template <typename T>
+    void TraverseAllocatedExtraObjects(T process) noexcept(noexcept(process(std::declval<kotlin::mm::ExtraObjectData*>()))) {
+        fixedBlockExtraObjectPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedBlocks([process](uint8_t* block) {
+                process(reinterpret_cast<ExtraObjectCell*>(block)->Data());
+            });
+        });
+        singleExtraObjectPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedBlocks([process](uint8_t* block) {
+                process(reinterpret_cast<ExtraObjectCell*>(block)->Data());
+            });
+        });
+    }
+
 private:
-    PageStore<FixedBlockPage> fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
-    PageStore<NextFitPage> nextFitPages_;
-    PageStore<SingleObjectPage> singleObjectPages_;
-    PageStore<ExtraObjectPage> extraObjectPages_;
+    PageStore<FixedBlockPage, ObjectSweepTraits> fixedBlockPages_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
+    PageStore<NextFitPage, ObjectSweepTraits> nextFitPages_;
+    PageStore<SingleObjectPage, ObjectSweepTraits> singleObjectPages_;
+    PageStore<FixedBlockPage, ExtraDataSweepTraits> fixedBlockExtraObjectPages_;
+    PageStore<SingleObjectPage, ExtraDataSweepTraits> singleExtraObjectPages_;
 
     FinalizerQueue pendingFinalizerQueue_;
     std::mutex pendingFinalizerQueueMutex_;
 
     std::atomic<std::size_t> concurrentSweepersCount_ = 0;
+
+    AllocatedSizeTracker::Heap allocatedSizeTracker_{};
 };
 
 } // namespace kotlin::alloc

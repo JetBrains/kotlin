@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // See also KT-10896: Wrong inference of if / else result type
 
 interface Option<T>
@@ -52,3 +53,7 @@ fun bindNoGeneric(r: SimpleOption): SimpleOption {
     }
     else r
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, interfaceDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, typeParameter, typeWithExtension,
+whenExpression, whenWithSubject */

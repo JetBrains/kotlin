@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,70 +9,51 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
-import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirStatusResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.STATUS) {
-    override val transformer = run {
-        val statusComputationSession = StatusComputationSession()
-        FirStatusResolveTransformer(
-            session,
-            scopeSession,
-            statusComputationSession
-        )
+    override val transformer: FirStatusResolveTransformer = run {
+        val statusComputationSession = StatusComputationSession(session, scopeSession)
+        FirStatusResolveTransformer(statusComputationSession)
     }
 }
 
 fun <F : FirClassLikeDeclaration> F.runStatusResolveForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
-    scopesForLocalClass: List<FirScope>,
-    localClassesNavigationInfo: LocalClassesNavigationInfo
+    localClassesNavigationInfo: LocalClassesNavigationInfo,
 ): F {
-    val statusComputationSession = StatusComputationSession()
-    val transformer = FirStatusResolveTransformer(
+    @OptIn(FirImplementationDetail::class)
+    val statusComputationSession = session.jumpingPhaseComputationSessionForLocalClassesProvider.statusPhaseSession(
         session,
         scopeSession,
-        statusComputationSession,
         localClassesNavigationInfo.parentForClass,
-        FirCompositeScope(scopesForLocalClass)
     )
 
+    val transformer = FirStatusResolveTransformer(statusComputationSession)
     return this.transform(transformer, null)
 }
 
 open class FirStatusResolveTransformer(
-    session: FirSession,
-    scopeSession: ScopeSession,
     statusComputationSession: StatusComputationSession,
-    designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?> = mapOf(),
-    scopeForLocalClass: FirScope? = null,
-) : AbstractFirStatusResolveTransformer(
-    session,
-    scopeSession,
-    statusComputationSession,
-    designationMapForLocalClasses,
-    scopeForLocalClass
-) {
+) : AbstractFirStatusResolveTransformer(statusComputationSession) {
     override fun FirDeclaration.needResolveMembers(): Boolean {
         if (this is FirRegularClass) {
             return statusComputationSession[this] != StatusComputationSession.StatusComputationStatus.Computed
@@ -89,7 +70,7 @@ open class FirStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
         val computationStatus = statusComputationSession.startComputing(firClass)
-        forceResolveStatusesOfSupertypes(firClass)
+        statusComputationSession.forceResolveStatusesOfSupertypes(firClass)
         /*
          * Status of class may be already calculated if that class was in supertypes of one of the previous classes
          */
@@ -105,19 +86,9 @@ open class FirStatusResolveTransformer(
 }
 
 open class FirDesignatedStatusResolveTransformer(
-    session: FirSession,
-    scopeSession: ScopeSession,
     private val designation: DesignationState,
     statusComputationSession: StatusComputationSession,
-    designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
-    scopeForLocalClass: FirScope?,
-) : AbstractFirStatusResolveTransformer(
-    session,
-    scopeSession,
-    statusComputationSession,
-    designationMapForLocalClasses,
-    scopeForLocalClass
-) {
+) : AbstractFirStatusResolveTransformer(statusComputationSession) {
     override fun FirDeclaration.needResolveMembers(): Boolean {
         return designation.classLocated
     }
@@ -139,7 +110,7 @@ open class FirDesignatedStatusResolveTransformer(
         if (classLocated) {
             assert(firClass == designation.targetClass)
             val computationStatus = statusComputationSession.startComputing(firClass)
-            forceResolveStatusesOfSupertypes(firClass)
+            statusComputationSession.forceResolveStatusesOfSupertypes(firClass)
             if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
                 firClass.transformStatus(this, statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
             }
@@ -155,8 +126,12 @@ open class FirDesignatedStatusResolveTransformer(
     }
 }
 
-class StatusComputationSession {
-    private val statusMap = mutableMapOf<FirClass, StatusComputationStatus>()
+open class StatusComputationSession(
+    val useSiteSession: FirSession,
+    val useSiteScopeSession: ScopeSession,
+    val designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?> = emptyMap(),
+) {
+    private val statusMap = hashMapOf<FirClass, StatusComputationStatus>()
         .withDefault { StatusComputationStatus.NotComputed }
 
     operator fun get(klass: FirClass): StatusComputationStatus = statusMap.getValue(klass)
@@ -182,20 +157,80 @@ class StatusComputationSession {
         ComputedOnlyClassStatus(true),
         Computed(false)
     }
+
+    open fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
+        for (superTypeRef in regularClass.superTypeRefs + additionalSuperTypes(regularClass)) {
+            for (classifierSymbol in superTypeToSymbols(superTypeRef)) {
+                forceResolveStatusOfCorrespondingClass(classifierSymbol)
+            }
+        }
+    }
+
+    protected open fun additionalSuperTypes(regularClass: FirClass): List<FirTypeRef> = emptyList()
+
+    /**
+     * @return symbols which should be resolved to [FirResolvePhase.STATUS] phase
+     */
+    protected open fun superTypeToSymbols(typeRef: FirTypeRef): Collection<FirClassifierSymbol<*>> {
+        return listOfNotNull(typeRef.coneType.toSymbol(useSiteSession))
+    }
+
+    private fun forceResolveStatusOfCorrespondingClass(superClassSymbol: FirClassifierSymbol<*>) {
+        when (superClassSymbol) {
+            is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
+            is FirTypeAliasSymbol -> {
+                for (classifierSymbol in superTypeToSymbols(superClassSymbol.fir.expandedTypeRef)) {
+                    forceResolveStatusOfCorrespondingClass(classifierSymbol)
+                }
+            }
+            is FirTypeParameterSymbol, is FirAnonymousObjectSymbol -> {}
+        }
+    }
+
+    private fun forceResolveStatusesOfClass(regularClass: FirRegularClass) {
+        if (regularClass.origin != FirDeclarationOrigin.Source) {
+            /*
+             * If regular class has no corresponding file then it is platform or binary class,
+             *   so we need to resolve supertypes of this class because they could
+             *   come from kotlin sources (e.g. for java classes or cases of classpath substitution)
+             */
+            val statusComputationStatus = this[regularClass]
+            if (!statusComputationStatus.requiresComputation) return
+
+            this.startComputing(regularClass)
+            forceResolveStatusesOfSupertypes(regularClass)
+            this.endComputing(regularClass)
+
+            return
+        }
+
+        val statusComputationStatus = this[regularClass]
+        if (!statusComputationStatus.requiresComputation) return
+        if (!resolveClassForSuperType(regularClass)) return
+        this.endComputing(regularClass)
+    }
+
+    protected open fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {
+        val designation = DesignationState.create(regularClass.symbol, designationMapForLocalClasses, includeFile = false) ?: return false
+
+        val transformer = FirDesignatedStatusResolveTransformer(
+            designation,
+            this
+        )
+
+        designation.firstDeclaration.transformSingle(transformer, null)
+        return true
+    }
 }
 
 abstract class AbstractFirStatusResolveTransformer(
-    final override val session: FirSession,
-    val scopeSession: ScopeSession,
-    val statusComputationSession: StatusComputationSession,
-    private val designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
-    private val scopeForLocalClass: FirScope?
+    val statusComputationSession: StatusComputationSession
 ) : FirAbstractTreeTransformer<FirResolvedDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
-    private val isTransformerForLocalDeclarations: Boolean get() = scopeForLocalClass != null
+    override val session: FirSession get() = statusComputationSession.useSiteSession
 
     @PrivateForInline
-    val classes = mutableListOf<FirClass>()
-    val statusResolver = FirStatusResolver(session, scopeSession)
+    val classes: MutableList<FirClass> = mutableListOf()
+    val statusResolver: FirStatusResolver = FirStatusResolver(session, statusComputationSession.useSiteScopeSession)
 
     @OptIn(PrivateForInline::class)
     val containingClass: FirClass? get() = classes.lastOrNull()
@@ -247,11 +282,16 @@ abstract class AbstractFirStatusResolveTransformer(
         }
     }
 
+    override fun transformDanglingModifierList(
+        danglingModifierList: FirDanglingModifierList,
+        data: FirResolvedDeclarationStatus?,
+    ): FirDanglingModifierList = danglingModifierList
+
     override fun transformTypeAlias(
         typeAlias: FirTypeAlias,
         data: FirResolvedDeclarationStatus?
     ): FirStatement = whileAnalysing(session, typeAlias) {
-        typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
+        typeAlias.typeParameters.forEach { it.transformSingle(this, data) }
         typeAlias.transformStatus(this, statusResolver.resolveStatus(typeAlias, containingClass, isLocal = false))
         return transformDeclaration(typeAlias, data) as FirTypeAlias
     }
@@ -317,7 +357,7 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     fun transformValueClassRepresentation(firClass: FirClass) {
-        if (firClass is FirRegularClass && firClass.isInline) {
+        if (firClass is FirRegularClass && firClass.isInlineOrValue) {
             firClass.valueClassRepresentation = computeValueClassRepresentation(firClass, session)
         }
     }
@@ -326,69 +366,12 @@ abstract class AbstractFirStatusResolveTransformer(
         firClass.transformStatus(this, statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
     }
 
-    fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
-        for (superTypeRef in regularClass.superTypeRefs) {
-            forceResolveStatusOfCorrespondingClass(superTypeRef)
-        }
-    }
-
-    private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
-        val superClassSymbol = typeRef.coneType.toSymbol(session)
-        if (isTransformerForLocalDeclarations) {
-            if (superClassSymbol is FirClassSymbol) {
-                superClassSymbol.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
-            } else {
-                superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
-            }
-        } else {
-            superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS.previous)
-        }
-
-        when (superClassSymbol) {
-            is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
-            is FirTypeAliasSymbol -> forceResolveStatusOfCorrespondingClass(superClassSymbol.fir.expandedTypeRef)
-            is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> {}
-        }
-    }
-
-    private fun forceResolveStatusesOfClass(regularClass: FirRegularClass) {
-        if (regularClass.origin is FirDeclarationOrigin.Java || regularClass.origin == FirDeclarationOrigin.Precompiled) {
-            /*
-             * If regular class has no corresponding file then it is platform class,
-             *   so we need to resolve supertypes of this class because they could
-             *   come from kotlin sources
-             */
-            val statusComputationStatus = statusComputationSession[regularClass]
-            if (!statusComputationStatus.requiresComputation) return
-
-            statusComputationSession.startComputing(regularClass)
-            forceResolveStatusesOfSupertypes(regularClass)
-            statusComputationSession.endComputing(regularClass)
-
-            return
-        }
-
-        if (regularClass.origin != FirDeclarationOrigin.Source) return
-        val statusComputationStatus = statusComputationSession[regularClass]
-        if (!statusComputationStatus.requiresComputation) return
-        if (!resolveClassForSuperType(regularClass)) return
-        statusComputationSession.endComputing(regularClass)
-    }
-
-    protected open fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {
-        val designation = DesignationState.create(regularClass.symbol, designationMapForLocalClasses, includeFile = false) ?: return false
-
-        val transformer = FirDesignatedStatusResolveTransformer(
-            session,
-            scopeSession,
-            designation,
-            statusComputationSession,
-            designationMapForLocalClasses,
-            scopeForLocalClass
-        )
-
-        designation.firstDeclaration.transformSingle(transformer, null)
-        return true
+    override fun transformReplSnippet(
+        replSnippet: FirReplSnippet,
+        data: FirResolvedDeclarationStatus?,
+    ): FirReplSnippet = whileAnalysing(session, replSnippet) {
+        transformRegularClass(replSnippet.snippetClass, data)
+        return replSnippet
     }
 
     private fun transformPropertyAccessor(
@@ -418,32 +401,34 @@ abstract class AbstractFirStatusResolveTransformer(
         return transformDeclaration(constructor, data) as FirStatement
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: FirResolvedDeclarationStatus?) =
-        transformConstructor(errorPrimaryConstructor, data)
-
-    override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+    override fun transformErrorPrimaryConstructor(
+        errorPrimaryConstructor: FirErrorPrimaryConstructor,
         data: FirResolvedDeclarationStatus?,
-    ): FirStatement = whileAnalysing(session, simpleFunction) {
-        val overriddenFunctions = statusResolver.getOverriddenFunctions(simpleFunction, containingClass)
-        transformSimpleFunction(simpleFunction, overriddenFunctions, data)
-        return simpleFunction
+    ): FirStatement = transformConstructor(errorPrimaryConstructor, data)
+
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
+        data: FirResolvedDeclarationStatus?,
+    ): FirStatement = whileAnalysing(session, namedFunction) {
+        val overriddenFunctions = statusResolver.getOverriddenFunctions(namedFunction, containingClass)
+        transformNamedFunction(namedFunction, overriddenFunctions, data)
+        return namedFunction
     }
 
-    fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
-        overriddenFunctions: List<FirSimpleFunction>,
+    fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
+        overriddenFunctions: List<FirNamedFunction>,
         data: FirResolvedDeclarationStatus? = null,
     ) {
         val resolvedStatus = statusResolver.resolveStatus(
-            simpleFunction,
+            namedFunction,
             containingClass,
             isLocal = false,
             overriddenFunctions.map { it.status as FirResolvedDeclarationStatus },
         )
 
-        simpleFunction.transformStatus(this, resolvedStatus)
-        transformDeclaration(simpleFunction, data) as FirStatement
+        namedFunction.transformStatus(this, resolvedStatus)
+        transformDeclaration(namedFunction, data) as FirStatement
     }
 
     override fun transformProperty(

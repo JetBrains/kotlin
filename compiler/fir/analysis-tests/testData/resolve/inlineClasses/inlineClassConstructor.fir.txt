@@ -1,5 +1,5 @@
 FILE: inlineClassConstructor.kt
-    public final inline class WithoutConstructor : R|kotlin/Any| {
+    public final value class WithoutConstructor : R|kotlin/Any| {
         public constructor(): R|WithoutConstructor| {
             super<R|kotlin/Any|>()
         }

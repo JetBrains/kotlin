@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.kt
 package foo.bar
 
@@ -15,3 +16,5 @@ fun f() {
         fun g() : foo.bar.X? = null
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, nullableType */

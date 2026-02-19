@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate Kotlin Lexers" type="GradleRunConfiguration" factoryName="Gradle" folderName="Generators">
+    <ExternalSystemSettings>
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="taskNames">
+        <list>
+          <option value=":compiler:multiplatform-parsing:generateKDocLexer" />
+          <option value=":compiler:multiplatform-parsing:generateKotlinLexer" />
+          <option value=":compiler:psi:parser:lexer" />
+          <option value="--no-configuration-cache" />
+        </list>
+      </option>
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>false</RunAsTest>
+    <method v="2" />
+  </configuration>
+</component>

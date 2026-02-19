@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 fun test_1(x: Int) {
     val y = when {
         x == 1 -> 10
@@ -16,3 +17,7 @@ fun test_2(x: Any?) {
         <!USELESS_IS_CHECK!>x is A<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, intersectionType, isExpression, localProperty, multiplicativeExpression, nullableType,
+propertyDeclaration, smartcast, whenExpression */

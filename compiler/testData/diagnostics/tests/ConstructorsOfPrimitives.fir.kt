@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
     <!INVISIBLE_REFERENCE!>Double<!>()
     <!INVISIBLE_REFERENCE!>Float<!>()
@@ -8,3 +9,5 @@ fun test() {
     <!INVISIBLE_REFERENCE!>Char<!>()
     <!INVISIBLE_REFERENCE!>Boolean<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

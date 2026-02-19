@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeParameter]
  */
 abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
@@ -35,9 +33,9 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
 
     abstract var superTypes: List<IrType>
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D):
-            IrTypeParameter = accept(transformer, data) as IrTypeParameter
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrTypeParameter =
+        accept(transformer, data) as IrTypeParameter
 }

@@ -1,4 +1,5 @@
 // WITH_SIGNATURES
+
 // FILE: rawTypeInSignature.kt
 
 class GenericInv<T : Number>

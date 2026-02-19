@@ -1,0 +1,2 @@
+expression: result
+expected type: null

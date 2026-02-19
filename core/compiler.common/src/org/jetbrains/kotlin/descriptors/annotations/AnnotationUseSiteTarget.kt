@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors.annotations
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 enum class AnnotationUseSiteTarget(renderName: String? = null) {
+    ALL,
     FIELD,
     FILE,
     PROPERTY,

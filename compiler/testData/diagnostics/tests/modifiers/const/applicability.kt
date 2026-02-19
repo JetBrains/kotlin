@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -CAST_NEVER_SUCCEEDS -DIVISION_BY_ZERO
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -CAST_NEVER_SUCCEEDS -DIVISION_BY_ZERO
 
 import kotlin.reflect.KProperty
 
@@ -100,9 +101,18 @@ const val constInitializer12 = (-1.0) % 0
 const val constInitializer13 = 1.0.rem(0)
 const val constInitializer15 = 1.0.div(0)
 
+typealias IntAlias = Int
+const val constInitializer16: IntAlias = 1
+const val constInitializer17 = constInitializer16 + 0
+
 // ------------------
 class Delegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): Int = 1
 
     operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: Int) = Unit
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, companionObject, const,
+enumDeclaration, enumEntry, functionDeclaration, getter, init, inner, integerLiteral, localProperty,
+multiplicativeExpression, nestedClass, nullableType, objectDeclaration, operator, override, primaryConstructor,
+propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeAliasDeclaration, unaryExpression */

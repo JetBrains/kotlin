@@ -48,7 +48,7 @@ private fun Project.ideModuleVersion(forIde: Boolean) = when (IdeVersionConfigur
 }
 
 fun Project.intellijSdkVersionForIde(): String? {
-    val majorVersion = kotlinBuildProperties.getOrNull("attachedIntellijVersion") as? String ?: return null
+    val majorVersion = kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull
     return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
 }
 
@@ -126,11 +126,9 @@ object IntellijRootUtils {
     }
 }
 
-fun Project.ideaHomePathForTests() = rootProject.buildDir.resolve("ideaHomeForTests")
-
-fun Project.ideaBuildNumberFileForTests() = File(ideaHomePathForTests(), "build.txt")
+fun Project.ideaBuildNumberFileForTests() = objects.directoryProperty().value(ideaHomePathForTests()).file("build.txt")
 
 fun Project.writeIdeaBuildNumberForTests() {
-    ideaHomePathForTests().mkdirs()
-    ideaBuildNumberFileForTests().writeText("IC-${rootProject.extra["versions.intellijSdk"]}")
+    ideaHomePathForTests().get().asFile.mkdirs()
+    ideaBuildNumberFileForTests().get().asFile.writeText("IC-${rootProject.extra["versions.intellijSdk"]}")
 }

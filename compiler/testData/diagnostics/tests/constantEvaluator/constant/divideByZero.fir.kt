@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 // val prop1: null
@@ -16,7 +17,7 @@ val prop4 = 1 / 0.1
 val prop5 = 1 / 0.toLong()
 
 // val prop6: Infinity.toDouble()
-val prop6 = 1.0 / 0.toInt()
+val prop6 = 1.0 / 0L.toInt()
 
 // val prop7: Infinity.toDouble()
 val prop7 = 1.0 / 0.toLong()
@@ -77,3 +78,6 @@ val prop26 = 1.0.rem(0)
 
 // val prop27: Infinity.toDouble()
 val prop27 = <!DIVISION_BY_ZERO!>1.0.div(0)<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, multiplicativeExpression, propertyDeclaration,
+unaryExpression */

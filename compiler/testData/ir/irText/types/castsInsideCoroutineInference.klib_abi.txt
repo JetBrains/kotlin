@@ -1,0 +1,38 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class <#A: kotlin/Any?> /ChannelCoroutine { // /ChannelCoroutine|null[0]
+    constructor <init>() // /ChannelCoroutine.<init>|<init>(){}[0]
+    final suspend fun sendFair(#A) // /ChannelCoroutine.sendFair|sendFair(1:0){}[0]
+}
+abstract interface /CoroutineScope // /CoroutineScope|null[0]
+abstract interface <#A: out kotlin/Any?> /Flow { // /Flow|null[0]
+    abstract suspend fun collect(/FlowCollector<#A>) // /Flow.collect|collect(FlowCollector<1:0>){}[0]
+}
+abstract interface <#A: in kotlin/Any?> /FlowCollector { // /FlowCollector|null[0]
+    abstract suspend fun emit(#A) // /FlowCollector.emit|emit(1:0){}[0]
+}
+abstract interface <#A: in kotlin/Any?> /ProducerScope : /CoroutineScope, /SendChannel<#A> { // /ProducerScope|null[0]
+    abstract val channel // /ProducerScope.channel|{}channel[0]
+        abstract fun <get-channel>(): /SendChannel<#A> // /ProducerScope.channel.<get-channel>|<get-channel>(){}[0]
+}
+abstract interface <#A: out kotlin/Any?> /ReceiveChannel // /ReceiveChannel|null[0]
+final class <#A: kotlin/Any?> /SafeCollector : /FlowCollector<#A> { // /SafeCollector|null[0]
+    constructor <init>(/FlowCollector<#A>) // /SafeCollector.<init>|<init>(FlowCollector<1:0>){}[0]
+    final suspend fun emit(#A) // /SafeCollector.emit|emit(1:0){}[0]
+}
+abstract interface <#A: in kotlin/Any?> /SendChannel { // /SendChannel|null[0]
+    abstract suspend fun send(#A) // /SendChannel.send|send(1:0){}[0]
+}
+final suspend inline fun <#A: kotlin/Any?> (/Flow<#A>)./collect(crossinline kotlin.coroutines/SuspendFunction1<#A, kotlin/Unit>) // /collect|collect@Flow<0:0>(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /flow(kotlin.coroutines/SuspendFunction1</FlowCollector<#A>, kotlin/Unit>): /Flow<#A> // /flow|flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> /flowScope(kotlin.coroutines/SuspendFunction1</CoroutineScope, #A>): #A // /flowScope|flowScope(kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> (/FlowCollector<#A>)./invokeSafely(kotlin.coroutines/SuspendFunction2</FlowCollector<#A>, kotlin/Throwable?, kotlin/Unit>) // /invokeSafely|invokeSafely@FlowCollector<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> (/Flow<#A>)./onCompletion(kotlin.coroutines/SuspendFunction1<kotlin/Throwable?, kotlin/Unit>): /Flow<#A> // /onCompletion|onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> (/Flow<#A>)./onCompletion(kotlin.coroutines/SuspendFunction2</FlowCollector<#A>, kotlin/Throwable?, kotlin/Unit>): /Flow<#A> // /onCompletion|onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> (/CoroutineScope)./produce(kotlin.coroutines/SuspendFunction1</ProducerScope<#A>, kotlin/Unit>): /ReceiveChannel<#A> // /produce|produce@CoroutineScope(kotlin.coroutines.SuspendFunction1<ProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /scopedFlow(kotlin.coroutines/SuspendFunction2</CoroutineScope, /FlowCollector<#A>, kotlin/Unit>): /Flow<#A> // /scopedFlow|scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> /unsafeFlow(crossinline kotlin.coroutines/SuspendFunction1</FlowCollector<#A>, kotlin/Unit>): /Flow<#A> // /unsafeFlow|unsafeFlow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]

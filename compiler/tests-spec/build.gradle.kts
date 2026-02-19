@@ -1,52 +1,72 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("project-tests-convention")
+    id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(projectTests(":compiler"))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 
-    testImplementation(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
 
-    testApi(commonDependency("com.google.code.gson:gson"))
-    testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testFixturesImplementation(commonDependency("com.google.code.gson:gson"))
+    testImplementation(commonDependency("com.google.code.gson:gson"))
+    testFixturesImplementation(intellijJDom())
+    testImplementation(intellijJDom())
 
-    api("org.jsoup:jsoup:1.14.2")
+    api(libs.jsoup)
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-
-    testApiJUnit5(vintageEngine = true)
+    testRuntimeOnly(toolsJar())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.junit.jupiter.params)
+    runtimeOnly(libs.junit.vintage.engine)
+    testFixturesImplementation(libs.junit4)
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { }
+    "testFixtures" { projectDefault() }
     "test" { projectDefault() }
 }
 
 testsJar()
 
-projectTest(parallel = true) {
-    workingDir = rootDir
-    dependsOn(":dist")
-}
+val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt", testSourceSet)
 
-val generateSpecTests by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt")
-
-val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt")
-
-val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt")
+val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt", testSourceSet)
 
 val specConsistencyTests by task<Test> {
-    workingDir = rootDir
     filter {
         includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
     }
     useJUnitPlatform()
 }
 
-tasks.named<Test>("test") {
-    filter {
-        excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+projectTests {
+    testData(isolated, "testData")
+    testData(project(":compiler").isolated, "testData")
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withStdlibCommon()
+
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        filter {
+            excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+        }
     }
+
+    testGenerator(
+        "org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt",
+        taskName = "generateSpecTests",
+    )
 }

@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 @JvmInline
 value class Empty<T><!VALUE_CLASS_EMPTY_CONSTRUCTOR!>()<!>
@@ -46,3 +47,6 @@ value class Baz2(val u: Int, val y: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYP
 
 @JvmInline
 value class BazNullable(val u: Nothing?, val y: Nothing?)
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter, value */

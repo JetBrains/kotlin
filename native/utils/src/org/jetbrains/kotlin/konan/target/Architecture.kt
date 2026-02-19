@@ -9,8 +9,5 @@ enum class Architecture(@Deprecated("Compare Architecture entries instead.") val
     X64(64),
     X86(32),
     ARM64(64),
-    ARM32(32),
-    MIPS32(32),
-    MIPSEL32(32),
-    WASM32(32);
+    ARM32(32);
 }

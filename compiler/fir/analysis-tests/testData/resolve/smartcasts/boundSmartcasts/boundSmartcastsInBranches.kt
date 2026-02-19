@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 class A {
     val s: String = ""
 }
@@ -175,3 +176,6 @@ fun test_9() {
         b.length // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, continue, equalityExpression, forLoop,
+functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

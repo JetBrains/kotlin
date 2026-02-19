@@ -52,23 +52,26 @@ private fun shouldCreateAnnotation(
     if (!settings.getSetting(OptimisticNumberCommonizationEnabledKey))
         return false
 
-    val annotatedInputDeclarationPresent = inputDeclarations.any { declaration ->
+    val isDerivedFromOptimisticallyCommonizedType = inputDeclarations.any { declaration ->
         declaration.annotations.any { annotation -> annotation is UnsafeNumberAnnotation }
     }
 
-    if (annotatedInputDeclarationPresent)
-        return true
-
-    var isMarkedTypeFound = false
+    var isOptimisticallyCommonizedType = false
+    var isOptimisticallyCommonizableNumberType = false
 
     commonizedType.accept(object : BasicCirTypeVisitor() {
         override fun visit(classType: CirClassType) {
-            classType.getAttachment<OptimisticNumbersTypeCommonizer.OptimisticCommonizationMarker>()?.let { isMarkedTypeFound = true }
-                ?: super.visit(classType)
+            if (classType.getAttachment<OptimisticNumbersTypeCommonizer.OptimisticCommonizationMarker>() != null) {
+                isOptimisticallyCommonizedType = true
+            }
+            if (OptimisticNumbersTypeCommonizer.isOptimisticallyCommonizableNumber(classType.classifierId)) {
+                isOptimisticallyCommonizableNumberType = true
+            }
+            super.visit(classType)
         }
     })
 
-    return isMarkedTypeFound
+    return isOptimisticallyCommonizedType || (isDerivedFromOptimisticallyCommonizedType && isOptimisticallyCommonizableNumberType)
 }
 
 private typealias RenderedType = String

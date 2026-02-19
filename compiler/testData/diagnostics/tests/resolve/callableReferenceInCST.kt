@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun testWhen(x: Any?) {
     val y = when (x) {
@@ -33,3 +34,6 @@ fun testExclExcl() {
 fun testTry() {
     val v = try { ::<!UNRESOLVED_REFERENCE!>unresolved<!> } catch (e: Exception) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, stringLiteral, tryExpression, whenExpression, whenWithSubject */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: AImpl.kt
 
 abstract class AImpl {
@@ -26,3 +27,6 @@ fun main() {
     x[0]
     x.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaType, localProperty,
+propertyDeclaration */

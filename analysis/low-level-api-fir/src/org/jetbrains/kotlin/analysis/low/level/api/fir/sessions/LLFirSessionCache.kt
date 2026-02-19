@@ -5,160 +5,167 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.util.containers.CollectionFactory
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleInformationProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import java.util.concurrent.ConcurrentMap
-
-private typealias SessionStorage = ConcurrentMap<KtModule, LLFirSession>
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 @LLFirInternals
-class LLFirSessionCache(private val project: Project) {
-    companion object {
-        fun getInstance(project: Project): LLFirSessionCache {
-            return project.getService(LLFirSessionCache::class.java)
-        }
-    }
+class LLFirSessionCache(
+    private val project: Project,
+    val storage: LLFirSessionCacheStorage,
+) : Disposable {
+    constructor(project: Project) : this(
+        project,
+        LLFirSessionCacheStorage.createEmpty { LLFirSessionCleaner(it.requestedDisposableOrNull) }
+    )
 
-    private val sourceCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
-    private val binaryCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
+    @KaCachedService
+    private val moduleInformationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinModuleInformationProvider.getInstance(project)
+    }
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
      * Analyzable session will be returned for a library module.
+     *
+     * Must be called from a read action.
      */
-    fun getSession(module: KtModule, preferBinary: Boolean = false): LLFirSession {
-        if (module is KtBinaryModule && (preferBinary || module is KtSdkModule)) {
-            return getCachedSession(module, binaryCache) {
-                createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
+    fun getSession(module: KaModule, preferBinary: Boolean = false): LLFirSession =
+        when (module) {
+            is KaBuiltinsModule if preferBinary ->
+                LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(module.targetPlatform)
+
+            is KaLibraryModule if preferBinary -> getBinaryLibraryCachedSession(module, storage.binaryCache)
+
+            // Fallback dependencies aren't resolvable and thus always binary, regardless of `preferBinary`.
+            is KaLibraryFallbackDependenciesModule -> getBinaryLibraryCachedSession(module, storage.libraryFallbackDependenciesCache)
+
+            is KaDanglingFileModule -> getDanglingFileCachedSession(module)
+            else -> getCachedSession(module, storage.sourceCache, factory = ::createSession)
+        }
+
+    /**
+     * Returns the [LLFirSession] for [module], to be used as a *dependency*, or `null` if it doesn't make sense to create such a session as
+     * a dependency. This is an optimization for [KaModule]s of certain kinds, like empty modules.
+     *
+     * Dependency sessions are implicitly binary-preferred because sessions used as dependencies do not need to be resolvable.
+     */
+    fun getDependencySession(module: KaModule): LLFirSession? {
+        if (moduleInformationProvider?.isEmpty(module) == true) return null
+        return getSession(module, preferBinary = true)
+    }
+
+    private fun getBinaryLibraryCachedSession(module: KaModule, storage: SessionStorage): LLFirSession =
+        getCachedSession(module, storage) {
+            createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
+        }
+
+    private fun getDanglingFileCachedSession(module: KaDanglingFileModule): LLFirSession {
+        if (module.isStable) {
+            return getCachedSession(module, storage.danglingFileSessionCache, ::createSession)
+        }
+
+        checkCanceled()
+
+        val session = storage.unstableDanglingFileSessionCache.compute(module) { _, existingSession ->
+            if (existingSession is LLFirDanglingFileSession && !existingSession.hasFileModifications) {
+                existingSession
+            } else {
+                createSession(module)
             }
         }
 
-        return getCachedSession(module, sourceCache, ::createSession)
+        requireNotNull(session)
+        checkSessionValidity(session)
+
+        return session
     }
 
-    /**
-     * Returns a session without caching it.
-     * Note that session dependencies are still cached.
-     */
-    internal fun getSessionNoCaching(module: KtModule): LLFirSession {
-        return createSession(module)
-    }
-
-    private fun <T : KtModule> getCachedSession(
-        module: T,
-        storage: SessionStorage,
-        factory: (T) -> LLFirSession
-    ): LLFirSession {
+    private fun <T : KaModule> getCachedSession(module: T, storage: SessionStorage, factory: (T) -> LLFirSession): LLFirSession {
         checkCanceled()
 
-        return storage.computeIfAbsent(module) { factory(module) }.also { session ->
-            require(session.isValid) { "A session acquired via `getSession` should always be valid. Module: $module" }
-        }
-    }
-
-    /**
-     * Removes the session(s) associated with [module] after it has been invalidated. Must be called in a write action.
-     *
-     * @return `true` if any sessions were removed.
-     */
-    fun removeSession(module: KtModule): Boolean {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
-        val didSourceSessionExist = removeSessionFrom(module, sourceCache)
-        val didBinarySessionExist = if (module is KtBinaryModule) removeSessionFrom(module, binaryCache) else false
-
-        return didSourceSessionExist || didBinarySessionExist
-    }
-
-    private fun removeSessionFrom(module: KtModule, storage: SessionStorage): Boolean {
-        val session = storage.remove(module) ?: return false
-        session.markInvalid()
-        return true
-    }
-
-    /**
-     * Removes all sessions after global invalidation. If [includeLibraryModules] is `false`, sessions of library modules will not be
-     * removed.
-     *
-     * [removeAllSessions] must be called in a write action.
-     */
-    fun removeAllSessions(includeLibraryModules: Boolean) {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
-        if (includeLibraryModules) {
-            removeAllSessionsFrom(sourceCache)
-            removeAllSessionsFrom(binaryCache)
+        val session = if (module.supportsIsolatedSessionCreation) {
+            storage.computeIfAbsent(module) { factory(module) }
         } else {
-            // `binaryCache` can only contain library modules, so we only need to remove sessions from `sourceCache`.
-            removeAllMatchingSessionsFrom(sourceCache) { it !is KtBinaryModule && it !is KtLibrarySourceModule }
+            // Non-isolated session creation may need to access other sessions, so we should create the session outside `computeIfAbsent` to
+            // avoid recursive update exceptions.
+            storage[module] ?: run {
+                val newSession = factory(module)
+                storage.computeIfAbsent(module) { newSession }
+            }
+        }
+
+        checkSessionValidity(session)
+        return session
+    }
+
+    private fun checkSessionValidity(session: LLFirSession) {
+        requireWithAttachment(session.isValid, { "A session acquired via `getSession` should always be valid." }) {
+            withKaModuleEntry("module", session.ktModule)
+            withEntry("invalidationInformation", session.invalidationInformation)
         }
     }
 
-    // Removing script sessions is only needed temporarily until KTIJ-25620 has been implemented.
-    fun removeAllScriptSessions() {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
+    /**
+     * Whether the session for this [KaModule] can be created without getting other sessions from the cache. Should be kept in sync with
+     * [createSession].
+     */
+    private val KaModule.supportsIsolatedSessionCreation: Boolean
+        get() = this !is KaDanglingFileModule
 
-        removeAllScriptSessionsFrom(sourceCache)
-        removeAllScriptSessionsFrom(binaryCache)
-    }
-
-    private fun removeAllScriptSessionsFrom(storage: SessionStorage) {
-        removeAllMatchingSessionsFrom(storage) { it is KtScriptModule || it is KtScriptDependencyModule }
-    }
-
-    private fun removeAllSessionsFrom(storage: SessionStorage) {
-        // Because `removeAllSessionsFrom` is executed in a write action, the order of setting `isValid` and clearing `storage` is not
-        // important.
-        storage.values.forEach { it.markInvalid() }
-        storage.clear()
-    }
-
-    private inline fun removeAllMatchingSessionsFrom(storage: SessionStorage, shouldBeRemoved: (KtModule) -> Boolean) {
-        // `ConcurrentSoftValueHashMap` (the implementation used by `storage`) does not back its entry set but rather creates a copy, which
-        // is in violation of the contract of `Map.entrySet`, and thus changes to the entry set are not reflected in `storage`. Because this
-        // function is executed in a write action, we do not need the weak consistency guarantees made by `ConcurrentMap`'s iterator, so a
-        // "collect and remove" approach also works.
-        val scriptEntries = storage.entries.filter { (module, _) -> shouldBeRemoved(module) }
-        for ((module, session) in scriptEntries) {
-            session.markInvalid()
-            storage.remove(module)
-        }
-    }
-
-    private fun createSession(module: KtModule): LLFirSession {
+    private fun createSession(module: KaModule): LLFirSession {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
-            is KtSourceModule -> sessionFactory.createSourcesSession(module)
-            is KtLibraryModule, is KtLibrarySourceModule -> sessionFactory.createLibrarySession(module)
-            is KtSdkModule -> sessionFactory.createBinaryLibrarySession(module)
-            is KtScriptModule -> sessionFactory.createScriptSession(module)
-            is KtNotUnderContentRootModule -> sessionFactory.createNotUnderContentRootResolvableSession(module)
+            is KaSourceModule -> sessionFactory.createSourcesSession(module)
+            is KaBuiltinsModule -> sessionFactory.createResolvableLibrarySession(module)
+            is KaLibraryModule -> sessionFactory.createResolvableLibrarySession(module)
+            is KaLibrarySourceModule -> sessionFactory.createResolvableLibrarySession(module)
+            is KaLibraryFallbackDependenciesModule -> sessionFactory.createBinaryLibrarySession(module)
+            is KaScriptModule -> sessionFactory.createScriptSession(module)
+            is KaDanglingFileModule -> {
+                //  Dangling file context must have an analyzable session, so we can properly compile code against it.
+                val contextSession = getSession(module.contextModule, preferBinary = false)
+                sessionFactory.createDanglingFileSession(module, contextSession)
+            }
+            is KaNotUnderContentRootModule -> sessionFactory.createNotUnderContentRootResolvableSession(module)
             else -> error("Unexpected module kind: ${module::class.simpleName}")
         }
     }
 
-    private fun createPlatformAwareSessionFactory(module: KtModule): LLFirAbstractSessionFactory {
-        val targetPlatform = module.platform
+    private fun createPlatformAwareSessionFactory(module: KaModule): LLFirAbstractSessionFactory {
+        val targetPlatform = module.targetPlatform
         return when {
             targetPlatform.all { it is JvmPlatform } -> LLFirJvmSessionFactory(project)
             targetPlatform.all { it is JsPlatform } -> LLFirJsSessionFactory(project)
+            targetPlatform.all { it is WasmPlatform } -> LLFirWasmSessionFactory(project)
             targetPlatform.all { it is NativePlatform } -> LLFirNativeSessionFactory(project)
             else -> LLFirCommonSessionFactory(project)
         }
+    }
+
+    override fun dispose() {
+    }
+
+    companion object {
+        fun getInstance(project: Project): LLFirSessionCache = project.service()
     }
 }
 
@@ -175,14 +182,13 @@ internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession)
 )
 @OptIn(PrivateSessionConstructor::class)
 fun createEmptySession(): FirSession {
-    return object : FirSession(null, Kind.Source) {}.apply {
-        val moduleData = FirModuleDataImpl(
+    return object : FirSession(Kind.Source) {}.apply {
+        val moduleData = FirSourceModuleData(
             Name.identifier("<stub module>"),
             dependencies = emptyList(),
             dependsOnDependencies = emptyList(),
             friendDependencies = emptyList(),
             platform = JvmPlatforms.unspecifiedJvmPlatform,
-            analyzerServices = JvmPlatformAnalyzerServices
         )
         registerModuleData(moduleData)
         moduleData.bindSession(this)

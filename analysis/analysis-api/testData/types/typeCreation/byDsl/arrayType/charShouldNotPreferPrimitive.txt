@@ -1,0 +1,51 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Array
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Array
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Char
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Char
+              symbol: KaNamedClassSymbol(kotlin/Char)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Char)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Array)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Char
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Char
+          symbol: KaNamedClassSymbol(kotlin/Char)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Char)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.Array<kotlin.Char>

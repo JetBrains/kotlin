@@ -1,0 +1,4 @@
+fun foo(arr: IntArray) {
+  val x: Int = arr.get(index = 0)
+  arr.set(index = 1, value = x)
+}

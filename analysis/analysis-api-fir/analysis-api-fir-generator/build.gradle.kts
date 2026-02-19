@@ -1,10 +1,10 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     application
 }
 
 dependencies {
+    implementation(project(":generators"))
     implementation(project(":compiler:resolution.common"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:tree:tree-generator"))
@@ -20,7 +20,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
 }
 
 application {

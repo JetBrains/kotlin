@@ -1,0 +1,37 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    // No composable calls, so no group generated except for at function boundary
+    if (x > 0) {
+        NA()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (x > 0) {
+    NA()
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

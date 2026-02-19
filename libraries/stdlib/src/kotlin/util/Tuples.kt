@@ -23,6 +23,7 @@ package kotlin
  * @property second Second value.
  * @constructor Creates a new instance of Pair.
  */
+@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public data class Pair<out A, out B>(
     public val first: A,
     public val second: B
@@ -63,6 +64,7 @@ public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
  * @property second Second value.
  * @property third Third value.
  */
+@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public data class Triple<out A, out B, out C>(
     public val first: A,
     public val second: B,

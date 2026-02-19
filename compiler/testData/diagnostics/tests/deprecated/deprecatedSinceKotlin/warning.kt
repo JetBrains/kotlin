@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ALLOW_KOTLIN_PACKAGE
-// !API_VERSION: 1.4
+// API_VERSION: 1.4
 
 package kotlin
 
@@ -37,3 +38,5 @@ fun usage() {
     funNext()
     valNext
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration, stringLiteral */

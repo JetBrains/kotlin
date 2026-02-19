@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 
 fun x() {
 
@@ -23,3 +24,5 @@ class Bar {
         x() // Should resolve to fun x()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, operator, propertyDeclaration, thisExpression */

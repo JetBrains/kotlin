@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Outer {
     open class OpenNested
     class FinalNested
@@ -15,3 +16,5 @@ class Outer {
     inner class Inner3 : OpenInner()
     inner class Inner4 : <!FINAL_SUPERTYPE!>FinalInner<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nestedClass */

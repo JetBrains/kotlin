@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.util.WeakPair
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 
 @RequiresOptIn
 annotation class LookupTagInternals
@@ -16,7 +17,8 @@ annotation class LookupTagInternals
 class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag() {
 
     init {
-        assert(!classId.isLocal) { "You should use ConeClassLookupTagWithFixedSymbol for local $classId!" }
+        @OptIn(ClassIdBasedLocality::class)
+        assert(!classId.isLocal) { "You should use ${ConeClassLikeLookupTagWithFixedSymbol::class.simpleName} for local $classId!" }
     }
 
     @LookupTagInternals

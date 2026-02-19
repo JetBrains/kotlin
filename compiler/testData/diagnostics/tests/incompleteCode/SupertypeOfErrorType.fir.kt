@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 package a
 
 import java.util.Date
@@ -22,3 +23,7 @@ fun bar(i: Int, a: <!UNRESOLVED_REFERENCE!>U<!>) {
 
 //from standard library
 public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
+integerLiteral, javaFunction, lambdaLiteral, localProperty, multiplicativeExpression, nullableType, propertyDeclaration,
+smartcast, typeParameter */

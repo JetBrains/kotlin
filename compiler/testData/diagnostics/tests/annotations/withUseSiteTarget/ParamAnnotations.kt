@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 annotation class Ann
 annotation class Second
@@ -23,3 +24,6 @@ class PrimaryConstructorClass(
         <!REDUNDANT_ANNOTATION_TARGET!>@param:Ann<!> a: String,
 @param:[<!REDUNDANT_ANNOTATION_TARGET!>Ann<!> <!REDUNDANT_ANNOTATION_TARGET!>Second<!>] b: String,
 @param:Ann val c: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetParam, classDeclaration, functionDeclaration,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

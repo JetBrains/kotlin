@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface OutBase<out E>
 interface OutDerived<out F> : OutBase<F>
@@ -39,3 +40,7 @@ fun main(b: Base<out Number>) {
         b.baz().length
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration,
+intersectionType, isExpression, localProperty, nullableType, out, outProjection, propertyDeclaration, smartcast,
+starProjection, typeConstraint, typeParameter */

@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// DIAGNOSTICS: -UNREACHABLE_CODE
 package kt770_351_735
 
 
@@ -26,7 +28,7 @@ fun foo() {
             z = 34
         }
     }
-    val f: ()-> Int = <!INITIALIZER_TYPE_MISMATCH!>r<!>
+    val f: ()-> Int <!INITIALIZER_TYPE_MISMATCH!>=<!> r
     val g: ()-> Any = r
 }
 
@@ -79,7 +81,7 @@ fun testCoercionToUnit() {
             45
         }
     }
-    val f : () -> String = <!INITIALIZER_TYPE_MISMATCH!>checkType<!>
+    val f : () -> String <!INITIALIZER_TYPE_MISMATCH!>=<!> checkType
 }
 
 fun doSmth(i: Int) {}
@@ -149,7 +151,7 @@ fun bar(a: Unit) {}
 fun testStatementInExpressionContext() {
     var z = 34
     val a1: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 334<!>
-    val f = for (i in 1..10) {}
+    val f = <!EXPRESSION_EXPECTED!>for (i in 1..10) {}<!>
     if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 34<!>
     return <!EXPRESSION_EXPECTED!>while (true) {}<!>
 }
@@ -157,3 +159,8 @@ fun testStatementInExpressionContext() {
 fun testStatementInExpressionContext2() {
     val a2: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, equalityExpression, flexibleType,
+forLoop, functionDeclaration, functionalType, ifExpression, incrementDecrementExpression, integerLiteral,
+intersectionType, javaFunction, javaProperty, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+rangeExpression, stringLiteral, whenExpression, whenWithSubject, whileLoop */

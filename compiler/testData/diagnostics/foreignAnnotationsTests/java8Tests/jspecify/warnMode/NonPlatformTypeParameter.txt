@@ -1,6 +1,7 @@
 package
 
 public fun </*0*/ T : Test> main(/*0*/ a1: NonPlatformTypeParameter<kotlin.Any?>, /*1*/ a2: NonPlatformTypeParameter<Test>, /*2*/ x: T): kotlin.Unit
+public fun testNullable(/*0*/ a1: NonPlatformTypeParameter<Test>, /*1*/ x: Test?): kotlin.Unit
 
 public open class NonPlatformTypeParameter</*0*/ T : @org.jspecify.annotations.Nullable kotlin.Any!> {
     public constructor NonPlatformTypeParameter</*0*/ T : @org.jspecify.annotations.Nullable kotlin.Any!>()

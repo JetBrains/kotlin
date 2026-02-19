@@ -21,7 +21,6 @@ fun VersionRequirement.isFulfilled(languageVersionSettings: LanguageVersionSetti
             languageVersionSettings.apiVersion.version
         ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
             KotlinCompilerVersion.getVersion()?.substringBefore('-')?.let(::createVersion)
-        else -> null
     }
 
     return currentVersion == null || currentVersion >= requiredVersion

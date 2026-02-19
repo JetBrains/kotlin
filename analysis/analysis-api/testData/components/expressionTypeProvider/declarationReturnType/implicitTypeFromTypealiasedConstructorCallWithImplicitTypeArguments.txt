@@ -1,0 +1,6 @@
+GenericClass@(3,1)
+  GenericClass@(3,22) : test.GenericClass<T>
+    t@(3,23) : T
+MyClass@(5,1)
+TypeAlias@(7,1)
+propertyWithImplicitType@(9,1) : test.TypeAlias<test.MyClass>

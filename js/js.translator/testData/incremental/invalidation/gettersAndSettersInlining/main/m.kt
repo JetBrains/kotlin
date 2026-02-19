@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val parent = Parent("parent")
     val child = Child("child")
 

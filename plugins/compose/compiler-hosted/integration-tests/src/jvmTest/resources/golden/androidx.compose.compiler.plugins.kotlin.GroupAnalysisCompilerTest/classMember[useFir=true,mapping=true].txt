@@ -1,0 +1,21 @@
+//
+// Source
+// ------------------------------------------
+
+interface Test {
+    @Composable
+    fun Test()
+}
+
+class TestImpl : Test {
+    @Composable
+    override fun Test() {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:void TestImpl.Test(androidx.compose.runtime.Composer,int):11:11 -> m$<key>

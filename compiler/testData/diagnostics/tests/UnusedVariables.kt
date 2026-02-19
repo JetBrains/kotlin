@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: +UNUSED_VALUE, +UNUSED_CHANGED_VALUE, +UNUSED_PARAMETER, +UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_DEXING
+// DIAGNOSTICS: +UNUSED_VALUE, +UNUSED_CHANGED_VALUE, +UNUSED_PARAMETER, +UNUSED_VARIABLE
 
 package unused_variables
 
@@ -133,3 +135,9 @@ fun testObject() : Trait {
 }
 
 fun doSmth(<!UNUSED_PARAMETER!>i<!> : Int) {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, comparisonExpression, equalityExpression,
+forLoop, functionDeclaration, getter, ifExpression, incrementDecrementExpression, init, integerLiteral,
+interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, localFunction, localProperty, nullableType,
+operator, override, primaryConstructor, propertyDeclaration, rangeExpression, setter, smartcast, stringLiteral,
+thisExpression, whileLoop */

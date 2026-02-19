@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 object Test0 {
     fun foo(f: Runnable): Int = 0
@@ -18,7 +19,7 @@ object Test1 {
         fun foo(r: Runnable) {}
 
         fun test(f: () -> Unit) {
-            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(f)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.Scope.foo; typeCall: function")!>foo(f)<!>
         }
     }
 }
@@ -65,7 +66,21 @@ object Test5 {
         fun foo(r: Runnable) {}
 
         fun test() {
-            <!DEBUG_INFO_CALL("fqName: Test5.foo; typeCall: function")!>foo { }<!>
+            <!DEBUG_INFO_CALL("fqName: Test5.Scope.foo; typeCall: function")!>foo { }<!>
         }
     }
 }
+
+object Test6 {
+    fun foo(x: Any) = 1
+    fun foo(f: () -> Unit) = 2.0
+    fun foo(r: Runnable) = "3"
+
+    fun test() {
+        val result = foo { }
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>result<!>
+    }
+}
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nestedClass, objectDeclaration, propertyDeclaration, samConversion, stringLiteral */

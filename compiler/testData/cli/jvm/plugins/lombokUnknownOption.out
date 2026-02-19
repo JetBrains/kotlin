@@ -1,0 +1,2 @@
+error: unsupported plugin option: org.jetbrains.kotlin.lombok:unknownOption=blablabla
+COMPILATION_ERROR

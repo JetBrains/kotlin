@@ -14,9 +14,9 @@ public fun nonInlinableConcat(x: String, y: String): String = "$x$y"
 
 inline fun appendTo(target: String, suffix: String): String = nonInlinableConcat(target, suffix)
 
-// CHECK_CONTAINS_NO_CALLS: test except=nonInlinableConcat
-internal fun test(x: String): String = composition("", "O", "K", ::appendTo)
+// CHECK_CONTAINS_NO_CALLS: mytest except=nonInlinableConcat
+internal fun mytest(x: String): String = composition("", "O", "K", ::appendTo)
 
 fun box(): String {
-    return test("O")
+    return mytest("O")
 }

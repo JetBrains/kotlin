@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 // FIR_DIFFERENCE: KT-55234
 // FILE: 1.kt
 package k
@@ -43,3 +44,5 @@ fun test() {
     all(1)
     all("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

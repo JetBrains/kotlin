@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: 1.kt
 package a
 
@@ -51,3 +52,6 @@ import b.<!CONFLICTING_IMPORT!>B<!>
 // FILE: 7.kt
 import a.B as <!CONFLICTING_IMPORT!>Foo<!>
 import b.B as <!CONFLICTING_IMPORT!>Foo<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver */

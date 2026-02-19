@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Outer {
     interface Nested {
         fun bar()
@@ -17,3 +18,6 @@ class Impl : Outer() {
         n.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+nestedClass */

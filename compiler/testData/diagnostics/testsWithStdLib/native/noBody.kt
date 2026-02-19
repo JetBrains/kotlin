@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 import kotlin.jvm.*
 
@@ -24,3 +25,6 @@ fun test() {
         external fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, external, functionDeclaration,
+localClass, objectDeclaration */

@@ -1,0 +1,37 @@
+KtOperationReferenceExpression(146,148): '++'
+  KaSuccessCallInfo:
+    call = KaCompoundVariableAccessCall:
+      compoundOperation = KaCompoundUnaryOperation:
+        kind = INC
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = variable
+            isSafeNavigation = false
+            type = MyClass
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = MyClass
+            symbol = /MyClass.inc(<dispatch receiver>: MyClass): MyClass
+            valueParameters = []
+            contextParameters = []
+            callableId = /MyClass.inc
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        isContextSensitive = false
+        kind = Read
+        signature = KaVariableSignature:
+          name = variable
+          receiverType = null
+          returnType = MyClass
+          symbol = var variable: MyClass
+          contextParameters = []
+          callableId = /variable
+        typeArgumentsMapping = {}

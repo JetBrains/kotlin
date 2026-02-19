@@ -6,6 +6,8 @@
 package kotlin.collections.builders
 
 import java.io.NotSerializableException
+import java.io.ObjectInputStream
+import kotlin.internal.throwReadObjectNotSupported
 
 internal class SetBuilder<E> internal constructor(
     private val backing: MapBuilder<E, *>
@@ -19,7 +21,7 @@ internal class SetBuilder<E> internal constructor(
     constructor(initialCapacity: Int) : this(MapBuilder<E, Nothing>(initialCapacity))
 
     fun build(): Set<E> {
-        backing.build()
+        val _ = backing.build()
         return if (size > 0) this else Empty
     }
 
@@ -29,12 +31,14 @@ internal class SetBuilder<E> internal constructor(
         else
             throw NotSerializableException("The set cannot be serialized while it is being built.")
 
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
+
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
     override fun contains(element: E): Boolean = backing.containsKey(element)
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = backing.addKey(element) >= 0
-    override fun remove(element: E): Boolean = backing.removeKey(element) >= 0
+    override fun remove(element: E): Boolean = backing.removeKey(element)
     override fun iterator(): MutableIterator<E> = backing.keysIterator()
 
     override fun addAll(elements: Collection<E>): Boolean {

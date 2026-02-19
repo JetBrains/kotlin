@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 //KT-948 Make type inference work with sure()/!!
 
@@ -21,3 +22,6 @@ fun foo() {
 }
 
 fun doWithList(list: List<Int>) = list
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, javaFunction, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

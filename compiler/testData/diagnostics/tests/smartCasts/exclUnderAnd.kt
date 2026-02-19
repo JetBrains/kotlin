@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class D(val a: String, val b: Boolean)
 
 fun foo(p: Boolean, v: D?): String {
@@ -10,4 +11,7 @@ fun foo(p: Boolean, v: D?): String {
     if (p || v!! == D("?", false)) v<!UNSAFE_CALL!>.<!>a
     else <!DEBUG_INFO_SMARTCAST!>v<!>.a
     return ""
-} 
+}
+
+/* GENERATED_FIR_TAGS: andExpression, checkNotNullCall, classDeclaration, disjunctionExpression, equalityExpression,
+functionDeclaration, ifExpression, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 import java.io.File
 import kotlin.system.exitProcess
@@ -13,3 +14,6 @@ object Main {
         KOTLIN_HOME = File(home)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, ifExpression, init, integerLiteral, javaFunction,
+localProperty, objectDeclaration, propertyDeclaration, smartcast, stringLiteral */

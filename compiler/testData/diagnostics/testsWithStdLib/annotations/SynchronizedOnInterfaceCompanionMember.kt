@@ -1,6 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +JvmStaticInInterface
-// !JVM_TARGET: 1.8
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +JvmStaticInInterface
+// JVM_TARGET: 1.8
 
 interface I {
     companion object {
@@ -21,3 +22,6 @@ interface I {
             <!SYNCHRONIZED_IN_INTERFACE!>@Synchronized<!> @JvmStatic set(value) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, functionDeclaration, getter, interfaceDeclaration, objectDeclaration,
+propertyDeclaration, setter, stringLiteral */

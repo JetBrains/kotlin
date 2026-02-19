@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.hasContinuation
+import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -20,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -33,8 +35,7 @@ internal fun MethodNode.acceptWithStateMachine(
     obtainContinuationClassBuilder: () -> ClassBuilder,
 ) {
     val context = classCodegen.context
-    val state = context.state
-    val languageVersionSettings = state.languageVersionSettings
+    val languageVersionSettings = context.config.languageVersionSettings
     assert(languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) { "Experimental coroutines are unsupported in JVM_IR backend" }
 
     val lineNumber = if (irFunction.startOffset >= 0) {
@@ -62,12 +63,11 @@ internal fun MethodNode.acceptWithStateMachine(
         },
         lineNumber = lineNumber,
         sourceFile = classCodegen.irClass.file.name, // SuspendLambda.invokeSuspend is not suspend
+        config = context.config,
         needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
         internalNameForDispatchReceiver = classCodegen.type.internalName,
-        putContinuationParameterToLvt = false,
         initialVarsCountByType = varsCountByType,
-        shouldOptimiseUnusedVariables = !context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
     )
     accept(visitor)
 }
@@ -75,20 +75,8 @@ internal fun MethodNode.acceptWithStateMachine(
 private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =
     this is IrSimpleFunction && allOverridden().any { !it.returnType.isUnit() }
 
-internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
-    if (origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
-        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
-    ) return null
-    return parentAsClass.declarations.find {
-        // The function may not be named `it.name.asString() + FOR_INLINE_SUFFIX` due to name mangling,
-        // e.g., for internal declarations. We check for a function with the same `attributeOwnerId` instead.
-        // This is copied in `AddContinuationLowering`.
-        it is IrSimpleFunction && it.attributeOwnerId == (this as IrSimpleFunction).attributeOwnerId
-    } as IrSimpleFunction?
-}
-
 internal fun IrFunction.isSuspendCapturingCrossinline(): Boolean =
-    this is IrSimpleFunction && hasContinuation() && parentAsClass.declarations.any {
+    this is IrSimpleFunction && hasContinuation() && parent is IrClass && parentAsClass.declarations.any {
         it is IrSimpleFunction && it.attributeOwnerId == attributeOwnerId &&
                 it.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
     }
@@ -98,7 +86,10 @@ internal fun IrFunction.continuationClass(): IrClass? =
             as IrClass?
 
 internal fun IrExpression?.isReadOfInlineLambda(): Boolean = isReadOfCrossinline() ||
-        (this is IrGetValue && origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (symbol.owner as? IrValueParameter)?.isNoinline == false)
+        (this is IrGetValue && origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (symbol.owner as? IrValueParameter)?.isInlineable() == true)
+
+private fun IrValueParameter.isInlineable(): Boolean =
+    !isNoinline && (parent as? IrFunction)?.isInline == true
 
 internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(): IrType? {
     if (this !is IrSimpleFunction || !isSuspend) return null

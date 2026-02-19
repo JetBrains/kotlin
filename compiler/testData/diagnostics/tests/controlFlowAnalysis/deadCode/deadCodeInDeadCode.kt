@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun unreachable0() {
     return
@@ -22,3 +23,5 @@ fun unreachable4(array: Array<Any>) {
 
 fun bar(a: Any) {}
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

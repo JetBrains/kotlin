@@ -1,0 +1,8 @@
+KtArrayAccessExpression(44,48): '1[2]'
+  KtArrayAccessReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
+    symbols:
+      (in ROOT) fun kotlin.Int.get(index: kotlin.Int): kotlin.Int

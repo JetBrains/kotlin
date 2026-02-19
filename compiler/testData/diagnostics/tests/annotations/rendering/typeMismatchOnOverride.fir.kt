@@ -1,4 +1,5 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.PROPERTY,  AnnotationTarget.VALUE_PARAMETER)
 annotation class An
@@ -15,12 +16,14 @@ interface A {
 
 @An
 interface B : A {
-    override val p1: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE("p1; @An() val p1: @R|An|()  String")!>Int<!>
+    override val p1: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE("val p1: Int; 'val p1: String' defined in 'A'")!>Int<!>
     @An
-    override <!VAR_OVERRIDDEN_BY_VAL("public abstract override val /B.p2: @R|An|()  kotlin/String    public get(): @R|An|()  kotlin/String; public abstract var /A.p2: @R|An|()  kotlin/String    public get(): @R|An|()  kotlin/String    public set(value: @R|An|()  kotlin/String): kotlin/Unit")!>val<!> p2: @An String
-    override fun test(arg: String): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("test; @An() fun test(@An() arg: @R|An|()  String): @R|An|()  String")!>Int<!>
+    override <!VAR_OVERRIDDEN_BY_VAL("'var p2: String' defined in 'A'; val p2: String")!>val<!> p2: @An String
+    override fun test(arg: String): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("fun test(arg: String): Int; 'fun test(arg: String): String' defined in 'A'")!>Int<!>
 }
 
 interface C : A {
-    override var p2: <!VAR_TYPE_MISMATCH_ON_OVERRIDE("p2; @An() var p2: @R|An|()  String")!>Int<!>
+    override var p2: <!VAR_TYPE_MISMATCH_ON_OVERRIDE("var p2: Int; 'var p2: String' defined in 'A'")!>Int<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

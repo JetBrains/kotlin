@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -35,9 +36,11 @@ internal class ExternalKotlinTargetImpl internal constructor(
     val apiElementsPublishedConfiguration: Configuration,
     val runtimeElementsPublishedConfiguration: Configuration,
     val sourcesElementsPublishedConfiguration: Configuration,
+    @property:ComposeKotlinGradlePluginApi val resourcesElementsPublishedConfiguration: Configuration,
     val kotlinTargetComponent: ExternalKotlinTargetComponent,
     private val artifactsTaskLocator: ArtifactsTaskLocator,
-) : InternalKotlinTarget {
+) : InternalKotlinTarget,
+    HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions> {
 
 
     fun interface ArtifactsTaskLocator {
@@ -48,13 +51,9 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
-    override val preset: Nothing? = null
+    override val targetPreset: Nothing? = null
 
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
-
-    override val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
-
-    override val overrideDisambiguationClassifierOnIdeImport: String? = null
 
     val artifactsTask: TaskProvider<out Task> by lazy {
         artifactsTaskLocator.locate(this)
@@ -78,6 +77,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val sourcesElementsConfigurationName: String
         get() = sourcesElementsConfiguration.name
 
+    @ComposeKotlinGradlePluginApi
+    override val resourcesElementsConfigurationName: String
+        get() = resourcesElementsPublishedConfiguration.name
+
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> = setOf(kotlinTargetComponent)
 
@@ -87,7 +90,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
     }
 
     override val compilations: NamedDomainObjectContainer<DecoratedExternalKotlinCompilation> by lazy {
-        project.container(DecoratedExternalKotlinCompilation::class.java)
+        project.objects.domainObjectContainer(DecoratedExternalKotlinCompilation::class.java)
     }
 
     @Suppress("unchecked_cast")
@@ -103,7 +106,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
         mavenPublicationActions.all { action -> action.execute(publication) }
     }
 
-    private val attributeContainer = HierarchyAttributeContainer(parent = null)
+    private val attributeContainer = HierarchyAttributeContainer(parent = null, project.objects)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
 

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 import kotlin.coroutines.*
@@ -52,3 +53,6 @@ fun test() {
     builderSuspendSeveralArgs { _, _, _ -> kotlin.coroutines.coroutineContext }
     builderSuspendSeveralArgs { _, _, _ -> coroutineContext }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration,
+suspend */

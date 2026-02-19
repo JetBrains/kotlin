@@ -7,60 +7,79 @@
 
 #include "ObjectPtr.hpp"
 
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 
 using namespace kotlin;
 
-objc_support::internal::ObjectPtrImpl::ObjectPtrImpl() noexcept : object_(nil) {}
+objc_support::internal::NSObjectPtrImpl::NSObjectPtrImpl() noexcept : object_(nil) {}
 
-objc_support::internal::ObjectPtrImpl::ObjectPtrImpl(NSObject* object) noexcept : object_(object) {}
+objc_support::internal::NSObjectPtrImpl::NSObjectPtrImpl(NSObject* object) noexcept : object_(object) {}
 
-objc_support::internal::ObjectPtrImpl::ObjectPtrImpl(const ObjectPtrImpl& rhs) noexcept : object_([rhs.object_ retain]) {}
+objc_support::internal::NSObjectPtrImpl::NSObjectPtrImpl(object_ptr_retain_t, NSObject* object) noexcept : object_([object retain]) {}
 
-objc_support::internal::ObjectPtrImpl::ObjectPtrImpl(ObjectPtrImpl&& rhs) noexcept : object_(rhs.object_) {
+objc_support::internal::NSObjectPtrImpl::NSObjectPtrImpl(const NSObjectPtrImpl& rhs) noexcept : object_([rhs.object_ retain]) {}
+
+objc_support::internal::NSObjectPtrImpl::NSObjectPtrImpl(NSObjectPtrImpl&& rhs) noexcept : object_(rhs.object_) {
     rhs.object_ = nil;
 }
 
-objc_support::internal::ObjectPtrImpl::~ObjectPtrImpl() {
+objc_support::internal::NSObjectPtrImpl::~NSObjectPtrImpl() {
     @autoreleasepool {
         [object_ release];
     }
 }
 
-void objc_support::internal::ObjectPtrImpl::swap(ObjectPtrImpl& rhs) noexcept {
+void objc_support::internal::NSObjectPtrImpl::swap(NSObjectPtrImpl& rhs) noexcept {
     using std::swap;
     swap(object_, rhs.object_);
 }
 
-NSObject* objc_support::internal::ObjectPtrImpl::get() const noexcept {
+NSObject* objc_support::internal::NSObjectPtrImpl::get() const noexcept {
     return object_;
 }
 
-bool objc_support::internal::ObjectPtrImpl::valid() const noexcept {
+bool objc_support::internal::NSObjectPtrImpl::valid() const noexcept {
     return object_ != nil;
 }
 
-void objc_support::internal::ObjectPtrImpl::reset() noexcept {
+void objc_support::internal::NSObjectPtrImpl::reset() noexcept {
     reset(nil);
 }
 
-void objc_support::internal::ObjectPtrImpl::reset(NSObject* object) noexcept {
+void objc_support::internal::NSObjectPtrImpl::reset(NSObject* object) noexcept {
     @autoreleasepool {
         [object_ release];
         object_ = object;
     }
 }
 
-std::size_t objc_support::internal::ObjectPtrImpl::computeHash() const noexcept {
-    return object_.hash;
+void objc_support::internal::NSObjectPtrImpl::reset(object_ptr_retain_t, NSObject* object) noexcept {
+    reset([object retain]);
 }
 
-bool objc_support::internal::ObjectPtrImpl::operator==(const ObjectPtrImpl& rhs) const noexcept {
+bool objc_support::internal::NSObjectPtrImpl::operator==(const NSObjectPtrImpl& rhs) const noexcept {
     return object_ == rhs.object_;
 }
 
-bool objc_support::internal::ObjectPtrImpl::operator<(const ObjectPtrImpl& rhs) const noexcept {
+bool objc_support::internal::NSObjectPtrImpl::operator<(const NSObjectPtrImpl& rhs) const noexcept {
     return std::less<>()(object_, rhs.object_);
+}
+
+objc_support::internal::CFObjectPtrImpl::~CFObjectPtrImpl() {
+    if (object_) {
+        @autoreleasepool {
+            CFRelease(object_);
+        }
+    }
+}
+
+void objc_support::internal::CFObjectPtrImpl::reset(CFTypeRef object) noexcept {
+    if (object_) {
+        @autoreleasepool {
+            CFRelease(object_);
+        }
+    }
+    object_ = object;
 }
 
 #endif

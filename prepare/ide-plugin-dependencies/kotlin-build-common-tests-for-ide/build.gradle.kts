@@ -2,4 +2,8 @@ plugins {
     kotlin("jvm")
 }
 
-publishTestJarsForIde(listOf(":kotlin-build-common"))
+publishTestJarsForIde(
+    projectNames = listOf(),
+    projectWithFixturesNames = listOf(":kotlin-build-common"),
+    projectWithRenamedTestJarNames = listOf(":kotlin-build-common"),
+)

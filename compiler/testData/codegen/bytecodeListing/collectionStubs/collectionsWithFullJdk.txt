@@ -2,7 +2,7 @@
 public abstract class AbstractCollection {
     // source: 'collectionsWithFullJdk.kt'
     public method <init>(): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -37,9 +37,9 @@ public abstract class AbstractIterator {
 public abstract class AbstractList {
     // source: 'collectionsWithFullJdk.kt'
     public method <init>(): void
-    public synthetic method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
     public method add(p0: int, p1: java.lang.String): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
@@ -53,13 +53,13 @@ public abstract class AbstractList {
     public abstract method lastIndexOf(p0: java.lang.String): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
-    public synthetic method remove(p0: int): java.lang.Object
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public method remove(p0: int): java.lang.String
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method replaceAll(p0: java.util.function.UnaryOperator): void
     public method retainAll(p0: java.util.Collection): boolean
-    public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public method set(p0: int, p1: java.lang.String): java.lang.String
     public bridge final method size(): int
     public method sort(p0: java.util.Comparator): void
@@ -72,13 +72,13 @@ public abstract class AbstractList {
 public abstract class AbstractListIterator {
     // source: 'collectionsWithFullJdk.kt'
     public method <init>(): void
-    public synthetic method add(p0: java.lang.Object): void
+    public synthetic bridge method add(p0: java.lang.Object): void
     public method add(p0: java.lang.String): void
     public method hasNext(): boolean
-    public synthetic method next(): java.lang.Object
+    public synthetic bridge method next(): java.lang.Object
     public method next(): java.lang.String
     public method remove(): void
-    public synthetic method set(p0: java.lang.Object): void
+    public synthetic bridge method set(p0: java.lang.Object): void
     public method set(p0: java.lang.String): void
 }
 
@@ -87,40 +87,43 @@ public abstract class AbstractMap {
     // source: 'collectionsWithFullJdk.kt'
     public method <init>(): void
     public method clear(): void
-    public synthetic method compute(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
+    public synthetic bridge method compute(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
     public method compute(p0: java.lang.String, p1: java.util.function.BiFunction): java.lang.Number
-    public synthetic method computeIfAbsent(p0: java.lang.Object, p1: java.util.function.Function): java.lang.Object
+    public synthetic bridge method computeIfAbsent(p0: java.lang.Object, p1: java.util.function.Function): java.lang.Object
     public method computeIfAbsent(p0: java.lang.String, p1: java.util.function.Function): java.lang.Number
-    public synthetic method computeIfPresent(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
+    public synthetic bridge method computeIfPresent(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
     public method computeIfPresent(p0: java.lang.String, p1: java.util.function.BiFunction): java.lang.Number
     public bridge final method containsKey(p0: java.lang.Object): boolean
     public abstract method containsKey(p0: java.lang.String): boolean
     public abstract method containsValue(p0: java.lang.Number): boolean
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.Number
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public abstract method get(p0: java.lang.String): java.lang.Number
     public abstract method getEntries(): java.util.Set
     public abstract method getKeys(): java.util.Set
     public abstract method getSize(): int
     public abstract method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public synthetic method merge(p0: java.lang.Object, p1: java.lang.Object, p2: java.util.function.BiFunction): java.lang.Object
+    public synthetic bridge method merge(p0: java.lang.Object, p1: java.lang.Object, p2: java.util.function.BiFunction): java.lang.Object
     public method merge(p0: java.lang.String, p1: java.lang.Number, p2: java.util.function.BiFunction): java.lang.Number
-    public synthetic method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method put(p0: java.lang.String, p1: java.lang.Number): java.lang.Number
     public method putAll(p0: java.util.Map): void
-    public synthetic method putIfAbsent(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method putIfAbsent(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method putIfAbsent(p0: java.lang.String, p1: java.lang.Number): java.lang.Number
-    public method remove(p0: java.lang.Object): java.lang.Object
+    public method remove(p0: java.lang.Object): java.lang.Number
+    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
-    public synthetic method replace(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public synthetic method replace(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
+    public synthetic bridge method replace(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method replace(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
     public method replace(p0: java.lang.String, p1: java.lang.Number): java.lang.Number
     public method replace(p0: java.lang.String, p1: java.lang.Number, p2: java.lang.Number): boolean
     public method replaceAll(p0: java.util.function.BiFunction): void
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -128,14 +131,15 @@ public abstract class AbstractMapEntry {
     // source: 'collectionsWithFullJdk.kt'
     public method <init>(): void
     public method setValue(p0: java.lang.Number): java.lang.Number
-    public synthetic method setValue(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method setValue(p0: java.lang.Object): java.lang.Object
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
 public abstract class AbstractSet {
     // source: 'collectionsWithFullJdk.kt'
     public method <init>(): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void

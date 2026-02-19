@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -22,3 +24,5 @@ actual class Foo
 actual class Bar
 actual class Baz
 actual class FooBar
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor, secondaryConstructor */

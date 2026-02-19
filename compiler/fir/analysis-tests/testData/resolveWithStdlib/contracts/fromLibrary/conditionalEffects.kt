@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun test_1(x: Any) {
     require(x is Int)
     x.inc()
@@ -40,3 +41,6 @@ fun test_6(x: Any, b: Boolean) {
     }
     x.length
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, ifExpression, isExpression, nullableType,
+smartcast */

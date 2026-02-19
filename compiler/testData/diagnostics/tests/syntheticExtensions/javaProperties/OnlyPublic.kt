@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 package k
 
@@ -20,3 +21,5 @@ public class JavaClass {
 
     protected void setSomethingPublic(int value) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, javaProperty, javaType */

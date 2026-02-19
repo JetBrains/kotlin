@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 class A {
     fun foo() {}
 }
@@ -13,3 +14,6 @@ fun test(b: Boolean) {
     }
     a<!UNSAFE_CALL!>.<!>foo()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

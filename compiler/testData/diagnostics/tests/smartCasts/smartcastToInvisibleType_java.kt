@@ -1,5 +1,7 @@
-// ISSUE: KT-44802
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUES: KT-44802, KT-56744
 // INFERENCE_HELPERS
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: foo/PackagePrivateInterface.java
 package foo;
@@ -36,6 +38,13 @@ fun testInference(a: A, b: B) {
     <!INACCESSIBLE_TYPE!>x<!>.<!INVISIBLE_MEMBER!>foo<!>()
 }
 
+fun <T> dnnSelect(vararg x: T & Any): T & Any = x[0]
+
+fun testDnn(a: A, b: B) {
+    val x = <!INACCESSIBLE_TYPE!>dnnSelect(a, b)<!>
+    <!INACCESSIBLE_TYPE!>x<!>.<!INVISIBLE_MEMBER!>foo<!>()
+}
+
 // FILE: samePackage.kt
 package foo
 
@@ -51,3 +60,7 @@ fun testInference(a: A, b: B) {
     val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface")!>select(a, b)<!>
     x.foo()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, disjunctionExpression, dnnType, functionDeclaration, ifExpression,
+integerLiteral, isExpression, javaFunction, javaType, localProperty, nullableType, outProjection, propertyDeclaration,
+smartcast, typeParameter, vararg */

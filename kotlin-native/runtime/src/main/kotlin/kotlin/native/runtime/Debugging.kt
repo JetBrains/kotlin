@@ -5,6 +5,7 @@
 
 package kotlin.native.runtime
 
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 
@@ -16,17 +17,8 @@ import kotlin.native.internal.InternalForKotlinNative
 @NativeRuntimeApi
 @SinceKotlin("1.9")
 public object Debugging {
-    /**    
-     * Run full checked deinitialization on shutdown.
-     *
-     * Make sure that after exiting `main()` only a single thread with Kotlin runtime remains.
-     * Run GC collecting everything including globals.
-     *
-     * When enabled together with [Platform.isCleanersLeakCheckerActive] additionally checks that no cleaners get executed after `main()`
-     */
-    public var forceCheckedShutdown: Boolean
-        get() = Debugging_getForceCheckedShutdown()
-        set(value) = Debugging_setForceCheckedShutdown(value)
+    @Deprecated("Checked deinitialization is deprecated.")
+    public var forceCheckedShutdown: Boolean = false
 
     /**
      * Whether the current thread's state allows running Kotlin code.
@@ -37,14 +29,15 @@ public object Debugging {
     @InternalForKotlinNative
     public val isThreadStateRunnable: Boolean
         get() = Debugging_isThreadStateRunnable()
+
+    /**
+     * Dump memory in binary format to the given POSIX file descriptor and
+     * returns success flag.
+     */
+    @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemory")
+    @Escapes.Nothing
+    public external fun dumpMemory(fd: Long): Boolean
 }
-
-
-@GCUnsafeCall("Kotlin_Debugging_getForceCheckedShutdown")
-private external fun Debugging_getForceCheckedShutdown(): Boolean
-
-@GCUnsafeCall("Kotlin_Debugging_setForceCheckedShutdown")
-private external fun Debugging_setForceCheckedShutdown(value: Boolean): Unit
 
 @GCUnsafeCall("Kotlin_Debugging_isThreadStateRunnable")
 private external fun Debugging_isThreadStateRunnable(): Boolean

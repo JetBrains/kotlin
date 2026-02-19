@@ -5,51 +5,51 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
-import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ProcessForkOptions
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
-import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
-import org.jetbrains.kotlin.gradle.utils.getValue
-import java.nio.file.Path
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 
-internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
+@ExperimentalWasmDsl
+internal class KotlinWasmD8(
+    kotlinJsTest: KotlinJsTest,
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmD8"
+
+    private val testPath = kotlinJsTest.path
+
     @Transient
-    override val compilation: KotlinJsCompilation = kotlinJsTest.compilation
-    @Transient
-    private val project: Project = compilation.target.project
+    override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
 
-    private val d8 = D8RootPlugin.apply(project.rootProject)
-    private val d8Executable by project.provider { d8.requireConfigured().executablePath }
-    private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
-    private val npmProjectDir by project.provider { compilation.npmProject.dir }
+    private val projectLayout = kotlinJsTest.project.layout
+    private val d8 = D8Plugin.applyWithEnvSpec(kotlinJsTest.project)
 
-    override val workingDir: Path
-        get() = npmProjectDir.toPath()
+    override val workingDir: Provider<Directory> = projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
 
-    init {
-        kotlinJsTest.doNotTrackStateCompat("Should always re-run for WASM")
-    }
+    override val executable: Provider<String> = d8.executable
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
-        forkOptions: ProcessForkOptions,
+        launchOpts: ProcessLaunchOptions,
         nodeJsArgs: MutableList<String>,
-        debug: Boolean
+        debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(task.inputFileProperty.get().asFile)
-
-        forkOptions.executable = d8Executable.absolutePath
-        forkOptions.workingDir = testRunnerFile.parentFile
+        val compiledFile = task.inputFileProperty.get().asFile
+        val testRunnerFile = writeWasmUnitTestRunner(launchOpts.workingDir.get().asFile, compiledFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -57,7 +57,6 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(
@@ -65,17 +64,17 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
             exclude = task.excludePatterns
         )
 
-        val args = mutableListOf<String>()
-        with(args) {
-            addWasmExperimentalArguments()
+        val args = mutableListOf<String>().apply {
             add(testRunnerFile.absolutePath)
             add("--")
             addAll(cliArgs.toList())
         }
 
+        launchOpts.workingDir.set(compiledFile.parentFile)
+
         return TCServiceMessagesTestExecutionSpec(
-            forkOptions = forkOptions,
-            args = args,
+            processLaunchOptions = launchOpts,
+            processArgs = args,
             checkExitCode = false,
             clientSettings = clientSettings,
             dryRunArgs = args + "--dryRun"
@@ -84,5 +83,24 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = emptySet()
 
-    override fun getPath(): String = "${kotlinJsTest.path}:kotlinTestFrameworkStub"
+    override fun getPath(): String = "$testPath:kotlinTestFrameworkStub"
+
+    @Deprecated(
+        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
+        level = DeprecationLevel.ERROR
+    )
+    override fun createTestExecutionSpec(
+        task: KotlinJsTest,
+        forkOptions: ProcessForkOptions,
+        nodeJsArgs: MutableList<String>,
+        debug: Boolean,
+    ): TCServiceMessagesTestExecutionSpec =
+        createTestExecutionSpecDeprecated(
+            task = task,
+            forkOptions = forkOptions,
+            nodeJsArgs = nodeJsArgs,
+            debug = debug,
+            objects = objects,
+            providers = providers,
+        )
 }

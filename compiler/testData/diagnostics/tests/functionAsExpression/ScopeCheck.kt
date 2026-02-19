@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface B {
     fun b_fun() {}
@@ -19,3 +20,6 @@ fun test(param: String) {
     <!UNRESOLVED_REFERENCE!>inner_bar<!>
     <!UNRESOLVED_REFERENCE!>fun_param<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, functionDeclaration, integerLiteral, interfaceDeclaration,
+localProperty, propertyDeclaration */

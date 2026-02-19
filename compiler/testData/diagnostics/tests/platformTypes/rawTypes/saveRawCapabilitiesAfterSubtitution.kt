@@ -1,5 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -19,3 +21,5 @@ class Test {
 // FILE: main.kt
 
 val result = Test.rawAField.Inner<Double>().foo()
+
+/* GENERATED_FIR_TAGS: flexibleType, javaProperty, javaType, nullableType, propertyDeclaration */

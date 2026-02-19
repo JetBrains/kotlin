@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNCHECKED_CAST
 
 fun <T> Collection<T>.toArray(): Array<T> = this as Array<T>
 fun Collection<String>.toArray2(): Array<String> = this as Array<String>
@@ -20,3 +21,6 @@ fun use(arg: Array<String>, s: Collection<String>, x: Foo<String>) {
 }
 
 fun arr(x: Array<String>) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+nullableType, operator, thisExpression, typeParameter */

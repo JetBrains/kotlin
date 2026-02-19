@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -33,3 +35,5 @@ public enum FooImpl {
 
     public abstract String getResult();
 }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect, javaType, typeAliasDeclaration */

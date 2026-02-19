@@ -1,3 +1,4 @@
 expression: REFERENCE_EXPRESSION
 text: hashCode
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

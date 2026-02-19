@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable
 import org.jetbrains.kotlin.backend.common.linkage.partial.DeclarationKind.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.ExpressionKind.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.UNKNOWN_NAME
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.guessName
@@ -16,18 +18,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
 internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
     when (this@renderLinkageError) {
@@ -47,17 +42,11 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
         }
 
         is MemberAccessExpressionArgumentsMismatch -> expression(expression) {
-            memberAccessExpressionArgumentsMismatch(
-                expression.symbol,
-                expressionHasDispatchReceiver,
-                functionHasDispatchReceiver,
-                expressionValueArgumentCount,
-                functionValueParameterCount
-            )
+            memberAccessExpressionArgumentsMismatch(expression.symbol, this@renderLinkageError)
         }
 
         is InvalidSamConversion -> expression(expression) {
-            invalidSamConversion(expression, abstractFunctionSymbols, abstractPropertySymbol)
+            invalidSamConversion(this@renderLinkageError)
         }
 
         is SuspendableFunctionCallWithoutCoroutineContext -> expression(expression) {
@@ -161,22 +150,21 @@ private data class Expression(val kind: ExpressionKind, val referencedDeclaratio
 // More can be added for verbosity in the future.
 private val IrExpression.expression: Expression
     get() = when (this) {
-        is IrDeclarationReference -> when (this) {
-            is IrFunctionReference -> Expression(REFERENCE, symbol.declarationKind)
-            is IrPropertyReference,
-            is IrLocalDelegatedPropertyReference -> Expression(REFERENCE, PROPERTY)
-            is IrCall -> Expression(CALLING, symbol.declarationKind)
-            is IrConstructorCall,
-            is IrEnumConstructorCall,
-            is IrDelegatingConstructorCall -> Expression(CALLING, CONSTRUCTOR)
-            is IrClassReference -> Expression(REFERENCE, symbol.declarationKind)
-            is IrGetField -> Expression(READING, symbol.declarationKind)
-            is IrSetField -> Expression(WRITING, symbol.declarationKind)
-            is IrGetValue -> Expression(READING, symbol.declarationKind)
-            is IrSetValue -> Expression(WRITING, symbol.declarationKind)
-            is IrGetSingletonValue -> Expression(GETTING_INSTANCE, symbol.declarationKind)
-            else -> Expression(REFERENCE, OTHER_DECLARATION)
-        }
+        is IrFunctionReference -> Expression(REFERENCE, symbol.declarationKind)
+        is IrRichFunctionReference -> Expression(REFERENCE, reflectionTargetSymbol?.declarationKind ?: DeclarationKind.FUNCTION)
+        is IrPropertyReference, is IrRichPropertyReference,
+        is IrLocalDelegatedPropertyReference -> Expression(REFERENCE, PROPERTY)
+        is IrCall -> Expression(CALLING, symbol.declarationKind)
+        is IrConstructorCall,
+        is IrEnumConstructorCall,
+        is IrDelegatingConstructorCall -> Expression(CALLING, CONSTRUCTOR)
+        is IrClassReference -> Expression(REFERENCE, symbol.declarationKind)
+        is IrGetField -> Expression(READING, symbol.declarationKind)
+        is IrSetField -> Expression(WRITING, symbol.declarationKind)
+        is IrGetValue -> Expression(READING, symbol.declarationKind)
+        is IrSetValue -> Expression(WRITING, symbol.declarationKind)
+        is IrGetSingletonValue -> Expression(GETTING_INSTANCE, symbol.declarationKind)
+        is IrDeclarationReference -> Expression(REFERENCE, OTHER_DECLARATION)
         is IrInstanceInitializerCall -> Expression(CALLING_INSTANCE_INITIALIZER, classSymbol.declarationKind)
         is IrTypeOperatorCall -> {
             if (operator == IrTypeOperator.SAM_CONVERSION)
@@ -427,7 +415,27 @@ private fun Appendable.unusableClassifier(
 }
 
 private fun Appendable.noDeclarationForSymbol(symbol: IrSymbol): Appendable =
-    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol)
+    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol).also {
+        val signature = symbol.signature
+        val fromCInteropLibrary = signature?.run { with(this) { Flags.IS_NATIVE_INTEROP_LIBRARY.test() } }
+        if (fromCInteropLibrary == true) {
+            val packageFqName = signature.packageFqName().asString()
+            val platformLibraryName = packageFqName.removePrefix("org.jetbrains.kotlin.native.platform.")
+            if (platformLibraryName != packageFqName) {
+                it.append(". This looks like a Kotlin/Native $platformLibraryName platform library issue.")
+                it.append(" It could happen if one of the dependencies was compiled with a different version")
+                it.append(" of the Kotlin/Native compiler than the version used to compile this binary.")
+                it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                it.append(" See https://youtrack.jetbrains.com/issue/KT-78063 for more details.")
+            } else {
+                it.append(". This looks like a cinterop-generated library issue. It could happen if there is a transitive dependency which")
+                it.append(" uses cinterop and the resulting libraries are not binary compatible. Or there might be a cinterop dependency")
+                it.append(" generated with a different version of the Kotlin/Native compiler than the version used to compile this binary.")
+                it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                it.append(" See https://youtrack.jetbrains.com/issue/KT-78062 for more details.")
+            }
+        }
+    }
 
 private fun Appendable.declarationWithUnusableClassifier(
     declarationSymbol: IrSymbol,
@@ -504,6 +512,7 @@ private fun StringBuilder.expression(expression: IrExpression, continuation: (Ex
             is IrGetSingletonValue -> appendCapitalized("singleton", capitalized = !hasPrefix)
                 .append(" ").declarationName(expression.symbol)
             is IrDeclarationReference -> declarationKindName(expression.symbol, capitalized = !hasPrefix)
+            is IrRichCallableReference<*> -> declarationKindName(expression.reflectionTargetSymbol ?: expression.invokeFunction.symbol, capitalized = !hasPrefix)
             is IrInstanceInitializerCall -> declarationKindName(expression.classSymbol, capitalized = !hasPrefix)
             else -> appendCapitalized(referencedDeclarationKind.displayName, capitalized = !hasPrefix)
         }
@@ -520,37 +529,37 @@ private fun Appendable.wrongTypeOfDeclaration(actualDeclarationSymbol: IrSymbol,
 
 private fun Appendable.memberAccessExpressionArgumentsMismatch(
     functionSymbol: IrFunctionSymbol,
-    expressionHasDispatchReceiver: Boolean,
-    functionHasDispatchReceiver: Boolean,
-    expressionValueArgumentCount: Int,
-    functionValueParameterCount: Int
-): Appendable = when {
-    expressionHasDispatchReceiver && !functionHasDispatchReceiver ->
-        append("The call site provides excessive dispatch receiver parameter 'this' that is not needed for the ")
-            .declarationKind(functionSymbol, capitalized = false)
-
-    !expressionHasDispatchReceiver && functionHasDispatchReceiver ->
-        append("The call site does not provide a dispatch receiver parameter 'this' that the ")
-            .declarationKind(functionSymbol, capitalized = false).append(" requires")
-
-    else ->
-        append("The call site provides ").append(if (expressionValueArgumentCount > functionValueParameterCount) "more" else "less")
-            .append(" value arguments (").append(expressionValueArgumentCount.toString()).append(") than the ")
-            .declarationKind(functionSymbol, capitalized = false).append(" requires (")
-            .append(functionValueParameterCount.toString()).append(")")
+    mismatch: MemberAccessExpressionArgumentsMismatch,
+): Appendable = when(mismatch) {
+    is MemberAccessExpressionArgumentsMismatch.ExcessiveArguments -> append("The call site provides ${mismatch.count} more value argument(s) than the ")
+        .declarationKind(functionSymbol, capitalized = false).append(" expects")
+    is MemberAccessExpressionArgumentsMismatch.MissingArguments -> append("The call site has ${mismatch.forParameters.size} less value argument(s) than the ")
+        .declarationKind(functionSymbol, capitalized = false).append(" requires.")
+        .append(" Those arguments are missing: ").append(mismatch.forParameters.joinToString { it.name.asString() })
+    is MemberAccessExpressionArgumentsMismatch.MissingArgumentValues-> append("The ")
+        .declarationKind(functionSymbol, capitalized = false)
+        .append(" has some value parameters for which neither the call site provides an argument, nor do they have a default value: ")
+        .append(mismatch.forParameters.joinToString() { it.name.asString() })
 }
 
-private fun Appendable.invalidSamConversion(
-    expression: IrTypeOperatorCall,
-    abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
-    abstractPropertySymbol: IrPropertySymbol?,
-): Appendable {
-    declarationKindName(expression.typeOperand.classifierOrFail, capitalized = true)
-    return when {
-        abstractPropertySymbol != null -> append(" has abstract ").declarationKindName(abstractPropertySymbol, capitalized = false)
-        abstractFunctionSymbols.isEmpty() -> append(" does not have an abstract function")
-        else -> append(" has more than one abstract function: ").sortedDeclarationsName(abstractFunctionSymbols)
+private fun Appendable.invalidSamConversion(case: InvalidSamConversion): Appendable = when(case) {
+    is InvalidSamConversion.NotAFunInterface ->
+        declarationKindName(case.classifier, capitalized = true).append(" is not a fun interface")
+    is InvalidSamConversion.FunInterfaceHasNotSingleFunction -> {
+        declarationKindName(case.funInterface, capitalized = true)
+        if (case.abstractFunctionSymbols.isEmpty()) append(" does not have an abstract function")
+        else append(" has more than one abstract function: ").sortedDeclarationsName(case.abstractFunctionSymbols)
     }
+    is InvalidSamConversion.FunInterfaceHasAbstractProperty ->
+        declarationKindName(case.funInterface, capitalized = true).append(" has abstract ")
+            .declarationKindName(case.abstractPropertySymbol, capitalized = false)
+    is InvalidSamConversion.FunctionIsIncompatible ->
+        append("Cannot convert from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
+            .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
+    is InvalidSamConversion.SamChanged ->
+        append("The single abstract method of ").declarationKindName(case.funInterface, capitalized = false)
+            .append(" changed from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
+            .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
 }
 
 private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =

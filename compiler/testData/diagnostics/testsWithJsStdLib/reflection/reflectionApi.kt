@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.*
 
 class Foo(val prop: Any) {
@@ -26,7 +27,7 @@ fun testSomeValidCases(p0: KProperty0<Int>, pm0: KMutableProperty0<String>, f: K
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.simpleName
-    k.<!UNSUPPORTED!>qualifiedName<!>
+    k.<!UNSUPPORTED_REFLECTION_API!>qualifiedName<!>
     k.<!UNRESOLVED_REFERENCE!>members<!>
     k.<!UNRESOLVED_REFERENCE!>constructors<!>
     k.<!UNRESOLVED_REFERENCE!>nestedClasses<!>

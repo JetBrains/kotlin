@@ -1,4 +1,3 @@
-
 import kotlin.reflect.KProperty
 
 class Delegate {

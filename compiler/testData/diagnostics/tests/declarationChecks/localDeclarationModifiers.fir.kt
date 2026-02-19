@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package d
 
 class T {
@@ -10,3 +11,6 @@ fun foo() {
     <!WRONG_MODIFIER_TARGET!>override<!> fun T.baz() = 2
     <!WRONG_MODIFIER_TARGET!>private<!> fun bar() = 2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+localProperty, override, propertyDeclaration */

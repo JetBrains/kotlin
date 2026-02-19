@@ -1,0 +1,26 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val runA // /A.runA|{}runA[0]
+        final fun <get-runA>(): kotlin/Function2</A, kotlin/String, kotlin/Unit> // /A.runA.<get-runA>|<get-runA>(){}[0]
+    constructor <init>(kotlin/Function2</A, kotlin/String, kotlin/Unit> = ...) // /A.<init>|<init>(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}[0]
+    final fun component1(): kotlin/Function2</A, kotlin/String, kotlin/Unit> // /A.component1|component1(){}[0]
+    final fun copy(kotlin/Function2</A, kotlin/String, kotlin/Unit> = ...): /A // /A.copy|copy(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /A.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /A.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /A.toString|toString(){}[0]
+}
+final class /B { // /B|null[0]
+    final val x // /B.x|{}x[0]
+        final fun <get-x>(): kotlin/Any // /B.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Any = ...) // /B.<init>|<init>(kotlin.Any){}[0]
+    final fun component1(): kotlin/Any // /B.component1|component1(){}[0]
+    final fun copy(kotlin/Any = ...): /B // /B.copy|copy(kotlin.Any){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /B.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /B.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /B.toString|toString(){}[0]
+}

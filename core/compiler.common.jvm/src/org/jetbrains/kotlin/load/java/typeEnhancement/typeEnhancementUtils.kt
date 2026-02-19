@@ -32,28 +32,50 @@ private fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovar
 private val JavaTypeQualifiers.nullabilityForErrors: NullabilityQualifier?
     get() = if (isNullabilityQualifierForWarning) null else nullability
 
+private val JavaTypeQualifiers.mutabilityForErrors: MutabilityQualifier?
+    get() = if (isMutabilityQualifierForWarning) null else mutability
+
 fun JavaTypeQualifiers.computeQualifiersForOverride(
     superQualifiers: Collection<JavaTypeQualifiers>,
     isCovariant: Boolean,
     isForVarargParameter: Boolean,
-    ignoreDeclarationNullabilityAnnotations: Boolean
+    ignoreDeclarationNullabilityAnnotations: Boolean,
 ): JavaTypeQualifiers {
+    // TODO(KT-72620) If this is enhanced to DNN for warning but some super qualifier is enhanced to NOT_NULL for error, we basically
+    //  lose the enhancement for warning.
     val newNullabilityForErrors = superQualifiers.mapNotNull { it.nullabilityForErrors }.toSet()
         .select(nullabilityForErrors, isCovariant)
     val newNullability = newNullabilityForErrors ?: superQualifiers.mapNotNull { it.nullability }.toSet()
         .select(nullability, isCovariant)
-    val newMutability = superQualifiers.mapNotNull { it.mutability }.toSet()
-        .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, mutability, isCovariant)
+
     // Vararg value parameters effectively have non-nullable type in Kotlin
     // and having nullable types in Java may lead to impossibility of overriding them in Kotlin
     val realNullability = newNullability?.takeUnless {
         ignoreDeclarationNullabilityAnnotations || (isForVarargParameter && it == NullabilityQualifier.NULLABLE)
     }
+    val isNullabilityForWarning = realNullability != null && newNullabilityForErrors == null
+    val definitelyNotNull =
+        realNullability == NullabilityQualifier.NOT_NULL &&
+                (isDefinitelyNotNullAndSameSeverity(isNullabilityForWarning) ||
+                        superQualifiers.any { it.isDefinitelyNotNullAndSameSeverity(isNullabilityForWarning) })
+
+    val newMutabilityForErrors = superQualifiers.mapNotNull { it.mutabilityForErrors }.toSet()
+        .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, mutabilityForErrors, isCovariant)
+    val newMutability = newMutabilityForErrors ?: superQualifiers.mapNotNull { it.mutability }.toSet()
+        .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, mutability, isCovariant)
+    val isMutabilityForWarning = newMutability != null && newMutabilityForErrors == null
+
     return JavaTypeQualifiers(
-        realNullability, newMutability,
-        realNullability == NullabilityQualifier.NOT_NULL && (definitelyNotNull || superQualifiers.any { it.definitelyNotNull }),
-        realNullability != null && newNullabilityForErrors != newNullability
+        nullability = realNullability,
+        mutability = newMutability,
+        definitelyNotNull = definitelyNotNull,
+        isNullabilityQualifierForWarning = isNullabilityForWarning,
+        isMutabilityQualifierForWarning = isMutabilityForWarning,
     )
+}
+
+private fun JavaTypeQualifiers.isDefinitelyNotNullAndSameSeverity(isForWarning: Boolean): Boolean {
+    return isNullabilityQualifierForWarning == isForWarning && definitelyNotNull
 }
 
 fun TypeSystemCommonBackendContext.hasEnhancedNullability(type: KotlinTypeMarker): Boolean =

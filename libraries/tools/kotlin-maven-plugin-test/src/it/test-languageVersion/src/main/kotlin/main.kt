@@ -1,1 +1,7 @@
-interface A : suspend () -> Unit
+fun test() {
+    while (true) {
+        run {
+            break
+        }
+    }
+}

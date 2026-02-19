@@ -1,4 +1,5 @@
-// LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +GenericInlineClassParameter
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // IGNORE_BACKED: JVM
 
 inline class ICAny<T>(val value: T)

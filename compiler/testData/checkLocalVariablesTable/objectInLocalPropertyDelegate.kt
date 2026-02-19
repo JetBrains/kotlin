@@ -7,4 +7,4 @@ fun foo() {
 }
 
 // METHOD : ObjectInLocalPropertyDelegateKt$foo$prop$2.invoke()Ljava/lang/String;
-// VARIABLE : NAME=this TYPE=LObjectInLocalPropertyDelegateKt$foo$prop$2; INDEX=0
+// VARIABLE : NAME=this TYPE=LObjectInLocalPropertyDelegateKt$foo$prop$2;

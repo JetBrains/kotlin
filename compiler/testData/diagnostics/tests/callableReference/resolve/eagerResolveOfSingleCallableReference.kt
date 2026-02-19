@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class A
 class B : A()
@@ -12,3 +13,6 @@ fun test(ls: Out<B>) {
 }
 
 fun <S, T : S> Out<T>.reduce(operation: (S, T) -> S): S = TODO()
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, nullableType, out, primaryConstructor, typeConstraint, typeParameter */

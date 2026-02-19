@@ -1,0 +1,4 @@
+FILE: incompletePropertyWithDelegate.kt
+    public? final? fun String.getValue(x: Any?, y: KProperty<*>): <implicit> { LAZY_BLOCK }
+    public? final? val x: Stringby LAZY_EXPRESSION
+        public? get(): <implicit> { LAZY_BLOCK }

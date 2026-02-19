@@ -1,4 +1,5 @@
-// !IDIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun case_1(a: MutableList<out MutableList<MutableList<MutableList<MutableList<MutableList<MutableList<Int?>?>?>?>?>?>?>?) {
     if (a != null) {
@@ -82,3 +83,6 @@ fun case_3(a: MutableList<MutableList<MutableList<MutableList<MutableList<Mutabl
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, outProjection, propertyDeclaration, smartcast */

@@ -1,5 +1,7 @@
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE -UNUSED_PARAMETER
 // SKIP_TXT
 // WITH_COROUTINES
 import kotlin.coroutines.*
@@ -38,3 +40,7 @@ fun box() {
         calculate()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, companionObject, functionDeclaration,
+functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, safeCall, stringLiteral, suspend, thisExpression, typeParameter */

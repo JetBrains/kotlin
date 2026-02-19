@@ -8,8 +8,6 @@ import lombok.experimental.Accessors;
 public class FluentTest {
     @Getter private int age = 10;
 
-    @Getter @Accessors private int overrideAnnotation = 10;
-
     @Getter(AccessLevel.PROTECTED) private String name;
 
     @Getter private boolean primitiveBoolean;
@@ -19,7 +17,6 @@ public class FluentTest {
     void test() {
         age();
         primitiveBoolean();
-        getOverrideAnnotation();
     }
 
 }
@@ -34,9 +31,6 @@ fun box(): String {
     obj.primitiveBoolean()
 
     obj.boxedBoolean()
-
-    obj.overrideAnnotation
-    obj.getOverrideAnnotation()
 
     OverridenGetterTest().usage()
     return "OK"

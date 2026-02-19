@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class My(val field: Int) {
     // Backing field, initializer
@@ -8,3 +9,5 @@ class My(val field: Int) {
     val third: Int
         get() = this.field
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, primaryConstructor, propertyDeclaration, thisExpression */

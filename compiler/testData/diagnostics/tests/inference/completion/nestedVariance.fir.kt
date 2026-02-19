@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Base
 class Derived : Base
@@ -75,3 +76,6 @@ fun testLateCompletion(derived: Derived, otherDerived: OtherDerived) {
         biparamLateInv(derived, otherDerived)
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, nullableType, out,
+starProjection, typeParameter */

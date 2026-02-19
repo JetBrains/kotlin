@@ -1,0 +1,7 @@
+fun decode(encoded: kotlin.String?): kotlin.String?
+
+fun decodeFake(encoded: kotlin.String?): kotlin.String?
+
+fun decodeIfString(encoded: kotlin.Any): kotlin.String?
+
+fun decodeNotNumber(encoded: kotlin.Any): kotlin.String?

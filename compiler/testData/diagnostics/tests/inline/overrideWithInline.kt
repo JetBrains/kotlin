@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
 
 interface IBase {
     fun foo()
@@ -59,3 +59,5 @@ open class COpen : IBase {
     }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inline, interfaceDeclaration,
+localClass, nestedClass, nullableType, override, propertyDeclaration, reified, typeParameter */

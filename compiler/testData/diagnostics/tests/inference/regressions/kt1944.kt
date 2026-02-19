@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-1944 Inference fails on run()
 package j
@@ -15,3 +16,6 @@ class P {
         checkSubtype<Unit>(r)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

@@ -1,6 +1,6 @@
 // RENDER_ANNOTATIONS
 // TARGET_BACKEND: JVM_IR
-// JVM_TARGET: 1.8
+
 package foo
 
 @Target(AnnotationTarget.TYPE_PARAMETER)

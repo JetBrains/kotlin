@@ -17,6 +17,10 @@ public class BaseClass {
     public @Nullable Foo mixed(Foo x) { return null; }
 
     public Foo explicitlyNullnessUnspecified(@NullnessUnspecified Foo x) { return null; }
+
+    public void withVararg(Object... p) { }
+
+    public static Foo foo() { return null; }
 }
 
 
@@ -24,7 +28,11 @@ public class BaseClass {
 
 private val FOO = object : Foo {}
 
-class Correct : BaseClass() {
+open class IntermediateClass : BaseClass() {
+    open fun intermediateNotNull() = BaseClass.foo()
+}
+
+class Correct : IntermediateClass() {
     override fun everythingNotNullable(x: Foo): Foo {
         return FOO
     }
@@ -44,9 +52,15 @@ class Correct : BaseClass() {
     override fun explicitlyNullnessUnspecified(x: Foo): Foo {
         return FOO
     }
+
+    override fun intermediateNotNull(): Foo {
+        return FOO
+    }
+
+    override fun withVararg(vararg p: Any) {}
 }
 
-class WrongReturnTypes : BaseClass() {
+class WrongReturnTypes : IntermediateClass() {
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo): Foo? {
         return null
     }
@@ -54,9 +68,13 @@ class WrongReturnTypes : BaseClass() {
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun explicitlyNullnessUnspecified(x: Foo): Foo? {
         return null
     }
+
+    override fun intermediateNotNull(): Foo? {
+        return null
+    }
 }
 
-class WrongParameter : BaseClass() {
+class WrongParameter : IntermediateClass() {
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo?): Foo {
         return FOO
     }

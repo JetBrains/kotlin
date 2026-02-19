@@ -66,8 +66,6 @@ class SDLAudio(private val player: VideoPlayer) : DisposableContainer() {
 }
 
 private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?, length: Int) {
-    // This handler will be invoked in the audio thread, so reinit runtime.
-    initRuntimeIfNeeded()
     val decoder = DecoderWorker(Worker.fromCPointer(userdata))
     var outPosition = 0
     while (outPosition < length) {

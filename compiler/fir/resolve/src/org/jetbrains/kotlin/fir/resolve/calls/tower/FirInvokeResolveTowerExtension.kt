@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
@@ -14,15 +15,24 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
+import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitPropertyTypeMakesBehaviorOrderDependant
+import org.jetbrains.kotlin.fir.resolve.calls.NotFunctionAsOperator
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.dfa.PersistentTypeStatement
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class FirInvokeResolveTowerExtension(
     private val context: ResolutionContext,
@@ -111,15 +121,15 @@ internal class FirInvokeResolveTowerExtension(
     }
 
     /**
-     * Let we have a call if a form of "x.f()" or "f()"
+     * Let us having a call in the form of `x.f()` or `f()`
      *
-     * This method enqueues a task (based on runResolutionForInvokeReceiverVariable) that for each successful property enqueues another task
-     * that tries to resolve "f()" call itself
+     * This method enqueues a task (based on [runResolutionForInvokeReceiverVariable]) that for each successful property enqueues another task
+     * that tries to resolve `f()` call itself
      *
-     * @param info describes whole "x.f()" or "f()"
-     * @param invokeReceiverInfo describes "x.f" or "f" variable (in case of no-receiver call or in case of resolving invokeExtension with "x")
-     * @param invokeBuiltinExtensionMode is true only when the original call has a form "x.f()" and invokeReceiverInfo is "f"
-     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver ("x.f" or "f") on the given FirTowerResolveTask
+     * @param info describes the whole `x.f()` or `f()`
+     * @param invokeReceiverInfo describes `x.f` or `f` variable (in case of no-receiver call or in case of resolving invokeExtension with `x`)
+     * @param invokeBuiltinExtensionMode is true only when the original call has a form `x.f()` and invokeReceiverInfo is `f`
+     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver (`x.f` or `f`) on the given FirTowerResolveTask
      */
     private inline fun enqueueInvokeReceiverTask(
         info: CallInfo,
@@ -141,6 +151,7 @@ internal class FirInvokeResolveTowerExtension(
                     receiverGroup = towerGroup,
                     collector
                 )
+                collector.forwardedDiagnostics().forEach { candidateFactoriesAndCollectors.resultCollector.addForwardedDiagnostic(it) }
                 collector.newDataSet()
             }
         )
@@ -156,12 +167,19 @@ internal class FirInvokeResolveTowerExtension(
         collector: CandidateCollector
     ) {
         for (invokeReceiverCandidate in collector.bestCandidates()) {
-            val symbol = invokeReceiverCandidate.symbol
-            if (symbol !is FirCallableSymbol<*> && symbol !is FirClassLikeSymbol<*>) continue
-
-            val isExtensionFunctionType =
-                symbol is FirCallableSymbol<*> &&
-                        components.returnTypeCalculator.tryCalculateReturnType(symbol).isExtensionFunctionType(components.session)
+            val isExtensionFunctionType = when (val symbol = invokeReceiverCandidate.symbol) {
+                is FirCallableSymbol<*> -> {
+                    val calculatedType = components.returnTypeCalculator.tryCalculateReturnType(symbol)
+                    checkImplicitPropertyTypeMakesBehaviorOrderDependant(symbol, info, collector)
+                    calculatedType.isExtensionFunctionType(components.session)
+                }
+                is FirClassLikeSymbol<*> -> {
+                    false
+                }
+                else -> {
+                    continue
+                }
+            }
 
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
@@ -177,11 +195,13 @@ internal class FirInvokeResolveTowerExtension(
                     invokeReceiverCandidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression
                 ) ?: continue
 
+            if (invokeReceiverExpression.resolvedType is ConeErrorType) continue
+
             val invokeFunctionInfo =
                 info.copy(
                     explicitReceiver = invokeReceiverExpression,
                     name = OperatorNameConventions.INVOKE,
-                    isImplicitInvoke = true,
+                    implicitInvokeMode = ImplicitInvokeMode.Regular,
                     candidateForCommonInvokeReceiver = invokeReceiverCandidate.takeUnless { invokeBuiltinExtensionMode }
                 ).let {
                     when {
@@ -199,6 +219,41 @@ internal class FirInvokeResolveTowerExtension(
                 receiverGroup
             )
         }
+    }
+
+    /**
+     * The diagnostic is dedicated to warn about code that can be resolved differently depending on declaration order (see KT-76240)
+     */
+    private fun checkImplicitPropertyTypeMakesBehaviorOrderDependant(
+        symbol: FirCallableSymbol<*>,
+        callInfo: CallInfo,
+        collector: CandidateCollector,
+    ) {
+        // Check the diagnostic for properties because only they can be affected by possible invoke call resolution.
+        if (symbol !is FirPropertySymbol) return
+
+        // If the return type has never been implicit, we interrupt the further checks. Such a property can't lead to an implicit resolve loop.
+        if (symbol.fir.returnTypeRef.let { it !is FirImplicitTypeRef && it.source?.kind != KtFakeSourceElementKind.ImplicitTypeRef }) return
+
+        // Local properties don't cause recursive problems
+        // because it's not possible to reference a declaration that are declared below a given local declaration
+        if (symbol.isLocal) return
+
+        // The call site without an explicit receiver can't cause the warning.
+        // In the case of nonnull `explicitReceiver`, the resolver is not trying to treat a property call as an invoke function call,
+        // and a recursive problem error is always reported on a function call site if it exists.
+        if (callInfo.explicitReceiver == null) return
+
+        // It seems like the warning is only actual with `ReturnTypeCalculatorWithJump`
+        // If we encounter a similar problem with `ReturnTypeCalculatorForFullBodyResolve` we can consider its support later
+        // (for instance, a complicated case with overridden declarations)
+        val implicitBodyResolveComputationSession =
+            (context.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.implicitBodyResolveComputationSession ?: return
+
+        // Check loops to filter out irrelevant cases
+        if (!implicitBodyResolveComputationSession.belongToSomeNonTrivialLoop(symbol)) return
+
+        collector.addForwardedDiagnostic(ImplicitPropertyTypeMakesBehaviorOrderDependant(symbol))
     }
 
     private fun enqueueResolverTasksForInvoke(
@@ -221,7 +276,16 @@ internal class FirInvokeResolveTowerExtension(
             }
         } else {
             if (useImplicitReceiverAsBuiltinInvokeArgument) {
-                require(explicitReceiver.type.fullyExpandedType(context.session).isExtensionFunctionType)
+                if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                    val session = context.session
+                    val fullyExpandedType = explicitReceiver.type.fullyExpandedType(session)
+                    require(
+                        (session.typeApproximator.approximateToSuperType(
+                            fullyExpandedType,
+                            TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                        ) ?: fullyExpandedType).isExtensionFunctionType
+                    )
+                }
                 manager.enqueueResolverTask {
                     task.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
                         invokeFunctionInfo, explicitReceiver,
@@ -277,21 +341,21 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
     candidate: Candidate,
     info: CallInfo,
     invokeBuiltinExtensionMode: Boolean,
-    extensionReceiverExpression: FirExpression
+    extensionReceiverExpression: FirExpression?
 ): FirExpression? {
+    val notFunctionAsOperatorDiagnostics = runIf (candidate.lowestApplicability == CandidateApplicability.K2_NOT_FUNCTION_AS_OPERATOR) {
+        candidate.diagnostics.filterIsInstance<NotFunctionAsOperator>().map { ConeNotFunctionAsOperator(it.symbol) }
+    } ?: emptyList()
     return when (val symbol = candidate.symbol) {
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
-            candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol
+            candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol, notFunctionAsOperatorDiagnostics
         )
-        is FirRegularClassSymbol -> buildResolvedQualifierForClass(
+        is FirClassLikeSymbol -> buildResolvedQualifierForClass(
             symbol,
-            sourceElement = info.fakeSourceForImplicitInvokeCallReceiver
+            sourceElement = info.fakeSourceForImplicitInvokeCallReceiver,
+            explicitParent = info.explicitReceiver as? FirResolvedQualifier,
+            nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
         )
-        is FirTypeAliasSymbol -> {
-            val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-            val expansionRegularClassSymbol = type.lookupTag.toSymbol(session) ?: return null
-            buildResolvedQualifierForClass(expansionRegularClassSymbol, sourceElement = symbol.fir.source)
-        }
         else -> throw AssertionError()
     }
 }
@@ -300,17 +364,28 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
     candidate: Candidate,
     info: CallInfo,
     invokeBuiltinExtensionMode: Boolean,
-    extensionReceiverExpression: FirExpression,
-    symbol: FirCallableSymbol<*>
+    extensionReceiverExpression: FirExpression?,
+    symbol: FirCallableSymbol<*>,
+    nonFatalDiagnostics: List<ConeNotFunctionAsOperator>,
 ): FirExpression {
     return FirPropertyAccessExpressionBuilder().apply {
-        calleeReference = FirNamedReferenceWithCandidate(
-            null,
-            symbol.callableId.callableName,
-            candidate
-        )
+        val fakeSource = info.fakeSourceForImplicitInvokeCallReceiver
+        val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
+        calleeReference = when {
+            returnTypeRef is FirErrorTypeRef -> FirErrorReferenceWithCandidate(
+                fakeSource, symbol.name, candidate, returnTypeRef.diagnostic,
+            )
+
+            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.name, candidate)
+
+            else -> FirErrorReferenceWithCandidate(
+                fakeSource, symbol.name, candidate,
+                createConeDiagnosticForCandidateWithError(candidate.applicability, candidate),
+            )
+        }
         dispatchReceiver = candidate.dispatchReceiverExpression()
-        coneTypeOrNull = returnTypeCalculator.tryCalculateReturnType(symbol.fir).type
+
+        coneTypeOrNull = returnTypeRef.coneType
 
         if (!invokeBuiltinExtensionMode) {
             extensionReceiver = extensionReceiverExpression
@@ -318,14 +393,32 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
             explicitReceiver = info.explicitReceiver
         }
 
-        if (candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
-            nonFatalDiagnostics.add(ConePropertyAsOperator(candidate.symbol as FirPropertySymbol))
-        }
-        source = info.fakeSourceForImplicitInvokeCallReceiver
+        this.nonFatalDiagnostics.addAll(nonFatalDiagnostics)
+
+        candidate.updateSourcesOfReceivers()
+
+        source = fakeSource
     }.build().let {
         callCompleter.completeCall(it, ResolutionMode.ReceiverResolution)
-    }.let {
-        transformQualifiedAccessUsingSmartcastInfo(it)
+    }.let { expression ->
+        // This manual picking is necessary since we don't support snapshots/backtracking for DFA and are so unable
+        // to rely on `dataFlowAnalyzer.exitQualifiedAccessExpression(it)`: the implicit `invoke()` candidate may not
+        // end up being chosen during resolution, so we can't commit anything into our DFA just yet.
+        val field = (symbol as? FirPropertySymbol)?.tryAccessExplicitFieldSymbol(inlineFunction, session, candidate.hasVisibleBackingField)
+
+        val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) { variable, statement ->
+            if (field == null) {
+                statement
+            } else {
+                PersistentTypeStatement(
+                    variable = statement?.variable ?: variable,
+                    upperTypes = (statement?.upperTypes.orEmpty() + field.resolvedReturnType).toPersistentSet(),
+                    lowerTypes = statement?.lowerTypes.orEmpty().toPersistentSet()
+                )
+            }
+        } ?: return@let expression
+
+        transformExpressionUsingSmartcastInfo(expression, smartcastStatement)
     }
 }
 
@@ -377,7 +470,7 @@ private class InvokeFunctionResolveTask(
         invokeReceiverValue: ExpressionReceiverValue,
     ) {
         processLevelForRegularInvoke(
-            invokeReceiverValue.toMemberScopeTowerLevel(),
+            invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel(),
             info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
@@ -385,7 +478,7 @@ private class InvokeFunctionResolveTask(
         enumerateTowerLevels(
             onScope = { scope, _, group ->
                 processLevelForRegularInvoke(
-                    scope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    scope.toScopeBasedTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group,
                     ExplicitReceiverKind.EXTENSION_RECEIVER
                 )
@@ -393,15 +486,8 @@ private class InvokeFunctionResolveTask(
             onImplicitReceiver = { receiver, group ->
                 // NB: companions are processed via implicitReceiverValues!
                 processLevelForRegularInvoke(
-                    receiver.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    receiver.toDispatchReceiverMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group.Member,
-                    ExplicitReceiverKind.EXTENSION_RECEIVER
-                )
-            },
-            onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
-                processLevelForRegularInvoke(
-                    contextReceiverGroup.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
-                    info, towerGroup.Member,
                     ExplicitReceiverKind.EXTENSION_RECEIVER
                 )
             }
@@ -414,7 +500,7 @@ private class InvokeFunctionResolveTask(
         invokeReceiverValue: ExpressionReceiverValue,
     ) {
         processLevel(
-            invokeReceiverValue.toMemberScopeTowerLevel(),
+            invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel(),
             info, TowerGroup.Member.withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION),
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
@@ -436,7 +522,7 @@ private class InvokeFunctionResolveTask(
                     .withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION)
 
             processLevel(
-                invokeReceiverValue.toMemberScopeTowerLevel(),
+                invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel(),
                 // Try to supply `implicitReceiverValue` as an "x" in "f.invoke(x)"
                 info.withReceiverAsArgument(implicitReceiverValue.receiverExpression), towerGroup,
                 ExplicitReceiverKind.DISPATCH_RECEIVER
@@ -445,7 +531,7 @@ private class InvokeFunctionResolveTask(
     }
 
     private suspend fun processLevelForRegularInvoke(
-        towerLevel: TowerScopeLevel,
+        towerLevel: TowerLevel,
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind

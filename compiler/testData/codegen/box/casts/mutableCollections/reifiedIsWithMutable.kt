@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()
 class LItr : ListIterator<String> by ArrayList<String>().listIterator()
@@ -31,6 +32,7 @@ class MME : MutableMap.MutableEntry<String, String> {
 inline fun <reified T> reifiedIs(x: Any): Boolean = x is T
 inline fun <reified T> reifiedIsNot(x: Any): Boolean = x !is T
 
+// FILE: main.kt
 fun assert(condition: Boolean, message: () -> String) { if (!condition) throw AssertionError(message())}
 
 fun box(): String {

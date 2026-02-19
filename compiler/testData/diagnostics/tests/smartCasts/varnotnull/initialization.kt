@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun foo() {
     var v: String? = "xyz"
@@ -6,3 +7,6 @@ fun foo() {
     v = null
     v<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral */

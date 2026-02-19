@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 open class MyClass {
     fun f1() {}
@@ -174,3 +175,6 @@ fun fooPackage() {
     fooPackageLocal().f1()
     fooPackageLocal().visible()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localFunction, localProperty,
+nestedClass, propertyDeclaration */

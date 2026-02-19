@@ -15,6 +15,4 @@ fun foo(x : String) : String {
 }
 
 // 1 LOOKUPSWITCH
-
-// JVM_IR_TEMPLATES:
 // 0 LDC "fail"

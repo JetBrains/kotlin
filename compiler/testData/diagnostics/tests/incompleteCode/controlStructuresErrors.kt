@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
     if (<!UNRESOLVED_REFERENCE!>rr<!>) {
         if (<!UNRESOLVED_REFERENCE!>l<!>) {
@@ -22,3 +23,5 @@ fun test2(l: List<<!UNRESOLVED_REFERENCE!>AA<!>>) {
         <!UNRESOLVED_REFERENCE!>it<!>!!
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, lambdaLiteral */

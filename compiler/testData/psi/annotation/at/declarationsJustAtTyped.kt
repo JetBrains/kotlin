@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 private @ @[Ann1(1)] @Ann3("2") class A(
         @ private val x: Int,
         @ private var y: Int,

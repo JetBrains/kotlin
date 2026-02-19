@@ -5,48 +5,19 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
-// The contents of this file is from VisibilityUtil.kt adapted to IR.
-// TODO: The code would better be commonized for descriptors, ir and fir.
-
-fun isVisibleForOverride(
-    @Suppress("UNUSED_PARAMETER") overriding: IrOverridableMember,
-    fromSuper: IrOverridableMember
-): Boolean {
-    return !DescriptorVisibilities.isPrivate((fromSuper as IrDeclarationWithVisibility).visibility)
-}
-
-fun findMemberWithMaxVisibility(members: Collection<IrOverridableMember>): IrOverridableMember {
-    assert(members.isNotEmpty())
-
-    var member: IrOverridableMember? = null
-    for (candidate in members) {
-        if (member == null) {
-            member = candidate
-            continue
-        }
-
-        val result = DescriptorVisibilities.compare(member.visibility, candidate.visibility)
-        if (result != null && result < 0) {
-            member = candidate
-        }
-    }
-    return member ?: error("Could not find a visible member")
-}
+val IrDeclarationWithVisibility.isNonPrivate: Boolean
+    get() = visibility == DescriptorVisibilities.PUBLIC
+            || visibility == DescriptorVisibilities.PROTECTED
+            || visibility == DescriptorVisibilities.INTERNAL
 
 fun IrDeclarationWithVisibility.isEffectivelyPrivate(): Boolean {
-    fun DescriptorVisibility.isNonPrivate(): Boolean =
-        this == DescriptorVisibilities.PUBLIC
-                || this == DescriptorVisibilities.PROTECTED
-                || this == DescriptorVisibilities.INTERNAL
-
     return when {
-        visibility.isNonPrivate() -> parentClassOrNull?.isEffectivelyPrivate() ?: false
+        isNonPrivate -> parentClassOrNull?.isEffectivelyPrivate() ?: false
 
         visibility == DescriptorVisibilities.INVISIBLE_FAKE -> {
             val overridesOnlyPrivateDeclarations = (this as? IrOverridableDeclaration<*>)

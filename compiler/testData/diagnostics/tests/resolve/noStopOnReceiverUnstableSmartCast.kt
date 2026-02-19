@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface Base {
     val parent: Base
@@ -26,3 +27,6 @@ class Something {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, ifExpression,
+interfaceDeclaration, isExpression, nullableType, override, propertyDeclaration, smartcast, whenExpression */

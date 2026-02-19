@@ -72,12 +72,26 @@ class JsPrecedenceVisitor extends JsVisitor {
 
     @Override
     public void visitFunction(@NotNull JsFunction x) {
-        answer = 17; // primary
+        if (x.isEs6Arrow()) {
+            answer = 2;
+        } else {
+            answer = 17; // primary
+        }
     }
 
     @Override
     public void visitInvocation(@NotNull JsInvocation invocation) {
         answer = 16;
+    }
+
+    @Override
+    public void visitYield(@NotNull JsYield yield) {
+        answer = 2; // https://esdiscuss.org/topic/precedence-of-yield-operator
+    }
+
+    @Override
+    public void visitYieldStar(@NotNull JsYieldStar yield) {
+        answer = 2; // https://esdiscuss.org/topic/precedence-of-yield-operator
     }
 
     @Override
@@ -107,6 +121,11 @@ class JsPrecedenceVisitor extends JsVisitor {
 
     @Override
     public void visitDouble(@NotNull JsDoubleLiteral x) {
+        answer = 17; // primary
+    }
+
+    @Override
+    public void visitBigInt(@NotNull JsBigIntLiteral x) {
         answer = 17; // primary
     }
 
@@ -141,12 +160,27 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitTemplateString(@NotNull JsTemplateStringLiteral x) {
+        if (x.getTag() != null) {
+            answer = 2;
+        }
+        else {
+            answer = 17; // primary
+        }
+    }
+
+    @Override
     public void visitThis(@NotNull JsThisRef x) {
         answer = 17; // primary
     }
 
     @Override
     public void visitSuper(@NotNull JsSuperRef x) {
+        answer = 17; // primary
+    }
+
+    @Override
+    public void visitSpread(@NotNull JsSpread x) {
         answer = 17; // primary
     }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Test.java
 
 public class Test extends KotlinBase {
@@ -26,3 +27,6 @@ class Derived : Test(), KotlinProxy {
         zyxw // field!
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, getter, interfaceDeclaration, javaProperty,
+javaType, propertyDeclaration, stringLiteral */

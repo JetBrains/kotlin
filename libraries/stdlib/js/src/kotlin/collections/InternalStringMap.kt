@@ -12,19 +12,22 @@ import kotlin.collections.MutableMap.MutableEntry
 
 internal external interface JsRawArray<E> {
     fun push(element: E)
-    fun pop(): E
+    @IgnorableReturnValue fun pop(): E
 
     var length: Int
 }
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun <E> JsRawArray<E>.getElement(index: Int): E {
     return (this.asDynamic()[index]).unsafeCast<E>()
 }
 
+@Suppress("NOTHING_TO_INLINE")
 private inline fun <E> JsRawArray<E>.setElement(index: Int, element: E) {
     this.asDynamic()[index] = element
 }
 
+@Suppress("NOTHING_TO_INLINE")
 private inline fun <E> JsRawArray<E>.replaceElementAtWithLast(index: Int) {
     setElement(index, getElement(length - 1))
     pop()
@@ -84,7 +87,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators of the [keys], [values] and [entries] views
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
     internal var modCount: Int = 0
@@ -143,6 +146,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         return true
     }
 
+    @IgnorableReturnValue
     override fun put(key: K, value: V): V? {
         require(key is String)
         val index = backingMap[key]
@@ -171,6 +175,12 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         val removingValue = values.getElement(index)
         removeKeyIndex(key, index)
         return removingValue
+    }
+
+    override fun removeKey(key: K): Boolean {
+        val index = findKeyIndex(key) ?: return false
+        removeKeyIndex(key, index)
+        return true
     }
 
     internal open fun removeKeyIndex(key: K, removingIndex: Int) {
@@ -252,28 +262,48 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     private class EntriesItr<K, V>(map: InternalStringMap<K, V>) : MutableIterator<MutableEntry<K, V>>, BaseItr<K, V>(map) {
         override fun next(): MutableEntry<K, V> {
             goNext()
-            val key = map.keys.getElement(lastIndex)
-            val value = map.values.getElement(lastIndex)
-            return EntryRef(key, value, map)
+            return EntryRef(map, lastIndex)
         }
     }
 
-    protected class EntryRef<K, V>(
-        override val key: K,
-        override var value: V,
+    internal class EntryRef<K, V>(
         private val map: InternalStringMap<K, V>,
+        private val index: Int
     ) : MutableEntry<K, V> {
+        private val expectedModCount = map.modCount
+
+        override val key: K
+            get() {
+                checkForComodification()
+                return map.keys.getElement(index)
+            }
+
+        override val value: V
+            get() {
+                checkForComodification()
+                return map.values.getElement(index)
+            }
+
         override fun setValue(newValue: V): V {
-            val prevValue = value
-            map.put(key, newValue)
-            value = newValue
-            return prevValue
+            checkForComodification()
+            map.checkIsMutable()
+            val oldValue = map.values.getElement(index)
+            map.values.setElement(index, newValue)
+            return oldValue
         }
 
-        override fun equals(other: Any?): Boolean = other is Map.Entry<*, *> && other.key == key && other.value == value
+        override fun equals(other: Any?): Boolean =
+            other is Map.Entry<*, *> &&
+                    other.key == key &&
+                    other.value == value
 
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
         override fun toString(): String = "$key=$value"
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount)
+                throw ConcurrentModificationException("The backing map has been modified after this entry was obtained.")
+        }
     }
 }

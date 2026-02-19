@@ -1,0 +1,3 @@
+/* RootStructureElement */fun main() {/* DeclarationStructureElement */
+
+}

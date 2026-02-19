@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -14,16 +16,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
-        val WRONG_JS_QUALIFIER by error<KtElement>()
-        val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val JS_MODULE_PROHIBITED_ON_NON_NATIVE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirBasedSymbol<*>>("callee")
@@ -31,7 +35,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirBasedSymbol<*>>("callee")
         }
-        val RUNTIME_ANNOTATION_NOT_SUPPORTED by warning<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
@@ -58,6 +61,19 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<String>("name")
         }
         val NAME_CONTAINS_ILLEGAL_CHARS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("name")
+            parameter<Collection<FirBasedSymbol<*>>>("existing")
+            isSuppressible = true
+        }
+        val JS_FAKE_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("name")
+            parameter<FirBasedSymbol<*>>("override")
+            parameter<Collection<FirBasedSymbol<*>>>("existing")
+        }
+
+        val JS_SYMBOL_ON_TOP_LEVEL_DECLARATION by error<KtElement>()
+        val JS_SYMBOL_PROHIBITED_FOR_OVERRIDE by error<KtElement>()
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {
@@ -75,38 +91,11 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirNamedFunctionSymbol>("function")
         }
-        val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error<PsiElement>()
-        val EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER by error<KtParameter>()
         val EXTERNAL_ENUM_ENTRY_WITH_BODY by error<KtElement>()
-        val EXTERNAL_ANONYMOUS_INITIALIZER by error<KtAnonymousInitializer>()
-        val EXTERNAL_DELEGATION by error<KtElement>()
-        val EXTERNAL_DELEGATED_CONSTRUCTOR_CALL by error<KtElement>()
-        val WRONG_BODY_OF_EXTERNAL_DECLARATION by error<KtElement>()
-        val WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION by error<KtElement>()
-        val WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER by error<KtElement>()
-        val NESTED_EXTERNAL_DECLARATION by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val WRONG_EXTERNAL_DECLARATION by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<String>("classKind")
-        }
-        val NESTED_CLASS_IN_EXTERNAL_INTERFACE by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val INLINE_EXTERNAL_DECLARATION by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INLINE_CLASS_IN_EXTERNAL_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<ConeKotlinType>("type")
-        }
-        val CANNOT_CHECK_FOR_EXTERNAL_INTERFACE by error<KtElement> {
-            parameter<ConeKotlinType>("targetType")
-        }
-        val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE by warning<KtElement> {
-            parameter<ConeKotlinType>("sourceType")
-            parameter<ConeKotlinType>("targetType")
-        }
-        val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error<KtElement>()
+        val EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION by error<KtElement>(PositioningStrategy.FUNCTION_TYPE_RECEIVER)
         val JS_EXTERNAL_INHERITORS_ONLY by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirClassLikeSymbol<*>>("parent")
             parameter<FirClassLikeSymbol<*>>("kid")
@@ -114,13 +103,9 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_EXTERNAL_ARGUMENT by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("argType")
         }
-        val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<ConeKotlinType>("typeArgument")
-        }
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {
-        val NESTED_JS_EXPORT by error<KtElement>()
         val WRONG_EXPORTED_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("kind")
         }
@@ -131,6 +116,15 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val NON_CONSUMABLE_EXPORTED_IDENTIFIER by warning<KtElement>(PositioningStrategy.DEFAULT) {
             parameter<String>("name")
         }
+        val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val EXPOSED_NOT_EXPORTED_SUPER_INTERFACE by deprecationError<KtElement>(
+            LanguageFeature.JsExposedNotExportedSuperInterfaceApiByExportedOne
+        ) {
+            parameter<FirClassLikeSymbol<*>>("restrictingDeclaration")
+        }
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
@@ -140,5 +134,24 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val WRONG_OPERATION_WITH_DYNAMIC by error<KtElement> {
             parameter<String>("operation")
         }
+    }
+
+    val STATIC by object : DiagnosticGroup("Static") {
+        val JS_STATIC_NOT_IN_CLASS_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val JS_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val JS_STATIC_ON_CONST by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+    }
+
+    val NO_RUNTIME by object : DiagnosticGroup("NoRuntime") {
+        val JS_NO_RUNTIME_WRONG_TARGET by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_FORBIDDEN_IS_CHECK by error<KtElement>()
+        val JS_NO_RUNTIME_FORBIDDEN_AS_CAST by error<KtElement>()
+        val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE by error<KtElement>()
+        val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("typeArgument")
+        }
+        val JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
+        val JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
     }
 }

@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 interface WithInvoke {
     operator fun invoke()
@@ -16,3 +18,6 @@ fun Test1.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>test1<!>
 fun Test1.test1(i: Int) {}
 fun Test1.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>test1<!>(x: Any, y: Int) {}
 fun <T : Number> Test1.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>test1<!>(x: T, y: Int) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nullableType, operator,
+propertyDeclaration, typeConstraint, typeParameter */

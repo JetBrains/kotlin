@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 // FILE: MyJClass.java
@@ -25,3 +26,5 @@ fun test1(myJClass: MyJClass) {
 fun test2(myJClass: MyJClass2) {
     myJClass.meth(<!TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

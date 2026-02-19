@@ -30,6 +30,8 @@ class JsLazyIrModuleDeserializer(
 ) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
     private val dependencies = emptyList<IrModuleDeserializer>()
 
+    override val klib get() = error("'klib' is not available for ${this::class.java}")
+
     // TODO: implement proper check whether `idSig` belongs to this module
     override fun contains(idSig: IdSignature): Boolean = true
 
@@ -78,7 +80,7 @@ class JsLazyIrModuleDeserializer(
     }
 
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
     override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
 
     override val kind get() = IrModuleDeserializerKind.SYNTHETIC

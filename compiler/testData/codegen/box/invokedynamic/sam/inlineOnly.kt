@@ -5,7 +5,6 @@
 // FULL_JDK
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
 // FILE: inlineOnly.kt

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
 
 inline fun <reified T> foo() {
     <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::<!UNRESOLVED_REFERENCE!>toString<!><!>
@@ -19,3 +20,6 @@ fun <A> main() {
 
     val с: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, inline, localProperty, nullableType, propertyDeclaration,
+reified, typeParameter */

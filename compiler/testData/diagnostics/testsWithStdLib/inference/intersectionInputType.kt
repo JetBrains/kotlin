@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 import kotlin.test.assertEquals
@@ -10,3 +11,6 @@ fun test() {
 
     assertEquals(42, u)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, intersectionType, localProperty,
+propertyDeclaration, whenExpression, whenWithSubject */

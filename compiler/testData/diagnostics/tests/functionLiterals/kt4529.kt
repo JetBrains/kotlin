@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-4529 Lambdas are analyzed improperly in an infix call nested inside a println
 
@@ -18,3 +19,6 @@ fun main() {
 }
 
 fun use(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, infix, integerLiteral,
+lambdaLiteral, nullableType */

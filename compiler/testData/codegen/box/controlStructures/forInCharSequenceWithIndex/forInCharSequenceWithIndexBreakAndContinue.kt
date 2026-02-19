@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val cs: CharSequence = "abcd"
@@ -5,7 +6,7 @@ val cs: CharSequence = "abcd"
 fun box(): String {
     val s = StringBuilder()
 
-    for ((index, x) in cs.withIndex()) {
+    for ([index, x] in cs.withIndex()) {
         if (index == 0) continue
         if (index == 3) break
         s.append("$index:$x;")

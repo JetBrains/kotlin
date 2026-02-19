@@ -90,21 +90,37 @@ internal fun parseDouble(string: String): Double {
     var scale = numberBuilder.length
     if (parseDot()) parseNumber(numberBuilder)
     if (numberBuilder.isEmpty()) numberFormatError(string)
+    val numberString = numberBuilder.toString()
 
     if (parseE()) {
-        val exponentBuilder = StringBuilder()
-        if (parseSign()) {
-            exponentBuilder.append('-')
-        }
-        parseNumber(exponentBuilder)
+        numberBuilder.clear()
+        val isExponentNegative = parseSign()
+        parseNumber(numberBuilder)
         if (numberBuilder.isEmpty()) numberFormatError(string)
+        parseUnsignificants()
+        if (index != string.length) numberFormatError(string)
 
-        scale += exponentBuilder.toString().toInt()
+        if (numberString.all { it == '0' }) {
+            return if (isNegative) -0.0 else 0.0
+        }
+
+        val exponentScale = numberBuilder.toString().toIntOrNull() ?: run {
+            return if (isExponentNegative) {
+                if (isNegative) -0.0 else 0.0
+            } else {
+                if (isNegative) Double.NEGATIVE_INFINITY else Double.POSITIVE_INFINITY
+            }
+        }
+
+        if (isExponentNegative) {
+            scale -= exponentScale
+        } else {
+            scale += exponentScale
+        }
+    } else {
+        parseUnsignificants()
+        if (index != string.length) numberFormatError(string)
     }
 
-    parseUnsignificants()
-    if (index != string.length) numberFormatError(string)
-
-    val number = numberBuilder.toString()
-    return numberToDouble(isNegative, scale, number)
+    return numberToDouble(isNegative, scale, numberString)
 }

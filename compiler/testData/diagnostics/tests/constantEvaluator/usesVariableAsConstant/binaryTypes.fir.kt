@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 package test
 
 val x = 1
@@ -28,3 +29,5 @@ val prop7 = x == 1
 // val prop8: true
 val prop8 = 1 / x
 
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, comparisonExpression, disjunctionExpression,
+equalityExpression, integerLiteral, multiplicativeExpression, propertyDeclaration */

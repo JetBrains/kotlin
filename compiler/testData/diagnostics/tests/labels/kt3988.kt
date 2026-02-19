@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-3988 This@label for outer function not resolved
 
@@ -20,3 +21,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression, typeWithExtension */

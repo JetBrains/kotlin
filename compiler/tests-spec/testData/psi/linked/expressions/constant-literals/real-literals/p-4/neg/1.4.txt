@@ -13,8 +13,7 @@ KtFile: 1.4.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('1F')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(IDENTIFIER)('_0')
+      PsiElement(INTEGER_LITERAL)('0_0')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -50,8 +49,7 @@ KtFile: 1.4.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('4_4_4_4E-9_9_9_9_9_9_9_9_9_9_9_9_9_9_9_9_9f')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(IDENTIFIER)('_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0')
+      PsiElement(INTEGER_LITERAL)('0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -123,8 +121,7 @@ KtFile: 1.4.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('5e50__501f')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('1__1')
+      PsiElement(INTEGER_LITERAL)('01__1')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -148,9 +145,7 @@ KtFile: 1.4.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('765__43f')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(IDENTIFIER)('__000')
+      PsiElement(INTEGER_LITERAL)('00__000')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -162,8 +157,7 @@ KtFile: 1.4.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('8__765__432F')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('10')
+      PsiElement(INTEGER_LITERAL)('010')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')

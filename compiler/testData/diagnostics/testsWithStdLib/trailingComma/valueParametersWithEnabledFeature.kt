@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_ANONYMOUS_PARAMETER, -UNUSED_VARIABLE
-// !LANGUAGE: +TrailingCommas
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_ANONYMOUS_PARAMETER, -UNUSED_VARIABLE
+// LANGUAGE: +TrailingCommas
 
 open class Foo1(x: Int = 10, y: Float = 0f,)
 
@@ -103,3 +104,7 @@ fun main() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, classDeclaration, enumDeclaration, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, tryExpression, vararg */

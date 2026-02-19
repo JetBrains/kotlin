@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 
@@ -12,3 +13,6 @@ val Class<*>.primitiveByWrapper: Class<*>?
 
 val Class<*>.wrapperByPrimitive: Class<*>?
     get() = PRIMITIVE_TO_WRAPPER[this]
+
+/* GENERATED_FIR_TAGS: capturedType, classReference, getter, intersectionType, lambdaLiteral, nullableType,
+outProjection, propertyDeclaration, propertyWithExtensionReceiver, starProjection, thisExpression */

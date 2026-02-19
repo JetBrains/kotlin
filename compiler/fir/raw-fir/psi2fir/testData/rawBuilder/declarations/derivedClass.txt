@@ -1,5 +1,5 @@
 FILE: derivedClass.kt
-    public? open class Base<T> : R|kotlin/Any| {
+    public open class Base<T> : R|kotlin/Any| {
         public? [ContainingClassKey=Base] constructor<T>([CorrespondingProperty=/Base.x] x: T): R|Base<T>| {
             super<R|kotlin/Any|>()
         }
@@ -8,7 +8,7 @@ FILE: derivedClass.kt
             public? [ContainingClassKey=Base] get(): T
 
     }
-    public? final? class Derived<T : Any> : Base<T> {
+    public final? class Derived<T : Any> : Base<T> {
         public? [ContainingClassKey=Derived] constructor<T : Any>(x: T): R|Derived<T>| {
             super<Base<T>>(x#)
         }

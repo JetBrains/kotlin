@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 
 /**
  * Represents a Kotlin task performing further processing of compiled code via additional Kotlin tools using configurable [toolOptions].
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
  *
  * @see [KotlinCommonCompilerToolOptions]
  */
+@KotlinGradlePluginDsl
 interface KotlinToolTask<out TO : KotlinCommonCompilerToolOptions> : Task {
 
     /**

@@ -77,7 +77,7 @@ class LazyJavaClassMemberScope(
             addAll(declaredMemberIndex().getMethodNames())
             addAll(declaredMemberIndex().getRecordComponentNames())
             addAll(computeClassNames(kindFilter, nameFilter))
-            with(c) { addAll(c.components.syntheticPartsProvider.getMethodNames(ownerDescriptor)) }
+            addAll(c.components.syntheticPartsProvider.getMethodNames(ownerDescriptor, c))
         }
 
     internal val constructors = c.storageManager.createLazyValue {
@@ -98,7 +98,7 @@ class LazyJavaClassMemberScope(
             }
         }
 
-        with(c) { c.components.syntheticPartsProvider.generateConstructors(ownerDescriptor, result) }
+        c.components.syntheticPartsProvider.generateConstructors(ownerDescriptor, result, c)
 
         c.components.signatureEnhancement.enhanceSignatures(
             c,
@@ -496,7 +496,7 @@ class LazyJavaClassMemberScope(
             result.add(resolveRecordComponentToFunctionDescriptor(declaredMemberIndex().findRecordComponentByName(name)!!))
         }
 
-        with(c) { c.components.syntheticPartsProvider.generateMethods(ownerDescriptor, name, result) }
+        c.components.syntheticPartsProvider.generateMethods(ownerDescriptor, name, result, c)
     }
 
     private fun resolveRecordComponentToFunctionDescriptor(recordComponent: JavaRecordComponent): JavaMethodDescriptor {
@@ -804,7 +804,7 @@ class LazyJavaClassMemberScope(
     }
 
     private val generatedNestedClassNames = c.storageManager.createLazyValue {
-        with(c) { c.components.syntheticPartsProvider.getNestedClassNames(ownerDescriptor).toSet() }
+        c.components.syntheticPartsProvider.getNestedClassNames(ownerDescriptor, c).toSet()
     }
 
     private val enumEntryIndex = c.storageManager.createLazyValue {
@@ -827,7 +827,7 @@ class LazyJavaClassMemberScope(
 
             in generatedNestedClassNames() -> {
                 val classes = with(c) {
-                    buildList { c.components.syntheticPartsProvider.generateNestedClass(ownerDescriptor, name, this) }
+                    buildList { c.components.syntheticPartsProvider.generateNestedClass(ownerDescriptor, name, this, c) }
                 }
                 when (classes.size) {
                     0 -> null

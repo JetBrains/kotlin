@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T : Derived?> test(derived: T) {
     id<Out<Base>>(
@@ -36,3 +37,6 @@ fun <T> makeInv(arg: T): Inv<T> = TODO()
 fun <T> makeOut(arg: T): Out<T> = TODO()
 fun <T> makeIn(arg: T): In<T> = TODO()
 fun <T> makeInIn(arg: T): In<In<T>> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, in, interfaceDeclaration, nullableType, out,
+typeConstraint, typeParameter */

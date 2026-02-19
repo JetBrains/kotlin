@@ -5,9 +5,12 @@
 
 package kotlin.native.internal
 
+import kotlin.native.internal.escapeAnalysis.Escapes
+
 /**
  * Returns undefined value of type `T`.
  * This method is unsafe and should be used with care.
  */
 @GCUnsafeCall("Kotlin_native_internal_undefined")
+@Escapes.Nothing
 internal external fun <T> undefined(): T

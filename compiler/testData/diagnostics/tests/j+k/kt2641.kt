@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// WITH_EXTENDED_CHECKERS
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// WITH_EXTRA_CHECKERS
 
 package a
 
@@ -19,3 +20,7 @@ fun bar(any: Any): <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<Int><!>
     any as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>
     return null
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, infix, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+typeParameter, typeWithExtension */

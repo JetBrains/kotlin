@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 class JSONObject {
     fun build(): JSONObject = TODO()
@@ -25,3 +26,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, infix, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral, thisExpression,
+typeWithExtension */

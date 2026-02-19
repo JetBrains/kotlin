@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-20959
 
 enum class Foo {;
@@ -7,3 +8,6 @@ enum class Foo {;
         private fun foo() = "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, objectDeclaration, propertyDeclaration,
+stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun idAny(x: Any) = x
 fun <T> id(x: T) = x
 fun idUnit(x: Unit) = x
@@ -82,3 +83,7 @@ fun foo2() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, break, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+ifExpression, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter,
+whenExpression, whileLoop */

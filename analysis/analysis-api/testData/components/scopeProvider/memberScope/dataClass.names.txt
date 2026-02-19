@@ -1,0 +1,16 @@
+Classifier names:
+
+Callable names:
+  <init>
+  bodyProperty
+  check
+  component1
+  component2
+  component3
+  copy
+  equals
+  firstProperty
+  hashCode
+  secondProperty
+  thirdProperty
+  toString

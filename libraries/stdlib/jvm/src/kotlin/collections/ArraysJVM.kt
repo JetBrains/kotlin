@@ -25,7 +25,7 @@ public actual inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = thi
 public inline fun ByteArray.toString(charset: Charset): String = String(this, charset)
 
 /**
- * Returns a *typed* array containing all of the elements of this collection.
+ * Returns a *typed* array containing all the elements of this collection.
  *
  * Allocates an array of runtime type `T` having its size equal to the size of this collection
  * and populates the array with the elements of this collection.

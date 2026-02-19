@@ -1,6 +1,6 @@
 FILE: propertyGetterWithoutType.kt
-    public final val prop: <ERROR TYPE REF: empty body>
-        public get(): <ERROR TYPE REF: empty body> {
+    public final val prop: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        public get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate> {
             local final fun smth(s: R|kotlin/String|): R|kotlin/Int| {
                 ^smth Int(1)
             }

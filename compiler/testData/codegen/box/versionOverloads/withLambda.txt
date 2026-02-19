@@ -1,0 +1,51 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'withLambda.kt'
+    public method <init>(): void
+    public synthetic static method foo$default(p0: C, p1: int, p2: java.lang.String, p3: boolean, p4: kotlin.jvm.functions.Function1, p5: int, p6: java.lang.Object): java.lang.String
+    public synthetic deprecated static method foo$default(p0: C, p1: int, p2: java.lang.String, p3: kotlin.jvm.functions.Function1, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic deprecated static method foo$default(p0: C, p1: int, p2: kotlin.jvm.functions.Function1, p3: int, p4: java.lang.Object): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="2") p2: boolean, @org.jetbrains.annotations.NotNull p3: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method foo(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.String, p2: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method foo(p0: int, p1: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated static method mid$default(p0: C, p1: int, p2: boolean, p3: kotlin.jvm.functions.Function1, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic static method mid$default(p0: C, p1: int, p2: java.lang.String, p3: boolean, p4: kotlin.jvm.functions.Function1, p5: int, p6: java.lang.Object): java.lang.String
+    public synthetic deprecated static method mid$default(p0: C, p1: int, p2: kotlin.jvm.functions.Function1, p3: int, p4: java.lang.Object): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method mid(p0: int, @kotlin.IntroducedAt(version="1") p1: boolean, p2: kotlin.jvm.functions.Function1): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method mid(p0: int, @kotlin.IntroducedAt(version="2") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="1") p2: boolean, @org.jetbrains.annotations.NotNull p3: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method mid(p0: int, p1: kotlin.jvm.functions.Function1): java.lang.String
+}
+
+@kotlin.Metadata
+synthetic final class WithLambdaKt$test1$l$1 {
+    // source: 'withLambda.kt'
+    enclosing method WithLambdaKt.test1()Ljava/lang/String;
+    public final static field INSTANCE: WithLambdaKt$test1$l$1
+    inner (anonymous) class WithLambdaKt$test1$l$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.String): java.lang.String
+}
+
+@kotlin.Metadata
+synthetic final class WithLambdaKt$test2$l$1 {
+    // source: 'withLambda.kt'
+    enclosing method WithLambdaKt.test2()Ljava/lang/String;
+    public final static field INSTANCE: WithLambdaKt$test2$l$1
+    inner (anonymous) class WithLambdaKt$test2$l$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.String): java.lang.String
+}
+
+@kotlin.Metadata
+public final class WithLambdaKt {
+    // source: 'withLambda.kt'
+    inner (anonymous) class WithLambdaKt$test1$l$1
+    inner (anonymous) class WithLambdaKt$test2$l$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
+}

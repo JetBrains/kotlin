@@ -9,8 +9,8 @@
 #include <atomic>
 #include <cstring>
 
+#include "AllocationSize.hpp"
 #include "ExtraObjectData.hpp"
-#include "ExtraObjectPage.hpp"
 #include "Heap.hpp"
 #include "NextFitPage.hpp"
 #include "Memory.h"
@@ -28,10 +28,7 @@ public:
 
     ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept;
 
-    mm::ExtraObjectData* CreateExtraObject() noexcept;
-
-    mm::ExtraObjectData& CreateExtraObjectDataForObject(
-            ObjHeader* baseObject, const TypeInfo* info) noexcept;
+    mm::ExtraObjectData* CreateExtraObjectDataForObject(ObjHeader* baseObject, const TypeInfo* type) noexcept;
 
     void PrepareForGC() noexcept;
 
@@ -44,15 +41,16 @@ public:
     }
 
 private:
-    uint8_t* Allocate(uint64_t cellCount) noexcept;
+    uint8_t* Allocate(AllocationSize size) noexcept;
     uint8_t* AllocateInSingleObjectPage(uint64_t cellCount) noexcept;
     uint8_t* AllocateInNextFitPage(uint32_t cellCount) noexcept;
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
+    uint8_t* AllocateExtraObjectData() noexcept;
 
     Heap& heap_;
     NextFitPage* nextFitPage_;
-    FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
-    ExtraObjectPage* extraObjectPage_;
+    FixedBlockPage* fixedBlockPages_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
+    FixedBlockPage* extraObjectPage_;
     FinalizerQueue finalizerQueue_;
 };
 

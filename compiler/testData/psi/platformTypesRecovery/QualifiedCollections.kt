@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(
         p: kotlin.(Mutable)List<Foo>!,
         p1: kotlin.(Mutable)Iterable<Foo>!,

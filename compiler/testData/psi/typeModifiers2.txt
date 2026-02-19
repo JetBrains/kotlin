@@ -1,0 +1,156 @@
+KtFile: typeModifiers2.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(public)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('TypeModifiers')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('function')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        POSTFIX_EXPRESSION
+          NULL
+            PsiElement(null)('null')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEXCL)('!!')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('suspendFunction')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            PsiElement(suspend)('suspend')
+          PsiWhiteSpace(' ')
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        POSTFIX_EXPRESSION
+          NULL
+            PsiElement(null)('null')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEXCL)('!!')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('suspendExtFunction')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            PsiElement(suspend)('suspend')
+          PsiWhiteSpace(' ')
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Any')
+            PsiElement(DOT)('.')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        POSTFIX_EXPRESSION
+          NULL
+            PsiElement(null)('null')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEXCL)('!!')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('functionOnSuspendFunction')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                PsiElement(LPAR)('(')
+                MODIFIER_LIST
+                  PsiElement(suspend)('suspend')
+                PsiWhiteSpace(' ')
+                FUNCTION_TYPE
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(ARROW)('->')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Unit')
+                PsiElement(RPAR)(')')
+            PsiElement(DOT)('.')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        POSTFIX_EXPRESSION
+          NULL
+            PsiElement(null)('null')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEXCL)('!!')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

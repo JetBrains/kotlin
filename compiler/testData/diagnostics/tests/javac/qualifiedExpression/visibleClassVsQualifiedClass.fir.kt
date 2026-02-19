@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-63070
 // FILE: a/b.java
 package a;
 
@@ -55,3 +57,6 @@ package a
 fun test(_b: b) {
     _b.a_b()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nestedClass,
+propertyDeclaration */

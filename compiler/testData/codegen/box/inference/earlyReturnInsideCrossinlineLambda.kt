@@ -1,5 +1,7 @@
+// FILE: lib.kt
 inline fun <T> runReadAction(crossinline runnable: () -> T): T = runnable()
 
+// FILE: main.kt
 class Foo {
     fun <K> infer(): K = "OK" as K
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_MISSING_UNRESOLVED
 
@@ -22,3 +23,5 @@ class Outer {
     inner class Inner
     object O
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, objectDeclaration */

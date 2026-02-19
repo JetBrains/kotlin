@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 
@@ -17,3 +18,6 @@ fun test(): String {
     val o = priv.members.check.MyJClass.O
     return o + k.k()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, flexibleType, functionDeclaration, javaFunction, javaProperty,
+javaType, localProperty, propertyDeclaration */

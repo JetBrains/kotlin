@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class ShortenReferences {
     companion object {
@@ -27,3 +28,6 @@ fun takeReference(block: (String) -> Unit) {}
 fun test() {
     takeReference(ShortenReferences.DEFAULT::process)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, objectDeclaration, propertyDeclaration, stringLiteral */

@@ -1,0 +1,30 @@
+package
+
+public interface I1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I2 : I1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Test1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "foo") public abstract fun </*0*/ T : java.io.Serializable> foo(/*0*/ t: T): kotlin.Unit where T : kotlin.Cloneable
+    public abstract fun </*0*/ T : kotlin.Cloneable> foo(/*0*/ t: T): kotlin.Unit where T : java.io.Serializable
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Test2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun </*0*/ T : I1> foo(/*0*/ t: T): kotlin.Unit where T : I2
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "foo") public abstract fun </*0*/ T : I2> foo(/*0*/ t: T): kotlin.Unit where T : I1
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

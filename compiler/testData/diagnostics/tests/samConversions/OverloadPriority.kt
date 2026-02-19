@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
-// !CHECK_TYPE
+// LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
+// CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {
     R apply(T t);
@@ -29,3 +30,7 @@ fun test(j: J) {
 
     j.bar { it checkType { _<String>() }; "" } checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, samConversion, stringLiteral, typeParameter,
+typeWithExtension */

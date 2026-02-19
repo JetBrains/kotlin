@@ -1,7 +1,6 @@
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
-
 
 @JvmInline
 value class A(val x: Int) {

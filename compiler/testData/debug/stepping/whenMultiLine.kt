@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun foo(x: Int): Int {
@@ -29,58 +29,67 @@ fun box() {
     foo(63)
 }
 
-// JVM_IR backend optimized the when to a switch in the java bytecode.
-// Therefore, the stepping for JVM_IR does not step through the evaluation
-// of each of the conditions, but goes directly to the right body.
-// JVM_IR stepping behavior here is the same as for `whenMultiLineSubject.kt`.
-
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:27 box
 // test.kt:5 foo
-// EXPECTATIONS JVM
-// test.kt:6 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:7 foo
 // test.kt:14 foo
-// EXPECTATIONS JVM
-// test.kt:15 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:16 foo
 // test.kt:14 foo
 // test.kt:23 foo
 // test.kt:27 box
 // test.kt:28 box
 // test.kt:5 foo
-// EXPECTATIONS JVM
-// test.kt:6 foo
-// test.kt:8 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:9 foo
 // test.kt:14 foo
-// EXPECTATIONS JVM
-// test.kt:15 foo
-// test.kt:17 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:18 foo
 // test.kt:14 foo
 // test.kt:23 foo
 // test.kt:28 box
 // test.kt:29 box
 // test.kt:5 foo
-// EXPECTATIONS JVM
-// test.kt:6 foo
-// test.kt:8 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:11 foo
 // test.kt:14 foo
-// EXPECTATIONS JVM
-// test.kt:15 foo
-// test.kt:17 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:20 foo
 // test.kt:14 foo
 // test.kt:23 foo
 // test.kt:29 box
+// test.kt:30 box
+
+// EXPECTATIONS NATIVE
+// test.kt:27 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:15 foo
+// test.kt:16 foo
+// test.kt:21 foo
+// test.kt:23 foo
+// test.kt:24 foo
+// test.kt:27 box
+// test.kt:28 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:15 foo
+// test.kt:17 foo
+// test.kt:18 foo
+// test.kt:21 foo
+// test.kt:23 foo
+// test.kt:24 foo
+// test.kt:28 box
+// test.kt:29 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:15 foo
+// test.kt:17 foo
+// test.kt:20 foo
+// test.kt:21 foo
+// test.kt:23 foo
+// test.kt:24 foo
 // test.kt:30 box
 
 // EXPECTATIONS JS_IR
@@ -100,3 +109,31 @@ fun box() {
 // test.kt:20 foo
 // test.kt:23 foo
 // test.kt:30 box
+
+// EXPECTATIONS WASM
+// test.kt:27 $box (8, 4)
+// test.kt:6 $foo (8, 13, 8)
+// test.kt:7 $foo (12)
+// test.kt:15 $foo (8, 13, 8)
+// test.kt:16 $foo (12)
+// test.kt:23 $foo (11, 4)
+// test.kt:27 $box (4)
+// test.kt:28 $box (8, 4)
+// test.kt:6 $foo (8, 13, 8)
+// test.kt:8 $foo (8, 13, 8)
+// test.kt:9 $foo (12)
+// test.kt:15 $foo (8, 13, 8)
+// test.kt:17 $foo (8, 13, 8)
+// test.kt:18 $foo (12)
+// test.kt:23 $foo (11, 4)
+// test.kt:28 $box (4)
+// test.kt:29 $box (8, 4)
+// test.kt:6 $foo (8, 13, 8)
+// test.kt:8 $foo (8, 13, 8)
+// test.kt:11 $foo (12)
+// test.kt:15 $foo (8, 13, 8)
+// test.kt:17 $foo (8, 13, 8)
+// test.kt:20 $foo (12)
+// test.kt:23 $foo (11, 4)
+// test.kt:29 $box (4)
+// test.kt:30 $box (1)

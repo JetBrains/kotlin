@@ -73,8 +73,8 @@ class KotlinDirtySourceFilesHolder(
         val byTarget = mutableMapOf<ModuleBuildTarget, TargetFiles>()
 
         chunk.targets.forEach { target ->
-            val removedFiles = delegate.getRemovedFiles(target)
-                .map { File(it) }
+            val removedFiles = delegate.getRemoved(target)
+                .map { it.toFile() }
                 .filter { it.isKotlinSourceFile }
 
             byTarget[target] = TargetFiles(target, removedFiles)

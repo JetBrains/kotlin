@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     inner class I {
         companion <!NESTED_CLASS_NOT_ALLOWED("Companion object")!>object A<!>
@@ -15,3 +16,5 @@ object O {
 
     <!MANY_COMPANION_OBJECTS, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object C
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, inner, objectDeclaration */

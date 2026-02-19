@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //FILE:a.kt
 //KT-900 Inaccessible class should be unresolved
 
@@ -67,3 +68,6 @@ object N {
         fun bar() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration */

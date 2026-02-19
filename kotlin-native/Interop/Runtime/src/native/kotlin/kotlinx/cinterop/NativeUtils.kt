@@ -18,62 +18,70 @@ internal external fun CPointer<ByteVar>.toKStringFromUtf8Impl(): String
 
 @ExperimentalForeignApi
 @TypedIntrinsic(IntrinsicType.INTEROP_BITS_TO_FLOAT)
-external fun bitsToFloat(bits: Int): Float
+public external fun bitsToFloat(bits: Int): Float
 
 @ExperimentalForeignApi
 @TypedIntrinsic(IntrinsicType.INTEROP_BITS_TO_DOUBLE)
-external fun bitsToDouble(bits: Long): Double
+public external fun bitsToDouble(bits: Long): Double
 
 @Deprecated("Deprecated without replacement as part of the obsolete interop API", level = DeprecationLevel.WARNING)
 @TypedIntrinsic(IntrinsicType.INTEROP_SIGN_EXTEND)
-external inline fun <reified R : Number> Number.signExtend(): R
+public external inline fun <reified R : Number> Number.signExtend(): R
 
 @Deprecated("Deprecated without replacement as part of the obsolete interop API", level = DeprecationLevel.WARNING)
 @TypedIntrinsic(IntrinsicType.INTEROP_NARROW)
-external inline fun <reified R : Number> Number.narrow(): R
+public external inline fun <reified R : Number> Number.narrow(): R
 
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Byte.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> Byte.convert(): R
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Short.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> Short.convert(): R
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Int.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> Int.convert(): R
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Long.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> Long.convert(): R
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> UByte.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> UByte.convert(): R
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> UShort.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> UShort.convert(): R
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> UInt.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> UInt.convert(): R
 @ExperimentalForeignApi
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> ULong.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT)
+public external inline fun <reified R : Any> ULong.convert(): R
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class JvmName(val name: String)
 
 @ExperimentalForeignApi
-fun cValuesOf(vararg elements: UByte): CValues<UByteVar> =
+public fun cValuesOf(vararg elements: UByte): CValues<UByteVar> =
         createValues(elements.size) { index -> this.value = elements[index] }
 
 @ExperimentalForeignApi
-fun cValuesOf(vararg elements: UShort): CValues<UShortVar> =
+public fun cValuesOf(vararg elements: UShort): CValues<UShortVar> =
         createValues(elements.size) { index -> this.value = elements[index] }
 
 @ExperimentalForeignApi
-fun cValuesOf(vararg elements: UInt): CValues<UIntVar> =
+public fun cValuesOf(vararg elements: UInt): CValues<UIntVar> =
         createValues(elements.size) { index -> this.value = elements[index] }
 
 @ExperimentalForeignApi
-fun cValuesOf(vararg elements: ULong): CValues<ULongVar> =
+public fun cValuesOf(vararg elements: ULong): CValues<ULongVar> =
         createValues(elements.size) { index -> this.value = elements[index] }
 
 @ExperimentalForeignApi
-fun UByteArray.toCValues() = cValuesOf(*this)
+public fun UByteArray.toCValues(): CValues<UByteVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-fun UShortArray.toCValues() = cValuesOf(*this)
+public fun UShortArray.toCValues(): CValues<UShortVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-fun UIntArray.toCValues() = cValuesOf(*this)
+public fun UIntArray.toCValues(): CValues<UIntVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-fun ULongArray.toCValues() = cValuesOf(*this)
+public fun ULongArray.toCValues(): CValues<ULongVar> = cValuesOf(*this)

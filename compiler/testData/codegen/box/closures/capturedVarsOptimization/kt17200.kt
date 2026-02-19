@@ -1,7 +1,9 @@
+// FILE: lib.kt
 inline fun inlineCall(action: () -> Unit) {
     action()
 }
 
+// FILE: main.kt
 fun test() {
     var width = 1
     inlineCall {

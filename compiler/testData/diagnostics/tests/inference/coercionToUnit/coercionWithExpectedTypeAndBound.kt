@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T : Number> materializeNumber(): T = TODO()
 
 fun a(): Unit = run {
@@ -10,3 +10,5 @@ fun b(): Unit = run {
         <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materializeNumber<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, typeConstraint, typeParameter */

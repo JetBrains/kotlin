@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 enum class Color {
     RED {
@@ -47,8 +48,13 @@ fun <T> bar(a: Any): T = a <!UNCHECKED_CAST!>as T<!>
 
 fun <T> foo() {
     foo<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>()
-    foo<<!CANNOT_INFER_PARAMETER_TYPE!>RedAlias<!>>()
-    bar<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(<!ARGUMENT_TYPE_MISMATCH!>Color.RED<!>)
+    foo<RedAlias>()
+    <!INAPPLICABLE_CANDIDATE!>bar<!><Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(Color.RED)
 }
 
 fun Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>.foo(entries: Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>): Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>> = null!!
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, assignment, checkNotNullCall, classDeclaration,
+enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, localClass, localFunction, localProperty, nullableType, primaryConstructor, propertyDeclaration, setter,
+smartcast, typeAliasDeclaration, typeConstraint, typeParameter */

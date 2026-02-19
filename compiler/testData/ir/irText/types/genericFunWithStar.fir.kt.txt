@@ -1,30 +1,27 @@
-interface IBase {
-
-}
-
-interface IFoo : IBase {
-
-}
-
-interface IBar : IBase {
-
-}
-
-interface I<G> where G : IFoo, G : IBar {
-
-}
-
-abstract class Box<T> : IFoo, IBar where T : IFoo, T : IBar {
+abstract class Box<T> : IBar, IFoo where T : IBar, T : IFoo {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  abstract fun <F> foo(tSerializer: I<F>): I<Box<F>> where F : IFoo, F : IBar
-
   fun bar(vararg serializers: I<*>): I<*> {
-    return <this>.foo<IFoo>(tSerializer = serializers.get(index = 0))
+    return <this>.foo<IBase>(tSerializer = serializers.get(index = 0))
   }
 
+  abstract fun <F> foo(tSerializer: I<F>): I<Box<F>> where F : IBar, F : IFoo
+
 }
+
+interface I<G> where G : IBar, G : IFoo {
+}
+
+interface IBar : IBase {
+}
+
+interface IBase {
+}
+
+interface IFoo : IBase {
+}
+

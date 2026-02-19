@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 public class A {
@@ -8,3 +9,5 @@ public class A {
 fun main() {
     A.main(arrayOf())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

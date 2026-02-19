@@ -1,0 +1,9 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun /test_1(kotlin/Any?): kotlin/String? // /test_1|test_1(kotlin.Any?){}[0]
+final fun /test_2(kotlin/Any?): kotlin/String? // /test_2|test_2(kotlin.Any?){}[0]

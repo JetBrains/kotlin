@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
-import kotlinx.metadata.ClassName
+import kotlin.metadata.ClassName
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName

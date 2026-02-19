@@ -1,0 +1,21 @@
+FILE: package1.kt
+    package p1
+
+    public abstract fun interface SamUnit : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun bar(x: R|kotlin/String|, y: R|kotlin/String|, z: R|p1/SamUnit|): R|kotlin/Unit| {
+    }
+FILE: package2.kt
+    package p2
+
+    public final fun bar(x: R|kotlin/Any|, y: R|kotlin/Any|, z: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        R|p1/bar|(String(), String(), <L> = SAM(bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@bar Unit
+        }
+        ))
+    }

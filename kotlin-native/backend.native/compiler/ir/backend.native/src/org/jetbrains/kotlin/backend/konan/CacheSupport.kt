@@ -8,75 +8,60 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryName
 import org.jetbrains.kotlin.backend.common.serialization.deserializeFqName
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
+import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
+import org.jetbrains.kotlin.konan.config.filesToCache
+import org.jetbrains.kotlin.konan.config.optimization
+import org.jetbrains.kotlin.konan.config.preLinkCaches
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 class FileWithFqName(val filePath: String, val fqName: String)
 
 fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
-    val fileProtos = Array<ProtoFile>(fileCount()) {
-        ProtoFile.parseFrom(file(it).codedInputStream, ExtensionRegistryLite.newInstance())
+    val ir = irOrFail
+    val fileProtos = Array<ProtoFile>(ir.irFileCount) {
+        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
     }
     return fileProtos.mapIndexed { index, proto ->
-        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, index))
-        FileWithFqName(proto.fileEntry.name, fileReader.deserializeFqName(proto.fqNameList))
+        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, index))
+        val fileEntry = fileReader.fileEntry(proto)
+        FileWithFqName(
+                fileReader.deserializeFileEntryName(fileEntry),
+                fileReader.deserializeFqName(proto.fqNameList),
+        )
     }
 }
 
 fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
-    val fileProtos = Array<ProtoFile>(fileCount()) {
-        ProtoFile.parseFrom(file(it).codedInputStream, ExtensionRegistryLite.newInstance())
+    val ir = irOrFail
+    val fileProtos = Array<ProtoFile>(ir.irFileCount) {
+        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
     }
-    val filePathToIndex = fileProtos.withIndex().associate { it.value.fileEntry.name to it.index }
+    val filePathToIndexAndReader = fileProtos.withIndex().associate {
+        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, it.index))
+        val fileEntry = ir.fileEntry(it.value, it.index)
+        fileReader.deserializeFileEntryName(fileEntry) to (it.index to fileReader)
+    }
     return filePaths.map { filePath ->
-        val index = filePathToIndex[filePath] ?: error("No file with path $filePath is found in klib $libraryName")
-        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, index))
+        val (index, fileReader) = filePathToIndexAndReader[filePath] ?: error("No file with path $filePath is found in klib $location")
         fileReader.deserializeFqName(fileProtos[index].fqNameList)
     }
 }
-
-sealed class CacheDeserializationStrategy {
-    abstract fun contains(filePath: String): Boolean
-    abstract fun contains(fqName: FqName, fileName: String): Boolean
-
-    object Nothing : CacheDeserializationStrategy() {
-        override fun contains(filePath: String) = false
-        override fun contains(fqName: FqName, fileName: String) = false
-    }
-
-    object WholeModule : CacheDeserializationStrategy() {
-        override fun contains(filePath: String) = true
-        override fun contains(fqName: FqName, fileName: String) = true
-    }
-
-    class SingleFile(val filePath: String, val fqName: String) : CacheDeserializationStrategy() {
-        override fun contains(filePath: String) = filePath == this.filePath
-
-        override fun contains(fqName: FqName, fileName: String) =
-                fqName.asString() == this.fqName && File(filePath).name == fileName
-    }
-
-    class MultipleFiles(filePaths: List<String>, fqNames: List<String>) : CacheDeserializationStrategy() {
-        private val filePaths = filePaths.toSet()
-
-        private val fqNamesWithNames = fqNames.mapIndexed { i: Int, fqName: String -> Pair(fqName, File(filePaths[i]).name) }.toSet()
-
-        override fun contains(filePath: String) = filePath in filePaths
-
-        override fun contains(fqName: FqName, fileName: String) = Pair(fqName.asString(), fileName) in fqNamesWithNames
-    }
-}
-
-class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializationStrategy)
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
@@ -93,14 +78,14 @@ class CacheSupport(
     // TODO: consider using [FeaturedLibraries.kt].
     private val fileToLibrary = allLibraries.associateBy { it.libraryFile }
 
-    private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!
+    private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
                 File(it).takeIf { it.isDirectory }
                         ?: configuration.reportCompilationError("auto cacheable root $it is not found or is not a directory")
             }
 
     private val implicitCacheDirectories = buildList {
-        configuration.get(KonanConfigKeys.CACHE_DIRECTORIES)!!.forEach {
+        configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach {
             add(File(it).takeIf { it.isDirectory }
                     ?: configuration.reportCompilationError("cache directory $it is not found or is not a directory"))
         }
@@ -128,7 +113,7 @@ class CacheSupport(
     }
 
     internal val cachedLibraries: CachedLibraries = run {
-        val explicitCacheFiles = configuration.get(KonanConfigKeys.CACHED_LIBRARIES)!!
+        val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
         val explicitCaches = explicitCacheFiles.entries.associate { (libraryPath, cachePath) ->
             val library = fileToLibrary[File(libraryPath)]
@@ -145,6 +130,7 @@ class CacheSupport(
 
         val ignoreCachedLibraries = ignoreCacheReason != null
         CachedLibraries(
+                configuration = configuration,
                 target = target,
                 allLibraries = allLibraries,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
@@ -160,16 +146,16 @@ class CacheSupport(
                     "not found among resolved libraries:\n  " +
                     allLibraries.joinToString("\n  ") { it.libraryFile.absolutePath })
 
-    internal val libraryToCache = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let {
+    internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = File(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
         val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache)
         if (libraryCache is CachedLibraries.Cache.Monolithic)
             null
         else {
-            val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
+            val filesToCache = configuration.filesToCache
 
-            val strategy = if (filesToCache.isNullOrEmpty())
+            val strategy = if (filesToCache.isEmpty())
                 CacheDeserializationStrategy.WholeModule
             else
                 CacheDeserializationStrategy.MultipleFiles(filesToCache, libraryToAddToCache.getFileFqNames(filesToCache))
@@ -178,7 +164,7 @@ class CacheSupport(
     }
 
     internal val preLinkCaches: Boolean =
-            configuration.get(KonanConfigKeys.PRE_LINK_CACHES, false)
+            configuration.preLinkCaches
 
     companion object {
         fun cacheFileId(fqName: String, filePath: String) =
@@ -199,8 +185,8 @@ class CacheSupport(
                                 "going to be cached"
                             }
                             configuration.reportCompilationError(
-                                    "${library.library.libraryName} is $description, " +
-                                            "but its dependency isn't: ${it.library.libraryName}"
+                                    "${library.library.location} is $description, " +
+                                            "but its dependency isn't: ${it.library.location}"
                             )
                         }
                     }
@@ -214,14 +200,22 @@ class CacheSupport(
         libraryToCache?.klib?.let {
             val cache = cachedLibraries.getLibraryCache(it)
             if (cache is CachedLibraries.Cache.Monolithic) {
-                configuration.reportCompilationError("can't cache library '${it.libraryName}' " +
+                configuration.reportCompilationError("can't cache library '${it.location}' " +
                         "that is already cached in '${cache.path}'")
             }
         }
 
         if ((libraryToCache != null || cachedLibraries.hasDynamicCaches || cachedLibraries.hasStaticCaches)
-                && configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)) {
+                && configuration.optimization) {
             configuration.reportCompilationError("Cache cannot be used in optimized compilation")
         }
+    }
+}
+
+internal class FileIdProvider(private val deserializer: KonanPartialModuleDeserializer) {
+    val sortedFileIds by lazy {
+        deserializer.getDeserializationStates()
+                .sortedBy { it.file.fileEntry.name }
+                .map { CacheSupport.cacheFileId(it.file.packageFqName.asString(), it.file.fileEntry.name) }
     }
 }

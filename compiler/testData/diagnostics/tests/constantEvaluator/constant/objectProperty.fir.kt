@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 // val prop1: 1
@@ -46,3 +47,6 @@ fun foo() {
 interface Foo {
     fun f()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, functionDeclaration, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, objectDeclaration, override, propertyDeclaration */

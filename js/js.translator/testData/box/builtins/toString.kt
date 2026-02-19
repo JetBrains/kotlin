@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1288
 package foo
 
 class A {
@@ -28,12 +27,9 @@ fun box(): String {
     assertEquals((123 as Any).toString(), "123")
     assertEquals(null.toString(),  "null")
     assertEquals(TokenEqualityParser(2).toString(), "2 [object Object]")
-
-    if (!testUtils.isLegacyBackend()) {
-        assertEquals(js("Symbol()").unsafeCast<Any>().toString(),  "Symbol()")
-        assertEquals(js("BigInt(44)").unsafeCast<Any>().toString(),  "44")
-        assertEquals(js("Object.create(null)").unsafeCast<Any>().toString(),  "[object Object]")
-    }
+    assertEquals(js("Symbol()").unsafeCast<Any>().toString(),  "Symbol()")
+    assertEquals(js("BigInt(44)").unsafeCast<Any>().toString(),  "44")
+    assertEquals(js("Object.create(null)").unsafeCast<Any>().toString(),  "[object Object]")
 
     return "OK"
 }

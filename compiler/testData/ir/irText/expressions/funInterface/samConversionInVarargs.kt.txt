@@ -3,7 +3,14 @@ fun interface IFoo {
 
 }
 
-fun useVararg(vararg foos: IFoo) {
+fun testAdaptedCR() {
+  useVararg(foos = [{ // BLOCK
+    local fun withVarargOfInt(p0: Int) {
+      withVarargOfInt(xs = [p0]) /*~> Unit */
+    }
+
+    ::withVarargOfInt /*-> IFoo */
+  }])
 }
 
 fun testLambda() {
@@ -26,16 +33,10 @@ fun testSeveralLambdas() {
  /*-> IFoo */])
 }
 
+fun useVararg(vararg foos: IFoo) {
+}
+
 fun withVarargOfInt(vararg xs: Int): String {
   return ""
 }
 
-fun testAdaptedCR() {
-  useVararg(foos = [{ // BLOCK
-    local fun withVarargOfInt(p0: Int) {
-      withVarargOfInt(xs = [p0]) /*~> Unit */
-    }
-
-    ::withVarargOfInt /*-> IFoo */
-  }])
-}

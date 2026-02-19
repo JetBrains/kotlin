@@ -1,0 +1,16 @@
+// LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+data class XY(val x: Int, val y: Int)
+
+fun foo(list: List<XY>) {
+    for ((x1, y1) in list) {
+        for ((x2, y2) in list) {
+            if (x1 == y2 && x2 == y1) return
+        }
+        list.map { (x3, y3) -> x3 + y3 }
+    }
+}
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, equalityExpression, forLoop,
+functionDeclaration, ifExpression, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration */

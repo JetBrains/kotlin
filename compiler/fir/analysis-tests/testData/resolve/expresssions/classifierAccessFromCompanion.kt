@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Factory {
     sealed class Function {
         object Default
@@ -8,3 +9,5 @@ class Factory {
         val x = Function.Default
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, propertyDeclaration, sealed */

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 fun find2(): Any? {
     fun visit(element: Any) {
         <!RETURN_NOT_ALLOWED!>return@find2<!> element
@@ -32,3 +32,5 @@ fun find3(): Any? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, inline, localFunction, nullableType */

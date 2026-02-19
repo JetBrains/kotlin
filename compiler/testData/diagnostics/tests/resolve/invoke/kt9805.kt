@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A {
     val foo: B.() -> Unit get() = null!!
@@ -16,3 +17,6 @@ fun test(a: A, b: B) {
         (a.foo)(this)
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral,
+propertyDeclaration, thisExpression, typeWithExtension */

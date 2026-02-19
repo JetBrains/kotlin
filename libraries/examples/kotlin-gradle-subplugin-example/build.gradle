@@ -1,10 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import plugins.KotlinBuildPublishingPlugin
 
 plugins {
     id("java-gradle-plugin")
     id("org.jetbrains.kotlin.jvm")
     id("com.gradle.plugin-publish")
-    id("jps-compatible")
     id("maven-publish")
 }
 
@@ -13,26 +13,17 @@ repositories {
     mavenCentral()
 }
 
-pill {
-    variant = 'FULL'
-}
-
 dependencies {
     api project(':kotlin-gradle-plugin-api')
     // Use this dependency instead when building apart from the other modules:
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
-    api project(':kotlin-test:kotlin-test-junit')
+    // kotlin-for-gradle-plugins-compilation
+    String btaBootstrapVersion = libs.versions.kotlin.for.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$btaBootstrapVersion")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$btaBootstrapVersion")
 
-    compileOnly RepoDependencies.kotlinStdlib(project)
-    compileOnly project(':compiler')
-    compileOnly project(':compiler:plugin-api')
-    compileOnly project(':compiler:cli-common')
-    compileOnly project(':compiler:cli')
-    
     compileOnly gradleApi()
-
-    compileOnly project(':dependencies:intellij-core')
 }
 
 GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false, false)
@@ -48,23 +39,22 @@ extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 //}
 
 def sourceSet = sourceSets.main
-def jarTask = tasks.named(sourceSet.jarTaskName, Jar)
-def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting(
-    project,
-    "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}"
+def jarTask = tasks.named(sourceSet.jarTaskName, Jar) {
+    archiveClassifier.set("unshaded")
+}
+def shadowJarTask = tasks.register(
+        "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}",
+        ShadowJar
 ) {
-    RepoArtifacts.setupPublicJar(
+    def emptyClassifier = provider { "" }
+    SetupPublicJar.setupPublicJar(
         it,
         jarTask.flatMap { it.archiveBaseName },
-        jarTask.flatMap { it.archiveClassifier }
+        jarTask.flatMap { emptyClassifier }
     )
-    RepoArtifacts.addEmbeddedRuntime(it)
+    AddEmbeddedRuntime.addEmbeddedRuntime(it)
     it.from(sourceSet.output)
-
-    // When Gradle traverses the inputs, reject the shaded compiler JAR,
-    // which leads to the content of that JAR being excluded as well:
-    def compilerDummyJarFile = project.provider { project.configurations.getByName("compilerDummyJar").singleFile }
-    it.exclude { it.file == compilerDummyJarFile.get() }
+    EmbeddableKt.configureEmbeddableCompilerRelocation(it, true)
 }
 
 // Removing artifact produced by Jar task

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Owner.java
 
@@ -8,3 +9,5 @@ public class Owner {
 // FILE: Use.kt
 
 val x = Owner.name
+
+/* GENERATED_FIR_TAGS: javaProperty, propertyDeclaration */

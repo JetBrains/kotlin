@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
 class Some { fun foo() {} }
 
 typealias SomeAlias = Some
@@ -27,12 +29,18 @@ typealias InvUnusedCorrectAlias<T> = Inv<String>
 typealias InvUnusedIncorrectAlias<T> = Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>
 typealias InvSpecificAlias = Inv<String>
 
+typealias Mixed3<B> = Inv<InvAlias<B>>
+
 fun test_2() {
+    <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Mixed3<String><!>::foo
+
     Inv<String>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     Inv<*>::foo
     Inv<out <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     Inv<out String>::foo
+    Inv<in <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    Inv<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>::foo
     Inv<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 
@@ -41,6 +49,8 @@ fun test_2() {
     InvAlias<*>::foo
     InvAlias<out <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     InvAlias<out String>::foo
+    InvAlias<in <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    InvAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvAlias<!>::foo
     InvAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 
@@ -49,6 +59,8 @@ fun test_2() {
     InvUnusedCorrectAlias<*>::foo
     InvUnusedCorrectAlias<out Int>::foo
     InvUnusedCorrectAlias<out String>::foo
+    InvUnusedCorrectAlias<in Int>::foo
+    InvUnusedCorrectAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
     InvUnusedCorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 
@@ -57,11 +69,21 @@ fun test_2() {
     InvUnusedIncorrectAlias<*>::foo
     InvUnusedIncorrectAlias<out Int>::foo
     InvUnusedIncorrectAlias<out String>::foo
+    InvUnusedIncorrectAlias<in Int>::foo
+    InvUnusedIncorrectAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
     InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><out String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*, *><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 
     InvSpecificAlias::foo
     InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><out String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*, *><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 }
 
 // ----------------------------------------------------------------
@@ -168,3 +190,6 @@ fun test_3() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSpecificAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
     BoundedPairSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

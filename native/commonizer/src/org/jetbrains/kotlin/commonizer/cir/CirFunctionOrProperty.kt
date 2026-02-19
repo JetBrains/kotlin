@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -21,7 +20,14 @@ interface CirFunctionOrProperty :
 
     val extensionReceiver: CirExtensionReceiver?
     val returnType: CirType
-    val kind: CallableMemberDescriptor.Kind
+    val kind: Kind
+
+    enum class Kind {
+        DECLARATION,
+        FAKE_OVERRIDE,
+        DELEGATION,
+        SYNTHESIZED,
+    }
 
     fun isVirtual(): Boolean =
         visibility != Visibilities.Private

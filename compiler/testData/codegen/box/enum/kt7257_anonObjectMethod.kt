@@ -1,3 +1,4 @@
+
 enum class X {
     B {
         val value2 = "K"

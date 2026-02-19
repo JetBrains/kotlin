@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val flag = true
 
 // type of a was checked by txt
@@ -13,3 +14,5 @@ val b/*: () -> Int */ = l@ {
 val c/*: () -> Unit */ = l@ {
     if (flag) 4
 }
+
+/* GENERATED_FIR_TAGS: ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

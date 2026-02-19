@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 // FILE: J.java
 
@@ -38,3 +39,5 @@ fun test() {
     if (a === null && platformJ === a) {}
 }
 
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, flexibleType, functionDeclaration, ifExpression, javaProperty,
+javaType, localProperty, nullableType, propertyDeclaration, smartcast */

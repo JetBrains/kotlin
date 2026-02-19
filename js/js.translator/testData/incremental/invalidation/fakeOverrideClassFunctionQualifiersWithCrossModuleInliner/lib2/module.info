@@ -1,0 +1,31 @@
+STEP 0:
+    dependencies: lib1
+    added file: l2.kt
+STEP 1:
+    dependencies: lib1
+    updated exports: l2.kt
+    updated imports <wasm>: l2.kt
+STEP 2:
+    dependencies: lib1
+    updated imports: l2.kt
+STEP 3:
+    dependencies: lib1
+    updated imports <wasm>: l2.kt
+STEP 4:
+    dependencies: lib1
+    updated exports: l2.kt
+STEP 5:
+    dependencies: lib1
+STEP 6..7:
+    dependencies: lib1
+    updated exports: l2.kt
+    updated imports: l2.kt
+STEP 8..9:
+    dependencies: lib1
+    updated imports: l2.kt
+STEP 10:
+    dependencies: lib1
+    updated imports: l2.kt
+STEP 11:
+    dependencies: lib1
+    updated imports <wasm>: l2.kt

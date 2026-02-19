@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
-import kotlinx.metadata.KmTypeAlias
+import kotlin.metadata.KmTypeAlias
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName

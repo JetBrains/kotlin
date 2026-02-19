@@ -1,0 +1,22 @@
+// SimplePackageKt.class
+// ------------------------------------------
+package {
+
+  // signature: topLevelFun(Ljava/lang/Object;)Lkotlin/reflect/KClass;
+  internal final inline fun <reified T#0 /* X */ : kotlin/Any> topLevelFun(x: T#0): kotlin/reflect/KClass<T#0>
+
+  // field: topLevelProp:Ljava/lang/String;
+  // getter: getTopLevelProp()Ljava/lang/String;
+  public final var topLevelProp: kotlin/String?
+    public final get
+    private final /* non-default */ set(<set-?>: kotlin/String?)
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    SimplePackageKt
+  }
+}

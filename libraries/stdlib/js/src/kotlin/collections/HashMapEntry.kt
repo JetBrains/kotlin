@@ -20,7 +20,7 @@ internal class HashMapKeys<E> internal constructor(
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
-    override fun remove(element: E): Boolean = backing.remove(element) != null
+    override fun remove(element: E): Boolean = backing.removeKey(element)
     override fun iterator(): MutableIterator<E> = backing.keysIterator()
 
     override fun checkIsMutable() = backing.checkIsMutable()

@@ -7,10 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.sources
 
+import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import kotlin.test.Test
@@ -41,6 +41,7 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         kotlin.apply {
             jvm()
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
 
             sourceSets.apply {
@@ -59,12 +60,12 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
     @Test
     fun testCustomCompilationWithoutAssociation() {
         val jvm = kotlin.jvm()
-        val commonTest = kotlin.sourceSets.getByName("commonTest")
-        val jvmSpecialTest = kotlin.sourceSets.create("jvmSpecialTest")
-
-        jvmSpecialTest.dependsOn(commonTest)
 
         val jvmSpecialTestCompilation = jvm.compilations.create("specialTest") // note: No association with jvmMain!
+        val commonTest = kotlin.sourceSets.getByName("commonTest")
+        val jvmSpecialTest = kotlin.sourceSets.getByName("jvmSpecialTest")
+        jvmSpecialTest.dependsOn(commonTest)
+
         assertEquals(jvmSpecialTest, jvmSpecialTestCompilation.defaultSourceSet)
 
         jvmSpecialTest.assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
@@ -75,14 +76,15 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         val jvm = kotlin.jvm()
         kotlin.linuxX64()
 
+        val jvmSpecialTestCompilation = jvm.compilations.create("specialTest")
+
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val jvmMain = kotlin.sourceSets.getByName("jvmMain")
-        val jvmSpecialTest = kotlin.sourceSets.create("jvmSpecialTest")
+        val jvmSpecialTest = kotlin.sourceSets.getByName("jvmSpecialTest")
 
         jvmSpecialTest.dependsOn(commonTest)
 
-        val jvmSpecialTestCompilation = jvm.compilations.create("specialTest")
         assertEquals(jvmSpecialTest, jvmSpecialTestCompilation.defaultSourceSet)
 
         jvmSpecialTestCompilation.associateWith(jvm.compilations.getByName("main"))
@@ -130,16 +132,18 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
 
         listOf(null, "Main", "Test", "IntegrationTest").zipWithNext().forEach { (previousSuffix, suffix) ->
             val common = kotlin.sourceSets.maybeCreate("common$suffix")
-            val jvm = kotlin.sourceSets.maybeCreate("jvm$suffix")
-            val js = kotlin.sourceSets.maybeCreate("js$suffix")
+            val jvm by lazy { kotlin.sourceSets.getByName("jvm$suffix") }
+            val js by lazy { kotlin.sourceSets.maybeCreate("js$suffix") }
 
             if (previousSuffix != null) {
                 assertNotNull(suffix)
-                jvm.dependsOn(common)
-                js.dependsOn(common)
 
                 val previousJvmCompilation = kotlin.jvm().compilations.maybeCreate(previousSuffix.decapitalizeAsciiOnly())
                 val jvmCompilation = kotlin.jvm().compilations.maybeCreate(suffix.decapitalizeAsciiOnly())
+
+                jvm.dependsOn(common)
+                js.dependsOn(common)
+
                 assertEquals(jvm, jvmCompilation.defaultSourceSet)
                 jvmCompilation.associateWith(previousJvmCompilation)
 
@@ -154,17 +158,56 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         "jvmIntegrationTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "jvmMain", "commonTest", "jvmTest")
     }
 
+    @Test
+    fun testVisibleSourceSetsIntersection() {
+        /* Given Following Project Structure:
+              commonTest
+                  |
+               nativeTest
+                  |
+               linuxTest
+                /       \
+           linuxX64Test  linuxArm64Test -associatedWith-> linuxArm64Main2
+
+           by default each ${x}Test source sees ${x}Main and its transitive dependencies.
+        */
+        kotlin.linuxArm64 {
+            val test = compilations.getByName("test")
+            val main2 = compilations.create("main2")
+            test.associateWith(main2)
+        }
+        kotlin.linuxX64()
+
+        // Assert that linuxTest can see only source sets that
+        // *ALL* its underlying compilations (linuxX64Test, linuxArm64Test)
+        // can see as well (i.e. intersection of their visible source sets)
+        "linuxX64Test".assertVisibleSourceSetsFromAssociatedCompilations(
+            "commonMain",
+            "nativeMain",
+            "linuxMain",
+            "linuxX64Main", // unique for given source set
+        )
+        "linuxArm64Test".assertVisibleSourceSetsFromAssociatedCompilations(
+            "commonMain",
+            "nativeMain",
+            "linuxMain",
+            "linuxArm64Main", // unique for given source set
+            "linuxArm64Main2" // unique for given source set
+        )
+        "linuxTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "nativeMain", "linuxMain")
+    }
+
     private fun String.assertVisibleSourceSetsFromAssociatedCompilations(
-        vararg expectedVisibleSourceSets: String
+        vararg expectedVisibleSourceSets: String,
     ) = assertEquals(
         expectedVisibleSourceSets.toSet(),
-        getVisibleSourceSetsFromAssociateCompilations(kotlin.sourceSets.getByName(this).internal.compilations).map { it.name }.toSet()
+        getVisibleSourceSetsFromAssociateCompilations(kotlin.sourceSets.getByName(this)).map { it.name }.toSet()
     )
 
     private fun KotlinSourceSet.assertVisibleSourceSetsFromAssociatedCompilations(
-        vararg expectedVisibleSourceSets: KotlinSourceSet
+        vararg expectedVisibleSourceSets: KotlinSourceSet,
     ) = assertEquals(
         expectedVisibleSourceSets.map { it.name }.toSet(),
-        getVisibleSourceSetsFromAssociateCompilations(this.internal.compilations).map { it.name }.toSet()
+        getVisibleSourceSetsFromAssociateCompilations(this).map { it.name }.toSet()
     )
 }

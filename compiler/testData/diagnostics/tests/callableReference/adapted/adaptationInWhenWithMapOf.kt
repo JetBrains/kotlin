@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // WITH_STDLIB
@@ -12,3 +13,5 @@ fun test() {
         "b" to ::bar,
     )
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, nullableType, stringLiteral */

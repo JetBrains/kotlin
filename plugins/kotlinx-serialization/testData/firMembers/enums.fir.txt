@@ -21,14 +21,14 @@ FILE: enums.kt
             super<R|kotlin/Enum<WithNames>|>()
         }
 
-        @R|kotlinx/serialization/SerialName|(value = String(A)) public final static enum entry ENTRY1: R|WithNames| = object : R|WithNames| {
+        @R|kotlinx/serialization/SerialName|(value = String(A) [evaluated = String(A)]) public final static enum entry ENTRY1: R|WithNames| = object : R|WithNames| {
             private constructor(): R|<anonymous>| {
                 super<R|WithNames|>()
             }
 
         }
 
-        @R|kotlinx/serialization/SerialName|(value = String(B)) public final static enum entry ENTRY2: R|WithNames| = object : R|WithNames| {
+        @R|kotlinx/serialization/SerialName|(value = String(B) [evaluated = String(B)]) public final static enum entry ENTRY2: R|WithNames| = object : R|WithNames| {
             private constructor(): R|<anonymous>| {
                 super<R|WithNames|>()
             }
@@ -48,22 +48,6 @@ FILE: enums.kt
             public final fun serializer(): R|kotlinx/serialization/KSerializer<WithNames>|
 
             private constructor(): R|WithNames.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<WithNames>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|WithNames|): R|kotlin/Unit|
-
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|WithNames|
-
-            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
-                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
-
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
-
-            private constructor(): R|WithNames.$serializer| {
                 super<R|kotlin/Any|>()
             }
 
@@ -90,15 +74,15 @@ FILE: enums.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Holder|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Holder|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Holder.$serializer| {
                 super<R|kotlin/Any|>()
@@ -107,7 +91,7 @@ FILE: enums.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|))) public final fun testSerializers(): R|kotlin/String| {
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|)) [evaluated = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|))]) public final fun testSerializers(): R|kotlin/String| {
         lval cs: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>| = (Q|Holder|.R|/Holder.Companion.serializer|() as R|kotlinx/serialization/internal/GeneratedSerializer<*>|).R|SubstitutionOverride<kotlinx/serialization/internal/GeneratedSerializer.childSerializers: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|>|()
         lval str1: R|kotlin/String| = R|<local>/cs|.R|SubstitutionOverride<kotlin/Array.get: R|kotlinx/serialization/KSerializer<*>|>|(Int(0)).R|kotlin/Any.toString|()
         when () {

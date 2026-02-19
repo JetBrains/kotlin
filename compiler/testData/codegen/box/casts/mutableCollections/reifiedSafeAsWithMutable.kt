@@ -1,6 +1,6 @@
 // WITH_STDLIB
 
-
+// FILE: lib.kt
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()
 class LItr : ListIterator<String> by ArrayList<String>().listIterator()
@@ -53,6 +53,7 @@ inline fun <reified T> reifiedSafeAsReturnsNull(x: Any?, operation: String) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val itr = Itr() as Any
     val mitr = MItr()

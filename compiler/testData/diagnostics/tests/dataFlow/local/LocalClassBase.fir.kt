@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Base(x: String, y: Int)
 
 fun test(x: Any, y: Int?) {
@@ -8,3 +9,5 @@ fun test(x: Any, y: Int?) {
   }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, isExpression, localClass,
+nullableType, primaryConstructor, smartcast */

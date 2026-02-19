@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package variance
 
 abstract class Consumer<in T> {}
@@ -7,14 +8,14 @@ abstract class Producer<out T> {}
 abstract class Usual<T> {}
 
 fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
-    val c1: Consumer<Any> = <!INITIALIZER_TYPE_MISMATCH!>c<!>
+    val c1: Consumer<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> c
     val c2: Consumer<Int> = c1
 
     val p1: Producer<Any> = p
-    val p2: Producer<Int> = <!INITIALIZER_TYPE_MISMATCH!>p1<!>
+    val p2: Producer<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> p1
 
-    val u1: Usual<Any> = <!INITIALIZER_TYPE_MISMATCH!>u<!>
-    val u2: Usual<Int> = <!INITIALIZER_TYPE_MISMATCH!>u1<!>
+    val u1: Usual<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> u
+    val u2: Usual<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> u1
 }
 
 //Arrays copy example
@@ -38,3 +39,6 @@ fun f(ints: Array<Int>, any: Array<Any>, numbers: Array<Number>) {
     copy3<Int>(ints, numbers)
     copy4(ints, numbers) //ok
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, localProperty, nullableType, out,
+outProjection, primaryConstructor, propertyDeclaration, typeParameter */

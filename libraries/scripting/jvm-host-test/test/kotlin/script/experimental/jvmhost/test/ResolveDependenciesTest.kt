@@ -5,17 +5,21 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
-import org.junit.Test
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.test.ReplTest.Companion.checkEvaluateInRepl
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class ResolveDependenciesTest : TestCase() {
+class ResolveDependenciesTest {
 
     private val configurationWithDependenciesFromClassloader = ScriptCompilationConfiguration {
         dependencies(JvmDependencyFromClassLoader { ShouldBeVisibleFromScript::class.java.classLoader })
@@ -99,7 +103,7 @@ class ResolveDependenciesTest : TestCase() {
         """.trimIndent().toScriptSource()
         val classpath = listOf(
             File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-                assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+                assertTrue(it.exists(), "kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}")
             }
         )
         val compilationConfiguration = configurationWithDependenciesFromClassloader.with {
@@ -114,7 +118,10 @@ class ResolveDependenciesTest : TestCase() {
         evaluationConfiguration: ScriptEvaluationConfiguration?,
         expectedResult: T
     ) {
-        val res = BasicJvmScriptingHost().eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
+        val host =
+            if (isRunningTestOnK2) BasicJvmScriptingHost()
+            else BasicJvmScriptingHost.createLegacy()
+        val res = host.eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
         when (res) {
             is ResultValue.Value -> assertEquals(expectedResult, res.value)
             is ResultValue.Error -> throw res.error

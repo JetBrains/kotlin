@@ -1,31 +1,31 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
-import org.jetbrains.kotlin.KtFakeSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
+import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedPropertyAttr
+import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -36,8 +36,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -50,8 +53,8 @@ internal class StubBasedFirDeserializationContext(
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
     val outerTypeParameters: List<FirTypeParameterSymbol>,
-    private val initialOrigin: FirDeclarationOrigin,
-    val classLikeDeclaration: KtClassLikeDeclaration? = null
+    val initialOrigin: FirDeclarationOrigin,
+    val classLikeDeclaration: KtClassLikeDeclaration? = null,
 ) {
     val session: FirSession get() = moduleData.session
 
@@ -65,7 +68,7 @@ internal class StubBasedFirDeserializationContext(
         outerClassSymbol: FirRegularClassSymbol? = this.outerClassSymbol,
         annotationDeserializer: StubBasedAnnotationDeserializer = this.annotationDeserializer,
         capturesTypeParameters: Boolean = true,
-        containingDeclarationSymbol: FirBasedSymbol<*>? = this.outerClassSymbol
+        containingDeclarationSymbol: FirBasedSymbol<*>? = outerClassSymbol,
     ): StubBasedFirDeserializationContext = StubBasedFirDeserializationContext(
         moduleData = moduleData,
         packageFqName = packageFqName,
@@ -101,7 +104,7 @@ internal class StubBasedFirDeserializationContext(
     )
 
     val memberDeserializer: StubBasedFirMemberDeserializer = StubBasedFirMemberDeserializer(this, initialOrigin)
-    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, /* local = */ false).defaultType(allTypeParameters) }
+    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, isLocal = false).defaultType(allTypeParameters) }
 
     companion object {
 
@@ -112,7 +115,7 @@ internal class StubBasedFirDeserializationContext(
             annotationDeserializer: StubBasedAnnotationDeserializer,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol,
-            initialOrigin: FirDeclarationOrigin
+            initialOrigin: FirDeclarationOrigin,
         ): StubBasedFirDeserializationContext = createRootContext(
             moduleData,
             annotationDeserializer,
@@ -134,7 +137,7 @@ internal class StubBasedFirDeserializationContext(
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol?,
             containingDeclarationSymbol: FirBasedSymbol<*>?,
-            initialOrigin: FirDeclarationOrigin
+            initialOrigin: FirDeclarationOrigin,
         ): StubBasedFirDeserializationContext = StubBasedFirDeserializationContext(
             moduleData,
             packageFqName,
@@ -161,7 +164,7 @@ internal class StubBasedFirDeserializationContext(
             parameterListOwner: KtTypeParameterListOwner,
             symbol: FirBasedSymbol<*>,
             initialOrigin: FirDeclarationOrigin,
-            containerSource: DeserializedContainerSource
+            containerSource: DeserializedContainerSource?,
         ): StubBasedFirDeserializationContext {
             return createRootContext(
                 moduleData,
@@ -180,22 +183,23 @@ internal class StubBasedFirDeserializationContext(
 
 internal class StubBasedFirMemberDeserializer(
     private val c: StubBasedFirDeserializationContext,
-    private val initialOrigin: FirDeclarationOrigin
+    private val initialOrigin: FirDeclarationOrigin,
 ) {
 
-    fun loadTypeAlias(typeAlias: KtTypeAlias, aliasSymbol: FirTypeAliasSymbol): FirTypeAlias {
+    fun loadTypeAlias(typeAlias: KtTypeAlias, aliasSymbol: FirTypeAliasSymbol, scopeProvider: FirScopeProvider): FirTypeAlias {
         val name = typeAlias.nameAsSafeName
         val local = c.childContext(typeAlias, containingDeclarationSymbol = aliasSymbol)
         return buildTypeAlias {
             source = KtRealPsiSourceElement(typeAlias)
             moduleData = c.moduleData
             origin = initialOrigin
+            this.scopeProvider = scopeProvider
             this.name = name
             val visibility = typeAlias.visibility
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
-                visibility.toEffectiveVisibility(owner = null)
+                visibility.toLazyEffectiveVisibility(owner = null)
             ).apply {
                 isExpect = typeAlias.hasModifier(KtTokens.EXPECT_KEYWORD)
                 isActual = false
@@ -209,73 +213,132 @@ internal class StubBasedFirMemberDeserializer(
                 }
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
         }.apply {
             sourceElement = c.containerSource
         }
     }
 
     private fun loadPropertyGetter(
-        getter: KtPropertyAccessor,
+        getter: KtPropertyAccessor?,
         classSymbol: FirClassSymbol<*>?,
         returnTypeRef: FirTypeRef,
         propertySymbol: FirPropertySymbol,
+        propertySource: KtSourceElement?,
+        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
     ): FirPropertyAccessor {
-        val visibility = getter.visibility
-        val accessorModality = getter.modality
-        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
-        return buildPropertyAccessor {
-            source = KtRealPsiSourceElement(getter)
-            moduleData = c.moduleData
-            origin = initialOrigin
-            this.returnTypeRef = returnTypeRef
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            isGetter = true
-            status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
-                isInline = getter.hasModifier(KtTokens.INLINE_KEYWORD)
-                isExternal = getter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        val accessor = if (getter?.hasBody() == true) {
+            buildPropertyAccessor {
+                source = KtRealPsiSourceElement(getter)
+                moduleData = c.moduleData
+                origin = initialOrigin
+                this.returnTypeRef = returnTypeRef
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                isGetter = true
+                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                    getter.visibility,
+                    getter.modality,
+                    getter.visibility.toLazyEffectiveVisibility(classSymbol),
+                ).apply {
+                    isInline = getter.hasModifier(KtTokens.INLINE_KEYWORD)
+                    isExternal = getter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                }
+                this.symbol = FirPropertyAccessorSymbol()
+                dispatchReceiverType = c.dispatchReceiver
+                this.propertySymbol = propertySymbol
             }
-            this.symbol = FirPropertyAccessorSymbol()
-            dispatchReceiverType = c.dispatchReceiver
-            this.propertySymbol = propertySymbol
-        }.apply {
-            replaceAnnotations(
-                c.annotationDeserializer.loadAnnotations(getter)
+        } else {
+            @OptIn(FirImplementationDetail::class)
+            FirDefaultPropertyGetter(
+                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                moduleData = c.moduleData,
+                origin = initialOrigin,
+                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertySymbol = propertySymbol,
+                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                    visibility = propertyStatus.visibility,
+                    modality = propertyStatus.modality,
+                    lazyEffectiveVisibility = propertyStatus.lazyEffectiveVisibility,
+                ),
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             )
+        }
+
+        return accessor.apply {
+            if (getter != null) {
+                replaceAnnotations(c.annotationDeserializer.loadAnnotations(getter))
+            }
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
 
+    private fun FirContractDescriptionOwner.loadContracts(local: StubBasedFirDeserializationContext) {
+        val declaration = (source as? KtRealPsiSourceElement)?.psi as? KtDeclarationWithBody ?: return
+        val resolvedDescription = StubBasedFirContractDeserializer(this, local.typeDeserializer).loadContract(declaration)
+        if (resolvedDescription != null) {
+            replaceContractDescription(resolvedDescription)
+        }
+    }
+
     private fun loadPropertySetter(
-        setter: KtPropertyAccessor,
+        setter: KtPropertyAccessor?,
         classSymbol: FirClassSymbol<*>?,
+        returnTypeRef: FirTypeRef,
         propertySymbol: FirPropertySymbol,
         local: StubBasedFirDeserializationContext,
+        propertySource: KtSourceElement?,
+        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
     ): FirPropertyAccessor {
-        val visibility = setter.visibility
-        val accessorModality = setter.modality
-        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
-        return buildPropertyAccessor {
-            source = KtRealPsiSourceElement(setter)
-            moduleData = c.moduleData
-            origin = initialOrigin
-            this.returnTypeRef = FirImplicitUnitTypeRef(source)
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            isGetter = false
-            status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
-                isInline = setter.hasModifier(KtTokens.INLINE_KEYWORD)
-                isExternal = setter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        val accessor = if (setter?.hasBody() == true) {
+            buildPropertyAccessor {
+                source = KtRealPsiSourceElement(setter)
+                moduleData = c.moduleData
+                origin = initialOrigin
+                this.returnTypeRef = FirImplicitUnitTypeRef(source)
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                isGetter = false
+                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                    setter.visibility,
+                    setter.modality,
+                    setter.visibility.toLazyEffectiveVisibility(classSymbol),
+                ).apply {
+                    isInline = setter.hasModifier(KtTokens.INLINE_KEYWORD)
+                    isExternal = setter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                }
+                this.symbol = FirPropertyAccessorSymbol()
+                dispatchReceiverType = c.dispatchReceiver
+                valueParameters += local.memberDeserializer.valueParameters(
+                    setter.valueParameters,
+                    symbol
+                )
+
+                this.propertySymbol = propertySymbol
             }
-            this.symbol = FirPropertyAccessorSymbol()
-            dispatchReceiverType = c.dispatchReceiver
-            valueParameters += local.memberDeserializer.valueParameters(
-                setter.valueParameters,
-                symbol
+        } else {
+            @OptIn(FirImplementationDetail::class)
+            FirDefaultPropertySetter(
+                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                moduleData = c.moduleData,
+                origin = initialOrigin,
+                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertySymbol = propertySymbol,
+                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                    visibility = propertyStatus.visibility,
+                    modality = propertyStatus.modality,
+                    lazyEffectiveVisibility = propertyStatus.lazyEffectiveVisibility,
+                ),
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             )
-            this.propertySymbol = propertySymbol
-        }.apply {
-            replaceAnnotations(
-                c.annotationDeserializer.loadAnnotations(setter)
-            )
+        }
+
+        return accessor.apply {
+            if (setter != null) {
+                replaceAnnotations(c.annotationDeserializer.loadAnnotations(setter))
+            }
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
@@ -283,25 +346,18 @@ internal class StubBasedFirMemberDeserializer(
     fun loadProperty(
         property: KtProperty,
         classSymbol: FirClassSymbol<*>? = null,
-        existingSymbol: FirPropertySymbol? = null
+        existingSymbol: FirPropertySymbol? = null,
+        isFromAnnotation: Boolean = false,
     ): FirProperty {
         val callableName = property.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
-        val symbol = existingSymbol ?: FirPropertySymbol(callableId)
+        val symbol = existingSymbol ?: FirRegularPropertySymbol(callableId)
         val local = c.childContext(property, containingDeclarationSymbol = symbol)
 
         val returnTypeRef = property.typeReference?.toTypeRef(local)
             ?: errorWithAttachment("Property doesn't have type reference") {
                 withPsiEntry("property", property)
             }
-
-        val getter = property.getter
-        val receiverTypeReference = property.receiverTypeReference
-        val receiverAnnotations = if (getter != null && receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(receiverTypeReference)
-        } else {
-            emptyList()
-        }
 
         val propertyModality = property.modality
 
@@ -311,124 +367,199 @@ internal class StubBasedFirMemberDeserializer(
             moduleData = c.moduleData
             origin = initialOrigin
             this.returnTypeRef = returnTypeRef
-            receiverParameter = receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
-                buildReceiverParameter {
-                    typeRef = receiverType
-                    annotations += receiverAnnotations
-                }
-            }
-
+            receiverParameter = property.receiverTypeReference?.let { loadReceiverParameter(it, local, symbol) }
             name = callableName
             this.isVar = isVar
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
-            isLocal = false
             val visibility = property.visibility
-            status = FirResolvedDeclarationStatusImpl(visibility, propertyModality, visibility.toEffectiveVisibility(classSymbol)).apply {
+            val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                visibility,
+                propertyModality,
+                visibility.toLazyEffectiveVisibility(classSymbol)
+            ).apply {
                 isExpect = property.hasExpectModifier()
                 isActual = false
                 isOverride = false
                 isConst = property.hasModifier(KtTokens.CONST_KEYWORD)
                 isLateInit = property.hasModifier(KtTokens.LATEINIT_KEYWORD)
                 isExternal = property.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                setSpecialFlags(property.modifierList)
             }
+
+            status = resolvedStatus
+            isLocal = false
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             val allAnnotations = c.annotationDeserializer.loadAnnotations(property)
             annotations += allAnnotations.filter { it.useSiteTarget == null }
-            val backingFieldAnnotations =
-                allAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.FIELD || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD }
+            val backingFieldAnnotations = allAnnotations.filter {
+                it.useSiteTarget == AnnotationUseSiteTarget.FIELD || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+            }
+
             backingField = FirDefaultPropertyBackingField(
                 c.moduleData,
                 initialOrigin,
                 source = property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor),
                 backingFieldAnnotations.toMutableList(),
-                returnTypeRef,
+                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar,
                 symbol,
                 status,
             )
 
-            if (getter != null) {
-                this.getter = loadPropertyGetter(
-                    getter,
-                    classSymbol,
-                    returnTypeRef,
-                    symbol
-                )
-            }
+            this.getter = loadPropertyGetter(
+                getter = property.getter,
+                classSymbol = classSymbol,
+                returnTypeRef = returnTypeRef,
+                propertySymbol = symbol,
+                propertySource = source,
+                propertyStatus = resolvedStatus,
+            )
+
             val setter = property.setter
-            if (setter != null) {
-                this.setter = loadPropertySetter(
-                    setter,
-                    classSymbol,
-                    symbol,
-                    local
+            this.setter = if (setter != null || isVar) {
+                loadPropertySetter(
+                    setter = setter,
+                    classSymbol = classSymbol,
+                    returnTypeRef = returnTypeRef,
+                    propertySymbol = symbol,
+                    local = local,
+                    propertySource = source,
+                    propertyStatus = resolvedStatus,
                 )
+            } else {
+                null
             }
+
             this.containerSource = c.containerSource
-            this.initializer = c.annotationDeserializer.loadConstant(property, symbol.callableId)
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
+            this.initializer = c.annotationDeserializer.loadConstant(
+                property,
+                isUnsigned = returnTypeRef.coneType.isUnsignedType,
+                isFromAnnotation,
+            )
 
-            property.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
+            property.contextReceivers.mapTo(contextParameters) {
+                local.memberDeserializer.loadContextReceiver(it, symbol)
+            }
+
+            property.contextParameters.mapTo(contextParameters) {
+                local.memberDeserializer.loadContextParameter(it, symbol)
+            }
         }.apply {
+            val propertyStub: KotlinPropertyStubImpl = property.compiledStub
+            propertyStub.hasBackingField?.let { hasBackingField ->
+                @OptIn(FirImplementationDetail::class)
+                hasBackingFieldAttr = hasBackingField
+            }
+
+            if (isFromAnnotation) {
+                isDeserializedPropertyFromAnnotation = true
+            }
+
+            if (propertyStub.hasDelegate) {
+                @OptIn(FirImplementationDetail::class)
+                isDelegatedPropertyAttr = true
+            }
+
             setLazyPublishedVisibility(c.session)
+
             this.getter?.setLazyPublishedVisibility(annotations, this, c.session)
+            this.getter?.loadContracts(local)
+
             this.setter?.setLazyPublishedVisibility(annotations, this, c.session)
+            this.setter?.loadContracts(local)
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
         }
     }
 
-    private fun loadContextReceiver(typeReference: KtTypeReference): FirContextReceiver {
-        val typeRef = typeReference.toTypeRef(c)
-        return buildContextReceiver {
-            source = KtRealPsiSourceElement(typeReference)
-            val type = typeRef.coneType
-            this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
-            this.typeRef = typeRef
+    private fun loadContextReceiver(contextReceiver: KtContextReceiver, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
+        return buildValueParameter {
+            this.source = KtRealPsiSourceElement(contextReceiver)
+            this.moduleData = c.moduleData
+            this.origin = initialOrigin
+            this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            this.symbol = FirValueParameterSymbol()
+            this.returnTypeRef = contextReceiver.typeReference()?.toTypeRef(c) ?: errorWithAttachment("KtParameter doesn't have type") {
+                withPsiEntry("contextReceiver", contextReceiver)
+                withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
+            }
+            this.containingDeclarationSymbol = containingDeclarationSymbol
+            this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
+            this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         }
     }
 
-    internal fun createContextReceiversForClass(classOrObject: KtClassOrObject): List<FirContextReceiver> =
-        classOrObject.contextReceivers.mapNotNull { it.typeReference() }.map(::loadContextReceiver)
+    private fun loadContextParameter(
+        parameter: KtParameter,
+        containingDeclarationSymbol: FirCallableSymbol<*>,
+    ): FirValueParameter = loadValueParameter(
+        parameter = parameter,
+        containingSymbol = containingDeclarationSymbol,
+        kind = FirValueParameterKind.ContextParameter,
+    )
+
+    internal fun createContextReceiversForClass(
+        classOrObject: KtClassOrObject,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): List<FirValueParameter> {
+        return classOrObject.contextReceivers.mapNotNull { it.typeReference() }.map {
+            buildValueParameter {
+                this.source = KtRealPsiSourceElement(it)
+                this.moduleData = c.moduleData
+                this.origin = initialOrigin
+                this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                this.symbol = FirValueParameterSymbol()
+                this.returnTypeRef = it.toTypeRef(c)
+                this.containingDeclarationSymbol = containingDeclarationSymbol
+                this.valueParameterKind = FirValueParameterKind.ContextParameter
+                this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            }
+        }
+    }
+
+    private fun loadReceiverParameter(
+        receiverTypeReference: KtTypeReference,
+        localContext: StubBasedFirDeserializationContext,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): FirReceiverParameter = buildReceiverParameter {
+        typeRef = receiverTypeReference.toTypeRef(localContext)
+        annotations += c.annotationDeserializer.loadAnnotations(
+            ktAnnotated = receiverTypeReference,
+            useSiteTargetFilter = StubBasedAnnotationDeserializer.RECEIVER_ANNOTATIONS_FILTER,
+        )
+
+        symbol = FirReceiverParameterSymbol()
+        moduleData = c.moduleData
+        origin = initialOrigin
+        this.containingDeclarationSymbol = containingDeclarationSymbol
+    }
 
     fun loadFunction(
         function: KtNamedFunction,
         classSymbol: FirClassSymbol<*>? = null,
         session: FirSession,
-        existingSymbol: FirNamedFunctionSymbol? = null
-    ): FirSimpleFunction {
-        val receiverAnnotations = if (function.receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(
-                function
-            )
-        } else {
-            emptyList()
-        }
-
+        existingSymbol: FirNamedFunctionSymbol? = null,
+    ): FirNamedFunction {
         val callableName = function.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
         val symbol = existingSymbol ?: FirNamedFunctionSymbol(callableId)
         val local = c.childContext(function, containingDeclarationSymbol = symbol)
 
-        val simpleFunction = buildSimpleFunction {
+        val simpleFunction = buildNamedFunction {
             moduleData = c.moduleData
             origin = initialOrigin
             source = KtRealPsiSourceElement(function)
             returnTypeRef = function.typeReference?.toTypeRef(local) ?: session.builtinTypes.unitType
-            receiverParameter = function.receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
-                buildReceiverParameter {
-                    typeRef = receiverType
-                    annotations += receiverAnnotations
-                }
-            }
-
+            receiverParameter = function.receiverTypeReference?.let { loadReceiverParameter(it, local, symbol) }
             name = callableName
             val visibility = function.visibility
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 function.modality,
-                visibility.toEffectiveVisibility(classSymbol)
+                visibility.toLazyEffectiveVisibility(classSymbol)
             ).apply {
                 isExpect = function.hasExpectModifier()
                 isActual = false
@@ -439,7 +570,9 @@ internal class StubBasedFirMemberDeserializer(
                 isTailRec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
                 isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
                 isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
+                setSpecialFlags(function.modifierList)
             }
+            isLocal = false
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -448,28 +581,30 @@ internal class StubBasedFirMemberDeserializer(
                 function.valueParameters,
                 symbol
             )
-            annotations +=
-                c.annotationDeserializer.loadAnnotations(function)
+            annotations += c.annotationDeserializer.loadAnnotations(function)
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
-            function.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
+            function.contextReceivers.mapTo(contextParameters) {
+                local.memberDeserializer.loadContextReceiver(it, symbol)
+            }
+
+            function.contextParameters.mapTo(contextParameters) {
+                local.memberDeserializer.loadContextParameter(it, symbol)
+            }
         }.apply {
             setLazyPublishedVisibility(c.session)
+            loadContracts(local)
         }
-        if (function.mayHaveContract()) {
-            val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
-            if (resolvedDescription != null) {
-                simpleFunction.replaceContractDescription(resolvedDescription)
-            }
-        }
+
         return simpleFunction
     }
 
+    @OptIn(SuspiciousFakeSourceCheck::class)
     fun loadConstructor(
         constructor: KtConstructor<*>,
         classOrObject: KtClassOrObject,
-        classBuilder: FirRegularClassBuilder
+        classBuilder: FirRegularClassBuilder,
     ): FirConstructor {
         val relativeClassName = c.relativeClassName!!
         val callableId = CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName())
@@ -480,12 +615,12 @@ internal class StubBasedFirMemberDeserializer(
         val typeParameters = classBuilder.typeParameters
 
         val delegatedSelfType = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 classBuilder.symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
-            source = KtFakeSourceElement(classOrObject, KtFakeSourceElementKind.ClassSelfTypeRef)
+            source = KtFakePsiSourceElement(classOrObject, KtFakeSourceElementKind.ClassSelfTypeRef)
         }
 
         return if (isPrimary) {
@@ -499,21 +634,23 @@ internal class StubBasedFirMemberDeserializer(
             returnTypeRef = delegatedSelfType
             val visibility = constructor.visibility
             val isInner = classBuilder.status.isInner
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
-                visibility.toEffectiveVisibility(classBuilder.symbol)
+                visibility.toLazyEffectiveVisibility(classBuilder.symbol)
             ).apply {
                 isExpect = constructor.hasExpectModifier() || classOrObject.hasExpectModifier()
                 isActual = false
                 isOverride = false
                 this.isInner = isInner
+                setSpecialFlags(constructor.modifierList)
             }
+            isLocal = false
             this.symbol = symbol
             dispatchReceiverType =
                 if (!isInner) null
                 else with(c) {
-                    ClassId(packageFqName, relativeClassName.parent(), false).defaultType(outerTypeParameters)
+                    ClassId(packageFqName, relativeClassName.parent(), isLocal = false).defaultType(outerTypeParameters)
                 }
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.typeParameters +=
@@ -522,56 +659,82 @@ internal class StubBasedFirMemberDeserializer(
             valueParameters += local.memberDeserializer.valueParameters(
                 constructor.valueParameters,
                 symbol,
-                addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
+                forceDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
             )
             annotations +=
                 c.annotationDeserializer.loadAnnotations(constructor)
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
-            contextReceivers.addAll(createContextReceiversForClass(classOrObject))
+            contextParameters.addAll(local.memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             setLazyPublishedVisibility(c.session)
         }
     }
 
+    @OptIn(KtImplementationDetail::class)
+    private fun FirDeclarationStatusImpl.setSpecialFlags(modifierList: KtModifierList?) {
+        if (modifierList == null) return
+        val modifierListStub: KotlinModifierListStubImpl = modifierList.compiledStub
+        val hasMustUse = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.MustUseReturnValue)
+        val hasIgnorable = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.IgnorableReturnValue)
+
+        returnValueStatus = ReturnValueStatus.fromBitFlags(hasMustUse, hasIgnorable)
+    }
+
     private fun valueParameters(
         valueParameters: List<KtParameter>,
         functionSymbol: FirFunctionSymbol<*>,
-        addDefaultValue: Boolean = false
-    ): List<FirValueParameter> {
-        return valueParameters.map { ktParameter ->
-            val name = ktParameter.nameAsSafeName
-            buildValueParameter {
-                source = KtRealPsiSourceElement(ktParameter)
-                moduleData = c.moduleData
-                this.containingFunctionSymbol = functionSymbol
-                origin = initialOrigin
-                returnTypeRef =
-                    ktParameter.typeReference?.toTypeRef(c)
-                        ?: errorWithAttachment("KtParameter doesn't have type") {
-                            withPsiEntry("ktParameter", ktParameter)
-                            withFirSymbolEntry("functionSymbol", functionSymbol)
-                        }
-                isVararg = ktParameter.isVarArg
-                if (isVararg) {
-                    returnTypeRef = returnTypeRef.withReplacedReturnType(returnTypeRef.coneType.createOutArrayType())
-                }
-                this.name = name
-                symbol = FirValueParameterSymbol(name)
-                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+        forceDefaultValue: Boolean = false,
+    ): List<FirValueParameter> = valueParameters.map { parameter ->
+        loadValueParameter(
+            parameter = parameter,
+            containingSymbol = functionSymbol,
+            kind = FirValueParameterKind.Regular,
+            forceDefaultValue = forceDefaultValue,
+        )
+    }
 
-                defaultValue = if (ktParameter.hasDefaultValue() || addDefaultValue) {
-                    buildExpressionStub()
-                } else null
-                isCrossinline = ktParameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)
-                isNoinline = ktParameter.hasModifier(KtTokens.NOINLINE_KEYWORD)
-                annotations += c.annotationDeserializer.loadAnnotations(
-                    ktParameter
-                )
+    private fun loadValueParameter(
+        parameter: KtParameter,
+        containingSymbol: FirCallableSymbol<*>,
+        kind: FirValueParameterKind,
+        forceDefaultValue: Boolean = false,
+    ): FirValueParameter = buildValueParameter {
+        valueParameterKind = kind
+        source = KtRealPsiSourceElement(parameter)
+        moduleData = c.moduleData
+        containingDeclarationSymbol = containingSymbol
+        origin = initialOrigin
+        returnTypeRef = parameter.typeReference?.toTypeRef(c)
+            ?: errorWithAttachment("KtParameter doesn't have type") {
+                withPsiEntry("parameter", parameter)
+                withFirSymbolEntry("containingSymbol", containingSymbol)
             }
-        }.toList()
+
+        isVararg = parameter.isVarArg
+        if (isVararg) {
+            returnTypeRef = returnTypeRef.withReplacedReturnType(returnTypeRef.coneType.createOutArrayType())
+        }
+
+        val name = parameter.name
+        this.name = if (name == "_") {
+            SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        } else {
+            KtPsiUtil.safeName(name)
+        }
+        symbol = FirValueParameterSymbol()
+        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+        defaultValue = if (forceDefaultValue || parameter.hasDefaultValue()) {
+            buildExpressionStub()
+        } else {
+            null
+        }
+
+        isCrossinline = parameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)
+        isNoinline = parameter.hasModifier(KtTokens.NOINLINE_KEYWORD)
+        annotations += c.annotationDeserializer.loadAnnotations(parameter)
     }
 
     private fun KtTypeReference.toTypeRef(context: StubBasedFirDeserializationContext): FirTypeRef =
@@ -580,7 +743,7 @@ internal class StubBasedFirMemberDeserializer(
     fun loadEnumEntry(
         declaration: KtEnumEntry,
         symbol: FirRegularClassSymbol,
-        classId: ClassId
+        classId: ClassId,
     ): FirEnumEntry {
         val enumEntryName = declaration.name
             ?: errorWithAttachment("Enum entry doesn't provide name") {
@@ -592,7 +755,7 @@ internal class StubBasedFirMemberDeserializer(
             source = KtRealPsiSourceElement(declaration)
             this.moduleData = c.moduleData
             this.origin = initialOrigin
-            returnTypeRef = buildResolvedTypeRef { type = enumType }
+            returnTypeRef = buildResolvedTypeRef { coneType = enumType }
             name = Name.identifier(enumEntryName)
             this.symbol = FirEnumEntrySymbol(CallableId(classId, name))
             this.status = FirResolvedDeclarationStatusImpl(
@@ -602,10 +765,15 @@ internal class StubBasedFirMemberDeserializer(
             ).apply {
                 isStatic = true
             }
+            isLocal = false
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         }.apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
         }
         return enumEntry
+    }
+
+    private fun Visibility.toLazyEffectiveVisibility(owner: FirClassLikeSymbol<*>?): Lazy<EffectiveVisibility> {
+        return this.toLazyEffectiveVisibility(owner, c.session, forClass = false)
     }
 }

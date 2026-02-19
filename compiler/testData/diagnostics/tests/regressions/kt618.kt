@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package lol
 
@@ -27,3 +28,6 @@ fun main() {
     c <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>-=<!> B()
     c <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>%=<!> B()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, operator, primaryConstructor,
+propertyDeclaration, stringLiteral */

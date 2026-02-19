@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 class Foo {
     val x = 1
@@ -11,7 +12,7 @@ class Bar {
     val x = ""
 
     // NB: unused
-    fun Foo.abc() = x
+    fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>abc<!>() = x
 
     fun bar(): Bar = this
 
@@ -61,3 +62,6 @@ fun f() {
 
     abc()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localFunction, localProperty, operator, propertyDeclaration, stringLiteral, thisExpression */

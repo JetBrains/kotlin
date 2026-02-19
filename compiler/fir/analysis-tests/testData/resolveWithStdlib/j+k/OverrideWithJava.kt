@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 
 public class A {
@@ -21,3 +22,5 @@ class B : A() {
         bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override, thisExpression */

@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1274
-
 fun box(): String {
     instance = Holder()
     instance?.applyAndRet<Unit> { sideEffect("left") } ?: sideEffect("right")

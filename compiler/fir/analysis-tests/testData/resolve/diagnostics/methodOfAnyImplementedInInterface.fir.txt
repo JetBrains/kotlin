@@ -43,3 +43,35 @@ FILE: methodOfAnyImplementedInInterface.kt
         public abstract override operator fun hashCode(): R|kotlin/Int|
 
     }
+    public abstract interface I : R|kotlin/Any| {
+        public abstract fun R|kotlin/String|.hashCode(): R|kotlin/Int|
+
+        context(string: R|kotlin/String|)
+        public abstract fun hashCode(): R|kotlin/Int|
+
+        public abstract fun R|kotlin/String|.toString(): R|kotlin/String|
+
+        context(string: R|kotlin/String|)
+        public abstract fun toString(): R|kotlin/String|
+
+    }
+    public abstract interface J : R|I| {
+        public open override fun R|kotlin/String|.hashCode(): R|kotlin/Int| {
+            ^hashCode Int(1)
+        }
+
+        context(string: R|kotlin/String|)
+        public open override fun hashCode(): R|kotlin/Int| {
+            ^hashCode Int(1)
+        }
+
+        public open override fun R|kotlin/String|.toString(): R|kotlin/String| {
+            ^toString String()
+        }
+
+        context(string: R|kotlin/String|)
+        public open override fun toString(): R|kotlin/String| {
+            ^toString String()
+        }
+
+    }

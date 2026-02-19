@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-58604
 
@@ -82,3 +83,19 @@ fun test_5(a: Any) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // // can be ok
     }
 }
+
+fun test_6(a: String?) {
+    var b = a?.length
+    if (b != null) {
+        a<!UNSAFE_CALL!>.<!>length // can be ok
+    }
+    nonInPlaceRun {
+        b = 0
+    }
+    if (b != null) {
+        a<!UNSAFE_CALL!>.<!>length // not ok
+    }
+}
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, whileLoop */

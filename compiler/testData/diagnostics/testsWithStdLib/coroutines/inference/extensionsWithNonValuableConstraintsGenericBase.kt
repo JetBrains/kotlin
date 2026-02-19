@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -50,3 +50,7 @@ val test5 = generateSpecific {
 val test6 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generateSpecific<!> {
     stringBase()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, starProjection,
+stringLiteral, suspend, typeParameter, typeWithExtension */

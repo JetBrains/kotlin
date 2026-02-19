@@ -4,11 +4,13 @@
  */
 package kotlin.text
 
+import java.io.ObjectInputStream
 import java.util.Collections
 import java.util.EnumSet
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.internal.IMPLEMENTATIONS
+import kotlin.internal.throwReadObjectNotSupported
 
 private interface FlagEnum {
     public val value: Int
@@ -143,14 +145,12 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     public actual fun matchEntire(input: CharSequence): MatchResult? = nativePattern.matcher(input).matchEntire(input)
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchAt(input: CharSequence, index: Int): MatchResult? =
         nativePattern.matcher(input).useAnchoringBounds(false).useTransparentBounds(true).region(index, input.length).run {
             if (lookingAt()) MatcherMatchResult(this, input) else null
         }
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchesAt(input: CharSequence, index: Int): Boolean =
         nativePattern.matcher(input).useAnchoringBounds(false).useTransparentBounds(true).region(index, input.length).lookingAt()
 
@@ -174,6 +174,8 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      * @param replacement the expression to replace found matches with
      * @return the result of replacing each occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
      * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     *
+     * @sample samples.text.Regexps.replaceWithExpression
      */
     public actual fun replace(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceAll(replacement)
 
@@ -223,6 +225,8 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      * @param replacement the expression to replace the found match with
      * @return the result of replacing the first occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
      * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     *
+     * @sample samples.text.Regexps.replaceFirstWithExpression
      */
     public actual fun replaceFirst(input: CharSequence, replacement: String): String =
         nativePattern.matcher(input).replaceFirst(replacement)
@@ -231,8 +235,18 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
+     * The last element of the resulting list corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting list will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting list will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     *
+     * @sample samples.text.Regexps.split
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
@@ -259,12 +273,19 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     /**
      * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
      *
+     * The last element of the resulting sequence corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting sequence will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting sequence will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
         requireNonNegativeLimit(limit)
@@ -305,6 +326,8 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
 
     private fun writeReplace(): Any = Serialized(nativePattern.pattern(), nativePattern.flags())
 
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
+
     private class Serialized(val pattern: String, val flags: Int) : Serializable {
         companion object {
             private const val serialVersionUID: Long = 0L
@@ -313,7 +336,7 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
         private fun readResolve(): Any = Regex(Pattern.compile(pattern, flags))
     }
 
-    actual companion object {
+    public actual companion object {
         /**
          * Returns a regular expression that matches the specified [literal] string literally.
          * No characters of that string will have special meaning when searching for an occurrence of the regular expression.

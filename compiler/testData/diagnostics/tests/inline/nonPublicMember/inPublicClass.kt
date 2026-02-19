@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 public class Z {
     internal val privateProperty = 11;
 
@@ -36,3 +37,5 @@ public class Z2 {
         privateFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, integerLiteral, propertyDeclaration */

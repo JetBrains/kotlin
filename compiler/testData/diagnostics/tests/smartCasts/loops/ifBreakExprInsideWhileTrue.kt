@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun foo(x: String?): Int {
     while (true) {
         // After the check, smart cast should work
@@ -8,3 +9,6 @@ public fun foo(x: String?): Int {
     // x is null because of the break
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, whileLoop */

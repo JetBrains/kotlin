@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
 
@@ -16,3 +17,6 @@ val q = A<String>()
 class Test {
     var prop by q.toB({ "abc" }, { "cde" })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, operator, propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

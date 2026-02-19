@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 class Session(var lastAccess: Any?)
 interface Transaction {
@@ -15,3 +16,6 @@ fun updateUserSession() {
     session.lastAccess = now()
     storeSession(session)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, localProperty, nullableType, primaryConstructor, propertyDeclaration */

@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/../warnings.kt
 -Xir-produce-klib-dir
--Xir-only
 -libraries
 $STDLIB_JS$
 -nowarn

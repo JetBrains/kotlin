@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.contracts.description
 
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.*
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -28,18 +27,24 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
 
     fun render(contractDescription: FirContractDescription) {
         printer.pushIndent()
-        if (contractDescription !is FirEmptyContractDescription) {
-            printer.newLine()
-            val prefix = if (contractDescription is FirResolvedContractDescription) "R|" else ""
-            printer.print("[${prefix}Contract description]")
+        printer.newLine()
+        val prefix = when (contractDescription) {
+            is FirResolvedContractDescription -> "R|"
+            is FirErrorContractDescription -> "E|"
+            is FirLazyContractDescription -> "L|"
+            is FirLegacyRawContractDescription, is FirRawContractDescription -> ""
         }
+
+        printer.print("[${prefix}Contract description]")
         when (contractDescription) {
+            is FirLazyContractDescription -> {}
             is FirLegacyRawContractDescription -> render(contractDescription)
             is FirRawContractDescription -> render(contractDescription)
             is FirResolvedContractDescription -> {
                 printer.println()
                 render(contractDescription)
             }
+            is FirErrorContractDescription -> {}
         }
         printer.popIndent()
     }
@@ -81,6 +86,34 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
         conditionalEffect.effect.accept(this, data)
         printer.print(" -> ")
         conditionalEffect.condition.accept(this, data)
+    }
+
+    override fun visitConditionalReturnsDeclaration(
+        conditionalEffect: KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>,
+        data: Nothing?,
+    ) {
+        conditionalEffect.argumentsCondition.accept(this, data)
+        printer.print(" -> ")
+        conditionalEffect.returnsEffect.accept(this, data)
+    }
+
+    override fun visitHoldsInEffectDeclaration(
+        holdsInEffect: KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+        data: Nothing?,
+    ) {
+        holdsInEffect.argumentsCondition.accept(this, data)
+        printer.print(" HoldsIn(")
+        holdsInEffect.valueParameterReference.accept(this, data)
+        printer.print(")")
+    }
+
+    override fun visitReturnsResultOfEffectDeclaration(
+        returnsResultOfEffect: KtReturnsResultOfDeclaration<ConeKotlinType, ConeDiagnostic>,
+        data: Nothing?,
+    ) {
+        printer.print("ReturnsResultOf(")
+        returnsResultOfEffect.valueParameterReference.accept(this, data)
+        printer.print(")")
     }
 
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {

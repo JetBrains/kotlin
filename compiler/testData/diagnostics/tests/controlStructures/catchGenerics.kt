@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
 // See KT-9816, KT-9742
 
@@ -14,13 +15,17 @@ fun bar() {
     } catch (e: ZException<*>) {}    
 }
 
-inline fun <reified E : Exception, R> tryCatch(lazy: () -> R, failure: (E) -> R): R =
-    try {
-        lazy()
-    } catch (<!REIFIED_TYPE_IN_CATCH_CLAUSE!>e: E<!>) {
-        failure(e)
-    }
-
 fun <T : Throwable> tryCatch() {
     try { } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>e: T<!>) { }
 }
+
+fun <T : Nothing?> test1() {
+    try {
+        throw Exception()
+    } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>x: T & Any<!>) {
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, functionalType, inline, integerLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, reified, starProjection, tryExpression,
+typeConstraint, typeParameter */

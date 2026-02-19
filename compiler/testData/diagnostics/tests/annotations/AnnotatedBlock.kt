@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FIR_DUMP
 // ISSUE: KT-52175
@@ -14,3 +15,5 @@ fun test(x: String?) {
 
     <!WRONG_ANNOTATION_TARGET!>@Ann()<!> <!WRONG_ANNOTATION_TARGET!>@Ann2()<!> x
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType */

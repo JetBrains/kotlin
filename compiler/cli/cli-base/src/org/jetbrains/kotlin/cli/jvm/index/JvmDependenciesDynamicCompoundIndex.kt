@@ -23,7 +23,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-class JvmDependenciesDynamicCompoundIndex : JvmDependenciesIndex {
+/**
+ * @param shouldOnlyFindFirstClass The index will stop the search in [findClasses] once it finds one result.
+ */
+class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: Boolean) : JvmDependenciesIndex {
     private val indices = arrayListOf<JvmDependenciesIndex>()
     private val lock = ReentrantReadWriteLock()
 
@@ -38,17 +41,25 @@ class JvmDependenciesDynamicCompoundIndex : JvmDependenciesIndex {
             val alreadyIndexed = indexedRoots.toHashSet()
             val newRoots = roots.filter { root -> root !in alreadyIndexed }
             if (newRoots.isEmpty()) null
-            else JvmDependenciesIndexImpl(newRoots).also(this::addIndex)
+            else JvmDependenciesIndexImpl(newRoots, shouldOnlyFindFirstClass).also(this::addIndex)
         }
 
     override val indexedRoots: Sequence<JavaRoot> get() = indices.asSequence().flatMap { it.indexedRoots }
 
-    override fun <T : Any> findClass(
+    override fun <T : Any> findClasses(
         classId: ClassId,
         acceptedRootTypes: Set<JavaRoot.RootType>,
-        findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
-    ): T? = lock.read {
-        indices.asSequence().mapNotNull { it.findClass(classId, acceptedRootTypes, findClassGivenDirectory) }.firstOrNull()
+        findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?,
+    ): Collection<T> = lock.read {
+        if (shouldOnlyFindFirstClass) {
+            listOfNotNull(
+                indices.asSequence()
+                    .mapNotNull { it.findClasses(classId, acceptedRootTypes, findClassGivenDirectory).firstOrNull() }
+                    .firstOrNull()
+            )
+        } else {
+            indices.flatMap { it.findClasses(classId, acceptedRootTypes, findClassGivenDirectory) }
+        }
     }
 
     override fun traverseDirectoriesInPackage(

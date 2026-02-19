@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     <!VAL_REASSIGNMENT!>javaClass.something1<!>++
@@ -24,3 +25,6 @@ public class JavaClass {
     public int[] getSomething5() { return null; }
     public void setSomething5(int... value) { }
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, incrementDecrementExpression, javaProperty,
+javaType */

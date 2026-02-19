@@ -1,26 +1,26 @@
 class Inv<T : Any?> {
+  val x: T
+    field = x
+    get
+
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: T
-    field = x
-    get
-
 }
 
 class Test_1<TT : Any?> : JavaClass1<TT> {
+  val x: TT
+    field = x
+    get
+
   constructor(x: TT) /* primary */ {
     super/*JavaClass1*/<TT>()
     /* <init>() */
 
   }
-
-  val x: TT
-    field = x
-    get
 
   fun test(b: B<TT>) {
     b.output(x = <this>.<get-x>())
@@ -44,3 +44,4 @@ class Test_2<TT : Any?> : JavaClass2<TT, Inv<TT>> {
 fun <R : Any?> test_3(jb: B<R>, r: R) {
   jb.output(x = r)
 }
+

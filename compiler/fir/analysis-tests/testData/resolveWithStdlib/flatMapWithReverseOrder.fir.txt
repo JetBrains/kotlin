@@ -1,0 +1,30 @@
+FILE: flatMapWithReverseOrder.kt
+    public final class MergeFragment : R|kotlin/Any| {
+        public constructor(): R|MergeFragment| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val tailsAndBody: R|kotlin/collections/MutableSet<kotlin/Int>| = R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()
+            public get(): R|kotlin/collections/MutableSet<kotlin/Int>|
+
+    }
+    public final fun specifyTypeTest(fragments: R|kotlin/collections/Set<MergeFragment>|): R|kotlin/Unit| {
+        lval flatMap: R|java/util/TreeSet<kotlin/Int>| = R|<local>/fragments|.R|kotlin/collections/flatMapTo|<R|MergeFragment|, R|kotlin/Int|, R|java/util/TreeSet<kotlin/Int>|>(R|java/util/TreeSet.TreeSet|<R|kotlin/Int|>(Q|Wrapper|.R|/Wrapper.reverseOrder*s|<R|kotlin/Int!|>()), <L> = flatMapTo@fun <anonymous>(f: R|MergeFragment|): R|kotlin/collections/Iterable<kotlin/Int>| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/f|.R|/MergeFragment.tailsAndBody|
+        }
+        )
+         {
+            lval <iterator>: R|kotlin/collections/MutableIterator<@EnhancedNullability kotlin/Int>| = R|<local>/flatMap|.R|SubstitutionOverride<java/util/TreeSet.iterator: R|@EnhancedNullability kotlin/collections/MutableIterator<@EnhancedNullability kotlin/Int>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/MutableIterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval f: R|kotlin/Int| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/MutableIterator.next: R|@EnhancedNullability kotlin/Int|>|()
+                 {
+                    R|/testFun|(R|<local>/f|)
+                }
+
+            }
+
+        }
+
+    }
+    public final fun testFun(i: R|kotlin/Int|): R|kotlin/Unit| {
+    }

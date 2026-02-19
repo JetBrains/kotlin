@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-1028 Wrong type checking for plusAssign
 package kt1028
@@ -34,3 +35,7 @@ class Test()
         control.MouseMoved.plusAssign( { it.X } ) // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, forLoop, functionDeclaration, functionalType, integerLiteral,
+javaFunction, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+typeParameter */

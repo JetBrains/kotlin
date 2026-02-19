@@ -1,0 +1,7 @@
+FILE: invokeWithExtensionReceiver.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval ext: R|kotlin/String.(kotlin/Int) -> kotlin/Unit|
+        lval usedReceiver: R|kotlin/String| = String(foo)
+        lval unusedReceiver: R|kotlin/String| = String(bar)
+        R|<local>/ext|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(R|<local>/usedReceiver|, Int(10))
+    }

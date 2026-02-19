@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <org.example:bcv-klib-test>
+// Platform: NATIVE
+// Native targets: macos_arm64
+// Compiler version: 1.9.22
+// ABI version: 1.8.0
+final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
+    final val value // org.example/ShardedClass.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+    final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
+}
+final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]

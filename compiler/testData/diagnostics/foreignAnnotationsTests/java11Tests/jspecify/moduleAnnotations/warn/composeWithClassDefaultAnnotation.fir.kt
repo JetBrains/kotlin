@@ -1,7 +1,7 @@
 // JSPECIFY_STATE: warn
 // ALLOW_KOTLIN_PACKAGE
 
-// FILE: sandbox/test/module-info.java
+// FILE: sandbox/module-info.java
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -24,5 +24,5 @@ public class Test {
 import test.Test
 
 fun main(x: Test) {
-    x.foo(null)
+    x.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

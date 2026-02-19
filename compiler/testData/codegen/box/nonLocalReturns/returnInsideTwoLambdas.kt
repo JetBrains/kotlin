@@ -1,7 +1,9 @@
+// FILE: lib.kt
 fun <T> outer(command: () -> T) : T = command()
 
 inline fun <K> inner(action: () -> K): K = action()
 
+// FILE: main.kt
 fun test1(): String {
     outer {
         inner {

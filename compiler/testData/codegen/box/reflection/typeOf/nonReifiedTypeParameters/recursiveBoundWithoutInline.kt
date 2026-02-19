@@ -1,6 +1,6 @@
-// TODO: it should target all backends, but now it's possible to have only one .fail file per test file,
-//  so we can't define different messages for different test suites/runners.
-// TARGET_BACKEND: JS
+// IGNORE_BACKEND: JVM_IR, NATIVE, JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
+// ^^^ This test fails during the second phase of compilation. Yet it's still used in first phase-only
+//     tests such as *IrDeserializationTest*generated.
 // KJS_WITH_FULL_RUNTIME
 
 import kotlin.reflect.typeOf

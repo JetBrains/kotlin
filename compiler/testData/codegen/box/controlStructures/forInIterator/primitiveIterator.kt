@@ -19,6 +19,5 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 java/util/Iterator.next
 // 2 MyLongIterator.next

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Bound1
 interface Bound2
@@ -17,3 +18,6 @@ fun topLevel() = run {
 fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>topLevel()<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, intersectionType, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, vararg */

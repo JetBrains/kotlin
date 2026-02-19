@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: test/A.java
 
 package test;
@@ -23,3 +24,6 @@ fun foo(args: Array<String>) {
     main2(args)
     (A::main)(args)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaCallableReference, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

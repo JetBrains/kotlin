@@ -3,7 +3,6 @@
 // LAMBDAS: INDY
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
 inline class Z(val value: Int)

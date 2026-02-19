@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 public fun test() {
 
     fun localFun() {
@@ -10,3 +10,5 @@ public fun test() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, localFunction */

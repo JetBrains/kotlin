@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-51460
 
@@ -16,3 +17,6 @@ abstract class A {
 
     class C(override val a: A?): A()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, localProperty, nestedClass,
+nullableType, override, primaryConstructor, propertyDeclaration */

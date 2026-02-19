@@ -1,6 +1,4 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // WITH_STDLIB
-// FIR_DIFFERENCE: KT-53861
 // FILE: test.kt
 import kotlinx.serialization.*
 
@@ -10,9 +8,12 @@ class NonSerializable
 class Basic(val foo: <!SERIALIZER_NOT_FOUND("NonSerializable")!>NonSerializable<!>)
 
 @Serializable
-class Inside(val foo: <!SERIALIZER_NOT_FOUND("NonSerializable")!>List<NonSerializable><!>)
+class Inside(val foo: List<<!SERIALIZER_NOT_FOUND("NonSerializable")!>NonSerializable<!>>)
+
+@Serializable
+class Inside2(val foo: List<List<<!SERIALIZER_NOT_FOUND("NonSerializable")!>NonSerializable<!>>>)
 
 @Serializable
 class WithImplicitType {
-    <!SERIALIZER_NOT_FOUND("NonSerializable")!>val foo = NonSerializable()<!>
+    val foo = <!SERIALIZER_NOT_FOUND!>NonSerializable()<!>
 }

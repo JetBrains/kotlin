@@ -39,7 +39,7 @@ import java.io.ByteArrayOutputStream
 import kotlin.collections.ArrayList
 
 abstract class DeserializedMemberScope protected constructor(
-    protected val c: DeserializationContext,
+    val c: DeserializationContext,
     functionList: List<ProtoBuf.Function>,
     propertyList: List<ProtoBuf.Property>,
     typeAliasList: List<ProtoBuf.TypeAlias>,

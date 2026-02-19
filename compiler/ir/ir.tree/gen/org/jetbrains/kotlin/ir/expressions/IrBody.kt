@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,14 +10,12 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
  */
-abstract class IrBody : IrElementBase(), IrElement {
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
+sealed class IrBody : IrElementBase(), IrElement {
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBody =
         accept(transformer, data) as IrBody
 }

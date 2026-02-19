@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -12,3 +13,6 @@ fun test() {
         foo::toString
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+lambdaLiteral */

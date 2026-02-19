@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt
@@ -22,3 +23,5 @@ fun test() {
     val a: A = B().a
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

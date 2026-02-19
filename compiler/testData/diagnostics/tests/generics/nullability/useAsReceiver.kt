@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
 
 fun <T : CharSequence?> T.bar1() {}
 fun CharSequence?.bar2() {}
@@ -25,3 +26,6 @@ fun <T : String?> foo(x: T) {
 
     x?.let { it.length }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, integerLiteral, lambdaLiteral, nullableType, safeCall, typeConstraint, typeParameter */

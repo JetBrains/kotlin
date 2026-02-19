@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -27,3 +28,6 @@ fun foo(): Int {
         J.B -> return 2
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,
+smartcast, whenExpression, whenWithSubject */

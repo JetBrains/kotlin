@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: api.kt
 
 package api
@@ -137,3 +138,6 @@ val inProperty = @<!OPT_IN_USAGE!>EAnno<!> fun() {}
 
 val inPropertyAccessor: () -> Unit
     get() = @<!OPT_IN_USAGE!>EAnno<!> fun() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, classReference, functionDeclaration,
+functionalType, getter, localFunction, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */

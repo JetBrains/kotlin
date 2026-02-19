@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/../reportPerf.kt
+-d
+$TEMP_DIR$
+-cp
+non-existing-path.jar
+-Werror
+-Xreport-perf=true

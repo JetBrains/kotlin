@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 @JvmName("bar")
 fun foo(a: Any) {}
 
@@ -21,3 +22,6 @@ class C {
     fun getRwProp(): Int = 123
     fun setRwProp(v: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+propertyDeclaration, setter, stringLiteral */

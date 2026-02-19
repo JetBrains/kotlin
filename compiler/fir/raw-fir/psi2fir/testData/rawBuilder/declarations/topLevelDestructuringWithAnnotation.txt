@@ -1,0 +1,2 @@
+FILE: topLevelDestructuringWithAnnotation.kt
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = Pair#(IntegerLiteral(0), IntegerLiteral(1))

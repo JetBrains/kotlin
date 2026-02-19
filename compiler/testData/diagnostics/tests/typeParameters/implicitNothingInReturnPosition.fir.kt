@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST
 // SKIP_TXT
 // Issue: KT-20849
 
@@ -110,3 +111,9 @@ fun test3() {
 fun produceNothing(): Nothing = TODO()
 
 fun <R> foo(block: suspend String.() -> R) = null as R
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, companionObject, elvisExpression,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, in, inProjection, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, out, outProjection,
+primaryConstructor, propertyDeclaration, safeCall, smartcast, starProjection, stringLiteral, suspend, thisExpression,
+typeConstraint, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

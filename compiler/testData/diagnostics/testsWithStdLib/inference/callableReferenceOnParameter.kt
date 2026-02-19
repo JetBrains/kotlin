@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Issue: KT-37736
 
 internal class Z<K> {
@@ -6,3 +7,6 @@ internal class Z<K> {
         return map.getOrPut(key, ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS, USAGE_IS_NOT_INLINABLE!>producer<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, nullableType, propertyDeclaration,
+typeParameter */

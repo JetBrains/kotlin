@@ -1,0 +1,22 @@
+import com.example.Unresolved1;
+import org.example.*;
+import org.another.*;
+
+@Unresolved1()
+@Unresolved2()
+/**
+ * public final class C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+}

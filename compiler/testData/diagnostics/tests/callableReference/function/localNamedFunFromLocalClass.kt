@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 import kotlin.reflect.*
 
@@ -20,3 +21,7 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localClass, localFunction, nullableType, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

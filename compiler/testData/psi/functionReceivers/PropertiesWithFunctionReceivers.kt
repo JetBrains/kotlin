@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val ((Unit) -> Unit).foo
 val (foo.bar.() -> Unit).foo
 

@@ -14,40 +14,18 @@
  * limitations under the License.
  */
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-
 #include "KString.h"
 #include "Memory.h"
-#include "MemorySharedRefs.hpp"
-#include "Types.h"
-#include "std_support/New.hpp"
 
 using namespace kotlin;
 
-extern "C" {
-
-KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
-    KRefSharedHolder* holder = new (std_support::kalloc) KRefSharedHolder();
-    holder->init(any);
-    return holder;
+extern "C" OBJ_GETTER(Kotlin_CString_toKStringFromUtf8Impl, const char* cstring) {
+  RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
-void Kotlin_Interop_disposeStablePointer(KNativePtr pointer) {
-  KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
-  holder->dispose();
-  std_support::kdelete(holder);
-}
-
-OBJ_GETTER(Kotlin_Interop_derefStablePointer, KNativePtr pointer) {
-  KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
-  RETURN_OBJ(holder->ref<ErrorPolicy::kThrow>());
-}
-
-OBJ_GETTER(Kotlin_CString_toKStringFromUtf8Impl, const char* cstring) {
-  RETURN_RESULT_OF(StringFromUtf8Buffer, cstring, strlen(cstring));
-}
-
+extern "C" OBJ_GETTER(Kotlin_Interop_pinnable, KRef any) {
+    if (any != nullptr && any->type_info() == theStringTypeInfo) {
+        RETURN_RESULT_OF(ConvertStringToUtf16, any);
+    }
+    RETURN_OBJ(any);
 }

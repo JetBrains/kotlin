@@ -1,5 +1,5 @@
 FILE: enums3.kt
-    public? final? class C : R|kotlin/Any| {
+    public final? class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

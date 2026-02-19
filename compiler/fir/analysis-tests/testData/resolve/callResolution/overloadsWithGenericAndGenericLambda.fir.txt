@@ -10,7 +10,7 @@ FILE: overloadsWithGenericAndGenericLambda.kt
     public final fun <T> foo(c: R|Inv<T>|, v: R|T|): R|kotlin/Unit| {
     }
     public final fun <T> test(x: R|Inv<T>|, v: R|T|): R|kotlin/Unit| {
-        <Ambiguity: foo, [/foo, /foo]>#(R|<local>/x|, <L> = foo@fun <anonymous>(): R|T| <inline=Unknown>  {
+        R|/foo|<R|T|>(R|<local>/x|, <L> = foo@fun <anonymous>(): R|T| <inline=NoInline>  {
             ^ R|<local>/v|
         }
         )

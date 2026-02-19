@@ -1,0 +1,46 @@
+class ResourceTable {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Test {
+  var resourceTable: ResourceTable?
+    field = null
+    get(): ResourceTable? {
+      when {
+        EQEQ(arg0 = <this>.#resourceTable, arg1 = null).not() -> { // BLOCK
+          return <this>.#resourceTable
+        }
+      }
+      val fileData: String? = <this>.getFileData()
+      when {
+        EQEQ(arg0 = fileData, arg1 = null).not() -> { // BLOCK
+          <this>.#resourceTable = ResourceTable()
+        }
+      }
+      return { // BLOCK
+        val tmp_0: ResourceTable? = <this>.#resourceTable
+        when {
+          EQEQ(arg0 = tmp_0, arg1 = null) -> ResourceTable()
+          else -> tmp_0
+        }
+      }
+    }
+    set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun getFileData(): String? {
+    return ""
+  }
+
+}
+

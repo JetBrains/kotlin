@@ -1,9 +1,8 @@
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
 // WITH_REFLECT
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 interface I {
@@ -15,7 +14,6 @@ interface I {
 fun ok() = I.OK
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 import kotlin.reflect.KType

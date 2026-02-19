@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.SwiftUICore
+
+modules = SwiftUICore
+compilerOpts = -framework SwiftUICore
+linkerOpts = -framework SwiftUICore
+#Disabled: Unavailable

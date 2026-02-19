@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 object A {
     val iii = 42
@@ -29,3 +30,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

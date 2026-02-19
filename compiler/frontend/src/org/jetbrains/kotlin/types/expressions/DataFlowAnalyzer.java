@@ -194,13 +194,6 @@ public class DataFlowAnalyzer {
                     else if (operationToken == KtTokens.EXCLEQ || operationToken == KtTokens.EXCLEQEQEQ) {
                         equals = false;
                     }
-                    else if (operationToken == KtTokens.ELVIS &&
-                             languageVersionSettings.supportsFeature(LanguageFeature.BooleanElvisBoundSmartCasts) &&
-                             right instanceof KtConstantExpression &&
-                             KotlinBuiltIns.isBoolean(rhsType)) {
-                        // ?: false is equivalent to == true, ?: true is equivalent to != false
-                        equals = KtPsiUtil.isFalseConstant(right);
-                    }
                     if (equals != null) {
                         if (equals == conditionValue) { // this means: equals && conditionValue || !equals && !conditionValue
                             boolean identityEquals = operationToken == KtTokens.EQEQEQ ||

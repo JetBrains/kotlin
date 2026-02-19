@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -18,7 +18,7 @@ class CacheVersionTest {
             CacheVersion(
                 3,
                 JvmBytecodeBinaryVersion(1, 0, 3),
-                JvmMetadataVersion(1, 1, 13)
+                MetadataVersion(1, 1, 13)
             ).intValue
         )
     }
@@ -36,7 +36,7 @@ class CacheVersionTest {
         val version = CacheVersion(
             1,
             JvmBytecodeBinaryVersion(2, 3),
-            JvmMetadataVersion(4, 5)
+            MetadataVersion(4, 5)
         )
 
         assertEquals(1024305, version.intValue)
@@ -50,7 +50,7 @@ class CacheVersionTest {
             CacheVersion(
                 2146,
                 JvmBytecodeBinaryVersion(9, 9),
-                JvmMetadataVersion(9, 99)
+                MetadataVersion(9, 99)
             ).toString()
         )
     }

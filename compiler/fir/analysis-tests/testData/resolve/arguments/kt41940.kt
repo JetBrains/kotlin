@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-41940
 
 // FILE: Matcher.java
@@ -19,5 +20,7 @@ public class Matchers {
 import Matchers.*
 
 fun test(list: List<String>, string: String) {
-    assertThat(list, <!DEBUG_INFO_EXPRESSION_TYPE("Matcher<kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?!>..Matcher<kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?!>?!")!>hasItem(string)<!>)
+    assertThat(list, <!DEBUG_INFO_EXPRESSION_TYPE("(Matcher<(kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?)>..Matcher<(kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?)>?)")!>hasItem(string)<!>)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, starProjection */

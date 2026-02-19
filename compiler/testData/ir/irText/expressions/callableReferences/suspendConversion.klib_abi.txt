@@ -1,0 +1,31 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    final fun bar() // /C.bar|bar(){}[0]
+}
+final suspend fun /foo0() // /foo0|foo0(){}[0]
+final fun /foo1() // /foo1|foo1(){}[0]
+final fun /foo2(kotlin/IntArray...) // /foo2|foo2(kotlin.IntArray...){}[0]
+final fun /foo3(): kotlin/Int // /foo3|foo3(){}[0]
+final fun /foo4(kotlin/Int = ...) // /foo4|foo4(kotlin.Int){}[0]
+final fun /fooInt(kotlin/Int) // /fooInt|fooInt(kotlin.Int){}[0]
+final fun /testLambda() // /testLambda|testLambda(){}[0]
+final fun /testNestedNullableParam() // /testNestedNullableParam|testNestedNullableParam(){}[0]
+final fun /testNoCoversion() // /testNoCoversion|testNoCoversion(){}[0]
+final fun /testNullableParam() // /testNullableParam|testNullableParam(){}[0]
+final fun /testSuspendPlain() // /testSuspendPlain|testSuspendPlain(){}[0]
+final fun /testSuspendWithArgs() // /testSuspendWithArgs|testSuspendWithArgs(){}[0]
+final fun /testWithBoundReceiver() // /testWithBoundReceiver|testWithBoundReceiver(){}[0]
+final fun /testWithCoercionToUnit() // /testWithCoercionToUnit|testWithCoercionToUnit(){}[0]
+final fun /testWithDefaults() // /testWithDefaults|testWithDefaults(){}[0]
+final fun /testWithVararg() // /testWithVararg|testWithVararg(){}[0]
+final fun /testWithVarargMapped() // /testWithVarargMapped|testWithVarargMapped(){}[0]
+final fun /useSuspend(kotlin.coroutines/SuspendFunction0<kotlin/Unit>) // /useSuspend|useSuspend(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0]
+final fun /useSuspendInt(kotlin.coroutines/SuspendFunction1<kotlin/Int, kotlin/Unit>) // /useSuspendInt|useSuspendInt(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /useSuspendNestedNullable(kotlin.coroutines/SuspendFunction0<kotlin/Unit>?) // /useSuspendNestedNullable|useSuspendNestedNullable(kotlin.coroutines.SuspendFunction0<kotlin.Unit>?){}[0]
+final fun /useSuspendNullable(kotlin.coroutines/SuspendFunction0<kotlin/Unit>?) // /useSuspendNullable|useSuspendNullable(kotlin.coroutines.SuspendFunction0<kotlin.Unit>?){}[0]

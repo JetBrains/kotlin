@@ -2,13 +2,12 @@
 public final class LocalClassWithCapturedParamsKt$localCaptured$A {
     // source: 'localClassWithCapturedParams.kt'
     enclosing method LocalClassWithCapturedParamsKt.localCaptured()Ljava/lang/Object;
-    synthetic final field $z: int
     private final field x: int
-    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
+    private final field z: java.lang.String
     inner (local) class LocalClassWithCapturedParamsKt$localCaptured$A A
-    public method <init>(p0: int, @Simple(value="K") @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public method <init>(p0: int, @Simple(value="K") p1: java.lang.String): void
     public final method getX(): int
-    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
+    public final method getZ(): java.lang.String
 }
 
 @kotlin.Metadata

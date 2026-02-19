@@ -25,7 +25,7 @@ open class NpmProjectModules(
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        return resolve(request)?.canonicalPath ?: error("Cannot find node module \"$request\" in \"$this\"")
+        return resolve(request)?.absolutePath ?: error("Cannot find node module \"$request\" in \"$this\"")
     }
 
     fun copy(

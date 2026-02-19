@@ -1,0 +1,8 @@
+BODY_RESOLVE:
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction(): R|kotlin/Unit|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|library/topLevelFunction|()
+    }

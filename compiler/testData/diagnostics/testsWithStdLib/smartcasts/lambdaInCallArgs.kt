@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: Int, y: Any?, z: Int) {}
 
 fun myRun(block: () -> Unit): Any? {
@@ -47,3 +48,6 @@ fun test_4() {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

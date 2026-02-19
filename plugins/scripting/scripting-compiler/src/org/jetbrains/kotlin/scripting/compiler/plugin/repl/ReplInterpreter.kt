@@ -3,9 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
 import com.intellij.core.JavaCoreProjectEnvironment
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.repl.ReplClassLoader
@@ -32,11 +35,12 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.renderError
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ReplInterpreter(
     projectEnvironment: JavaCoreProjectEnvironment,
     private val configuration: CompilerConfiguration,
-    private val replConfiguration: ReplConfiguration
+    private val replConfiguration: ReplConfiguration,
 ) {
     private val hostConfiguration: ScriptingHostConfiguration
     private val compilationConfiguration: ScriptCompilationConfiguration
@@ -44,16 +48,10 @@ class ReplInterpreter(
 
     private val replState: JvmReplCompilerState<*>
 
-    companion object {
-        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition(Any::class) {
-            override val name = "Kotlin REPL"
-        }
-
-    }
-
     init {
         hostConfiguration = defaultJvmScriptingHostConfiguration
 
+        @OptIn(K1Deprecation::class)
         val environment = (projectEnvironment as? KotlinCoreEnvironment.ProjectEnvironment)?.let {
             KotlinCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         }
@@ -63,15 +61,21 @@ class ReplInterpreter(
 
         val context =
             createCompilationContextFromEnvironment(
-                ScriptCompilationConfigurationFromDefinition(hostConfiguration, REPL_LINE_AS_SCRIPT_DEFINITION),
+                ScriptCompilationConfigurationFromLegacyTemplate(
+                    defaultJvmScriptingHostConfiguration,
+                    Any::class
+                ).with {
+                    displayName("Kotlin REPL")
+                },
                 environment,
                 ScriptDiagnosticsMessageCollector(environment.messageCollector)
             )
 
         compilationConfiguration = context.baseScriptCompilationConfiguration
-        evaluationConfiguration = ScriptEvaluationConfigurationFromDefinition(hostConfiguration, REPL_LINE_AS_SCRIPT_DEFINITION).with {
-            scriptExecutionWrapper<Any> { replConfiguration.executionInterceptor.execute(it) }
-        }
+        evaluationConfiguration =
+            ScriptEvaluationConfigurationFromHostConfiguration(hostConfiguration).with {
+                scriptExecutionWrapper<Any> { replConfiguration.executionInterceptor.execute(it) }
+            }
 
         replState = JvmReplCompilerState(
             {
@@ -187,7 +191,12 @@ class ReplInterpreter(
                             is ResultWithDiagnostics.Success -> {
                                 when (val evalValue = evalResult.value.get().result) {
                                     is ResultValue.Unit -> ReplEvalResult.UnitResult()
-                                    is ResultValue.Value -> ReplEvalResult.ValueResult(evalValue.name, evalValue.value, evalValue.type, evalValue.scriptInstance)
+                                    is ResultValue.Value -> ReplEvalResult.ValueResult(
+                                        evalValue.name,
+                                        evalValue.value,
+                                        evalValue.type,
+                                        evalValue.scriptInstance
+                                    )
                                     is ResultValue.Error -> ReplEvalResult.Error.Runtime(evalValue.renderError())
                                     else -> ReplEvalResult.Error.Runtime("Error: snippet is not evaluated")
                                 }

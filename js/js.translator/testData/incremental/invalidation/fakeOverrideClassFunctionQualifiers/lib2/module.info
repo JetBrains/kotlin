@@ -4,11 +4,13 @@ STEP 0:
 STEP 1:
     dependencies: lib1
     updated exports: l2.kt
+    updated imports <wasm>: l2.kt
 STEP 2:
     dependencies: lib1
     updated imports: l2.kt
 STEP 3:
     dependencies: lib1
+    updated imports <wasm>: l2.kt
 STEP 4:
     dependencies: lib1
     updated exports: l2.kt
@@ -23,3 +25,4 @@ STEP 10:
     updated exports: l2.kt
 STEP 11:
     dependencies: lib1
+    updated imports <wasm>: l2.kt

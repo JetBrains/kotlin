@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class Inv<E>
 class C<R> {
     fun bindTo(property: Inv<R>) {}
@@ -20,3 +21,6 @@ fun foo(x: Any?, y: C<*>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType,
+smartcast, starProjection, stringLiteral, thisExpression, typeParameter */

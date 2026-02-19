@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
@@ -16,3 +17,5 @@ fun nullIfEmpty(list: List<String>): List<String>? {
         null
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType */

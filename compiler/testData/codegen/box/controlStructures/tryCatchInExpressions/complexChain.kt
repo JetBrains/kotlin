@@ -1,4 +1,4 @@
-
+// FILE: lib.kt
 fun cleanup() {}
 
 inline fun concat(x: String, y: String): String = x + y
@@ -14,6 +14,7 @@ inline fun throws() {
 
 inline fun first(x: String, y: String): String = x
 
+// FILE: main.kt
 fun box(): String =
     "" + concat(
             try { "" } finally { "0" },

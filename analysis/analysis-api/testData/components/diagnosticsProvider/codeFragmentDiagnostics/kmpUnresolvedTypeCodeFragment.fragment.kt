@@ -1,0 +1,2 @@
+// CODE_FRAGMENT_KIND: TYPE
+Abc

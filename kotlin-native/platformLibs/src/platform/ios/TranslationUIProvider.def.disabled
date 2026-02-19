@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.TranslationUIProvider
+
+modules = TranslationUIProvider
+compilerOpts = -framework TranslationUIProvider
+linkerOpts = -framework TranslationUIProvider
+#Disabled: Swift-only framework

@@ -1,7 +1,9 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
-// FILE: enhancedNullabilityInForLoop.kt
 // WITH_JDK
+// DISABLE_JAVA_FACADE
 
+// FILE: enhancedNullabilityInForLoop.kt
 fun use(s: P) {}
 
 fun testForInListUnused() {
@@ -11,7 +13,7 @@ fun testForInListUnused() {
 
 fun testForInListDestructured() {
     // See KT-36343 and KT-36344
-    for ((x, y) in J.listOfNotNull()) {}
+    for ([x, y] in J.listOfNotNull()) {}
 }
 
 fun testDesugaredForInList() {

@@ -7,305 +7,142 @@ public final class IntrinsicsAdvancedKt : java/lang/Object {
 
     public final static kotlinx.serialization.KSerializer getSer(kotlinx.serialization.modules.SerializersModule module) {
         LABEL (L0)
-          LDC (0)
-          ISTORE (1)
-        LABEL (L1)
           ALOAD (0)
           LDC (module)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L2)
+          ICONST_0
+          ISTORE (1)
+        LABEL (L1)
         LINENUMBER (18)
           ALOAD (0)
           ASTORE (2)
-        LABEL (L3)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L4)
-        LINENUMBER (34)
-          ALOAD (2)
           BIPUSH (6)
           LDC (T)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
           ACONST_NULL
+          LDC (kotlinx.serialization.serializer.withModule)
+          INVOKESTATIC (kotlin/jvm/internal/MagicApiIntrinsics, voidMagicApiCall, (Ljava/lang/Object;)V)
+          ALOAD (2)
+          SWAP
           INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (4)
-        LABEL (L5)
-          ICONST_0
-          ISTORE (5)
-        LABEL (L6)
-        LINENUMBER (35)
-          ALOAD (4)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-          ALOAD (4)
-          CHECKCAST (kotlinx/serialization/KSerializer)
-        LABEL (L7)
-        LINENUMBER (34)
-          NOP
-        LABEL (L8)
-        LINENUMBER (18)
           ARETURN
-        LABEL (L9)
+        LABEL (L2)
     }
 
     public final static void test() {
         LABEL (L0)
         LINENUMBER (22)
           GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
-          ASTORE (0)
+          POP
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          POP
         LABEL (L1)
-          ICONST_0
-          ISTORE (1)
-        LABEL (L2)
-        LINENUMBER (36)
-          ALOAD (0)
-          LDC (LSimple;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (2)
-        LABEL (L3)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L4)
-        LINENUMBER (37)
-          ALOAD (2)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L5)
-        LINENUMBER (36)
-          NOP
-        LABEL (L6)
         LINENUMBER (23)
           GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
+          LDC (LNoSer;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, noCompiledSerializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KClass;)Lkotlinx/serialization/KSerializer;)
+          POP
+        LABEL (L2)
+        LINENUMBER (24)
+          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
+          POP
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+          POP
+        LABEL (L3)
+        LINENUMBER (25)
+          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
           ASTORE (0)
-        LABEL (L7)
-          ICONST_0
-          ISTORE (1)
-        LABEL (L8)
-        LINENUMBER (38)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
           ALOAD (0)
           LDC (LNoSer;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (2)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, noCompiledSerializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KClass;)Lkotlinx/serialization/KSerializer;)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+          POP
+        LABEL (L4)
+        LINENUMBER (27)
+          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
+          ASTORE (0)
+        LABEL (L5)
+          ICONST_0
+          ISTORE (1)
+        LABEL (L6)
+        LINENUMBER (34)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+        LABEL (L7)
+          POP
+        LABEL (L8)
+        LINENUMBER (28)
+          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
+          ASTORE (0)
         LABEL (L9)
           ICONST_0
-          ISTORE (3)
+          ISTORE (1)
         LABEL (L10)
-        LINENUMBER (39)
-          ALOAD (2)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LINENUMBER (35)
+          ALOAD (0)
+          LDC (LNoSer;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, noCompiledSerializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KClass;)Lkotlinx/serialization/KSerializer;)
         LABEL (L11)
-        LINENUMBER (38)
-          NOP
+          POP
         LABEL (L12)
-        LINENUMBER (24)
+        LINENUMBER (30)
           GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
           ASTORE (0)
         LABEL (L13)
           ICONST_0
           ISTORE (1)
         LABEL (L14)
-        LINENUMBER (40)
+        LINENUMBER (36)
           ALOAD (0)
-          LDC (Ljava/util/List;)
-          GETSTATIC (kotlin/reflect/KTypeProjection, Companion, Lkotlin/reflect/KTypeProjection$Companion;)
-          LDC (LSimple;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKEVIRTUAL (kotlin/reflect/KTypeProjection$Companion, invariant, (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (2)
-        LABEL (L15)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L16)
-        LINENUMBER (41)
-          ALOAD (2)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L17)
-        LINENUMBER (40)
-          NOP
-        LABEL (L18)
-        LINENUMBER (25)
-          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
-          ASTORE (0)
-        LABEL (L19)
-          ICONST_0
-          ISTORE (1)
-        LABEL (L20)
-        LINENUMBER (42)
-          ALOAD (0)
-          LDC (Ljava/util/List;)
-          GETSTATIC (kotlin/reflect/KTypeProjection, Companion, Lkotlin/reflect/KTypeProjection$Companion;)
-          LDC (LNoSer;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKEVIRTUAL (kotlin/reflect/KTypeProjection$Companion, invariant, (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (2)
-        LABEL (L21)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L22)
-        LINENUMBER (43)
-          ALOAD (2)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L23)
-        LINENUMBER (42)
-          NOP
-        LABEL (L24)
-        LINENUMBER (27)
-          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
-          ASTORE (0)
-        LABEL (L25)
-          ICONST_0
-          ISTORE (1)
-        LABEL (L26)
-        LINENUMBER (44)
-          ALOAD (0)
-          ASTORE (2)
-        LABEL (L27)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L28)
-        LINENUMBER (45)
-          ALOAD (2)
-          LDC (LSimple;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (4)
-        LABEL (L29)
-          ICONST_0
-          ISTORE (5)
-        LABEL (L30)
-        LINENUMBER (46)
-          ALOAD (4)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L31)
-        LINENUMBER (45)
-          NOP
-        LABEL (L32)
-        LINENUMBER (44)
-          NOP
-        LABEL (L33)
-        LINENUMBER (28)
-          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
-          ASTORE (0)
-        LABEL (L34)
-          ICONST_0
-          ISTORE (1)
-        LABEL (L35)
-        LINENUMBER (47)
-          ALOAD (0)
-          ASTORE (2)
-        LABEL (L36)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L37)
-        LINENUMBER (48)
-          ALOAD (2)
-          LDC (LNoSer;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (4)
-        LABEL (L38)
-          ICONST_0
-          ISTORE (5)
-        LABEL (L39)
-        LINENUMBER (49)
-          ALOAD (4)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L40)
-        LINENUMBER (48)
-          NOP
-        LABEL (L41)
-        LINENUMBER (47)
-          NOP
-        LABEL (L42)
-        LINENUMBER (30)
-          GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
-          ASTORE (0)
-        LABEL (L43)
-          ICONST_0
-          ISTORE (1)
-        LABEL (L44)
-        LINENUMBER (50)
-          ALOAD (0)
-          ASTORE (2)
-        LABEL (L45)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L46)
-        LINENUMBER (51)
-          ALOAD (2)
           LDC (LNoSerGeneric;)
-          GETSTATIC (kotlin/reflect/KTypeProjection, Companion, Lkotlin/reflect/KTypeProjection$Companion;)
-          LDC (LSimple;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKEVIRTUAL (kotlin/reflect/KTypeProjection$Companion, invariant, (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (4)
-        LABEL (L47)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          ICONST_1
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          DUP
           ICONST_0
-          ISTORE (5)
-        LABEL (L48)
-        LINENUMBER (52)
-          ALOAD (4)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L49)
-        LINENUMBER (51)
-          NOP
-        LABEL (L50)
-        LINENUMBER (50)
-          NOP
-        LABEL (L51)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          AASTORE
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, noCompiledSerializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+        LABEL (L15)
+          POP
+        LABEL (L16)
         LINENUMBER (31)
           GETSTATIC (IntrinsicsAdvancedKt, module, Lkotlinx/serialization/modules/SerializersModule;)
           ASTORE (0)
-        LABEL (L52)
+        LABEL (L17)
           ICONST_0
           ISTORE (1)
-        LABEL (L53)
-        LINENUMBER (53)
+        LABEL (L18)
+        LINENUMBER (37)
           ALOAD (0)
           ASTORE (2)
-        LABEL (L54)
-          ICONST_0
-          ISTORE (3)
-        LABEL (L55)
-        LINENUMBER (54)
           ALOAD (2)
           LDC (LNoSerGeneric;)
-          GETSTATIC (kotlin/reflect/KTypeProjection, Companion, Lkotlin/reflect/KTypeProjection$Companion;)
-          LDC (LNoSer;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;)Lkotlin/reflect/KType;)
-          INVOKEVIRTUAL (kotlin/reflect/KTypeProjection$Companion, invariant, (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, typeOf, (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
-          ASTORE (4)
-        LABEL (L56)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          ICONST_1
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          DUP
           ICONST_0
-          ISTORE (5)
-        LABEL (L57)
-        LINENUMBER (55)
-          ALOAD (4)
-          LDC (null cannot be cast to non-null type kotlinx.serialization.KSerializer<T of kotlinx.serialization.internal.Platform_commonKt.cast>)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L58)
-        LINENUMBER (54)
-          NOP
-        LABEL (L59)
-        LINENUMBER (53)
-          NOP
-        LABEL (L60)
+          ALOAD (2)
+          LDC (LNoSer;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, noCompiledSerializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KClass;)Lkotlinx/serialization/KSerializer;)
+          AASTORE
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, noCompiledSerializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+        LABEL (L19)
+          POP
+        LABEL (L20)
         LINENUMBER (32)
           RETURN
     }
@@ -320,9 +157,9 @@ public final class NoSerGeneric : java/lang/Object {
 }
 
 public final class Simple$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
-    private final static kotlinx.serialization.descriptors.SerialDescriptor $$serialDesc
-
     public final static Simple$$serializer INSTANCE
+
+    private final static kotlinx.serialization.internal.PluginGeneratedSerialDescriptor descriptor
 
     static void <clinit>()
 
@@ -332,13 +169,13 @@ public final class Simple$$serializer : java/lang/Object, kotlinx/serialization/
 
     public Simple deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
-    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder p0)
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
     public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, Simple value)
 
-    public void serialize(kotlinx.serialization.encoding.Encoder p0, java.lang.Object p1)
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
 
     public kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }

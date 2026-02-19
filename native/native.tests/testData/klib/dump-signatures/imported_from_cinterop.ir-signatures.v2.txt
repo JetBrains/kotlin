@@ -1,0 +1,21 @@
+// Declared signatures: 5
+imported_from_cinterop.main/Derived.<init>|<init>(){}[0]
+imported_from_cinterop.main/Derived.overriddenFunction|objc:overriddenFunction[0]
+imported_from_cinterop.main/Derived.overriddenProperty|objc:overriddenProperty[0]
+imported_from_cinterop.main/Derived.setOverriddenProperty|objc:setOverriddenProperty:[0]
+imported_from_cinterop.main/Derived|null[0]
+
+// Imported signatures: 13
+imported_from_cinterop.lib/Base.<init>|objc:init#Constructor[100]
+imported_from_cinterop.lib/Base.overriddenFunction|objc:overriddenFunction[100]
+imported_from_cinterop.lib/Base.overriddenProperty|objc:overriddenProperty[100]
+imported_from_cinterop.lib/Base.setOverriddenProperty|objc:setOverriddenProperty:[100]
+imported_from_cinterop.lib/Base|null[100]
+kotlin.reflect/KClass|null[0]
+kotlin/Annotation|null[0]
+kotlin/Array|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/OptIn.<init>|<init>(kotlin.Array<out|kotlin.reflect.KClass<out|kotlin.Annotation>>...){}[0]
+kotlin/Unit|null[0]
+kotlinx.cinterop/ExperimentalForeignApi|null[0]

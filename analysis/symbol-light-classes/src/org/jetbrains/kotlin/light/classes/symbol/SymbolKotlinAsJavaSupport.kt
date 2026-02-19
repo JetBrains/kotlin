@@ -1,27 +1,35 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.util.concurrency.annotations.RequiresReadLock
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideLibraryModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideSourceModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolBasedFakeLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForScript
@@ -35,37 +43,104 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
+import java.util.*
 
-class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtModule>(project) {
-    private val projectStructureProvider by lazy { ProjectStructureProvider.getInstance(project) }
+private val KMP_CACHE: ThreadLocal<MutableMap<KtElement, KtLightClass?>> = ThreadLocal.withInitial { null }
 
-    private fun PsiElement.getModuleIfSupportEnabled(): KtModule? = projectStructureProvider.getModule(
-        element = this,
-        contextualModule = null,
-    ).takeIf(KtModule::isLightClassesEnabled)
+private val isMultiplatformSupportAvailable: Boolean
+    get() = KMP_CACHE.get() != null
+
+/**
+ * Enables light classes in non-JVM modules inside the given [block].
+ *
+ * The provided light classes might not correctly represent non-JVM concepts.
+ * E.g., while class types provide qualified class names, [com.intellij.psi.impl.source.PsiClassReferenceType.resolve] might return
+ * `false`, as in non-JVM modules there is usually no configured JDK.
+ *
+ * The method is designed to be used only for UAST (see https://plugins.jetbrains.com/docs/intellij/uast.html) in Android Lint.
+ */
+@KaNonPublicApi
+@RequiresReadLock
+fun <T> withMultiplatformLightClassSupport(project: Project, block: () -> T): T {
+    if (isMultiplatformSupportAvailable) {
+        // Allow reentrant access
+        return block()
+    }
+
+    val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
+    check(permissionChecker.isAnalysisAllowed()) {
+        val rejectionReason = permissionChecker.getRejectionReason()
+        "Cannot enable multiplatform light class support. $rejectionReason"
+    }
+
+    try {
+        KMP_CACHE.set(WeakHashMap())
+        return block()
+    } finally {
+        KMP_CACHE.set(null)
+    }
+}
+
+@Deprecated(
+    "Use withMultiplatformLightClassSupport(project, block) instead",
+    ReplaceWith("withMultiplatformLightClassSupport(project, block)")
+)
+@KaNonPublicApi
+@RequiresReadLock
+fun <T> withMultiplatformLightClassSupport(block: () -> T): T {
+    if (isMultiplatformSupportAvailable) {
+        // Allow reentrant access
+        return block()
+    }
+
+    require(ApplicationManager.getApplication().isReadAccessAllowed) { "The method can only run inside a read action" }
+    require(!ApplicationManager.getApplication().isWriteAccessAllowed) { "The method cannot be run inside a write action" }
+
+    try {
+        KMP_CACHE.set(WeakHashMap())
+        return block()
+    } finally {
+        KMP_CACHE.set(null)
+    }
+}
+
+private fun KaModule.isLightClassSupportAvailable(): Boolean {
+    return targetPlatform.has<JvmPlatform>() || isMultiplatformSupportAvailable
+}
+
+internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KaModule>(project) {
+    @KaCachedService
+    private val projectStructureProvider by lazyPub { KotlinProjectStructureProvider.getInstance(project) }
+
+    private fun PsiElement.getModuleIfSupportEnabled(): KaModule? {
+        return projectStructureProvider.getModule(
+            element = this,
+            useSiteModule = null,
+        ).takeIf(KaModule::isLightClassSupportAvailable)
+    }
 
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName,
         searchScope: GlobalSearchScope
-    ): Collection<KtClassOrObject> = project.createDeclarationProvider(searchScope, module = null).run {
+    ): Collection<KtClassOrObject> = project.createDeclarationProvider(searchScope, contextualModule = null).run {
         getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName).flatMap {
             getAllClassesByClassId(ClassId.topLevel(packageFqName.child(it)))
         }
     }
 
     override fun findFilesForPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> = buildSet {
-        addAll(project.createDeclarationProvider(searchScope, module = null).findFilesForFacadeByPackage(packageFqName))
+        addAll(project.createDeclarationProvider(searchScope, contextualModule = null).findFilesForFacadeByPackage(packageFqName))
         findClassOrObjectDeclarationsInPackage(packageFqName, searchScope).mapTo(this) {
             it.containingKtFile
         }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return project.createDeclarationProvider(searchScope, module = null).findFilesForFacadeByPackage(packageFqName)
+        return project.createDeclarationProvider(searchScope, contextualModule = null).findFilesForFacadeByPackage(packageFqName)
     }
 
     override fun findFilesForScript(scriptFqName: FqName, searchScope: GlobalSearchScope): Collection<KtScript> {
-        return project.createDeclarationProvider(searchScope, module = null).findFilesForScript(scriptFqName)
+        return project.createDeclarationProvider(searchScope, contextualModule = null).findFilesForScript(scriptFqName)
     }
 
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
@@ -76,7 +151,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
         return sequence {
             while (true) {
-                yield(ClassId(currentParent, FqName(currentRelativeName), false))
+                yield(ClassId(currentParent, FqName(currentRelativeName), isLocal = false))
                 currentName = currentParent.shortNameOrSpecial()
                 if (currentName.isSpecial) break
                 currentParent = currentParent.parentOrNull() ?: break
@@ -85,19 +160,20 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
         }
     }
 
-    override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> =
-        fqName.toClassIdSequence().flatMap {
-            project.createDeclarationProvider(searchScope, module = null).getAllClassesByClassId(it)
-        }
+    override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
+        val declarationProvider = project.createDeclarationProvider(searchScope, contextualModule = null)
+        return fqName.toClassIdSequence()
+            .flatMap(declarationProvider::getAllClassesByClassId)
             .filter { it.isFromSourceOrLibraryBinary() }
             .toSet()
+    }
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
         project.createPackageProvider(scope).doesKotlinOnlyPackageExist(fqName)
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> =
         project.createPackageProvider(scope)
-            .getKotlinOnlySubPackagesFqNames(fqn, nameFilter = { true })
+            .getKotlinOnlySubpackageNames(fqn)
             .map { fqn.child(it) }
 
     override fun createInstanceOfLightScript(script: KtScript): KtLightClass? {
@@ -105,17 +181,27 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
         return SymbolLightClassForScript(script, module)
     }
 
-    override fun KtFile.findModule(): KtModule? = getModuleIfSupportEnabled()
+    override fun KtFile.findModule(): KaModule? = getModuleIfSupportEnabled()
 
     override fun declarationLocation(file: KtFile): DeclarationLocation? = when (file.getModuleIfSupportEnabled()) {
-        is KtSourceModule -> DeclarationLocation.ProjectSources
-        is KtLibraryModule -> DeclarationLocation.LibraryClasses
-        is KtLibrarySourceModule -> DeclarationLocation.LibrarySources
+        is KaSourceModule -> DeclarationLocation.ProjectSources
+        is KaLibraryModule -> DeclarationLocation.LibraryClasses
+        is KaLibrarySourceModule -> DeclarationLocation.LibrarySources
         else -> null
     }
 
     override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass? {
-        return DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(classOrObject, project)
+        val lightClass = DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(classOrObject, project)
+        if (lightClass != null) {
+            return lightClass
+        }
+
+        if (isMultiplatformSupportAvailable) {
+            // Light classes for binary declarations are built over decompiled Java stubs which KMP files don't provide
+            return createInstanceOfLightClass(classOrObject)
+        }
+
+        return null
     }
 
     override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass? {
@@ -124,30 +210,59 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     }
 
     override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
-        return DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
+        val lightClass = DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
+        if (lightClass != null) {
+            return lightClass
+        }
+
+        if (isMultiplatformSupportAvailable) {
+            // Light classes for binary declarations are built over decompiled Java stubs which KMP files don't provide
+            return createInstanceOfLightFacade(facadeFqName, files)
+        }
+
+        return null
     }
 
     override fun projectWideOutOfBlockModificationTracker(): ModificationTracker {
-        return project.createProjectWideOutOfBlockModificationTracker()
+        return project.createProjectWideSourceModificationTracker()
     }
 
     override fun outOfBlockModificationTracker(element: PsiElement): ModificationTracker {
-        return project.createProjectWideOutOfBlockModificationTracker()
+        return project.createProjectWideSourceModificationTracker()
     }
 
     override fun librariesTracker(element: PsiElement): ModificationTracker {
-        return project.createAllLibrariesModificationTracker()
+        return project.createProjectWideLibraryModificationTracker()
     }
 
     override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
-        val module = files.first().getModuleIfSupportEnabled() ?: return null
+        val module = files.first().getModuleIfSupportEnabled()
+        if (module != null) {
+            val lightClass = createInstanceOfLightFacade(facadeFqName, module, files)
+            if (lightClass != null) {
+                return lightClass
+            }
+        }
+
+        return null
+    }
+
+    override fun createInstanceOfLightFacade(facadeFqName: FqName, module: KaModule, files: List<KtFile>): KtLightClassForFacade? {
         return SymbolLightClassForFacade(facadeFqName, files, module)
     }
 
-    override val KtModule.contentSearchScope: GlobalSearchScope get() = this.contentScope
+    override val KaModule.contentSearchScope: GlobalSearchScope
+        get() = GlobalSearchScope.union(
+            buildList {
+                add(contentScope)
+                for (dependency in transitiveDependsOnDependencies) {
+                    add(dependency.contentScope)
+                }
+            }
+        )
 
-    override fun facadeIsApplicable(module: KtModule, file: KtFile): Boolean =
-        module.isFromSourceOrLibraryBinary() && module.isLightClassesEnabled()
+    override fun facadeIsApplicable(module: KaModule, file: KtFile): Boolean =
+        module.isFromSourceOrLibraryBinary() && module.isLightClassSupportAvailable()
 
     override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         val facadeKtFiles = project.createDeclarationProvider(scope, null).findInternalFilesForFacade(fqName)
@@ -175,18 +290,28 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return project.createDeclarationProvider(searchScope, module = null).findFilesForFacade(facadeFqName)
+        return project.createDeclarationProvider(searchScope, contextualModule = null).findFilesForFacade(facadeFqName)
     }
 
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = SymbolBasedFakeLightClass(classOrObject)
 
+    override fun <E : KtElement, R : KtLightClass> cacheLightClass(element: E, provider: CachedValueProvider<R>): R? {
+        return if (isMultiplatformSupportAvailable) {
+            @Suppress("UNCHECKED_CAST")
+            KMP_CACHE.get().computeIfAbsent(element) { provider.compute()?.value } as R?
+        } else {
+            super.cacheLightClass(element, provider)
+        }
+    }
+
     private fun KtElement.isFromSourceOrLibraryBinary(): Boolean = getModuleIfSupportEnabled()?.isFromSourceOrLibraryBinary() == true
 
-    private fun KtModule.isFromSourceOrLibraryBinary() = when (this) {
-        is KtSourceModule -> true
-        is KtLibraryModule -> true
-        else -> false
+    private fun KaModule.isFromSourceOrLibraryBinary(): Boolean {
+        return when (this) {
+            is KaSourceModule -> true
+            is KaLibraryModule -> true
+            is KaDanglingFileModule -> contextModule.isFromSourceOrLibraryBinary()
+            else -> false
+        }
     }
 }
-
-private fun KtModule.isLightClassesEnabled(): Boolean = platform.has<JvmPlatform>()

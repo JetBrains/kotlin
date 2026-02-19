@@ -1,0 +1,5 @@
+KtArrayAccessExpression(53,57): '1[2]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
+    ]

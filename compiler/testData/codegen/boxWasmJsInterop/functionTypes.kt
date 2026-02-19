@@ -1,5 +1,5 @@
 // Char issues
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 // MODULE: main
 // FILE: externals.js
@@ -244,22 +244,22 @@ fun box(): String {
 
 // FILE: entry.mjs
 
-import main from "./index.mjs"
+import { box, exportedF, complexHigherOrder } from "./index.mjs"
 
-const boxResult = main.box();
+const boxResult = box();
 
 if (boxResult != "OK") {
     throw `Wrong box result '${boxResult}'; Expected "OK"`;
 }
 
-const exportedFres = main.exportedF()(1, 20, 300)("<", ">");
+const exportedFres = exportedF()(1, 20, 300)("<", ">");
 if (exportedFres !== "<321>")
     throw "exportedF fail " + exportedFres;
 
 (function testComplexHighOrder() {
     const x = (ss2s1, ss2s2) => (s1, s2) => ss2s1(s1, s2) + "_" + ss2s2(s1, s2);
 
-    const y = main.complexHigherOrder(x);
+    const y = complexHigherOrder(x);
     const res = y((s1, s2) => s1 + "+" + s2, (s1, s2) => s1 + "-" + s2)("abc", "xyz");
     if (res !== "abc+xyz_abc-xyz") {
         throw "Fail complexHigherOrderTest " + res;

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.internal.JvmBuiltin
+
 package kotlin
 
 import kotlin.annotation.AnnotationRetention.*
@@ -94,6 +96,7 @@ import kotlin.reflect.KClass
  */
 @Target(ANNOTATION_CLASS)
 @Retention(BINARY)
+@MustBeDocumented
 @SinceKotlin("1.3")
 public annotation class RequiresOptIn(
     val message: String = "",
@@ -144,6 +147,7 @@ public annotation class OptIn(
 @Target(CLASS)
 @Retention(BINARY)
 @SinceKotlin("1.8")
+@RequiresOptIn
 public annotation class ExperimentalSubclassOptIn
 
 /**
@@ -173,8 +177,9 @@ public annotation class ExperimentalSubclassOptIn
  */
 @Target(CLASS)
 @Retention(BINARY)
-@SinceKotlin("1.8")
-@ExperimentalSubclassOptIn
+@MustBeDocumented
+@SinceKotlin("2.1")
+@WasExperimental(ExperimentalSubclassOptIn::class)
 public annotation class SubclassOptInRequired(
-    val markerClass: KClass<out Annotation>
+    vararg val markerClass: KClass<out Annotation>,
 )

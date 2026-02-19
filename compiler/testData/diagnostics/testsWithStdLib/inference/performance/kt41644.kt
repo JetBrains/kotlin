@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-//!DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 
 sealed class DataType<T> {
     sealed class NotNull<T> : DataType<T>() {
@@ -42,3 +43,6 @@ fun <A, DA : DataType<A>, B, DB : DataType<B>, C, DC : DataType<C>, D, DD : Data
     ) as DataType.NotNull.Partial<Either8<A, B, C, D, E, F, G, H>>
 
 class Either8<T, U, V, W, X, Y, Z, T1>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, nestedClass, nullableType,
+primaryConstructor, sealed, typeConstraint, typeParameter */

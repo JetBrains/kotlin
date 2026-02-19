@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class <#A: kotlin/Any?> /B { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    open fun bar(#A) // /B.bar|bar(1:0){}[0]
+    open fun foo(#A) // /B.foo|foo(1:0){}[0]
+    open fun qux(/B<#A>) // /B.qux|qux(B<1:0>){}[0]
+    open fun <#A1: kotlin/Any?> six(#A, #A1) // /B.six|six(1:0;0:0){0§<kotlin.Any?>}[0]
+}
+final class <#A: kotlin/Any?> /D : /B<#A!!> { // /D|null[0]
+    constructor <init>() // /D.<init>|<init>(){}[0]
+    final fun foo(#A!!) // /D.foo|foo(1:0){}[0]
+}

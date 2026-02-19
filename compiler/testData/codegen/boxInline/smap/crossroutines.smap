@@ -21,17 +21,6 @@ test/_1Kt$inlineMe1$2
 1#1,23:1
 *E
 
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt$inlineMe1$2$run$1
-*L
-1#1,23:1
-*E
-
 // FILE: 2.kt
 SMAP
 2.kt

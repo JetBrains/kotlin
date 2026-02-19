@@ -1,5 +1,6 @@
-// !LANGUAGE: -ProhibitSuperCallsFromPublicInline +QualifiedSupertypeMayBeExtendedByOtherSupertype
-// !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitSuperCallsFromPublicInline +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FILE: main.kt
 open class AndroidTargetConfigurator :
@@ -121,3 +122,7 @@ class FooOuter : Base() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, inline, inner, interfaceDeclaration, lambdaLiteral, nestedClass, override, sealed, stringLiteral,
+superExpression */

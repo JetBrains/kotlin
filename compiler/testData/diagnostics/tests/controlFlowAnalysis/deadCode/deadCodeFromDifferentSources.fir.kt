@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package c
 
 fun test1() {
@@ -21,3 +22,6 @@ class A {
 }
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, functionDeclaration, localProperty,
+operator, propertyDeclaration */

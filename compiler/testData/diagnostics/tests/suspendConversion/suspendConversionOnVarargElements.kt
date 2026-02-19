@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun useSuspendVararg(vararg sfn: suspend () -> Unit) {}
 
@@ -19,3 +20,5 @@ fun testSuspendConversionInVarargElementsAll(
 ) {
     useSuspendVararg(f1, f2, f3)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, suspend, vararg */

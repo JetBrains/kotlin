@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
+import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -21,25 +23,18 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.name.Name
 
-abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext) {
+abstract class DefaultArgumentFunctionFactory(
+    val context: CommonBackendContext,
+    val copyOriginalFunctionLocation: Boolean = true,
+) {
 
     protected fun IrFunction.generateDefaultArgumentsFunctionName() =
         Name.identifier("${name}\$default")
 
     protected abstract fun IrFunction.generateDefaultArgumentStubFrom(original: IrFunction, useConstructorMarker: Boolean)
 
-    protected fun IrFunction.copyAttributesFrom(original: IrFunction) {
-        (this as? IrAttributeContainer)?.copyAttributes(original as? IrAttributeContainer)
-    }
-
     protected fun IrFunction.copyReturnTypeFrom(original: IrFunction) {
         returnType = original.returnType.remapTypeParameters(original.classIfConstructor, classIfConstructor)
-    }
-
-    protected fun IrFunction.copyReceiversFrom(original: IrFunction) {
-        dispatchReceiverParameter = original.dispatchReceiverParameter?.copyTo(this)
-        extensionReceiverParameter = original.extensionReceiverParameter?.copyTo(this)
-        contextReceiverParametersCount = original.contextReceiverParametersCount
     }
 
     /**
@@ -52,7 +47,7 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
     protected open fun IrType.hasNullAsUndefinedValue(): Boolean = true
 
     protected fun IrFunction.copyValueParametersFrom(original: IrFunction) {
-        valueParameters = original.valueParameters.memoryOptimizedMap {
+        parameters = original.parameters.memoryOptimizedMap {
             val newType = it.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
             val makeNullable = it.defaultValue != null && it.type.hasNullAsUndefinedValue()
             it.copyTo(
@@ -90,7 +85,7 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                 }
             }
 
-            if (valueParameters.any { it.defaultValue != null }) return this
+            if (parameters.any { it.defaultValue != null }) return this
 
             return null
         }
@@ -105,12 +100,12 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
         forceSetOverrideSymbols: Boolean,
         visibility: DescriptorVisibility,
         useConstructorMarker: Boolean,
-        copiedAnnotations: List<IrConstructorCall>,
+        copiedAnnotations: List<IrAnnotation>,
     ): IrFunction? {
         if (skipInlineMethods && declaration.isInline) return null
         if (skipExternalMethods && declaration.isExternalOrInheritedFromExternal()) return null
-        if (context.mapping.defaultArgumentsOriginalFunction[declaration] != null) return null
-        context.mapping.defaultArgumentsDispatchFunction[declaration]?.let { return it }
+        if (declaration.defaultArgumentsOriginalFunction != null) return null
+        declaration.defaultArgumentsDispatchFunction?.let { return it }
         if (declaration is IrSimpleFunction) {
             // If this is an override of a function with default arguments, produce a fake override of a default stub.
             if (declaration.overriddenSymbols.any {
@@ -128,8 +123,8 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                     true,
                     useConstructorMarker,
                 ).also { defaultsFunction ->
-                    context.mapping.defaultArgumentsDispatchFunction[declaration] = defaultsFunction
-                    context.mapping.defaultArgumentsOriginalFunction[defaultsFunction] = declaration
+                    declaration.defaultArgumentsDispatchFunction = defaultsFunction
+                    defaultsFunction.defaultArgumentsOriginalFunction = declaration
 
                     if (forceSetOverrideSymbols) {
                         (defaultsFunction as IrSimpleFunction).overriddenSymbols =
@@ -157,7 +152,7 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
         //     }
         // Since this bug causes the metadata serializer to write the "has default value" flag into compiled
         // binaries, it's way too late to fix it. Hence the workaround.
-        if (declaration.valueParameters.any { it.defaultValue != null }) {
+        if (declaration.parameters.any { it.defaultValue != null }) {
             return generateDefaultsFunctionImpl(
                 declaration,
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
@@ -166,8 +161,8 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                 false,
                 useConstructorMarker,
             ).also {
-                context.mapping.defaultArgumentsDispatchFunction[declaration] = it
-                context.mapping.defaultArgumentsOriginalFunction[it] = declaration
+                declaration.defaultArgumentsDispatchFunction = it
+                it.defaultArgumentsOriginalFunction = declaration
             }
         }
         return null
@@ -178,34 +173,45 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
         declaration: IrFunction,
         newOrigin: IrDeclarationOrigin,
         newVisibility: DescriptorVisibility,
-        copiedAnnotations: List<IrConstructorCall>,
+        copiedAnnotations: List<IrAnnotation>,
         isFakeOverride: Boolean,
         useConstructorMarker: Boolean,
     ): IrFunction {
         val newFunction = when (declaration) {
             is IrConstructor ->
-                declaration.factory.buildConstructor {
-                    updateFrom(declaration)
-                    origin = newOrigin
-                    isExternal = false
-                    isPrimary = false
-                    isExpect = false
-                    visibility = newVisibility
-                }
+                context.irFactory.stageController.restrictTo(declaration) {
+                    declaration.factory.buildConstructor {
+                        updateFrom(declaration)
+                        origin = newOrigin
+                        isExternal = false
+                        isPrimary = false
+                        isExpect = false
+                        visibility = newVisibility
 
+                        if (!copyOriginalFunctionLocation) {
+                            startOffset = UNDEFINED_OFFSET
+                            endOffset = UNDEFINED_OFFSET
+                        }
+                    }
+                }
             is IrSimpleFunction ->
-                declaration.factory.buildFun {
-                    updateFrom(declaration)
-                    name = declaration.generateDefaultArgumentsFunctionName()
-                    origin = newOrigin
-                    this.isFakeOverride = isFakeOverride
-                    modality = Modality.FINAL
-                    isExternal = false
-                    isTailrec = false
-                    visibility = newVisibility
-                }
+                context.irFactory.stageController.restrictTo(declaration) {
+                    declaration.factory.buildFun {
+                        updateFrom(declaration)
+                        name = declaration.generateDefaultArgumentsFunctionName()
+                        origin = newOrigin
+                        this.isFakeOverride = isFakeOverride
+                        modality = Modality.FINAL
+                        isExternal = false
+                        isTailrec = false
+                        visibility = newVisibility
 
-            else -> throw IllegalStateException("Unknown function type")
+                        if (!copyOriginalFunctionLocation) {
+                            startOffset = UNDEFINED_OFFSET
+                            endOffset = UNDEFINED_OFFSET
+                        }
+                    }
+                }
         }
 
         return newFunction.apply {

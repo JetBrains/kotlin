@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !INHERIT_MULTIFILE_PARTS
+// INHERIT_MULTIFILE_PARTS
 // FILE: test.kt
 
 @file:JvmMultifileClass

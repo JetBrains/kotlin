@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.kt
 
 package a
@@ -13,3 +14,5 @@ package b
 import a.MyClass.MyNested
 
 class YourClass : MyNested()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

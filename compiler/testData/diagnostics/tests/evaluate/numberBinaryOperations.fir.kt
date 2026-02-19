@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun fooInt(p: Int) = p
 fun fooLong(p: Long) = p
 fun fooByte(p: Byte) = p
@@ -24,3 +25,5 @@ fun test() {
     fooLong(1 % 1)
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 % 1<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

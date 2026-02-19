@@ -1,0 +1,26 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /Ann : kotlin/Annotation { // /Ann|null[0]
+    constructor <init>() // /Ann.<init>|<init>(){}[0]
+}
+abstract interface /Base { // /Base|null[0]
+    abstract val prop // /Base.prop|{}prop[0]
+        abstract fun <get-prop>(): kotlin/Int // /Base.prop.<get-prop>|<get-prop>(){}[0]
+    abstract var propWithAccessors // /Base.propWithAccessors|{}propWithAccessors[0]
+        abstract fun <get-propWithAccessors>(): kotlin/Int // /Base.propWithAccessors.<get-propWithAccessors>|<get-propWithAccessors>(){}[0]
+        abstract fun <set-propWithAccessors>(kotlin/Int) // /Base.propWithAccessors.<set-propWithAccessors>|<set-propWithAccessors>(kotlin.Int){}[0]
+    abstract fun func() // /Base.func|func(){}[0]
+}
+final class /Delegated : /Base { // /Delegated|null[0]
+    final val prop // /Delegated.prop|{}prop[0]
+        final fun <get-prop>(): kotlin/Int // /Delegated.prop.<get-prop>|<get-prop>(){}[0]
+    final var propWithAccessors // /Delegated.propWithAccessors|{}propWithAccessors[0]
+        final fun <get-propWithAccessors>(): kotlin/Int // /Delegated.propWithAccessors.<get-propWithAccessors>|<get-propWithAccessors>(){}[0]
+        final fun <set-propWithAccessors>(kotlin/Int) // /Delegated.propWithAccessors.<set-propWithAccessors>|<set-propWithAccessors>(kotlin.Int){}[0]
+    constructor <init>(/Base) // /Delegated.<init>|<init>(Base){}[0]
+    final fun func() // /Delegated.func|func(){}[0]
+}

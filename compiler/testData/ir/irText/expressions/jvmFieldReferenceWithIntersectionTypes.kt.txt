@@ -1,7 +1,3 @@
-interface IFoo {
-
-}
-
 class Derived1 : JFieldOwner, IFoo {
   constructor() /* primary */ {
     super/*JFieldOwner*/()
@@ -12,15 +8,6 @@ class Derived1 : JFieldOwner, IFoo {
 }
 
 class Derived2 : JFieldOwner, IFoo {
-  constructor() /* primary */ {
-    super/*JFieldOwner*/()
-    /* <init>() */
-
-  }
-
-}
-
-open class Mid : JFieldOwner {
   constructor() /* primary */ {
     super/*JFieldOwner*/()
     /* <init>() */
@@ -45,6 +32,18 @@ class DerivedThroughMid2 : Mid, IFoo {
 
   }
 
+}
+
+open class Mid : JFieldOwner {
+  constructor() /* primary */ {
+    super/*JFieldOwner*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface IFoo {
 }
 
 fun test(b: Boolean) {

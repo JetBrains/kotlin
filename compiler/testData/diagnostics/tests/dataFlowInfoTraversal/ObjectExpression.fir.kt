@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun bar(x: Int): Int = x + 1
 
@@ -9,3 +10,6 @@ fun foo() {
         fun quux(): Int = <!RETURN_TYPE_MISMATCH!>if (x == null) x else x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

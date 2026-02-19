@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-58524
 
 interface MyGenericInterface<T> {
@@ -31,3 +32,6 @@ fun foo3(a: MyGenericInterface<Number>) {
 }
 
 fun expectInt(w: Int): Int = w
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, interfaceDeclaration, intersectionType,
+lambdaLiteral, nullableType, override, smartcast, typeParameter */

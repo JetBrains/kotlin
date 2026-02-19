@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
+// FIR_IDENTICAL
 annotation class TestAnn(val x: String)
 
 @TestAnn("class")

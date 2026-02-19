@@ -22,12 +22,26 @@ object OptInNames {
     val OPT_IN_ANNOTATION_CLASS = Name.identifier("markerClass")
     val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
-    fun buildDefaultDiagnosticMessage(prefix: String, markerName: String): String {
-        return "$prefix with '@$markerName' or '@OptIn($markerName::class)'"
+    fun buildDefaultDiagnosticMessage(
+        prefix: String,
+        markerName: String,
+        isSubclassOptInApplicable: Boolean = false,
+        postfix: String? = null,
+    ): String {
+        return buildString {
+            append(prefix)
+            if (isSubclassOptInApplicable) {
+                append(" with '@$markerName', '@OptIn($markerName::class)' or '@SubclassOptInRequired($markerName::class)'")
+            } else {
+                append(" with '@$markerName' or '@OptIn($markerName::class)'")
+            }
+            if (postfix != null) {
+                append(". ")
+                append(postfix)
+            }
+        }
     }
 
-    fun buildMessagePrefix(verb: String): String =
-        "This declaration needs opt-in. Its usage $verb be marked"
 
     fun buildOverrideMessage(supertypeName: String, markerMessage: String?, verb: String, markerName: String): String {
         val basePrefix = "Base declaration of supertype '$supertypeName' needs opt-in. "
@@ -36,4 +50,5 @@ object OptInNames {
         val baseSuffix = buildDefaultDiagnosticMessage("The declaration override $verb be annotated", markerName)
         return basePrefix + markerMessageOrStub + baseSuffix
     }
+
 }

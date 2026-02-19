@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Statics.java
 
@@ -12,3 +13,5 @@ class A : Statics() {
         foo {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 // LANGUAGE:-ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor
@@ -11,3 +12,6 @@ class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, ifExpression, integerLiteral,
+propertyDeclaration, secondaryConstructor, setter */

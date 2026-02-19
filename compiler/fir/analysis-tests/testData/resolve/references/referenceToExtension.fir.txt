@@ -35,13 +35,13 @@ FILE: referenceToExtension.kt
         }
 
         public final fun test_1(): R|kotlin/Unit| {
-            lval memberValRef: R|kotlin/reflect/KProperty1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|::R|SubstitutionOverride</GenericTest.B.memberVal: R|GenericTest.A<CapturedType(*)>|>|
-            lval memberFunRef: R|kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|::R|SubstitutionOverride</GenericTest.B.memberFun: R|GenericTest.A<CapturedType(*)>|>|
+            lval memberValRef: R|kotlin/reflect/KProperty1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|<*>::R|SubstitutionOverride</GenericTest.B.memberVal: R|GenericTest.A<CapturedType(*)>|>|
+            lval memberFunRef: R|kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|<*>::R|SubstitutionOverride</GenericTest.B.memberFun: R|GenericTest.A<CapturedType(*)>|>|
         }
 
         public final fun test_2(): R|kotlin/Unit| {
-            lval extensionValRef: R|kotlin/reflect/KProperty1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|::R|/GenericTest.extensionVal<CapturedType(*)>|
-            lval extensionFunRef: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|::R|/GenericTest.extensionFun<CapturedType(*)>|
+            lval extensionValRef: R|kotlin/reflect/KProperty1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|<*>::R|/GenericTest.extensionVal<CapturedType(*)>|
+            lval extensionFunRef: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<out kotlin/Any?>>| = Q|GenericTest.B|<*>::R|/GenericTest.extensionFun<CapturedType(*)>|
         }
 
     }

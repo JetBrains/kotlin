@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-9620 AssertionError in checkBounds
 
@@ -13,3 +14,6 @@ interface E2<T : D<!TYPE_ARGUMENTS_NOT_ALLOWED!><A><!>, D<!SYNTAX!><<!><!SYNTAX!
 open class L<E>()
 
 class M<C> : L<C<!TYPE_ARGUMENTS_NOT_ALLOWED!><C><!>>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, primaryConstructor, typeConstraint,
+typeParameter */

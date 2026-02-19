@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface B
 
 interface A {
@@ -12,3 +13,6 @@ class C(a: A, b: B) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, safeCall */

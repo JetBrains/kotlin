@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // see https://youtrack.jetbrains.com/issue/KT-21515
 
 abstract class <!CYCLIC_SCOPES_WITH_COMPANION!>DerivedAbstract<!> : C.Base() {
@@ -13,3 +14,5 @@ public class C {
 
     companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, primaryConstructor */

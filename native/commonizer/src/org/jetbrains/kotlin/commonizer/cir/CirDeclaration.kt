@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-import kotlinx.metadata.*
+import kotlin.metadata.*
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -55,7 +55,10 @@ interface CirMaybeCallableMemberOfClass {
 interface CirContainingClass : CirHasModality {
     val kind: ClassKind
     val isData: Boolean
+    val isValue: Boolean
 }
+
+val CirContainingClass.isDataOrValue: Boolean get() = isData || isValue
 
 interface CirHasTypeParameters {
     val typeParameters: List<CirTypeParameter>

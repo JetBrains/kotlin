@@ -1,0 +1,41 @@
+FILE: Main.kt
+    public final const [EvaluatedValue=Char(2)] val CHAR: R|kotlin/Char| = Char(1).R|kotlin/Char.plus|(Int(1))
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Boolean(true)] val BOOL: R|kotlin/Boolean| = Boolean(true)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Byte(2)] val BYTE: R|kotlin/Byte| = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.plus|(Int(1)).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(2)] val SHORT: R|kotlin/Short| = Int(1).R|kotlin/Int.toShort|().R|kotlin/Short.plus|(Int(1)).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(2)] val INT: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(2)] val LONG: R|kotlin/Long| = Long(1).R|kotlin/Long.plus|(Long(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Float(2.0)] val FLOAT: R|kotlin/Float| = Float(1.5).R|kotlin/Float.plus|(Float(0.5))
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(2.0)] val DOUBLE: R|kotlin/Double| = Double(1.5).R|kotlin/Double.plus|(Double(0.5))
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=String(12)] val STRING: R|kotlin/String| = <strcat>(String(1), String(2))
+        public get(): R|kotlin/String|
+FILE: usages.kt
+    public final const [EvaluatedValue=Char(4)] val CHAR_JAVA: R|kotlin/Char| = Q|Bar|.R|/Bar.CHAR*s|.R|kotlin/Char.plus|(Int(1))
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Boolean(false)] val BOOL_JAVA: R|kotlin/Boolean| = Q|Bar|.R|/Bar.BOOL*s|
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Byte(4)] val BYTE_JAVA: R|kotlin/Byte| = Q|Bar|.R|/Bar.BYTE*s|.R|kotlin/Byte.plus|(Int(1)).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(4)] val SHORT_JAVA: R|kotlin/Short| = Q|Bar|.R|/Bar.SHORT*s|.R|kotlin/Short.plus|(Int(1)).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(4)] val INT_JAVA: R|kotlin/Int| = Q|Bar|.R|/Bar.INT*s|.R|kotlin/Int.plus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(4)] val LONG_JAVA: R|kotlin/Long| = Q|Bar|.R|/Bar.LONG*s|.R|kotlin/Long.plus|(Long(1))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Float(4.0)] val FLOAT_JAVA: R|kotlin/Float| = Q|Bar|.R|/Bar.FLOAT*s|.R|kotlin/Float.plus|(Float(1.0))
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(4.0)] val DOUBLE_JAVA: R|kotlin/Double| = Q|Bar|.R|/Bar.DOUBLE*s|.R|kotlin/Double.plus|(Double(1.0))
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=String(1234)] val STRING_JAVA: R|kotlin/String| = Q|Bar|.R|/Bar.STRING*s|.R|kotlin/String.plus|(String(4))
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

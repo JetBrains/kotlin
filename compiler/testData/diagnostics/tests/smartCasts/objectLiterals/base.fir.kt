@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-6293: Smart cast doesn't work after object literal
 abstract class Runnable {
     abstract fun run()
@@ -17,3 +18,6 @@ fun foo(): Int {
     }
     else return -1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration,
+ifExpression, integerLiteral, isExpression, localProperty, nullableType, override, propertyDeclaration, smartcast */

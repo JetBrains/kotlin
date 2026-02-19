@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 // FILE: 1.kt
 open class A {
@@ -45,3 +46,6 @@ class Y: C() {
         <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Z()<!>.A_C_Z()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, javaFunction, javaType, nestedClass,
+objectDeclaration */

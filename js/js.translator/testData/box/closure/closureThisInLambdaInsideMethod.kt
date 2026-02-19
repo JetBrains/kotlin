@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1287
 // KT-4207 Closure this doesn't work in JS backend
 
 package foo

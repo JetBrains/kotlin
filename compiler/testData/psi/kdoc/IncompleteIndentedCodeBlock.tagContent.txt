@@ -1,0 +1,6 @@
+ORIGINAL KDOC:
+*    line1
+      line2
+CONTENT:
+    line1
+line2

@@ -1,2 +1,3 @@
 type Nullable<T> = T | null | undefined
-export declare function box(stepId: number): string;
+declare function KtSingleton<T>(): T & (abstract new() => any);
+export declare function box(stepId: number, isWasm: boolean): string;

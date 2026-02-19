@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-56630
 // FILE: Usage.java
 
@@ -14,3 +15,6 @@ class XXX : Usage()
 fun main() {
     println(XXX())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, typeConstraint,
+typeParameter */

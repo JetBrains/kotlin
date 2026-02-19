@@ -1,0 +1,23 @@
+FILE: Main.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        private [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final static [ContainingClassKey=A] enum entry OK: R|A|
+        public final val x: R|kotlin/Int| = Q|J|.R|/J.f*s|()
+            public [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public final static [ContainingClassKey=A] fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static [ContainingClassKey=A] fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+        public final static [ContainingClassKey=A] val entries: R|kotlin/enums/EnumEntries<A>|
+            public get(): R|kotlin/enums/EnumEntries<A>|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box Q|A|.R|/A.OK|.R|SubstitutionOverride</A.name: R|kotlin/String|>|
+    }

@@ -1,0 +1,23 @@
+@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/Int>>
+  context -> FirTypeAliasSymbol BadArgsInTypeAlias
+  anchor -> [FirTypeAliasSymbol BadArgsInTypeAlias]
+
+@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/Int>
+  context -> FirTypeAliasSymbol BadArgsInTypeAlias
+  anchor -> [FirTypeAliasSymbol BadArgsInTypeAlias]
+
+@R|TypeAnnWithArg|()  kotlin/Int
+  context -> FirTypeAliasSymbol BadArgsInTypeAlias
+  anchor -> [FirTypeAliasSymbol BadArgsInTypeAlias]
+
+FILE: [ResolvedTo(IMPORTS)] withMissedArguments.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arg: String = R|<local>/arg|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] get(): String
+
+    }
+    public final [ResolvedTo(TYPES)] typealias BadArgsInTypeAlias = R|@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/Int>>|

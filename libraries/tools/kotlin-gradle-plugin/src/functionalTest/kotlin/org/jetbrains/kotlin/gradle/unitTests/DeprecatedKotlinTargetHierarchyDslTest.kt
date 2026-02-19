@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName", "DEPRECATION")
+@file:Suppress("FunctionName", "DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -50,6 +50,7 @@ class DeprecatedKotlinTargetHierarchyDslTest {
         listOf(legacyProject, project).forEach { project ->
             project.multiplatformExtension.jvm()
             project.multiplatformExtension.linuxX64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             project.multiplatformExtension.macosX64()
             project.evaluate()
 

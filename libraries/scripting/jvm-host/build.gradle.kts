@@ -1,7 +1,7 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 publish()
@@ -18,7 +18,6 @@ dependencies {
     publishedRuntime(project(":kotlin-compiler"))
     publishedRuntime(project(":kotlin-scripting-compiler"))
     publishedRuntime(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    publishedRuntime(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 }
 
 sourceSets {
@@ -26,8 +25,8 @@ sourceSets {
     "test" {}
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
 standardPublicJars()

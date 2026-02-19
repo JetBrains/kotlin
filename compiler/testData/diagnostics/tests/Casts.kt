@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun test() : Unit {
   var x : Int? = 0
@@ -21,3 +22,7 @@ fun test() : Unit {
   (<!WRONG_ANNOTATION_TARGET!>@MustBeDocumented()<!>( "" as String?))?.length
   Unit
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, localProperty, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral,
+typeParameter, typeWithExtension */

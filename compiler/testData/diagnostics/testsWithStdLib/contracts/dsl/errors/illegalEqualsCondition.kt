@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -28,3 +29,6 @@ fun equalNullWithCall() {
         returns() implies (<!ERROR_IN_CONTRACT_DESCRIPTION("only references to parameters are allowed in contract description")!>get()<!> == null)
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, lambdaLiteral,
+nullableType */

@@ -1,0 +1,33 @@
+//
+// Source
+// ------------------------------------------
+
+package test
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import dependency.ContentImpl
+
+@Composable
+@NonRestartableComposable
+fun Foo() {
+    ContentImpl().setContent()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@NonRestartableComposable
+fun Foo(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Foo):Test.kt#2487m")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  ContentImpl().setContent()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

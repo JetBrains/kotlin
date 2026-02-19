@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ImprovedResolutionInSecondaryConstructors
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class Base(p: Any?) {
     fun foo1() {}
 }
@@ -11,3 +13,6 @@ fun Base.foo() {
         constructor(x: Int, y: Int) : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@B<!>.foo1())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localClass, nullableType,
+primaryConstructor, secondaryConstructor, thisExpression */

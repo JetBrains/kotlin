@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1-common
 // FILE: common.kt
 import kotlin.reflect.KProperty
@@ -69,3 +71,7 @@ actual class OuterClassWithNamedCompanion {
 actual object OuterObject {
     actual object NestedObject
 }
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, companionObject, expect, functionDeclaration,
+functionalType, inner, integerLiteral, interfaceDeclaration, lambdaLiteral, nestedClass, nullableType, objectDeclaration,
+operator, out, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeParameter */

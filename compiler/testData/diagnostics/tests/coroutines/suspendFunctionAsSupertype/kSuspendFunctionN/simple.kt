@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 // SKIP_TXT
 // FIR_IDENTICAL
 // DIAGNOSTICS: -ABSTRACT_MEMBER_NOT_IMPLEMENTED
@@ -18,3 +19,6 @@ object O: KSuspendFunction0<Unit> {
     override suspend fun invoke() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, objectDeclaration, operator,
+override, suspend */

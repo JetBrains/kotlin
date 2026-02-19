@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_TYPEALIAS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_TYPEALIAS_PARAMETER
 
 interface I1<S>
 interface Out<out T>
@@ -15,3 +16,6 @@ class Test2<out S> : <!TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE!>A2<Any, S><!>
 class Test3<out S> : AOut<S>
 class Test4<out S> : <!TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE!>AInvOut<S, S><!>
 class Test5<out S> : <!TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE!>AInvOutTT<S><!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, out, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

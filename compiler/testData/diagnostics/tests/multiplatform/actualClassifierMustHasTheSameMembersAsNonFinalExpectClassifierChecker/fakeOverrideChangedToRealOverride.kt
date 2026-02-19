@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -14,3 +15,5 @@ expect open class Foo : Base
 actual open class Foo : Base() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

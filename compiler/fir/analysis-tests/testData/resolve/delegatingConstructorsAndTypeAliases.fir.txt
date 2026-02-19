@@ -6,9 +6,9 @@ FILE: delegatingConstructorsAndTypeAliases.kt
 
     }
     public final typealias Alias<X> = R|Inv<X, Inv<X, X>>|
-    public final class InvImpl : R|Alias<kotlin/String>| {
+    public final class InvImpl : R|{Alias<kotlin/String>=} Inv<kotlin/String, Inv<kotlin/String, kotlin/String>>| {
         public constructor(): R|InvImpl| {
-            super<R|Alias<kotlin/String>|>(String(), R|/Inv.Inv|<R|kotlin/String|, R|kotlin/String|>(String(), String()))
+            super<R|{Alias<kotlin/String>=} Inv<kotlin/String, Inv<kotlin/String, kotlin/String>>|>(String(), R|/Inv.Inv|<R|kotlin/String|, R|kotlin/String|>(String(), String()))
         }
 
     }

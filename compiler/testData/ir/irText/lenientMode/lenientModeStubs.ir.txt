@@ -1,0 +1,5 @@
+FILE fqName:<root> fileName:/common.kt
+  FUN name:bar visibility:public modality:FINAL returnType:kotlin.Any? [expect]
+  FUN name:baz visibility:public modality:FINAL returnType:kotlin.String [expect]
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit [expect]
+  FUN name:qux visibility:public modality:FINAL returnType:kotlin.Any [expect]

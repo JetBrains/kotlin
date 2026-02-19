@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open <!REPEATED_MODIFIER!>open<!> class A
 
 internal <!REPEATED_MODIFIER!>internal<!> object B
@@ -15,3 +16,6 @@ enum <!REPEATED_MODIFIER!>enum<!> class C {
 open class E(private <!REPEATED_MODIFIER!>private<!> val int: Int = 5) {
     protected <!REPEATED_MODIFIER!>protected<!> var double = int + 8.0
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, enumDeclaration, enumEntry,
+functionDeclaration, functionalType, inline, integerLiteral, objectDeclaration, primaryConstructor, propertyDeclaration */

@@ -1,0 +1,21 @@
+public class cases/suspend/C : cases/suspend/II {
+	public fun <init> ()V
+	public fun openFunction (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class cases/suspend/I {
+	public fun openFunction (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class cases/suspend/I$DefaultImpls {
+	public static fun openFunction (Lcases/suspend/I;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class cases/suspend/II : cases/suspend/I {
+	public fun openFunction (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class cases/suspend/II$DefaultImpls {
+	public static fun openFunction (Lcases/suspend/II;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

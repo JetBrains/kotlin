@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FIR_DUMP
 
@@ -18,3 +19,6 @@ class Base {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, init, localProperty,
+nestedClass, propertyDeclaration */

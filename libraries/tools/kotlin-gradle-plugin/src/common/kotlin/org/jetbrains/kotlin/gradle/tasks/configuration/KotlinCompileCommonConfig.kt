@@ -14,7 +14,7 @@ internal class KotlinCompileCommonConfig(
 ) : AbstractKotlinCompileConfig<KotlinCompileCommon>(compilationInfo) {
     init {
         configureTask { task ->
-            task.expectActualLinker.value(
+            task.produceMetadataKlib.value(
                 providers.provider {
                     (compilationInfo.origin as? KotlinCommonCompilation)?.isKlibCompilation == true
                 }
@@ -22,6 +22,7 @@ internal class KotlinCompileCommonConfig(
             task.refinesMetadataPaths.from(compilationInfo.refinesPaths).disallowChanges()
             task.moduleName.set(providers.provider { compilationInfo.moduleName })
             task.incrementalModuleInfoProvider.disallowChanges()
+            task.runViaBuildToolsApi.value(false).disallowChanges()
         }
     }
 }

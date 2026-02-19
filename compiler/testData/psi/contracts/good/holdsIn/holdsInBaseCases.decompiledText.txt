@@ -1,0 +1,8 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public inline fun <R> runIf(condition: kotlin.Boolean, block: () -> R): R? { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun <R> runIfNot(condition: kotlin.Boolean, block: () -> R): R? { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun <R> runIfElse(condition: kotlin.Boolean, ifTrue: () -> R, ifFalse: () -> R, unrelated: () -> kotlin.Unit): R? { contract { /* compiled contract */ }; /* compiled code */ }

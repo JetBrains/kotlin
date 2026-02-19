@@ -1,0 +1,1 @@
+@java.lang.Deprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun aaa(): R|kotlin/Unit| { LAZY_BLOCK }

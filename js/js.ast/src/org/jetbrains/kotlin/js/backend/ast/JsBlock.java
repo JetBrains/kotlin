@@ -19,7 +19,7 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     private final List<JsStatement> statements;
 
     @Nullable
-    private Object closingBraceSource;
+    private JsLocationWithSource closingBraceSource;
 
     public JsBlock() {
         this(new SmartList<JsStatement>());
@@ -43,11 +43,11 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Nullable
-    public Object getClosingBraceSource() {
+    public JsLocationWithSource getClosingBraceSource() {
         return closingBraceSource;
     }
 
-    public void setClosingBraceSource(@Nullable Object closingBraceLocation) {
+    public void setClosingBraceSource(@Nullable JsLocationWithSource closingBraceLocation) {
         this.closingBraceSource = closingBraceLocation;
     }
 

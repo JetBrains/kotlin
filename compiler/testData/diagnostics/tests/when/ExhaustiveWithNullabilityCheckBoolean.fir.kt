@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -22,3 +23,6 @@ fun foo(arg: Boolean?): Int {
         return -1
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType, smartcast,
+whenExpression, whenWithSubject */

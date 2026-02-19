@@ -1,4 +1,6 @@
-// !LANGUAGE: +SafeCastCheckBoundSmartCasts
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
+// LANGUAGE: +SafeCastCheckBoundSmartCasts
 interface SomeClass {
     val data: Any?
 }
@@ -65,3 +67,7 @@ fun f(a: SomeClass?) {
         <!DEBUG_INFO_SMARTCAST!>c<!>.foo
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, objectDeclaration, override, propertyDeclaration, safeCall, smartcast,
+stringLiteral */

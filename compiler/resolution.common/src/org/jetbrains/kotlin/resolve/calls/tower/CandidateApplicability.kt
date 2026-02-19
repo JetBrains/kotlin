@@ -89,10 +89,10 @@ enum class CandidateApplicability {
     RESOLVED_LOW_PRIORITY,
 
     /**
-     * Candidate is successful but uses property of functional type as an operator.
+     * Candidate is successful but uses property or object of functional type as an operator.
      * Tower resolve proceeds to next levels.
      */
-    K2_PROPERTY_AS_OPERATOR,
+    K2_NOT_FUNCTION_AS_OPERATOR,
 
     /**
      * Candidate is successful but uses new features that change resolve.
@@ -124,9 +124,21 @@ enum class CandidateApplicability {
 }
 
 /**
- * This property determines that the considered candidate is "successful" in terms of having no resolve errors.
- * Note that it does not necessarily mean tower resolve should stop on this candidate.
+ * Introduced for `CandidateApplicability.isSuccess` specifically.
+ * Warns about accidental uses of `CandidateApplicability.isSuccess`
+ * instead of `Candidate.isSuccessful`.
  */
+@RequiresOptIn
+annotation class ApplicabilityDetail
+
+/**
+ * Determines if this individual applicability is successful.
+ * Note that it does not necessarily mean tower resolve should stop on this candidate,
+ * and neither the value of `true` is enough to consider a candidate successful
+ * because there is [CandidateApplicability.RESOLVED_WITH_ERROR].
+ * Consider using [org.jetbrains.kotlin.fir.resolve.calls.Candidate.isSuccessful] if possible.
+ */
+@ApplicabilityDetail
 val CandidateApplicability.isSuccess: Boolean
     get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY && this != CandidateApplicability.RESOLVED_WITH_ERROR
 

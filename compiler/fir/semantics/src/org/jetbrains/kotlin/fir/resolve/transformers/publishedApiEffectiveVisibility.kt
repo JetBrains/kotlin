@@ -14,14 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -56,9 +53,7 @@ fun computePublishedApiEffectiveVisibility(
     forClass: Boolean,
     session: FirSession,
 ): EffectiveVisibility? {
-    val hasPublishedApiAnnotation = annotations.any {
-        it.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.Annotations.PublishedApi
-    }
+    val hasPublishedApiAnnotation = annotations.hasAnnotationSafe(StandardClassIds.Annotations.PublishedApi, session)
 
     return computePublishedApiEffectiveVisibility(
         hasPublishedApiAnnotation,
@@ -72,7 +67,7 @@ fun computePublishedApiEffectiveVisibility(
     )
 }
 
-fun computePublishedApiEffectiveVisibility(
+private fun computePublishedApiEffectiveVisibility(
     hasPublishedApiAnnotation: Boolean,
     visibility: Visibility,
     selfEffectiveVisibility: EffectiveVisibility,
@@ -117,22 +112,20 @@ fun FirMemberDeclaration.setLazyPublishedVisibility(annotations: List<FirAnnotat
 }
 
 fun FirMemberDeclaration.setLazyPublishedVisibility(hasPublishedApi: Boolean, parentProperty: FirProperty?, session: FirSession) {
-    if (!hasPublishedApi) return
-
     lazyPublishedApiEffectiveVisibility = lazy {
         val containingClassLookupTag = (when {
-            parentProperty != null -> parentProperty.symbol.callableId.classId
+            parentProperty != null -> parentProperty.symbol.callableId?.classId
             this is FirClassLikeDeclaration -> classId.parentClassId
-            this is FirCallableDeclaration -> symbol.callableId.classId
+            this is FirCallableDeclaration -> symbol.callableId?.classId
             else -> null
         })?.toLookupTag()
 
         val status = status as FirResolvedDeclarationStatus
         val parentSymbol = containingClassLookupTag?.toSymbol(session)
         computePublishedApiEffectiveVisibility(
-            hasPublishedApiAnnotation = true,
+            hasPublishedApiAnnotation = hasPublishedApi,
             visibility = status.visibility,
-            selfEffectiveVisibility = status.effectiveVisibility,
+            selfEffectiveVisibility = status.visibility.toEffectiveVisibility(parentSymbol, forClass = this is FirClass),
             containingClassLookupTag = containingClassLookupTag,
             parentEffectiveVisibility = parentProperty?.effectiveVisibility ?: parentSymbol?.effectiveVisibility
             ?: EffectiveVisibility.Public,

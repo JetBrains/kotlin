@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-36188
 
@@ -12,3 +13,5 @@ class Impl : A, B {
 }
 
 fun box(): String = Impl().foo()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral */

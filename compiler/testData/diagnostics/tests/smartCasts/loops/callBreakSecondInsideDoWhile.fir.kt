@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(): Boolean { return true }
 
 fun gav(z: String, arg: Any): String { return if (arg is String) arg else z }
@@ -11,3 +12,6 @@ public fun foo(x: String?, z: String?): Int {
     // x is null because of the break
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+isExpression, nullableType, smartcast */

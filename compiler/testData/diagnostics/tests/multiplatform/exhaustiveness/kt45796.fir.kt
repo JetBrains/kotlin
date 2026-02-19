@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-45796
 
 // MODULE: m1-common
@@ -27,3 +29,6 @@ fun whenForSealed(s: SealedClass): Int {
         is SealedClass.Nested -> 8
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, isExpression, nestedClass,
+primaryConstructor, sealed, smartcast, whenExpression, whenWithSubject */

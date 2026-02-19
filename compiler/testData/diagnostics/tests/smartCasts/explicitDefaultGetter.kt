@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class ExplicitAccessorForAnnotation {
     val tt: String? = "good"
         get
@@ -9,3 +10,6 @@ class ExplicitAccessorForAnnotation {
         return ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

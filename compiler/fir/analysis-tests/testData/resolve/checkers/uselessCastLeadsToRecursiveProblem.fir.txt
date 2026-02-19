@@ -19,7 +19,7 @@ FILE: uselessCastLeadsToRecursiveProblem.kt
         }
     public final val R|A|.extProp1: R|kotlin/String|
         public get(): R|kotlin/String| {
-            ^ when (this@R|/extProp1|) {
+            ^ when (lval <when-subject>: R|A| = this@R|/extProp1|) {
                 ($subj$ is R|B|) ->  {
                     String(I'm B)
                 }
@@ -38,7 +38,7 @@ FILE: uselessCastLeadsToRecursiveProblem.kt
         }
     public final val R|A|.extProp2: R|kotlin/String|
         public get(): R|kotlin/String| {
-            ^ when (this@R|/extProp2|) {
+            ^ when (lval <when-subject>: R|A| = this@R|/extProp2|) {
                 ($subj$ is R|B|) ->  {
                     String(I'm B)
                 }

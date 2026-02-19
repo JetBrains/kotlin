@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Named.java
 
 public interface Named {
@@ -57,3 +58,6 @@ public class LightField<D> : LightMember<Any>(), Field {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, isExpression, javaProperty, javaType, nullableType, override, smartcast,
+starProjection, stringLiteral, typeParameter */

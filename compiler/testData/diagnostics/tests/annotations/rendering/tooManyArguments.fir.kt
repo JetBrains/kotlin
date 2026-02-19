@@ -1,4 +1,5 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class Ann(val s: String = "")
@@ -7,5 +8,8 @@ annotation class Ann(val s: String = "")
 fun foo() {}
 
 val bar = foo(
-    <!TOO_MANY_ARGUMENTS("public final fun /foo(): kotlin/Unit")!>15<!>
+    <!TOO_MANY_ARGUMENTS("fun foo(): Unit")!>15<!>
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

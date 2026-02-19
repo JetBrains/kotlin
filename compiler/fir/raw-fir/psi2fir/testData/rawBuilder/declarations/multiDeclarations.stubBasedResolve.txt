@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] multiDeclarations.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }

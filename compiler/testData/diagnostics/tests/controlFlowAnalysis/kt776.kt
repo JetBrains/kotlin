@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-776 Wrong detection of unreachable code
 
@@ -37,3 +38,6 @@ fun test1() : Int {
 }
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: assignment, break, comparisonExpression, continue, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration, tryExpression, whileLoop */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: test.kt
 
 package test
@@ -21,3 +22,6 @@ abstract class Factory {
 
     abstract fun createExtra(): Extra
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed */

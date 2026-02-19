@@ -1,0 +1,87 @@
+@Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#)
+owner -> FirRegularClassSymbol A
+context -> FirRegularClassSymbol A
+
+@Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#)
+owner -> FirRegularClassSymbol B
+context -> FirRegularClassSymbol B
+
+@A()
+owner -> FirTypeAliasSymbol Test0
+context -> FirTypeAliasSymbol Test0
+
+@B()
+owner -> FirTypeAliasSymbol Test0
+context -> FirTypeAliasSymbol Test0
+
+@A()
+owner -> FirTypeAliasSymbol Test1
+context -> FirTypeAliasSymbol Test1
+
+@A()
+owner -> FirTypeAliasSymbol Test1
+context -> FirTypeAliasSymbol Test1
+
+@A()
+owner -> FirTypeAliasSymbol Test2
+context -> FirTypeAliasSymbol Test2
+
+@B()
+owner -> FirTypeAliasSymbol Test2
+context -> FirTypeAliasSymbol Test2
+
+@A()
+owner -> FirTypeAliasSymbol Test3
+context -> FirTypeAliasSymbol Test3
+
+@A()
+owner -> FirTypeAliasSymbol Test3
+context -> FirTypeAliasSymbol Test3
+
+@A()
+owner -> FirTypeAliasSymbol Test4
+context -> FirTypeAliasSymbol Test4
+
+@B()
+owner -> FirTypeAliasSymbol Test4
+context -> FirTypeAliasSymbol Test4
+
+@A()
+owner -> FirTypeAliasSymbol Test5
+context -> FirTypeAliasSymbol Test5
+
+@B()
+owner -> FirTypeAliasSymbol Test5
+context -> FirTypeAliasSymbol Test5
+
+@A()
+owner -> FirTypeAliasSymbol Test6
+context -> FirTypeAliasSymbol Test6
+
+@B()
+owner -> FirTypeAliasSymbol Test6
+context -> FirTypeAliasSymbol Test6
+
+@A()
+owner -> FirTypeAliasSymbol Test7
+context -> FirTypeAliasSymbol Test7
+
+@B()
+owner -> FirTypeAliasSymbol Test7
+context -> FirTypeAliasSymbol Test7
+
+@A()
+owner -> FirTypeAliasSymbol Test8
+context -> FirTypeAliasSymbol Test8
+
+@B()
+owner -> FirTypeAliasSymbol Test8
+context -> FirTypeAliasSymbol Test8
+
+@A()
+owner -> FirTypeAliasSymbol Test9
+context -> FirTypeAliasSymbol Test9
+
+@B()
+owner -> FirTypeAliasSymbol Test9
+context -> FirTypeAliasSymbol Test9

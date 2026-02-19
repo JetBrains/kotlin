@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 // FILE: foo.kt
 
@@ -45,3 +46,6 @@ import test.EnumAlias.<!UNRESOLVED_REFERENCE!>Nested3<!>.*
 import test.EnumAlias.Entry
 
 fun f() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass, objectDeclaration,
+typeAliasDeclaration */

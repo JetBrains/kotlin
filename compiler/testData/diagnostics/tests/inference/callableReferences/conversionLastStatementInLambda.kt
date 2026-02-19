@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // ISSUE: KT-55729, KT-55931, KT-55936
 
@@ -31,3 +32,6 @@ fun test1(): String = ""
 fun test2(): String = ""
 
 fun callWithLambda(action: () -> () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+stringLiteral */

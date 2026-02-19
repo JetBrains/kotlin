@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @file:OptIn(ExperimentalTypeInference::class)
 
@@ -21,3 +22,7 @@ val test1 = generate {
         })
     })
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, suspend, typeParameter,
+typeWithExtension */

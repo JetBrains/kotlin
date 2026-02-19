@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-56847
 // FILE: foo/TestTarget.java
@@ -26,3 +27,5 @@ package foo
 class AnotherTarget {
     fun hello() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType */

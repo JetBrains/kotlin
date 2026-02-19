@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 
@@ -20,3 +21,6 @@ class Bar {
 }
 
 fun main(args: Array<String>) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
+functionDeclaration */

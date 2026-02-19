@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class AHolder(val a: Int)
 
 class F {
@@ -25,3 +26,6 @@ fun main() {
     FF.foo.<!UNRESOLVED_REFERENCE!>a<!> // (1) everywhere
     // Why not companion
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, lambdaLiteral,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration */

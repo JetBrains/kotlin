@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // KT-6829 False warning on map to @Nullable
 
@@ -23,3 +24,6 @@ fun foo(collection: Collection<J>) {
 public fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+javaFunction, javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

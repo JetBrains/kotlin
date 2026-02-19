@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun String.invoke(i: Int) {}
 
@@ -7,3 +8,5 @@ fun foo(i: Int) {
 
     <!FUNCTION_EXPECTED!>1<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral */

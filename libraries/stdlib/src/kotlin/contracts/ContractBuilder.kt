@@ -23,6 +23,20 @@ import kotlin.internal.InlineOnly
 public annotation class ExperimentalContracts
 
 /**
+ * This marker distinguishes the experimental extended contract declaration API and is used to opt-in for that feature
+ * when declaring extended contracts of user functions.
+ *
+ * Any usage of a declaration annotated with `@ExperimentalExtendedContracts` must be accepted either by
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalExtendedContracts::class)`,
+ * or by using the compiler argument `-opt-in=kotlin.contracts.ExperimentalExtendedContracts`.
+ */
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.2")
+@RequiresOptIn
+@MustBeDocumented
+public annotation class ExperimentalExtendedContracts
+
+/**
  * Provides a scope, where the functions of the contract DSL, such as [returns], [callsInPlace], etc.,
  * can be used to describe the contract of a function.
  *
@@ -74,8 +88,6 @@ public interface ContractBuilder {
      * 2. _(optionally)_ the function [lambda] is invoked the number of times specified by the [kind] parameter,
      *  see the [InvocationKind] enum for possible values.
      *
-     * A function declaring the `callsInPlace` effect must be _inline_.
-     *
      */
     /* @sample samples.contracts.callsInPlaceAtMostOnceContract
     * @sample samples.contracts.callsInPlaceAtLeastOnceContract
@@ -83,6 +95,64 @@ public interface ContractBuilder {
     * @sample samples.contracts.callsInPlaceUnknownContract
     */
     @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
+
+    /**
+     * Specifies the effect that will be observed if the condition passed as a receiver argument holds.
+     *
+     * Only [ReturnsNotNull] effect is supported for now.
+     *
+     * Note: the receiver can accept only a subset of boolean expressions,
+     * where a function parameter or receiver (`this`) undergoes
+     * - null-checks (`== null`, `!= null`);
+     * - instance-checks (`is`, `!is`);
+     */
+    @ExperimentalExtendedContracts
+    @ContractsDsl
+    public infix fun Boolean.implies(value: ReturnsNotNull)
+
+    /**
+     * Specifies the condition, passed as a receiver argument, that is guaranteed to be true in the body of a function parameter [lambda].
+     *
+     * Note: the receiver accepts only a restricted boolean expression representing the condition, where the expression may include
+     * only the boolean parameter of the function defining the contract, or its negation.
+     */
+    @ExperimentalExtendedContracts
+    @ContractsDsl
+    public infix fun <R> Boolean.holdsIn(lambda: Function<R>): HoldsIn
+
+    /**
+     * Specifies that the function returns the result of the invocation of the function parameter [lambda].
+     *
+     * This information is currently used by the Kotlin's return value checker and instructs it
+     * to look inside [lambda] to decide whether function with contract is ignorable.
+     *
+     * If the functional parameter result is returned only in one of the possible execution paths (i.e., in [InvocationKind.AT_MOST_ONCE] situation),
+     * contract still should mention it. If the function accepts multiple functional parameters, the contract may be specified several times
+     * and should list all potential invocations from all execution paths.
+     *
+     * For example:
+     * ```kotlin
+     * inline fun <T, R> T.selector(condition: (T) -> Boolean?, a: (T) -> R, b: (T) -> R): R? {
+     *     contract {
+     *         callsInPlace(a, InvocationKind.AT_MOST_ONCE)
+     *         callsInPlace(b, InvocationKind.AT_MOST_ONCE)
+     *         returnsResultOf(a)
+     *         returnsResultOf(b)
+     *     }
+     *     return when (condition(this)) {
+     *         true -> a(this)
+     *         false -> b(this)
+     *         null -> null
+     *     }
+     * }
+     * ```
+     * `a` and `b` are mentioned in the `returnsResultOf` contract because each of them is returned from the function in at least one of the paths.
+     * `condition` is not mentioned in the contract because it is not returned from the function on all the paths.
+     *
+     * This contract is experimental, and it is allowed to use it only with the 'Return value checker' feature enabled.
+     */
+    @ContractsDsl
+    public fun <R> returnsResultOf(lambda: Function<R>)
 }
 
 /**

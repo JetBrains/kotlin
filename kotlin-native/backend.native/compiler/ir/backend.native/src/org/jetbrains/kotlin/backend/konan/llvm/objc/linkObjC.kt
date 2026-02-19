@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
@@ -20,10 +21,10 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()
 
-    val bitcodeFile = config.objCNativeLibrary
-    val parsedModule = parseBitcodeFile(generationState.llvmContext, bitcodeFile)
+    val bitcodeFile = generationState.runtimeModulesConfig.absolutePathFor(RuntimeModule.OBJC)
+    val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
 
-    patchBuilder.buildAndApply(parsedModule, generationState.llvm)
+    patchBuilder.buildAndApply(parsedModule, generationState)
     return parsedModule
 }
 
@@ -115,7 +116,7 @@ private fun PatchBuilder.addObjCPatches() {
     addPrivateCategory("NSDictionaryToKotlin")
     addPrivateCategory("NSEnumeratorAsAssociatedObject")
 
-    addExportedClass(objCExportNamer.kotlinAnyName, "KotlinBase", "refHolder", "permanent")
+    addExportedClass(objCExportNamer.kotlinAnyName, "KotlinBase", "refHolder")
 
     addExportedClass(objCExportNamer.mutableSetName, "KotlinMutableSet", "setHolder")
     addExportedClass(objCExportNamer.mutableMapName, "KotlinMutableDictionary", "mapHolder")
@@ -126,7 +127,7 @@ private fun PatchBuilder.addObjCPatches() {
     }
 }
 
-private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, llvm: CodegenLlvmHelpers) {
+private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, state: NativeGenerationState) {
     val nameToGlobalPatch = globalPatches.associateNonRepeatingBy { it.globalName }
 
     val sectionToValueToLiteralPatch = literalPatches.groupBy { it.generator.section }
@@ -154,7 +155,7 @@ private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, llvm: CodegenL
             val value = getStringValue(initializer)
             val patch = valueToLiteralPatch[value]
             if (patch != null) {
-                if (patch.newValue != value) patchLiteral(global, llvm, patch.generator, patch.newValue)
+                if (patch.newValue != value) patchLiteral(global, state, patch.generator, patch.newValue)
                 unusedPatches -= patch
             } else if (section == ObjCDataGenerator.classNameGenerator.section) {
                 error("Objective-C class name literal is not patched: $value")
@@ -196,27 +197,31 @@ private fun <T, K> List<T>.associateNonRepeatingBy(keySelector: (T) -> K): Map<K
                 }
 
 private fun patchLiteral(
-    global: LLVMValueRef,
-    llvm: CodegenLlvmHelpers,
-    generator: ObjCDataGenerator.CStringLiteralsGenerator,
-    newValue: String
+        global: LLVMValueRef,
+        state: NativeGenerationState,
+        generator: ObjCDataGenerator.CStringLiteralsGenerator,
+        newValue: String
 ) {
+    val llvm = state.llvm
     val module = LLVMGetGlobalParent(global)!!
-
-    val newFirstCharPtr = generator.generate(module, llvm, newValue).getElementPtr(llvm, 0).llvm
-
-    generateSequence(LLVMGetFirstUse(global), { LLVMGetNextUse(it) }).forEach { use ->
-        val firstCharPtr = LLVMGetUser(use)!!.also {
-            require(it.isFirstCharPtr(llvm, global)) {
-                "Unexpected literal usage: ${llvm2string(it)}"
+    if (state.config.useLlvmOpaquePointers) {
+        val newGlobal = generator.generate(module, state.llvm, newValue).llvm
+        LLVMReplaceAllUsesWith(global, newGlobal)
+    } else {
+        val newFirstCharPtr = generator.generate(module, llvm, newValue).llvm
+        generateSequence(LLVMGetFirstUse(global), { LLVMGetNextUse(it) }).forEach { use ->
+            val firstCharPtr = LLVMGetUser(use)!!.also {
+                require(it.isFirstCharPtr(llvm, global)) {
+                    "Unexpected literal usage: ${llvm2string(it)}"
+                }
             }
+            LLVMReplaceAllUsesWith(firstCharPtr, newFirstCharPtr)
         }
-        LLVMReplaceAllUsesWith(firstCharPtr, newFirstCharPtr)
     }
 }
 
 private fun LLVMValueRef.isFirstCharPtr(llvm: CodegenLlvmHelpers, global: LLVMValueRef): Boolean =
-        this.type == llvm.int8PtrType &&
+    this.type == llvm.pointerType &&
                 LLVMIsConstant(this) != 0 && LLVMGetConstOpcode(this) == LLVMOpcode.LLVMGetElementPtr
                 && LLVMGetNumOperands(this) == 3
                 && LLVMGetOperand(this, 0) == global

@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.utils.forAllTargets
 
 private const val KOTLIN_DOM_API_MODULE_NAME = "kotlin-dom-api-compat"
 
@@ -30,23 +30,11 @@ private val kotlin190Version = SemVer(1.toBigInteger(), 9.toBigInteger(), 0.toBi
 private fun isAtLeast1_9_0(version: String) = SemVer.fromGradleRichVersion(version) >= kotlin190Version
 
 internal fun Project.configureKotlinDomApiDefaultDependency(
-    topLevelExtension: KotlinTopLevelExtension,
+    kotlinExtension: KotlinProjectExtension,
     coreLibrariesVersion: Provider<String>
 ) {
-    when (topLevelExtension) {
-        is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
-            target?.addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
-        }
-
-        is KotlinSingleTargetExtension<*> -> topLevelExtension
-            .target
-            .addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
-
-        is KotlinMultiplatformExtension -> topLevelExtension
-            .targets
-            .configureEach { target ->
-                target.addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
-            }
+    kotlinExtension.forAllTargets { target ->
+        target.addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
     }
 }
 
@@ -55,10 +43,6 @@ private fun KotlinTarget.addKotlinDomApiDependency(
     dependencies: DependencyHandler,
     coreLibrariesVersion: Provider<String>
 ) {
-    if (this is KotlinJsTarget) {
-        irTarget?.addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
-    }
-
     compilations.configureEach { compilation ->
         if (compilation.platformType != KotlinPlatformType.js) return@configureEach
         if (compilation !is KotlinJsIrCompilation) return@configureEach

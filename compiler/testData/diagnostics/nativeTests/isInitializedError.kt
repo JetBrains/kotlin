@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !LANGUAGE: +NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// LANGUAGE: +NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // FILE: stdlibInternal.kt
 
 package kotlin.internal

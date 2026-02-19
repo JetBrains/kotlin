@@ -1,0 +1,9 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testSuspendConversionInVarargElementsAll(kotlin/Function0<kotlin/Unit>, kotlin/Function0<kotlin/Unit>, kotlin/Function0<kotlin/Unit>) // /testSuspendConversionInVarargElementsAll|testSuspendConversionInVarargElementsAll(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}[0]
+final fun /testSuspendConversionInVarargElementsSome(kotlin/Function0<kotlin/Unit>, kotlin.coroutines/SuspendFunction0<kotlin/Unit>, kotlin/Function0<kotlin/Unit>) // /testSuspendConversionInVarargElementsSome|testSuspendConversionInVarargElementsSome(kotlin.Function0<kotlin.Unit>;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}[0]
+final fun /useSuspendVararg(kotlin/Array<out kotlin.coroutines/SuspendFunction0<kotlin/Unit>>...) // /useSuspendVararg|useSuspendVararg(kotlin.Array<out|kotlin.coroutines.SuspendFunction0<kotlin.Unit>>...){}[0]

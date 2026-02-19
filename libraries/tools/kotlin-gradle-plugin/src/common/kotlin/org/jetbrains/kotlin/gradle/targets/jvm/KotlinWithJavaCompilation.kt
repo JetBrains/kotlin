@@ -9,24 +9,31 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
-open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject internal constructor(
+/**
+ * This compilation is used by 'kotlin-jvm' plugin.
+ */
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
+open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinAnyOptionsDeprecated, CO : KotlinCommonCompilerOptions>
+@Inject internal constructor(
     compilation: KotlinCompilationImpl,
     val javaSourceSet: SourceSet,
-) : AbstractKotlinCompilationToRunnableFiles<KotlinOptionsType>(compilation),
-    KotlinCompilationWithResources<KotlinOptionsType> {
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinOptionsType>(compilation),
+    DeprecatedKotlinCompilationWithResources<KotlinOptionsType> {
 
-    @Suppress("UNCHECKED_CAST")
-    override val compilerOptions: HasCompilerOptions<CO> =
-        compilation.compilerOptions as HasCompilerOptions<CO>
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    override val compilerOptions: DeprecatedHasCompilerOptions<CO> =
+        compilation.compilerOptions as DeprecatedHasCompilerOptions<CO>
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = target.project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
@@ -38,7 +45,7 @@ open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO
         with(target.project) {
             afterEvaluate {
                 tasks.named<AbstractKotlinCompile<*>>(compileKotlinTaskName).configure {
-                    it.setSource(javaSourceSet.java)
+                    it.source(javaSourceSet.java)
                 }
             }
         }

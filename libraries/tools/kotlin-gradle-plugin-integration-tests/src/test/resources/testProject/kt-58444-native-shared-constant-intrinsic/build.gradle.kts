@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 group = "test"
 version = "1.0"

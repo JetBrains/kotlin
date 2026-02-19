@@ -1,95 +1,95 @@
 package foo
 
+val array: Array<Int>
+  field = arrayOf<Int>(elements = [0])
+  get
+
 class A {
+  var prop: Int
+    field = 0
+    get
+    set
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+object B {
   var prop: Int
     field = 0
     get
     set
 
-}
-
-object B {
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  var prop: Int
-    field = 0
-    get
-    set
-
 }
-
-val array: Array<Int>
-  field = arrayOf<Int>(elements = [0])
-  get
 
 fun <T : Any?> id(t: T): T {
   return t
 }
 
-fun main() {
+fun runMe() {
   val a: A = A()
   id<A>(t = a).<set-prop>(<set-?> = 10)
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().plus(other = 20))
+    val tmp_0: A = id<A>(t = a)
+    tmp_0.<set-prop>(<set-?> = tmp_0.<get-prop>().plus(other = 20))
   }
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().minus(other = 20))
+    val tmp_1: A = id<A>(t = a)
+    tmp_1.<set-prop>(<set-?> = tmp_1.<get-prop>().minus(other = 20))
   }
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().times(other = 2))
+    val tmp_2: A = id<A>(t = a)
+    tmp_2.<set-prop>(<set-?> = tmp_2.<get-prop>().times(other = 2))
   }
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().div(other = 5))
+    val tmp_3: A = id<A>(t = a)
+    tmp_3.<set-prop>(<set-?> = tmp_3.<get-prop>().div(other = 5))
   }
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().rem(other = 3))
+    val tmp_4: A = id<A>(t = a)
+    tmp_4.<set-prop>(<set-?> = tmp_4.<get-prop>().rem(other = 3))
   }
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    val <unary>: Int = <receiver>.<get-prop>()
-    <receiver>.<set-prop>(<set-?> = <unary>.inc())
-    <unary>
+    val tmp_5: A = id<A>(t = a)
+    val tmp_6: Int = tmp_5.<get-prop>()
+    tmp_5.<set-prop>(<set-?> = tmp_6.inc())
+    tmp_6
   } /*~> Unit */
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    val <unary>: Int = <receiver>.<get-prop>()
-    <receiver>.<set-prop>(<set-?> = <unary>.dec())
-    <unary>
+    val tmp_7: A = id<A>(t = a)
+    val tmp_8: Int = tmp_7.<get-prop>()
+    tmp_7.<set-prop>(<set-?> = tmp_8.dec())
+    tmp_8
   } /*~> Unit */
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().inc())
-    <receiver>.<get-prop>()
+    val tmp_9: A = id<A>(t = a)
+    tmp_9.<set-prop>(<set-?> = tmp_9.<get-prop>().inc())
+    tmp_9.<get-prop>()
   } /*~> Unit */
   { // BLOCK
-    val <receiver>: A = id<A>(t = a)
-    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().dec())
-    <receiver>.<get-prop>()
+    val tmp_10: A = id<A>(t = a)
+    tmp_10.<set-prop>(<set-?> = tmp_10.<get-prop>().dec())
+    tmp_10.<get-prop>()
   } /*~> Unit */
   { // BLOCK
-    val <unary>: Int = B.<get-prop>()
-    B.<set-prop>(<set-?> = <unary>.inc())
-    <unary>
+    val tmp_11: Int = B.<get-prop>()
+    B.<set-prop>(<set-?> = tmp_11.inc())
+    tmp_11
   } /*~> Unit */
   { // BLOCK
-    val <unary>: Int = B.<get-prop>()
-    B.<set-prop>(<set-?> = <unary>.dec())
-    <unary>
+    val tmp_12: Int = B.<get-prop>()
+    B.<set-prop>(<set-?> = tmp_12.dec())
+    tmp_12
   } /*~> Unit */
   { // BLOCK
     B.<set-prop>(<set-?> = B.<get-prop>().inc())
@@ -101,64 +101,65 @@ fun main() {
   } /*~> Unit */
   id<Array<Int>>(t = <get-array>()).set(index = 0, value = 10)
   { // BLOCK
-    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).plus(other = 20))
+    val tmp_13: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp_14: Int = 0
+    tmp_13.set(index = tmp_14, value = tmp_13.get(index = tmp_14).plus(other = 20))
   }
   { // BLOCK
-    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).minus(other = 20))
+    val tmp_15: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp_16: Int = 0
+    tmp_15.set(index = tmp_16, value = tmp_15.get(index = tmp_16).minus(other = 20))
   }
   { // BLOCK
-    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).times(other = 2))
+    val tmp_17: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp_18: Int = 0
+    tmp_17.set(index = tmp_18, value = tmp_17.get(index = tmp_18).times(other = 2))
   }
   { // BLOCK
-    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).div(other = 5))
+    val tmp_19: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp_20: Int = 0
+    tmp_19.set(index = tmp_20, value = tmp_19.get(index = tmp_20).div(other = 5))
   }
   { // BLOCK
-    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).rem(other = 3))
+    val tmp_21: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp_22: Int = 0
+    tmp_21.set(index = tmp_22, value = tmp_21.get(index = tmp_22).rem(other = 3))
   }
-  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-  val <index_0>: Int = 0
-  val <unary>: Int = <array>.get(index = <index_0>)
-  <array>.set(index = <index_0>, value = <unary>.inc())
-  <unary> /*~> Unit */
-  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-  val <index_0>: Int = 0
-  val <unary>: Int = <array>.get(index = <index_0>)
-  <array>.set(index = <index_0>, value = <unary>.dec())
-  <unary> /*~> Unit */
-  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-  val <index_0>: Int = 0
-  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).inc())
-  <array>.get(index = <index_0>) /*~> Unit */
-  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
-  val <index_0>: Int = 0
-  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).dec())
-  <array>.get(index = <index_0>) /*~> Unit */
-  val <array>: Array<Int> = <get-array>()
-  val <index_0>: Int = 0
-  val <unary>: Int = <array>.get(index = <index_0>)
-  <array>.set(index = <index_0>, value = <unary>.inc())
-  <unary> /*~> Unit */
-  val <array>: Array<Int> = <get-array>()
-  val <index_0>: Int = 0
-  val <unary>: Int = <array>.get(index = <index_0>)
-  <array>.set(index = <index_0>, value = <unary>.dec())
-  <unary> /*~> Unit */
-  val <array>: Array<Int> = <get-array>()
-  val <index_0>: Int = 0
-  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).inc())
-  <array>.get(index = <index_0>) /*~> Unit */
-  val <array>: Array<Int> = <get-array>()
-  val <index_0>: Int = 0
-  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).dec())
-  <array>.get(index = <index_0>) /*~> Unit */
+  val tmp_23: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val tmp_24: Int = 0
+  val tmp_25: Int = tmp_23.get(index = tmp_24)
+  tmp_23.set(index = tmp_24, value = tmp_25.inc())
+  tmp_25 /*~> Unit */
+  val tmp_26: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val tmp_27: Int = 0
+  val tmp_28: Int = tmp_26.get(index = tmp_27)
+  tmp_26.set(index = tmp_27, value = tmp_28.dec())
+  tmp_28 /*~> Unit */
+  val tmp_29: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val tmp_30: Int = 0
+  tmp_29.set(index = tmp_30, value = tmp_29.get(index = tmp_30).inc())
+  tmp_29.get(index = tmp_30) /*~> Unit */
+  val tmp_31: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val tmp_32: Int = 0
+  tmp_31.set(index = tmp_32, value = tmp_31.get(index = tmp_32).dec())
+  tmp_31.get(index = tmp_32) /*~> Unit */
+  val tmp_33: Array<Int> = <get-array>()
+  val tmp_34: Int = 0
+  val tmp_35: Int = tmp_33.get(index = tmp_34)
+  tmp_33.set(index = tmp_34, value = tmp_35.inc())
+  tmp_35 /*~> Unit */
+  val tmp_36: Array<Int> = <get-array>()
+  val tmp_37: Int = 0
+  val tmp_38: Int = tmp_36.get(index = tmp_37)
+  tmp_36.set(index = tmp_37, value = tmp_38.dec())
+  tmp_38 /*~> Unit */
+  val tmp_39: Array<Int> = <get-array>()
+  val tmp_40: Int = 0
+  tmp_39.set(index = tmp_40, value = tmp_39.get(index = tmp_40).inc())
+  tmp_39.get(index = tmp_40) /*~> Unit */
+  val tmp_41: Array<Int> = <get-array>()
+  val tmp_42: Int = 0
+  tmp_41.set(index = tmp_42, value = tmp_41.get(index = tmp_42).dec())
+  tmp_41.get(index = tmp_42) /*~> Unit */
 }
+

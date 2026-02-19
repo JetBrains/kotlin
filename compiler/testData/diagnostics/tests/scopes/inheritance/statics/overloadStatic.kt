@@ -1,5 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 public class A {
     static void foo() {}
@@ -19,3 +21,5 @@ class E: B() {
         val a: Long = bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaFunction, javaType, localProperty, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Parent {
     override fun equals(other: Any?): Boolean =
         super.equals(other)
@@ -23,3 +24,5 @@ class D : OperatorParent() {
     override operator fun equals(other: Any?): Boolean = // false positive in K1, OK in K2
         super.equals(other)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, override, superExpression */

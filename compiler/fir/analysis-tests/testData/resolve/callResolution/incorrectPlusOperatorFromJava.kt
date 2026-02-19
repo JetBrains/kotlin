@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-56875
 // FILE: Base.java
 public class Base {
@@ -20,3 +21,6 @@ class Derived : Base() {
         y.length // should be ok
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, javaFunction, javaType, localProperty, operator, propertyDeclaration, stringLiteral */

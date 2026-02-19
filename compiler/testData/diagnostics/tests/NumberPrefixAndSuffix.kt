@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -USELESS_CAST
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER -USELESS_CAST
 
 infix fun Any?.foo(a: Any) {}
 infix fun Any?.zoo(a: Any) {}
@@ -52,3 +54,6 @@ fun test(a: Any) {
     <!USELESS_IS_CHECK!>1<!UNSUPPORTED!>!is<!> Any<!>
     1<!UNSUPPORTED!>!in<!> a
 }
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, infix, integerLiteral, isExpression,
+nullableType, operator */

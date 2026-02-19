@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 open class Final {
     fun foo() {}
@@ -54,3 +55,6 @@ class CBarT<T> : IBarT<T> {
 <!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test7<!> : Final(), IBarT<Int> by CBarT<Int>()
 
 <!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test8<!> : Final(), IBarT<Int> by <!TYPE_MISMATCH!>CBar()<!>
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, getter, inheritanceDelegation,
+integerLiteral, interfaceDeclaration, nullableType, override, propertyDeclaration, typeParameter */

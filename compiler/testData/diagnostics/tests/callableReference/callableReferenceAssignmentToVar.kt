@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -18,3 +19,6 @@ fun bar() {
 }
 
 fun baz(x: (Double) -> Double) {}
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, functionDeclaration, functionalType, lambdaLiteral,
+propertyDeclaration */

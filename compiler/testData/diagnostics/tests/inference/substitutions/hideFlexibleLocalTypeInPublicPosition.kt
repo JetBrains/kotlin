@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-30054
-// !LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
+// LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
 // FILE: J.java
 public class J {
     public static <T> T flexibleId(T x) { return x; }
@@ -22,3 +23,6 @@ fun main() {
     bar(false).foo()
     bar(false)?.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction,
+nullableType, override, safeCall, stringLiteral */

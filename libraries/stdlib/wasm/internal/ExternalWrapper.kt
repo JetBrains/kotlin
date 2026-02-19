@@ -5,8 +5,11 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 /*
 * Compiler generates inplace next code:
 * ```
@@ -19,3 +22,10 @@ package kotlin.wasm.internal
 * ```
 */
 internal fun returnArgumentIfItIsKotlinAny(): Unit = implementedAsIntrinsic
+
+@Target(AnnotationTarget.FUNCTION)
+internal annotation class JsBuiltin(
+    val module: String,
+    val name: String = "",
+    val polyfill: String = ""
+)

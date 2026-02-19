@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 
 public interface J {
@@ -13,3 +14,6 @@ fun <U : Any> f4(u: U?): Any = u::<!TYPE_MISMATCH, UNSAFE_CALL!>hashCode<!>
 fun f5(c: List<*>): Any = c[0]::<!TYPE_MISMATCH, UNSAFE_CALL!>hashCode<!>
 
 fun f6(j: J): Any = j.platformString()::hashCode
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+nullableType, starProjection, typeConstraint, typeParameter */

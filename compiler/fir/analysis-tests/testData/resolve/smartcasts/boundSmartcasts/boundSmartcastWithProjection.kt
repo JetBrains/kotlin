@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-24779
 
 class Inv<T>(val data: T)
@@ -15,3 +16,7 @@ fun test2(x: Inv<out Any?>) {
         is String -> x.data.length // No smart cast, UNRESOLVED_REFERENCE: length
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, dnnType, functionDeclaration, intersectionType, isExpression,
+localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration, smartcast, typeParameter,
+whenExpression, whenWithSubject */

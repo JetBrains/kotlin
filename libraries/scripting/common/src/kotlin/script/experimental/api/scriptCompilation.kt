@@ -11,6 +11,8 @@ import java.io.File
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
+import kotlin.script.experimental.impl.simpleRefineImpl
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptCompilationConfigurationKeys
@@ -34,7 +36,9 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
     // inherited from script compilationConfiguration for using as a keys anchor
     companion object : ScriptCompilationConfigurationKeys
 
-    object Default : ScriptCompilationConfiguration()
+    object Default : ScriptCompilationConfiguration() {
+        private fun readResolve(): Any = Default
+    }
 
     override fun toString(): String {
         return "ScriptCompilationConfiguration($properties)"
@@ -79,6 +83,13 @@ val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key
  * See also {@link ScriptCompilationConfigurationKeys#fileExtension} parameter for the primary script definition selection
  */
 val ScriptCompilationConfigurationKeys.filePathPattern by PropertiesCollection.key<String>()
+
+/**
+ * Additional (to the filename extension) RegEx pattern with that the script file name is checked
+ * Preserved for historical reasons for supporting legacy [ScriptTemplateDefinition] annotation parameter
+ */
+@Deprecated("use filePathPattern property instead", level = DeprecationLevel.ERROR)
+val ScriptCompilationConfigurationKeys.fileNamePattern by PropertiesCollection.key<String>()
 
 /**
  * The superclass for target script class
@@ -199,7 +210,6 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param handler the callback that will be called
      */
     fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {
-        // TODO: implement handlers composition
         ScriptCompilationConfiguration.refineConfigurationOnAnnotations.append(RefineConfigurationOnAnnotationsData(annotations, handler))
     }
 
@@ -240,7 +250,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
     }
 
     /**
-     * The callback that will be called on the script compilation  immediately before starting the compilation
+     * The callback that will be called on the script compilation immediately before starting the compilation
      * @param handler the callback that will be called
      */
     fun beforeCompiling(handler: RefineScriptCompilationConfigurationHandler) {
@@ -277,7 +287,7 @@ data class RefineConfigurationOnAnnotationsData(
     }
 }
 
-
+// refinement helpers
 fun ScriptCompilationConfiguration.refineBeforeParsing(
     script: SourceCode,
     collectedData: ScriptCollectedData? = null
@@ -289,20 +299,8 @@ fun ScriptCompilationConfiguration.refineBeforeParsing(
 fun ScriptCompilationConfiguration.refineOnAnnotations(
     script: SourceCode,
     collectedData: ScriptCollectedData
-): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val foundAnnotationNames = collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }
-    if (foundAnnotationNames.isNullOrEmpty()) return this.asSuccess()
-
-    val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
-    return this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
-        ?.fold(thisResult) { config, (annotations, handler) ->
-            config.onSuccess {
-                // checking that the collected data contains expected annotations
-                if (annotations.none { foundAnnotationNames.contains(it.typeName) }) it.asSuccess()
-                else handler.invoke(ScriptConfigurationRefinementContext(script, it, collectedData))
-            }
-        } ?: thisResult
-}
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    refineOnAnnotationsWithLazyDataCollection(script, { collectedData.asSuccess() })
 
 fun ScriptCompilationConfiguration.refineBeforeCompiling(
     script: SourceCode,
@@ -311,16 +309,6 @@ fun ScriptCompilationConfiguration.refineBeforeCompiling(
     simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeCompiling) { config, refineData ->
         refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
     }
-
-internal inline fun <Configuration: PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
-    key: PropertiesCollection.Key<List<RefineData>>,
-    refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>
-): ResultWithDiagnostics<Configuration> = (
-        this[key]
-            ?.fold(this) { config, refineData ->
-                refineFn(config, refineData).valueOr { return it }
-            } ?: this
-        ).asSuccess()
 
 /**
  * The functional interface to the script compiler

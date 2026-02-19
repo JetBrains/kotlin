@@ -1,0 +1,41 @@
+class TestInitValFromParameter {
+  val x: Int
+    field = x
+    get
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class TestInitValInClass {
+  val x: Int
+    field = 0
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class TestInitValInInitBlock {
+  val x: Int
+    get
+
+  init {
+    <this>.#x = 0
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

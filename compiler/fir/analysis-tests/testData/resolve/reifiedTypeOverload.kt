@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: classes.kt
 package classes
 
@@ -35,3 +36,6 @@ fun test() {
    nameOf<Bar>()
    nameOf<Foo>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, nullableType, reified, stringLiteral,
+typeConstraint, typeParameter */

@@ -27,6 +27,7 @@ object SerializationAnnotations {
     // Otherwise, there it might lead to exceptions from light classes when building them for serializer/serializable classes
     val serializableAnnotationFqName = FqName("kotlinx.serialization.Serializable")
     val serializerAnnotationFqName = FqName("kotlinx.serialization.Serializer")
+    val keepGeneratedSerializerAnnotationFqName = FqName("kotlinx.serialization.KeepGeneratedSerializer")
     val serialNameAnnotationFqName = FqName("kotlinx.serialization.SerialName")
     val requiredAnnotationFqName = FqName("kotlinx.serialization.Required")
     val serialTransientFqName = FqName("kotlinx.serialization.Transient")
@@ -45,6 +46,9 @@ object SerializationAnnotations {
 
     val namedCompanionFqName = FqName("kotlinx.serialization.internal.NamedCompanion")
 
+    val protoNumberAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoNumber")
+    val protoOneOfAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoOneOf")
+
     val serializableAnnotationClassId = ClassId.topLevel(serializableAnnotationFqName)
     val serializerAnnotationClassId = ClassId.topLevel(serializerAnnotationFqName)
     val serialNameAnnotationClassId = ClassId.topLevel(serialNameAnnotationFqName)
@@ -53,7 +57,7 @@ object SerializationAnnotations {
     val serialInfoClassId = ClassId.topLevel(serialInfoFqName)
     val inheritableSerialInfoClassId = ClassId.topLevel(inheritableSerialInfoFqName)
     val metaSerializableAnnotationClassId = ClassId.topLevel(metaSerializableAnnotationFqName)
-    val encodeDefaultClassId = ClassId.topLevel(encodeDefaultFqName)
+    val keepGeneratedSerializerAnnotationClassId = ClassId.topLevel(keepGeneratedSerializerAnnotationFqName)
 
     val contextualClassId = ClassId.topLevel(contextualFqName)
     val contextualOnFileClassId = ClassId.topLevel(contextualOnFileFqName)
@@ -61,6 +65,9 @@ object SerializationAnnotations {
     val polymorphicClassId = ClassId.topLevel(polymorphicFqName)
     val additionalSerializersClassId = ClassId.topLevel(additionalSerializersFqName)
     val namedCompanionClassId = ClassId.topLevel(namedCompanionFqName)
+
+    val protoNumberAnnotationClassId = ClassId.topLevel(protoNumberAnnotationFqName)
+    val protoOneOfAnnotationClassId = ClassId.topLevel(protoOneOfAnnotationFqName)
 }
 
 object SerialEntityNames {
@@ -70,13 +77,7 @@ object SerialEntityNames {
     const val LOAD = "deserialize"
     const val SERIALIZER_CLASS = "\$serializer"
 
-    const val CACHED_DESCRIPTOR_FIELD = "\$cachedDescriptor"
-    const val CACHED_SERIALIZER_PROPERTY = "\$cachedSerializer"
-    const val CACHED_CHILD_SERIALIZERS_PROPERTY = "\$childSerializers"
-
     // classes
-    val KCLASS_NAME_FQ = FqName("kotlin.reflect.KClass")
-    val KCLASS_NAME_CLASS_ID = ClassId.topLevel(KCLASS_NAME_FQ)
     val KSERIALIZER_NAME = Name.identifier(KSERIALIZER_CLASS)
     val SERIAL_CTOR_MARKER_NAME = Name.identifier("SerializationConstructorMarker")
     val KSERIALIZER_NAME_FQ = SerializationPackages.packageFqName.child(KSERIALIZER_NAME)
@@ -97,20 +98,14 @@ object SerialEntityNames {
 
     const val ANNOTATION_MARKER_CLASS = "SerializableWith"
 
-    const val SERIAL_SAVER_CLASS = "SerializationStrategy"
-    const val SERIAL_LOADER_CLASS = "DeserializationStrategy"
-
     const val SERIAL_DESCRIPTOR_CLASS = "SerialDescriptor"
     const val SERIAL_DESCRIPTOR_CLASS_IMPL = "PluginGeneratedSerialDescriptor"
     const val SERIAL_DESCRIPTOR_FOR_ENUM = "EnumDescriptor"
     const val SERIAL_DESCRIPTOR_FOR_INLINE = "InlineClassDescriptor"
 
-    const val PLUGIN_EXCEPTIONS_FILE = "PluginExceptions"
     const val ENUMS_FILE = "Enums"
 
     //exceptions
-    const val SERIAL_EXC = "SerializationException"
-    const val MISSING_FIELD_EXC = "MissingFieldException"
     const val UNKNOWN_FIELD_EXC = "UnknownFieldException"
 
     // functions
@@ -121,21 +116,20 @@ object SerialEntityNames {
     val TYPE_PARAMS_SERIALIZERS_GETTER = Name.identifier("typeParametersSerializers")
     val WRITE_SELF_NAME = Name.identifier("write\$Self")
     val SERIALIZER_PROVIDER_NAME = Name.identifier("serializer")
+    val GENERATED_SERIALIZER_PROVIDER_NAME = Name.identifier("generatedSerializer")
     val SINGLE_MASK_FIELD_MISSING_FUNC_NAME = Name.identifier("throwMissingFieldException")
     val ARRAY_MASK_FIELD_MISSING_FUNC_NAME = Name.identifier("throwArrayMissingFieldException")
     val ENUM_SERIALIZER_FACTORY_FUNC_NAME = Name.identifier("createSimpleEnumSerializer")
     val ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME = Name.identifier("createAnnotatedEnumSerializer")
-    val SINGLE_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(SINGLE_MASK_FIELD_MISSING_FUNC_NAME)
-    val ARRAY_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(ARRAY_MASK_FIELD_MISSING_FUNC_NAME)
-    val CACHED_SERIALIZER_PROPERTY_NAME = Name.identifier(CACHED_SERIALIZER_PROPERTY)
-    val CACHED_CHILD_SERIALIZERS_PROPERTY_NAME = Name.identifier(CACHED_CHILD_SERIALIZERS_PROPERTY)
-    val CACHED_DESCRIPTOR_FIELD_NAME = Name.identifier(CACHED_DESCRIPTOR_FIELD)
+    val CACHED_SERIALIZER_PROPERTY_NAME = Name.identifier("\$cachedSerializer")
+    val CACHED_KEEP_SERIALIZER_PROPERTY_NAME = Name.identifier("\$cachedKeepSerializer")
+    val CACHED_CHILD_SERIALIZERS_PROPERTY_NAME = Name.identifier("\$childSerializers")
+    val CACHED_DESCRIPTOR_FIELD_NAME = Name.identifier("\$cachedDescriptor")
 
     // parameters
     val dummyParamName = Name.identifier("serializationConstructorMarker")
     const val typeArgPrefix = "typeSerial"
 
-    val wrapIntoNullableExt = SerializationPackages.builtinsPackageFqName.child(Name.identifier("nullable"))
     val wrapIntoNullableCallableId = CallableId(SerializationPackages.builtinsPackageFqName, Name.identifier("nullable"))
 }
 
@@ -151,11 +145,8 @@ object SpecialBuiltins {
     object Names {
         val referenceArraySerializer = Name.identifier(SpecialBuiltins.referenceArraySerializer)
         val objectSerializer = Name.identifier(SpecialBuiltins.objectSerializer)
-        val enumSerializer = Name.identifier(SpecialBuiltins.enumSerializer)
         val polymorphicSerializer = Name.identifier(SpecialBuiltins.polymorphicSerializer)
-        val sealedSerializer = Name.identifier(SpecialBuiltins.sealedSerializer)
         val contextSerializer = Name.identifier(SpecialBuiltins.contextSerializer)
-        val nullableSerializer = Name.identifier(SpecialBuiltins.nullableSerializer)
     }
 }
 
@@ -176,7 +167,6 @@ object CallingConventions {
     const val end = "endStructure"
 
     const val decode = "decode"
-    const val update = "update"
     const val encode = "encode"
     const val encodeEnum = "encodeEnum"
     const val decodeEnum = "decodeEnum"
@@ -194,9 +184,7 @@ object CallingConventions {
 
 object SerializationDependencies {
     val LAZY_FQ = FqName("kotlin.Lazy")
-    val LAZY_FUNC_FQ = FqName("kotlin.lazy")
     val LAZY_MODE_FQ = FqName("kotlin.LazyThreadSafetyMode")
-    val FUNCTION0_FQ = FqName("kotlin.Function0")
     val LAZY_PUBLICATION_MODE_NAME = Name.identifier("PUBLICATION")
 }
 
@@ -219,11 +207,8 @@ object SerializersClassIds {
 }
 
 object SerializationRuntimeClassIds {
-
     val descriptorClassId =
         ClassId(SerializationPackages.descriptorsPackageFqName, Name.identifier(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS))
-    val compositeEncoderClassId =
-        ClassId(SerializationPackages.encodingPackageFqName, Name.identifier(SerialEntityNames.STRUCTURE_ENCODER_CLASS))
 }
 
 fun findStandardKotlinTypeSerializerName(typeName: String?): String? {
@@ -266,6 +251,8 @@ fun findStandardKotlinTypeSerializerName(typeName: String?): String? {
         "kotlin.DoubleArray" -> "DoubleArraySerializer"
         "kotlin.BooleanArray" -> "BooleanArraySerializer"
         "kotlin.time.Duration" -> "DurationSerializer"
+        "kotlin.time.Instant" -> "InstantSerializer"
+        "kotlin.uuid.Uuid" -> "UuidSerializer"
         "java.lang.Boolean" -> "BooleanSerializer"
         "java.lang.Byte" -> "ByteSerializer"
         "java.lang.Short" -> "ShortSerializer"

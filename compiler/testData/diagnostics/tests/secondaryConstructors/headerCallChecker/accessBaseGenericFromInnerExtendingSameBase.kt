@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class Base<T>(p: Any?) {
     fun foo1(t: T) {}
@@ -11,3 +12,6 @@ class D: Base<Int>("") {
         constructor(x: Int) : super(foo1(1))
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, nullableType, primaryConstructor,
+secondaryConstructor, stringLiteral, typeParameter */

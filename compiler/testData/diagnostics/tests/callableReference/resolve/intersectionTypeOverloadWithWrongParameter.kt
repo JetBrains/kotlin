@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KCallable
 
@@ -17,3 +18,6 @@ class Foo {
 }
 
 fun route(s: String): Any? = null
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, nullableType,
+starProjection, typeConstraint, typeParameter */

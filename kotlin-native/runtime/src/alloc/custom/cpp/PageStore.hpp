@@ -8,18 +8,18 @@
 
 #include <atomic>
 #include <cstdint>
+#include <vector>
 
 #include "AtomicStack.hpp"
-#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
-#include "std_support/Vector.hpp"
+#include "FixedBlockPage.hpp"
 
 namespace kotlin::alloc {
 
-template <class T>
+template <class T, typename SweepTraits>
 class PageStore {
 public:
-    using GCSweepScope = typename T::GCSweepScope;
+    using GCSweepScope = typename SweepTraits::GCSweepScope;
 
     void PrepareForGC() noexcept {
         unswept_.TransferAllFrom(std::move(ready_));
@@ -30,17 +30,6 @@ public:
 
     void Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
         while (SweepSingle(sweepHandle, unswept_.Pop(), unswept_, ready_, finalizerQueue)) {
-        }
-    }
-
-    void SweepAndFree(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
-        T* page;
-        while ((page = unswept_.Pop())) {
-            if (page->Sweep(sweepHandle, finalizerQueue)) {
-                ready_.Push(page);
-            } else {
-                page->Destroy();
-            }
         }
     }
 
@@ -59,7 +48,7 @@ public:
 
             if ((page = unswept_.Pop())) {
                 // If there're unswept_ pages, the GC is in progress.
-                GCSweepScope sweepHandle = T::currentGCSweepScope(*handle);
+                auto sweepHandle = SweepTraits::currentGCSweepScope(*handle);
                 if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
                     return page;
                 }
@@ -78,12 +67,15 @@ public:
         return page;
     }
 
+    bool isEmpty() noexcept {
+        return empty_.isEmpty() &&
+            ready_.isEmpty() &&
+            used_.isEmpty() &&
+            unswept_.isEmpty();
+    }
+
     ~PageStore() noexcept {
-        T* page;
-        while ((page = empty_.Pop())) page->Destroy();
-        while ((page = ready_.Pop())) page->Destroy();
-        while ((page = used_.Pop())) page->Destroy();
-        while ((page = unswept_.Pop())) page->Destroy();
+        Clear();
     }
 
 private:
@@ -94,7 +86,7 @@ private:
             return nullptr;
         }
         do {
-            if (page->Sweep(sweepHandle, finalizerQueue)) {
+            if (page->template Sweep<SweepTraits>(sweepHandle, finalizerQueue)) {
                 to.Push(page);
                 return page;
             }
@@ -104,25 +96,102 @@ private:
     }
 
     // Testing method
-    std_support::vector<T*> GetPages() noexcept {
-        std_support::vector<T*> pages;
+    std::vector<T*> GetPages() noexcept {
+        std::vector<T*> pages;
         for (T* page : ready_.GetElements()) pages.push_back(page);
         for (T* page : used_.GetElements()) pages.push_back(page);
         for (T* page : unswept_.GetElements()) pages.push_back(page);
         return pages;
     }
 
-    void ClearForTests() noexcept {
+    void Clear() noexcept {
         while (T* page = empty_.Pop()) page->Destroy();
         while (T* page = ready_.Pop()) page->Destroy();
         while (T* page = used_.Pop()) page->Destroy();
         while (T* page = unswept_.Pop()) page->Destroy();
     }
 
+    template <typename F>
+    void TraversePages(F process) noexcept(noexcept(process(std::declval<T*>()))) {
+        empty_.TraverseElements(process);
+        ready_.TraverseElements(process);
+        used_.TraverseElements(process);
+        unswept_.TraverseElements(process);
+    }
+
     AtomicStack<T> empty_;
     AtomicStack<T> ready_;
     AtomicStack<T> used_;
     AtomicStack<T> unswept_;
+};
+
+template <typename SweepTraits>
+class PageStore<SingleObjectPage, SweepTraits> {
+public:
+    using GCSweepScope = typename SweepTraits::GCSweepScope;
+
+    void PrepareForGC() noexcept {
+        unswept_.TransferAllFrom(std::move(newlyAllocated_));
+        // used_ is not accessed by mutators and will be processed directly in Sweep
+    }
+
+    void Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
+        AtomicStack<SingleObjectPage> survived_{};
+        while (auto* page = unswept_.PopNonAtomic()) {
+            if (page->SweepAndDestroy<SweepTraits>(sweepHandle, finalizerQueue)) {
+                survived_.PushNonAtomic(page);
+            }
+        }
+        while (auto* page = used_.PopNonAtomic()) {
+            if (page->SweepAndDestroy<SweepTraits>(sweepHandle, finalizerQueue)) {
+                survived_.PushNonAtomic(page);
+            }
+        }
+        used_.TransferAllFrom(std::move(survived_));
+    }
+
+    SingleObjectPage* NewPage(uint64_t cellCount) noexcept {
+        auto* page = SingleObjectPage::Create(cellCount);
+        newlyAllocated_.Push(page);
+        return page;
+    }
+
+    bool isEmpty() noexcept {
+        return used_.isEmpty() && unswept_.isEmpty();
+    }
+
+    ~PageStore() noexcept {
+        Clear();
+    }
+
+private:
+    friend class Heap;
+
+    // Testing method
+    std::vector<SingleObjectPage*> GetPages() noexcept {
+        std::vector<SingleObjectPage*> pages;
+        for (auto* page : newlyAllocated_.GetElements()) pages.push_back(page);
+        for (auto* page : used_.GetElements()) pages.push_back(page);
+        for (auto* page : unswept_.GetElements()) pages.push_back(page);
+        return pages;
+    }
+
+    void Clear() noexcept {
+        while (auto* page = newlyAllocated_.Pop()) page->Destroy<SweepTraits>();
+        while (auto* page = used_.Pop()) page->Destroy<SweepTraits>();
+        while (auto* page = unswept_.Pop()) page->Destroy<SweepTraits>();
+    }
+
+    template <typename F>
+    void TraversePages(F process) noexcept(noexcept(process(std::declval<SingleObjectPage*>()))) {
+        newlyAllocated_.TraverseElements(process);
+        used_.TraverseElements(process);
+        unswept_.TraverseElements(process);
+    }
+
+    AtomicStack<SingleObjectPage> newlyAllocated_;
+    AtomicStack<SingleObjectPage> used_;
+    AtomicStack<SingleObjectPage> unswept_;
 };
 
 } // namespace kotlin::alloc

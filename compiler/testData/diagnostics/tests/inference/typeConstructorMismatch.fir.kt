@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package typeConstructorMismatch
 //+JDK
 
@@ -11,3 +12,5 @@ fun test(set: Set<String>) {
 
 fun <R> elemAndList(r: R, t: List<R>): R = r
 fun <R> R.elemAndListWithReceiver(r: R, t: List<R>): R = r
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, nullableType, stringLiteral, typeParameter */

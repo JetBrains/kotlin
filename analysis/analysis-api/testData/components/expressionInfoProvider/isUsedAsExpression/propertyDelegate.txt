@@ -1,0 +1,6 @@
+expression: CALL_EXPRESSION
+text: lazy {
+    1000
+}
+isUsedAsExpression: true
+isUsedAsResultOfLambda: false

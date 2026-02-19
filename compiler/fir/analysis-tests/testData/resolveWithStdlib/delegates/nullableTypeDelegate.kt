@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface ReadWriteProperty<R, T> {
     operator fun getValue(thisRef: R, prop: Any): T
     operator fun setValue(thisRef: R, prop: Any, value: T)
@@ -18,3 +19,7 @@ class MyClassSome : DatabaseEntity {
         other = link
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration, nullableType, operator, propertyDeclaration, propertyDelegate, setter,
+typeConstraint, typeParameter */

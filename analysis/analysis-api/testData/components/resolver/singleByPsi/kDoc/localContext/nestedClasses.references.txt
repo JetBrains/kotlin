@@ -1,0 +1,35 @@
+<caret_1>:
+  KDocName(8,10): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) class AA
+
+<caret_2>:
+  KDocName(16,21): 'AA.AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in AA) class AA
+
+<caret_3>:
+  KDocName(47,49): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in AA) class AA
+
+<caret_4>:
+  KDocName(76,78): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in AA) fun AA(p: kotlin.Int)

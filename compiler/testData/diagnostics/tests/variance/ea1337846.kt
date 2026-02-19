@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // https://ea.jetbrains.com/browser/ea_reports/1337846
 
@@ -20,3 +21,6 @@ where
 {
     fun anyTwoSegments(comparator: EachSegmentComparator<<!UNRESOLVED_REFERENCE!>ComputableSegment<!><NumberType, PointType>>): Boolean
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, nullableType, out,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

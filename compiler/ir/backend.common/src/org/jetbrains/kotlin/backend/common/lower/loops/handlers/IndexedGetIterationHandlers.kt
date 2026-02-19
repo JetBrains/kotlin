@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.IndexedGetHeaderInfo
-import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -46,8 +46,8 @@ abstract class IndexedGetIterationHandler(
             //
             // This also ensures that the semantics of re-assignment of array variables used in the loop is consistent with the semantics
             // proposed in https://youtrack.jetbrains.com/issue/KT-21354.
-            val objectVariable = scope.createTmpVariable(
-                expression, nameHint = "indexedObject"
+            val objectVariable = scope.createTemporaryVariable(
+                expression, nameHint = "indexedObject", inventUniqueName = false
             )
 
             val last = irCall(expression.type.sizePropertyGetter).apply {
@@ -55,7 +55,8 @@ abstract class IndexedGetIterationHandler(
             }
 
             IndexedGetHeaderInfo(
-                this@IndexedGetIterationHandler.context.ir.symbols,
+                this@IndexedGetIterationHandler.context.irBuiltIns,
+                this@IndexedGetIterationHandler.context.symbols,
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
@@ -78,8 +79,8 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         if (expression.type.isArrayType()) return true
 
         val callee = (expression as? IrCall)?.symbol?.owner ?: return false
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.let { it.isArray() || it.isPrimitiveArray() } == true &&
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type.let { it.isArray() || it.isPrimitiveArray() } &&
                 callee.kotlinFqName == FqName("kotlin.collections.reversed")
     }
 
@@ -90,7 +91,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray())
 
     private val IrType.getFunctionName: Name
-        get() = context.ir.symbols.getWithoutBoundCheckName.let {
+        get() = context.symbols.getWithoutBoundCheckName.let {
             if (isArrayType() && it != null) {
                 it
             } else {
@@ -101,8 +102,11 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     override val IrType.getFunction
         get() = getClass()!!.functions.single {
             it.name == getFunctionName &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
+                    it.hasShape(
+                        dispatchReceiver = true,
+                        regularParameters = 1,
+                        parameterTypes = listOf(null, context.irBuiltIns.intType)
+                    )
         }
 }
 
@@ -117,23 +121,23 @@ internal open class CharSequenceIterationHandler(
     canCacheLast: Boolean = false
 ) : IndexedGetIterationHandler(context, canCacheLast) {
     override fun matchIterable(expression: IrExpression): Boolean =
-        expression.type.isSubtypeOfClass(context.ir.symbols.charSequence)
+        expression.type.isSubtypeOfClass(context.irBuiltIns.charSequenceClass)
 
     // We only want to handle the known extension function for CharSequence in the standard library (top level `kotlin.text.iterator`).
     // The behavior of this iterator is well-defined and can be lowered. CharSequences can have their own iterators, either as a member or
     // extension function, and the behavior of those custom iterators is unknown.
     override fun matchIteratorCall(call: IrCall): Boolean {
         val callee = call.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.isCharSequence() == true &&
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type.isCharSequence() &&
                 callee.kotlinFqName == FqName("kotlin.text.${OperatorNameConventions.ITERATOR}")
     }
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+        get() = context.irBuiltIns.charSequenceClass.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction: IrSimpleFunction
-        get() = context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+        get() = context.irBuiltIns.charSequenceClass.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
 
 /**
@@ -146,8 +150,8 @@ internal class StringIterationHandler(context: CommonBackendContext) : CharSeque
         expression.type.isString()
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = context.ir.symbols.string.getPropertyGetter("length")!!.owner
+        get() = context.irBuiltIns.stringClass.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction: IrSimpleFunction
-        get() = context.ir.symbols.string.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+        get() = context.irBuiltIns.stringClass.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }

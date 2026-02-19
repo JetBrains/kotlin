@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_JAVAC
 // This directive is needed to skip this test in LazyBodyIsNotTouchedTilContractsPhaseTestGenerated,
 //  because it fails to parse module structure of multimodule test
@@ -30,3 +31,5 @@ class Main : Test() {
         return Success()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass */

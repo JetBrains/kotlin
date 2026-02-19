@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /A : kotlin/Annotation { // /A|null[0]
+    final val klass // /A.klass|{}klass[0]
+        final fun <get-klass>(): kotlin.reflect/KClass<*> // /A.klass.<get-klass>|<get-klass>(){}[0]
+    constructor <init>(kotlin.reflect/KClass<*>) // /A.<init>|<init>(kotlin.reflect.KClass<*>){}[0]
+}
+final class /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}
+final fun /test1() // /test1|test1(){}[0]

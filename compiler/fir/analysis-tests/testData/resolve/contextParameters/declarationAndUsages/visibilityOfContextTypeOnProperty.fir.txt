@@ -1,0 +1,195 @@
+FILE: visibilityOfContextTypeOnProperty.kt
+    public final class PublicClass : R|kotlin/Any| {
+        public constructor(): R|PublicClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    private final class PrivateClass : R|kotlin/Any| {
+        public constructor(): R|PrivateClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public open class OpenClass : R|kotlin/Any| {
+        public constructor(): R|OpenClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final class ProtectedClass : R|kotlin/Any| {
+            public constructor(): R|OpenClass.ProtectedClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val a: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+        }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        public final var privateInOpenProperty: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        internal final var internalInOpen: R|kotlin/String|
+            internal get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            internal set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        private final var privateInOpen: R|kotlin/String|
+            private get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            private set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        protected final var d: R|kotlin/String|
+            protected get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            protected set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+    }
+    internal final class InternalClass : R|kotlin/Any| {
+        public constructor(): R|InternalClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    context(w: R|PublicClass|, x: R|PrivateClass|, z: R|InternalClass|)
+    public final var publicProperty: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+            ^ String()
+        }
+        public set(value: R|kotlin/String|): R|kotlin/Unit| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+        }
+    context(w: R|PublicClass|, x: R|PrivateClass|, z: R|InternalClass|)
+    private final var privateProperty: R|kotlin/String|
+        private get(): R|kotlin/String| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+            ^ String()
+        }
+        private set(value: R|kotlin/String|): R|kotlin/Unit| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+        }
+    context(w: R|PublicClass|, x: R|PrivateClass|, z: R|InternalClass|)
+    internal final var internalProperty: R|kotlin/String|
+        internal get(): R|kotlin/String| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+            ^ String()
+        }
+        internal set(value: R|kotlin/String|): R|kotlin/Unit| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+        }
+    public final class YChild : R|OpenClass| {
+        public constructor(): R|YChild| {
+            super<R|OpenClass|>()
+        }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        public final var publicInChild: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        internal final var internalInChild: R|kotlin/String|
+            internal get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            internal set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        private final var privateInChild: R|kotlin/String|
+            private get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            private set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+        context(n: R|OpenClass.ProtectedClass|)
+        protected final var protectedInChild: R|kotlin/String|
+            protected get(): R|kotlin/String| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+                ^ String()
+            }
+            protected set(value: R|kotlin/String|): R|kotlin/Unit| {
+                R|<local>/n|.R|/OpenClass.ProtectedClass.a|
+            }
+
+    }
+    context(w: R|PublicClass|, x: R|PrivateClass|, z: R|InternalClass|)
+    public final var privateSetter: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+            ^ String()
+        }
+        private set(value: R|kotlin/String|): R|kotlin/Unit| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+        }
+    context(w: R|PublicClass|, x: R|PrivateClass|, z: R|InternalClass|)
+    public final var internalSetter: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+            ^ String()
+        }
+        internal set(value: R|kotlin/String|): R|kotlin/Unit| {
+            R|<local>/w|.R|/PublicClass.a|
+            R|<local>/x|.R|/PrivateClass.a|
+            R|<local>/z|.R|/InternalClass.a|
+        }

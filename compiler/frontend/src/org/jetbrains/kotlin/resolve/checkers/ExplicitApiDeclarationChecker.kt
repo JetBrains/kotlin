@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -19,15 +20,23 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 
 class ExplicitApiDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val state = context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
-        if (state == ExplicitApiMode.DISABLED) return
+        fun extractState(flag: AnalysisFlag<ExplicitApiMode>): ExplicitApiMode? {
+            return context.languageVersionSettings.getFlag(flag).takeUnless { it == ExplicitApiMode.DISABLED }
+        }
+
+        val explicitApiState = extractState(AnalysisFlags.explicitApiMode)
+        val explicitReturnTypesState = extractState(AnalysisFlags.explicitReturnTypes)
+
+        if (explicitApiState == null && explicitReturnTypesState == null) return
 
         if (descriptor !is DeclarationDescriptorWithVisibility) return
         if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) return // Enum entries does not have visibilities
         if (!descriptor.isEffectivelyPublicApi && !descriptor.isPublishedApi()) return
 
-        checkVisibilityModifier(state, declaration, descriptor, context)
-        checkExplicitReturnType(state, declaration, descriptor, context)
+        if (explicitApiState != null) {
+            checkVisibilityModifier(explicitApiState, declaration, descriptor, context)
+        }
+        checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, declaration, descriptor, context)
     }
 
     private fun checkVisibilityModifier(

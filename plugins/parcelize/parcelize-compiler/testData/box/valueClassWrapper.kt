@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// See: https://issuetracker.google.com/197890119
-// IGNORE_BACKEND: JVM
 
 @file:JvmName("TestKt")
 package test

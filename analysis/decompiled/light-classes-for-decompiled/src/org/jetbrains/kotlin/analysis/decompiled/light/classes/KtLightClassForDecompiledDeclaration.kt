@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,10 +19,8 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
-import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
-import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -31,7 +29,14 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
     crossinline computer: () -> T,
 ): T = CachedValuesManager.getCachedValue(this) {
-    CachedValueProvider.Result.createSingleDependency(computer(), project.createAllLibrariesModificationTracker())
+    CachedValueProvider.Result.createSingleDependency(
+        computer(),
+        KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this),
+    )
+}
+
+private inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
+    return if (isNotEmpty()) toTypedArray() else default
 }
 
 open class KtLightClassForDecompiledDeclaration(
@@ -40,31 +45,42 @@ open class KtLightClassForDecompiledDeclaration(
     protected val file: KtClsFile,
     kotlinOrigin: KtClassOrObject?
 ) : KtLightClassForDecompiledDeclarationBase(clsDelegate, clsParent, kotlinOrigin) {
-    private val myInnersCache by lazyPub {
-        ClassInnerStuffCache(
-            /* aClass = */ this,
-            /* generateEnumMethods = */ true,
-            /* modificationTrackers = */ listOf(project.createAllLibrariesModificationTracker()),
+    private val contentFinderCache by lazyPub {
+        ClassContentFinderCache(
+            extensibleClass = this,
+            modificationTrackers = listOf(KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this)),
         )
     }
 
-    override fun getFields(): Array<PsiField> = myInnersCache.fields
-    override fun getMethods(): Array<PsiMethod> = myInnersCache.methods
-    override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
-    override fun getInnerClasses(): Array<PsiClass> = myInnersCache.innerClasses
-    override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
-    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
-    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
+    override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
+    override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
+    override fun getConstructors(): Array<PsiMethod> = ownConstructors.let { if (it.isEmpty()) it else it.clone() }
+    override fun getInnerClasses(): Array<PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
+
+    override fun findFieldByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiField? = contentFinderCache.findFieldByName(name, checkBases)
+
+    override fun findMethodsByName(
+        name: String,
+        checkBases: Boolean,
+    ): Array<PsiMethod> = contentFinderCache.findMethodsByName(name, checkBases)
+
+    override fun findInnerClassByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiClass? = contentFinderCache.findInnerClassByName(name, checkBases)
+
     override fun hasModifierProperty(name: String): Boolean = clsDelegate.hasModifierProperty(name)
 
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
-        patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? =
+        PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = patternMethod?.let {
-        PsiClassImplUtil.findMethodsBySignature(this, it, checkBases)
-    } ?: PsiMethod.EMPTY_ARRAY
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> =
+        PsiClassImplUtil.findMethodsBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
+    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
         PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 
     override fun getImplementsList(): PsiReferenceList? = clsDelegate.implementsList
@@ -77,7 +93,7 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getContainingClass(): PsiClass? = parent as? PsiClass
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean =
         clsDelegate.isInheritorDeep(baseClass, classToByPass)
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod?, PsiSubstitutor?>?> =
@@ -104,6 +120,7 @@ open class KtLightClassForDecompiledDeclaration(
     )
 
     override fun isEnum(): Boolean = clsDelegate.isEnum
+    override fun isRecord(): Boolean = clsDelegate.isRecord
     override fun getExtendsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getExtendsListTypes(this)
     override fun getTypeParameterList(): PsiTypeParameterList? = clsDelegate.typeParameterList
     override fun isAnnotationType(): Boolean = clsDelegate.isAnnotationType
@@ -126,12 +143,26 @@ open class KtLightClassForDecompiledDeclaration(
     override fun getAllMethods(): Array<PsiMethod> = PsiClassImplUtil.getAllMethods(this)
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
 
+    private val ownConstructors: Array<PsiMethod>
+        get() = cachedValueWithLibraryTracker {
+            PsiImplUtil.getConstructors(this)
+        }
+
     override fun getOwnMethods(): List<PsiMethod> = cachedValueWithLibraryTracker {
         val isEnum = isEnum
         this.clsDelegate.methods.mapNotNull { psiMethod ->
-            if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNull null
-            if (isEnum && isGetEntriesMethod(psiMethod)) {
-                return@mapNotNull getEnumEntriesPsiMethod(this)
+            // We replace cls method with generated ones to provide nullability annotations
+            when {
+                !isEnum -> {}
+                isSyntheticValuesOrValueOfMethod(psiMethod) -> {
+                    return@mapNotNull if (psiMethod.name == "valueOf") {
+                        getEnumValueOfPsiMethod(this)
+                    } else {
+                        getEnumValuesPsiMethod(this)
+                    }
+                }
+
+                isGetEntriesMethod(psiMethod) -> return@mapNotNull getEnumEntriesPsiMethod(this)
             }
 
             KtLightMethodForDecompiledDeclaration(
@@ -163,10 +194,12 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getOwnInnerClasses(): List<PsiClass> = cachedValueWithLibraryTracker {
         this.clsDelegate.innerClasses.map { psiClass ->
+            val innerClassName = psiClass.name
             val innerDeclaration = this.kotlinOrigin
                 ?.declarations
-                ?.filterIsInstance<KtClassOrObject>()
-                ?.firstOrNull { cls -> cls.name == this.clsDelegate.name }
+                ?.firstNotNullOfOrNull { clsDeclaration ->
+                    (clsDeclaration as? KtClassOrObject)?.takeIf { it.name == innerClassName }
+                }
 
             KtLightClassForDecompiledDeclaration(
                 clsDelegate = psiClass,
@@ -189,7 +222,6 @@ open class KtLightClassForDecompiledDeclaration(
     override fun hashCode(): Int = qualifiedName?.hashCode() ?: kotlinOrigin?.fqName?.hashCode() ?: 0
     override fun copy(): PsiElement = this
     override fun clone(): Any = this
-    override fun toString(): String = "${this.javaClass.simpleName} of $parent"
     override fun getName(): String? = clsDelegate.name
     override fun isValid(): Boolean = file.isValid && clsDelegate.isValid && (kotlinOrigin?.isValid != false)
 }

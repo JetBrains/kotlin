@@ -1,3 +1,4 @@
+// LIBRARY_PLATFORMS: JVM
 
 class MyException : Exception()
 class C @Throws(Exception::class) constructor(a: Int = 1) {

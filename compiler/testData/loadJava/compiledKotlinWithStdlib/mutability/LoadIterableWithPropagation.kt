@@ -1,4 +1,5 @@
-// JVM_ANNOTATIONS
+// WITH_KOTLIN_JVM_ANNOTATIONS
+// TARGET_BACKEND: JVM
 package test
 
 import java.util.ArrayList

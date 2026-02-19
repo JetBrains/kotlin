@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 // LANGUAGE: +CustomEqualsInValueClasses
 // SKIP_TXT
 
@@ -21,3 +22,6 @@ value class IC2(val x: Int) {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(other: IC2) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, override,
+primaryConstructor, propertyDeclaration, value */

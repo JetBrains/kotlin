@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: byteArray.kt
 
 package Test
@@ -16,3 +17,5 @@ interface My {
     // Should be kotlin.ByteArray
     val array: ByteArray
 }
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, propertyDeclaration */

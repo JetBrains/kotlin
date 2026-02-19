@@ -1,0 +1,66 @@
+PairList.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PairList, superNames=[]]
+      MODIFIER_LIST[public final]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, name=T]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PairList]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=items]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=List]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+      CLASS_BODY
+        PROPERTY[fqName=PairList.items, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=items]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=collections]
+              REFERENCE_EXPRESSION[referencedName=List]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=T]
+
+
+WithDestructuringDeclarationKt.class:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithDestructuringDeclarationKt]]
+    facadeFqName: WithDestructuringDeclarationKt
+    partSimpleName: "WithDestructuringDeclarationKt"
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    FUN[fqName=component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=component1]
+      contract: [ effect:param(-1) != null -> Returns(NOT_NULL) ]
+      origin: Facade(className=WithDestructuringDeclarationKt, jvmClassName=null)
+      MODIFIER_LIST[public operator]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, name=T]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=PairList]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]

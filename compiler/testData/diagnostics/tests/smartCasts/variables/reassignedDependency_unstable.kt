@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 class C {
@@ -78,3 +79,6 @@ fun test5() {
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
     <!SMARTCAST_IMPOSSIBLE!>d.x<!>.length // no smartcast
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, getter, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, whileLoop */

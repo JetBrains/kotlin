@@ -1,6 +1,8 @@
+
 // WITH_STDLIB
 // FILE: b.kt
 import a.A
+
 
 class B {
     fun getValue() = sequenceOf(A()).map(A::value).first()

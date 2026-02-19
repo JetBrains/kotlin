@@ -29,20 +29,15 @@ public class Derived extends Base { }
 
 // FILE: main.kt
 fun main(a: IgnoreAnnotations, x: Derived): Unit {
-    // jspecify_nullness_mismatch
-    a.foo(x, null).foo()
-    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
-    a.foo(null, x).foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(x, null)<!>.foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, x)<!>.foo()
 
-    // jspecify_nullness_mismatch
-    a.field.foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.foo()
 
-    // jspecify_nullness_mismatch
-    a.everythingNotNullable(null).foo()
+    a.everythingNotNullable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).foo()
     a.everythingNotNullable(x).foo()
 
-    // jspecify_nullness_mismatch
-    a.everythingNullable(null).foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.everythingNullable(null)<!>.foo()
 
     a.everythingUnknown(null).foo()
 }

@@ -1,9 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode", "unused")
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
@@ -11,19 +14,10 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.asResolveState
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -31,17 +25,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
-
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
@@ -51,50 +40,54 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
-    override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
-    override var contractDescription: FirContractDescription,
+    override var contractDescription: FirContractDescription?,
     override val symbol: FirPropertyAccessorSymbol,
     override val propertySymbol: FirPropertySymbol,
     override val isGetter: Boolean,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirPropertyAccessor() {
-    override val receiverParameter: FirReceiverParameter? get() = null
+    override val isLocal: Boolean
+        get() = propertySymbol.fir.isLocal
+    override val receiverParameter: FirReceiverParameter?
+        get() = null
+    override val containerSource: DeserializedContainerSource?
+        get() = null
+    override val contextParameters: List<FirValueParameter>
+        get() = emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val isSetter: Boolean get() = !isGetter
+    override val isSetter: Boolean
+        get() = !isGetter
+    override val typeParameters: List<FirTypeParameter>
+        get() = emptyList()
 
     init {
         symbol.bind(this)
-        @OptIn(ResolveStateAccess::class)
         resolveState = resolvePhase.asResolveState()
+        @Suppress("SENSELESS_COMPARISON")
+        require(source != null || origin != FirDeclarationOrigin.Source) { "${this::class.simpleName} with Source origin was instantiated without a source element." }
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
-        contractDescription.accept(visitor, data)
+        contractDescription?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        contextReceivers.transformInplace(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
         transformContractDescription(transformer, data)
         transformAnnotations(transformer, data)
-        transformTypeParameters(transformer, data)
         return this
     }
 
@@ -112,6 +105,10 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        return this
+    }
+
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         valueParameters.transformInplace(transformer, data)
         return this
@@ -123,7 +120,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        contractDescription = contractDescription.transform(transformer, data)
+        contractDescription = contractDescription?.transform(transformer, data)
         return this
     }
 
@@ -133,7 +130,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -151,15 +147,14 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers = newContextReceivers.toMutableOrEmpty()
-    }
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {}
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
 
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
+        if (valueParameters === newValueParameters) return
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
     }
@@ -168,7 +163,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         body = newBody
     }
 
-    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+    override fun replaceContractDescription(newContractDescription: FirContractDescription?) {
         contractDescription = newContractDescription
     }
 

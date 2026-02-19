@@ -5,13 +5,15 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.junit.Assert
-import org.junit.Ignore
-import org.junit.Test
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import java.io.*
 import java.net.URLClassLoader
 import java.security.MessageDigest
@@ -26,8 +28,10 @@ import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.loadScriptFromJar
+import kotlin.test.*
 
-class CachingTest : TestCase() {
+@ResourceLock(Resources.SYSTEM_OUT)
+class CachingTest {
 
     val simpleScript = "val x = 1\nprintln(\"x = \$x\")".toScriptSource()
     val simpleScriptExpectedOutput = listOf("x = 1")
@@ -55,7 +59,7 @@ class CachingTest : TestCase() {
     fun testFileCache() {
         withTempDir("scriptingTestCache") { cacheDir ->
             val cache = FileBasedScriptCache(cacheDir)
-            Assert.assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
+            assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
 
             checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
         }
@@ -65,7 +69,7 @@ class CachingTest : TestCase() {
     fun testSimpleImportWithFileCache() {
         withTempDir("scriptingTestCache") { cacheDir ->
             val cache = FileBasedScriptCache(cacheDir)
-            Assert.assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
+            assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
 
             checkWithCache(
                 cache, scriptWithImport, scriptWithImportExpectedOutput,
@@ -78,13 +82,13 @@ class CachingTest : TestCase() {
     fun testJarCache() {
         withTempDir("scriptingTestJarCache") { cacheDir ->
             val cache = TestCompiledScriptJarsCache(cacheDir)
-            Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+            assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
             checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
 
             val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
 
-            Assert.assertEquals(simpleScriptExpectedOutput, scriptOut)
+            assertEquals(simpleScriptExpectedOutput, scriptOut)
         }
     }
 
@@ -92,7 +96,7 @@ class CachingTest : TestCase() {
     fun testSimpleImportWithJarCache() {
         withTempDir("scriptingTestJarCache") { cacheDir ->
             val cache = TestCompiledScriptJarsCache(cacheDir)
-            Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+            assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
             checkWithCache(
                 cache, scriptWithImport, scriptWithImportExpectedOutput,
@@ -102,9 +106,9 @@ class CachingTest : TestCase() {
             // cannot make it work in this form - it requires a dependency on the current test classes, but classes directory seems
             // not work when specified in the manifest
             // TODO: find a way to make it work
-//            val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
+//        val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
 //
-//            Assert.assertEquals(scriptWithImportExpectedOutput, scriptOut)
+//        assertEquals(scriptWithImportExpectedOutput, scriptOut)
         }
     }
 
@@ -112,7 +116,7 @@ class CachingTest : TestCase() {
     fun testImplicitReceiversWithJarCache() {
         withTempDir("scriptingTestJarCache") { cacheDir ->
             val cache = TestCompiledScriptJarsCache(cacheDir)
-            Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+            assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
             checkWithCache(
                 cache, simpleScript, simpleScriptExpectedOutput, checkDirectEval = false,
@@ -135,7 +139,7 @@ class CachingTest : TestCase() {
 
             withTempDir("scriptingTestJarChacheWithDep") { cacheDir ->
                 val cache = TestCompiledScriptJarsCache(cacheDir)
-                Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+                assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
                 val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
                     jvm {
@@ -143,7 +147,9 @@ class CachingTest : TestCase() {
                         compilationCache(cache)
                     }
                 }
-                val host = BasicJvmScriptingHost(compiler = JvmScriptCompiler(hostConfiguration), evaluator = BasicJvmScriptEvaluator())
+                val host =
+                    if (isRunningTestOnK2) BasicJvmScriptingHost(hostConfiguration)
+                    else BasicJvmScriptingHost.createLegacy(hostConfiguration)
 
                 val scriptCompilationConfiguration = ScriptCompilationConfiguration {
                     updateClasspath(standardJars +outJar)
@@ -154,13 +160,13 @@ class CachingTest : TestCase() {
 
                 val res0 = host.eval(script, scriptCompilationConfiguration, null).valueOrThrow().returnValue
                 assertEquals(42, (res0 as? ResultValue.Value)?.value)
-                Assert.assertEquals(1, cache.storedScripts)
-                Assert.assertEquals(0, cache.retrievedScripts)
+                assertEquals(1, cache.storedScripts)
+                assertEquals(0, cache.retrievedScripts)
 
                 val res1 = host.eval(script, scriptCompilationConfiguration, null).valueOrThrow().returnValue
                 assertEquals(42, (res1 as? ResultValue.Value)?.value)
-                Assert.assertEquals(1, cache.storedScripts)
-                Assert.assertEquals(1, cache.retrievedScripts)
+                assertEquals(1, cache.storedScripts)
+                assertEquals(1, cache.retrievedScripts)
 
                 val outJar2 = File(depDir, "dependency2.jar")
                 outJar.renameTo(outJar2)
@@ -187,7 +193,7 @@ class CachingTest : TestCase() {
 
             withTempDir("scriptingTestJarChacheWithExtLoadedDep") { cacheDir ->
                 val cache = TestCompiledScriptJarsCache(cacheDir)
-                Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+                assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
                 val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
                     jvm {
@@ -195,7 +201,9 @@ class CachingTest : TestCase() {
                         compilationCache(cache)
                     }
                 }
-                val host = BasicJvmScriptingHost(compiler = JvmScriptCompiler(hostConfiguration), evaluator = BasicJvmScriptEvaluator())
+                val host =
+                    if (isRunningTestOnK2) BasicJvmScriptingHost(hostConfiguration)
+                    else BasicJvmScriptingHost.createLegacy(hostConfiguration)
 
                 val scriptCompilationConfiguration = ScriptCompilationConfiguration {
                     updateClasspath(standardJars + outJar)
@@ -224,16 +232,25 @@ class CachingTest : TestCase() {
     }
 
     private fun makeDependenciesJar(depDir: File, standardJars: List<File>): File {
+        val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
         val outJar = File(depDir, "dependency.jar")
         val inKt = File(depDir, "Dependency.kt").apply { writeText("class Dependency(val v: Int)") }
         val outStream = ByteArrayOutputStream()
         val compileExitCode = K2JVMCompiler().exec(
             PrintStream(outStream),
-            "-d", outJar.path, "-no-stdlib", "-cp", standardJars.joinToString(File.pathSeparator), inKt.path
+            K2JVMCompilerArguments::destination.cliArgument,
+            outJar.path,
+            K2JVMCompilerArguments::noStdlib.cliArgument,
+            K2JVMCompilerArguments::classpath.cliArgument,
+            standardJars.joinToString(File.pathSeparator),
+            CommonCompilerArguments::languageVersion.cliArgument,
+            if (isK2) "2.0" else "1.9",
+            CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+            inKt.path
         )
         assertTrue(
-            "Compilation Failed:\n$outStream",
-            outStream.size() == 0 && compileExitCode == ExitCode.OK && outJar.exists()
+            outStream.size() == 0 && compileExitCode == ExitCode.OK && outJar.exists(),
+            "Compilation Failed:\n$outStream"
         )
         return outJar
     }
@@ -249,7 +266,9 @@ class CachingTest : TestCase() {
                 compilationCache(cache)
             }
         }
-        val compiler = JvmScriptCompiler(myHostConfiguration)
+        val compiler =
+            if (isRunningTestOnK2) JvmScriptCompiler(myHostConfiguration)
+            else JvmScriptCompiler.createLegacy(myHostConfiguration)
         val evaluator = BasicJvmScriptEvaluator()
         val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
 
@@ -260,7 +279,7 @@ class CachingTest : TestCase() {
 
         val scriptEvaluationConfiguration = ScriptEvaluationConfiguration(body = evaluationConfiguration)
 
-        Assert.assertEquals(0, cache.storedScripts)
+        assertEquals(0, cache.storedScripts)
         var compiledScript: CompiledScript? = null
         val output = captureOut {
             runBlocking {
@@ -270,37 +289,37 @@ class CachingTest : TestCase() {
                 }.throwOnFailure()
             }
         }.lines()
-        Assert.assertEquals(expectedOutput, output)
-        Assert.assertEquals(1, cache.storedScripts)
-        Assert.assertEquals(0, cache.retrievedScripts)
+        assertEquals(expectedOutput, output)
+        assertEquals(1, cache.storedScripts)
+        assertEquals(0, cache.retrievedScripts)
 
         if (checkDirectEval) {
             val cachedScript = cache.get(script, scriptCompilationConfiguration)
-            Assert.assertNotNull(cachedScript)
-            Assert.assertEquals(1, cache.retrievedScripts)
+            assertNotNull(cachedScript)
+            assertEquals(1, cache.retrievedScripts)
 
             val compiledScriptClassRes = runBlocking { compiledScript!!.getClass(null) }
-            val cachedScriptClassRes = runBlocking { cachedScript!!.getClass(null) }
+            val cachedScriptClassRes = runBlocking { cachedScript.getClass(null) }
 
             val compiledScriptClass = compiledScriptClassRes.valueOrThrow()
             val cachedScriptClass = cachedScriptClassRes.valueOrThrow()
 
-            Assert.assertEquals(compiledScriptClass.qualifiedName, cachedScriptClass.qualifiedName)
-            Assert.assertEquals(compiledScriptClass.java.supertypes(), cachedScriptClass.java.supertypes())
+            assertEquals(compiledScriptClass.qualifiedName, cachedScriptClass.qualifiedName)
+            assertEquals(compiledScriptClass.java.supertypes(), cachedScriptClass.java.supertypes())
 
             val output2 = captureOut {
                 runBlocking {
-                    evaluator(cachedScript!!, scriptEvaluationConfiguration).throwOnFailure()
+                    evaluator(cachedScript, scriptEvaluationConfiguration).throwOnFailure()
                 }
             }.lines()
-            Assert.assertEquals(output, output2)
+            assertEquals(output, output2)
         }
 
         val output3 = captureOut {
             host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).throwOnFailure()
         }.lines()
-        Assert.assertEquals(if (checkDirectEval) 2 else 1, cache.retrievedScripts)
-        Assert.assertEquals(output, output3)
+        assertEquals(if (checkDirectEval) 2 else 1, cache.retrievedScripts)
+        assertEquals(output, output3)
     }
 }
 

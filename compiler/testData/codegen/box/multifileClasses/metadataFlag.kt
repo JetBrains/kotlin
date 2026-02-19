@@ -2,7 +2,7 @@
 // WITH_STDLIB
 
 // MODULE: optimized
-// !INHERIT_MULTIFILE_PARTS
+// INHERIT_MULTIFILE_PARTS
 // FILE: optimized.kt
 
 @file:JvmMultifileClass

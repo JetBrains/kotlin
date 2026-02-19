@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @file:OptIn(ExperimentalTypeInference::class)
 
@@ -28,3 +29,6 @@ private fun <T> MyFlow<T>.idScoped(): MyFlow<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, in, interfaceDeclaration, lambdaLiteral, nullableType, out, typeParameter, typeWithExtension */

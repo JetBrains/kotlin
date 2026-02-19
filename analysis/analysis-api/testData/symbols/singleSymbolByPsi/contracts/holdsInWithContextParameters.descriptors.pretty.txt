@@ -1,0 +1,1 @@
+inline fun conditionInContext(block: () -> kotlin.Int)

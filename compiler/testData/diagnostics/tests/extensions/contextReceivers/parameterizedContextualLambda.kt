@@ -1,6 +1,7 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // SKIP_TXT
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 fun <T> test(action: context(T) () -> Unit) {}
 
@@ -18,3 +19,5 @@ fun main() {
         a.length
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter, typeWithContext */

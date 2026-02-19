@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 public @interface A {
@@ -14,3 +15,5 @@ public @interface A {
 @A() fun test4() {}
 
 @A fun test5() {}
+
+/* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, javaType, stringLiteral */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object Legal {
     operator fun get(i: Int) = 0
@@ -43,3 +44,5 @@ fun testMismatchingArities() {
     <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!> += 1
 }
 
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, objectDeclaration, operator, propertyDeclaration */

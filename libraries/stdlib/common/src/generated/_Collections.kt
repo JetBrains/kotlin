@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
+@file:Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 
 package kotlin.collections
 
@@ -13,6 +14,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -103,6 +105,9 @@ public inline fun <T> List<T>.elementAt(index: Int): T {
  * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     if (this is List)
         return this.getOrElse(index, defaultValue)
     if (index < 0)
@@ -124,7 +129,10 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in 0..<size) get(index) else defaultValue(index)
 }
 
 /**
@@ -291,10 +299,15 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in 0..<size) get(index) else defaultValue(index)
 }
 
 /**
@@ -303,7 +316,7 @@ public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun <T> List<T>.getOrNull(index: Int): T? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in 0..<size) get(index) else null
 }
 
 /**
@@ -565,7 +578,6 @@ public fun <T> Collection<T>.random(random: Random): T {
  * Returns a random element from this collection, or `null` if this collection is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Collection<T>.randomOrNull(): T? {
     return randomOrNull(Random)
@@ -575,7 +587,6 @@ public inline fun <T> Collection<T>.randomOrNull(): T? {
  * Returns a random element from this collection using the specified source of randomness, or `null` if this collection is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> Collection<T>.randomOrNull(random: Random): T? {
     if (isEmpty())
         return null
@@ -784,6 +795,7 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Bo
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -805,6 +817,7 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.inter
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
+@IgnorableReturnValue
 public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
     return destination
@@ -833,6 +846,7 @@ public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
  * 
  * @sample samples.collections.Collections.Filtering.filterNotNullTo
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
     return destination
@@ -843,6 +857,7 @@ public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -853,6 +868,7 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -938,7 +954,7 @@ public inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T> 
     val iterator = listIterator(size)
     while (iterator.hasPrevious()) {
         if (!predicate(iterator.previous())) {
-            iterator.next()
+            val _ = iterator.next()
             val expectedSize = size - iterator.nextIndex()
             if (expectedSize == 0) return emptyList()
             return ArrayList<T>(expectedSize).apply {
@@ -983,7 +999,7 @@ public fun <T> Iterable<T>.reversed(): List<T> {
 /**
  * Randomly shuffles elements in this list in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.3")
 public fun <T> MutableList<T>.shuffle(random: Random): Unit {
@@ -996,7 +1012,10 @@ public fun <T> MutableList<T>.shuffle(random: Random): Unit {
 /**
  * Sorts elements in the list in-place according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortBy
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -1005,7 +1024,10 @@ public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selec
 /**
  * Sorts elements in the list in-place descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortByDescending
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))
@@ -1037,7 +1059,8 @@ public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  * 
  * @sample samples.collections.Collections.Sorting.sortedBy
  */
@@ -1048,7 +1071,10 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(crossinline select
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedByDescending
  */
 public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareByDescending(selector))
@@ -1218,6 +1244,7 @@ public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, value
  * 
  * @sample samples.collections.Collections.Transformations.associateByTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -1234,6 +1261,7 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(d
  * 
  * @sample samples.collections.Collections.Transformations.associateByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -1249,6 +1277,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByT
  * 
  * @sample samples.collections.Collections.Transformations.associateTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -1281,6 +1310,7 @@ public inline fun <K, V> Iterable<K>.associateWith(valueSelector: (K) -> V): Map
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Iterable<K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
     for (element in this) {
         destination.put(element, valueSelector(element))
@@ -1291,6 +1321,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Iterable<K>.associateWithTo
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -1411,6 +1442,7 @@ public inline fun <T, R> Iterable<T>.flatMapIndexed(transform: (index: Int, T) -
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Iterable<R>): C {
     var index = 0
@@ -1429,6 +1461,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexed
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedSequenceTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Sequence<R>): C {
     var index = 0
@@ -1442,6 +1475,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexed
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -1457,6 +1491,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapSequenceTo")
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -1498,6 +1533,7 @@ public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTran
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -1516,6 +1552,7 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.group
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -1575,6 +1612,7 @@ public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
@@ -1586,6 +1624,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndex
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
     var index = 0
     for (item in this)
@@ -1607,6 +1646,7 @@ public inline fun <T, R : Any> Iterable<T>.mapNotNull(transform: (T) -> R?): Lis
  * Applies the given [transform] function to each element in the original collection
  * and appends only the non-null results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
     forEach { element -> transform(element)?.let { destination.add(it) } }
     return destination
@@ -1616,6 +1656,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapNotNu
  * Applies the given [transform] function to each element of the original collection
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -1663,15 +1704,23 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this collection and the specified collection.
+ * Returns a set containing elements of this collection that are also contained in the specified [other] collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<T>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -1679,11 +1728,19 @@ public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
  * Returns a set containing all elements that are contained by this collection and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.removeAll(other)
-    return set
+    val otherCollection = other.convertToListIfNotCollection()
+    val result = mutableSetOf<T>()
+    for (e in this) {
+        if (!otherCollection.contains(e)) {
+            result.add(e)
+        }
+    }
+    return result
 }
 
 /**
@@ -1704,6 +1761,9 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
  * The returned set preserves the element iteration order of the original collection.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -1868,9 +1928,11 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit
 /**
  * Returns the largest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -1889,9 +1951,11 @@ public fun Iterable<Double>.max(): Double {
 /**
  * Returns the largest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -1910,7 +1974,11 @@ public fun Iterable<Float>.max(): Float {
 /**
  * Returns the largest element.
  * 
+ * If there are multiple equal maximal elements, this function returns the first of those elements.
+ * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -1927,11 +1995,18 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the collection is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -1954,9 +2029,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.maxByOrNull(selector: (T) -> R): T? {
@@ -1983,6 +2065,8 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxByOrNull(selector: (T) -
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2006,6 +2090,8 @@ public inline fun <T> Iterable<T>.maxOf(selector: (T) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2026,7 +2112,11 @@ public inline fun <T> Iterable<T>.maxOf(selector: (T) -> Float): Float {
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the collection.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2047,9 +2137,11 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxOf(selector: (T) -> R): 
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the collection or `null` if there are no elements.
+ * applied to each element in the collection or `null` if the collection is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2068,9 +2160,11 @@ public inline fun <T> Iterable<T>.maxOfOrNull(selector: (T) -> Double): Double? 
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the collection or `null` if there are no elements.
+ * applied to each element in the collection or `null` if the collection is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2089,7 +2183,11 @@ public inline fun <T> Iterable<T>.maxOfOrNull(selector: (T) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the collection or `null` if there are no elements.
+ * applied to each element in the collection or `null` if the collection is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2112,7 +2210,11 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxOfOrNull(selector: (T) -
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the collection.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2133,7 +2235,11 @@ public inline fun <T, R> Iterable<T>.maxOfWith(comparator: Comparator<in R>, sel
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the collection or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the collection or `null` if the collection is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2153,9 +2259,11 @@ public inline fun <T, R> Iterable<T>.maxOfWithOrNull(comparator: Comparator<in R
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the collection is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Iterable<Double>.maxOrNull(): Double? {
@@ -2170,9 +2278,11 @@ public fun Iterable<Double>.maxOrNull(): Double? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the collection is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Iterable<Float>.maxOrNull(): Float? {
@@ -2187,7 +2297,11 @@ public fun Iterable<Float>.maxOrNull(): Float? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the collection is empty.
+ * 
+ * If there are multiple equal maximal elements, this function returns the first of those elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.4")
 public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
@@ -2238,9 +2352,11 @@ public fun <T> Iterable<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
 /**
  * Returns the smallest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -2259,9 +2375,11 @@ public fun Iterable<Double>.min(): Double {
 /**
  * Returns the smallest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -2280,7 +2398,11 @@ public fun Iterable<Float>.min(): Float {
 /**
  * Returns the smallest element.
  * 
+ * If there are multiple equal minimal elements, this function returns the first of those elements.
+ * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -2297,11 +2419,18 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the collection is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -2324,9 +2453,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.minByOrNull(selector: (T) -> R): T? {
@@ -2353,6 +2489,8 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.minByOrNull(selector: (T) -
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2376,6 +2514,8 @@ public inline fun <T> Iterable<T>.minOf(selector: (T) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2396,7 +2536,11 @@ public inline fun <T> Iterable<T>.minOf(selector: (T) -> Float): Float {
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the collection.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2417,9 +2561,11 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.minOf(selector: (T) -> R): 
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the collection or `null` if there are no elements.
+ * applied to each element in the collection or `null` if the collection is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2438,9 +2584,11 @@ public inline fun <T> Iterable<T>.minOfOrNull(selector: (T) -> Double): Double? 
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the collection or `null` if there are no elements.
+ * applied to each element in the collection or `null` if the collection is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2459,7 +2607,11 @@ public inline fun <T> Iterable<T>.minOfOrNull(selector: (T) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the collection or `null` if there are no elements.
+ * applied to each element in the collection or `null` if the collection is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2482,7 +2634,11 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.minOfOrNull(selector: (T) -
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the collection.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2503,7 +2659,11 @@ public inline fun <T, R> Iterable<T>.minOfWith(comparator: Comparator<in R>, sel
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the collection or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the collection or `null` if the collection is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2523,9 +2683,11 @@ public inline fun <T, R> Iterable<T>.minOfWithOrNull(comparator: Comparator<in R
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the collection is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Iterable<Double>.minOrNull(): Double? {
@@ -2540,9 +2702,11 @@ public fun Iterable<Double>.minOrNull(): Double? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the collection is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Iterable<Float>.minOrNull(): Float? {
@@ -2557,7 +2721,11 @@ public fun Iterable<Float>.minOrNull(): Float? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the collection is empty.
+ * 
+ * If there are multiple equal minimal elements, this function returns the first of those elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.4")
 public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
@@ -2725,7 +2893,6 @@ public inline fun <S, T : S> Iterable<T>.reduceIndexedOrNull(operation: (index: 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Iterable<T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
     val iterator = this.iterator()
     if (!iterator.hasNext()) return null
@@ -2819,7 +2986,6 @@ public inline fun <S, T : S> List<T>.reduceRightIndexedOrNull(operation: (index:
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> List<T>.reduceRightOrNull(operation: (T, acc: S) -> S): S? {
     val iterator = listIterator(size)
     if (!iterator.hasPrevious())
@@ -2893,7 +3059,6 @@ public inline fun <T, R> Iterable<T>.runningFoldIndexed(initial: R, operation: (
  * @sample samples.collections.Collections.Aggregates.runningReduce
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Iterable<T>.runningReduce(operation: (acc: S, T) -> S): List<S> {
     val iterator = this.iterator()
     if (!iterator.hasNext()) return emptyList()
@@ -2944,7 +3109,6 @@ public inline fun <S, T : S> Iterable<T>.runningReduceIndexed(operation: (index:
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <T, R> Iterable<T>.scan(initial: R, operation: (acc: R, T) -> R): List<R> {
     return runningFold(initial, operation)
 }
@@ -2962,7 +3126,6 @@ public inline fun <T, R> Iterable<T>.scan(initial: R, operation: (acc: R, T) -> 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <T, R> Iterable<T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
 }
@@ -3013,8 +3176,6 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Double): Double {
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Int): Int {
@@ -3045,10 +3206,7 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Long): Long {
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -3065,7 +3223,6 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.sumOf(selector: (T) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -3180,7 +3337,7 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
 }
 
 /**
- * Splits the original collection into pair of lists,
+ * Splits the original collection into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -3479,8 +3636,11 @@ public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0

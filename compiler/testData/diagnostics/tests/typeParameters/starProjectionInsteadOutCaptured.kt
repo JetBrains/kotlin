@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 interface A
@@ -9,3 +10,6 @@ fun foo1(c: C<out A, out B<*>>) {}
 fun foo2(c: C<*, B<*>>) {}
 fun <T : B<*>> foo3(c: C<*, T>) {}
 fun <T : B<*>> foo4(c: C<out A, T>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, outProjection, starProjection, typeConstraint,
+typeParameter */

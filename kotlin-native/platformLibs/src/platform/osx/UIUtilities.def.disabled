@@ -1,0 +1,11 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
+language = Objective-C
+package = platform.UIUtilities
+
+modules = UIUtilities
+compilerOpts = -framework UIUtilities
+#Disabled: We had to rename packages for this module to platform.UIKit,
+# in order to preserve binary compatibility on iOS. With this rename we had a choice:
+# either to keep the package platform.UIUtilities on macOS, or to rename it to platform.UIKit.
+# First one introduces an inconsistency between platforms. Second one introduces an iOS specific module name
+# to macOS. As no solution is perfect, we decided to disable this module on macOS, as there is no usage of it.

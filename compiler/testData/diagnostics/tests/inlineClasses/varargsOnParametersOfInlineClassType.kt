@@ -1,5 +1,7 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -UNUSED_ANONYMOUS_PARAMETER, -INLINE_CLASS_DEPRECATED
 
 inline class Foo(val x: Int)
 
@@ -19,3 +21,6 @@ class B(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val s: Foo) {
 }
 
 annotation class Ann(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val f: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Foo<!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, functionDeclaration, localFunction,
+localProperty, outProjection, primaryConstructor, propertyDeclaration, secondaryConstructor, vararg */

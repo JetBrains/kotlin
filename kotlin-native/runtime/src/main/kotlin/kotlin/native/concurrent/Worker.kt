@@ -5,14 +5,10 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.Frozen
-import kotlin.native.internal.VolatileLambda
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.ref.*
 import kotlinx.cinterop.*
-
 
 /**
  * Class representing a worker.
@@ -33,10 +29,9 @@ import kotlinx.cinterop.*
  *     - It includes such things as innocuous [Worker.current] from the **current** worker.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-@OptIn(FreezingIsDeprecated::class)
 @ObsoleteWorkersApi
-public value class Worker @PublishedApi internal constructor(val id: Int) {
-    companion object {
+public value class Worker @PublishedApi internal constructor(public val id: Int) {
+    public companion object {
         /**
          * Start new scheduling primitive, such as thread, to accept new tasks via `execute` interface.
          * Typically new worker may be needed for computations offload to another core, for IO it may be
@@ -47,7 +42,7 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
          * @return worker object, usable across multiple concurrent contexts.
          */
         public fun start(errorReporting: Boolean = true, name: String? = null): Worker
-                = Worker(startInternal(errorReporting, name))
+                = Worker(startInternal(errorReporting, createRetainedExternalRCRef(name)))
 
         /**
          * Return the current worker. Worker context is accessible to any valid Kotlin context,
@@ -117,7 +112,7 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
      */
     @Suppress("UNUSED_PARAMETER")
     @TypedIntrinsic(IntrinsicType.WORKER_EXECUTE)
-    public fun <T1, T2> execute(mode: TransferMode, producer: () -> T1, @VolatileLambda job: (T1) -> T2): Future<T2> =
+    public fun <T1, T2> execute(mode: TransferMode, producer: () -> T1, job: (T1) -> T2): Future<T2> =
             /*
              * This function is a magical operation, handled by lowering in the compiler, and replaced with call to
              *   executeImpl(worker, mode, producer, job)
@@ -128,22 +123,16 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
     /**
      * Plan job for further execution in the worker.
      *
-     * With -Xworker-exception-handling=use-hook, if the worker was created with `errorReporting` set to true, any exception escaping from [operation] will
+     * If the worker was created with `errorReporting` set to true, any exception escaping from [operation] will
      * be handled by [processUnhandledException].
-     *
-     * Legacy MM: [operation] parameter must be either frozen, or execution to be planned on the current worker.
-     * Otherwise [IllegalStateException] will be thrown.
      *
      * @param afterMicroseconds defines after how many microseconds delay execution shall happen, 0 means immediately,
      * @throws [IllegalArgumentException] on negative values of [afterMicroseconds].
      * @throws [IllegalStateException] if [operation] parameter is not frozen and worker is not current.
      */
-    @OptIn(ExperimentalNativeApi::class)
     public fun executeAfter(afterMicroseconds: Long = 0, operation: () -> Unit): Unit {
-        val current = currentInternal()
-        if (Platform.memoryModel != MemoryModel.EXPERIMENTAL && current != id && !operation.isFrozen) throw IllegalStateException("Job for another worker must be frozen")
         if (afterMicroseconds < 0) throw IllegalArgumentException("Timeout parameter must be non-negative")
-        executeAfterInternal(id, operation, afterMicroseconds)
+        executeAfterInternal(id, createRetainedExternalRCRef(operation), afterMicroseconds)
     }
 
     /**
@@ -155,6 +144,7 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
      * @throws [IllegalStateException] if this request is executed on non-current [Worker].
      * @return `true` if request(s) was processed and `false` otherwise.
      */
+    @IgnorableReturnValue
     public fun processQueue(): Boolean = processQueueInternal(id)
 
     /**
@@ -169,6 +159,7 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
      * @throws [IllegalStateException] if this request is executed on non-current [Worker].
      * @throws [IllegalArgumentException] if timeout value is incorrect.
      */
+    @IgnorableReturnValue
     public fun park(timeoutMicroseconds: Long, process: Boolean = false): Boolean {
         if (timeoutMicroseconds < -1) throw IllegalArgumentException()
         return parkInternal(id, timeoutMicroseconds, process)
@@ -181,7 +172,7 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
      */
     public val name: String
         get() {
-            val customName = getWorkerNameInternal(id)
+            val customName = dereferenceExternalRCRef(getWorkerNameInternal(id)) as String?
             return if (customName == null) "worker $id" else customName
         }
 

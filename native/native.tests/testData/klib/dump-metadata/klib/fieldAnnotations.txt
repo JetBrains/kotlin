@@ -1,7 +1,39 @@
-    class A constructor() {
-        @field:Ann var x: Int
-        @delegate:Ann var y: Int
+library {
+  // module name: <fieldAnnotations.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Ann
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+
+      public final var x: kotlin/Int
+        public final get
+        public final set
+
+      public final /* delegated */ var y: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
     }
-    annotation class Ann constructor() : Annotation
-    @field:Ann var x: Int
-    @delegate:Ann var y: Int
+
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      public final var x: kotlin/Int
+        public final get
+        public final set
+
+      public final /* delegated */ var y: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+    }
+  }
+}

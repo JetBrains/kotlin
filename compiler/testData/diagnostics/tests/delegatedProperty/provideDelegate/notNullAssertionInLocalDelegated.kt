@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-58013
 // WITH_REFLECT
 // FIR_DUMP
@@ -19,3 +20,7 @@ fun test(list: List<Ref<*>>) {
 
     val data2: String by list.getElement(0)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, data, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, starProjection, thisExpression, typeParameter */

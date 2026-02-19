@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
-import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
 object ModuleWrapperTranslation {
@@ -67,9 +67,7 @@ object ModuleWrapperTranslation {
 
         val adapterBody = JsBlock()
         val adapter = JsFunction(program.scope, adapterBody, "Adapter")
-        val rootName = adapter.scope.declareName("root")
         val factoryName = adapter.scope.declareName("factory")
-        adapter.parameters += JsParameter(rootName)
         adapter.parameters += JsParameter(factoryName)
 
         val amdTest = JsAstUtils.and(JsAstUtils.typeOfIs(defineName.makeRef(), JsStringLiteral("function")),
@@ -79,6 +77,8 @@ object ModuleWrapperTranslation {
         val amdBody = JsBlock(wrapAmd(factoryName.makeRef(), importedModules, program))
         val commonJsBody = JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program))
         val plainInvocation = makePlainInvocation(moduleId, factoryName.makeRef(), importedModules, program)
+
+        val rootName = JsName("globalThis", false)
 
         val lhs: JsExpression = if (Namer.requiresEscaping(moduleId)) {
             JsArrayAccess(rootName.makeRef(), JsStringLiteral(moduleId))
@@ -96,7 +96,7 @@ object ModuleWrapperTranslation {
         val selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainBlock))
         adapterBody.statements += selector
 
-        return listOf(JsInvocation(adapter, JsThisRef(), function).makeStmt())
+        return listOf(JsInvocation(adapter, function).makeStmt())
     }
 
     private fun wrapAmd(
@@ -201,7 +201,7 @@ object ModuleWrapperTranslation {
         // TODO: we could use `this.moduleName` syntax. However, this does not work for `kotlin` module in Rhino, since
         // we run kotlin.js in a parent scope. Consider better solution
         return if (Namer.requiresEscaping(moduleId)) {
-            JsArrayAccess(JsThisRef(), JsStringLiteral(moduleId))
+            JsArrayAccess(JsName("globalThis", false).makeRef(), JsStringLiteral(moduleId))
         }
         else {
             program.scope.declareName(moduleId).makeRef()

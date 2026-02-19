@@ -1,0 +1,32 @@
+// WITH_STDLIB
+// TARGET_BACKEND: WASM
+// USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+// WASM_FAILS_IN: Wasmtime, WasmEdge
+
+import kotlin.test.*
+
+val sb = StringBuilder()
+
+fun box(): String {
+
+    try {
+        sb.appendLine("Try")
+        throw Error("Error happens")
+        sb.appendLine("After throw")
+    } catch (e: Error) {
+        sb.appendLine("Caught Error")
+    } finally {
+        sb.appendLine("Finally")
+    }
+
+    sb.appendLine("Done")
+
+    assertEquals("""
+        Try
+        Caught Error
+        Finally
+        Done
+
+    """.trimIndent(), sb.toString())
+    return "OK"
+}

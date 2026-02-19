@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -7,6 +8,4 @@ expect class Foo
 // FILE: jvm.kt
 actual class Foo
 
-// MODULE: m3-js()()(m1-common)
-// FILE: js.kt
-actual class Foo
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

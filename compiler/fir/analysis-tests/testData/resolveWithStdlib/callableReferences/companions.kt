@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JavaClass.java
 public class JavaClass {
     public static int bar(String x) { return 0; }
@@ -34,13 +35,15 @@ fun main() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(KotlinClass::baz)
 
     // Type mismatch
-    foo1(KotlinClass::<!UNRESOLVED_REFERENCE!>bar<!>)
+    foo1(KotlinClass::<!INAPPLICABLE_CANDIDATE!>bar<!>)
     foo2(KotlinClass::bar)
     foo3(KotlinClass::bar)
 
     foo1(KotlinClass2::bar)
     // Type mismatch
-    foo2(KotlinClass2::<!UNRESOLVED_REFERENCE!>bar<!>)
+    foo2(KotlinClass2::<!NONE_APPLICABLE!>bar<!>)
     foo3(KotlinClass2::bar)
 }
 
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, flexibleType, functionDeclaration,
+functionalType, integerLiteral, javaCallableReference, javaType, objectDeclaration, override */

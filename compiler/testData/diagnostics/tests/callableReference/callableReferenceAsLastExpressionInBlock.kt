@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// CHECK_TYPE
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -22,3 +23,7 @@ fun test() {
 }
 
 fun foo(): Int = 0
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

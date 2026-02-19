@@ -1,6 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1462
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JS
 // KT-55315
 
 var stackTrace: String = ""

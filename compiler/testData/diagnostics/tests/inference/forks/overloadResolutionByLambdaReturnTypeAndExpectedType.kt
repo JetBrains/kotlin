@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // WITH_STDLIB
 import kotlin.experimental.ExperimentalTypeInference
@@ -37,3 +38,7 @@ fun <T> MyList<T>.limitedFlatMap(producer: (T) -> MyList<T>): MyList<T> = TODO()
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("limitedFlatMapSeq")
 fun <T> MyList<T>.limitedFlatMap(producer: (T) -> MySequence<T>): MyList<T> = TODO()
+
+/* GENERATED_FIR_TAGS: classReference, equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+smartcast, stringLiteral, typeParameter */

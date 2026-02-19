@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: A.java
@@ -25,16 +25,16 @@ class X<T>(t: T?) {
 
     init {
         val a = A<T>()
-        a.foo(t)
+        a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>t<!>)
 
-        val x: T = a.bam()
-        val y: T = a.baz<T>()
+        val x: T = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bam()<!>
+        val y: T = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz<T>()<!>
     }
 }
 
 fun test() {
     val a = A<String?>()
-    a.foo(null)
+    a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
-    val b: String = a.bar()
+    val b: String = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bar()<!>
 }

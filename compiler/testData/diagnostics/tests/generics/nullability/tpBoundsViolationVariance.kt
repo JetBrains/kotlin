@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 class A<F> {
     class Inv<Q>
@@ -64,3 +65,6 @@ class A<F> {
         fooOut2(Out<W>())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in, infix,
+nestedClass, nullableType, out, typeConstraint, typeParameter, typeWithExtension */

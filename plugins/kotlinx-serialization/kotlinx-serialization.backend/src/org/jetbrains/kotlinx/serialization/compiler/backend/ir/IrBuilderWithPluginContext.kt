@@ -8,23 +8,33 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addGetter
+import org.jetbrains.kotlin.ir.builders.declarations.addProperty
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_NAME_FQ
 
 
 interface IrBuilderWithPluginContext {
@@ -78,8 +88,7 @@ interface IrBuilderWithPluginContext {
         visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
         initializerBuilder: IrBlockBodyBuilder.() -> Unit
     ): IrProperty {
-        val lazyIrType =
-            compilerContext.lazyClass.defaultType.substitute(mapOf(compilerContext.lazyClass.typeParameters[0].symbol to targetIrType))
+        val lazyIrType = lazyType(targetIrType)
 
         val field = containingClass.factory.buildField {
             startOffset = containingClass.startOffset
@@ -92,15 +101,7 @@ interface IrBuilderWithPluginContext {
         }.also { it.parent = containingClass }
 
         containingClass.addAnonymousInit {
-            val enumElement = IrGetEnumValueImpl(
-                startOffset,
-                endOffset,
-                compilerContext.lazyModeClass.defaultType,
-                compilerContext.lazyModePublicationEnumEntry.symbol
-            )
-            val lambdaExpression = containingClass.createLambdaExpression(targetIrType, initializerBuilder)
-            val invokeLazyExpr =
-                irInvoke(null, compilerContext.lazyFunctionSymbol, listOf(targetIrType), listOf(enumElement, lambdaExpression), lazyIrType)
+            val invokeLazyExpr = createLazyDelegate(targetIrType, containingClass, initializerBuilder)
             +irSetField(irGet(containingClass.thisReceiver!!), field, invokeLazyExpr)
         }
 
@@ -127,18 +128,25 @@ interface IrBuilderWithPluginContext {
         }
 
         getter.apply {
-            dispatchReceiverParameter = containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType)
+            parameters = listOf(containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType))
             body = compilerContext.irBuiltIns.createIrBuilder(symbol, containingClass.startOffset, containingClass.endOffset).irBlockBody {
                 +irReturn(
                     irInvoke(
-                        irGetField(irGet(dispatchReceiverParameter!!), field),
                         compilerContext.lazyValueGetter,
-                        typeHint = targetIrType
+                        irGetField(irGet(dispatchReceiverParameter!!), field),
+                        returnTypeHint = targetIrType
                     )
                 )
             }
         }
         return prop
+    }
+
+    fun IrElement.createAnnotationCallWithoutArgs(annotationSymbol: IrClassSymbol): IrAnnotation {
+        val annotationCtor = annotationSymbol.constructors.single { it.owner.isPrimary }
+        val annotationType = annotationSymbol.defaultType
+
+        return IrAnnotationImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
     }
 
     fun IrClass.addValPropertyWithJvmField(
@@ -153,11 +161,7 @@ interface IrBuilderWithPluginContext {
                 val resultExpression = addAndGetLastExpression(initializerBuilder)
                 +irSetField(irGet(thisReceiver!!), field, resultExpression)
             }
-
-            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
-            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
-
-            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+            field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
     }
 
@@ -176,12 +180,8 @@ interface IrBuilderWithPluginContext {
                 field.startOffset,
                 field.endOffset
             )
-            field.initializer = IrExpressionBodyImpl(builder.initializer())
-
-            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
-            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
-
-            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+            field.initializer = factory.createExpressionBody(builder.initializer())
+            field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
     }
 
@@ -196,45 +196,39 @@ interface IrBuilderWithPluginContext {
             ?: error("Last statement in property initializer builder is not an a expression")
     }
 
-    fun IrBuilderWithScope.irInvoke(
-        dispatchReceiver: IrExpression? = null,
+    context(irBuilder: IrBuilderWithScope) fun irInvoke(
         callee: IrFunctionSymbol,
-        vararg args: IrExpression,
-        typeHint: IrType? = null
-    ): IrMemberAccessExpression<*> {
-        assert(callee.isBound) { "Symbol $callee expected to be bound" }
-        val returnType = typeHint ?: callee.owner.returnType
-        val call = irCall(callee, type = returnType)
-        call.dispatchReceiver = dispatchReceiver
-        args.forEachIndexed(call::putValueArgument)
+        vararg arguments: IrExpression,
+        returnTypeHint: IrType? = null,
+    ): IrFunctionAccessExpression {
+        val call = irBuilder.irCall(callee, type = returnTypeHint ?: callee.owner.returnType)
+        call.arguments.assignFrom(arguments.toList())
         return call
     }
 
-    fun IrBuilderWithScope.irInvoke(
-        dispatchReceiver: IrExpression? = null,
+    context(irBuilder: IrBuilderWithScope) fun irInvoke(
         callee: IrFunctionSymbol,
-        typeArguments: List<IrType?>,
-        valueArguments: List<IrExpression>,
-        returnTypeHint: IrType? = null
-    ): IrMemberAccessExpression<*> =
-        irInvoke(
-            dispatchReceiver,
-            callee,
-            *valueArguments.toTypedArray(),
-            typeHint = returnTypeHint
-        ).also { call -> typeArguments.forEachIndexed(call::putTypeArgument) }
+        arguments: List<IrExpression>,
+        typeArguments: List<IrType?> = emptyList(),
+        returnTypeHint: IrType? = null,
+    ): IrFunctionAccessExpression {
+        val call = irBuilder.irCall(callee, type = returnTypeHint ?: callee.owner.returnType)
+        call.arguments.assignFrom(arguments.toList())
+        call.typeArguments.assignFrom(typeArguments)
+        return call
+    }
 
-    fun IrBuilderWithScope.createArrayOfExpression(
+    context(irBuilder: IrBuilderWithScope) fun createArrayOfExpression(
         arrayElementType: IrType,
-        arrayElements: List<IrExpression>
+        arrayElements: List<IrExpression>,
     ): IrExpression {
 
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(arrayElementType)
-        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
+        val arg0 = IrVarargImpl(irBuilder.startOffset, irBuilder.endOffset, arrayType, arrayElementType, arrayElements)
         val typeArguments = listOf(arrayElementType)
 
-        return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
-            putValueArgument(0, arg0)
+        return irBuilder.irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
+            arguments[0] = arg0
         }
     }
 
@@ -243,7 +237,7 @@ interface IrBuilderWithPluginContext {
         val arrayType = compilerContext.intArrayOfFunctionSymbol.owner.returnType
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementType, arrayElements)
         return irCall(compilerContext.intArrayOfFunctionSymbol, arrayType).apply {
-            putValueArgument(0, arg0)
+            arguments[0] = arg0
         }
     }
 
@@ -269,8 +263,11 @@ interface IrBuilderWithPluginContext {
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
         val classFqName = (lhs.type as IrSimpleType).classOrNull!!.owner.fqNameWhenAvailable!!
-        val symbol = compilerContext.referenceFunctions(CallableId(ClassId.topLevel(classFqName), name)).single()
-        return irInvoke(lhs, symbol, rhs)
+        val symbol = compilerContext
+            .finderForSource((scope.scopeOwnerSymbol.owner as IrDeclaration).file)
+            .findFunctions(CallableId(ClassId.topLevel(classFqName), name))
+            .single()
+        return irInvoke(symbol, lhs, rhs)
     }
 
     fun IrBuilderWithScope.irGetObject(irObject: IrClass) =
@@ -283,6 +280,7 @@ interface IrBuilderWithPluginContext {
 
     fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
+            @OptIn(ObsoleteDescriptorBasedAPI::class)
             compilerContext.symbolTable.withReferenceScope(irDeclaration) {
                 builder(irDeclaration)
             }
@@ -378,8 +376,8 @@ interface IrBuilderWithPluginContext {
         }
 
         getter.apply {
-            if (dispatchReceiverParameter == null)
-                dispatchReceiverParameter = propertyParent.thisReceiver!!.copyTo(this, type = propertyParent.defaultType)
+            if (parameters.isEmpty())
+                parameters = listOf(propertyParent.thisReceiver!!.copyTo(this, type = propertyParent.defaultType))
             if (body == null)
                 body = compilerContext.irBuiltIns.createIrBuilder(symbol, propertyParent.startOffset, propertyParent.endOffset).irBlockBody {
                         +irReturn(irGetField(irGet(dispatchReceiverParameter!!), field))
@@ -398,8 +396,8 @@ interface IrBuilderWithPluginContext {
         )
     }
 
-    fun IrBuilderWithScope.classReference(classSymbol: IrClassSymbol): IrClassReference =
-        createClassReference(classSymbol.starProjectedType, startOffset, endOffset)
+    context(irBuilder: IrBuilderWithScope) fun classReference(classSymbol: IrClassSymbol): IrClassReference =
+        createClassReference(classSymbol.starProjectedType, irBuilder.startOffset, irBuilder.endOffset)
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
         if (!(irClass.isInterface || irClass.hasSerializableOrMetaAnnotation())) return emptyList()
@@ -423,27 +421,50 @@ interface IrBuilderWithPluginContext {
         return annotationByFq.values.toList().flatten()
     }
 
-    fun IrBuilderWithScope.copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
-        annotations.mapNotNull { annotationCall ->
-            val annotationClass = annotationCall.symbol.owner.parentAsClass
-            if (!annotationClass.isSerialInfoAnnotation) return@mapNotNull null
-            annotationCall.deepCopyWithVariables()
-        }
+    fun copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
+        annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun IrBuilderWithScope.wrapperClassReference(classType: IrType): IrClassReference {
+    fun kSerializerType(serializableType: IrType): IrSimpleType {
+        val kSerializerClass = compilerContext.kSerializerClass
+            ?: error("Serializer class '$KSERIALIZER_NAME_FQ' not found. Check that the kotlinx.serialization runtime is connected correctly")
+        return kSerializerClass.typeWith(serializableType)
+    }
+
+    fun lazyType(returnType: IrType): IrType {
+        return compilerContext.lazyClass.defaultType.substitute(mapOf(compilerContext.lazyClass.typeParameters[0].symbol to returnType))
+    }
+
+    fun IrBuilderWithScope.createLazyDelegate(
+        returnType: IrType,
+        containingClass: IrClass,
+        initializerBuilder: IrBlockBodyBuilder.() -> Unit,
+    ): IrExpression {
+        val lazyIrType = lazyType(returnType)
+
+        val enumElement = IrGetEnumValueImpl(
+            startOffset,
+            endOffset,
+            compilerContext.lazyModeClass.defaultType,
+            compilerContext.lazyModePublicationEnumEntry.symbol
+        )
+        val lambdaExpression = containingClass.createLambdaExpression(returnType, initializerBuilder)
+        return irInvoke(compilerContext.lazyFunctionSymbol, listOf(enumElement, lambdaExpression), listOf(returnType), lazyIrType)
+    }
+
+    context(irBuilder: IrBuilderWithScope) @OptIn(ObsoleteDescriptorBasedAPI::class)
+    fun wrapperClassReference(classType: IrType): IrClassReference {
         if (compilerContext.platform.isJvm()) {
             // "Byte::class" -> "java.lang.Byte::class"
 //          TODO: get rid of descriptor
             val wrapperFqName =
                 KotlinBuiltIns.getPrimitiveType(classType.classOrNull!!.descriptor)?.let(JvmPrimitiveType::get)?.wrapperFqName
             if (wrapperFqName != null) {
-                val wrapperClass = compilerContext.referenceClass(ClassId.topLevel(wrapperFqName))
+                val wrapperClass = compilerContext.finderForBuiltins().findClass(ClassId.topLevel(wrapperFqName))
                     ?: error("Primitive wrapper class for $classType not found: $wrapperFqName")
-                return createClassReference(wrapperClass.defaultType, startOffset, endOffset)
+                return createClassReference(wrapperClass.defaultType, irBuilder.startOffset, irBuilder.endOffset)
             }
         }
-        return createClassReference(classType, startOffset, endOffset)
+        return createClassReference(classType, irBuilder.startOffset, irBuilder.endOffset)
     }
 
     fun IrClass.getSuperClassOrAny(): IrClass = getSuperClassNotAny() ?: compilerContext.irBuiltIns.anyClass.owner

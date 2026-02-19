@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -31,3 +32,6 @@ fun bar(s: Any): String {
     val y: String = x // no error
     return y
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, isExpression, localProperty, propertyDeclaration, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

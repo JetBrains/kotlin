@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Some
 
 fun foo(): () -> Boolean {
@@ -8,3 +9,6 @@ fun foo(): () -> Boolean {
         return { true }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, isExpression, lambdaLiteral,
+localProperty, propertyDeclaration */

@@ -1,11 +1,11 @@
-open var kotlin.Int.zoo: kotlin.Unit
+override var kotlin.Int.zoo: kotlin.Unit
 
-open fun foo()
+override fun foo()
 
-open val foo: kotlin.Int
+override val foo: kotlin.Int
 
-open fun kotlin.Int.smth(): kotlin.Short
+override fun kotlin.Int.smth(): kotlin.Short
 
-open var bar: kotlin.Long
+override var bar: kotlin.Long
 
-open val kotlin.Int.doo: kotlin.String
+override val kotlin.Int.doo: kotlin.String

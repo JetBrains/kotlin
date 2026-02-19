@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /Base { // /Base|null[0]
+    final val x // /Base.x|{}x[0]
+        final fun <get-x>(): kotlin/Any // /Base.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Any) // /Base.<init>|<init>(kotlin.Any){}[0]
+}
+final object /Host { // /Host|null[0]
+    final class Derived1 : /Base { // /Host.Derived1|null[0]
+        constructor <init>() // /Host.Derived1.<init>|<init>(){}[0]
+    }
+    final class Derived2 : /Base { // /Host.Derived2|null[0]
+        constructor <init>() // /Host.Derived2.<init>|<init>(){}[0]
+    }
+}

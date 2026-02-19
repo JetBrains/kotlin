@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!CONFLICTING_OVERLOADS!>fun bar(x: String): Int<!> = 1
 <!CONFLICTING_OVERLOADS!>fun bar(x: String): Double<!> = <!RETURN_TYPE_MISMATCH!>1<!>
 
@@ -12,3 +13,6 @@ fun foo() {
 
     ::baz
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nullableType, propertyDeclaration, typeParameter */

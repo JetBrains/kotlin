@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 
 fun testF(x: Any) =
     when (x) {

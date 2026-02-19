@@ -15,11 +15,12 @@ import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.build.*
+import org.jetbrains.kotlin.build.BuildMetaInfo
+import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
 import org.jetbrains.kotlin.incremental.components.*
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.jps.incremental.loadDiff
 import org.jetbrains.kotlin.jps.incremental.localCacheVersionManager
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
 import org.jetbrains.kotlin.jps.model.testOutputFilePath
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -66,7 +68,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     @Suppress("LeakingThis")
     val localCacheVersionManager = localCacheVersionManager(
-        kotlinContext.dataPaths.getTargetDataRoot(jpsModuleBuildTarget).toPath(),
+        kotlinContext.dataPaths.getTargetDataRootDir(jpsModuleBuildTarget),
         isIncrementalCompilationEnabled
     )
 
@@ -202,7 +204,8 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     abstract fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
     ): Boolean
 
     open fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
@@ -267,14 +270,14 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         builder: Services.Builder,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker,
+        expectActualTracker: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
         importTracker: ImportTracker
     ) {
         with(builder) {
             register(LookupTracker::class.java, lookupTracker)
-            register(ExpectActualTracker::class.java, exceptActualTracer)
+            register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                 override fun checkCanceled() {
                     if (jpsGlobalContext.cancelStatus.isCanceled) throw CompilationCanceledException()

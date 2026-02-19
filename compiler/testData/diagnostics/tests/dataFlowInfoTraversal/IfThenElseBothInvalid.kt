@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -14,3 +15,6 @@ fun foo() {
     }
     bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

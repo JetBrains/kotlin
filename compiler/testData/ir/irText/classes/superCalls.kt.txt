@@ -1,4 +1,8 @@
 open class Base {
+  open val bar: String
+    field = ""
+    open get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,10 +11,6 @@ open class Base {
 
   open fun foo() {
   }
-
-  open val bar: String
-    field = ""
-    open get
 
   override fun hashCode(): Int {
     return super<Any>.hashCode()

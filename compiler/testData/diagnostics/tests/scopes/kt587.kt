@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-587 Unresolved reference
 
@@ -10,3 +11,6 @@ class Main {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration */

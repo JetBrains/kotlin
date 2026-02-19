@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-58135
 
@@ -29,3 +30,6 @@ class Test(
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, init, lambdaLiteral, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, thisExpression */

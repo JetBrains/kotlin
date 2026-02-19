@@ -23,7 +23,6 @@ package org.jetbrains.kotlin.js.backend.ast;
  */
 
 import com.intellij.util.SmartList;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -47,11 +46,6 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         @Override
         public <R extends T> void addPrevious(R node) {
             previous.add(node);
-        }
-
-        @Override
-        public <R extends T> void addNext(R node) {
-            next.add(node);
         }
 
         @Override
@@ -175,11 +169,6 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
     @Override
     protected <T extends JsNode> void doAcceptList(List<T> collection) {
         new ListContext<T>().traverse(collection);
-    }
-
-    @NotNull
-    protected JsContext<JsStatement> getLastStatementLevelContext() {
-        return statementContexts.peek();
     }
 
     @Override

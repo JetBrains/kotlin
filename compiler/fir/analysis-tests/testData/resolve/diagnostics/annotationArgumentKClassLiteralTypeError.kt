@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KClass
 
 annotation class Ann(val a: Array<KClass<*>>)
@@ -10,3 +11,7 @@ inline val <reified T> T.test
             <!ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR!>Array<Array<Array<Array<T>>>>::class<!>
         )<!>
     ) object {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classReference, collectionLiteral, getter,
+nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, reified, starProjection,
+typeParameter */

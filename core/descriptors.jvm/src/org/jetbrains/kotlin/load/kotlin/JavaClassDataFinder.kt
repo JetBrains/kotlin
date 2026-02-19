@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.utils.jvmMetadataVersionOrDefault
 
 class JavaClassDataFinder(
     internal val kotlinClassFinder: KotlinClassFinder,
@@ -27,7 +26,7 @@ class JavaClassDataFinder(
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
         val kotlinClass = kotlinClassFinder.findKotlinClass(
-            classId, deserializedDescriptorResolver.components.configuration.jvmMetadataVersionOrDefault()
+            classId, deserializedDescriptorResolver.components.configuration.metadataVersion
         ) ?: return null
         assert(kotlinClass.classId == classId) {
             "Class with incorrect id found: expected $classId, actual ${kotlinClass.classId}"

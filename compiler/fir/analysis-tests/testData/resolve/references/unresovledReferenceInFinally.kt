@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-47490
 
 fun test() {
@@ -8,3 +9,5 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral, tryExpression */

@@ -16,4 +16,10 @@ interface TypeSpecificityComparator : PlatformSpecificExtension<TypeSpecificityC
     object NONE : TypeSpecificityComparator {
         override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker) = false
     }
+
+    class Composed(val comparators: List<TypeSpecificityComparator>) : TypeSpecificityComparator {
+        override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
+            return comparators.any { it.isDefinitelyLessSpecific(specific, general) }
+        }
+    }
 }

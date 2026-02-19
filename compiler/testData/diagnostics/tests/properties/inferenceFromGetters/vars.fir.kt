@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 var x
     get() = 1
     set(q) {
@@ -14,8 +15,12 @@ fun foo() {
     noSetter checkType { _<Int>() }
 
     x = 1
-    x = <!ASSIGNMENT_TYPE_MISMATCH!>""<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
 
     noSetter = 2
-    noSetter = <!ASSIGNMENT_TYPE_MISMATCH!>""<!>
+    noSetter <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, setter, stringLiteral, typeParameter,
+typeWithExtension */

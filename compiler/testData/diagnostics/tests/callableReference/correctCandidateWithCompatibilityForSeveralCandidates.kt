@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun <T> foo(f: () -> T): T = f()
 
@@ -19,3 +20,6 @@ object Scope {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

@@ -1,4 +1,5 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T : Any> foo(x: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>T<!> & Any, y: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>List<<!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>String<!> & Any><!> & Any) {}
 
@@ -16,3 +17,6 @@ fun <F> (F & Any).bar9(x: () -> Unit) {}
 
 fun <F> bar10(x: F & <!INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION!><!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>Any<!> & <!INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION!>String<!><!>) {}
 fun <F> bar11(x: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>Double<!> & <!INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION!><!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>Any<!> & <!INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION!>String<!><!>) {}
+
+/* GENERATED_FIR_TAGS: dnnType, funWithExtensionReceiver, functionDeclaration, functionalType, nullableType,
+typeConstraint, typeParameter, typeWithExtension */

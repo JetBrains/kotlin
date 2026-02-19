@@ -4,7 +4,6 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.common.Symbol;
 import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,12 +52,6 @@ public final class JsNameRef extends JsExpression implements HasName {
     @Override
     public void setName(JsName name) {
         this.name = name;
-    }
-
-    @Nullable
-    @Override
-    public Symbol getSymbol() {
-        return name;
     }
 
     @Nullable

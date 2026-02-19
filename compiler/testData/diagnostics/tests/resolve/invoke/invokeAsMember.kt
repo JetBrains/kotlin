@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Foo {
     operator fun invoke() {}
@@ -59,3 +60,6 @@ fun test(d: D, c: C) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, lambdaLiteral, operator,
+propertyDeclaration, propertyWithExtensionReceiver */

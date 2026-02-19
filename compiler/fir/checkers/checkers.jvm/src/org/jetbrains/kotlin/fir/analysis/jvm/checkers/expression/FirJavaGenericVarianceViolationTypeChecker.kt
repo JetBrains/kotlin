@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import kotlin.math.min
 
@@ -45,9 +45,10 @@ import kotlin.math.min
  * `UnsupportedOperationException`, which is expected and the price we pay in order to make immutable collection easier to use. This checker
  * doesn't do anything to prevent this from happening.
  */
-object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
+object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return
         if (!calleeFunction.originalOrSelf().isJavaOrEnhancement) {
             return
@@ -108,60 +109,52 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             // actually created because of type projection from `get`. Hence, to workaround this problem, we simply remove all the out
             // projection and type capturing and compare the types after such erasure. This way, we won't incorrectly reject any valid code
             // though we may accept some invalid code. But in presence of the unsound flexible types, we are allowing invalid code already.
-            val argTypeWithoutOutProjection = argType.removeOutProjection(isCovariant = true)
-            val lowerBoundWithoutCapturing = context.session.typeApproximator.approximateToSuperType(
-                lowerBound,
-                TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) ?: lowerBound
+            val argTypeWithoutOutProjection = argType.approximate().removeOutProjection(context.session.typeContext, isCovariant = true)
+            val lowerBoundWithoutCapturing = lowerBound.approximate()
 
             if (!AbstractTypeChecker.isSubtypeOf(
                     typeContext,
                     argTypeWithoutOutProjection,
-                    lowerBoundWithoutCapturing.withNullability(ConeNullability.NULLABLE, typeContext)
+                    lowerBoundWithoutCapturing.withNullability(nullable = true, typeContext)
                 )
             ) {
-                reporter.reportOn(arg.source, FirJvmErrors.JAVA_TYPE_MISMATCH, expectedType, argType, context)
+                reporter.reportOn(arg.source, FirJvmErrors.JAVA_TYPE_MISMATCH, expectedType, argType)
             }
         }
     }
 
-    private fun ConeKotlinType.removeOutProjection(isCovariant: Boolean): ConeKotlinType {
+    context(context: CheckerContext)
+    private fun ConeKotlinType.approximate(): ConeKotlinType {
+        return context.session.typeApproximator.approximateToSuperType(
+            this,
+            TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+        ) ?: this
+    }
+
+    private fun ConeKotlinType.removeOutProjection(typeContext: ConeTypeContext, isCovariant: Boolean): ConeKotlinType {
         return when (this) {
-            is ConeFlexibleType -> ConeFlexibleType(
-                lowerBound.removeOutProjection(isCovariant),
-                upperBound.removeOutProjection(isCovariant)
-            )
-            is ConeSimpleKotlinType -> removeOutProjection(isCovariant)
+            is ConeFlexibleType -> mapTypesOrSelf(typeContext) { it.removeOutProjection(typeContext, isCovariant) }
+            is ConeRigidType -> removeOutProjection(typeContext, isCovariant)
         }
     }
 
-    private fun ConeSimpleKotlinType.removeOutProjection(isCovariant: Boolean): ConeSimpleKotlinType {
+    private fun ConeRigidType.removeOutProjection(typeContext: ConeTypeContext, isCovariant: Boolean): ConeRigidType {
         return when (this) {
-            is ConeCapturedType -> ConeCapturedType(
-                captureStatus,
-                lowerType?.removeOutProjection(isCovariant),
-                nullability,
-                constructor.apply {
-                    ConeCapturedTypeConstructor(
-                        projection.removeOutProjection(isCovariant),
-                        supertypes?.map { it.removeOutProjection(isCovariant) },
-                        typeParameterMarker
-                    )
-                },
-                attributes,
-                isProjectionNotNull
-            )
-            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
-            is ConeIntersectionType -> ConeIntersectionType(
-                intersectedTypes.map { it.removeOutProjection(isCovariant) },
-                alternativeType?.removeOutProjection(isCovariant)
-            )
+            is ConeSimpleKotlinType -> removeOutProjection(typeContext, isCovariant)
+            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(typeContext, isCovariant))
+        }
+    }
+
+    private fun ConeSimpleKotlinType.removeOutProjection(typeContext: ConeTypeContext, isCovariant: Boolean): ConeSimpleKotlinType {
+        return when (this) {
+            is ConeIntersectionType -> mapTypes { it.removeOutProjection(typeContext, isCovariant) }
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,
-                typeArguments.map { it.removeOutProjection(isCovariant) }.toTypedArray(),
-                isNullable,
+                typeArguments.map { it.removeOutProjection(typeContext, isCovariant) }.toTypedArray(),
+                isMarkedNullable,
                 attributes
             )
+            is ConeCapturedType -> error("There shouldn't be any captured types here as we call `approximate()`")
             else -> this
         }
     }
@@ -172,10 +165,10 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
      * This function only remove out projections in covariant context.
      * 'in' projections are never removed, nor would an out projection in a contravariant context.
      */
-    private fun ConeTypeProjection.removeOutProjection(isCovariant: Boolean): ConeTypeProjection {
+    private fun ConeTypeProjection.removeOutProjection(typeContext: ConeTypeContext, isCovariant: Boolean): ConeTypeProjection {
         return when (this) {
             is ConeKotlinTypeProjectionOut -> if (isCovariant) type else this
-            is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(!isCovariant))
+            is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(typeContext, !isCovariant))
             is ConeStarProjection -> if (isCovariant) StandardTypes.NullableAny else this
             // Don't remove nested projections for types at invariant position.
             is ConeKotlinTypeConflictingProjection,
@@ -183,23 +176,11 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         }
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(subType: ConeKotlinType, superType: ConeSimpleKotlinType): Boolean {
-        return isTypeConstructorEqualOrSubClassOf(subType.typeConstructor(), superType.typeConstructor())
+    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
+        subType: ConeKotlinType,
+        superType: ConeRigidType,
+    ): Boolean {
+        return AbstractTypeChecker.isSubtypeOfClass(this, subType.typeConstructor(), superType.typeConstructor())
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
-        subTypeConstructor: TypeConstructorMarker,
-        superTypeConstructor: TypeConstructorMarker
-    ): Boolean {
-        if (subTypeConstructor == superTypeConstructor) return true
-        for (immediateSuperType in subTypeConstructor.supertypes()) {
-            val immediateSuperTypeConstructor = immediateSuperType.typeConstructor()
-            if (superTypeConstructor == immediateSuperTypeConstructor) return true
-            if (this@isTypeConstructorEqualOrSubClassOf.isTypeConstructorEqualOrSubClassOf(
-                    immediateSuperTypeConstructor, superTypeConstructor
-                )
-            ) return true
-        }
-        return false
-    }
 }

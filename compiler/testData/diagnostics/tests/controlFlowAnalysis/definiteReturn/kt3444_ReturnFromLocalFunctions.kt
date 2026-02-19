@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package f
 
@@ -16,3 +17,4 @@ fun main() {
     box()
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction */

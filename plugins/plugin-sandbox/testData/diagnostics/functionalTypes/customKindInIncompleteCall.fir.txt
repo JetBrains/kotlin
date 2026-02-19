@@ -1,0 +1,24 @@
+FILE: customKindInIncompleteCall.kt
+    public final fun foo(f: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|, g: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|, h: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun test_good(): R|kotlin/Unit| {
+        R|/foo|(foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        , foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        , foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        )
+    }
+    public final fun test_bad(): R|kotlin/Unit| {
+        R|/foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /foo>#|(foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo Unit
+        }
+        , foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo Unit
+        }
+        )
+    }

@@ -1,0 +1,21 @@
+KtDotQualifiedExpression(59,66): 'a.foo()'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun foo(): Unit': it is private in 'A'.>
+    isInBestCandidates = true

@@ -30,7 +30,9 @@ fun f(a: ULong): Int {
 // 0 INVOKESTATIC kotlin/ULong.constructor-impl
 // 0 INVOKE\w+ kotlin/ULong.(un)?box-impl
 
-// JVM_IR_TEMPLATES
+// 2 LDC -1
+// ASM prints LDC2_W as LDC: https://gitlab.ow2.org/asm/asm/-/issues/317855
+
 // 1 ILOAD
 // 1 ISTORE
 // 0 IADD

@@ -7,7 +7,7 @@
 
 #include "TestSupportCompilerGenerated.hpp"
 
-#include <Foundation/NSObject.h>
+#include <Foundation/Foundation.h>
 #include <objc/runtime.h>
 
 #include "Types.h"
@@ -156,6 +156,18 @@ void Kotlin_MutableList_removeLastObject(KRef list) {
 }
 
 void Kotlin_MutableList_setObject(KRef list, KInt index, KRef obj) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KInt Kotlin_hashCode(KRef str) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KBoolean Kotlin_equals(KRef lhs, KRef rhs) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_toString, KRef obj) {
     throw std::runtime_error("Not implemented for tests");
 }
 

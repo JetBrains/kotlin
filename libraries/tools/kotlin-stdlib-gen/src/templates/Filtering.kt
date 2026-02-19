@@ -192,7 +192,7 @@ object Filtering : TemplateGroupBase() {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
@@ -206,6 +206,17 @@ object Filtering : TemplateGroupBase() {
                     break
             }
             return list
+            """
+        }
+
+        // For object arrays, ensure a single array copy instead of copying using a loop (see KT-75801)
+        body(ArraysOfObjects) {
+            """
+            require(n >= 0) { "Requested element count $n is less than zero." }
+            if (n == 0) return emptyList()
+            if (n >= size) return toList()
+            if (n == 1) return listOf(this[0])
+            return copyOfRange(0, n).asList()
             """
         }
     }
@@ -270,7 +281,7 @@ object Filtering : TemplateGroupBase() {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
@@ -284,6 +295,19 @@ object Filtering : TemplateGroupBase() {
             return list
             """
         }
+
+        // For object arrays, ensure a single array copy instead of copying using a loop (see KT-75801)
+        body(ArraysOfObjects) {
+            """
+            require(n >= 0) { "Requested element count $n is less than zero." }
+            if (n == 0) return emptyList()
+            val size = size
+            if (n >= size) return toList()
+            if (n == 1) return listOf(this[size - 1])
+            return copyOfRange(size - n, size).asList()
+            """
+        }
+
         body(Lists) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
@@ -413,6 +437,17 @@ object Filtering : TemplateGroupBase() {
             returns("Sequence<T>")
             body { """return TakeWhileSequence(this, predicate)""" }
         }
+
+        // For object arrays, ensure a single array copy instead of copying using a loop (see KT-75801)
+        body(ArraysOfObjects) {
+            """
+            var i = 0
+            while (i < ${f.code.size} && predicate(this[i])) i++
+            return if (i == 0) emptyList()
+                   else if (i == 1) listOf(this[0])
+                   else copyOfRange(0, i).asList()
+            """
+        }
     }
 
     val f_dropLastWhile = fn("dropLastWhile(predicate: (T) -> Boolean)") {
@@ -504,7 +539,7 @@ object Filtering : TemplateGroupBase() {
             val iterator = listIterator(size)
             while (iterator.hasPrevious()) {
                 if (!predicate(iterator.previous())) {
-                    iterator.next()
+                    val _ = iterator.next()
                     val expectedSize = size - iterator.nextIndex()
                     if (expectedSize == 0) return emptyList()
                     return ArrayList<T>(expectedSize).apply {
@@ -579,6 +614,7 @@ object Filtering : TemplateGroupBase() {
 
         doc { "Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterTo")
+        annotation("@IgnorableReturnValue")
         typeParam("C : TCollection")
         returns("C")
 
@@ -660,6 +696,7 @@ object Filtering : TemplateGroupBase() {
             and returns the result of predicate evaluation on the ${f.element}.
             """ }
         sample("samples.collections.Collections.Filtering.filterIndexedTo")
+        annotation("@IgnorableReturnValue")
         typeParam("C : TCollection")
         returns("C")
 
@@ -713,6 +750,7 @@ object Filtering : TemplateGroupBase() {
 
         doc { "Appends all elements not matching the given [predicate] to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterTo")
+        annotation("@IgnorableReturnValue")
         typeParam("C : TCollection")
         returns("C")
 
@@ -765,6 +803,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         doc { "Appends all elements that are not `null` to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterNotNullTo")
+        annotation("@IgnorableReturnValue")
         returns("C")
         typeParam("C : TCollection")
         typeParam("T : Any")
@@ -782,6 +821,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         doc { "Appends all elements that are instances of specified type parameter R to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterIsInstanceTo")
+        annotation("@IgnorableReturnValue")
         typeParam("reified R")
         typeParam("C : MutableCollection<in R>")
         inline()
@@ -828,6 +868,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         doc { "Appends all elements that are instances of specified class to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterIsInstanceToJVM")
+        annotation("@IgnorableReturnValue")
         genericStarProjection = true
         typeParam("C : MutableCollection<in R>")
         typeParam("R")

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: String?, y: String?, z: String?, w: String?) {
     if (x != null && y != null && (x == z || y == z))
         <!DEBUG_INFO_SMARTCAST!>z<!>.length
@@ -20,3 +21,6 @@ fun foo(x: String?, y: String?, z: String?, w: String?) {
     else
         y<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

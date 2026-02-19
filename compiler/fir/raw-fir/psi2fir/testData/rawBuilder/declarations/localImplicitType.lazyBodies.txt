@@ -1,0 +1,2 @@
+FILE: localImplicitType.kt
+    public? final? fun check(): R|kotlin/Unit| { LAZY_BLOCK }

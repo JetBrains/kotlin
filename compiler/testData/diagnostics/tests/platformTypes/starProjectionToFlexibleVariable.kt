@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: ExtensionPointName.java
@@ -18,3 +20,5 @@ public class Area {
 private fun unregisterEverything(extensionPoint: ExtensionPointName<*>) {
     Area.getExtensionPoint(extensionPoint).foo().hashCode()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, starProjection */

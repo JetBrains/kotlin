@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 
 fun foo() {
@@ -10,3 +11,5 @@ fun foo() {
     z.addAll(y)
     z.add("Omega")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral */

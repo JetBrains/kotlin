@@ -9,15 +9,16 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 
 open class FirAnnotationRenderer {
 
     internal lateinit var components: FirRendererComponents
-    protected val visitor get() = components.visitor
-    protected val printer get() = components.printer
-    protected val callArgumentsRenderer get() = components.callArgumentsRenderer
+    protected val visitor: FirRenderer.Visitor get() = components.visitor
+    protected val printer: FirPrinter get() = components.printer
+    protected val callArgumentsRenderer: FirCallArgumentsRenderer? get() = components.callArgumentsRenderer
 
     fun render(annotationContainer: FirAnnotationContainer, explicitAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null) {
         renderAnnotations(annotationContainer.annotations, explicitAnnotationUseSiteTarget)
@@ -32,7 +33,7 @@ open class FirAnnotationRenderer {
     internal fun renderAnnotation(annotation: FirAnnotation, explicitAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null) {
         printer.print("@")
         (explicitAnnotationUseSiteTarget ?: annotation.useSiteTarget)?.let {
-            printer.print(it.name)
+            renderUseSiteTarget(it)
             printer.print(":")
         }
 
@@ -41,7 +42,12 @@ open class FirAnnotationRenderer {
             is FirAnnotationCall -> {
                 components.resolvePhaseRenderer?.render(annotation)
                 if (annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }) {
-                    callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
+                    val argumentList = annotation.argumentList
+                    if (argumentList is FirResolvedArgumentList) {
+                        callArgumentsRenderer?.renderArgumentsWithEvaluated(argumentList, annotation.argumentMapping)
+                    } else {
+                        callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
+                    }
                 } else {
                     visitor.visitCall(annotation)
                 }
@@ -55,5 +61,15 @@ open class FirAnnotationRenderer {
         } else {
             printer.print(" ")
         }
+    }
+
+    open protected fun renderUseSiteTarget(it: AnnotationUseSiteTarget) {
+        printer.print(it.name)
+    }
+}
+
+class FirAnnotationRendererForReadability : FirAnnotationRenderer() {
+    override fun renderUseSiteTarget(it: AnnotationUseSiteTarget) {
+        printer.print(it.renderName)
     }
 }

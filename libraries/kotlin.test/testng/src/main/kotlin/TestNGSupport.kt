@@ -11,7 +11,7 @@ import kotlin.test.*
 /**
  * Provides [TestNGAsserter] if `org.testng.Assert` is found in the classpath.
  */
-class TestNGContributor : AsserterContributor {
+public class TestNGContributor : AsserterContributor {
     override fun contribute(): Asserter? {
         return if (hasTestNGInClassPath) TestNGAsserter else null
     }
@@ -27,7 +27,7 @@ class TestNGContributor : AsserterContributor {
 /**
  * Implements `kotlin.test` assertions by delegating them to `org.testng.Assert` class.
  */
-object TestNGAsserter : Asserter {
+public object TestNGAsserter : Asserter {
     override fun assertEquals(message: String?, expected: Any?, actual: Any?) {
         Assert.assertEquals(actual, expected, message)
     }

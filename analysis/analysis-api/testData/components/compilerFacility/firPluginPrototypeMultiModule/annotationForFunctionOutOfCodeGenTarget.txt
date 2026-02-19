@@ -1,0 +1,4 @@
+public final class MainKt {
+    // source: 'main.kt'
+    public final static method PostCardSimple(p0: kotlin.jvm.functions.Function1, p1: boolean, p2: kotlin.jvm.functions.Function0): void
+}

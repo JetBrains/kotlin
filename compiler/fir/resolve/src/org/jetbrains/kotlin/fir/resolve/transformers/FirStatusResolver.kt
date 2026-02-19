@@ -1,50 +1,40 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import java.util.*
 
 class FirStatusResolver(
-    val session: FirSession,
-    val scopeSession: ScopeSession
-) {
+    override val session: FirSession,
+    override val scopeSession: ScopeSession
+) : SessionAndScopeSessionHolder {
     companion object {
-        private val NOT_INHERITED_MODIFIERS: List<FirDeclarationStatusImpl.Modifier> = listOf(
-            FirDeclarationStatusImpl.Modifier.ACTUAL,
-            FirDeclarationStatusImpl.Modifier.EXPECT,
-            FirDeclarationStatusImpl.Modifier.CONST,
-            FirDeclarationStatusImpl.Modifier.LATEINIT,
-            FirDeclarationStatusImpl.Modifier.TAILREC,
-            FirDeclarationStatusImpl.Modifier.EXTERNAL,
+        private val MODIFIERS_FROM_OVERRIDDEN = EnumSet.of(
+            FirDeclarationStatusImpl.Modifier.OPERATOR,
+            FirDeclarationStatusImpl.Modifier.INFIX,
         )
-
-        private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> =
-            FirDeclarationStatusImpl.Modifier.values().toList() - NOT_INHERITED_MODIFIERS
     }
 
     private val extensionStatusTransformers = session.extensionService.statusTransformerExtensions
@@ -71,7 +61,7 @@ class FirStatusResolver(
     ): FirResolvedDeclarationStatus {
         return when (declaration) {
             is FirProperty -> resolveStatus(declaration, containingClass, isLocal)
-            is FirSimpleFunction -> resolveStatus(declaration, containingClass, isLocal)
+            is FirNamedFunction -> resolveStatus(declaration, containingClass, isLocal)
             is FirPropertyAccessor -> resolveStatus(declaration, containingClass, containingProperty, isLocal)
             is FirRegularClass -> resolveStatus(declaration, containingClass, isLocal)
             is FirTypeAlias -> resolveStatus(declaration, containingClass, isLocal)
@@ -92,7 +82,7 @@ class FirStatusResolver(
             return emptyList()
         }
 
-        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+        val scope = containingClass.unsubstitutedScope(withForcedTypeCalculator = false, memberRequiredPhase = null)
 
         return buildList {
             scope.processPropertiesByName(property.name) {}
@@ -122,17 +112,15 @@ class FirStatusResolver(
     }
 
     fun getOverriddenFunctions(
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         containingClass: FirClass?
-    ): List<FirSimpleFunction> {
+    ): List<FirNamedFunction> {
         if (containingClass == null) {
             return emptyList()
         }
 
         return buildList {
             val scope = containingClass.unsubstitutedScope(
-                session,
-                scopeSession,
                 withForcedTypeCalculator = false,
                 memberRequiredPhase = null,
             )
@@ -152,7 +140,7 @@ class FirStatusResolver(
     }
 
     fun resolveStatus(
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         containingClass: FirClass?,
         isLocal: Boolean,
         overriddenStatuses: List<FirResolvedDeclarationStatus>? = null,
@@ -176,6 +164,8 @@ class FirStatusResolver(
             is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass?.symbol, isLocal) }
             else -> firClass.status
         }
+
+        classLikeStatusValidation(newStatus = status, declaration = firClass)
         return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
     }
 
@@ -187,7 +177,26 @@ class FirStatusResolver(
         val status = typeAlias.applyExtensionTransformers {
             transformStatus(it, typeAlias, containingClass?.symbol, isLocal)
         }
+
+        classLikeStatusValidation(newStatus = status, declaration = typeAlias)
         return resolveStatus(typeAlias, status, containingClass, null, isLocal, emptyList())
+    }
+
+    private fun classLikeStatusValidation(newStatus: FirDeclarationStatus, declaration: FirClassLikeDeclaration) {
+        val originalVisibility = declaration.status.visibility
+        requireWithAttachment(
+            originalVisibility != Visibilities.Unknown,
+            { "Visibility has to be provided for a class-like declaration (${declaration::class.simpleName}) during its initialization" },
+        ) {
+            withFirEntry("declaration", declaration)
+        }
+
+        requireWithAttachment(
+            newStatus.visibility == originalVisibility,
+            { "Attempt to change visibility of a class-like declaration (${declaration::class.simpleName}), original visibility: $originalVisibility, new visibility: ${declaration.visibility}" },
+        ) {
+            withFirEntry("declaration", declaration)
+        }
     }
 
     fun resolveStatus(
@@ -242,26 +251,11 @@ class FirStatusResolver(
     ): FirResolvedDeclarationStatus {
         if (status is FirResolvedDeclarationStatus) return status
         require(status is FirDeclarationStatusImpl)
-
-        @Suppress("UNCHECKED_CAST")
-        overriddenStatuses as List<FirResolvedDeclarationStatusImpl>
         val visibility = when (status.visibility) {
             Visibilities.Unknown -> when {
                 isLocal -> Visibilities.Local
                 else -> resolveVisibility(declaration, containingClass, containingProperty, overriddenStatuses)
             }
-
-            Visibilities.Private -> when {
-                declaration is FirPropertyAccessor -> if (containingProperty?.visibility == Visibilities.PrivateToThis) {
-                    Visibilities.PrivateToThis
-                } else {
-                    Visibilities.Private
-                }
-
-                isPrivateToThis(declaration, containingClass) -> Visibilities.PrivateToThis
-                else -> Visibilities.Private
-            }
-
             else -> status.visibility
         }
 
@@ -271,11 +265,11 @@ class FirStatusResolver(
             } else {
                 it
             }
-        } ?: resolveModality(declaration, containingClass)
+        } ?: resolveModality(declaration, containingProperty, containingClass)
         if (overriddenStatuses.isNotEmpty()) {
             for (modifier in MODIFIERS_FROM_OVERRIDDEN) {
                 status[modifier] = status[modifier] || overriddenStatuses.fold(false) { acc, overriddenStatus ->
-                    acc || overriddenStatus[modifier]
+                    acc || (overriddenStatus as FirDeclarationStatusImpl)[modifier]
                 }
             }
         }
@@ -290,100 +284,83 @@ class FirStatusResolver(
             containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-        val annotations = (containingProperty ?: declaration).annotations
-        val parentPublishedEffectiveVisibility = when {
-            containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
-            containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
-            else -> null
-        }
 
-        computePublishedApiEffectiveVisibility(
-            annotations,
-            visibility,
-            selfEffectiveVisibility,
-            containingClass?.symbol,
-            parentEffectiveVisibility,
-            parentPublishedEffectiveVisibility,
-            declaration is FirClass,
-            session
-        )?.let {
-            declaration.nonLazyPublishedApiEffectiveVisibility = it
+        if (!isLocal) {
+            val annotations = (containingProperty ?: declaration).annotations
+            val parentPublishedEffectiveVisibility = when {
+                containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
+                containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
+                else -> null
+            }
+
+            computePublishedApiEffectiveVisibility(
+                annotations,
+                visibility,
+                selfEffectiveVisibility,
+                containingClass?.symbol,
+                parentEffectiveVisibility,
+                parentPublishedEffectiveVisibility,
+                declaration is FirClass,
+                session
+            )?.let {
+                declaration.nonLazyPublishedApiEffectiveVisibility = it
+            }
         }
 
         if (containingClass is FirRegularClass && containingClass.isExpect) {
             status.isExpect = true
         }
 
+        status.returnValueStatus = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty, overriddenStatuses)
+
         return status.resolved(visibility, modality, effectiveVisibility)
     }
 
-    private fun isPrivateToThis(
+    private fun computeMustUseReturnValue(
         declaration: FirDeclaration,
+        isLocal: Boolean,
         containingClass: FirClass?,
-    ): Boolean {
-        if (containingClass == null) return false
-        if (declaration !is FirCallableDeclaration) return false
-        if (declaration is FirConstructor) return false
-        if (containingClass.typeParameters.all { it.symbol.variance == Variance.INVARIANT }) return false
+        containingProperty: FirProperty?,
+        overriddenStatuses: List<FirResolvedDeclarationStatus>,
+    ): ReturnValueStatus {
+        if (declaration !is FirCallableDeclaration) return ReturnValueStatus.Unspecified
 
-        if (declaration.receiverParameter?.typeRef?.contradictsWith(Variance.IN_VARIANCE) == true) {
-            return true
-        }
-        if (declaration.returnTypeRef.contradictsWith(
-                if (declaration is FirProperty && declaration.isVar) Variance.INVARIANT
-                else Variance.OUT_VARIANCE
-            )
-        ) {
-            return true
-        }
-        if (declaration is FirFunction) {
-            for (parameter in declaration.valueParameters) {
-                if (parameter.returnTypeRef.contradictsWith(Variance.IN_VARIANCE)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    private fun FirTypeRef.contradictsWith(requiredVariance: Variance): Boolean {
-        val type = coneTypeSafe<ConeKotlinType>() ?: return false
-        return contradictsWith(type, requiredVariance)
-    }
-
-    private fun contradictsWith(type: ConeKotlinType, requiredVariance: Variance): Boolean {
-        if (type is ConeTypeParameterType) {
-            return !type.lookupTag.typeParameterSymbol.fir.variance.allowsPosition(requiredVariance)
-        }
-        if (type is ConeClassLikeType) {
-            val classLike = type.lookupTag.toSymbol(session)?.fir
-            for ((index, argument) in type.typeArguments.withIndex()) {
-                if (classLike?.typeParameters?.getOrNull(index) is FirOuterClassTypeParameterRef) continue
-                val (argType, requiredVarianceForArgument) = when (argument) {
-                    is ConeKotlinTypeProjectionOut -> argument.type to requiredVariance
-                    is ConeKotlinTypeProjectionIn -> argument.type to requiredVariance.opposite()
-                    is ConeKotlinTypeProjection -> argument.type to Variance.INVARIANT
-                    is ConeStarProjection -> continue
-                }
-                if (contradictsWith(argType, requiredVarianceForArgument)) {
-                    return true
-                }
-            }
-        }
-        return false
+        return session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForCallable(
+            session,
+            declaration.symbol,
+            isLocal,
+            containingClass?.symbol,
+            containingProperty?.symbol,
+            overriddenStatuses
+        )
     }
 
     private fun resolveVisibility(
         declaration: FirDeclaration,
         containingClass: FirClass?,
         containingProperty: FirProperty?,
-        overriddenStatuses: List<FirResolvedDeclarationStatusImpl>
+        overriddenStatuses: List<FirResolvedDeclarationStatus>
     ): Visibility {
         if (declaration is FirConstructor && containingClass?.hasPrivateConstructor() == true) return Visibilities.Private
 
         val fallbackVisibility = when {
             declaration is FirPropertyAccessor && containingProperty != null -> containingProperty.visibility
             else -> Visibilities.Public
+        }
+
+        if (containingClass?.status?.isData == true &&
+            declaration is FirNamedFunction &&
+            declaration.origin == FirDeclarationOrigin.Synthetic.DataClassMember &&
+            DataClassResolver.isCopy(declaration.name)
+        ) {
+            return when {
+                containingClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) ->
+                    Visibilities.Public
+                LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled() ||
+                        containingClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session) ->
+                    containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
+                else -> fallbackVisibility
+            }
         }
 
         return overriddenStatuses.map { it.visibility }
@@ -399,13 +376,16 @@ class FirStatusResolver(
 
     private fun resolveModality(
         declaration: FirDeclaration,
+        containingProperty: FirProperty?,
         containingClass: FirClass?,
     ): Modality {
         return when (declaration) {
             is FirRegularClass -> if (declaration.classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
             is FirCallableDeclaration -> {
+                val containingPropertyModality = containingProperty?.modality
                 when {
                     containingClass == null -> Modality.FINAL
+                    declaration is FirPropertyAccessor && containingPropertyModality != null -> containingPropertyModality
                     containingClass.classKind == ClassKind.INTERFACE -> {
                         when {
                             declaration.visibility == Visibilities.Private -> Modality.FINAL
@@ -428,12 +408,11 @@ private val FirClass.modality: Modality?
     get() = when (this) {
         is FirRegularClass -> status.modality
         is FirAnonymousObject -> Modality.FINAL
-        else -> error("Unknown kind of class: ${this::class}")
     }
 
 private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
     return when (this) {
-        is FirSimpleFunction -> this.body != null
+        is FirNamedFunction -> this.body != null
         is FirProperty -> this.initializer != null || this.getter?.body != null || this.setter?.body != null
         else -> true
     }

@@ -1,0 +1,2 @@
+KtSafeQualifiedExpression(45,49): 'a?.y'
+  null

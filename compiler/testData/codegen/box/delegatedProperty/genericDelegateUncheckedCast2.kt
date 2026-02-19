@@ -1,13 +1,27 @@
 // See the end of KT-8135 description: The same problem appears when using delegating properties with unchecked casts inside
 // Test fail reason: ClassCastException is not thrown when using delegating properties with unchecked casts inside
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR, JVM_IR_SERIALIZE
 // FIR status: not supported in JVM
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JVM, JS
 
+// FILE: lib.kt
+inline fun asFailsWithCCE(block: () -> Unit) {
+    try {
+        block()
+    }
+    catch (e: ClassCastException) {
+        return
+    }
+    catch (e: Throwable) {
+        throw AssertionError("Should throw ClassCastException, got $e")
+    }
+    throw AssertionError("Should throw ClassCastException, no exception thrown")
+}
+
+// FILE: main.kt
 import kotlin.reflect.KProperty
 
 class Delegate<T>(var inner: T) {
@@ -21,19 +35,6 @@ class A {
     inner class B {
         var prop: String by del
     }
-}
-
-inline fun asFailsWithCCE(block: () -> Unit) {
-    try {
-        block()
-    }
-    catch (e: ClassCastException) {
-        return
-    }
-    catch (e: Throwable) {
-        throw AssertionError("Should throw ClassCastException, got $e")
-    }
-    throw AssertionError("Should throw ClassCastException, no exception thrown")
 }
 
 fun box(): String {

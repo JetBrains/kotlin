@@ -1,4 +1,5 @@
-//!DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <R> Iterable<*>.filterIsInstance1(): List<@kotlin.internal.NoInfer R> = throw Exception()
@@ -28,3 +29,6 @@ fun test1() {
     listOf("").foo().length
     bar(1) { x -> x + 1 }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, lambdaLiteral, multiplicativeExpression, nullableType, starProjection, stringLiteral, typeParameter */

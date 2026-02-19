@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.wasm.util.hasValidJsCodeBody
 
-// TODO: Implement in K2: KT-56849
 object WasmJsInteropTypesChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is MemberDescriptor)
@@ -114,12 +113,13 @@ private fun isTypeSupportedInJsInterop(
     val nonNullable = type.makeNotNullable()
     if (
         KotlinBuiltIns.isPrimitiveType(nonNullable) ||
+        KotlinBuiltIns.isUnsignedNumber(nonNullable) ||
         KotlinBuiltIns.isString(nonNullable)
     ) {
         return true
     }
 
-    // Interop type parameters upper bounds should are checked
+    // Interop type parameters upper bounds should be checked
     // on declaration site separately
     if (nonNullable.isTypeParameter()) {
         return true

@@ -6,25 +6,17 @@
       {
         "name": "jsApiElements",
         "sourceSet": [
-          "commonMain"
+          "webMain",
+          "commonMain",
+          "commonNonJvmMain"
         ]
       },
       {
         "name": "jsRuntimeElements",
         "sourceSet": [
-          "commonMain"
-        ]
-      },
-      {
-        "name": "jsV1ApiElements",
-        "sourceSet": [
-          "commonMain"
-        ]
-      },
-      {
-        "name": "jsV1RuntimeElements",
-        "sourceSet": [
-          "commonMain"
+          "webMain",
+          "commonMain",
+          "commonNonJvmMain"
         ]
       },
       {
@@ -38,12 +30,58 @@
         "sourceSet": [
           "commonMain"
         ]
+      },
+      {
+        "name": "wasmJsApiElements",
+        "sourceSet": [
+          "webMain",
+          "commonMain",
+          "commonNonJvmMain"
+        ]
+      },
+      {
+        "name": "wasmJsRuntimeElements",
+        "sourceSet": [
+          "webMain",
+          "commonMain",
+          "commonNonJvmMain"
+        ]
+      },
+      {
+        "name": "wasmWasiApiElements",
+        "sourceSet": [
+          "commonNonJvmMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "wasmWasiRuntimeElements",
+        "sourceSet": [
+          "commonNonJvmMain",
+          "commonMain"
+        ]
       }
     ],
     "sourceSets": [
       {
         "name": "commonMain",
         "dependsOn": [],
+        "moduleDependency": [],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "commonNonJvmMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "webMain",
+        "dependsOn": [
+          "commonMain"
+        ],
         "moduleDependency": [],
         "binaryLayout": "klib"
       }

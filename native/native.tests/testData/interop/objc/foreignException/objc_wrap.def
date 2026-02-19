@@ -1,0 +1,4 @@
+language = Objective-C
+headerFilter = **/objc_wrap.h
+linkerOpts = -lforeignException
+foreignExceptionMode = objc-wrap

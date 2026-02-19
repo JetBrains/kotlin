@@ -10,9 +10,10 @@ import com.intellij.openapi.application.ApplicationManager
 abstract class KotlinLabelProviderService {
     abstract fun getLabelForBuiltInFileType(): String
     abstract fun getLabelForKlibMetaFileType(): String
+    abstract fun getLabelForKotlinJavaScriptMetaFileType(): String
 
     companion object {
         fun getService(): KotlinLabelProviderService? =
-            ApplicationManager.getApplication().getServiceIfCreated(KotlinLabelProviderService::class.java)
+            ApplicationManager.getApplication().getService(KotlinLabelProviderService::class.java)
     }
 }

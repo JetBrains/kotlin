@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 // FILE: test.kt
@@ -31,3 +32,7 @@ public class SortedComboBoxModel<C> {
     public SortedComboBoxModel(Comparator<? super C> comparator) {
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, flexibleType, functionDeclaration, functionalType,
+inProjection, javaFunction, javaType, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+samConversion, stringLiteral, typeParameter */

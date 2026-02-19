@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-323 Handle visibility interactions with overriding
 package kt323
 
@@ -16,3 +17,5 @@ class B : A() {
         get() = 23
         private set(i: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, override, propertyDeclaration, setter */

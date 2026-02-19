@@ -1,0 +1,24 @@
+class X {
+    fun foo(): String = "no arg overload"
+    fun foo(s: String): String = "initial overload $s"
+    fun foo(s: String?): String = "nullable overload $s"
+    fun foo(s: String, p: String): String = "more args overload $s"
+
+    fun bar(s: String?): String = "initial overload $s"
+    fun bar(s: String): String = "non-nullable overload $s"
+    
+    fun qux(s: Any): String = "initial any overload $s"
+    fun qux(s: String): String = "initial narrower overload $s"
+}
+
+fun foo(): String = "no arg overload"
+fun foo(s: String): String = "initial overload $s"
+fun foo(s: String?): String = "nullable overload $s"
+fun foo(s: String, p: String): String = "more args overload $s"
+
+fun bar(s: String?): String = "initial overload $s"
+fun bar(s: String): String = "non-nullable overload $s"
+
+fun qux(s: Any): String = "initial any overload $s"
+fun qux(s: String): String = "initial narrower overload $s"
+

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // See KT-10107: 'Variable must be initialized' for delegate with private set
 
 class My {
@@ -10,3 +11,5 @@ class My {
     var delegateWithBackingField: String by kotlin.properties.Delegates.notNull()
         <!ACCESSOR_FOR_DELEGATED_PROPERTY!>private set(arg) { field = arg }<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, nullableType, propertyDeclaration, propertyDelegate, setter */

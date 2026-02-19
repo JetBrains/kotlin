@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 fun foo() {
@@ -8,3 +9,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

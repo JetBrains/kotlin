@@ -1,4 +1,4 @@
 expression: av
-expected type: KtTypeParameterType:
-  annotationsList: []
+expected type: KaTypeParameterType:
+  annotations: []
   type: R

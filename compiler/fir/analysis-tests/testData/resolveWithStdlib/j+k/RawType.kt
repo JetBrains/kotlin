@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // FILE: JavaClass.java
 import java.util.ArrayList;
@@ -13,3 +14,5 @@ class Some
 fun test(list: ArrayList<Some>) {
     JavaClass.foo(list)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction */

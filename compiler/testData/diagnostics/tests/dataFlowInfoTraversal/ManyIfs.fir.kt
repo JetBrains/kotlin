@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun noUselessDataFlowInfoCreation(x: Number) {
     if (x is Int) { if (<!USELESS_IS_CHECK!>x is Int<!>) { if (<!USELESS_IS_CHECK!>x is Int<!>) { if (<!USELESS_IS_CHECK!>x is Int<!>) { if (<!USELESS_IS_CHECK!>x is Int<!>) {
@@ -30,3 +31,7 @@ fun dataFlowInfoOr(a: Array<Number>) {
         checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>a[0]<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, disjunctionExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, isExpression, nullableType, smartcast, typeParameter,
+typeWithExtension */

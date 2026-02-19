@@ -1,11 +1,12 @@
-// !LANGUAGE: -NestedClassesInAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -NestedClassesInAnnotations
 
 annotation class Annotation2() {
-    <!ANNOTATION_CLASS_MEMBER!>public val s: String = ""<!>
+    public <!ANNOTATION_CLASS_MEMBER!>val s: String<!> = ""
 }
 
 annotation class Annotation3() {
-    <!ANNOTATION_CLASS_MEMBER!>public fun foo() {}<!>
+    public <!ANNOTATION_CLASS_MEMBER!>fun foo()<!> {}
 }
 
 annotation class Annotation4() {
@@ -17,7 +18,7 @@ annotation class Annotation5() {
 }
 
 annotation class Annotation6() {
-    <!ANNOTATION_CLASS_MEMBER!>init {}<!>
+    <!ANNOTATION_CLASS_MEMBER!>init<!> {}
 }
 
 annotation class Annotation1() {}
@@ -29,3 +30,6 @@ annotation class Annotation8(<!VAR_ANNOTATION_PARAMETER!>var<!> name: String = "
 annotation class Annotation9(val name: String)
 
 annotation class Annotation10
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, functionDeclaration, init, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

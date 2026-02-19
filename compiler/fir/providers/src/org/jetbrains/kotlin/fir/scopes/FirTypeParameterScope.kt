@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.Name
@@ -25,4 +27,7 @@ abstract class FirTypeParameterScope : FirContainingNamesAwareScope() {
     override fun getCallableNames(): Set<Name> = emptySet()
 
     override fun getClassifierNames(): Set<Name> = typeParameters.keys
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirContainingNamesAwareScope?
 }

@@ -1,5 +1,6 @@
-// !DUMP_CFG
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 
@@ -36,7 +37,7 @@ fun test1m() {
     x = ""
     x.length
     unknown { x = "" }
-    x.length
+    x.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun test2() {
@@ -45,7 +46,7 @@ fun test2() {
     x.length
     atLeastOnce { x = 1 }
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    x.inc()
+    x.<!UNRESOLVED_REFERENCE!>inc<!>()
 }
 
 fun test3() {
@@ -54,7 +55,7 @@ fun test3() {
     x.length
     exactlyOnce { x = 1 }
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    x.inc()
+    x.<!UNRESOLVED_REFERENCE!>inc<!>()
 }
 
 fun test4() {
@@ -65,3 +66,6 @@ fun test4() {
     x.<!UNRESOLVED_REFERENCE!>length<!>
     x.<!UNRESOLVED_REFERENCE!>inc<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

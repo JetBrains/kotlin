@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * If kotlin property hides some getter from java superclass this property should win in resolve
  */
@@ -28,3 +29,5 @@ fun test(b: B) {
     // should be CommandExecutor
     b.executor
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, localProperty, propertyDeclaration */

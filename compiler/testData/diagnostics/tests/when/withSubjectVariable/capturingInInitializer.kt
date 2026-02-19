@@ -1,5 +1,6 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun getBoolean() = true
 
@@ -35,3 +36,7 @@ fun testUnsafeCaptureVarInInitializer() {
 
     <!SMARTCAST_IMPOSSIBLE!>x<!>.inc() // NB smart cast should be impossible
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, equalityExpression, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

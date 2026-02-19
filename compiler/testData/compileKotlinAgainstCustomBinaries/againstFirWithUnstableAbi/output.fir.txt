@@ -1,1 +1,11 @@
-OK
+error: classes compiled by an unstable version of the Kotlin compiler were found in dependencies. Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors
+compiler/testData/compileKotlinAgainstCustomBinaries/againstFirWithUnstableAbi/source.kt:4:5: error: class 'lib.AKt' is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler.
+    get { Box("OK").value }
+    ^^^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/againstFirWithUnstableAbi/source.kt:4:11: error: class 'lib.Box' is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler.
+    get { Box("OK").value }
+          ^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/againstFirWithUnstableAbi/source.kt:4:11: error: class 'lib.Box' is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler.
+    get { Box("OK").value }
+          ^^^^^^^^^^^^^^^
+COMPILATION_ERROR

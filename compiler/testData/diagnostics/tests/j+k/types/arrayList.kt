@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: k.kt
 
@@ -14,3 +16,6 @@ import java.util.*;
 public class J<T> extends ML<T> {
     public List<T> foo() { return null; }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType,
+typeParameter */

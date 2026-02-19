@@ -1,6 +1,8 @@
 package
 
 public external val topLevelProp: kotlin.String
+public val x: kotlin.String
+public var y: kotlin.String
 
 public final external class A : I {
     public constructor A()

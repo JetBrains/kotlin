@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 private const val A = 0L
@@ -19,3 +20,6 @@ class Foo {
 
     constructor()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, const, functionDeclaration, init, nullableType, propertyDeclaration,
+secondaryConstructor */

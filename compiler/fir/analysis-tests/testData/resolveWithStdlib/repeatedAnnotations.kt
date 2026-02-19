@@ -1,7 +1,9 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Some.java
 import java.util.List;
 
 public class Some {
+    // Note that this source is incorrect Java code
     public static List<@SomeAnn(1) @SomeAnn(2) String> foo() {
         return null;
     }
@@ -35,3 +37,5 @@ fun test() {
     })
 }
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, flexibleType, functionDeclaration, functionalType,
+integerLiteral, javaFunction, lambdaLiteral, nullableType, stringLiteral, typeParameter */

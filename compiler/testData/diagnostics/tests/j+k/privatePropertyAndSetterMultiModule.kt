@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -44,3 +45,6 @@ fun main(editorTabs: JChildClass) {
     editorTabs.getData5()
     editorTabs.setData5("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, propertyDeclaration,
+stringLiteral */

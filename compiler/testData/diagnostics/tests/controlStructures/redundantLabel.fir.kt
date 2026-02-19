@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 annotation class Ann
@@ -37,3 +38,6 @@ fun testHighOrderFunctionCallLabel() {
 
 fun testAnonymousObjectLabel() =
     L@ object {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, anonymousObjectExpression, doWhileLoop, forLoop,
+functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, whileLoop */

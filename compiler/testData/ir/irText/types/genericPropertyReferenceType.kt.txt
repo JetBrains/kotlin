@@ -1,15 +1,27 @@
 class C<T : Any?> {
+  var x: T
+    field = x
+    get
+    set
+
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  var x: T
-    field = x
-    get
-    set
+}
 
+fun test1() {
+  use(p = ::y/*<String>(<this> = C<String>(x = "abc")) */)
+}
+
+fun test2(a: Any) {
+  a as C<String> /*~> Unit */
+  use(p = ::y/*<String>(<this> = a /*as C<String> */) */)
+}
+
+fun use(p: KMutableProperty<String>) {
 }
 
 var <T : Any?> C<T>.y: T
@@ -20,14 +32,3 @@ var <T : Any?> C<T>.y: T
     <this>.<set-x>(<set-?> = v)
   }
 
-fun use(p: KMutableProperty<String>) {
-}
-
-fun test1() {
-  use(p = C<String>(x = "abc")::y/*<String>()*/)
-}
-
-fun test2(a: Any) {
-  a as C<String> /*~> Unit */
-  use(p = a /*as C<String> */::y/*<String>()*/)
-}

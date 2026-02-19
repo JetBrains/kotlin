@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VALUE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VALUE
 
 fun foo(k: Int): Int {
     val i: Int
@@ -8,3 +9,6 @@ fun foo(k: Int): Int {
     i = 6
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+rangeExpression */

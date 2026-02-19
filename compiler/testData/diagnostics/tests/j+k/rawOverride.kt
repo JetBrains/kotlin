@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -23,3 +25,5 @@ class MakefileStubFileElementType : IStubFileElementType<StubElement<CharSequenc
     // FIR: ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED: indexStub, should be ok
     // FE 1.0: Ok
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 fun foo(x: Any?) {
     x ?:<!SYNTAX!><!>
     val foo = 1
@@ -21,3 +21,6 @@ class A {
     val q = null ?:
     fun String.() = 6
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+integerLiteral, localFunction, localProperty, nullableType, propertyDeclaration, typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun x(): Boolean { return true }
 
 public fun foo(p: String?): Int {
@@ -9,3 +10,6 @@ public fun foo(p: String?): Int {
     // p should be smart casted despite of break
     return <!DEBUG_INFO_SMARTCAST!>p<!>.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast, stringLiteral */

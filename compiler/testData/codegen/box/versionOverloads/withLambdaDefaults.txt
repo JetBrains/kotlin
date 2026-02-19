@@ -1,0 +1,55 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'withLambdaDefaults.kt'
+    public method <init>(): void
+    public synthetic deprecated static method inArgument$default(p0: C, p1: java.lang.String, p2: int, p3: kotlin.jvm.functions.Function1, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic static method inArgument$default(p0: C, p1: java.lang.String, p2: int, p3: kotlin.jvm.functions.Function1, p4: kotlin.jvm.functions.Function1, p5: int, p6: java.lang.Object): java.lang.String
+    private final static method inArgument$lambda$0(p0: int, p1: int): int
+    public final @org.jetbrains.annotations.NotNull method inArgument(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, @kotlin.IntroducedAt(version="2") @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p3: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method inArgument(p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, p2: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method inArgument(p0: java.lang.String, p1: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic static method inTrailing$default(p0: C, p1: java.lang.String, p2: int, p3: boolean, p4: kotlin.jvm.functions.Function1, p5: int, p6: java.lang.Object): java.lang.String
+    public synthetic deprecated static method inTrailing$default(p0: C, p1: java.lang.String, p2: int, p3: kotlin.jvm.functions.Function1, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic deprecated static method inTrailing$default(p0: C, p1: java.lang.String, p2: kotlin.jvm.functions.Function1, p3: int, p4: java.lang.Object): java.lang.String
+    private final static method inTrailing$lambda$0(p0: java.lang.String, p1: java.lang.String): java.lang.String
+    private final static method inTrailing$lambda$1(p0: java.lang.String, p1: java.lang.String): java.lang.String
+    private final static method inTrailing$lambda$2(p0: java.lang.String, p1: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method inTrailing(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, @kotlin.IntroducedAt(version="2") p2: boolean, @org.jetbrains.annotations.NotNull p3: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method inTrailing(p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, p2: kotlin.jvm.functions.Function1): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method inTrailing(p0: java.lang.String, p1: kotlin.jvm.functions.Function1): java.lang.String
+}
+
+@kotlin.Metadata
+synthetic final class WithLambdaDefaultsKt$test1$f$1 {
+    // source: 'withLambdaDefaults.kt'
+    enclosing method WithLambdaDefaultsKt.test1()Ljava/lang/String;
+    public final static field INSTANCE: WithLambdaDefaultsKt$test1$f$1
+    inner (anonymous) class WithLambdaDefaultsKt$test1$f$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.String): java.lang.String
+}
+
+@kotlin.Metadata
+synthetic final class WithLambdaDefaultsKt$test2$f$1 {
+    // source: 'withLambdaDefaults.kt'
+    enclosing method WithLambdaDefaultsKt.test2()Ljava/lang/String;
+    public final static field INSTANCE: WithLambdaDefaultsKt$test2$f$1
+    inner (anonymous) class WithLambdaDefaultsKt$test2$f$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.String): java.lang.String
+}
+
+@kotlin.Metadata
+public final class WithLambdaDefaultsKt {
+    // source: 'withLambdaDefaults.kt'
+    inner (anonymous) class WithLambdaDefaultsKt$test1$f$1
+    inner (anonymous) class WithLambdaDefaultsKt$test2$f$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
+    private final static method test2$lambda$0(p0: int): int
+    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
+}

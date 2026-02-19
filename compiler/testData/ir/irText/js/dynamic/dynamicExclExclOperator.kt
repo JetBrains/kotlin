@@ -1,4 +1,3 @@
 // TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND_K1: JS_IR
-// IGNORE_BACKEND_K1: JS_IR_ES6
 fun test(d: dynamic) = d!!

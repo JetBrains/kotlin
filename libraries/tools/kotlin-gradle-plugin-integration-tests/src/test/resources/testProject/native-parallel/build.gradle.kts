@@ -1,10 +1,4 @@
+import java.util.concurrent.CountDownLatch
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>").apply(false)
-}
-
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
+    id("org.jetbrains.kotlin.multiplatform").apply(false)
 }

@@ -3,32 +3,57 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE")
 package kotlin.test
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.WasmExport
+
+internal expect fun adapter(): FrameworkAdapter
 
 /**
  * The functions below are used by the compiler to describe the tests structure, e.g.
+ * fun startUnitTests() {
+ *     `declare test fun`()
+ *     runRootSuites()
+ * }
  *
- * suite('a suite', false, function() {
- *   suite('a subsuite', false, function() {
- *     test('a test', false, function() {...});
- *     test('an ignored/pending test', true, function() {...});
- *   });
- *   suite('an ignored/pending test', true, function() {...});
- * });
+ * fun `declare test fun`() {
+ *     registerRootSuiteBlock("top-level-package1") {
+ *         suite("TestClass1", ignored = false) {
+ *             suite("a subsuite", ignored = false) {
+ *                 test("a test", ignored = false) {...}
+ *                 test("an ignored/pending test", ignored = true) {...}
+ *             }
+ *             suite("an ignored/pending test", ignored = true) {...}
+ *         }
+ *     }
+ * }
  */
 
+@UsedFromCompilerGeneratedCode
 internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
     adapter().suite(name, ignored, suiteFn)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
     adapter().test(name, ignored, testFn)
 }
 
-// This is called from the js-launcher alongside wasm start function
-@WasmExport
-internal fun startUnitTests() {
-    // This will be filled with the corresponding code during lowering
+private val rootSuiteBlocks: MutableMap<String, MutableList<() -> Unit>> = mutableMapOf()
+
+@UsedFromCompilerGeneratedCode
+internal fun registerRootSuiteBlock(suiteName: String, block: () -> Unit) {
+    rootSuiteBlocks.getOrPut(suiteName, ::mutableListOf).add(block)
+}
+
+@UsedFromCompilerGeneratedCode
+internal fun runRootSuites() {
+    rootSuiteBlocks.entries.forEach { (suiteName, block) ->
+        suite(name = suiteName, ignored = false) {
+            block.forEach { it() }
+        }
+    }
+    rootSuiteBlocks.clear()
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class C1
 
 interface I1
@@ -20,3 +21,9 @@ class <!NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE, NON_EXTERNAL_TYPE_EXTENDS_EXTER
 
 val x1: Any = <!NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE!>object<!> : EI1 {}
 val x2: Any = <!NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE!>object<!> : EC1() {}
+
+external interface EI2
+
+typealias TA1 = EI2
+
+external class EC4 : TA1

@@ -5,20 +5,27 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import org.jetbrains.kotlin.cli.common.CLITool
+import com.intellij.openapi.util.SystemInfo
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
-import org.junit.Assert
-import org.junit.Test
 import java.io.File
+import java.net.URLClassLoader
 import java.nio.file.Files
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ScriptingWithCliCompilerTest {
 
     companion object {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
+        val SIMPLE_TEST_SCRIPT = "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts"
     }
 
     init {
@@ -41,6 +48,23 @@ class ScriptingWithCliCompilerTest {
             "$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", listOf("Hello from standard kts!"),
             classpath = getMainKtsClassPath()
         )
+    }
+
+    @Test
+    fun testCompileMainKtsWithDependsOn() {
+        withTempDir { tmpdir ->
+            runWithK2JVMCompiler(
+                arrayOf(
+                    K2JVMCompilerArguments::destination.cliArgument,
+                    tmpdir.absolutePath,
+                    K2JVMCompilerArguments::classpath.cliArgument,
+                    getMainKtsClassPath().joinToString(File.pathSeparator),
+                    K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                    K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                    "$TEST_DATA_DIR/integration/hello-resolve-junit.main.kts",
+                ),
+            )
+        }
     }
 
     @Test
@@ -70,7 +94,7 @@ class ScriptingWithCliCompilerTest {
         // testing that without specifying default to .main.kts, the annotation is unresolved
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 "-expression=@file:CompilerOptions(\"-Xunknown1\")"
             ),
             expectedExitCode = 1,
@@ -80,8 +104,8 @@ class ScriptingWithCliCompilerTest {
         )
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-Xdefault-script-extension=.main.kts",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
                 "-expression=@file:CompilerOptions(\"-Xunknown1\")"
             ),
             expectedExitCode = 0,
@@ -96,8 +120,10 @@ class ScriptingWithCliCompilerTest {
         // testing that without specifying default to .main.kts the script with extension .txt is not recognized
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-script",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
+                K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
             expectedExitCode = 1,
@@ -107,9 +133,11 @@ class ScriptingWithCliCompilerTest {
         )
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-Xdefault-script-extension=.main.kts",
-                "-script",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
+                K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
             expectedExitCode = 1,
@@ -119,9 +147,11 @@ class ScriptingWithCliCompilerTest {
         )
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-Xdefault-script-extension=main.kts",
-                "-script",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::defaultScriptExtension.cliArgument("main.kts"),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
+                K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
             expectedExitCode = 1,
@@ -158,16 +188,16 @@ class ScriptingWithCliCompilerTest {
     @Test
     fun testExceptionWithCause() {
         val (_, err, _) = captureOutErrRet {
-            CLITool.doMainNoExit(
+            CLICompiler.doMainNoExit(
                 K2JVMCompiler(),
                 arrayOf(
-                    "-script",
+                    K2JVMCompilerArguments::script.cliArgument,
                     "$TEST_DATA_DIR/integration/exceptionWithCause.kts"
                 )
             )
         }
         val filteredErr = err.linesSplitTrim().filterNot { it.startsWith("WARN: ") }
-        Assert.assertEquals(
+        assertContentEquals(
             """
                 java.lang.Exception: Top
 	                    at ExceptionWithCause.<init>(exceptionWithCause.kts:8)
@@ -181,62 +211,53 @@ class ScriptingWithCliCompilerTest {
     }
 
     @Test
-    fun testCompileScriptWithRegularKotlin() {
-
-        fun compileVariant(vararg flags: String, withScriptInstance: Boolean = true): Pair<List<String>, ExitCode> {
-            return withTempDir { tmpdir ->
-                val (_, err, exitCode) = captureOutErrRet {
-                    CLITool.doMainNoExit(
-                        K2JVMCompiler(),
-                        arrayOf(
-                            "-d", tmpdir.path,
-                            "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                            *flags,
-                            if (withScriptInstance)
-                                "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScriptInstance.kt"
-                            else
-                                "$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt",
-                            "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts"
-                        )
+    fun testAccessRegularSourceFromScript() {
+        withTempDir { tmpdir ->
+            val scriptPath = "$TEST_DATA_DIR/compiler/mixedCompilation/scriptAccessingNonScript.main.kts"
+            val ret =
+                CLICompiler.doMainNoExit(
+                    K2JVMCompiler(),
+                    arrayOf(
+                        "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                        K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                        K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                        K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                        K2JVMCompilerArguments::verbose.cliArgument,
+                        "$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt",
+                        scriptPath,
                     )
-                }
-                err.linesSplitTrim() to exitCode
+                )
+            assertEquals(ExitCode.OK.code, ret.code)
+            val (out, _, _) = captureOutErrRet {
+                val cl = URLClassLoader((getMainKtsClassPath() + tmpdir).map { it.toURI().toURL() }.toTypedArray())
+                val klass = cl.loadClass("ScriptAccessingNonScript_main")
+                val ctor = klass.constructors.single()
+                ctor.newInstance(arrayOf<String>(), File(scriptPath))
             }
+            assertEquals("OK", out.trim())
         }
+    }
 
-        val scriptInSourceRootWarning =
-            "warning: script 'simpleScript.main.kts' is not supposed to be used along with regular Kotlin sources, and will be ignored in the future versions"
-
-        val unresolvedScriptError =
-            "simpleScriptInstance.kt:3:13: error: unresolved reference: SimpleScript_main"
-
-        compileVariant("-language-version", "1.7").let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.any { it.startsWith(scriptInSourceRootWarning) })
-            Assert.assertEquals(ExitCode.OK, exitCode)
-        }
-
-        compileVariant("-language-version", "1.7", "-Xallow-any-scripts-in-source-roots").let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
-            Assert.assertEquals(ExitCode.OK, exitCode)
-        }
-
-        compileVariant("-language-version", "1.9").let { (errLines, exitCode) ->
-            if (errLines.none { it.endsWith(unresolvedScriptError) }) {
-                Assert.fail("Expecting unresolved reference: SimpleScript_main error, got:\n${errLines.joinToString("\n")}")
+    @Test
+    fun testAccessScriptFromRegularSource() {
+        withTempDir { tmpdir ->
+            val (_, err, ret) = captureOutErrRet {
+                CLICompiler.doMainNoExit(
+                    K2JVMCompiler(),
+                    arrayOf(
+                        "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                        K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                        K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                        K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                        K2JVMCompilerArguments::verbose.cliArgument,
+                        "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",
+                        SIMPLE_TEST_SCRIPT
+                    )
+                )
             }
-            Assert.assertEquals(ExitCode.COMPILATION_ERROR, exitCode)
-        }
-
-        compileVariant("-language-version", "1.9", withScriptInstance = false).let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
-            Assert.assertEquals(ExitCode.OK, exitCode)
-        }
-
-        compileVariant("-language-version", "1.9", "-Xallow-any-scripts-in-source-roots").let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.none {
-                it.endsWith(unresolvedScriptError) || it.startsWith(scriptInSourceRootWarning)
-            })
-            Assert.assertEquals(ExitCode.OK, exitCode)
+            assertTrue(err.contains("error: unresolved reference 'SimpleScript_main'"), "Expecting an error about unresolved 'SimpleScript_main', got:\n$err")
+            assertTrue(err.contains("error: unresolved reference 'ok'"), "Expecting an error about unresolved 'ok', got:\n$err")
+            assertEquals(ExitCode.COMPILATION_ERROR.code, ret.code)
         }
     }
 
@@ -246,34 +267,68 @@ class ScriptingWithCliCompilerTest {
 
             fun compileSuccessfullyGetStdErr(fileArg: String): List<String> {
                 val (_, err, ret) = captureOutErrRet {
-                    CLITool.doMainNoExit(
+                    CLICompiler.doMainNoExit(
                         K2JVMCompiler(),
                         arrayOf(
-                            "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
-                            "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
-                            "-Xuse-fir-lt=false",
-                            "-Xallow-any-scripts-in-source-roots", "-verbose", fileArg
+                            "-P",
+                            "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                            K2JVMCompilerArguments::classpath.cliArgument,
+                            getMainKtsClassPath().joinToString(File.pathSeparator),
+                            K2JVMCompilerArguments::destination.cliArgument,
+                            tmpdir.path,
+                            K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                            K2JVMCompilerArguments::verbose.cliArgument,
+                            fileArg
                         )
                     )
                 }
-                Assert.assertEquals(0, ret.code)
+                assertEquals(ExitCode.OK.code, ret.code)
                 return err.linesSplitTrim()
             }
 
             val loadMainKtsMessage = "logging: configure scripting: loading script definition class org.jetbrains.kotlin.mainKts.MainKtsScript using classpath"
 
             val res1 = compileSuccessfullyGetStdErr("$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt")
-            Assert.assertTrue(res1.none { it.startsWith(loadMainKtsMessage) })
+            assertTrue(res1.none { it.startsWith(loadMainKtsMessage) })
 
-            val res2 = compileSuccessfullyGetStdErr("$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts")
-            Assert.assertTrue(res2.any { it.startsWith(loadMainKtsMessage) })
+            val res2 = compileSuccessfullyGetStdErr(SIMPLE_TEST_SCRIPT)
+            assertTrue(res2.any { it.startsWith(loadMainKtsMessage) })
         }
+    }
+
+    @Test
+    fun testWithAllOpenViaLegacyPluginOptions() {
+        // fails on K1, see KT-74390
+        if (System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") == true) return
+
+        val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
+        runWithKotlinc(
+            arrayOf(
+                "-Xplugin=dist/kotlinc/lib/allopen-compiler-plugin.jar",
+                "-P", "${quoteForWin}plugin:org.jetbrains.kotlin.allopen:annotation=AllOpen$quoteForWin",
+                "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
+            ), listOf("OK")
+        )
+    }
+
+    @Test
+    fun testWithAllOpen() {
+        // this plugin syntax is not supported in K1
+        if (System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") == true) return
+
+        val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
+        runWithKotlinc(
+            arrayOf(
+                "-Xcompiler-plugin=${quoteForWin}dist/kotlinc/lib/allopen-compiler-plugin.jar=annotation=AllOpen$quoteForWin",
+                "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
+            ), listOf("OK")
+        )
     }
 
     private fun getMainKtsClassPath(): List<File> {
         return listOf(
             File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-                Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+                assertTrue(it.exists(), "kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}")
             }
         )
     }

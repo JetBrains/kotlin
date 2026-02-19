@@ -4,7 +4,6 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.common.Symbol;
 import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,11 +32,6 @@ public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasNa
     @Override
     public void setName(JsName name) {
         label = name;
-    }
-
-    @Override
-    public Symbol getSymbol() {
-        return label;
     }
 
     public JsStatement getStatement() {

@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +AllowSuperCallToJavaInterface
 // FILE: JavaInterface.java
 
 public interface JavaInterface {
@@ -165,3 +166,6 @@ fun test() {
     KotlinClass().testOverride()
     KotlinClassIndirectInheritance().testOverride()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, flexibleType, functionDeclaration, getter,
+interfaceDeclaration, javaFunction, javaType, override, propertyDeclaration, stringLiteral, superExpression */

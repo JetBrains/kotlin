@@ -1,6 +1,6 @@
 // This test depends on line numbers
-// WITH_STDLIB
 
+// WITH_STDLIB
 // FILE: 1.kt
 package test
 

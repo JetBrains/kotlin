@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(block: (Int, String) -> Unit) { }
 fun foobar(block: (Double) -> Unit) { }
@@ -46,3 +47,6 @@ fun bar() {
 
     foo(fun(x: Int, _: String) {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

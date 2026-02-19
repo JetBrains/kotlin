@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-35314
 
@@ -28,3 +29,6 @@ inline fun myLet(block: () -> Unit) {
     }
     return block()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, contractCallsEffect, contracts, functionDeclaration,
+functionalType, ifExpression, inline, lambdaLiteral, tryExpression */

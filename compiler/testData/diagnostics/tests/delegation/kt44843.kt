@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: test.kt
@@ -23,3 +24,6 @@ class Bar<T, V> : ReadOnlyProperty<T, V> {
         TODO("Not yet implemented")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, override, propertyDeclaration,
+propertyDelegate, starProjection, stringLiteral, typeParameter */

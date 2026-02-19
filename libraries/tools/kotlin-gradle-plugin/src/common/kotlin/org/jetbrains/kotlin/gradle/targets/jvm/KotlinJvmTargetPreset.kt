@@ -7,14 +7,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
 
-@DeprecatedTargetPresetApi
-class KotlinJvmTargetPreset(
+internal class KotlinJvmTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinJvmTarget, KotlinJvmCompilation>(
     project
@@ -23,7 +21,7 @@ class KotlinJvmTargetPreset(
         return project.objects.newInstance(KotlinJvmTarget::class.java, project)
     }
 
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createCompilationFactory(forTarget: KotlinJvmTarget): KotlinCompilationFactory<KotlinJvmCompilation> =
         KotlinJvmCompilationFactory(forTarget)

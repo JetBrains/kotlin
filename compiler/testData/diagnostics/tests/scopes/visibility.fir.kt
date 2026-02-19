@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 //FILE:a.kt
 package test_visibility
@@ -41,7 +42,7 @@ class B {
 
 fun test3(a: A) {
     a.<!INVISIBLE_REFERENCE!>v<!> //todo .bMethod()
-    a.<!INVISIBLE_REFERENCE!>f<!>(0, 1) //todo .bMethod()
+    a.f(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
 }
 
 interface T
@@ -54,7 +55,7 @@ open class C : T {
 }
 
 fun test4(c: C) {
-    c.<!INVISIBLE_REFERENCE, INVISIBLE_SETTER!>i<!>++
+    c.<!INVISIBLE_REFERENCE!>i<!>++
 }
 
 class D : C() {
@@ -93,3 +94,6 @@ fun test() {
     internal_fun()
     <!INVISIBLE_REFERENCE!>private_fun<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, integerLiteral,
+interfaceDeclaration, propertyDeclaration */

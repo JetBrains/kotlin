@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 import kotlin.reflect.KClass
 fun <T : PsiElement> select(vararg classes: KClass<out T>): T? {
@@ -16,3 +17,6 @@ class A {
 fun main() {
     A().inv
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, getter, interfaceDeclaration,
+intersectionType, nullableType, propertyDeclaration, typeConstraint, typeParameter, vararg */

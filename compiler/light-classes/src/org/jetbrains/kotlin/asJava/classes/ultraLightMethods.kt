@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,17 +19,17 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
-import org.jetbrains.kotlin.codegen.FunctionCodegen
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.RawType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -75,7 +75,7 @@ private class KtUltraLightMethodModifierList(
             ?: super.getTextOffset()
     }
 
-    override fun getTextRange(): TextRange {
+    override fun getTextRange(): TextRange? {
         return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextRange)
             ?: super.getTextRange()
     }
@@ -101,7 +101,7 @@ internal abstract class KtUltraLightMethod(
         val builder = KtUltraLightThrowsReferenceListBuilder(parentMethod = this)
 
         if (methodDescriptor !== null) {
-            for (ex in FunctionCodegen.getThrownExceptions(methodDescriptor, LanguageVersionSettingsImpl.DEFAULT)) {
+            for (ex in getThrownExceptions(methodDescriptor)) {
                 val psiClassType = ex.defaultType.asPsiType(support, TypeMappingMode.DEFAULT, builder) as? PsiClassType
                 psiClassType ?: continue
                 builder.addReference(psiClassType)
@@ -109,6 +109,19 @@ internal abstract class KtUltraLightMethod(
         }
 
         return builder
+    }
+
+    private fun getThrownExceptions(function: FunctionDescriptor): List<ClassDescriptor> {
+        if (function.getKind() == CallableMemberDescriptor.Kind.DELEGATION) return emptyList()
+
+        val annotation = function.annotations.findAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME) ?: return emptyList()
+
+        val value = annotation.allValueArguments.values.firstOrNull()
+        return (value as? ArrayValue)?.value?.mapNotNull { constant ->
+            if (constant is KClassValue) {
+                DescriptorUtils.getClassDescriptorForType(constant.getArgumentType(function.module))
+            } else null
+        }.orEmpty()
     }
 
     protected fun computeCheckNeedToErasureParametersTypes(methodDescriptor: FunctionDescriptor?): Boolean {
@@ -164,7 +177,8 @@ internal abstract class KtUltraLightMethod(
     override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean): List<MethodSignatureBackedByPsiMethod> =
         PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
 
-    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+    @Deprecated("Deprecated in Java")
+    override fun findDeepestSuperMethod(): PsiMethod? = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
 
     override fun findDeepestSuperMethods(): Array<out PsiMethod> = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
 
@@ -320,7 +334,7 @@ internal class KtUltraLightMethodForDescriptor(
 
         val returnType = if (methodDescriptor is ConstructorDescriptor) {
             delegate.isConstructor = true
-            PsiType.VOID
+            PsiTypes.voidType()
         } else {
             support.mapType(methodDescriptor.returnType, this) { typeMapper, signatureWriter ->
                 typeMapper.mapReturnType(methodDescriptor, signatureWriter)

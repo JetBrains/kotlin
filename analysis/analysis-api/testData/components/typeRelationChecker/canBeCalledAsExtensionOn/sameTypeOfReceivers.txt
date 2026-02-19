@@ -1,0 +1,3 @@
+CAN_BE_CALLED_AS_EXTENSION_ON: true
+CALLABLE: fun kotlin.Int.foo()
+TYPE: kotlin.Int

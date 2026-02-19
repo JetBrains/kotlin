@@ -1,23 +1,22 @@
-// !LANGUAGE: +MultiPlatformProjects
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 // FILE: StringValue.kt
-<!NO_ACTUAL_FOR_EXPECT{JS}!>expect class StringValue<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class StringValue
 
-<!NO_ACTUAL_FOR_EXPECT{JS}!>expect fun StringValue.plus(other: String): StringValue<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> fun StringValue.plus(other: String): StringValue
 
 // MODULE: commonJS()()(common)
-// TARGET_PLATFORM: JS
 
-// FILE: StringValue.kt
-actual class Strin<!NO_ACTUAL_FOR_EXPECT{JS}!>gValue(val value: String<!>)
-<!NO_ACTUAL_FOR_EXPECT{JS}!>
-actual fun StringValue.plus(other: String) = StringVal<!>ue(this.value + other)
+// FILE: StringValueJs.kt
+actual class StringValue(val value: String)
+
+actual fun StringValue.plus(other: String) = StringValue(this.value + other)
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 
 // FILE: StringDemoInterface.kt
 expect interface StringDemoInterface
@@ -26,17 +25,20 @@ interface KotlinXStringDemoInterface {
     val value: String
 }
 
-<!INCOMPATIBLE_MATCHING{JS}!>expect fun StringDemoInterface.plusK(): String<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun StringDemoInterface.plusK(): String
 
 // MODULE: js()()(common, intermediate)
-// TARGET_PLATFORM: JS
 
-// FILE: StringDemoInterface.kt
+// FILE: StringDemoInterfaceJs.kt
 actual typealias StringDemoInterface = KotlinXStringDemoInterface
 
-actual fun StringDemoIn<!INCOMPATIBLE_MATCHING!>terface.<!ACTUAL_WITHOUT_EXPECT("actual fun StringDemoInterface.plusK(): <ERROR TYPE REF: Unresolved name: value>; The following declaration is incompatible:    expect fun StringDemoInterface.plusK(): String")!>plusK<!>() = <!EXPECT_CLASS_AS_FUNCTION!>StringValue<!>(value).plus("K")<!>.<!UNRESOLVED_REFERENCE!>value<!>
+actual fun StringDemoInterface.<!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>plusK<!>() = <!EXPECT_CLASS_AS_FUNCTION!>StringValue<!>(value).plus("K").<!UNRESOLVED_REFERENCE!>value<!>
 
 // FILE: main.kt
 class StringDemo(override val value: String) : StringDemoInterface
 
 fun box() = StringDemo("O").plusK()
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral,
+thisExpression, typeAliasDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package outer
 
@@ -23,3 +24,5 @@ fun use() {
     <!INVISIBLE_MEMBER!>a<!>()
     outer.<!INVISIBLE_MEMBER!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

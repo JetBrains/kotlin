@@ -1,5 +1,6 @@
 // p.E
 // test for KT-8874
+// WITH_STDLIB
 
 package p
 
@@ -10,5 +11,3 @@ enum class E {
     @Deprecated("b")
     Entry3
 }
-
-// FIR_COMPARISON

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50092
 // SKIP_TXT
 
@@ -83,3 +84,7 @@ fun test6() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, equalityExpression, forLoop, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression, safeCall, smartcast,
+stringLiteral, tryExpression, whenExpression, whenWithSubject, whileLoop */

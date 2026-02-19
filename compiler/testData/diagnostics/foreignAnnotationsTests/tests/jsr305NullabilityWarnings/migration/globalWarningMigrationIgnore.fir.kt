@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: warn
 // JSR305_MIGRATION_REPORT: ignore
 // JSR305_SPECIAL_REPORT: MyNullable:strict, MyMigrationNonnull:strict
@@ -45,10 +45,10 @@ fun main(a: A) {
 
     a.foo2("", null)?.length
     a.foo2("", null)<!UNSAFE_CALL!>.<!>length
-    a.foo2(null, "")<!UNSAFE_CALL!>.<!>length
+    a.foo2(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!UNSAFE_CALL!>.<!>length
 
     a.bar2().length
-    a.bar2()!!.length
+    a.bar2()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field2?.length
     a.field2<!UNSAFE_CALL!>.<!>length

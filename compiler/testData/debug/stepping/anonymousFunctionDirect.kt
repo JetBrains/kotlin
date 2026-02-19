@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun box() {
@@ -9,14 +9,22 @@ fun box() {
 
 // EXPECTATIONS JVM_IR
 // test.kt:6 box
-// EXPECTATIONS JVM
+// test.kt:8 box
+
+// EXPECTATIONS NATIVE
 // test.kt:5 box
+// test.kt:5 invoke
 // test.kt:6 invoke
-// test.kt:5 box
-// EXPECTATIONS JVM JVM_IR
+// test.kt:7 invoke
 // test.kt:8 box
 
 // EXPECTATIONS JS_IR
 // test.kt:5 box
 // test.kt:6 box$lambda
 // test.kt:8 box
+
+// EXPECTATIONS WASM
+// test.kt:5 $box (4)
+// test.kt:6 $box$lambda.invoke (8, 12)
+// test.kt:5 $box (4)
+// test.kt:8 $box (1)

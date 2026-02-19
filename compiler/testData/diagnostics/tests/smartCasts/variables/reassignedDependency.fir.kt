@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 class C(val x: String?)
@@ -84,3 +85,6 @@ fun test6() {
     }
     c.x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, elvisExpression, equalityExpression, functionDeclaration,
+ifExpression, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, whileLoop */

@@ -1,8 +1,17 @@
 package
 
 package f {
+    public fun </*0*/ R, /*1*/ K> f(/*0*/ f: (kotlin.Boolean) -> R, /*1*/ vararg x: f.In<K> /*kotlin.Array<out f.In<K>>*/): kotlin.Int
+    public fun </*0*/ R, /*1*/ K> f(/*0*/ f: (kotlin.String) -> R, /*1*/ vararg x: f.In<K> /*kotlin.Array<out f.In<K>>*/): kotlin.Int
     public fun getAnswer(): kotlin.Int
     public fun </*0*/ R> h(/*0*/ f: (kotlin.Boolean) -> R): kotlin.Int
     public fun </*0*/ R> h(/*0*/ f: (kotlin.String) -> R): kotlin.Int
-    public fun test(): [Error type: Return type for function cannot be resolved]
+    public fun test(): kotlin.Unit
+
+    public final class In</*0*/ in K> {
+        public constructor In</*0*/ in K>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }

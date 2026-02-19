@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class A(val v: A) {
     A1(<!UNINITIALIZED_ENUM_ENTRY!>A2<!>),
     A2(A1),
@@ -34,3 +35,6 @@ enum class MyEnum {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, integerLiteral, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

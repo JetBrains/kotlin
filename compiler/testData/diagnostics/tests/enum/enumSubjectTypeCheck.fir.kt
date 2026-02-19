@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-14705
 
 enum class En { A, B, С }
@@ -30,7 +31,7 @@ fun useEn(x: En) = x
 fun useEn2(x: En2) = x
 
 fun bar(x: Any) {
-    if (x is En && x is En2) {
+    if (x is En && <!USELESS_IS_CHECK!>x is En2<!>) {
         when (x) {
             En.A -> useEn(x)
             En2.D -> useEn2(x)
@@ -38,3 +39,7 @@ fun bar(x: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression,
+intersectionType, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

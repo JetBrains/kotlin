@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -USELESS_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -USELESS_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: j/Base.java
 package j;
@@ -86,3 +88,7 @@ fun testOkInJava() {
     <!INACCESSIBLE_TYPE!>select(d1, d2)<!>
     foo(<!INACCESSIBLE_TYPE!>select(d1, d2)<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, checkNotNullCall, forLoop, functionDeclaration, ifExpression,
+integerLiteral, javaFunction, javaType, localProperty, nullableType, outProjection, propertyDeclaration, typeConstraint,
+typeParameter, vararg, whenExpression */

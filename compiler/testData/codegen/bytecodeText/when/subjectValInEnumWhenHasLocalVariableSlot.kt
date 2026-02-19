@@ -1,4 +1,4 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 
 enum class X { A, B, C }
 

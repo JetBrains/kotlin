@@ -1,8 +1,9 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: kotlin/collections/Iterator
+KaNamedClassSymbol:
+  annotations: []
+  classId: kotlin/collections/Iterator
   classKind: INTERFACE
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -11,20 +12,39 @@ KtNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: Iterator
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      upperBounds: []
+      variance: OUT_VARIANCE
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
+      importableFqName: null
   ]
-  visibility: Public
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: kotlin.collections.Iterator

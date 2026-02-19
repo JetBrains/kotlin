@@ -1,0 +1,2 @@
+expression: GenericClass<String>()::foo
+type: kotlin.reflect.KFunction0<kotlin.String>

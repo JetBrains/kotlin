@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 interface A
 interface B
@@ -17,3 +18,6 @@ fun test(a: A, b: B) {
     bar2(::foo, a)
     bar2(::foo, b)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, interfaceDeclaration, localProperty,
+nullableType, propertyDeclaration, typeParameter */

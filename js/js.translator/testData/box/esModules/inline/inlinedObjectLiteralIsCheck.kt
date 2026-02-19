@@ -1,8 +1,7 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 
 // Generated .mjs name is different in Wasm
-// DONT_TARGET_EXACT_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: WASM_JS
 
 // FILE: main.kt
 interface I {

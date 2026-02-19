@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Super.java
 public class Super {
@@ -18,3 +19,6 @@ fun main() {
     x.foo = true
     x.bar = true
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration */

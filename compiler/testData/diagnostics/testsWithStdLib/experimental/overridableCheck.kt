@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @RequiresOptIn
 @Target(AnnotationTarget.TYPEALIAS, AnnotationTarget.FUNCTION)
 annotation class Marker
@@ -20,3 +21,6 @@ fun test(d: Derived) {
     d.<!OPT_IN_USAGE_ERROR!>foo<!>()
     d.<!OPT_IN_USAGE_ERROR!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

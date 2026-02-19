@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 inline fun foo(bar1: (String.() -> Int) -> Int, bar2: (()->Int) -> Int) {
     bar1 label@ {
@@ -38,3 +39,6 @@ inline fun foo2(bar1: (String.() -> Int) -> Int) {
         11
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, thisExpression,
+typeWithExtension */

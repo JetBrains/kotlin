@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: usage.kt
 @Target(AnnotationTarget.TYPE)
@@ -22,3 +23,6 @@ public interface Manager<T> {
 public interface Consumer<T> {
     void accept(T t);
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, flexibleType, functionDeclaration, inProjection,
+javaType, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, samConversion, typeParameter */

@@ -48,7 +48,7 @@ internal class CAdapterApiExporter(
             builtIns.charType, builtIns.booleanType,
             builtIns.unitType
     ) + UnsignedType.values().map {
-        // Unfortunately, `context.ir` and `context.irBuiltins` are not initialized, so `context.ir.symbols.ubyte`, etc, are unreachable.
+        // Unfortunately, `context.symbols` and `context.irBuiltins` are not initialized, so `context.symbols.ubyte`, etc, are unreachable.
         builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
     }
 
@@ -245,14 +245,11 @@ internal class CAdapterApiExporter(
         output("#endif  /* KONAN_${prefix.uppercase()}_H */")
 
         outputStreamWriter.close()
-        println("Produced library API in ${prefix}_api.h")
 
         outputStreamWriter = cppAdapterFile.printWriter()
 
         // Include header into C++ source.
         headerFile.forEachLine { it -> output(it) }
-
-        output("#include <exception>")
 
         output("""
     |struct KObjHeader;
@@ -264,7 +261,13 @@ internal class CAdapterApiExporter(
     |typedef struct FrameOverlay FrameOverlay;
     |
     |#define RUNTIME_NOTHROW __attribute__((nothrow))
-    |#define RUNTIME_USED __attribute__((used))
+    |
+    |#if __has_attribute(retain)
+    |#define RUNTIME_EXPORT __attribute__((used,retain))
+    |#else
+    |#define RUNTIME_EXPORT __attribute__((used))
+    |#endif
+    |
     |#define RUNTIME_NORETURN __attribute__((noreturn))
     |
     |extern "C" {
@@ -380,7 +383,7 @@ internal class CAdapterApiExporter(
 
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
         output("};")
-        output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
+        output("RUNTIME_EXPORT ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
         if (defFile != null) {

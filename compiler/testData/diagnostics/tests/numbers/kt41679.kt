@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-41679
 
@@ -10,3 +11,6 @@ fun test_2(x: Int) {
     var y = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<{Comparable<*> & java.io.Serializable}>")!>mutableListOf("MH", x, true)<!>
     y[0] = "value4"
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, intersectionType, localProperty, outProjection,
+propertyDeclaration, stringLiteral */

@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public final class IntMutableCollection {
     // source: 'mutableCollectionOfPrimitive.kt'
-    private final field mc: java.util.Collection
+    private final @org.jetbrains.annotations.NotNull field mc: java.util.Collection
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
     public method add(p0: int): boolean
     public synthetic bridge method add(p0: java.lang.Object): boolean
@@ -13,7 +13,7 @@ public final class IntMutableCollection {
     public method getSize(): int
     public method isEmpty(): boolean
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
-    public method remove(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): boolean
+    public method remove(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): boolean
     public bridge final method remove(p0: java.lang.Object): boolean
     public method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
@@ -25,7 +25,7 @@ public final class IntMutableCollection {
 @kotlin.Metadata
 public final class LongMutableCollection {
     // source: 'mutableCollectionOfPrimitive.kt'
-    private final field mc: java.util.Collection
+    private final @org.jetbrains.annotations.NotNull field mc: java.util.Collection
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
     public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: long): boolean

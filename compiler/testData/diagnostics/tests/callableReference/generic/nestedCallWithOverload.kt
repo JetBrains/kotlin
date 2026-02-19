@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
 fun foo(i: Int) {}
 fun foo(s: String) {}
@@ -19,3 +20,6 @@ fun test() {
     baz(id(::foo), id(id<(Int) -> Unit>(::foo)))
     baz(id(::foo), id<(Int) -> Unit>(id(::foo)))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, nullableType,
+propertyDeclaration, typeParameter */

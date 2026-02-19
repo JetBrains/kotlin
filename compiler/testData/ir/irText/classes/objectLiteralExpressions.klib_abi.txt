@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /IFoo { // /IFoo|null[0]
+    abstract fun foo() // /IFoo.foo|foo(){}[0]
+}
+final class /Outer { // /Outer|null[0]
+    constructor <init>() // /Outer.<init>|<init>(){}[0]
+    final fun test3(): /Outer.Inner // /Outer.test3|test3(){}[0]
+    abstract inner class Inner : /IFoo { // /Outer.Inner|null[0]
+        constructor <init>() // /Outer.Inner.<init>|<init>(){}[0]
+    }
+}
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin/Any // /test1.<get-test1>|<get-test1>(){}[0]
+final val /test2 // /test2|{}test2[0]
+    final fun <get-test2>(): /IFoo // /test2.<get-test2>|<get-test2>(){}[0]
+final fun (/Outer)./test4(): /Outer.Inner // /test4|test4@Outer(){}[0]

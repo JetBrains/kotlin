@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // See KT-6271
 fun foo() {
     fun fact(n: Int) = {
@@ -9,3 +10,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localFunction, multiplicativeExpression */

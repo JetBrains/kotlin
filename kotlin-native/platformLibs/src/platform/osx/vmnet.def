@@ -1,4 +1,4 @@
-depends = darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase darwin posix
 language = Objective-C
 package = platform.vmnet
 modules = vmnet

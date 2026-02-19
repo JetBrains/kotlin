@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface One<T>
 fun <E, R> foo(): E where E : Number, E : One<R>, R : One<E> = null!!
 
@@ -13,3 +14,8 @@ class SecuredOrder(order: Order) : SecuredEntity<<!UPPER_BOUND_VIOLATED!>Order<!
 fun main() {
     val securedOrder = Order().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>secured<!>()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, intersectionType, isExpression, localProperty, nullableType, out, primaryConstructor,
+propertyDeclaration, smartcast, starProjection, thisExpression, typeConstraint, typeParameter, whenExpression,
+whenWithSubject */

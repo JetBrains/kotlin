@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // WITH_STDLIB
 // FILE: test.kt
 inline class A(val s: String) {

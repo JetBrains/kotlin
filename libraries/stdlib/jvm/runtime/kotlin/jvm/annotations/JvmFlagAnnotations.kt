@@ -22,8 +22,14 @@ import kotlin.annotation.AnnotationTarget.*
 public actual annotation class Volatile
 
 /**
- * Marks the JVM backing field of the annotated property as `transient`, meaning that it is not
- * part of the default serialized form of the object.
+ * Marks the backing field of the annotated property with the `transient` modifier on the JVM platform, meaning that it is not
+ * a part of the serialized form of the object when serialized with `java.io.Serializable` machinery.
+ *
+ * **Warning:** the `java.io.Serializable` is an unsound mechanism that bypasses classes' invariants.
+ * When `@Transient` annotation is applied to a property, the author must ensure that either the property has a nullable type
+ * or that an author-supplied `readResolve` is implemented, supplying a conforming value for the non-nullable transient property.
+ *
+ * See also: ["Java Object Serialization Specification"](https://docs.oracle.com/en/java/javase/21/docs/specs/serialization/index.html)
  */
 @Target(FIELD)
 @Retention(AnnotationRetention.SOURCE)

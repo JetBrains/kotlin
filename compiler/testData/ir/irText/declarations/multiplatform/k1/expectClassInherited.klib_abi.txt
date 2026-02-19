@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    abstract fun foo() // /A.foo|foo(){}[0]
+}
+open class /B : /A { // /B|null[0]
+    constructor <init>(kotlin/Int) // /B.<init>|<init>(kotlin.Int){}[0]
+    open fun bar(kotlin/String) // /B.bar|bar(kotlin.String){}[0]
+    open fun foo() // /B.foo|foo(){}[0]
+}

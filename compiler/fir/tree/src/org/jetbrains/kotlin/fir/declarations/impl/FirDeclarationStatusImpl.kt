@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
 open class FirDeclarationStatusImpl(
     override val visibility: Visibility,
@@ -70,6 +72,12 @@ open class FirDeclarationStatusImpl(
         get() = this[INLINE]
         set(value) {
             this[INLINE] = value
+        }
+
+    override var isValue: Boolean
+        get() = this[VALUE]
+        set(value) {
+            this[VALUE] = value
         }
 
     override var isTailRec: Boolean
@@ -150,6 +158,19 @@ open class FirDeclarationStatusImpl(
             this[HAS_STABLE_PARAMETER_NAMES] = value
         }
 
+    override var returnValueStatus: ReturnValueStatus
+        get() = ReturnValueStatus.fromBitFlags(this[HAS_MUST_USE_RETURN_VALUE], this[HAS_IGNORABLE_RETURN_VALUE])
+        set(value) {
+            flags = flags and (HAS_MUST_USE_RETURN_VALUE.mask or HAS_IGNORABLE_RETURN_VALUE.mask).inv()
+            when (value) {
+                ReturnValueStatus.MustUse ->
+                    this[HAS_MUST_USE_RETURN_VALUE] = true
+                ReturnValueStatus.ExplicitlyIgnorable ->
+                    this[HAS_IGNORABLE_RETURN_VALUE] = true
+                else -> Unit // flags are already cleared
+            }
+        }
+
     enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -170,6 +191,10 @@ open class FirDeclarationStatusImpl(
         FROM_ENUM(0x10000),
         FUN(0x20000),
         HAS_STABLE_PARAMETER_NAMES(0x40000),
+        VALUE(0x80000),
+        HAS_MUST_USE_RETURN_VALUE(0x100000),
+        HAS_IGNORABLE_RETURN_VALUE(0x200000),
+        ;
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
@@ -178,17 +203,55 @@ open class FirDeclarationStatusImpl(
         return this
     }
 
-    fun resolved(
+    open fun resolved(
         visibility: Visibility,
         modality: Modality,
         effectiveVisibility: EffectiveVisibility
     ): FirResolvedDeclarationStatusImpl {
         return FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility, flags)
     }
+
+    override val defaultModality: Modality
+        get() = Modality.FINAL
+
+    override val defaultVisibility: Visibility
+        get() = Visibilities.DEFAULT_VISIBILITY
+}
+
+class FirDeclarationStatusWithAlteredDefaults(
+    visibility: Visibility,
+    modality: Modality?,
+    override val defaultVisibility: Visibility,
+    override val defaultModality: Modality,
+) : FirDeclarationStatusImpl(visibility, modality) {
+    internal constructor(
+        visibility: Visibility,
+        modality: Modality?,
+        defaultVisibility: Visibility,
+        defaultModality: Modality,
+        flags: Int
+    ) : this(visibility, modality, defaultVisibility, defaultModality) {
+        this.flags = flags
+    }
+
+    override fun resolved(
+        visibility: Visibility,
+        modality: Modality,
+        effectiveVisibility: EffectiveVisibility
+    ): FirResolvedDeclarationStatusImpl {
+        return FirResolvedDeclarationStatusWithAlteredDefaults(
+            visibility,
+            modality,
+            defaultVisibility,
+            defaultModality,
+            effectiveVisibility,
+            flags
+        )
+    }
 }
 
 @OptIn(FirImplementationDetail::class)
-val FirDeclarationStatus.modifiersRepresentation: Any
+val FirDeclarationStatus.modifiersRepresentation: Int
     get() = when (this) {
         is FirDeclarationStatusImpl -> rawFlags
         else -> error("Generating modifier representations for ${this::class.simpleName} is not supported")

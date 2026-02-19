@@ -1,6 +1,7 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> listOf(vararg e: T): List<T> = null!!
 
@@ -17,3 +18,6 @@ fun main() {
         A<Int>().<!NO_CONTEXT_RECEIVER!>f<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter, vararg */

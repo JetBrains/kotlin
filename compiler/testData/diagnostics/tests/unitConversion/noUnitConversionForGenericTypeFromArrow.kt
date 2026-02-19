@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Either
 
@@ -10,3 +11,6 @@ fun unsafeRunAsync(cb: (Either) -> Unit) {}
 fun runAsync(cb: (Either) -> Unit) {
     unsafeRunAsync(cb.andThen { })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, typeParameter */

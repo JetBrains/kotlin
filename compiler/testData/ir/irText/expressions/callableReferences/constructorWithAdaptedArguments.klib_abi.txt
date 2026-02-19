@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    constructor <init>(kotlin/IntArray...) // /C.<init>|<init>(kotlin.IntArray...){}[0]
+}
+final class /Outer { // /Outer|null[0]
+    constructor <init>() // /Outer.<init>|<init>(){}[0]
+    final inner class Inner { // /Outer.Inner|null[0]
+        constructor <init>(kotlin/IntArray...) // /Outer.Inner.<init>|<init>(kotlin.IntArray...){}[0]
+    }
+}
+final fun /testConstructor(): kotlin/Any // /testConstructor|testConstructor(){}[0]
+final fun /testInnerClassConstructor(/Outer): kotlin/Any // /testInnerClassConstructor|testInnerClassConstructor(Outer){}[0]
+final fun /testInnerClassConstructorCapturingOuter(): kotlin/Any // /testInnerClassConstructorCapturingOuter|testInnerClassConstructorCapturingOuter(){}[0]
+final fun /use(kotlin/Function1<kotlin/Int, kotlin/Any>): kotlin/Any // /use|use(kotlin.Function1<kotlin.Int,kotlin.Any>){}[0]

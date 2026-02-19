@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR
-//   Ignore reason: KT-61282
 // FULL_JDK
 
 import java.nio.CharBuffer

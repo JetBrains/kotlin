@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
 
@@ -16,3 +16,6 @@ class IncorrectThis<T> {
         return 1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, propertyDeclaration,
+propertyDelegate, starProjection, typeParameter */

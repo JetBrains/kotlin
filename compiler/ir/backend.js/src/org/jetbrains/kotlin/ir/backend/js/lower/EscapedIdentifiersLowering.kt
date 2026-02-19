@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
@@ -24,9 +25,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
+/**
+ * Converts global variables with invalid names access to `globalThis` member expression.
+ */
 class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass {
     private val transformer = ReferenceTransformer(context)
     private val moduleKind = context.configuration[JSConfigurationKeys.MODULE_KIND]!!
@@ -49,9 +53,8 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 type = context.dynamicType,
-                symbol = context.intrinsics.globalThis.owner.getter!!.symbol,
+                symbol = context.symbols.globalThis.owner.getter!!.symbol,
                 typeArgumentsCount = 0,
-                valueArgumentsCount = 0,
             )
 
         private val IrFunction.dummyDispatchReceiverParameter
@@ -63,11 +66,11 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                 type = context.irBuiltIns.anyType,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = UNDEFINED_PARAMETER_INDEX,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
                 isHidden = false,
+                kind = IrParameterKind.DispatchReceiver,
             ).also { it.parent = this }
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -124,17 +127,17 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
             val property = function.correspondingPropertySymbol?.owner ?: function
 
             val updatedCall = if (
-                expression.dispatchReceiver != null ||
+                (function.dispatchReceiverParameter != null && function.parameters.size == expression.arguments.size) ||
                 !property.isEffectivelyExternal() ||
                 !property.needToBeWrappedWithGlobalThis()
             ) {
                 expression
             } else {
                 expression
-                    .apply { dispatchReceiver = globalThisReceiver }
                     .also {
+                        it.arguments.add(0, globalThisReceiver)
                         if (function.dispatchReceiverParameter == null) {
-                            function.dispatchReceiverParameter = function.dummyDispatchReceiverParameter
+                            function.parameters = listOf(function.dummyDispatchReceiverParameter) + function.parameters
                         }
                     }
             }

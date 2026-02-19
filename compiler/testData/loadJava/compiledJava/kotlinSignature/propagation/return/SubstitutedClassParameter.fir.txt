@@ -4,7 +4,7 @@ public abstract interface SubstitutedClassParameter : R|kotlin/Any| {
 
     }
     public abstract interface Super<T : R|kotlin/Any!|> : R|kotlin/Any| {
-        public abstract fun foo(): R|ft<T & Any, T?>|
+        public abstract fun foo(): R|T!|
 
         public abstract fun dummy(): R|kotlin/Unit|
 

@@ -1,0 +1,1 @@
+internal fun usage2(b: A) = b.f() + 2

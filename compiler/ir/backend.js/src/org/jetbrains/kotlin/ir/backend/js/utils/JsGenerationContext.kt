@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getJsCode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getSourceLocation
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getStartSourceLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 
 val emptyScope: JsScope = object : JsScope("nil") {
     override fun doCreateName(ident: String): JsName {
@@ -27,8 +30,9 @@ val emptyScope: JsScope = object : JsScope("nil") {
 }
 
 class JsGenerationContext(
-    val currentFile: IrFile,
+    val currentFileEntry: IrFileEntry,
     val currentFunction: IrFunction?,
+    val currentInlineFunction: IrFunction?,
     val staticContext: JsStaticContext,
     val localNames: LocalNameGenerator? = null,
     private val nameCache: MutableMap<IrElement, JsName> = hashMapOf(),
@@ -37,10 +41,14 @@ class JsGenerationContext(
     private val startLocationCache = hashMapOf<Int, JsLocation>()
     private val endLocationCache = hashMapOf<Int, JsLocation>()
 
-    fun newFile(file: IrFile, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
+    fun newInlineFunction(
+        fileEntry: IrFileEntry,
+        inlineFun: IrFunction?,
+    ): JsGenerationContext {
         return JsGenerationContext(
-            currentFile = file,
-            currentFunction = func,
+            currentFileEntry = fileEntry,
+            currentFunction = currentFunction,
+            currentInlineFunction = inlineFun,
             staticContext = staticContext,
             localNames = localNames,
             nameCache = nameCache,
@@ -48,10 +56,11 @@ class JsGenerationContext(
         )
     }
 
-    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
+    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null, fileEntry: IrFileEntry = currentFileEntry): JsGenerationContext {
         return JsGenerationContext(
-            currentFile = currentFile,
+            currentFileEntry = fileEntry,
             currentFunction = func,
+            currentInlineFunction = currentInlineFunction,
             staticContext = staticContext,
             localNames = localNames,
             nameCache = nameCache,
@@ -62,10 +71,12 @@ class JsGenerationContext(
     fun getNameForValueDeclaration(declaration: IrDeclarationWithName): JsName {
         return nameCache.getOrPut(declaration) {
             if (useBareParameterNames) {
-                JsName(sanitizeName(declaration.name.asString()), true)
+                JsName(makeValidES5Identifier(declaration.name.asString()), true)
             } else {
                 val name = localNames!!.variableNames.names[declaration]
-                    ?: error("Variable name is not found ${declaration.name}")
+                    ?: irError("Variable name is not found") {
+                        withIrEntry("declaration", declaration)
+                    }
                 JsName(name, true)
             }
         }
@@ -85,9 +96,11 @@ class JsGenerationContext(
         }
     }
 
-    fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode
+    fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.symbols.jsCode
 
-    fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean = staticContext.backendContext.getJsCodeForFunction(symbol) != null
+    fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean {
+        return with(staticContext.backendContext) { symbol.owner.getJsCode() != null }
+    }
 
     fun getStartLocationForIrElement(irElement: IrElement, originalName: String? = null) =
         getLocationForIrElement(irElement, originalName, startLocationCache) { startOffset }
@@ -101,6 +114,6 @@ class JsGenerationContext(
         cache: MutableMap<Int, JsLocation>,
         offsetSelector: IrElement.() -> Int,
     ): JsLocation? = cache.getOrPut(irElement.offsetSelector()) {
-        irElement.getSourceLocation(currentFile.fileEntry, offsetSelector) ?: return null
+        irElement.getSourceLocation(currentFileEntry, offsetSelector) ?: return null
     }.copy(name = originalName)
 }

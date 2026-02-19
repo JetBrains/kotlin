@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ExperimentalBuilderInference
-// !OPT_IN: kotlin.RequiresOptIn
+// LANGUAGE: +ExperimentalBuilderInference
+// OPT_IN: kotlin.RequiresOptIn
 // SKIP_TXT
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -97,3 +98,7 @@ fun test() {
         RestrictedController<String>().<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("1")
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral, suspend, thisExpression,
+typeParameter, typeWithExtension */

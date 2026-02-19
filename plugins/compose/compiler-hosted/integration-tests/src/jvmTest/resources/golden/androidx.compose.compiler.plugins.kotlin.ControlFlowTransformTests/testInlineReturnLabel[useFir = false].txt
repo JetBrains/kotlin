@@ -1,0 +1,58 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@Composable
+@NonRestartableComposable
+fun CustomTextBroken(condition: Boolean) {
+    FakeBox {
+        if (condition) {
+            return@FakeBox
+        }
+        A()
+    }
+}
+@Composable
+inline fun FakeBox(content: @Composable () -> Unit) {
+    content()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@NonRestartableComposable
+fun CustomTextBroken(condition: Boolean, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(CustomTextBroken)<FakeBo...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  FakeBox({ %composer: Composer?, %changed: Int ->
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C<A()>:Test.kt")
+    if (condition) {
+      %composer.endReplaceGroup()
+      return@FakeBox
+    }
+    A(%composer, 0)
+    %composer.endReplaceGroup()
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun FakeBox(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(FakeBox)<conten...>:Test.kt")
+  content(%composer, 0b1110 and %changed)
+  sourceInformationMarkerEnd(%composer)
+}

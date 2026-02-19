@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 class A {
@@ -31,7 +31,7 @@ fun box() {
     A.s
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:30 box
 // test.kt:8 <clinit>
 // test.kt:9 <clinit>
@@ -53,6 +53,22 @@ fun box() {
 // test.kt:31 box
 // test.kt:32 box
 
+// EXPECTATIONS NATIVE
+// test.kt:30 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:24 <get-$companion>
+// test.kt:30 box
+// test.kt:12 <get-x>
+// test.kt:30 box
+// test.kt:31 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:24 <get-$companion>
+// test.kt:31 box
+// test.kt:6 <get-s>
+// test.kt:32 box
+
 // EXPECTATIONS JS_IR
 // test.kt:30 box
 // test.kt:9 <init>
@@ -64,3 +80,17 @@ fun box() {
 // test.kt:5 <init>
 // test.kt:31 box
 // test.kt:32 box
+
+// EXPECTATIONS WASM
+// test.kt:30 $box (6)
+// test.kt:9 $Companion.<init> (12, 16, 12)
+// test.kt:12 $Companion.<init> (16)
+// test.kt:27 $x (10, 12)
+// test.kt:12 $Companion.<init> (16)
+// test.kt:14 $Companion.<init> (23)
+// test.kt:17 $Companion.<init> (20)
+// test.kt:22 $Companion.<init> (20)
+// test.kt:24 $Companion.<init> (5)
+// test.kt:30 $box (6)
+// test.kt:31 $box (6)
+// test.kt:32 $box (1)

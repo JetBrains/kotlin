@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val a: Number
         <!WRONG_MODIFIER_TARGET!>abstract<!> field = 1
@@ -19,4 +20,12 @@ class A {
 
     val g: Number
         <!WRONG_MODIFIER_TARGET!>tailrec<!> field = 1
+
+    val h: Number
+        <!WRONG_MODIFIER_TARGET!>const<!> field = 1
+
+    val i: Number
+        <!WRONG_MODIFIER_TARGET!>lateinit<!> field = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, integerLiteral, propertyDeclaration */

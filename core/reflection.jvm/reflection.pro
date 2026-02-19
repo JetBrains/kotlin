@@ -3,11 +3,15 @@
 -target 1.6
 -dontoptimize
 -dontobfuscate
+-dontprocesskotlinmetadata
+-keep class kotlin.Metadata
 # -dontshrink
 
 -keep public class kotlin.reflect.* { *; }
 -keep public class kotlin.reflect.jvm.* { *; }
 -keep public class kotlin.reflect.full.* { *; }
+
+-keep public class kotlin.reflect.jvm.internal.impl.km.jvm.internal.JvmMetadataExtensions { *; }
 
 -keepattributes SourceFile,LineNumberTable,InnerClasses,Signature,Deprecated,*Annotation*,EnclosingMethod
 

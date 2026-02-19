@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final enum class /ConfigurationParameter : kotlin/Enum</ConfigurationParameter> { // /ConfigurationParameter|null[0]
+    final val entries // /ConfigurationParameter.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</ConfigurationParameter> // /ConfigurationParameter.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /ConfigurationParameter // /ConfigurationParameter.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</ConfigurationParameter> // /ConfigurationParameter.values|values#static(){}[0]
+    enum entry BASE_URL // /ConfigurationParameter.BASE_URL|null[0]
+}
+final class /Wrapper { // /Wrapper|null[0]
+    final var baseUrl // /Wrapper.baseUrl|{}baseUrl[0]
+        final fun <get-baseUrl>(): kotlin/String // /Wrapper.baseUrl.<get-baseUrl>|<get-baseUrl>(){}[0]
+        final fun <set-baseUrl>(kotlin/String) // /Wrapper.baseUrl.<set-baseUrl>|<set-baseUrl>(kotlin.String){}[0]
+    constructor <init>(kotlin/String) // /Wrapper.<init>|<init>(kotlin.String){}[0]
+}

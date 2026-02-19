@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 
 context(T) class A<T>
 

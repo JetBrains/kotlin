@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 
 class A {
@@ -34,3 +35,5 @@ fun test() {
     B.bar()
     B.bar(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaProperty */

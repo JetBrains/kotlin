@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KClass
 
 @Repeatable
@@ -22,3 +23,6 @@ fun bar() = Foo::class
     ]
 )
 fun test1() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, collectionLiteral, functionDeclaration,
+integerLiteral, primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

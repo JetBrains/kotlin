@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ import kotlin.ranges.reversed
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun UIntArray.elementAt(index: Int): UInt {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -34,7 +34,7 @@ public actual inline fun UIntArray.elementAt(index: Int): UInt {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun ULongArray.elementAt(index: Int): ULong {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -46,7 +46,7 @@ public actual inline fun ULongArray.elementAt(index: Int): ULong {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun UByteArray.elementAt(index: Int): UByte {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -58,7 +58,7 @@ public actual inline fun UByteArray.elementAt(index: Int): UByte {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun UShortArray.elementAt(index: Int): UShort {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -74,6 +74,16 @@ public actual fun UIntArray.asList(): List<UInt> {
         override fun get(index: Int): UInt = this@asList[index]
         override fun indexOf(element: UInt): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: UInt): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<UInt> = object : Iterator<UInt> {
+            val size_ = size
+            var index = 0
+            override fun next(): UInt {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -90,6 +100,16 @@ public actual fun ULongArray.asList(): List<ULong> {
         override fun get(index: Int): ULong = this@asList[index]
         override fun indexOf(element: ULong): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: ULong): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<ULong> = object : Iterator<ULong> {
+            val size_ = size
+            var index = 0
+            override fun next(): ULong {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -106,6 +126,16 @@ public actual fun UByteArray.asList(): List<UByte> {
         override fun get(index: Int): UByte = this@asList[index]
         override fun indexOf(element: UByte): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: UByte): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<UByte> = object : Iterator<UByte> {
+            val size_ = size
+            var index = 0
+            override fun next(): UByte {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -122,150 +152,16 @@ public actual fun UShortArray.asList(): List<UShort> {
         override fun get(index: Int): UShort = this@asList[index]
         override fun indexOf(element: UShort): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: UShort): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<UShort> = object : Iterator<UShort> {
+            val size_ = size
+            var index = 0
+            override fun next(): UShort {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UIntArray.contentEquals(other: UIntArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun ULongArray.contentEquals(other: ULongArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UByteArray.contentEquals(other: UByteArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UShortArray.contentEquals(other: UShortArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UIntArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun ULongArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UByteArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UShortArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UIntArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun ULongArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UByteArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UShortArray.contentToString(): String {
-    return this.contentToString()
 }
 

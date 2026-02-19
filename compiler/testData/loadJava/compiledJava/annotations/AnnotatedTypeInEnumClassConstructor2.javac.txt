@@ -1,7 +1,7 @@
 package test
 
-public/*package*/ open class AnnotatedParameterInInnerClassConstructor {
-    public/*package*/ constructor AnnotatedParameterInInnerClassConstructor()
+public/*package*/ open class AnnotatedTypeInEnumClassConstructor2 {
+    public/*package*/ constructor AnnotatedTypeInEnumClassConstructor2()
 
     @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER}) public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)
@@ -9,6 +9,6 @@ public/*package*/ open class AnnotatedParameterInInnerClassConstructor {
     }
 
     public/*package*/ open inner class JavaEnum {
-        public/*package*/ constructor JavaEnum(/*0*/ @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "a") p0: kotlin.String!, /*1*/ @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "b") p1: kotlin.String!)
+        public/*package*/ constructor JavaEnum(/*0*/ @test.AnnotatedTypeInEnumClassConstructor2.Anno(value = "a") p0: kotlin.String!, /*1*/ @test.AnnotatedTypeInEnumClassConstructor2.Anno(value = "b") p1: kotlin.String!)
     }
 }

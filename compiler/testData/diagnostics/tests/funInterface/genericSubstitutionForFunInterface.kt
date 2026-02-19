@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
-// !CHECK_TYPE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
+// CHECK_TYPE
 
 fun interface F<S> {
     fun apply(s: S)
@@ -24,3 +25,6 @@ fun test(
     k.f_r(f_int) { it checkType { _<Int>() } }
     k.f_pr(f_pr) { it checkType { _<PR<String, Int>>() } }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, lambdaLiteral, nullableType, samConversion, typeParameter, typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaClass.java
 public class JavaClass {
     public static void foo(Runnable x) {}
@@ -14,3 +15,5 @@ fun main() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion, stringLiteral */

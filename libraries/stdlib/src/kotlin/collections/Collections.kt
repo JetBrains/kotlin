@@ -53,7 +53,10 @@ internal object EmptyList : List<Nothing>, Serializable, RandomAccess {
     private fun readResolve(): Any = EmptyList
 }
 
-internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this, isVarargs = false)
+@kotlin.internal.InlineOnly
+internal expect inline fun <T> Array<out T>.asArrayList(): ArrayList<T>
+
+internal fun <T> Array<out T>.asCollection(isVarargs: Boolean = false): Collection<T> = ArrayAsCollection(this, isVarargs = isVarargs)
 
 private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean) : Collection<T> {
     override val size: Int get() = values.size
@@ -115,14 +118,14 @@ public inline fun <T> arrayListOf(): ArrayList<T> = ArrayList()
  * @sample samples.collections.Collections.Lists.mutableList
  */
 public fun <T> mutableListOf(vararg elements: T): MutableList<T> =
-    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+    if (elements.size == 0) ArrayList() else elements.asArrayList()
 
 /**
  * Returns a new [ArrayList] with the given elements.
  * @sample samples.collections.Collections.Lists.arrayList
  */
 public fun <T> arrayListOf(vararg elements: T): ArrayList<T> =
-    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+    if (elements.size == 0) ArrayList() else elements.asArrayList()
 
 /**
  * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
@@ -178,9 +181,8 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
  * @sample samples.collections.Builders.Lists.buildListSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-@Suppress("DEPRECATION")
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND", "DEPRECATION")
 public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildListInternal(builderAction)
@@ -207,9 +209,8 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
  * @sample samples.collections.Builders.Lists.buildListSampleWithCapacity
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-@Suppress("DEPRECATION")
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND", "DEPRECATION")
 public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildListInternal(capacity, builderAction)
@@ -278,8 +279,12 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
-    if (isEmpty()) defaultValue() else this
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isEmpty()) defaultValue() else this
+}
 
 
 /**
@@ -464,10 +469,12 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
 
 @PublishedApi
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 internal expect fun checkIndexOverflow(index: Int): Int
 
 @PublishedApi
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 internal expect fun checkCountOverflow(count: Int): Int
 
 

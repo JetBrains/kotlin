@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FIR_IDENTICAL
 // FILE: A.java
@@ -21,3 +23,5 @@ class Outer {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, nestedClass */

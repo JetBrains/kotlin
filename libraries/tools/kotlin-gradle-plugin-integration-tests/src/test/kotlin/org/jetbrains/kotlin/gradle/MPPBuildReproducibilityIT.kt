@@ -20,10 +20,14 @@ import kotlin.test.fail
 class MPPBuildReproducibilityIT : KGPBaseTest() {
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @DisplayName("Check if consecutive builds produce same binaries: Simple Multiplatform project")
     fun `test simpleMultiplatformProject`(gradleVersion: GradleVersion) {
-        project("MPPBuildReproducibility/simpleMultiplatformProject", gradleVersion) {
+        project(
+            "MPPBuildReproducibility/simpleMultiplatformProject",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
             assertConsecutiveBuildsProduceSameBinaries()
         }
     }

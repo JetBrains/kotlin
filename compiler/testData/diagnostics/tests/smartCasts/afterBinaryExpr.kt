@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package o
 
 class A {
@@ -12,3 +13,5 @@ fun test(a: A, b: B?) {
     a foo b!!
     <!DEBUG_INFO_SMARTCAST!>b<!>.bar()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, infix, nullableType, smartcast */

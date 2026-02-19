@@ -6,47 +6,32 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.*
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.IgnoreEmptyDirectories
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
+import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonFilesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.asNpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.asYarnEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
-import java.io.File
 
 @DisableCachingByDefault
 abstract class KotlinNpmInstallTask :
     DefaultTask(),
+    NodeJsEnvironmentTask,
+    PackageJsonFilesTask,
     UsesKotlinNpmResolutionManager {
     init {
         check(project == project.rootProject)
-    }
-
-    // Only in configuration phase
-    // Not part of configuration caching
-
-    private val nodeJs: NodeJsRootExtension
-        get() = project.rootProject.kotlinNodeJsExtension
-
-    private val yarn
-        get() = project.rootProject.yarn
-
-    private val rootResolver: KotlinRootNpmResolver
-        get() = nodeJs.resolver
-
-    // -----
-
-    private val npmEnvironment by lazy {
-        nodeJs.requireConfigured().asNpmEnvironment
-    }
-
-    private val yarnEnv by lazy {
-        yarn.requireConfigured().asYarnEnvironment
     }
 
     @Input
@@ -56,46 +41,44 @@ abstract class KotlinNpmInstallTask :
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val preparedFiles: Collection<File> by lazy {
-        nodeJs.packageManager.preparedFiles(npmEnvironment)
-    }
+    abstract val preparedFiles: ConfigurableFileCollection
 
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    @get:InputFiles
-    val packageJsonFiles: Collection<File> by lazy {
-        rootResolver.projectResolvers.values
-            .flatMap { it.compilationResolvers }
-            .map { it.compilationNpmResolution }
-            .map { it.npmProjectPackageJsonFile }
-    }
-
-    @get:OutputFile
-    val yarnLock: File by lazy {
-        nodeJs.rootPackageDir.resolve("yarn.lock")
-    }
+    @get:OutputFiles
+    abstract val additionalFiles: ConfigurableFileCollection
 
     // node_modules as OutputDirectory is performance problematic
     // so input will only be existence of its directory
     @get:Internal
-    val nodeModules: File by lazy {
-        nodeJs.rootPackageDir.resolve("node_modules")
-    }
+    abstract val nodeModules: DirectoryProperty
+
+    private val isOffline = project.gradle.startParameter.isOffline()
 
     @TaskAction
     fun resolve() {
+        val args = buildList {
+            addAll(args)
+            if (isOffline) add("--offline")
+        }
+
         npmResolutionManager.get()
             .installIfNeeded(
                 args = args,
                 services = services,
                 logger = logger,
-                npmEnvironment,
-                yarnEnv
+                nodeJsEnvironment.get(),
+                packageManagerEnv.get(),
             ) ?: throw (npmResolutionManager.get().state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
     }
 
     companion object {
+        @Deprecated(
+            "Use npmInstallTaskProvider from corresponding NodeJsRootExtension or WasmNodeJsRootExtension instead. " +
+                    "Scheduled for removal in Kotlin 2.4.",
+            level = DeprecationLevel.ERROR
+        )
         const val NAME = "kotlinNpmInstall"
+
+        @InternalKotlinGradlePluginApi
+        const val BASE_NAME = "npmInstall"
     }
 }

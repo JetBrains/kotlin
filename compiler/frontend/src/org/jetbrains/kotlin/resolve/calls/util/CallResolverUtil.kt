@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticConstructors
@@ -151,15 +153,6 @@ fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
         return descriptor.overriddenDescriptors.all(::isOrOverridesSynthesized)
     }
     return false
-}
-
-fun isBinaryRemOperator(call: Call): Boolean {
-    val callElement = call.callElement as? KtBinaryExpression ?: return false
-    val operator = callElement.operationToken
-    if (operator !is KtToken) return false
-
-    val name = OperatorConventions.getNameForOperationSymbol(operator, true, true) ?: return false
-    return name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.keys
 }
 
 fun isConventionCall(call: Call): Boolean {
@@ -279,7 +272,7 @@ fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean
     if (argumentExpression is KtCollectionLiteralExpression) return true
 
     val type = trace.getType(argumentExpression) ?: return false
-    return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
+    return KotlinBuiltIns.isArrayOrPrimitiveArray(type) || KotlinBuiltIns.isUnsignedArrayType(type)
 }
 
 fun createResolutionCandidatesForConstructors(

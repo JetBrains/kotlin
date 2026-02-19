@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-51704
 
@@ -36,3 +37,6 @@ fun usage() {
     Bar.checkSomethingObject(1 == 2, "wat")    // ok
     checkSomethingObject(1 == 2, "wat")        // compiler crash
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, contractConditionalEffect, contracts,
+equalityExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, objectDeclaration, stringLiteral */

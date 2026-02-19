@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 
@@ -10,3 +11,6 @@ fun box(): String {
         "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral, intersectionType, lambdaLiteral, localProperty,
+propertyDeclaration, rangeExpression, smartcast, stringLiteral, tryExpression */

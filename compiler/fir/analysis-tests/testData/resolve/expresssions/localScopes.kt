@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Bar {
     fun foo() {}
 }
@@ -26,3 +27,6 @@ fun test() {
     derived.baz()
     derived.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, localProperty,
+propertyDeclaration */

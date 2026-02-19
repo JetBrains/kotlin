@@ -1,4 +1,5 @@
-//!DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 @kotlin.jvm.JvmName("containsAny")
@@ -10,6 +11,9 @@ public fun <T> Iterable<T>.contains1(element: @kotlin.internal.NoInfer T): Boole
 
 
 fun test() {
-    val a: Boolean = listOf(1).contains1("")
+    val a: Boolean = <!TYPE_MISMATCH!>listOf(1).contains1("")<!>
     val b: Boolean = listOf(1).contains1(1)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter */

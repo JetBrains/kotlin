@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 import java.util.*;
@@ -40,3 +41,6 @@ class E : D(), B {
 
 
 class F : D()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, starProjection,
+stringLiteral */

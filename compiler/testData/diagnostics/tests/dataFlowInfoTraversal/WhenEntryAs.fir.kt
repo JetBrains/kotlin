@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(x: Number, y: Int) {
     when (x) {
@@ -24,3 +25,7 @@ fun whenWithoutSubject(x: Number) {
     }
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, nullableType, smartcast, typeParameter, typeWithExtension, whenExpression,
+whenWithSubject */

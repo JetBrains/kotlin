@@ -8,39 +8,68 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.collectOverriddenFunctionsWhere
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctionsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
+import org.jetbrains.kotlin.name.Name
 
-object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecker() {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        declaration.unsubstitutedScope(context).processAllFunctions {
-            if (it.containingClassLookupTag() != declaration.symbol.toLookupTag()) {
-                return@processAllFunctions
-            }
-
-            checkFunction(declaration, it, context, reporter)
+sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
+    object Regular : FirMultipleDefaultsInheritedFromSupertypesChecker(MppCheckerKind.Platform) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
+            if (declaration.isExpect) return
+            super.check(declaration)
         }
     }
 
+    object ForExpectClass : FirMultipleDefaultsInheritedFromSupertypesChecker(MppCheckerKind.Common) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
+            if (!declaration.isExpect) return
+            super.check(declaration)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        if (declaration.isExternal) return
+
+        declaration.unsubstitutedScope().processAllFunctions {
+            val originalIfSubstitutionOverride = it.unwrapSubstitutionOverrides()
+
+            if (originalIfSubstitutionOverride.containingClassLookupTag() != declaration.symbol.toLookupTag()) {
+                return@processAllFunctions
+            }
+
+            checkFunction(declaration, originalIfSubstitutionOverride)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkFunction(
-        declaration: FirRegularClass,
+        declaration: FirClass,
         function: FirNamedFunctionSymbol,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        val overriddenFunctions = function.collectOverriddenFunctionsWhere(mutableSetOf(), context) { overridden ->
-            // Substitution overrides copy default values from originals
-            !overridden.isSubstitutionOverride && overridden.valueParameterSymbols.any { it.hasDefaultValue }
+        val overriddenFunctions = mutableSetOf<FirNamedFunctionSymbol>()
+        function.processOverriddenFunctionsSafe { overridden ->
+            // default values of actual functions are located in corresponding expect functions
+            val overriddenWithDefaults = overridden.getSingleMatchedExpectForActualOrNull() as? FirNamedFunctionSymbol ?: overridden
+            if (overriddenWithDefaults.valueParameterSymbols.any { it.hasDefaultValue }) {
+                overriddenFunctions += overriddenWithDefaults
+            }
         }
         val isExplicitOverride = function.origin == FirDeclarationOrigin.Source
 
@@ -48,9 +77,9 @@ object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecke
         val overriddenFunctionsK1WouldConsider = overriddenFunctions.filter { it.containingClassLookupTag() in immediateSupertypes }
 
         for ((index, parameter) in function.valueParameterSymbols.withIndex()) {
-            val basesWithDefaultValues = overriddenFunctions.count { it.valueParameterSymbols[index].hasDefaultValue }
+            val basesWithDefaultValues = overriddenFunctions.filter { it.valueParameterSymbols[index].hasDefaultValue }
 
-            if (basesWithDefaultValues <= 1) {
+            if (basesWithDefaultValues.size <= 1) {
                 continue
             }
 
@@ -58,45 +87,63 @@ object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecke
 
             when {
                 !isExplicitOverride -> {
-                    reportDiagnosticForImplicitOverride(k1WouldMiss, declaration.source, parameter, context, reporter)
+                    reportDiagnosticForImplicitOverride(
+                        k1WouldMiss, declaration.source, function.name, parameter, basesWithDefaultValues
+                    )
                     // Avoid duplicates
                     break
                 }
-                else -> reportDiagnosticForExplicitOverride(k1WouldMiss, parameter, context, reporter)
+                else -> reportDiagnosticForExplicitOverride(
+                    k1WouldMiss, function.name, parameter, basesWithDefaultValues
+                )
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportDiagnosticForImplicitOverride(
         k1WouldMiss: Boolean,
         source: KtSourceElement?,
+        name: Name,
         parameter: FirValueParameterSymbol,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
+        basesWithDefaultValues: List<FirNamedFunctionSymbol>,
     ): Unit = when {
         k1WouldMiss -> reporter.reportOn(
-            source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION,
-            parameter, context,
+            source,
+            FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION,
+            name,
+            parameter,
+            basesWithDefaultValues
         )
         else -> reporter.reportOn(
-            source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE,
-            parameter, context,
+            source,
+            FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE,
+            name,
+            parameter,
+            basesWithDefaultValues
         )
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportDiagnosticForExplicitOverride(
         k1WouldMiss: Boolean,
+        name: Name,
         parameter: FirValueParameterSymbol,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
+        basesWithDefaultValues: List<FirNamedFunctionSymbol>,
     ): Unit = when {
         k1WouldMiss -> reporter.reportOn(
-            parameter.source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION,
-            parameter, context,
+            parameter.source,
+            FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION,
+            name,
+            parameter,
+            basesWithDefaultValues
         )
         else -> reporter.reportOn(
-            parameter.source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES,
-            parameter, context,
+            parameter.source,
+            FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES,
+            name,
+            parameter,
+            basesWithDefaultValues
         )
     }
 }

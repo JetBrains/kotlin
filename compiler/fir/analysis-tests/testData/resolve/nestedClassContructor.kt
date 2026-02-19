@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * We see same constructor of `B` in two scopes
  */
@@ -27,3 +28,6 @@ class E : A() {
         val c = C()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, primaryConstructor,
+propertyDeclaration */

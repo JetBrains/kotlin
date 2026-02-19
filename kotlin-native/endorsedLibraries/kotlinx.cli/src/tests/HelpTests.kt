@@ -57,7 +57,7 @@ Options:
         SAMPLES,
         GEOMEAN;
 
-        override fun toString() = name.toLowerCase()
+        override fun toString() = name.lowercase()
     }
 
     @Test

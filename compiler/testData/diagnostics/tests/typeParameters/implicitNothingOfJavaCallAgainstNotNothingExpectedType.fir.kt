@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_EXPRESSION -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_EXPRESSION -UNREACHABLE_CODE
 
 // FILE: abc/Bar.java
 
@@ -38,3 +39,6 @@ fun tryProblem(): String? {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, javaFunction, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, tryExpression, whenExpression */

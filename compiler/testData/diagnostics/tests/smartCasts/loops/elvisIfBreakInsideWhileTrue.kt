@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 public fun foo(x: String?, y: String?): Int {
     while (true) {
@@ -8,3 +9,6 @@ public fun foo(x: String?, y: String?): Int {
     // y is null because of the break
     return y<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, elvisExpression, equalityExpression, functionDeclaration, ifExpression, nullableType,
+smartcast, whileLoop */

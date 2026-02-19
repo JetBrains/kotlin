@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
 
 fun <T : CharSequence?> T.bar1() {}
 fun CharSequence?.bar2() {}
@@ -43,3 +44,6 @@ fun <T : CharSequence?> foo(x: T) {
         x.bar3()
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+intersectionType, isExpression, nullableType, safeCall, smartcast, typeConstraint, typeParameter */

@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Inv<T>
 
@@ -41,3 +42,7 @@ fun main(x: Inv<Int>) {
         ::bar
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral,
+typeParameter */

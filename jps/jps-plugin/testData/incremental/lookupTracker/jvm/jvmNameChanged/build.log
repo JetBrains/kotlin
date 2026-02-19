@@ -1,0 +1,11 @@
+==== INITIAL BUILD ====
+Compiling files:
+  src/A.kt
+  src/AChild.kt
+  src/useAChild.kt
+Exit code: OK
+
+==== STEP 1 ====
+Compiling files:
+  src/A.kt
+Exit code: OK

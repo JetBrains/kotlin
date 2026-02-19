@@ -1,0 +1,4 @@
+DEFAULT TYPE:
+`<anonymous>`
+DEFAULT TYPE WITH STAR PROJECTIONS:
+`<anonymous>`

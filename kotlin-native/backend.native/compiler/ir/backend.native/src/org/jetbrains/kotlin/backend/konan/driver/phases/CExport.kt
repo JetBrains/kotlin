@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.cexport.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import java.io.File
 
-internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
-        "BuildCExports", "Build C exports",
+internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
+        "BuildCExports",
         outputIfNotEnabled = { _, _, _, _ -> error("") }
 ) { context, input ->
     val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
@@ -29,9 +31,8 @@ internal data class CExportGenerateApiInput(
         val cppAdapterFile: File,
 )
 
-internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportGenerateApiInput>(
+internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, CExportGenerateApiInput>(
         name = "CExportGenerateApi",
-        description = "Create C header for the exported API",
 ) { context, input ->
     CAdapterApiExporter(
             elements = input.elements,
@@ -47,9 +48,8 @@ internal class CExportCompileAdapterInput(
         val bitcodeAdapterFile: File,
 )
 
-internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportCompileAdapterInput>(
+internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, CExportCompileAdapterInput>(
         name = "CExportCompileAdapter",
-        description = "Compile C++ adapter to bitcode"
 ) { context, input ->
     produceCAdapterBitcode(context.config.clang, input.cppAdapterFile, input.bitcodeAdapterFile)
 }

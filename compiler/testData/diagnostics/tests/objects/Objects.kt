@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// RUN_PIPELINE_TILL: FRONTEND
 package toplevelObjectDeclarations
 
 open class Foo(y: Int) {
@@ -30,3 +30,6 @@ val y = object : Foo(x) {
 }
 
 val z = y.foo()
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration, init,
+integerLiteral, objectDeclaration, override, primaryConstructor, propertyDeclaration */

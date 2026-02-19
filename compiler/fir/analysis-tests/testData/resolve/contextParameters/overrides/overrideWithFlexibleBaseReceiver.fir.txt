@@ -1,0 +1,30 @@
+FILE: Base.kt
+    public abstract interface Base<B, B2> : R|kotlin/Any| {
+        context(b: R|B|)
+        public abstract val prop1: R|kotlin/String?|
+            public get(): R|kotlin/String?|
+
+        context(b: R|B2|)
+        public abstract val R|B|.prop2: R|kotlin/String?|
+            public get(): R|kotlin/String?|
+
+    }
+FILE: main.kt
+    public final class FooImpl<E, E2> : R|Foo<E, E2>| {
+        public constructor<E, E2>(): R|FooImpl<E, E2>| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(b: R|E|)
+        public open override val prop1: R|kotlin/String?|
+            public get(): R|kotlin/String?| {
+                ^ String()
+            }
+
+        context(b: R|E2|)
+        public open override val R|E|.prop2: R|kotlin/String?|
+            public get(): R|kotlin/String?| {
+                ^ String()
+            }
+
+    }

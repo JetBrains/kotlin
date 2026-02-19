@@ -107,7 +107,7 @@ fun checkJavaLocalClass() {
 
     assertEquals("Local", klass.simpleName)
 
-    assertEquals(listOf("fun `<init>`(): Local"), klass.constructors.map { it.toString() })
+    assertEquals(listOf("fun `<init>`(): `JavaClass$1Local`"), klass.constructors.map { it.toString() })
 
     check(klass, instance)
 }

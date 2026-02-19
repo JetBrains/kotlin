@@ -1,5 +1,5 @@
 FILE: annotationOnProperty.kt
-    public? final? annotation class Ann : R|kotlin/Annotation| {
+    public final? annotation class Ann : R|kotlin/Annotation| {
         public? [ContainingClassKey=Ann] constructor(): R|Ann| {
             super<R|kotlin/Any|>()
         }
@@ -11,7 +11,7 @@ FILE: annotationOnProperty.kt
         public? get(): Int
     @Ann() public? final? val z: Int = IntegerLiteral(3)
         public? get(): Int
-    public? final? class Some : R|kotlin/Any| {
+    public final? class Some : R|kotlin/Any| {
         public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.x] x: Int, [CorrespondingProperty=/Some.y] y: Int, [CorrespondingProperty=/Some.z] @CONSTRUCTOR_PARAMETER:Ann() z: Int, [CorrespondingProperty=/Some.w] w: Int): R|Some| {
             super<R|kotlin/Any|>()
         }

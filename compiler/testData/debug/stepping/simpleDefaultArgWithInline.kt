@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 
 // FILE: test.kt
 
@@ -16,7 +16,7 @@ fun box(): String {
 }
 
 // FORCE_STEP_INTO
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:14 box
 // test.kt:5 box
 // test.kt:6 box
@@ -26,5 +26,31 @@ fun box(): String {
 // test.kt:9 ifoo2$default (synthetic)
 // test.kt:15 box
 
+// EXPECTATIONS NATIVE
+// test.kt:14 box
+// test.kt:5 box
+// test.kt:6 box
+// test.kt:15 box
+// test.kt:9 ifoo2$default
+// test.kt:11 ifoo2$default
+// test.kt:9 ifoo2$default
+// test.kt:9 ifoo2
+// test.kt:10 ifoo2
+// test.kt:11 ifoo2
+// test.kt:9 ifoo2$default
+// test.kt:11 ifoo2$default
+// test.kt:15 box
+// test.kt:16 box
+
 // EXPECTATIONS JS_IR
 // test.kt:15 box
+
+// EXPECTATIONS WASM
+// test.kt:14 $box (4)
+// test.kt:5 $box (29)
+// test.kt:6 $box (11, 4)
+// test.kt:15 $box (11)
+// test.kt:9 $ifoo2$default (23)
+// test.kt:10 $ifoo2 (11, 4)
+// test.kt:9 $ifoo2$default (23)
+// test.kt:15 $box (4)

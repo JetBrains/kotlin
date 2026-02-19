@@ -123,8 +123,8 @@ private fun InlineSourceBuilder.ModuleBuilder.platformIntegers() {
             
             abstract class CVariable
             
-            expect class PlatformIntVarOf<T : PlatformInt> : CVariable
-            expect class PlatformUIntVarOf<T : PlatformUInt> : CVariable
+            expect class PlatformIntVarOf<T : kotlin.PlatformInt> : CVariable
+            expect class PlatformUIntVarOf<T : kotlin.PlatformUInt> : CVariable
         """.trimIndent(),
         "PlatformVars.kt"
     )
@@ -135,8 +135,8 @@ private fun InlineSourceBuilder.ModuleBuilder.platformIntegers() {
             
             expect open class PlatformIntProgression
             expect open class PlatformUIntProgression
-            expect class PlatformIntRange : PlatformIntProgression, ClosedRange<PlatformInt>
-            expect class PlatformUIntRange : PlatformUIntProgression, ClosedRange<PlatformUInt>
+            expect class PlatformIntRange : PlatformIntProgression, ClosedRange<kotlin.PlatformInt>
+            expect class PlatformUIntRange : PlatformUIntProgression, ClosedRange<kotlin.PlatformUInt>
         """.trimIndent()
     )
 }

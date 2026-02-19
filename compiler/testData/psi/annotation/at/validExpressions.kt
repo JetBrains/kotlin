@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     return @ann 1
     return (@ann 2)

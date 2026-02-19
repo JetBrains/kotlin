@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -13,3 +14,5 @@ fun main(a: A, ml: MutableList<String>, l: List<String>) {
     a.foo(ml)
     a.foo(l)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

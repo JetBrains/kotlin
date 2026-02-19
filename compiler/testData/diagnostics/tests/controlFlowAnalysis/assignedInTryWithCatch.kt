@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun assignedInTry() {
     val a: Int
     try {
@@ -68,3 +69,6 @@ fun sideEffectBeforeAssignedInTryCatchButNotFinally(s: Any) {
     }
     a.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+tryExpression */

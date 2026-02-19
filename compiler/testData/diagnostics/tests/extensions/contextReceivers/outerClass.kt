@@ -1,6 +1,7 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED, -CONTEXT_CLASS_OR_CONSTRUCTOR
+// LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Outer {
     val x: Int = 1
@@ -17,3 +18,6 @@ fun f(outer: Outer) {
         Inner(3)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, primaryConstructor,
+propertyDeclaration */

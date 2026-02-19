@@ -5,12 +5,13 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.script.experimental.api.*
@@ -23,8 +24,10 @@ import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
+import kotlin.test.*
 
-class ReplTest : TestCase() {
+@ResourceLock(Resources.SYSTEM_OUT)
+class ReplTest {
 
     @Test
     fun testDecompiledReflection() {
@@ -64,7 +67,7 @@ class ReplTest : TestCase() {
                 sequenceOf(null, 7, null)
             )
         }
-        Assert.assertEquals("x = 3", out)
+        assertEquals("x = 3", out)
     }
 
     @Test
@@ -88,7 +91,7 @@ class ReplTest : TestCase() {
                 sequenceOf(null, null, 3, null, null, 5, null, 7, null, 9, null, 11)
             )
         }
-        Assert.assertEquals("b() = 3", out)
+        assertEquals("b() = 3", out)
     }
 
     @Test
@@ -317,8 +320,8 @@ class ReplTest : TestCase() {
             }
         }
         assertTrue(
-            "Expecting 1 got $res0",
-            res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1
+            res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1,
+            "Expecting 1 got $res0"
         )
 
         var handlerInvoked = false
@@ -342,11 +345,11 @@ class ReplTest : TestCase() {
             }
         }
         assertTrue(
-            "Expecting 2 got $res1",
-            res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2
+            res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2,
+            "Expecting 2 got $res1"
         )
 
-        assertTrue("Refinement handler on annotation is not invoked", handlerInvoked)
+        assertTrue(handlerInvoked, "Refinement handler on annotation is not invoked")
     }
 
     @Test
@@ -400,7 +403,7 @@ class ReplTest : TestCase() {
             sequenceOf(script),
             sequenceOf(greeting),
             simpleScriptCompilationConfiguration.with {
-                compilerOptions("-Xallow-kotlin-package")
+                compilerOptions(K2JVMCompilerArguments::allowKotlinPackage.cliArgument)
             }
         )
     }
@@ -463,63 +466,62 @@ class ReplTest : TestCase() {
                 compiledSnippetChecker
             ).forEachIndexed { index, res ->
                 val expectedRes = expectedIter.next()
+                val resReports = res.reports.filter {
+                    it.code != ScriptDiagnostic.incompleteCode && it.severity != ScriptDiagnostic.Severity.DEBUG
+                }
                 when {
                     res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
 
-                        val resReports = res.reports.filter {
-                            it.code != ScriptDiagnostic.incompleteCode
-                        }
-                        Assert.assertTrue(
-                            "#$index: Expected $expectedRes, got $res. Messages are different",
-                            resReports.map { it.message } == expectedRes.reports.map { it.message }
+                        assertTrue(
+                            resReports.map { it.message } == expectedRes.reports.map { it.message },
+                            "#$index: Expected $expectedRes, got $res. Messages are different"
                         )
-                        Assert.assertTrue(
-                            "#$index: Expected $expectedRes, got $res. Locations are different",
+                        assertTrue(
                             resReports.map { it.location }.zip(expectedRes.reports.map { it.location }).all {
                                 it.second == null || locationsEqual(it.first, it.second)
-                            }
+                            },
+                            "#$index: Expected $expectedRes, got $res. Locations are different"
                         )
                     }
                     res is ResultWithDiagnostics.Success && expectedRes is ResultWithDiagnostics.Success -> {
                         val expectedVal = expectedRes.value
                         val actualVal = res.value.result
                         when (actualVal) {
-                            is ResultValue.Value -> Assert.assertEquals(
-                                "#$index: Expected $expectedVal, got $actualVal",
+                            is ResultValue.Value -> assertEquals(
                                 expectedVal,
-                                actualVal.value
+                                actualVal.value,
+                                "#$index: Expected $expectedVal, got $actualVal"
                             )
-                            is ResultValue.Unit -> Assert.assertNull("#$index: Expected $expectedVal, got Unit", expectedVal)
-                            is ResultValue.Error -> Assert.assertTrue(
-                                "#$index: Expected $expectedVal, got Error: ${actualVal.error}",
-                                        ((expectedVal as? Throwable) ?: (expectedVal as? ResultValue.Error)?.error).let {
-                                            it != null && it.message == actualVal.error.message
-                                                    && it.cause?.message == actualVal.error.cause?.message
-                                        }
+                            is ResultValue.Unit -> assertNull(expectedVal, "#$index: Expected $expectedVal, got Unit")
+                            is ResultValue.Error -> assertTrue(
+                                ((expectedVal as? Throwable) ?: (expectedVal as? ResultValue.Error)?.error).let {
+                                    it != null && it.message == actualVal.error.message
+                                            && it.cause?.message == actualVal.error.cause?.message
+                                },
+                                "#$index: Expected $expectedVal, got Error: ${actualVal.error}"
                             )
-                            is ResultValue.NotEvaluated -> Assert.assertEquals(
-                                "#$index: Expected $expectedVal, got NotEvaluated",
-                                expectedVal, actualVal
+                            is ResultValue.NotEvaluated -> assertEquals(
+                                expectedVal, actualVal,
+                                "#$index: Expected $expectedVal, got NotEvaluated"
                             )
-                            else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $actualVal", expectedVal == null)
                         }
                         if (!ignoreDiagnostics) {
                             val expectedDiag = expectedRes.reports
-                            val actualDiag = res.reports
-                            Assert.assertEquals(
-                                "Diagnostics should be same",
+                            val actualDiag = resReports
+                            assertEquals(
                                 expectedDiag.map { it.toString() },
-                                actualDiag.map { it.toString() }
+                                actualDiag.map { it.toString() },
+                                "Diagnostics should be same"
                             )
                         }
                     }
                     else -> {
-                        Assert.fail("#$index: Expected $expectedRes, got $res")
+                        fail("#$index: Expected $expectedRes, got $res")
                     }
                 }
             }
             if (expectedIter.hasNext()) {
-                Assert.fail("Expected ${expectedIter.next()} got end of results stream")
+                fail("Expected ${expectedIter.next()} got end of results stream")
             }
         }
 

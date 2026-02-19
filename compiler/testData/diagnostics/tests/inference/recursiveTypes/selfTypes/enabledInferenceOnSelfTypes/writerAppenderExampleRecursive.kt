@@ -1,4 +1,4 @@
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// RUN_PIPELINE_TILL: BACKEND
 
 // FILE: JavaWriterAppender.java
 public class JavaWriterAppender {
@@ -49,3 +49,7 @@ object WriterAppender {
         return Builder1<B>().asBuilder()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, flexibleType, functionDeclaration,
+interfaceDeclaration, javaFunction, javaType, nestedClass, objectDeclaration, thisExpression, typeConstraint,
+typeParameter */

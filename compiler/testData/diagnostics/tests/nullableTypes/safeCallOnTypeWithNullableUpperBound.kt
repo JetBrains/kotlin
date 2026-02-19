@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 fun <T> test(t: T): String? {
     if (t != null) {
         return t<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
@@ -11,3 +12,6 @@ fun <T> T.testThis(): String? {
     }
     return this?.toString()
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+intersectionType, nullableType, safeCall, smartcast, thisExpression, typeParameter */

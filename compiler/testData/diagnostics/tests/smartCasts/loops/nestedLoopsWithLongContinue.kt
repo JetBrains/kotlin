@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun x(): Boolean { return true }
 
 public fun foo(p: String?, r: String?, q: String?): Int {
@@ -17,3 +18,6 @@ public fun foo(p: String?, r: String?, q: String?): Int {
     r<!UNSAFE_CALL!>.<!>length
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration,
+ifExpression, nullableType, smartcast, whileLoop */

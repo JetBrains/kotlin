@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.incremental.storage.FileToAbsolutePathConverter
+import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
+import java.io.File
 
 class IncrementalCompilationContext(
-    // The root directories of source files and class files are different, so we may need different `FileToPathConverter`s
-    val pathConverterForSourceFiles: FileToPathConverter = FileToAbsolutePathConverter,
-    val pathConverterForOutputFiles: FileToPathConverter = FileToAbsolutePathConverter,
+    // The root directories of source files and output files are different, so we need different `FileToPathConverter`s
+    val pathConverterForSourceFiles: FileToPathConverter = BasicFileToPathConverter,
+    val pathConverterForOutputFiles: FileToPathConverter = BasicFileToPathConverter,
     val storeFullFqNamesInLookupCache: Boolean = false,
     val transaction: CompilationTransaction = NonRecoverableCompilationTransaction(),
     val reporter: ICReporter = DoNothingICReporter,
@@ -21,12 +23,9 @@ class IncrementalCompilationContext(
      * Controls whether changes in lookup cache should be tracked. Required for the classpath snapshots based IC approach
      */
     val trackChangesInLookupCache: Boolean = false,
-    /**
-     * Controls whether any changes should be propagated to FS until we decide that the compilation is successful or not
-     *
-     * Required for optimizing Gradle side outputs backup
-     */
-    val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    val fragmentContext: FragmentContext? = null,
+    val useCompilerMapsOnly: Boolean = false
 ) {
     @Deprecated("This constructor is scheduled to be removed. KSP is using it")
     constructor(
@@ -43,10 +42,11 @@ class IncrementalCompilationContext(
         transaction,
         reporter,
         trackChangesInLookupCache,
-        keepIncrementalCompilationCachesInMemory
+        IncrementalCompilationFeatures.DEFAULT_CONFIGURATION.copy(
+            keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory
+        ),
     )
 
-    // FIXME: Remove `pathConverter` and require its users to decide whether to use `pathConverterForSourceFiles` or
-    // `pathConverterForClassFiles`
-    val pathConverter = pathConverterForSourceFiles
+    val fileDescriptorForSourceFiles: KeyDescriptor<File> = pathConverterForSourceFiles.getFileDescriptor()
+    val fileDescriptorForOutputFiles: KeyDescriptor<File> = pathConverterForOutputFiles.getFileDescriptor()
 }

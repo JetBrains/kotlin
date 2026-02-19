@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNCHECKED_CAST
+// DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNCHECKED_CAST
 // WITH_STDLIB
 
 sealed interface Metric {}
@@ -27,3 +28,7 @@ fun <T : Metric?> register(name: String, metric: T): T? {
         else -> return null
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, sealed, smartcast, starProjection, typeConstraint, typeParameter, whenExpression, whenWithSubject */

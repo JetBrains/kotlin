@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
+// LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
 // WITH_STDLIB
 
 class Foo<T>
@@ -16,3 +17,7 @@ fun <K : <!FINAL_UPPER_BOUND!>Inv<out Inv<out Int>><!>> main() {
     val foo = Foo<K>()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>Bar<Inv<in Inv<in Number>>>().takeFoo(foo)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, integerLiteral,
+intersectionType, localFunction, localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter */

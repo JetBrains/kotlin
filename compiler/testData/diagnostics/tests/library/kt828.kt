@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun test() {
     var res : Boolean = true
@@ -11,3 +12,6 @@ fun test() {
     res = (true && false)
     res = (true || false)
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, disjunctionExpression, functionDeclaration, localProperty,
+propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: kotlin.kt
 fun foo() {
@@ -12,3 +13,5 @@ public class JavaClass {
 
     public JavaClass(String... ss) {  }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

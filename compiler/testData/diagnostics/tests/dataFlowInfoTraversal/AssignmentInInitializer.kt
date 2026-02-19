@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-2825  DataFlowInfo is not retained after assignment
 
 interface A
@@ -19,3 +20,6 @@ fun bar2(a: A) {
     <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
     b.foo()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, interfaceDeclaration, localProperty, propertyDeclaration,
+smartcast */

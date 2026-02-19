@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.host.*
-import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface JvmScriptingHostConfigurationKeys
@@ -36,7 +36,7 @@ val JvmScriptingHostConfigurationKeys.baseClassLoader by PropertiesCollection.ke
     isTransient = true
 )
 
-@Suppress("unused")
+@Suppress("UnusedReceiverParameter")
 val ScriptingHostConfigurationKeys.jvm
     get() = JvmScriptingHostConfigurationBuilder()
 
@@ -92,10 +92,10 @@ class JvmGetScriptingClass : GetScriptingClassByClassLoader, Serializable {
         }
 
         if (baseClassLoaderIsInitialized != true) {
-            baseClassLoader = contextClassLoader
+            baseClassLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader] ?: contextClassLoader
             baseClassLoaderIsInitialized = true
         }
-        // TODO: this check breaks testLazyScriptDefinition, find out the reason and fix
+        // TODO: this check breaks testLazyScriptDefinition, find out the reason and fix (KT-83948)
 //        else if (baseClassLoader != null) {
 //            val baseClassLoadersChain = generateSequence(baseClassLoader) { it.parent }
 //            if (baseClassLoadersChain.none { it == contextClassloader }) throw IllegalArgumentException("scripting class instantiation context changed")

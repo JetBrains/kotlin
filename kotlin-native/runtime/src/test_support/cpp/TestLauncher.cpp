@@ -6,6 +6,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "Runtime.h"
+
 extern "C" void Kotlin_TestSupport_AssertClearGlobalState();
 
 namespace {
@@ -26,6 +28,8 @@ int main(int argc, char** argv) {
 
     // Googletest takes ownership of the registered environment object.
     testing::AddGlobalTestEnvironment(new GlobalStateChecker());
+
+    kotlin::initializeGlobalRuntimeIfNeeded();
 
     return RUN_ALL_TESTS();
 }

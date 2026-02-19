@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test(numbers: List<Number>) {
 
@@ -20,3 +21,6 @@ fun <R> shortExpected(f: () -> R) {}
 fun <R : Comparable<R>> shortComparable(f: () -> R) {}
 
 fun getShort(): Short? = 1
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, lambdaLiteral, nullableType, typeConstraint,
+typeParameter */

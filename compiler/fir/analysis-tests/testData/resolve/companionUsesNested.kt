@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Base {
     class BaseNested
 }
@@ -16,3 +17,6 @@ class Derived : Base() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

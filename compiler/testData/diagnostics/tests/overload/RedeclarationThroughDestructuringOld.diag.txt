@@ -1,0 +1,6 @@
+/RedeclarationThroughDestructuringOld.kt:7:14: error: conflicting declarations: val b: String, val b: Int
+        val (b, b) = e
+             ^
+/RedeclarationThroughDestructuringOld.kt:7:17: error: conflicting declarations: val b: String, val b: Int
+        val (b, b) = e
+                ^

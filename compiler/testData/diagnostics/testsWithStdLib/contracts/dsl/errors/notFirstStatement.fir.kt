@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -REDUNDANT_LABEL_WARNING -UNUSED_PARAMETER -NOTHING_TO_INLINE -CAST_NEVER_SUCCEEDS
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -REDUNDANT_LABEL_WARNING -UNUSED_PARAMETER -NOTHING_TO_INLINE -CAST_NEVER_SUCCEEDS
 // Issues: KT-26153, KT-26191
 
 import kotlin.contracts.*
@@ -50,7 +51,7 @@ inline fun case_4(number: Int?): Boolean {
 inline fun case_5(cond: Boolean): Boolean {
     run {
         <!CONTRACT_NOT_ALLOWED!>contract<!> {
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (cond)<!>
+            returns(true) implies (cond)
         }
     }
     return true
@@ -69,8 +70,12 @@ inline fun case_6(cond: Boolean): Boolean {
 fun case_7(cond: Boolean): Boolean {
     fun innerFun() {
         <!CONTRACT_NOT_ALLOWED!>contract<!> {
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (cond)<!>
+            returns(true) implies (cond)
         }
     }
     return true
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, contractCallsEffect, contractConditionalEffect, contracts,
+equalityExpression, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localClass,
+localFunction, localProperty, nullableType, propertyDeclaration */

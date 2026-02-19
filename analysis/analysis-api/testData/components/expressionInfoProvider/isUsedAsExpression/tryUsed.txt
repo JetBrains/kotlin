@@ -7,3 +7,4 @@ text: try {
         9
     }
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

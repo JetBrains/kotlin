@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun foo(init: A.() -> Unit) { }
 
@@ -32,3 +33,7 @@ class E: C() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, init, integerLiteral, lambdaLiteral, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, thisExpression, typeWithExtension */

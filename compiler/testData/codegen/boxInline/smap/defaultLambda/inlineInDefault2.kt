@@ -1,6 +1,6 @@
+
 // SKIP_INLINE_CHECK_IN: lParams$default
 // FILE: 1.kt
-
 
 package test
 //A lot of blank lines [Don't delete]

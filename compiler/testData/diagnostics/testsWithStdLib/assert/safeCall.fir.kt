@@ -1,4 +1,5 @@
-// !IGNORE_DATA_FLOW_IN_ASSERT
+// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_DATA_FLOW_IN_ASSERT
 // SKIP_TXT
 // WITH_STDLIB
 
@@ -35,3 +36,5 @@ fun test6() {
     s.length
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast */

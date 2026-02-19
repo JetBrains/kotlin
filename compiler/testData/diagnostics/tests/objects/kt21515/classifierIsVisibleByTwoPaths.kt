@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 open class A {
     class FromA {
@@ -16,3 +17,6 @@ class B : A() {
 
     val c = FromA()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration */

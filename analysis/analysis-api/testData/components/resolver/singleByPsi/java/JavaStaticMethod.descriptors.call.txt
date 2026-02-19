@@ -1,0 +1,16 @@
+KtNameReferenceExpression(589,592): 'bar'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pkg/Foo.bar(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = pkg/Foo.bar
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

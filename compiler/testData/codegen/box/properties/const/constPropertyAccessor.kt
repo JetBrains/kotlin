@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 var a = 12
 
 object C {

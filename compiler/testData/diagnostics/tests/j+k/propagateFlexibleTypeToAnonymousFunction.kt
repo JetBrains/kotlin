@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: usage.kt
 val propertyToResolve: String
@@ -20,3 +21,6 @@ public class JavaClass {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, getter, javaFunction, lambdaLiteral, nullableType,
+propertyDeclaration, safeCall, stringLiteral */

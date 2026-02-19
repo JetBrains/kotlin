@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,33 +17,43 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: para
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: [
+      returnType: KaUsualClassType:
+        annotations: [
           Anno3()
             psi: KtAnnotationEntry
           Anno2()
@@ -49,13 +61,20 @@ KtFunctionSymbol:
           Anno1()
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
+        typeArguments: []
         type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtSourceModule "Sources of main"
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
+      getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
+  getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: foo

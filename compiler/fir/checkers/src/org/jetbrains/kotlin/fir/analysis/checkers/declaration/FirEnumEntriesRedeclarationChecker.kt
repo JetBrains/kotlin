@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 
-object FirEnumEntriesRedeclarationChecker : FirEnumEntryChecker() {
-    override fun check(declaration: FirEnumEntry, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirEnumEntriesRedeclarationChecker : FirEnumEntryChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirEnumEntry) {
         if (declaration.name == StandardNames.ENUM_ENTRIES) {
-            reporter.reportOn(declaration.source, FirErrors.DEPRECATED_DECLARATION_OF_ENUM_ENTRY, context)
+            reporter.reportOn(declaration.source, FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES)
         }
     }
 }

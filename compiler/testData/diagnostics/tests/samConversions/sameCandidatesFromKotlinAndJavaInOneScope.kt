@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
+// DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Action.java
 public interface Action<T> {
@@ -25,3 +26,6 @@ fun test(c: C) {
     c.pluginManagement {
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, javaType, lambdaLiteral,
+typeWithExtension */

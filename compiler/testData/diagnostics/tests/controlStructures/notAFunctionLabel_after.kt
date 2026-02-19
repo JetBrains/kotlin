@@ -1,4 +1,5 @@
-// !LANGUAGE: +RestrictReturnStatementTarget
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +RestrictReturnStatementTarget
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
@@ -69,3 +70,6 @@ fun testMultipleLabelsWithNestedLambda() {
         return@l2
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, comparisonExpression, forLoop, functionDeclaration,
+ifExpression, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

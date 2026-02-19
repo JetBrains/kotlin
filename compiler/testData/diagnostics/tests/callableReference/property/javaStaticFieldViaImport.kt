@@ -1,4 +1,5 @@
-// !DIAGNOSTICS:-UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS:-UNUSED_VARIABLE
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -26,3 +27,6 @@ fun test() {
     val privFinRef: KProperty<JavaClass?> = ::<!INVISIBLE_MEMBER!>privateFinal<!>
     val privMutRef: KMutableProperty<Throwable?> = ::<!INVISIBLE_MEMBER!>privateMutable<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaCallableReference, javaType, localProperty, nullableType,
+propertyDeclaration */

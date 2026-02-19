@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 public @interface A {
@@ -7,3 +8,5 @@ public @interface A {
 // FILE: b.kt
 @A(arg = String::class) class MyClass1
 @A class MyClass2
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, javaType */

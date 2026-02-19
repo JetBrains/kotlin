@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: J.java
 public class J {
     public static void f(Byte x) {}
@@ -22,3 +23,5 @@ fun main() {
     g(123)
     g(123123123123)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, nullableType */

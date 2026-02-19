@@ -1,7 +1,4 @@
-// !LANGUAGE: +KotlinFunInterfaceConstructorReference
-
-// IGNORE_BACKEND: JVM
-//  ^ unsupported in old JVM BE
+// LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 fun interface KSupplier<T> {
     fun get(): T

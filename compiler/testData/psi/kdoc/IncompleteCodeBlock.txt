@@ -1,0 +1,20 @@
+KtFile: IncompleteCodeBlock.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ```')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_CODE_BLOCK_TEXT)(' line1')
+      PsiWhiteSpace('\n      ')
+      PsiElement(KDOC_CODE_BLOCK_TEXT)('line2')
+  PsiErrorElement:Unclosed comment
+    <empty list>

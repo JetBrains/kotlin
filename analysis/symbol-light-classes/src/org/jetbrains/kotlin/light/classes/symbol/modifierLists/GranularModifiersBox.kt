@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,17 +8,12 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 import com.intellij.psi.PsiModifier
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.toPersistentHashMap
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
@@ -49,7 +44,7 @@ internal class GranularModifiersBox(
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ GranularModifiersBox::class.java,
             /* vclass = */ PersistentMap::class.java,
-            /* fieldName = */ "modifiersMapReference",
+            /* fieldName = */ GranularModifiersBox::modifiersMapReference.name,
         )
 
         internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
@@ -65,8 +60,8 @@ internal class GranularModifiersBox(
             }.toPersistentHashMap()
 
         internal fun computeVisibilityForMember(
-            ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
+            ktModule: KaModule,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
                 it.toPsiVisibilityForMember()
@@ -76,8 +71,8 @@ internal class GranularModifiersBox(
         }
 
         internal fun computeVisibilityForClass(
-            ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
+            ktModule: KaModule,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
             isTopLevel: Boolean,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
@@ -88,12 +83,12 @@ internal class GranularModifiersBox(
         }
 
         internal fun computeSimpleModality(
-            ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithModality>,
+            ktModule: KaModule,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
             val modality = declarationPointer.withSymbol(ktModule) {
-                if ((it as? KtClassOrObjectSymbol)?.classKind == KtClassKind.ENUM_CLASS) {
-                    it.enumClassModality()
+                if ((it as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) {
+                    enumClassModality(it)
                 } else {
                     it.computeSimpleModality()
                 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun intBinEq() {
     var x = 0
     x <!NONE_APPLICABLE!>+=<!> 'a'
@@ -46,3 +47,6 @@ fun overloading() {
     var z = B()
     <!TYPE_MISMATCH!>z += x<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+intersectionType, localProperty, multiplicativeExpression, operator, propertyDeclaration, smartcast */

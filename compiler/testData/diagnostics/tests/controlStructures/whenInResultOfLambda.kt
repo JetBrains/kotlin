@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // NI_EXPECTED_FILE
 
@@ -17,3 +18,6 @@ val test5 = {
         else -> println()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, integerLiteral, intersectionType,
+lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

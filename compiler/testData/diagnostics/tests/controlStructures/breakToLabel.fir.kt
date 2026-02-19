@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-48116
 //WITH_STDLIB
 
@@ -18,3 +19,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, break, equalityExpression, forLoop, functionDeclaration, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whileLoop */

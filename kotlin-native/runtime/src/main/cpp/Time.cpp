@@ -14,22 +14,36 @@
  * limitations under the License.
  */
 
-#include "Natives.h"
+#include "CallsChecker.hpp"
 #include "Porting.h"
 #include "Types.h"
 
+using namespace kotlin;
+
 extern "C" {
 
-KLong Kotlin_system_getTimeMillis() {
+KLong Kotlin_system_getSteadyTimeMillis() {
+  // Should complete relatively fast.
+  CallsCheckerIgnoreGuard guard;
   return konan::getTimeMillis();
 }
 
-KLong Kotlin_system_getTimeNanos() {
+KLong Kotlin_system_getSteadyTimeNanos() {
+  // Should complete relatively fast.
+  CallsCheckerIgnoreGuard guard;
   return konan::getTimeNanos();
 }
 
-KLong Kotlin_system_getTimeMicros() {
+KLong Kotlin_system_getSteadyTimeMicros() {
+  // Should complete relatively fast.
+  CallsCheckerIgnoreGuard guard;
   return konan::getTimeMicros();
+}
+
+KLong Kotlin_system_getSystemTimeNanos() {
+  // Should complete relatively fast.
+  CallsCheckerIgnoreGuard guard;
+  return konan::getSystemTimeNanos();
 }
 
 }  // extern "C"

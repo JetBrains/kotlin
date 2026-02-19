@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 
 interface First {
@@ -32,3 +33,6 @@ fun test(arg: First) {
     chained1(arg).<!UNRESOLVED_REFERENCE!>first<!>()
     chained2(arg).<!UNRESOLVED_REFERENCE!>first<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression,
+lambdaLiteral, smartcast */

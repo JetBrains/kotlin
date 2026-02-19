@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-702 Type inference failed
 package a
@@ -19,3 +20,7 @@ public class Throwables() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, checkNotNullCall, classDeclaration, companionObject, equalityExpression,
+functionDeclaration, ifExpression, nullableType, objectDeclaration, primaryConstructor, safeCall, smartcast,
+typeConstraint, typeParameter */

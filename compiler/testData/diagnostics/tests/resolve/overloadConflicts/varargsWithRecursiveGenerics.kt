@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: J.java
 import java.util.*;
 
@@ -20,3 +21,5 @@ val test2: String = J.foo(a, a)
 val test3: String = J.foo(a, a, a)
 val test4: Int = J.foo(a, a, a, a)
 val test5: Int = J.foo(a, a, a, a, a)
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, flexibleType, javaFunction, propertyDeclaration */

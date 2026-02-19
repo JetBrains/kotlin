@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -16,3 +18,5 @@ public class B implements A {
 fun foo() {
     B().size
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaProperty, javaType */

@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// LATEST_LV_DIFFERENCE
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)

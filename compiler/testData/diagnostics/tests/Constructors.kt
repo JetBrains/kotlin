@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class NoC
 class NoC1 : <!SUPERTYPE_NOT_INITIALIZED!>NoC<!>
 
@@ -33,3 +34,5 @@ class NoCPI {
     get() = 1
     set(v) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, primaryConstructor, propertyDeclaration, setter */

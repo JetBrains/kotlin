@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // NI_EXPECTED_FILE
 
 class GenericController<T> {
@@ -19,3 +20,6 @@ val test2 = generate<Int> {
 val test3 = generate { bar: Int ->
     yield(4)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, propertyDeclaration, suspend, typeParameter, typeWithExtension */

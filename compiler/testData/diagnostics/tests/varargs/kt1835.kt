@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: JavaClass.java
 public class JavaClass {
@@ -11,3 +12,5 @@ fun main() {
     JavaClass().from("")
     JavaClass().from("", "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

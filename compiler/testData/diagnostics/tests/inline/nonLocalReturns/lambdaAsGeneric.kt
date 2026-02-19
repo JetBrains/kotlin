@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun box() : String {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> {
         <!RETURN_NOT_ALLOWED!>return@box<!> "123"
@@ -9,3 +10,5 @@ fun box() : String {
 <!NOTHING_TO_INLINE!>inline<!> fun <T> test(p: T) {
     p.toString()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, lambdaLiteral, nullableType, stringLiteral, typeParameter */

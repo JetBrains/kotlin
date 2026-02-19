@@ -1,5 +1,5 @@
 FILE: classWithWrongSuperCall.kt
-    public? open class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(init: ( A.() -> Unit )): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -8,7 +8,7 @@ FILE: classWithWrongSuperCall.kt
             public? [ContainingClassKey=A] get(): String
 
     }
-    public? final? object B : A {
+    public final? object B : A {
         private [ContainingClassKey=B] constructor(): R|B| {
             super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 ^ Unit
@@ -17,7 +17,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? object C : A {
+    public final? object C : A {
         private [ContainingClassKey=C] constructor(): R|C| {
             super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 local final? fun foo(): <implicit> {
@@ -29,7 +29,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? class D : A {
+    public final? class D : A {
         public? [ContainingClassKey=D] constructor(): R|D| {
             super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 local final? fun foo(): <implicit> {
@@ -41,7 +41,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? class E : A {
+    public final? class E : A {
         public? [ContainingClassKey=E] constructor(): R|E| {
             super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 local final? fun foo(): <implicit> {
@@ -53,7 +53,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? class F : A {
+    public final? class F : A {
         public? [ContainingClassKey=F] error_constructor(): R|F| {
             super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 local final? fun foo(): <implicit> {
@@ -69,7 +69,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? class G : A {
+    public final? class G : A {
         public? [ContainingClassKey=G] error_constructor(): R|G| {
             super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 local final? fun foo(): <implicit> {
@@ -91,7 +91,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? class H : A {
+    public final? class H : A {
         public? [ContainingClassKey=H] constructor(): R|H| {
             super<<implicit>>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 local final? fun foo(): <implicit> {

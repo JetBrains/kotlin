@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.allOverridden
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -45,7 +46,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
     private fun IrSimpleFunction.toDescription() = SpecialMethodDescription(
         parentAsClass.fqNameWhenAvailable,
         name,
-        valueParameters.size
+        nonDispatchParameters.size
     )
 
     @Suppress("UNUSED_PARAMETER")
@@ -61,7 +62,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, IrConstKind.Int, -1)
 
     private fun getSecondArg(bridge: IrSimpleFunction) =
-        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1].symbol)
+        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.parameters[2].symbol)
 
     private val specialMethodsWithDefaults = mapOf(
         makeDescription(StandardNames.FqNames.collection, "contains", 1) to

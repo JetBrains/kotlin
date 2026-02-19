@@ -12,25 +12,26 @@ More fine-grained test tasks exist covering different parts of Gradle plugins:
 - `kgpJsTests` - runs all tests for Kotlin Gradle Plugin/Js platform (parallel execution)
 - `kgpAndroidTests` - runs all tests for Kotlin Gradle Plugin/Android platform (parallel execution)
 - `kgpMppTests` - run all tests for Kotlin Gradle Multiplatform plugin (parallel execution)
+- `kgpNativeTests` - run all tests for Kotlin Gradle Plugin with K/N (parallel execution)
 - `kgpDaemonTests` - runs all tests for Gradle and Kotlin daemons (sequential execution)
 - `kgpOtherTests` - run all tests for support Gradle plugins, such as kapt, allopen, etc (parallel execution)
 - `kgpAllParallelTests` - run all tests for all platforms except daemons tests (parallel execution)
 
-Also, few deprecated tasks still exist until all tests will be migrated to the new setup:
-- `kgpSimpleTests` - runs all migrated Kotlin Gradle Plugin tests (parallel execution)
-- `test` - runs all tests with the oldest supported Gradle version (sequential execution)
-- `testAdvancedGradleVersion` - runs all tests with the latest supported Gradle version (sequential execution)
-
-The old tests that use the Gradle plugins DSL ([`PluginsDslIT`](../kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) 
-also require the Gradle plugin marker artifacts to be installed:
-```shell
-./gradlew :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
-./gradlew :kotlin-gradle-plugin-integration-tests:test
-```
-
 If you want to run only one test class, you need to append `--tests` flag with value of test class, which you want to run
 ```shell
-./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllTests --tests <class-name-with-package>
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests --tests <class-name-with-package>
+```
+
+#### How to Run Using Kotlin Native from Master
+
+Currently, Kotlin Native from master involves three configurations: `kgpMppTests`, `kgpNativeTests`, and `kgpOtherTests`. 
+Depending on your development environment, there are a few different ways you can run this.
+* **On Local Environment** In the case of Local Environment builds, you have two options, which you can add in your `local.properties` file:  
+  * `kotlin.native.enabled=true` - this property adds building Kotlin Native full bundle step before Integration Tests, then this bundle will be used in the Integration Tests.
+* **On TeamCity** In the case of TeamCity builds, no extra setting is necessary. The mentioned configurations depend on the `full bundle`, which stores its artifacts in the `-DkonanDataDirForIntegrationTests` directory.
+Also, you can specify the konan directory for test by providing `-DkonanDataDirForIntegrationTests`, for example:
+```bash
+ ./gradlew :kotlin-gradle-plugin-integration-tests:kgpNativeTests -DkonanDataDirForIntegrationTests=/tmp/.konan
 ```
 
 #### How to work with the tests
@@ -50,8 +51,11 @@ to understand what test is about.
 - Add to test related Kotlin tag. For example for Kotlin/Jvm tests - `@JvmGradlePluginTests`. Other available tags are located nearby 
 `@JvmGradlePluginTests` - check yourself what suites best for the test. You could add tag onto test suite once, but then all tests 
 in test suite should be for the related tag. Preferably add tag for each test.
-- Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying 
-existing test projects.
+- Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying existing test projects.
+- <a name="autodebug"></a> When debugging tests in IDE, Gradle will also stream daemon logs and runs target project 
+build in-process. This is especially useful for [build script injections](#injections) since you will be able to break 
+transparently in the injection. You can opt out of this behavior using `kotlin.gradle.autoDebugIT=false` 
+in `local.properties`.
 
 Tests run using [Gradle TestKit](https://docs.gradle.org/current/userguide/test_kit.html) and may reuse already active Gradle TestKit daemon.
 Shared TestKit caches are located in [./.testKitDir](.testKitDir) directory. It is cleared on CI after test run is finished, but not locally.
@@ -102,10 +106,10 @@ add a new assertion, add as a reviewer someone from Kotlin build tools team.
 
 ##### Additional test helpers
 
-- Whenever you need to test combination of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
+- Whenever you need to test combinations of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
 Then test method will receive requires JDKs as a second parameter:
 ```kotlin
-@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_17])
+@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_21])
 @GradleWithJdkTest
 fun someTest(
     gradleVersion: GradleVersion, 
@@ -177,22 +181,180 @@ pluginManagement {
 ```
 </details>
 
-##### Deprecated tests setup
+## <a name="injections"></a> build.gradle.kts injections from main test code
 
-When you create a new test, figure out which Gradle versions it is supposed to run on. Then, when you instantiate a test project, specify one of:
+It is possible to inject code from IT test directly into the build files of the test project. 
 
-* `project("someProjectName", GradleVersionRequired.None)` or just `project("someProjectName")` – the test can run on the whole range of the supported Gradle versions;
-* `project("someProjectName", GradleVersionRequired.AtLeast("X.Y"))` – the test is supposed to run on Gradle version `X.Y` and newer (e.g. it tests integration with a Gradle feature that was released in version `X.Y`);
-* `project("someProjectName", GradleVersionRequired.Exact("X.Y"))` – the test is supposed to run only with Gradle version `X.Y` (e.g. it tests a workaround for that version or records some special behavior that is not reproducible with newer versions).
+See [BuildScriptInjectionIT.kt](src/test/kotlin/org/jetbrains/kotlin/gradle/BuildScriptInjectionIT.kt) for examples of how to write a test 
+with injections including:
+* Generating a multiplatform project with sources from scratch
+* Building a multi-project and composite build setups
+* Publishing a project in a Maven repository and consuming it in another project as a dependency
+* Catching execution and configuration time exceptions
 
-:warning: When your tests target multiple Gradle versions, make sure they pass when run with both tasks `test` and `testAdvanceGradleVersion` (see above). In the IDE, you can modify a test run configuration to use a Gradle task other than `test`.
+With [implicit debugging](#autodebug) you can break transparently in the test, the injection and in KGP.
 
-You can check a Gradle version that the test runs with using [`Project.testGradleVersionAtLeast("X.Y")`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L454) and [`Project.testGradleVersionBelow("X.Y")`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L457).
+To inject a test use `buildScriptInjection` DSL function as follows:
 
-Since Gradle output layouts differ from version to version, you can access classes and resources output directories using the functions that adapt to the Gradle version that is used for each test:
+```kotlin
+@GradleTest
+fun test(version: GradleVersion) {
+    // Any project can be injected; "empty" can be used as a bare template
+    project("empty", version) {
+        // Bare template doesn't have KGP in classpath, so it needs to be explicitly added before plugin application 
+        plugins {
+            kotlin("multiplatform")
+        }
+        buildScriptInjection {
+            // This code will be executed inside build.gradle(.kts) during project evaluation
+            project.applyMultiplatform {
+                linuxArm64()
+                sourceSets.commonMain.get().compileSource("class Common")
+            }
+        }
+        build("assemble") {
+            assertTasksExecuted(":compileKotlinLinuxArm64")
+        }
+    }
+}
+```
 
-* [`CompiledProject.kotlinClassesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L459) with optional arguments for subproject and source set, and its Java counterpart [`CompiledProject.javaClassesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L462) (note that Gradle versions below 4.0 use the same directory for both)
+Injections can capture `java.io.Serializable` variables from the test:
 
-* [`Project.resourcesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L444) (with optional arguments for subproject and source set) for the resources directory;
+```kotlin
+data class PassMe(val foo: String) : java.io.Serializable
 
-* [`Project.classesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L449), which is a general way to get the output directory for a specific subproject, source set, and language.
+project("empty", version) {
+    // Instantiate Serializable types as variables in test
+    val loveInjectionsTask = "loveInjections"
+    val passMe = PassMe("Injections 🥰")
+    buildScriptInjection {
+        project.tasks.register(loveInjectionsTask) {
+            it.doLast {
+                // Use them during configuration or at execution
+                println(passMe)
+            }
+        }
+    }
+    build(loveInjectionsTask) {
+        assertOutputContains(passMe.foo)
+    }
+}
+```
+
+Injections can also return `Serializable` value from the build script back to the test using `buildScriptReturn` injections:
+
+```kotlin
+project("empty", version) {
+    plugins {
+        kotlin("multiplatform")
+    }
+    buildScriptInjection {
+        project.applyMultiplatform {
+            linuxArm64()
+            linuxX64()
+            sourceSets.commonMain.get().compileSource("class Common")
+        }
+    }
+
+    // Use assertions on this path or capture it in another injection!
+    val commonMainMetadataKlibPath: File = buildScriptReturn {
+        kotlinMultiplatform.metadata().compilations.getByName("commonMain").output.classesDirs.singleFile
+    }.buildAndReturn()
+}
+```
+
+Use injections to capture execution and configuration time failures:
+
+```kotlin
+data class A(val name: String = "A") : Exception()
+val a1 = A("1")
+
+project("empty", version) {
+    buildScriptInjection {
+        project.tasks.register("throwA") {
+            it.doLast { throw a1 }
+        }
+    }
+    assertEquals(
+        CaughtBuildFailure.Expected(setOf(a1)),
+        catchBuildFailures<A>().buildAndReturn(
+            "throwA",
+        )
+    )
+}
+```
+
+Settings build scripts are also injectable:
+
+```kotlin
+project("empty", version) {
+    settingsBuildScriptInjection {
+        settings.dependencyResolutionManagement {
+            // ...
+        }
+    }
+}
+```
+
+Injections also have access to KGP's internal APIs (IDE currently colors this code red due to KTIJ-31881, but it will compile):
+
+```kotlin
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+
+project("empty", version) {
+    plugins {
+        kotlin("multiplatform")
+    }
+    buildScriptInjection {
+        project.applyMultiplatform {
+            linuxArm64()
+        }
+    }
+
+    buildScriptReturn {
+        // Any internal KGP APIs are accessible in the injections
+        kotlinMultiplatform.linuxArm64().compilations.getByName("main").internal as InternalKotlinCompilation
+    }
+}
+```
+
+It is also possible to apply plugins in a `TestProject.plugins {}` block:
+```kotlin
+project("empty", version) {
+    settingsBuildScriptInjection {
+        // Plugin repository can be added through the usual
+        settings.pluginManagement.repositories.maven(pluginRepository)
+    }
+    plugins {
+        id("org.example.customPlugin") version "1.0" apply true
+        // KGP and AGP don't need explicit version specification
+        kotlin("multiplatform")
+        // Bundled Gradle plugins can also be applied in this block
+        `maven-publish`
+    }
+    buildScriptInjection {
+        project.extensions.getByName("customPluginExtension")
+    }
+}
+```
+
+Finally, it is possible to inject the `buildscript` block using injections. Using this type of injections you can manipulate build script classpath directly:
+
+```kotlin
+project("empty", version) {
+    buildScriptBuildscriptBlockInjection {
+        buildscript.repositories.add(repositoryWithKgp)
+        buildscript.configurations.getByName("classpath").dependencies.add(
+            buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        )
+    }
+
+    buildScriptInjection {
+        // Now KGP plugins will apply
+        project.applyMultiplatform {
+            linuxArm64()
+        }
+    }
+}
+```

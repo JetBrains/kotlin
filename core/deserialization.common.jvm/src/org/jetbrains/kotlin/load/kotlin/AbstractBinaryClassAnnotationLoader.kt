@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<A>>(
     protected val kotlinClassFinder: KotlinClassFinder
 ) : AnnotationLoader<A> {
-    abstract val jvmMetadataVersion: JvmMetadataVersion
+    abstract val metadataVersion: MetadataVersion
 
     protected abstract fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): S
 
@@ -54,6 +53,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     protected open fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? = null
 
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
+        if (noAnnotationsInBytecode(container.classProto.flags)) return emptyList()
         val kotlinClass = container.toBinaryClass() ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
 
         val result = ArrayList<A>(1)
@@ -71,6 +71,9 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<A> {
+        val flags = proto.getCallableAnnotationFlags(kind)
+        if (noAnnotationsInBytecode(flags)) return emptyList()
+
         if (kind == AnnotatedCallableKind.PROPERTY) {
             return loadPropertyAnnotations(container, proto as ProtoBuf.Property, PropertyRelatedElement.PROPERTY)
         }
@@ -80,10 +83,14 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
-        loadPropertyAnnotations(container, proto, PropertyRelatedElement.BACKING_FIELD)
+        loadAnnotationsIfPresentInBytecode(proto.flags) {
+            loadPropertyAnnotations(container, proto, PropertyRelatedElement.BACKING_FIELD)
+        }
 
     override fun loadPropertyDelegateFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
-        loadPropertyAnnotations(container, proto, PropertyRelatedElement.DELEGATE_FIELD)
+        loadAnnotationsIfPresentInBytecode(proto.flags) {
+            loadPropertyAnnotations(container, proto, PropertyRelatedElement.DELEGATE_FIELD)
+        }
 
     private enum class PropertyRelatedElement {
         PROPERTY,
@@ -141,7 +148,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                     field,
                     isConst,
                     isMovedFromInterfaceCompanion,
-                    kotlinClassFinder, jvmMetadataVersion
+                    kotlinClassFinder, metadataVersion
                 )
             )
                 ?: return listOf()
@@ -154,20 +161,13 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         callableProto: MessageLite,
         kind: AnnotatedCallableKind,
         parameterIndex: Int,
-        proto: ProtoBuf.ValueParameter
-    ): List<A> {
-        val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind)
-        if (methodSignature != null) {
-            val index = parameterIndex + computeJvmParameterIndexShift(container, callableProto)
-            val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
-            return findClassAndLoadMemberAnnotations(container, paramSignature)
-        }
-
-        return listOf()
+        proto: ProtoBuf.ValueParameter,
+    ): List<A> = loadAnnotationsIfPresentInBytecode(proto.flags) {
+        loadParameterAnnotations(container, callableProto, kind, parameterIndex + computeJvmParameterIndexShift(container, callableProto))
     }
 
     private fun computeJvmParameterIndexShift(container: ProtoContainer, message: MessageLite): Int {
-        return when (message) {
+        return message.contextParameterCount + when (message) {
             is ProtoBuf.Function -> if (message.hasReceiver()) 1 else 0
             is ProtoBuf.Property -> if (message.hasReceiver()) 1 else 0
             is ProtoBuf.Constructor -> when {
@@ -180,25 +180,61 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
+        container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind,
+    ): List<A> =
+        loadParameterAnnotations(container, proto, kind, proto.contextParameterCount)
+
+    override fun loadContextParameterAnnotations(
         container: ProtoContainer,
-        proto: MessageLite,
-        kind: AnnotatedCallableKind
-    ): List<A> {
-        val methodSignature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind)
-        if (methodSignature != null) {
-            val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
-            return findClassAndLoadMemberAnnotations(container, paramSignature)
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter?,
+    ): List<A> =
+        loadAnnotationsIfPresentInBytecode(proto?.flags ?: 0) {
+            loadParameterAnnotations(container, callableProto, kind, parameterIndex)
         }
 
-        return emptyList()
+    private fun loadParameterAnnotations(
+        container: ProtoContainer, callableProto: MessageLite, kind: AnnotatedCallableKind, parameterIndex: Int,
+    ): List<A> {
+        val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
+        val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, parameterIndex)
+        return findClassAndLoadMemberAnnotations(container, paramSignature)
     }
 
+    private val MessageLite.contextParameterCount: Int
+        get() = when (this) {
+            is ProtoBuf.Function -> contextParameterCount
+            is ProtoBuf.Property -> contextParameterCount
+            else -> 0
+        }
+
+    private fun MessageLite.getCallableAnnotationFlags(kind: AnnotatedCallableKind) = when (this) {
+        is ProtoBuf.Constructor -> flags
+        is ProtoBuf.Function -> flags
+        is ProtoBuf.Property -> getPropertyFlags(kind)
+        else -> 0
+    }
+
+    private fun ProtoBuf.Property.getPropertyFlags(kind: AnnotatedCallableKind) = when (kind) {
+        AnnotatedCallableKind.PROPERTY_GETTER -> if (hasGetterFlags()) getterFlags else flags
+        AnnotatedCallableKind.PROPERTY_SETTER -> if (hasSetterFlags()) setterFlags else flags
+        else -> flags
+    }
+
+    private fun loadAnnotationsIfPresentInBytecode(flags: Int, loadAnnotations: () -> List<A>): List<A> =
+        if (noAnnotationsInBytecode(flags)) emptyList() else loadAnnotations()
+
+    private fun noAnnotationsInBytecode(flags: Int): Boolean =
+        !Flags.HAS_ANNOTATIONS.get(flags)
+
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
-        return proto.getExtension(JvmProtoBuf.typeAnnotation).map { loadAnnotation(it, nameResolver) }
+        return proto.annotationList.map { loadAnnotation(it, nameResolver) }
     }
 
     override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<A> {
-        return proto.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadAnnotation(it, nameResolver) }
+        return proto.annotationList.map { loadAnnotation(it, nameResolver) }
     }
 
     protected fun findClassWithAnnotationsAndInitializers(
@@ -248,7 +284,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             classId.shortClassName.asString() != JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
         ) return false
 
-        val klass = kotlinClassFinder.findKotlinClass(classId, jvmMetadataVersion)
+        val klass = kotlinClassFinder.findKotlinClass(classId, metadataVersion)
         return klass != null && SpecialJvmAnnotations.isAnnotatedWithContainerMetaAnnotation(klass)
     }
 
@@ -264,14 +300,14 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             isConst: Boolean?,
             isMovedFromInterfaceCompanion: Boolean,
             kotlinClassFinder: KotlinClassFinder,
-            jvmMetadataVersion: JvmMetadataVersion
+            metadataVersion: MetadataVersion
         ): KotlinJvmBinaryClass? {
             if (property) {
                 checkNotNull(isConst) { "isConst should not be null for property (container=$container)" }
                 if (container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
                     return kotlinClassFinder.findKotlinClass(
                         container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)),
-                        jvmMetadataVersion
+                        metadataVersion
                     )
                 }
                 if (isConst && container is ProtoContainer.Package) {
@@ -281,7 +317,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                         // Converting '/' to '.' is fine here because the facade class has a top level ClassId
                         return kotlinClassFinder.findKotlinClass(
                             ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.'))),
-                            jvmMetadataVersion
+                            metadataVersion
                         )
                     }
                 }
@@ -302,7 +338,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                 val jvmPackagePartSource = container.source as JvmPackagePartSource
 
                 return jvmPackagePartSource.knownJvmBinaryClass
-                    ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId, jvmMetadataVersion)
+                    ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId, metadataVersion)
             }
             return null
         }

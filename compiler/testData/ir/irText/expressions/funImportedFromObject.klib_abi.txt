@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object test/Host { // test/Host|null[0]
+    final inline fun <#A1: reified kotlin/Any?> foo(): kotlin/String // test/Host.foo|foo(){0§<kotlin.Any?>}[0]
+}
+final fun test/test(): kotlin/String // test/test|test(){}[0]

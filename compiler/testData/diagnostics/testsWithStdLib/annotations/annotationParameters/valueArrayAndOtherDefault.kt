@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 // FILE: A.java
@@ -27,3 +28,5 @@ public @interface A {
 @A(x = Any::class, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>*arrayOf("5", "6")<!>, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>"7"<!>, y = 3) fun test9() {}
 @A(x = Any::class, value = ["5", "6"], <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>"7"<!>, y = 3) fun test10() {}
 @A(x = Any::class, value = ["5", "6", "7"], y = 3) fun test11() {}
+
+/* GENERATED_FIR_TAGS: classReference, collectionLiteral, functionDeclaration, integerLiteral, javaType, stringLiteral */

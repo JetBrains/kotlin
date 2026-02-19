@@ -1,9 +1,10 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-
 
 class Controller {
     var result = ""
@@ -41,6 +42,11 @@ public inline fun Controller.consume(action: Controller.() -> String?): String? 
         consumeCancel(cause)
     }
 }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 public suspend fun Controller.doTest(): String? {
     return consume {

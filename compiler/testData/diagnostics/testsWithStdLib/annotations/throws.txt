@@ -1,5 +1,10 @@
 package
 
+public val w: kotlin.reflect.KClass<kotlin.Throws /* = kotlin.jvm.Throws */>
+public val x: kotlin.Throws? /* = kotlin.jvm.Throws? */ = null
+public val y: kotlin.Throws /* = kotlin.jvm.Throws */
+public val z: kotlin.reflect.KProperty1<kotlin.Throws /* = kotlin.jvm.Throws */, kotlin.Array<out kotlin.reflect.KClass<out kotlin.Throwable>>>
+
 package abc1 {
     @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
     @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit

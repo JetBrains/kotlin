@@ -10,9 +10,10 @@ import kotlin.js.RegExp
 /**
  * Provides enumeration values to use to set regular expression options.
  */
-public actual enum class RegexOption(val value: String) {
+public actual enum class RegexOption(public val value: String) {
     /** Enables case-insensitive matching. */
     IGNORE_CASE("i"),
+
     /** Enables multiline mode.
      *
      * In multiline mode the expressions `^` and `$` match just after or just before,
@@ -28,7 +29,7 @@ private fun Iterable<RegexOption>.toFlags(prepend: String): String = joinToStrin
  *
  * @param value The value of captured group.
  */
-public actual data class MatchGroup(actual val value: String)
+public actual data class MatchGroup(public actual val value: String)
 
 
 /**
@@ -62,7 +63,7 @@ public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
  * @constructor Creates a regular expression from the specified [pattern] string and the specified set of [options].
  */
 @Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-public actual class Regex actual constructor(pattern: String, options: Set<RegexOption>) {
+public actual class Regex public actual constructor(pattern: String, options: Set<RegexOption>) {
 
     /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
     public actual constructor(pattern: String, option: RegexOption) : this(pattern, setOf(option))
@@ -104,7 +105,6 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     }
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchesAt(input: CharSequence, index: Int): Boolean {
         if (index < 0 || index > input.length) {
             throw IndexOutOfBoundsException("index out of bounds: $index, input length: ${input.length}")
@@ -154,7 +154,6 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
         initMatchesEntirePattern().findNext(input.toString(), 0, nativePattern)
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchAt(input: CharSequence, index: Int): MatchResult? {
         if (index < 0 || index > input.length) {
             throw IndexOutOfBoundsException("index out of bounds: $index, input length: ${input.length}")
@@ -181,6 +180,8 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      * @param replacement the expression to replace found matches with
      * @return the result of replacing each occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
      * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     *
+     * @sample samples.text.Regexps.replaceWithExpression
      */
     public actual fun replace(input: CharSequence, replacement: String): String {
         if (!replacement.contains('\\') && !replacement.contains('$')) {
@@ -234,6 +235,8 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      * @param replacement the expression to replace the found match with
      * @return the result of replacing the first occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
      * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     *
+     * @sample samples.text.Regexps.replaceFirstWithExpression
      */
     public actual fun replaceFirst(input: CharSequence, replacement: String): String {
         if (!replacement.contains('\\') && !replacement.contains('$')) {
@@ -253,8 +256,18 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
+     * The last element of the resulting list corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting list will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting list will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     *
+     * @sample samples.text.Regexps.split
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
@@ -274,12 +287,19 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     /**
      * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
      *
+     * The last element of the resulting sequence corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting sequence will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting sequence will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
         requireNonNegativeLimit(limit)
@@ -314,7 +334,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      */
     public override fun toString(): String = nativePattern.toString()
 
-    actual companion object {
+    public actual companion object {
         /**
          * Returns a regular expression that matches the specified [literal] string literally.
          * No characters of that string will have special meaning when searching for an occurrence of the regular expression.

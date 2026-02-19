@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class C {
     val v1: String
         @Deprecated("", level = DeprecationLevel.HIDDEN)
@@ -51,3 +52,6 @@ fun test(c: C) {
         v6 = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, lambdaLiteral, propertyDeclaration,
+setter, stringLiteral */

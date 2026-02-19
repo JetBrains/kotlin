@@ -1,0 +1,56 @@
+FILE: kCallableNameWithSideEffect.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final fun someSideEffect(value: R|kotlin/Any?|): R|() -> kotlin/Unit| {
+        ^someSideEffect [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+
+    }
+    public final class A : R|kotlin/Any| {
+        public [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = String()
+            public [ContainingClassKey=A] get(): R|kotlin/String|
+
+        public final fun b(): R|kotlin/String| {
+            ^b String()
+        }
+
+        public final fun withParameters(a: R|kotlin/Int|, b: R|kotlin/String|): R|kotlin/String| {
+            ^withParameters String()
+        }
+
+        init {
+            R|/someSideEffect|(String(A init))
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            lval a: R|kotlin/String| = Q|A|::R|/A.a|.R|SubstitutionOverride<kotlin/reflect/KProperty1.name: R|kotlin/String|>|
+            lval b: R|kotlin/String| = Q|A|::R|/A.b|.R|SubstitutionOverride<kotlin/reflect/KFunction1.name: R|kotlin/String|>|
+            lval c: R|kotlin/String| = ::R|/A.A|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|
+            lval d: R|kotlin/String| = this@R|/A|::R|/A.a|.R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|
+            lval e: R|kotlin/String| = R|/A.A|()::R|/A.b|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|
+            lval f: R|kotlin/String| = this@R|/A|.R|/A.getA|()::R|/A.b|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|
+            lval temp: R|A| = R|/A.A|()
+            lval g: R|kotlin/String| = R|<local>/temp|::R|/A.b|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|
+            lval insideStringConcat: R|kotlin/String| = <strcat>(R|<local>/temp|::R|/A.b|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|)
+            lval complexExpression1: R|kotlin/String| = R|/A.A|()::R|/A.a|.R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|.R|kotlin/String.plus|(R|/A.A|()::R|/A.b|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|)
+            lval complexExpression2: R|kotlin/String| = Q|A|::R|/A.a|.R|SubstitutionOverride<kotlin/reflect/KProperty1.name: R|kotlin/String|>|.R|kotlin/String.plus|(Q|A|::R|/A.b|.R|SubstitutionOverride<kotlin/reflect/KFunction1.name: R|kotlin/String|>|)
+            lval recursive: R|kotlin/String| = ::R|/A.test|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|
+            lval wihtParams1: R|kotlin/String| = Q|A|::R|/A.withParameters|.R|SubstitutionOverride<kotlin/reflect/KFunction3.name: R|kotlin/String|>|
+            lval wihtParams2: R|kotlin/String| = R|/A.A|()::R|/A.withParameters|.R|SubstitutionOverride<kotlin/reflect/KFunction2.name: R|kotlin/String|>|
+        }
+
+        public final fun getA(): R|A| {
+            ^getA R|/A.A|()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/A.A|().R|/A.test|()
+        ^box String(OK)
+    }

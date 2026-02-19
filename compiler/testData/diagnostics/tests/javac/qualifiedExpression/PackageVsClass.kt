@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: a/b/c.java
 package a.b;
@@ -41,3 +42,5 @@ fun test(a_b: a.b) {
 }
 
 fun test2() = t().a_b()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

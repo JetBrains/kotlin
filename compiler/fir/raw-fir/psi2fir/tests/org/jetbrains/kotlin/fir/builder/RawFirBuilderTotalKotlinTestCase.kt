@@ -1,17 +1,21 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.psi
@@ -31,6 +35,7 @@ import kotlin.system.measureNanoTime
 
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
+@ObsoleteTestInfrastructure
 class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     fun testTotalKotlinWithExpressionTrees() {
@@ -260,6 +265,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
                 it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
                 it is KtStringTemplateEntry ||
+                it is KtStringInterpolationPrefix ||
                 it is KtOperationReferenceExpression ||
                 it is KtLabelReferenceExpression ||
                 it is KtConstructorDelegationReferenceExpression ||
@@ -267,6 +273,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtLabeledExpression ||
                 it is KtAnnotatedExpression ||
                 it is KtWhenConditionWithExpression ||
+                it is KtWhenEntryGuard ||
                 it is KtFinallySection ||
                 it is KtObjectLiteralExpression ||// TODO: KT-24089 (support of dynamic)
                 // NB: KtAnnotation is processed via its KtAnnotationEntries
@@ -286,9 +293,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it.getStrictParentOfType<KtImportDirective>() != null ||
                 (it is KtPropertyAccessor && !it.hasBody()) ||
                 it is KtDestructuringDeclarationEntry && it.text == "_" ||
+                it is KtConstructorDelegationCall && it.text == "" ||
                 it is KtIfExpression && it.parent is KtContainerNodeForControlStructureBody && it.parent.parent is KtIfExpression ||
-                it is KtContextReceiverList ||
-                it is KtContextReceiver && it.parent is KtContextReceiverList && it.parent?.parent is KtFunctionType ||
+                it is KtContextParameterList ||
+                it is KtContextReceiver && it.parent is KtContextParameterList && it.parent?.parent is KtFunctionType ||
                 it is KtConstantExpression && it.parent.let { parent ->
             parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
         }

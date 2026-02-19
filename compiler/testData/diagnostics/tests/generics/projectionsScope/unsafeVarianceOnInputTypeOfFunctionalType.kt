@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -REDUNDANT_PROJECTION
+// DIAGNOSTICS: -UNUSED_PARAMETER -REDUNDANT_PROJECTION
 
 class FunctionHolder<out T : Any>(val f: (@UnsafeVariance T) -> Unit) {
     fun f2(v: @UnsafeVariance T) {}
@@ -20,3 +21,6 @@ fun caller(
     holder3.f(a)
     holder3.f2(a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, out, outProjection, primaryConstructor,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

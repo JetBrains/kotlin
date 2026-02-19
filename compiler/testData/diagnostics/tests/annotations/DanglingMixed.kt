@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 annotation class Ann
 annotation class Ann2
@@ -27,3 +28,6 @@ class C {
 @Ann @<!UNRESOLVED_REFERENCE!>Ann3<!>
 @Ann2(<!TOO_MANY_ARGUMENTS!>1<!>)
 @<!UNRESOLVED_REFERENCE!>Ann4<!><!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, functionDeclaration,
+integerLiteral, interfaceDeclaration, localClass, localProperty, propertyDeclaration */

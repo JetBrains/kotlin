@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-7042 Providing return type for property setter is not reported as error
 
@@ -25,3 +26,5 @@ var v: String = ""
     set(value): <!WRONG_SETTER_RETURN_TYPE!>String<!> {
         field = value
     }
+
+/* GENERATED_FIR_TAGS: assignment, getter, integerLiteral, propertyDeclaration, setter, stringLiteral */

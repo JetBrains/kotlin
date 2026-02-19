@@ -1,3 +1,4 @@
 expression: LABEL
 text: four@
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 @file:JsQualifier(<!WRONG_JS_QUALIFIER!>""<!>)
 
@@ -21,4 +21,10 @@
 typealias JsQ = JsQualifier
 
 // FILE: h.kt
-@file:JsQ(<!WRONG_JS_QUALIFIER!>value = "%^&"<!>)
+@file:JsQ(value = <!WRONG_JS_QUALIFIER!>"%^&"<!>)
+
+// FILE: i.kt
+@file:JsQualifier(<!WRONG_JS_QUALIFIER!>"("<!>)
+
+// FILE: j.kt
+@file:JsQualifier(<!WRONG_JS_QUALIFIER!>"{"<!>)

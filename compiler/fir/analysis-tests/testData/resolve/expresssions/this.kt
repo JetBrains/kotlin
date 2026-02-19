@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 
 class Bar
 
@@ -7,3 +8,5 @@ class Foo {
     fun Bar.foo() = this@Foo
     fun Bar.foobar() = this@foobar
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, thisExpression */

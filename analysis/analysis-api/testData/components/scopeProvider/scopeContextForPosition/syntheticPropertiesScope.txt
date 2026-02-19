@@ -1,10 +1,13 @@
 element: e
-implicit receivers:
-  type: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: JavaClass
-  owner symbol: KtFirFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: JavaClass
+    ownerSymbol = KaNamedFunctionSymbol:
+      /test(<extension receiver>: JavaClass): kotlin.Unit
 
 scopes:
   LocalScope, index = 0
@@ -17,9 +20,11 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 5
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /JavaClass.getValue
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: /JavaClass.getValue
+        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -34,20 +39,23 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
+        location: CLASS
         modality: OPEN
         name: getValue
-        origin: JAVA
+        origin: JAVA_SOURCE
         receiverParameter: null
-        returnType: KtFlexibleType:
-          annotationsList: []
+        returnType: KaFlexibleType:
+          annotations: []
           type: kotlin/Int!
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
-        visibility: Public
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.equals
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: kotlin/Any.equals
+        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -62,42 +70,53 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
+        location: CLASS
         modality: OPEN
         name: equals
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Boolean
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
-            annotationsList: []
-            callableIdIfNonLocal: null
+          KaValueParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
+            hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
+            isActual: false
             isCrossinline: false
+            isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
+            location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
-            returnType: KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
               type: kotlin/Any?
-            symbolKind: LOCAL
-            typeParameters: []
+            visibility: PUBLIC
         ]
-        visibility: Public
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.hashCode
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: kotlin/Any.hashCode
+        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -112,21 +131,24 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
+        location: CLASS
         modality: OPEN
         name: hashCode
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Int
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
-        visibility: Public
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.toString
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: kotlin/Any.toString
+        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -141,87 +163,97 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
+        location: CLASS
         modality: OPEN
         name: toString
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/String
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
-        visibility: Public
-      KtSyntheticJavaPropertySymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaSyntheticJavaPropertySymbol:
+        annotations: []
         backingFieldSymbol: null
-        callableIdIfNonLocal: /JavaClass.value
+        callableId: /JavaClass.value
+        compilerVisibility: Public
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: /JavaClass.getValue
+        getter: KaPropertyGetterSymbol:
+          annotations: []
+          callableId: /JavaClass.getValue
+          compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
-          isDefault: false
+          isActual: false
+          isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
+          isNotDefault: true
           isOverride: false
+          location: PROPERTY
           modality: OPEN
           origin: JAVA_SYNTHETIC_PROPERTY
           receiverParameter: null
-          returnType: KtFlexibleType:
-            annotationsList: []
+          returnType: KaFlexibleType:
+            annotations: []
             type: kotlin/Int!
-          symbolKind: ACCESSOR
-          typeParameters: []
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
         initializer: null
+        isActual: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
+        isExternal: false
         isFromPrimaryConstructor: false
         isOverride: false
         isStatic: false
         isVal: true
-        javaGetterSymbol: KtFunctionSymbol(/JavaClass.getValue)
+        javaGetterSymbol: KaNamedFunctionSymbol(/JavaClass.getValue)
         javaSetterSymbol: null
+        location: CLASS
         modality: OPEN
         name: value
         origin: JAVA_SYNTHETIC_PROPERTY
         receiverParameter: null
-        returnType: KtFlexibleType:
-          annotationsList: []
+        returnType: KaFlexibleType:
+          annotations: []
           type: kotlin/Int!
         setter: null
-        symbolKind: CLASS_MEMBER
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
-      KtConstructorSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: null
-        containingClassIdIfNonLocal: JavaClass
+      KaConstructorSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        containingClassId: JavaClass
         contextReceivers: []
         hasStableParameterNames: false
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
-        origin: JAVA
+        location: CLASS
+        modality: FINAL
+        origin: JAVA_SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: JavaClass
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
 
   LocalScope, index = 2
     packages: 0
@@ -237,29 +269,63 @@ scopes:
 
   PackageMemberScope, index = 4
     packages: 6
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: META-INF
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: java
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: javax
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: kotlin
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: org
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: sun
+        location: TOP_LEVEL
         origin: SOURCE
-    classifiers: 0
+    classifiers: 1
+      KaNamedClassSymbol:
+        annotations: []
+        classId: JavaClass
+        classKind: CLASS
+        companionObject: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: OPEN
+        name: JavaClass
+        origin: JAVA_SOURCE
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: PUBLIC
     callables: 1
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /test
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: /test
+        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -274,25 +340,39 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
+        location: TOP_LEVEL
         modality: FINAL
         name: test
         origin: SOURCE
-        receiverParameter: KtReceiverParameterSymbol:
-          annotationsList: []
+        receiverParameter: KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
           origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/test)
-          type: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          owningCallableSymbol: KaNamedFunctionSymbol(/test)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: JavaClass
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+          visibility: PUBLIC
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Unit
-        symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   DefaultSimpleImportingScope, index = 5
@@ -305,6 +385,5 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 8
+  DefaultStarImportingScope, index = 8
 
-  DefaultStarImportingScope, index = 9

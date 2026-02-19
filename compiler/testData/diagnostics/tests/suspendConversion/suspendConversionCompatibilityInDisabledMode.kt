@@ -1,5 +1,6 @@
-// !LANGUAGE: -SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 object Test1 {
     fun <T> foo(f: suspend () -> T): T = TODO()
@@ -34,3 +35,6 @@ object Test2 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, suspend, typeParameter */

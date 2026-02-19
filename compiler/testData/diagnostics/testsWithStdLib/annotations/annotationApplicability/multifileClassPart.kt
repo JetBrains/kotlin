@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 @file:JvmName("MultifileClass")
 @file:JvmMultifileClass
 <!ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES!>@file:FileAnn<!>
@@ -16,4 +17,4 @@ public annotation class FileBinaryAnn
 @Retention(AnnotationRetention.SOURCE)
 public annotation class FileSourceAnn
 
-
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, stringLiteral */

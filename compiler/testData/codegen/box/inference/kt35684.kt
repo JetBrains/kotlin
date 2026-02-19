@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // WITH_STDLIB
 
 // ISSUE: KT-35684

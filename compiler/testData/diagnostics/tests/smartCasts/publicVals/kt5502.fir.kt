@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // NB: should work after KT-5907 / KT-4450 fix
 
 val currentTimeMillis = 1234L
@@ -14,3 +15,6 @@ public class Foo(protected val maxParsingTimeInMillis: Long?) {
         return true
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, equalityExpression,
+functionDeclaration, ifExpression, nullableType, primaryConstructor, propertyDeclaration, smartcast */

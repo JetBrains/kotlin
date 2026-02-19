@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.internal.state
 
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.logging.SL4JKotlinLogger
+import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 import java.util.HashMap
 
@@ -27,3 +30,16 @@ internal object TaskLoggers {
         taskLoggers.clear()
     }
 }
+
+internal fun getTaskLogger(taskPath: String, prefix: String?, fallbackLoggerName: String, addLevelAsPrefix: Boolean) =
+    TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it, prefix, addLevelAsPrefix).apply { debug("Using '$taskPath' logger") } }
+        ?: run {
+            val logger = LoggerFactory.getLogger(fallbackLoggerName)
+            val kotlinLogger = if (logger is Logger) {
+                GradleKotlinLogger(logger, prefix, addLevelAsPrefix)
+            } else SL4JKotlinLogger(logger, prefix, addLevelAsPrefix)
+
+            kotlinLogger.apply {
+                debug("Could not get logger for '$taskPath'. Falling back to sl4j logger")
+            }
+        }

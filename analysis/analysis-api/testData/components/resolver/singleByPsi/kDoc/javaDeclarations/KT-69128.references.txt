@@ -1,0 +1,35 @@
+<caret_1>:
+  KDocName(30,51): 'ReferredContainerJava'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) open class ReferredContainerJava
+
+<caret_2>:
+  KDocName(60,81): 'ReferredContainerJava'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) open class ReferredContainerJava
+
+<caret_3>:
+  KDocName(109,130): 'ReferredContainerJava'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) open class ReferredContainerJava
+
+<caret_4>:
+  KDocName(154,175): 'ReferredContainerJava'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) open class ReferredContainerJava

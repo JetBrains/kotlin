@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Outer {
     class Nested {
@@ -13,3 +14,6 @@ class Outer {
 
 fun foo() = Outer.Nested.foo()
 fun bar() = Outer.bar()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration */

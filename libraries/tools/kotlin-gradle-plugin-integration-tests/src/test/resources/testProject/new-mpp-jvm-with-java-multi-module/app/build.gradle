@@ -7,7 +7,7 @@ kotlin {
 			api kotlin('stdlib-common')
 		}
 	}
-	targetFromPreset(presets.jvmWithJava, 'jvm') {
+	jvm('jvm') {
 		compilations.main.defaultSourceSet.dependencies {
 			api kotlin('stdlib')
 		}

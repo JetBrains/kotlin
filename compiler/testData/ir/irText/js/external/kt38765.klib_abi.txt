@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface events/A { // events/A|null[0]
+    final object Companion // events/A.Companion|null[0]
+}
+open class events/internal { // events/internal|null[0]
+    final var property // events/internal.property|{}property[0]
+        final fun <get-property>(): kotlin/Int // events/internal.property.<get-property>|<get-property>(){}[0]
+        final fun <set-property>(kotlin/Int) // events/internal.property.<set-property>|<set-property>(kotlin.Int){}[0]
+    constructor <init>() // events/internal.<init>|<init>(){}[0]
+    final fun function(): kotlin/String // events/internal.function|function(){}[0]
+    open class EventEmitterP : events/internal { // events/internal.EventEmitterP|null[0]
+        constructor <init>() // events/internal.EventEmitterP.<init>|<init>(){}[0]
+    }
+    open class EventEmitterS : events/internal { // events/internal.EventEmitterS|null[0]
+        constructor <init>(kotlin/Any) // events/internal.EventEmitterS.<init>|<init>(kotlin.Any){}[0]
+    }
+    final enum class NestedExternalEnum : kotlin/Enum<events/internal.NestedExternalEnum> { // events/internal.NestedExternalEnum|null[0]
+        final val entries // events/internal.NestedExternalEnum.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<events/internal.NestedExternalEnum> // events/internal.NestedExternalEnum.entries.<get-entries>|<get-entries>#static(){}[0]
+        final fun valueOf(kotlin/String): events/internal.NestedExternalEnum // events/internal.NestedExternalEnum.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<events/internal.NestedExternalEnum> // events/internal.NestedExternalEnum.values|values#static(){}[0]
+        enum entry A // events/internal.NestedExternalEnum.A|null[0]
+        enum entry B // events/internal.NestedExternalEnum.B|null[0]
+    }
+    abstract interface NestedExternalInterface // events/internal.NestedExternalInterface|null[0]
+    final object NestedExternalObject : events/internal // events/internal.NestedExternalObject|null[0]
+}

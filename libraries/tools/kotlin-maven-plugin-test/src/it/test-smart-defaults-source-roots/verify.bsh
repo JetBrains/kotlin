@@ -1,0 +1,21 @@
+import java.io.*;
+
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
+
+/**
+ * Verify that source root detection works correctly:
+ * 1. src/main/kotlin is automatically added as compile source root
+ * 2. src/test/kotlin is automatically added as test compile source root
+ * 3. Both main and test classes are compiled
+ */
+
+// Check that smart defaults were enabled
+assertBuildLogHasLineThatContains("Kotlin smart defaults are enabled");
+
+// Check that main classes were produced
+assertFileExists("target/classes/test/Calculator.class");
+
+// Check that test classes were produced
+assertFileExists("target/test-classes/test/CalculatorTest.class");
+
+print("Smart defaults source roots test passed!");

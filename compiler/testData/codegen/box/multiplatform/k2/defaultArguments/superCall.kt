@@ -1,9 +1,10 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: EXPECT_DEFAULT_PARAMETERS
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: JVM_IR, WASM_JS, WASM_WASI, NATIVE
+// IGNORE_HMPP: JVM_IR
 // K2/NATIVE fail: KT-59608
-// IGNORE_BACKEND: NATIVE, JVM, JVM_IR
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6
+// WASM_MUTE_REASON: EXPECT_DEFAULT_PARAMETERS
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ SUPER_CALL_WITH_DEFAULT_PARAMETERS: Super-calls with default arguments are prohibited. Specify all arguments of 'super.foo' explicitly
 
 // MODULE: common
 // FILE: common.kt

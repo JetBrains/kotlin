@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Boo.java
 public class Boo<P2, P3, P4> {
     static Foo test1() { return null; }
@@ -10,3 +11,6 @@ class Foo<P1 : Boo<P2, P3, P4>, P2 : Boo<P1, P3, P4>, P3 : Boo<P1, P2, P4>, P4 :
 fun main() {
     val x = <!DEBUG_INFO_EXPRESSION_TYPE("raw (Foo<Boo<Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>..Foo<out Boo<out Boo<*, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>, out Boo<*, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>?)")!>Boo.test1()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A(val x: (String.() -> Unit)?)
 
 fun test(a: A) {
@@ -19,3 +20,6 @@ fun test(a: A) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeWithExtension */

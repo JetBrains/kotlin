@@ -1,4 +1,4 @@
-
+// RUN_PIPELINE_TILL: BACKEND
 // NB new inference doesn't really work with old JVM back-end.
 
 // WITH_JDK
@@ -69,3 +69,6 @@ public class J {
 
     public static <T> T id(T x) { return x; }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, flexibleType, functionDeclaration, functionalType, ifExpression,
+intersectionType, isExpression, javaFunction, javaType, samConversion, smartcast */

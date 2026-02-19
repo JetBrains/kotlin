@@ -7,6 +7,7 @@
 #define RUNTIME_EXCEPTIONS_H
 
 #include "Types.h"
+#include "KString.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,13 +43,13 @@ void RUNTIME_NORETURN ThrowNotImplementedError();
 void RUNTIME_NORETURN ThrowCharacterCodingException();
 void RUNTIME_NORETURN ThrowIllegalArgumentException();
 void RUNTIME_NORETURN ThrowIllegalStateException();
-void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);
-void RUNTIME_NORETURN ThrowIncorrectDereferenceException();
+void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message);
 void RUNTIME_NORETURN ThrowFileFailedToInitializeException(KRef reason);
-void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address);
-void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker);
+void RUNTIME_NORETURN ThrowRuntimeException(KConstRef message);
 // Prints out message of Throwable.
 void PrintThrowable(KRef);
+
+OBJ_GETTER(CreateStringFromCString, const char* cstring);
 
 #ifdef __cplusplus
 } // extern "C"
@@ -58,6 +59,20 @@ namespace kotlin {
 
 void ProcessUnhandledException(KRef exception) noexcept;
 void RUNTIME_NORETURN TerminateWithUnhandledException(KRef exception) noexcept;
+
+template<typename Fun>
+void wrappingCppExceptions(Fun fun) {
+    kotlin::AssertThreadState(ThreadState::kRunnable);
+    try {
+        fun();
+    } catch (const std::exception& exception) {
+        ObjHolder messageHoled;
+        CreateStringFromCString(exception.what(), messageHoled.slot());
+        ThrowRuntimeException(messageHoled.obj());
+    } catch(...) {
+        ThrowRuntimeException(nullptr);
+    }
+}
 
 } // namespace kotlin
 

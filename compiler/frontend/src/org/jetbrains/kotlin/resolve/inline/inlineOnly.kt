@@ -6,19 +6,13 @@
 package org.jetbrains.kotlin.resolve.inline
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
-
-/**
- * @return true if it's impossible to observe a call instruction referencing this member in the bytecode.
- */
-fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
-    isInlineWithReified() || isInlineOnlyPrivateInBytecode()
 
 /**
  * @return true if this member should be private in bytecode because it's effectively inline-only.

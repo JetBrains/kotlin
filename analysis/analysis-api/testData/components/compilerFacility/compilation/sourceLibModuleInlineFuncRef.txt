@@ -1,0 +1,14 @@
+synthetic final class home/MainKt$Greeting$ref$1 {
+    // source: 'main.kt'
+    enclosing method home/MainKt.Greeting(Ljava/lang/String;)V
+    inner (anonymous) class home/MainKt$Greeting$ref$1
+    method <init>(p0: java.lang.Object): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.String
+}
+
+public final class home/MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class home/MainKt$Greeting$ref$1
+    public final static method Greeting(p0: java.lang.String): void
+}

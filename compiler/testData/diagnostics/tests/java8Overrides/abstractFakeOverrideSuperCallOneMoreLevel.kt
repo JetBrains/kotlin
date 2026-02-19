@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidSuperDelegationToAbstractFakeOverride
+// LANGUAGE: -ForbidSuperDelegationToAbstractFakeOverride
 interface Foo {
     fun check(): String = "OK"
 }
@@ -23,3 +24,6 @@ class Problem2 : Derived3() {
         return super.<!ABSTRACT_SUPER_CALL_WARNING!>check<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral,
+superExpression */

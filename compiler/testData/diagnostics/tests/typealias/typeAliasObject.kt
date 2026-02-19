@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 object AnObject {
     val ok = "OK"
@@ -31,3 +32,6 @@ val test35: ClassWithCompanion.Companion = TestCWC
 val test36 = TestCWC
 val test37: String = TestCWC.ok
 val test38: String = TestCWC.foo()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

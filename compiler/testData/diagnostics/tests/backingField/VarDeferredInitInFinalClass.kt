@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 
 
@@ -151,3 +151,6 @@ interface I {
     val d32: Int
     val d33: Int
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, interfaceDeclaration, override,
+propertyDeclaration, setter */

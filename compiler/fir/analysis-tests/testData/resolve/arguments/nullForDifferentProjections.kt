@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-37490
 
 interface SomeFace<T>
@@ -15,3 +16,6 @@ fun nullTypeArg(invP: SomeGene<Any>, inP: SomeGene<in Any>, outP: SomeGene<out A
     outP.setFace(null)
     outP.setString(null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, interfaceDeclaration, nullableType,
+outProjection, typeParameter */

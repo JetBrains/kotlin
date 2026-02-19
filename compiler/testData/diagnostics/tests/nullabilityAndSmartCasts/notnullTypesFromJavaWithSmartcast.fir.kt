@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JClass.java
 
 import org.jetbrains.annotations.NotNull;
@@ -18,3 +19,6 @@ fun <T : Any> test() {
 
     value.hashCode() // unsafe call error
 }
+
+/* GENERATED_FIR_TAGS: assignment, dnnType, equalityExpression, functionDeclaration, ifExpression, javaFunction,
+localProperty, nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter */

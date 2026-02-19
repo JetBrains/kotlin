@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface X {
     fun foo(a : Int = 1)
@@ -10,3 +11,5 @@ interface Y {
 class Z : X, Y {
     override fun foo(a : Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override */

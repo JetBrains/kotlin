@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
@@ -18,13 +20,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-@DisplayName("Incremental compilation tests for Kotlin JS IR backend with K1")
-@JsGradlePluginTests
-class Kotlin2JsK1IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK1()
-}
-
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend with K2")
 @JsGradlePluginTests
 class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
@@ -32,6 +27,7 @@ class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilat
         get() = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
+    @GradleTest
     override fun testRebuildAfterError(gradleVersion: GradleVersion) {
         super.testRebuildAfterError(gradleVersion)
     }
@@ -45,7 +41,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             incrementalJsKlib = true,
             incrementalJsIr = true
         ),
-    )
+    ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Test rebuild after backend error")
     @GradleTest
@@ -67,7 +63,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
 
             var successfulBuildCacheFiles = emptyMap<String, Int>()
             srcFile.appendText("\nfun unknownFunction() = 1\n")
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("Hello, World!")
                 successfulBuildCacheFiles = readCacheFiles()
@@ -77,14 +73,14 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             srcFile.writeText(badCode)
 
             for (i in 0..1) {
-                buildAndFail("nodeDevelopmentRun") {
+                buildAndFail("jsNodeDevelopmentRun") {
                     assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
                     assertTrue("guard file after compilation error expected") { guardFile.exists() }
                 }
             }
 
             srcFile.writeText(badCode.replace("Hello, World!", "Hello, Kotlin!") + "\nfun unknownFunction() = 2\n")
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("Hello, Kotlin!")
                 val successfulRebuildCacheFiles = readCacheFiles()
@@ -107,8 +103,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                     """
                     |
                     |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs") {
-                    |    kotlinOptions {
-                    |        freeCompilerArgs += "-Xir-property-lazy-initialization=$value"
+                    |    compilerOptions {
+                    |        freeCompilerArgs.add("-Xir-property-lazy-initialization=$value")
                     |   }
                     |}
                     """.trimMargin()
@@ -121,19 +117,19 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             // -Xir-property-lazy-initialization default is true
-            build("nodeRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
             }
 
             setLazyInitializationArg(false)
-            build("nodeRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("TOP LEVEL!", "Hello, Gradle."), output.testScriptOutLines())
             }
 
             setLazyInitializationArg(true)
-            build("nodeRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
             }
@@ -156,7 +152,9 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                 assertEquals(5, klibCacheDirs?.size, "cache should contain 5 dirs")
 
                 val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
-                assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
+                assertEquals(1, libKlibCacheDirs?.size, "cache should contain 1 dirs for lib.klib")
+                val mainKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("main") }
+                assertEquals(2, mainKlibCacheDirs?.size, "cache should contain 2 dirs starting from main (1 for main of lib + 1 main of app)")
 
                 var lib = false
                 var libOther = false
@@ -168,14 +166,14 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                             .forEach {
                                 val text = it.readText()
                                 // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib']")) {
+                                if (text.contains("globalThis['kotlin-js-ir-ic-multiple-artifacts-lib'] = ")) {
                                     if (lib) {
                                         error("lib should be only once in cache")
                                     }
                                     lib = true
                                 }
                                 // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib-other']")) {
+                                if (text.contains("globalThis['kotlin-js-ir-ic-multiple-artifacts-lib-other'] = ")) {
                                     if (libOther) {
                                         error("libOther should be only once in cache")
                                     }
@@ -193,29 +191,33 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Test removing unused dependency from klib")
+    @DisplayName("KT-50503: Test removing unused dependency from klib")
     @GradleTest
     fun testRemoveUnusedDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-remove-unused-dep", gradleVersion) {
-            val appBuildGradleKts = subProject("app").buildGradleKts
+            val enableDependencyProperty = "enableDependency"
+            subProject("app").buildScriptInjection {
+                if (project.hasProperty(enableDependencyProperty)) {
+                    project.applyMultiplatform {
+                        sourceSets.jsMain.dependencies {
+                            implementation(project(":lib"))
+                        }
+                    }
+                }
+            }
 
-            val buildGradleKtsWithoutDependency = appBuildGradleKts.readText()
-            appBuildGradleKts.appendText(
-                """
-                |
-                |dependencies {
-                |    implementation(project(":lib"))
-                |}
-                |
-                """.trimMargin()
-            )
-
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("compileDevelopmentExecutableKotlinJs", "-P${enableDependencyProperty}") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
             }
 
-            appBuildGradleKts.writeText(buildGradleKtsWithoutDependency)
             build("compileDevelopmentExecutableKotlinJs") {
+                // Check the dependency was there and has been removed
+                val regexPathSeparator = if (OS.WINDOWS.isCurrentOs) {
+                    "\\\\"
+                } else {
+                    "/"
+                }
+                assertOutputContains("lib${regexPathSeparator}.*bodies\\.knb has been removed".toRegex())
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
             }
         }
@@ -226,7 +228,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
         project("kotlin2JsIrICProject", gradleVersion) {
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("module [main] was built clean")
                 assertOutputContains(">>> TEST OUT: Hello, Gradle.")
@@ -235,11 +237,11 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             val cacheGuard = projectPath.resolve("build/klib/cache/js/developmentExecutable/cache.guard").toFile()
             assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
 
-            val srcFile = projectPath.resolve("src/main/kotlin/Main.kt").toFile()
+            val srcFile = projectPath.resolve("src/jsMain/kotlin/Main.kt").toFile()
             srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
 
             cacheGuard.createNewFile()
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains(Regex("Cache guard file detected, cache directory '.+' cleared"))
                 assertOutputContains("module [main] was built clean")

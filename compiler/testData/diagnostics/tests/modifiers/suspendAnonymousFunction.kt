@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-57991
 
 fun foo() {
@@ -6,3 +6,5 @@ fun foo() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration */

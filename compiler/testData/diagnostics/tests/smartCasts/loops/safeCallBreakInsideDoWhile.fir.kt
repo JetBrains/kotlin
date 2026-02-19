@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: String): String? = x
 
 fun calc(x: String?, y: String?): Int {
@@ -12,3 +13,6 @@ fun calc(x: String?, y: String?): Int {
     // x is not null, at least in theory
     return x.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, comparisonExpression, doWhileLoop, functionDeclaration, ifExpression,
+integerLiteral, nullableType, safeCall, smartcast */

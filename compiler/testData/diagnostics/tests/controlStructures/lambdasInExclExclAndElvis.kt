@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun use(a: Any?) = a
 
@@ -14,3 +15,6 @@ fun test() {
     1 <!USELESS_ELVIS!>?: { }<!>
     use(1 <!USELESS_ELVIS!>?: { }<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, integerLiteral, lambdaLiteral,
+nullableType */

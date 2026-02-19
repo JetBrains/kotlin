@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 // FILE: Test.java
 class Test {
@@ -16,3 +17,6 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("(Foo<out (kotlin.Number..kotlin.Number?)>..Foo<out (kotlin.Number..kotlin.Number?)>?)")!>Test.getFoo()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(Foo<out (kotlin.Number..kotlin.Number?)>..Foo<out (kotlin.Number..kotlin.Number?)>?)")!>id(Test.getFoo())<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, javaFunction, nullableType,
+outProjection, typeParameter */

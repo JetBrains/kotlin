@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A<T>
 class AIn<in T>
 class AOut<out T>
@@ -100,3 +101,6 @@ fun foo(
 
     mutableListAny == listString
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, equalityExpression, functionDeclaration, in, inProjection,
+integerLiteral, interfaceDeclaration, nullableType, out, outProjection, stringLiteral, typeParameter */

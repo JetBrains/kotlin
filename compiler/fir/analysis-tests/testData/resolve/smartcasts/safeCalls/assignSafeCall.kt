@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 // ----------------- Stable -----------------
 
 class A {
@@ -58,3 +59,6 @@ fun test_2(a: B?) {
     a.foo() // Should be OK
     x.foo() // Should be OK
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

@@ -47,21 +47,21 @@ class Correct : BaseClass() {
 }
 
 class WrongReturnTypes : BaseClass() {
-    override fun everythingNotNullable(x: Foo): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo): Foo? {
         return null
     }
 
-    override fun explicitlyNullnessUnspecified(x: Foo): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun explicitlyNullnessUnspecified(x: Foo): Foo? {
         return null
     }
 }
 
 class WrongParameter : BaseClass() {
-    override fun everythingNotNullable(x: Foo?): Foo {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo?): Foo {
         return FOO
     }
 
-    override fun everythingNullable(x: Foo): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun everythingNullable(x: Foo): Foo? {
         return null
     }
 
@@ -69,7 +69,7 @@ class WrongParameter : BaseClass() {
         return null
     }
 
-    override fun mixed(x: Foo?): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun mixed(x: Foo?): Foo? {
         return null
     }
 

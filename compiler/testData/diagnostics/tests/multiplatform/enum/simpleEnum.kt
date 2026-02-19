@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -16,3 +17,5 @@ actual enum class Foo(val x: String) {
     ENTRY2("2"),
     ENTRY3("3");
 }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect, primaryConstructor, propertyDeclaration */

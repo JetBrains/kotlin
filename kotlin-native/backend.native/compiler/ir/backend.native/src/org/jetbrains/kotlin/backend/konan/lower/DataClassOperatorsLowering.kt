@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrElementTransformer<IrFunction?> {
+internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrTransformer<IrFunction?>() {
     private val irBuiltins = context.irBuiltIns
 
     override fun lower(irFile: IrFile) {
@@ -35,14 +35,14 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
             && expression.symbol != irBuiltins.dataClassArrayMemberHashCodeSymbol)
             return expression
 
-        val argument = expression.getValueArgument(0)!!
+        val argument = expression.arguments[0]!!
         val argumentClassifier = argument.type.classifierOrFail
 
         val isToString = expression.symbol == irBuiltins.dataClassArrayMemberToStringSymbol
         val newCalleeSymbol = if (isToString)
-            context.ir.symbols.arrayContentToString[argumentClassifier]!!
+            context.symbols.arrayContentToString[argumentClassifier]!!
         else
-            context.ir.symbols.arrayContentHashCode[argumentClassifier]!!
+            context.symbols.arrayContentHashCode[argumentClassifier]!!
 
         val newCallee = newCalleeSymbol.owner
 
@@ -54,8 +54,8 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
             // TODO: use more precise type arguments.
             val typeArguments = (0 until newCallee.typeParameters.size).map { irBuiltins.anyNType }
 
-            irCall(newCallee, typeArguments).apply {
-                extensionReceiver = argument
+            irCallWithSubstitutedType(newCallee, typeArguments).apply {
+                arguments[0] = argument
             }
         }
     }

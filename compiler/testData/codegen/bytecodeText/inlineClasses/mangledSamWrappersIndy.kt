@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JVM
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // LAMBDAS: INDY
 
 inline class A(val value: String?)

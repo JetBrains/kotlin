@@ -65,6 +65,10 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
                     add(argumentName)
                 }
 
+                argumentAnnotation.value == "-XXLanguage" -> {
+                    add("$argumentName:$argumentStringValue")
+                }
+
                 /* Advanced (e.g. -X arguments) or boolean properties need to be passed using the '=' */
                 argumentAnnotation.isAdvanced || property.returnType.classifier == Boolean::class -> {
                     add("$argumentName=$argumentStringValue")

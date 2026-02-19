@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FILE: Base.java
 
@@ -46,3 +47,6 @@ fun test(d: Derived) {
     d::<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>withGetter<!>
     Derived::<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>withGetter<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, functionDeclaration, getter, javaType,
+lambdaLiteral, lateinit, propertyDeclaration, propertyDelegate, setter, stringLiteral */

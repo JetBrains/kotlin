@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-607 Val reassignment is not marked as an error
 
 package kt607
@@ -16,3 +17,6 @@ class A() {
     val z : Int
     get() = 3
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration */

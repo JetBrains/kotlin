@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 // FILE: Outer.kt
 package abc
@@ -34,3 +35,6 @@ fun bar() {
         Inner(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, lambdaLiteral,
+objectDeclaration, primaryConstructor, secondaryConstructor */

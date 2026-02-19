@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Test<X, T> {
     fun hereIdeaFail(values : List<Int>, others : List<String>): List<Test<out Int, out String>> {
@@ -14,3 +15,6 @@ class Test<X, T> {
 
 fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> = TODO()
 operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, objectDeclaration, operator, outProjection, typeParameter */

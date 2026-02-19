@@ -10,15 +10,25 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.TypeResolutionConfiguration
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -31,6 +41,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstit
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -38,7 +49,7 @@ class FirTypeResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.TYPES) {
-    override val transformer = FirTypeResolveTransformer(session, scopeSession)
+    override val transformer: FirTypeResolveTransformer = FirTypeResolveTransformer(session, scopeSession)
 }
 
 fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
@@ -71,16 +82,19 @@ open class FirTypeResolveTransformer(
      * All current scopes sorted from outermost to innermost.
      */
     @PrivateForInline
-    var scopes = initialScopes.asReversed().toPersistentList()
+    var scopes: PersistentList<FirScope> = initialScopes.asReversed().toPersistentList()
 
     /**
      * Scopes that are accessible statically, i.e. [scopes] minus type parameter scopes.
      */
     @PrivateForInline
-    var staticScopes = scopes
+    var staticScopes: PersistentList<FirScope> = scopes
 
     @set:PrivateForInline
     var scopesBefore: PersistentList<FirScope>? = null
+
+    @set:PrivateForInline
+    var staticScopesBefore: PersistentList<FirScope>? = null
 
     private var currentDeclaration: FirDeclaration? = null
 
@@ -94,7 +108,7 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
+    private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = true)
 
     @PrivateForInline
     var currentFile: FirFile? = initialCurrentFile
@@ -114,6 +128,27 @@ open class FirTypeResolveTransformer(
         }
     }
 
+    override fun transformReplSnippet(replSnippet: FirReplSnippet, data: Any?): FirReplSnippet {
+        whileAnalysing(session, replSnippet) {
+            return withReplSnippetScope(replSnippet) {
+                transformElement(replSnippet, data)
+            }
+        }
+    }
+
+    inline fun <R> withReplSnippetScope(replSnippet: FirReplSnippet, crossinline action: () -> R): R {
+        return withScopeCleanup {
+            addScopes(buildList {
+                // TODO: robuster matching and error reporting on no extension (KT-72969)
+                for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
+                    val scope = resolveExt.getSnippetScope(replSnippet, session)
+                    if (scope != null) add(scope)
+                }
+            })
+            action()
+        }
+    }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         whileAnalysing(session, regularClass) {
             withClassDeclarationCleanup(regularClass) {
@@ -125,6 +160,10 @@ open class FirTypeResolveTransformer(
 
     fun transformClassTypeParameters(regularClass: FirRegularClass, data: Any?) {
         withScopeCleanup {
+            // Remove type parameter scopes for classes that are neither inner nor local
+            if (removeOuterTypeParameterScope(regularClass)) {
+                this.scopes = staticScopes
+            }
             addTypeParametersScope(regularClass)
             regularClass.typeParameters.forEach {
                 it.accept(this, data)
@@ -149,9 +188,15 @@ open class FirTypeResolveTransformer(
             val result = transformDeclaration(constructor, data) as FirConstructor
 
             if (result.isPrimary) {
+                val shouldAddDefaultStubs = session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) &&
+                        session.moduleData.isCommon &&
+                        constructor.returnTypeRef.coneType.classId == StandardClassIds.Enum
                 for (valueParameter in result.valueParameters) {
                     if (valueParameter.correspondingProperty != null) {
                         valueParameter.moveOrDeleteIrrelevantAnnotations()
+                    }
+                    if (shouldAddDefaultStubs) {
+                        valueParameter.replaceDefaultValue(buildExpressionStub()) // TODO: Remove when KT-67381 is implemented
                     }
                 }
             }
@@ -160,7 +205,13 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Any?) =
+    override fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Any?): FirAnonymousInitializer {
+        return withScopeCleanup {
+            transformDeclaration(anonymousInitializer, data) as FirAnonymousInitializer
+        }
+    }
+
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Any?): FirConstructor =
         transformConstructor(errorPrimaryConstructor, data)
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(session, typeAlias) {
@@ -188,15 +239,15 @@ open class FirTypeResolveTransformer(
                 property.transformTypeParameters(this, data)
                     .transformReturnTypeRef(this, data)
                     .transformReceiverParameter(this, data)
-                    .transformContextReceivers(this, data)
+                    .transformContextParameters(this, data)
                     .transformGetter(this, data)
                     .transformSetter(this, data)
                     .transformBackingField(this, data)
                     .transformAnnotations(this, data)
 
                 if (property.isFromVararg == true) {
-                    property.transformTypeToArrayType()
-                    property.backingField?.transformTypeToArrayType()
+                    property.transformTypeToArrayType(session)
+                    property.backingField?.transformTypeToArrayType(session)
                     setAccessorTypesByPropertyType(property)
                 }
 
@@ -246,19 +297,19 @@ open class FirTypeResolveTransformer(
         super.transformBackingField(backingField, data)
     }
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: Any?,
-    ): FirSimpleFunction = whileAnalysing(session, simpleFunction) {
+    ): FirNamedFunction = whileAnalysing(session, namedFunction) {
         withScopeCleanup {
-            withDeclaration(simpleFunction) {
-                addTypeParametersScope(simpleFunction)
-                val result = transformDeclaration(simpleFunction, data).also {
+            withDeclaration(namedFunction) {
+                addTypeParametersScope(namedFunction)
+                val result = transformDeclaration(namedFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
 
                 if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers &&
-                    result is FirSimpleFunction &&
+                    result is FirNamedFunction &&
                     result.name == StandardNames.DATA_CLASS_COPY
                 ) {
                     for (valueParameter in result.valueParameters) {
@@ -268,7 +319,7 @@ open class FirTypeResolveTransformer(
 
                 result
             }
-        } as FirSimpleFunction
+        } as FirNamedFunction
     }
 
     private fun unboundCyclesInTypeParametersSupertypes(typeParametersOwner: FirTypeParameterRefsOwner) {
@@ -277,6 +328,7 @@ open class FirTypeResolveTransformer(
             if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
                 val errorType = buildErrorTypeRef {
                     diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList())
+                    source = typeParameter.bounds.first().source
                 }
                 typeParameter.replaceBounds(
                     listOf(errorType)
@@ -311,12 +363,10 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
-        return typeResolverTransformer.withFile(currentFile) {
-            typeRef.transform(
-                typeResolverTransformer,
-                ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack, containerDeclaration = currentDeclaration)
-            )
-        }
+        return typeRef.transform(
+            typeResolverTransformer,
+            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+        )
     }
 
     override fun transformValueParameter(
@@ -326,13 +376,17 @@ open class FirTypeResolveTransformer(
         withDeclaration(valueParameter) {
             valueParameter.transformReturnTypeRef(this, data)
             valueParameter.transformAnnotations(this, data)
-            valueParameter.transformVarargTypeToArrayType()
+            valueParameter.transformVarargTypeToArrayType(session)
             valueParameter
         }
     }
 
     override fun transformBlock(block: FirBlock, data: Any?): FirStatement {
         return block
+    }
+
+    override fun transformArgumentList(argumentList: FirArgumentList, data: Any?): FirArgumentList {
+        return argumentList
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: Any?): FirStatement {
@@ -351,6 +405,7 @@ open class FirTypeResolveTransformer(
                         else -> shouldNotBeCalled()
                     }
                     FirAnnotationResolvePhase.CompilerRequiredAnnotations -> {
+                        annotationCall.transformTypeArguments(this, data)
                         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
                         val alternativeResolvedTypeRef =
                             originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
@@ -359,7 +414,8 @@ open class FirTypeResolveTransformer(
                         if (coneTypeFromTypesPhase != coneTypeFromCompilerRequiredPhase) {
                             val errorTypeRef = buildErrorTypeRef {
                                 source = originalTypeRef.source
-                                type = coneTypeFromCompilerRequiredPhase
+                                coneType = coneTypeFromCompilerRequiredPhase
+                                annotations += originalTypeRef.annotations
                                 delegatedTypeRef = originalTypeRef.delegatedTypeRef
                                 diagnostic = ConeAmbiguouslyResolvedAnnotationFromPlugin(
                                     coneTypeFromCompilerRequiredPhase,
@@ -374,6 +430,7 @@ open class FirTypeResolveTransformer(
             }
             else -> {
                 val transformedTypeRef = originalTypeRef.transformSingle(this, data)
+                annotationCall.transformTypeArguments(this, data)
                 annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
                 annotationCall.replaceAnnotationTypeRef(transformedTypeRef)
             }
@@ -384,16 +441,21 @@ open class FirTypeResolveTransformer(
 
     inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
         val scopesBeforeSnapshot = scopes
+        val scopesBeforeBeforeSnapshot = scopesBefore
         scopesBefore = scopesBeforeSnapshot
 
-        val staticScopesBefore = staticScopes
+        val staticScopesBeforeSnapshot = staticScopes
+        val staticScopesBeforeBeforeSnapshot = staticScopesBefore
+        staticScopesBefore = staticScopesBeforeSnapshot
 
-        val result = l()
-
-        scopes = scopesBeforeSnapshot
-        staticScopes = staticScopesBefore
-
-        return result
+        return try {
+            l()
+        } finally {
+            scopes = scopesBeforeSnapshot
+            scopesBefore = scopesBeforeBeforeSnapshot
+            staticScopes = staticScopesBeforeSnapshot
+            staticScopesBefore = staticScopesBeforeBeforeSnapshot
+        }
     }
 
     private fun resolveClassContent(
@@ -410,8 +472,17 @@ open class FirTypeResolveTransformer(
                 }
 
                 // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
-                for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
-                    transformDelegatedConstructorCall(constructor)
+                for (declaration in firClass.declarations) {
+                    when (declaration) {
+                        is FirConstructor -> transformDelegatedConstructorCall(declaration)
+                        is FirField -> {
+                            if (declaration.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
+                                transformDelegateField(declaration)
+                            }
+                        }
+
+                        else -> {}
+                    }
                 }
             }
         }
@@ -425,8 +496,17 @@ open class FirTypeResolveTransformer(
         constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
     }
 
+    fun transformDelegateField(field: FirField) {
+        field.transformReturnTypeRef(this, null)
+    }
+
     fun removeOuterTypeParameterScope(firClass: FirClass): Boolean = !firClass.isInner && !firClass.isLocal
 
+    /**
+     * Changes to the order of scopes should also be reflected in
+     * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext.withScopesForClass].
+     * Otherwise, we get different behavior between type resolve and body resolve phases.
+     */
     inline fun <R> withClassScopes(
         firClass: FirClass,
         crossinline actionInsideStaticScope: () -> Unit = {},
@@ -457,16 +537,21 @@ open class FirTypeResolveTransformer(
             }
         }
 
-        session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
         if (firClass is FirRegularClass) {
-            val companionObject = firClass.companionObjectSymbol?.fir
-            if (companionObject != null) {
-                session.nestedClassifierScope(companionObject)?.let(scopesToAdd::add)
-            }
+            // Companion scope is added before static scope,
+            // i.e., static scope is checked first during resolution (scopes are in reverse order).
+            // This is because we can qualify companion scope using `Companion.` if we want to explicitly refer to a declaration in the
+            // companion.
+            firClass.companionObjectSymbol?.fir
+                ?.let(session::nestedClassifierScope)
+                ?.let(scopesToAdd::add)
+
+            session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
 
             addScopes(scopesToAdd)
             addTypeParametersScope(firClass)
         } else {
+            session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
             addScopes(scopesToAdd)
         }
 
@@ -506,48 +591,115 @@ open class FirTypeResolveTransformer(
      */
     private fun FirVariable.moveOrDeleteIrrelevantAnnotations() {
         if (annotations.isEmpty()) return
-        val backingFieldAnnotations by lazy(LazyThreadSafetyMode.NONE) { backingField?.annotations?.toMutableList() ?: mutableListOf() }
-        var replaceBackingFieldAnnotations = false
+        val languageVersionSettings = session.languageVersionSettings
         replaceAnnotations(annotations.filter { annotation ->
             when (annotation.useSiteTarget) {
-                null -> {
-                    val allowedTargets = annotation.useSiteTargetsFromMetaAnnotation(session)
-                    when {
-                        this is FirValueParameter -> CONSTRUCTOR_PARAMETER in allowedTargets
-                        this.source?.kind == KtFakeSourceElementKind.PropertyFromParameter && CONSTRUCTOR_PARAMETER in allowedTargets -> false
-                        this is FirProperty && backingField != null && annotationShouldBeMovedToField(allowedTargets) -> {
-                            backingFieldAnnotations += annotation
-                            replaceBackingFieldAnnotations = true
-                            false
-                        }
-                        else -> true
-                    }
-                }
+                null -> annotation.multiplexWithoutUseSiteTarget(this, languageVersionSettings)
+                ALL -> annotation.multiplexWithAllUseSiteTarget(this, languageVersionSettings)
                 else -> true
             }
         })
-        if (replaceBackingFieldAnnotations) {
-            backingField?.replaceAnnotations(backingFieldAnnotations)
+    }
+
+    private fun FirAnnotation.multiplexWithoutUseSiteTarget(
+        annotated: FirDeclaration,
+        languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
+        return when (annotated) {
+            // If parameter is allowed, we apply annotation to it in the first turn, independent of the targeting mode
+            is FirValueParameter -> {
+                CONSTRUCTOR_PARAMETER in allowedTargets
+            }
+            is FirProperty if annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets -> {
+                when {
+                    !languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> {
+                        false
+                    }
+                    // In the property-param mode,
+                    // we should apply annotation also to the property (or to the field) if it's allowed
+                    PROPERTY in allowedTargets -> true
+                    annotated.backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
+                        if (classDeclarationsStack.lastOrNull()?.classKind != ClassKind.ANNOTATION_CLASS) {
+                            val backingField = annotated.backingField!!
+                            backingField.replaceAnnotations(backingField.annotations + this)
+                        }
+                        false
+                    }
+                    else -> false
+                }
+            }
+            // Otherwise (for a regular property or for a constructor property if annotation isn't applicable to parameter),
+            // we simply choose between a property and a field
+            is FirProperty if annotated.backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
+                val backingField = annotated.backingField!!
+                backingField.replaceAnnotations(backingField.annotations + this)
+                false
+            }
+            // Here we can come with a regular (non-constructor) property without a backing field,
+            // or with some other non-parameter variable
+            else -> {
+                true
+            }
         }
     }
 
-    private fun annotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
+    private fun FirAnnotation.multiplexWithAllUseSiteTarget(
+        annotated: FirDeclaration,
+        languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+            return true
+        }
+        val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
+        return when (annotated) {
+            is FirValueParameter -> {
+                CONSTRUCTOR_PARAMETER in allowedTargets
+            }
+            is FirProperty -> {
+                var addedSomewhere = false
+
+                fun FirCallableDeclaration.addAnnotationWithoutUseSiteTarget(annotation: FirAnnotation) {
+                    val copy = if (annotation is FirAnnotationCall) {
+                        buildAnnotationCallCopy(annotation) {
+                            useSiteTarget = null
+                        }
+                    } else {
+                        buildAnnotationCopy(annotation) {
+                            useSiteTarget = null
+                        }
+                    }
+                    replaceAnnotations(annotations + copy)
+                    addedSomewhere = true
+                }
+
+                if (FIELD in allowedTargets && annotated.delegate == null) {
+                    annotated.backingField?.addAnnotationWithoutUseSiteTarget(this)
+                }
+                if (PROPERTY_GETTER in allowedTargets) {
+                    annotated.getter?.addAnnotationWithoutUseSiteTarget(this)
+                }
+                if (annotated.isVar && SETTER_PARAMETER in allowedTargets) {
+                    annotated.setter?.valueParameters?.firstOrNull()?.addAnnotationWithoutUseSiteTarget(this)
+                }
+                if (CONSTRUCTOR_PARAMETER in allowedTargets && annotated.fromPrimaryConstructor == true) {
+                    // It's already on a constructor parameter, but we set the flag to prevent reporting an error
+                    addedSomewhere = true
+                }
+                // If annotation isn't applicable anywhere or the property is delegated, we keep it at property to report an error later
+                PROPERTY in allowedTargets || !addedSomewhere || annotated.delegate != null
+            }
+            else -> {
+                true
+            }
+        }
+    }
+
+    /**
+     * @param allowedTargets allowed use-site targets of a given property annotation
+     * @return true if the given annotation on a property (initially placed there during raw FIR building)
+     * is in fact inapplicable to properties, but applicable to fields.
+     */
+    private fun propertyAnnotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
         (FIELD in allowedTargets || PROPERTY_DELEGATE_FIELD in allowedTargets) && PROPERTY !in allowedTargets
 }
-
-annotation class NoTarget
-
-@Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class Param
-
-@Target(AnnotationTarget.PROPERTY)
-annotation class Prop
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-annotation class Both
-
-data class Foo(
-    @NoTarget @Param @Prop @Both val p1: Int,
-    @param:NoTarget @param:Both val p2: String,
-    @property:NoTarget @property:Both val p3: Boolean,
-)

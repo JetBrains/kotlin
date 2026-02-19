@@ -1,0 +1,57 @@
+FILE: kt57313.kt
+    public abstract class AsyncJob : R|kotlin/Any| {
+        public [ContainingClassKey=AsyncJob] constructor(): R|AsyncJob| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract suspend fun execute(lifetime: R|AsyncLifetime|, attempt: R|kotlin/Int|, due: R|DateTime|, context: R|JobContext|): R|JobContext|
+
+    }
+    public final class OrgBootstrapRequest : R|kotlin/Any| {
+        public [ContainingClassKey=OrgBootstrapRequest] constructor(): R|OrgBootstrapRequest| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class AsyncLifetime : R|kotlin/Any| {
+        public [ContainingClassKey=AsyncLifetime] constructor(): R|AsyncLifetime| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class DateTime : R|kotlin/Any| {
+        public [ContainingClassKey=DateTime] constructor(): R|DateTime| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class JobContext : R|kotlin/Any| {
+        public [ContainingClassKey=JobContext] constructor(): R|JobContext| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class OrgBootstrapTriggerJob : R|AsyncJob| {
+        public [ContainingClassKey=OrgBootstrapTriggerJob] constructor([CorrespondingProperty=/OrgBootstrapTriggerJob.orgId] orgId: R|kotlin/Long|, [CorrespondingProperty=/OrgBootstrapTriggerJob.bootstrap] bootstrap: R|OrgBootstrapRequest|, [CorrespondingProperty=/OrgBootstrapTriggerJob.jetSalesSync] jetSalesSync: R|kotlin/Boolean?|): R|OrgBootstrapTriggerJob| {
+            super<R|AsyncJob|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val orgId: R|kotlin/Long| = R|<local>/orgId|
+            public [ContainingClassKey=OrgBootstrapTriggerJob] get(): R|kotlin/Long|
+
+        public final [IsFromPrimaryConstructor=true] val bootstrap: R|OrgBootstrapRequest| = R|<local>/bootstrap|
+            public [ContainingClassKey=OrgBootstrapTriggerJob] get(): R|OrgBootstrapRequest|
+
+        public final [IsFromPrimaryConstructor=true] val jetSalesSync: R|kotlin/Boolean?| = R|<local>/jetSalesSync|
+            public [ContainingClassKey=OrgBootstrapTriggerJob] get(): R|kotlin/Boolean?|
+
+        public open override suspend fun execute(lifetime: R|AsyncLifetime|, attempt: R|kotlin/Int|, due: R|DateTime|, context: R|JobContext|): R|JobContext| {
+            ^execute R|/JobContext.JobContext|()
+        }
+
+    }
+    public final val name: R|kotlin/String| = <strcat>(<getClass>(Q|OrgBootstrapTriggerJob|).R|SubstitutionOverride<kotlin/reflect/KClass.simpleName: R|kotlin/String?|>|, String(.), Q|OrgBootstrapTriggerJob|::R|/OrgBootstrapTriggerJob.execute|.R|SubstitutionOverride<kotlin/reflect/KSuspendFunction5.name: R|kotlin/String|>|)
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

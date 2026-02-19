@@ -1,6 +1,4 @@
-// IGNORE_REVERSED_RESOLVE
-// IGNORE_CONTRACT_VIOLATIONS
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann(val i: Int)
@@ -32,3 +30,6 @@ val ia: IntArray = intArrayOf(1, 2)
 val sa: Array<String> = arrayOf("a", "b")
 
 annotation class Ann2
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

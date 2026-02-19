@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._WorkoutKit_SwiftUI
+
+modules = _WorkoutKit_SwiftUI
+compilerOpts = -framework _WorkoutKit_SwiftUI
+linkerOpts = -framework _WorkoutKit_SwiftUI
+#Disabled: Unavailable

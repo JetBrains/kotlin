@@ -8,23 +8,15 @@ package kotlin.native.internal
 
 import kotlin.reflect.KClass
 import kotlinx.cinterop.*
-
-@ExportForCppRuntime
-internal fun DescribeObjectForDebugging(typeInfo: NativePtr, address: NativePtr): String {
-    val kClass = kotlin.native.internal.KClassImpl<Any>(typeInfo)
-    return debugDescription(kClass, address.toLong().toInt())
-}
-
-internal fun debugDescription(kClass: KClass<*>, identity: Int): String {
-    val className = kClass.qualifiedName ?: kClass.simpleName ?: "<object>"
-    val unsignedIdentity = identity.toLong() and 0xffffffffL
-    val identityStr = unsignedIdentity.toString(16)
-    return "$className@$identityStr"
-}
+import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.internal.escapeAnalysis.PointsTo
 
 @GCUnsafeCall("Kotlin_internal_reflect_getObjectReferenceFieldsCount")
+@Escapes.Nothing
 private external fun getObjectReferenceFieldsCount(o: Any): Int
+
 @GCUnsafeCall("Kotlin_internal_reflect_getObjectReferenceFieldByIndex")
+@PointsTo(0x000, 0x000, 0x002) // the return value references `o`'s contents.
 private external fun getObjectReferenceFieldByIndex(o: Any, index: Int): Any?
 
 /**

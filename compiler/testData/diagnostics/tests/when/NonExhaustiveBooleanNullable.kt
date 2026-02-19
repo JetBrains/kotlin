@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -17,3 +18,6 @@ fun foo(arg: Boolean?): String {
         false -> "falsehood"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nullableType, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

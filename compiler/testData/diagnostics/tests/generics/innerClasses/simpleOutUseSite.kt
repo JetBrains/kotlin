@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class Outer<E> {
     inner class Inner {
@@ -34,3 +35,7 @@ fun main() {
     val x: Outer<String>.Inner = factoryString()
     outer.set(<!TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, localProperty, nullableType, outProjection, propertyDeclaration, starProjection,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

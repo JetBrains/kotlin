@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -35,3 +36,5 @@ fun test(a: A) {
 
 fun bar(): MutableList<*> = TODO()
 fun bar2(): MutableList<MutableList<*>> = TODO()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType, starProjection */

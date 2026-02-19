@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 
 fun foo(x: Int): Int = 0
 
@@ -33,3 +34,6 @@ fun test() {
     fooLong(1) checkType { _<Int>() }
     fooLong(1u) checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension, unsignedLiteral */

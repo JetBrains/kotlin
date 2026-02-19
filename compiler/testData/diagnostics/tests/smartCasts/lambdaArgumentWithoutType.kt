@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-5385: no smart cast in a literal without given type arguments
 
 interface Foo
@@ -18,3 +19,6 @@ fun bar(): Foo {
     if (x == null) throw Exception()
     return repeat(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

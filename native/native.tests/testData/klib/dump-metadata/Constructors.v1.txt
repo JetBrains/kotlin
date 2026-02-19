@@ -1,0 +1,95 @@
+library {
+  // module name: <Constructors.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Bar
+    // class name: Baz
+    // class name: Foo
+    // class name: Qux
+    // class name: Typed
+
+    // signature: /A|null[0]
+    public final annotation class A : kotlin/Annotation {
+
+      // signature: /A.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: /Bar|null[0]
+    public final class Bar : kotlin/Any {
+
+      // signature: /Bar.<init>|-5182794243525578284[0]
+      @A
+      public constructor(x: kotlin/Int)
+    }
+
+    // signature: /Baz|null[0]
+    public final class Baz : kotlin/Any {
+
+      // signature: /Baz.<init>|-5182794243525578284[0]
+      private constructor(x: kotlin/Int)
+    }
+
+    // signature: /Foo|null[0]
+    public final class Foo : kotlin/Any {
+
+      // signature: /Foo.<init>|-5645683436151566731[0]
+      public /* secondary */ constructor()
+
+      // signature: /Foo.<init>|5452796351634795197[0]
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      // signature: /Foo.<init>|575075696928934302[0]
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      // signature: /Foo.<init>|-5182794243525578284[0]
+      public constructor(x: kotlin/Int)
+
+      // signature: /Foo.<init>|5217973964116651322[0]
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      // signature: /Foo.<init>|1280618353163213788[0]
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      // signature: /Foo.<init>|-648032236499795795[0]
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+
+    // signature: /Qux|null[0]
+    public final class Qux : kotlin/Any {
+
+      // signature: /Qux.<init>|-5182794243525578284[0]
+      protected constructor(x: kotlin/Int)
+    }
+
+    // signature: /Typed|null[0]
+    public final class Typed<T#0 /* T */> : kotlin/Any {
+
+      // signature: /Typed.<init>|-5645683436151566731[0]
+      public /* secondary */ constructor()
+
+      // signature: /Typed.<init>|5452796351634795197[0]
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      // signature: /Typed.<init>|575075696928934302[0]
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      // signature: /Typed.<init>|-5182794243525578284[0]
+      public constructor(x: kotlin/Int)
+
+      // signature: /Typed.<init>|5217973964116651322[0]
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      // signature: /Typed.<init>|1280618353163213788[0]
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      // signature: /Typed.<init>|-648032236499795795[0]
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+  }
+}

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 
 @Repeatable
 annotation class repann
@@ -32,3 +33,6 @@ annotation class repexpr
 @repann @repann fun foo(@repann @repann x: Int): Int {
     @repexpr @repexpr return x
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

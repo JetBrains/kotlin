@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -20,3 +21,6 @@ fun foo(x: Int) {
 fun r(f: () -> Unit) {
     f()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+whenExpression, whenWithSubject */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: A:getFoo, B:getFoo, C:getFoo, D:getFoo
 // FILE: A.java
 public interface A {
@@ -20,3 +21,6 @@ class D : C()
 fun test(d: D) {
     d.foo.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaProperty, javaType, override,
+propertyDeclaration, stringLiteral */

@@ -19,6 +19,7 @@ import kotlin.streams.asSequence
 internal data class SetupFile(
     val properties: Map<String, String>,
     val consentDetailsLink: String? = null,
+    val obfuscationSalt: String? = null,
 )
 
 @OptIn(ExperimentalSerializationApi::class)

@@ -8,12 +8,6 @@ var test2: Int
   set
 
 class Host {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val testMember1: Int
     field = 42
     get
@@ -23,15 +17,15 @@ class Host {
     get
     set
 
-}
-
-class InPrimaryCtor<T : Any?> {
-  constructor(testInPrimaryCtor1: T, testInPrimaryCtor2: Int = 42) /* primary */ {
+  constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class InPrimaryCtor<T : Any?> {
   val testInPrimaryCtor1: T
     field = testInPrimaryCtor1
     get
@@ -41,4 +35,11 @@ class InPrimaryCtor<T : Any?> {
     get
     set
 
+  constructor(testInPrimaryCtor1: T, testInPrimaryCtor2: Int = 42) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

@@ -1,0 +1,9 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun <#A: kotlin/Number> (kotlin/Number)./convert(): #A // /convert|convert@kotlin.Number(){0§<kotlin.Number>}[0]
+final fun /foo(kotlin/Number) // /foo|foo(kotlin.Number){}[0]
+final fun /runMe(kotlin/Array<kotlin/String>) // /runMe|runMe(kotlin.Array<kotlin.String>){}[0]

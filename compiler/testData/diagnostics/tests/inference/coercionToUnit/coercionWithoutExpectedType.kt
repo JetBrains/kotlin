@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> materialize(): T = TODO()
 
 fun implicitCoercion() {
@@ -16,3 +16,6 @@ fun implicitCoercion() {
         return@l <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

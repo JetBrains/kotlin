@@ -10,20 +10,30 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
+import org.jetbrains.kotlin.KtInMemoryTextSourceFile
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ScriptResultFieldData
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
+import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
+import kotlin.script.experimental.host.FileScriptSource
+import kotlin.script.experimental.host.StringScriptSource
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
@@ -36,7 +46,7 @@ internal fun makeCompiledModule(generationState: GenerationState) =
 inline fun <T> withMessageCollectorAndDisposable(
     script: SourceCode? = null,
     parentMessageCollector: MessageCollector? = null,
-    disposable: Disposable = Disposer.newDisposable(),
+    disposable: Disposable = Disposer.newDisposable("Default disposable for scripting compiler"),
     disposeOnSuccess: Boolean = true,
     body: (ScriptDiagnosticsMessageCollector, Disposable) -> ResultWithDiagnostics<T>
 ): ResultWithDiagnostics<T> {
@@ -102,15 +112,13 @@ internal fun getScriptKtFile(
 internal fun makeCompiledScript(
     generationState: GenerationState,
     script: SourceCode,
-    ktFile: KtFile,
+    getScriptClassFqName: (SourceCode) -> FqName?,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
-    getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
+    getScriptConfiguration: (SourceCode) -> ScriptCompilationConfiguration,
+    resultFields: Map<FqName, ScriptResultFieldData>
 ): ResultWithDiagnostics<KJvmCompiledScript> {
-    val scriptDependenciesStack = ArrayDeque<KtScript>()
-    val ktScript = ktFile.declarations.firstIsInstanceOrNull<KtScript>()
-        ?: throw IllegalStateException("Expecting script file: KtScript is not found in ${ktFile.name}")
-
-    fun makeOtherScripts(script: KtScript): ResultWithDiagnostics<List<KJvmCompiledScript>> {
+    val scriptDependenciesStack = ArrayDeque<SourceCode>()
+    fun makeOtherScripts(script: SourceCode): ResultWithDiagnostics<List<KJvmCompiledScript>> {
 
         // TODO: ensure that it is caught earlier (as well) since it would be more economical
         if (scriptDependenciesStack.contains(script))
@@ -118,27 +126,28 @@ internal fun makeCompiledScript(
                 ScriptDiagnostic(
                     ScriptDiagnostic.unspecifiedError,
                     "Unable to handle recursive script dependencies",
-                    sourcePath = script.containingFile.virtualFile?.path
+                    sourcePath = script.locationId
                 )
             )
         scriptDependenciesStack.push(script)
 
-        val containingKtFile = script.containingKtFile
         val otherScripts =
-            sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.valueOrThrow()
+            sourceDependencies.find {
+                script.locationId != null && it.script.locationId == script.locationId
+            }?.sourceDependencies?.valueOr { return it }
                 ?.mapNotNullSuccess { sourceFile ->
-                    sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let { ktScript ->
-                        makeOtherScripts(ktScript).onSuccess { otherScripts ->
+                    makeOtherScripts(sourceFile).onSuccess { otherScripts ->
+                        getScriptClassFqName(sourceFile)?.let { scriptClassFqName ->
                             KJvmCompiledScript(
-                                sourceFile.virtualFilePath,
+                                sourceFile.locationId,
                                 getScriptConfiguration(sourceFile),
-                                ktScript.fqName.asString(),
+                                scriptClassFqName.asString(),
                                 null,
                                 otherScripts,
                                 null
-                            ).asSuccess()
-                        }
-                    } ?: null.asSuccess()
+                            )
+                        }.asSuccess()
+                    }
                 } ?: emptyList<KJvmCompiledScript>().asSuccess()
 
         scriptDependenciesStack.pop()
@@ -147,16 +156,17 @@ internal fun makeCompiledScript(
 
     val module = makeCompiledModule(generationState)
 
-    val resultField = with(generationState.scriptSpecific) {
-        if (resultFieldName == null) null
-        else resultFieldName!! to KotlinType(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
+    val scriptClassFqName = getScriptClassFqName(script) ?: error("Unable to get target class for script: ${script.locationId}")
+
+    val resultField = resultFields[scriptClassFqName]?.let {
+        it.fieldName.asString() to KotlinType(it.fieldTypeName)
     }
 
-    return makeOtherScripts(ktScript).onSuccess { otherScripts ->
+    return makeOtherScripts(script).onSuccess { otherScripts ->
         KJvmCompiledScript(
             script.locationId,
-            getScriptConfiguration(ktScript.containingKtFile),
-            ktScript.fqName.asString(),
+            getScriptConfiguration(script),
+            scriptClassFqName.asString(),
             resultField,
             otherScripts,
             module
@@ -164,3 +174,9 @@ internal fun makeCompiledScript(
     }
 }
 
+fun SourceCode.toKtSourceFile(): KtSourceFile = when (this) {
+    is KtFileScriptSource -> KtPsiSourceFile(ktFile)
+    is VirtualFileScriptSource -> KtVirtualFileSourceFile(virtualFile)
+    is FileScriptSource -> KtIoFileSourceFile(file)
+    else -> KtInMemoryTextSourceFile(name ?: "", locationId, text)
+}

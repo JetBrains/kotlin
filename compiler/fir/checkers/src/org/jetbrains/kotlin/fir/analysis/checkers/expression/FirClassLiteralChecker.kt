@@ -6,34 +6,37 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedTypeParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.QUEST
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
-object FirClassLiteralChecker : FirGetClassCallChecker() {
-    override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirGetClassCall) {
         val source = expression.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
         val argument = expression.argument
         if (argument is FirResolvedQualifier) {
             val classId = argument.classId
             if (classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID || classId == OptInNames.OPT_IN_CLASS_ID) {
-                reporter.reportOn(argument.source, FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, context)
+                reporter.reportOn(argument.source, FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION)
             }
         }
 
@@ -47,59 +50,67 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
         val markedNullable = source.getChild(QUEST, depth = 1) != null
+        val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType()
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
-                argument.resolvedType.isMarkedNullable ||
-                argument.resolvedType.isNullableTypeParameter(context.session.typeContext)
+                resolvedFullyExpandedType.isMarkedNullable ||
+                resolvedFullyExpandedType.isNullableTypeParameter(isExpression = !argument.canBeDoubleColonLHSAsType)
         if (isNullable) {
             if (argument.canBeDoubleColonLHSAsType) {
-                reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
+                reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS)
             } else {
                 reporter.reportOn(
                     argument.source,
                     FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
-                    argument.resolvedType,
-                    context
+                    argument.resolvedType
                 )
             }
             return
         }
 
+        if (!argument.canBeDoubleColonLHSAsType &&
+            !LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isEnabled() &&
+            resolvedFullyExpandedType.toTypeParameterSymbol()?.isReified == true &&
+            !resolvedFullyExpandedType.isMarkedNullable &&
+            resolvedFullyExpandedType.canBeNull(context.session)
+        ) {
+            reporter.reportOn(
+                argument.source,
+                FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS_WARNING,
+                argument.resolvedType
+            )
+        }
+
         argument.safeAsTypeParameterSymbol?.let {
             if (!it.isReified) {
                 // E.g., fun <T: Any> foo(): Any = T::class
-                reporter.reportOn(source, FirErrors.TYPE_PARAMETER_AS_REIFIED, it, context)
+                reporter.reportOn(source, FirErrors.TYPE_PARAMETER_AS_REIFIED, it)
             }
         }
 
         if (argument !is FirResolvedQualifier) return
-        // TODO, KT-59835: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
-        if (argument.typeArguments.isNotEmpty() && !argument.resolvedType.fullyExpandedType(context.session)
-                .isAllowedInClassLiteral(context)) {
+        if (argument.typeArguments.isNotEmpty() && !resolvedFullyExpandedType.isAllowedInClassLiteral()) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
-            @OptIn(SymbolInternals::class)
-            val typeParameters = (symbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters
             // Among type parameter references, only count actual type parameter while discarding [FirOuterClassTypeParameterRef]
-            val expectedTypeArgumentSize = typeParameters?.count { it is FirTypeParameter } ?: 0
+            val expectedTypeArgumentSize = symbol?.ownTypeParameterSymbols?.size ?: 0
             if (expectedTypeArgumentSize != argument.typeArguments.size) {
                 if (symbol != null) {
-                    reporter.reportOn(argument.source, FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS, expectedTypeArgumentSize, symbol, context)
+                    reporter.reportOn(argument.source, FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS, expectedTypeArgumentSize, symbol)
                 }
                 return
             }
-            reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS, context)
+            reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS)
         }
     }
 
-    private fun ConeKotlinType.isNullableTypeParameter(context: ConeInferenceContext): Boolean {
+    context(context: CheckerContext)
+    private fun ConeKotlinType.isNullableTypeParameter(isExpression: Boolean): Boolean {
         if (this !is ConeTypeParameterType) return false
         val typeParameter = lookupTag.typeParameterSymbol
-        with(context) {
-            return !typeParameter.isReified &&
-                    // E.g., fun <T> f2(t: T): Any = t::class
-                    typeParameter.toConeType().isNullableType()
-        }
+        // E.g., fun <T> f2(t: T): Any = t::class
+        return canBeNull(context.session) &&
+                (!typeParameter.isReified || isExpression && LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isEnabled())
     }
 
     private val FirExpression.canBeDoubleColonLHSAsType: Boolean
@@ -114,14 +125,16 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
             return (this as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedTypeParameterSymbol()
         }
 
-    private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =
+    context(context: CheckerContext)
+    private fun ConeKotlinType.isAllowedInClassLiteral(): Boolean =
         when (this) {
             is ConeClassLikeType -> {
-                if (isNonPrimitiveArray) {
+                val isPlatformThatAllowsNonPrimitiveArrays = context.session.firGenericArrayClassLiteralSupport.isEnabled
+                if (isNonPrimitiveArray && isPlatformThatAllowsNonPrimitiveArrays) {
                     typeArguments.none { typeArgument ->
                         when (typeArgument) {
                             is ConeStarProjection -> true
-                            is ConeKotlinTypeProjection -> !typeArgument.type.isAllowedInClassLiteral(context)
+                            is ConeKotlinTypeProjection -> !typeArgument.type.isAllowedInClassLiteral()
                         }
                     }
                 } else
@@ -131,3 +144,17 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
             else -> false
         }
 }
+
+interface FirGenericArrayClassLiteralSupport : FirSessionComponent {
+    val isEnabled: Boolean
+
+    object Enabled : FirGenericArrayClassLiteralSupport {
+        override val isEnabled: Boolean = true
+    }
+
+    object Disabled : FirGenericArrayClassLiteralSupport {
+        override val isEnabled: Boolean = false
+    }
+}
+
+val FirSession.firGenericArrayClassLiteralSupport: FirGenericArrayClassLiteralSupport by FirSession.sessionComponentAccessor()

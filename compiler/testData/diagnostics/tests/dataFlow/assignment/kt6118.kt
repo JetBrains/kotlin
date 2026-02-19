@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-6118 Redundant type cast can be not redundant?
 
 fun foo(o: Any) {
@@ -14,3 +15,6 @@ fun foo1(o: Any) {
         <!DEBUG_INFO_SMARTCAST!>s<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, isExpression, localProperty, propertyDeclaration,
+smartcast */

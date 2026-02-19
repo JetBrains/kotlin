@@ -60,8 +60,8 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             cursor = 5
             expect {
                 addCompletion("listOf(", "listOf(T)", "List<T>", "method")
-                addCompletion("listOf()", "listOf()", "List<T>", "method")
                 addCompletion("listOf(", "listOf(vararg T)", "List<T>", "method")
+                addCompletion("listOf()", "listOf()", "List<T>", "method")
                 addCompletion("listOfNotNull(", "listOfNotNull(T?)", "List<T>", "method")
                 addCompletion("listOfNotNull(", "listOfNotNull(vararg T?)", "List<T>", "method")
             }

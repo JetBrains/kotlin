@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 @file:Suppress("DuplicatedCode", "unused")
 
@@ -12,24 +15,16 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.builder.FirAbstractResolvedQualifierBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
 
 @FirBuilderDsl
 class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -39,10 +34,14 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
     override var symbol: FirClassLikeSymbol<*>? = null
+    override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLHSForCallableReference: Boolean = false
+    override var resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType? = null
+    override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
 
     override fun build(): FirResolvedQualifier {
@@ -53,10 +52,14 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
             packageFqName,
             relativeClassFqName,
             symbol,
+            explicitParent,
             isNullableLHSForCallableReference,
+            resolvedLHSTypeForCallableReferenceOrNull,
+            resolvedToCompanionObject,
             canBeValue,
             isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            resolvedSymbolOrigin,
             typeArguments.toMutableOrEmpty(),
         )
     }
@@ -68,19 +71,12 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
         set(_) {
             throw IllegalStateException()
         }
-
-    @Deprecated("Modification of 'resolvedToCompanionObject' has no impact for FirResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
-    override var resolvedToCompanionObject: Boolean
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedQualifier(init: FirResolvedQualifierBuilder.() -> Unit): FirResolvedQualifier {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedQualifierBuilder().apply(init).build()
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: base/Base.java
 package base;
@@ -22,3 +23,5 @@ fun foo() {
     Impl().foo()
     Impl().packagePrivateFoo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

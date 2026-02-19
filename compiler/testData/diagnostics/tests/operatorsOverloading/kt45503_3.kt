@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
 // SKIP_TXT
 
@@ -16,3 +17,6 @@ class E {
 fun foo() {
     E()[A<MutableList<Int>>()] += 1
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+nullableType, operator, typeConstraint, typeParameter */

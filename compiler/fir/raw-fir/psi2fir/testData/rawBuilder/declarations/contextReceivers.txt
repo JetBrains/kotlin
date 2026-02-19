@@ -8,7 +8,7 @@ FILE: contextReceivers.kt
             ^ IntegerLiteral(1)
         }
     context(A, b@B)
-    public? final? class C : R|kotlin/Any| {
+    public final? class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
@@ -17,12 +15,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
-object ES6_THROWABLE_CONSTRUCTOR_SLOT : IrDeclarationOriginImpl("ES6_THROWABLE_CONSTRUCTOR_SLOT")
+val ES6_THROWABLE_CONSTRUCTOR_SLOT by IrDeclarationOriginImpl.Regular
 /**
  * Capture stack trace in primary constructors of Throwable
  */
@@ -39,7 +36,7 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
         val statements = (irBody as? IrBlockBody)?.statements ?: return
         val delegatingConstructorCallIndex = statements.indexOfLast { it is IrDelegatingConstructorCall }
 
-        statements.add(delegatingConstructorCallIndex + 1, JsIrBuilder.buildCall(context.intrinsics.captureStack).also { call ->
+        statements.add(delegatingConstructorCallIndex + 1, JsIrBuilder.buildCall(context.symbols.captureStack).also { call ->
             val self = klass.thisReceiver!!.symbol
 
             val constructorRef = if (context.es6mode) {
@@ -48,8 +45,8 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
                 JsIrBuilder.buildRawReference(container.symbol, context.irBuiltIns.anyType)
             }
 
-            call.putValueArgument(0, JsIrBuilder.buildGetValue(self))
-            call.putValueArgument(1, constructorRef)
+            call.arguments[0] = JsIrBuilder.buildGetValue(self)
+            call.arguments[1] = constructorRef
         })
     }
 

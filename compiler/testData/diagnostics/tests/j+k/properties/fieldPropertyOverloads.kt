@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +PreferJavaFieldOverload
-// !CHECK_TYPE
+// LANGUAGE: +PreferJavaFieldOverload
+// CHECK_TYPE
 
 // FILE: CompressionType.java
 public enum CompressionType {
@@ -26,3 +27,6 @@ fun main(c: CollectionWithSize) {
     CompressionType.ZIP::name checkType { _<kotlin.reflect.KProperty0<Double>>() }
     c::size checkType { _<kotlin.reflect.KProperty0<String>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaCallableReference, javaProperty, javaType, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-57905
 
 // FILE: Base.java
@@ -17,3 +18,6 @@ class Derived: Base() {
         val something: String = <!TYPE_MISMATCH!>extension<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, javaType,
+localProperty, propertyDeclaration, propertyWithExtensionReceiver */

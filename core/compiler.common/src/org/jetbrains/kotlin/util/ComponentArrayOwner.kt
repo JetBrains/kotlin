@@ -25,8 +25,14 @@ abstract class ComponentArrayOwner<K : Any, V : Any> : AbstractArrayMapOwner<K, 
     }
 
     protected operator fun get(key: KClass<out K>): V {
+        getOrNull(key)?.let { return it }
         val id = typeRegistry.getId(key)
-        return arrayMap[id] ?: error("No '$key'($id) component in array: $this")
+        error("No '$key'($id) component in array: $this")
+    }
+
+    protected fun getOrNull(key: KClass<out K>): V? {
+        val id = typeRegistry.getId(key)
+        return arrayMap[id]
     }
 
     private fun createDiagnosticMessage(id: Int, keyQualifiedName: String): String = buildString {

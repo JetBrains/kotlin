@@ -1,0 +1,6 @@
+expression: LAMBDA_EXPRESSION
+text: { x: Int ->
+                x.toString()
+            }
+isUsedAsExpression: true
+isUsedAsResultOfLambda: true

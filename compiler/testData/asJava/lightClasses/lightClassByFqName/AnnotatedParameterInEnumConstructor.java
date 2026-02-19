@@ -2,13 +2,13 @@ public enum AnnotatedParameterInEnumConstructor /* test.AnnotatedParameterInEnum
   A;
 
   @org.jetbrains.annotations.NotNull()
-  public static kotlin.enums.EnumEntries<test.AnnotatedParameterInEnumConstructor> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() test.AnnotatedParameterInEnumConstructor> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.NotNull()
-  public static test.AnnotatedParameterInEnumConstructor valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() test.AnnotatedParameterInEnumConstructor @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static test.AnnotatedParameterInEnumConstructor[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() test.AnnotatedParameterInEnumConstructor valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  private  AnnotatedParameterInEnumConstructor(@test.Anno(x = "a") java.lang.String, @test.Anno(x = "b") java.lang.String);//  .ctor(java.lang.String, java.lang.String)
+  private  AnnotatedParameterInEnumConstructor(@test.Anno(x = "a") @org.jetbrains.annotations.NotNull() java.lang.String, @test.Anno(x = "b") @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
 }

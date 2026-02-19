@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface I
 
@@ -20,3 +21,6 @@ fun <CX: I> foo(
 class WrapperFactory<W>(val creator: () -> W)
 
 class Wrapper<in CX2>(val fn1: (CX2) -> Unit, val fn2: (CX2?) -> Unit)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, in, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

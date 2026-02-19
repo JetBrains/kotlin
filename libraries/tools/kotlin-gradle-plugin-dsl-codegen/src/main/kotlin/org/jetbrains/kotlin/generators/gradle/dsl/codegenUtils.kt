@@ -46,4 +46,69 @@ internal fun String.indented(nSpaces: Int = 4, skipFirstLine: Boolean = false): 
         }
 }
 
-internal val outputSourceRoot get() = System.getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot"] as String
+/**
+ * Replaces old content of code region with [name] to [content]
+ * Code region is defined as following:
+ *
+ * ``` kotlin
+ * // region [name]
+ *   /* ANY CONTENT HERE */
+ * // endregion
+ * ```
+ *
+ * NB: This function doesn't expect nested regions!
+ * i.e. this is not allowed
+ *
+ * ```kotlin
+ * // region foo
+ * // region bar
+ *   /* nested regions are not allowed! */
+ * // endregion
+ * // endregion
+ * ```
+ */
+internal fun String.replaceRegion(regionName: String, content: String): String {
+    val lines = lineSequence().iterator()
+    return buildString {
+        // Insert content before region
+        var startOfRegionFound = false
+        for (line in lines) {
+            appendLine(line)
+            if (line.trim() == "// region $regionName") {
+                startOfRegionFound = true
+                break
+            }
+        }
+        check(startOfRegionFound) { "Region with name $regionName not found" }
+
+        // Skip region content
+        var originalEndRegionLine: String? = null
+        for (line in lines) {
+            if (line.trim() == "// endregion") {
+                originalEndRegionLine = line
+                break
+            }
+        }
+        checkNotNull(originalEndRegionLine) { "End of region with name $regionName not found" }
+
+        // Insert replacing content
+        appendLine(content)
+        appendLine(originalEndRegionLine)
+
+        // Insert content after region
+        while (lines.hasNext()) {
+            val line = lines.next()
+            if (lines.hasNext()) {
+                appendLine(line)
+            } else { // for the list line we don't want to add extra "\n"
+                append(line)
+            }
+        }
+    }
+}
+
+internal val kotlinGradlePluginSourceRoot get() = System
+        .getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.kotlinGradlePluginSourceRoot"] as String
+
+internal val kotlinGradlePluginApiSourceRoot get() = System
+    .getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.kotlinGradlePluginApiSourceRoot"] as String

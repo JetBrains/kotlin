@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -31,3 +32,5 @@ fun test() {
     E.<!OVERLOAD_RESOLUTION_AMBIGUITY!>field<!>
     O.field
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty */

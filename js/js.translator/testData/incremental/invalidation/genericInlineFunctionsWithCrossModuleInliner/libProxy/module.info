@@ -1,0 +1,30 @@
+STEP 0..7:
+    rebuild klib: false
+STEP 8:
+    dependencies: lib1
+    modifications:
+        U : proxy.1.kt -> proxy.kt
+    added file: proxy.kt
+STEP 9:
+    dependencies: lib1
+    modified ir: proxy.kt
+STEP 10..14:
+    dependencies: lib1
+    modified ir: proxy.kt
+STEP 15:
+    dependencies: lib1
+    modified ir: proxy.kt
+STEP 16:
+    dependencies: lib1
+    modifications:
+        U : proxy.2.kt -> proxy.kt
+    modified ir: proxy.kt
+STEP 17:
+    dependencies: lib1
+    modified ir: proxy.kt
+STEP 18..22:
+    dependencies: lib1
+    modified ir: proxy.kt
+STEP 23:
+    dependencies: lib1
+    modified ir: proxy.kt

@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 interface A {
     fun foo()
 }
@@ -76,3 +77,7 @@ fun test_7(d1: D, d2: D) {
     b as B
     b.bar() // should be OK
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, elvisExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, safeCall, smartcast */

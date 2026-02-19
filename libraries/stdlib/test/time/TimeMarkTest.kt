@@ -247,7 +247,7 @@ class TimeMarkTest {
     }
 
     @OptIn(ExperimentalTime::class)
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private class DoubleTimeSource(unit: DurationUnit) : AbstractDoubleTimeSource(unit) {
         var reading: Double = 0.0
         override fun read(): Double = reading

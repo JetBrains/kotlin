@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 @foo
 @file @bar
 @file:

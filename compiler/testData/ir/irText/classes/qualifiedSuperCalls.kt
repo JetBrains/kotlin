@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface ILeft {
     fun foo() {}
     val bar: Int get() = 1

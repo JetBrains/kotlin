@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-15792 and related
 
 fun foo() {
@@ -43,3 +44,6 @@ fun baz(arg: Some?) {
         <!SMARTCAST_IMPOSSIBLE!><!DEBUG_INFO_SMARTCAST!>arg<!>.s<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast, stringLiteral */

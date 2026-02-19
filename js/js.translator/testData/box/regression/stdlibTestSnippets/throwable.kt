@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1279
 // Snippet from stdlib test test.exceptions.ExceptionTest
 
 private val cause = Exception("cause")

@@ -12,14 +12,12 @@ import org.gradle.api.GradleException
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinCompilationSourceDeprecation
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
@@ -27,9 +25,9 @@ import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal class KotlinCompilationImpl constructor(
+internal class KotlinCompilationImpl(
     private val params: Params,
-) : InternalKotlinCompilation<KotlinCommonOptions> {
+) : InternalKotlinCompilation<KotlinAnyOptionsDeprecated> {
 
     //region Params
 
@@ -41,8 +39,8 @@ internal class KotlinCompilationImpl constructor(
         val compilationTaskNames: KotlinCompilationTaskNamesContainer,
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
-        val compilerOptions: HasCompilerOptions<*>,
-        val kotlinOptions: KotlinCommonOptions,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") val compilerOptions: DeprecatedHasCompilerOptions<*>,
+        @Suppress("DEPRECATION_ERROR") val kotlinOptions: KotlinCommonOptions,
         val compilationAssociator: KotlinCompilationAssociator,
         val compilationFriendPathsResolver: KotlinCompilationFriendPathsResolver,
         val compilationSourceSetInclusion: KotlinCompilationSourceSetInclusion,
@@ -92,12 +90,6 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = sourceSets.kotlinSourceSets
 
-    @Deprecated("scheduled for removal with Kotlin 2.0")
-    override fun source(sourceSet: KotlinSourceSet) {
-        project.kotlinToolingDiagnosticsCollector.report(project, KotlinCompilationSourceDeprecation(Throwable()))
-        sourceSets.source(sourceSet)
-    }
-
     override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) {
         defaultSourceSet.configure()
     }
@@ -108,15 +100,35 @@ internal class KotlinCompilationImpl constructor(
 
     //region Dependency Configuration Management
 
+    @Deprecated(
+        "Accessing apiConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.apiConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val apiConfigurationName: String
         get() = configurations.apiConfiguration.name
 
+    @Deprecated(
+        "Accessing implementationConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.implementationConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val implementationConfigurationName: String
         get() = configurations.implementationConfiguration.name
 
+    @Deprecated(
+        "Accessing compileOnlyConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.compileOnlyConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val compileOnlyConfigurationName: String
         get() = configurations.compileOnlyConfiguration.name
 
+    @Deprecated(
+        "Accessing runtimeOnlyConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.runtimeOnlyConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val runtimeOnlyConfigurationName: String
         get() = configurations.runtimeOnlyConfiguration.name
 
@@ -130,10 +142,20 @@ internal class KotlinCompilationImpl constructor(
 
     override var runtimeDependencyFiles: FileCollection? = configurations.runtimeDependencyConfiguration
 
+    @Deprecated(
+        "Declaring dependencies on Compilation level is deprecated, please declare on related source set",
+        replaceWith = ReplaceWith("defaultSourceSet.dependencies"),
+        level = DeprecationLevel.WARNING
+    )
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
         HasKotlinDependencies(project, configurations).dependencies(configure)
     }
 
+    @Deprecated(
+        "Declaring dependencies on Compilation level is deprecated, please declare on related source set",
+        replaceWith = ReplaceWith("defaultSourceSet.dependencies"),
+        level = DeprecationLevel.WARNING
+    )
     override fun dependencies(configure: Action<KotlinDependencyHandler>) {
         HasKotlinDependencies(project, configurations).dependencies(configure)
     }
@@ -149,13 +171,21 @@ internal class KotlinCompilationImpl constructor(
     override val compileAllTaskName: String
         get() = params.compilationTaskNames.compileAllTaskName
 
-    @Suppress("deprecation")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("deprecation_error")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
     override val compileKotlinTask: KotlinCompile<KotlinCommonOptions>
         get() = compileKotlinTaskProvider.get()
 
-    @Suppress("deprecation")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<KotlinCommonOptions>>
         get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate  task $compileKotlinTaskName")
 
@@ -164,20 +194,29 @@ internal class KotlinCompilationImpl constructor(
 
     //endregion
 
+    override val archiveTaskName: String?
+        get() = project.kotlinCompilationArchiveTasksOrNull?.getArchiveTaskOrNull(this)?.name
+            ?: target.artifactsTaskName.takeIf { isMain() }
 
     //region CompilerOptions & KotlinOptions
 
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION_ERROR")
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 
-    override val compilerOptions: HasCompilerOptions<*>
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
+    override val compilerOptions: DeprecatedHasCompilerOptions<*>
         get() = params.compilerOptions
 
     //endregion
 
     //region Attributes
 
-    private val attributes by lazy { HierarchyAttributeContainer(target.attributes) }
+    private val attributes by lazy { HierarchyAttributeContainer(target.attributes, target.project.objects) }
 
     override fun getAttributes(): AttributeContainer = attributes
 

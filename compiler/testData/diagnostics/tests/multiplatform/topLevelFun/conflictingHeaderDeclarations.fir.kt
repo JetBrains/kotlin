@@ -1,7 +1,13 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
-<!CONFLICTING_OVERLOADS, NO_ACTUAL_FOR_EXPECT!>expect fun foo()<!>
-<!CONFLICTING_OVERLOADS, NO_ACTUAL_FOR_EXPECT!>expect fun foo()<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> <!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{METADATA}!>fun foo()<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> <!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{METADATA}!>fun foo()<!>
 
-<!NO_ACTUAL_FOR_EXPECT!>expect fun foo(x: Int)<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> fun foo(x: Int)
+
+// MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration */

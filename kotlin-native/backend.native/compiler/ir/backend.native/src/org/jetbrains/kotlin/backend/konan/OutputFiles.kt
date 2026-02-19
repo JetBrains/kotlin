@@ -5,12 +5,10 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.util.prefixBaseNameIfNot
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.visibleName
 import kotlin.random.Random
 
 
@@ -21,9 +19,6 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
-
-    fun klibOutputFileName(isPacked: Boolean): String =
-            if (isPacked) "$outputName$suffix" else outputName
 
     /**
      * Header file for dynamic library.
@@ -67,7 +62,7 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 
-    val hashFile = tempCacheDirectory?.child(CachedLibraries.HASH_FILE_NAME)
+    val cacheMetadata = tempCacheDirectory?.child(CachedLibraries.METADATA_FILE_NAME)
 
     val bitcodeDependenciesFile = tempCacheDirectory?.cacheBinaryPart()?.child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
 

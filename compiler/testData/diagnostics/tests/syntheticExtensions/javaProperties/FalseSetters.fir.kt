@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.<!VAL_REASSIGNMENT!>something1<!>++
     javaClass.<!VAL_REASSIGNMENT!>something2<!>++
     javaClass.<!VAL_REASSIGNMENT!>something3<!>++
     javaClass.<!VAL_REASSIGNMENT!>something4<!>++
-    javaClass.something5 = null
+    javaClass.<!VAL_REASSIGNMENT!>something5<!> = null
 }
 
 // FILE: JavaClass.java
@@ -24,3 +25,6 @@ public class JavaClass {
     public int[] getSomething5() { return null; }
     public void setSomething5(int... value) { }
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, incrementDecrementExpression, javaProperty,
+javaType */

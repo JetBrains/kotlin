@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 expect class A()
 // Lifted up type aliases:
 typealias B = A // class at the RHS
@@ -45,7 +47,7 @@ expect class X // different nullability of the RHS TA
 expect class Y // TA at the RHS with the different nullability of own RHS
 
 // Supertypes:
-expect class FILE expect constructor(): kotlinx.cinterop.CStructVar
+expect class FILE constructor(rawPtr: kotlinx.cinterop.NativePtr): kotlinx.cinterop.CStructVar
 
 typealias uuid_t = __darwin_uuid_t
 typealias __darwin_uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>

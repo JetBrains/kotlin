@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 suspend fun foo() {}
 
@@ -28,3 +29,6 @@ suspend fun test2(a: A) {
     val z1 = a::ext
     val z2 = A::ext
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty,
+propertyDeclaration, suspend */

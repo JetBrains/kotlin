@@ -5,11 +5,24 @@
 
 package org.jetbrains.kotlin.parcelize.fir
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize
 
-class FirParcelizeExtensionRegistrar : FirExtensionRegistrar() {
+class FirParcelizeExtensionRegistrar(
+    private val parcelizeAnnotationFqNames: List<FqName>,
+    private val experimentalCodeGeneration: Boolean = false,
+) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        +::FirParcelizeDeclarationGenerator
-        +::FirParcelizeCheckersExtension
+        +::FirParcelizeDeclarationGenerator.bind(parcelizeAnnotationFqNames)
+        +::firParcelizeCheckersExtension
+
+        registerDiagnosticContainers(KtErrorsParcelize)
     }
+
+    private fun firParcelizeCheckersExtension(session: FirSession) =
+        FirParcelizeCheckersExtension(session, parcelizeAnnotationFqNames.map { ClassId.topLevel(it) }, experimentalCodeGeneration)
+
 }

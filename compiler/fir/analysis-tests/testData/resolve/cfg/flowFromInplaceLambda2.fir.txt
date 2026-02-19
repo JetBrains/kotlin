@@ -20,7 +20,7 @@ FILE: flowFromInplaceLambda2.kt
             ^ Int(123)
         }
         ))
-        R|<local>/x|.R|kotlin/String.length|
+        R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
     }
     public final fun test2(x: R|kotlin/String?|): R|kotlin/Unit| {
         R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -32,7 +32,7 @@ FILE: flowFromInplaceLambda2.kt
             ^ Int(123)
         }
         ))
-        R|<local>/x|.R|kotlin/String.length|
+        R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
     }
     public final fun test3(x: R|kotlin/String?|): R|kotlin/Unit| {
         R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -52,7 +52,7 @@ FILE: flowFromInplaceLambda2.kt
             ^ Int(123)
         }
         ))
-        R|<local>/x|.R|kotlin/String.length|
+        R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
     }
     public final fun test4(x: R|kotlin/String?|): R|kotlin/Unit| {
         lvar p: R|kotlin/String?| = R|<local>/x|

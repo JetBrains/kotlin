@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: main.kt
 interface A {
     <!CONFLICTING_OVERLOADS!>suspend fun foo()<!>
@@ -13,3 +14,5 @@ interface B : A {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, suspend */

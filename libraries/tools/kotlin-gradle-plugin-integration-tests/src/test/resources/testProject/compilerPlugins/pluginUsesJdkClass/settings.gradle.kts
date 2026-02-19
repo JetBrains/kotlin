@@ -1,0 +1,2 @@
+include(":plugin")
+include(":library")

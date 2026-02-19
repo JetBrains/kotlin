@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.assignment.plugin.k2
 
+import org.jetbrains.kotlin.assignment.plugin.k2.diagnostics.FirErrorsAssignmentPlugin
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
 class FirAssignmentPluginExtensionRegistrar(private val annotations: List<String>) : FirExtensionRegistrar() {
@@ -12,5 +13,7 @@ class FirAssignmentPluginExtensionRegistrar(private val annotations: List<String
         +::FirAssignmentPluginAssignAltererExtension
         +::FirAssignmentPluginCheckersExtension
         +FirAssignAnnotationMatchingService.getFactory(annotations)
+
+        registerDiagnosticContainers(FirErrorsAssignmentPlugin)
     }
 }

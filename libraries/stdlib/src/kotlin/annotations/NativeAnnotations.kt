@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.experimental.ExperimentalObjCEnum
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 
@@ -23,17 +24,15 @@ import kotlin.experimental.ExperimentalObjCRefinement
 public expect annotation class CName(val externName: String = "", val shortName: String = "")
 
 /**
- * Freezing API is deprecated since 1.7.20.
+ * Freezing API has been deprecated since Kotlin 1.7.20,
+ * and support for the legacy memory manager was completely removed from the compiler in 1.9.20.
  *
- * See [documentation](https://kotlinlang.org/docs/native-migration-guide.html) for details
+ * See the [documentation](https://kotlinlang.org/docs/native-migration-guide.html) for details.
  */
-// Note: when changing level of deprecation here, also change
-// * `freezing` mode handling in KonanConfig.kt
-// * frontend diagnostics in ErrorsNative.kt
 @SinceKotlin("1.7")
 @RequiresOptIn(
     message = "Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details",
-    level = RequiresOptIn.Level.WARNING,
+    level = RequiresOptIn.Level.WARNING
 )
 @Target(
     AnnotationTarget.CLASS,
@@ -49,8 +48,11 @@ public expect annotation class CName(val externName: String = "", val shortName:
     AnnotationTarget.TYPEALIAS,
 )
 @Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
 @OptionalExpectation
-expect annotation class FreezingIsDeprecated
+@Deprecated("Opting in for the freezing API is no longer supported.")
+@DeprecatedSinceKotlin(warningSince = "2.1")
+public expect annotation class FreezingIsDeprecated
 
 /**
  * Instructs the Kotlin compiler to use a custom Objective-C and/or Swift name for this class, property, parameter or function.
@@ -69,6 +71,21 @@ expect annotation class FreezingIsDeprecated
 @ExperimentalObjCName
 @SinceKotlin("1.8")
 public expect annotation class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
+
+/**
+ * Instructs the Kotlin compiler to generate a NS_ENUM typedef for the annotated enum class. The name of the generated type will
+ * be the name of the enum type with "NSEnum" appended. This name can be overridden with the "name" parameter, which is treated
+ * as an exact name. Additionally, a separate name for Swift can be specified using the swiftName parameter.
+ * The enum literals will be prefixed with the type name, as they live in a global namespace.
+ * Swift naming will remove these disambiguation prefixes. The NSEnum values are accessible via the "nsEnum" property.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@OptionalExpectation
+@ExperimentalObjCEnum
+@SinceKotlin("2.3")
+public expect annotation class ObjCEnum(val name: String = "", val swiftName: String = "")
 
 /**
  * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.
@@ -132,4 +149,3 @@ public expect annotation class RefinesInSwift()
 @ExperimentalObjCRefinement
 @SinceKotlin("1.8")
 public expect annotation class ShouldRefineInSwift()
-

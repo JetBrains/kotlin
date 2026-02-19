@@ -1,7 +1,8 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
-val a0: Int = <!INITIALIZER_TYPE_MISMATCH!>1uL<!>
-val a1: UInt = <!INITIALIZER_TYPE_MISMATCH!>1uL<!>
+val a0: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> 1uL
+val a1: UInt <!INITIALIZER_TYPE_MISMATCH!>=<!> 1uL
 val a3: ULong = 1uL
 val a4 = 1UL + 2UL
 val a5 = <!UNRESOLVED_REFERENCE!>-<!>1UL
@@ -14,3 +15,5 @@ fun test() {
     takeULong(1u + 0uL)
     takeULong(1uL + 4u)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, propertyDeclaration, unaryExpression, unsignedLiteral */

@@ -2,24 +2,8 @@
  * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin.native.concurrent
-
-import kotlin.native.internal.*
-import kotlinx.cinterop.ExperimentalForeignApi
-
-@GCUnsafeCall("Kotlin_WorkerBoundReference_create")
-@ObsoleteWorkersApi
-external private fun createWorkerBoundReference(value: Any): NativePtr
-
-@GCUnsafeCall("Kotlin_WorkerBoundReference_deref")
-@ObsoleteWorkersApi
-external private fun derefWorkerBoundReference(ref: NativePtr): Any?
-
-@GCUnsafeCall("Kotlin_WorkerBoundReference_describe")
-@ObsoleteWorkersApi
-external private fun describeWorkerBoundReference(ref: NativePtr): String
 
 /**
  * A shared reference to a Kotlin object that doesn't freeze the referred object when it gets frozen itself.
@@ -31,46 +15,23 @@ external private fun describeWorkerBoundReference(ref: NativePtr): String
  * To resolve such cycles consider using [AtomicReference]`<WorkerBoundReference?>` which can be explicitly
  * nulled out.
  */
-@NoReorderFields
-@ExportTypeInfo("theWorkerBoundReferenceTypeInfo")
-@HasFinalizer
-@HasFreezeHook
-@FreezingIsDeprecated
 @ObsoleteWorkersApi
-@OptIn(ExperimentalForeignApi::class)
-public class WorkerBoundReference<out T : Any>(value: T) {
-
-    private var ptr = NativePtr.NULL
-    private val ownerName = Worker.current.name
-    private var valueBeforeFreezing: T? = value
-
-    private val valueDescription
-        get() = describeWorkerBoundReference(ptr)
-
+@Deprecated("Support for the legacy memory manager has been completely removed. Use the referenced value directly.")
+@DeprecatedSinceKotlin(errorSince = "2.1")
+public class WorkerBoundReference<out T : Any>(
+        /**
+         * The referenced value.
+         */
+        public val value: T
+) {
     /**
-     * The referenced value.
-     * @throws IncorrectDereferenceException if referred object is not frozen and current worker is different from the one created [this].
+     * The referenced value. Never null.
      */
-    val value: T
-        get() = valueOrNull ?: throw IncorrectDereferenceException("illegal attempt to access non-shared $valueDescription bound to `$ownerName` from `${Worker.current.name}`")
-
-    /**
-     * The referenced value or null if referred object is not frozen and current worker is different from the one created [this].
-     */
-    val valueOrNull: T?
-        get() = valueBeforeFreezing ?: @Suppress("UNCHECKED_CAST") (derefWorkerBoundReference(ptr) as T?)
+    public val valueOrNull: T?
+        get() = value
 
     /**
      * Worker that [value] is bound to.
      */
-    val worker: Worker = Worker.current
-
-    @ExportForCppRuntime("Kotlin_WorkerBoundReference_freezeHook")
-    private fun freezeHook() {
-        // If this hook was already run, do nothing.
-        if (valueBeforeFreezing == null)
-            return
-        ptr = createWorkerBoundReference(valueBeforeFreezing!!)
-        valueBeforeFreezing = null
-    }
+    public val worker: Worker = Worker.current
 }

@@ -1,9 +1,10 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // ISSUE: KT-37070
 
 class KotlinClass(private val name: String) : Comparable<KotlinClass> {
-    override operator fun compareTo(that: KotlinClass): Int {
-        return name.compareTo(that.name)
+    override operator fun compareTo(other: KotlinClass): Int {
+        return name.compareTo(other.name)
     }
 }
 
@@ -38,3 +39,7 @@ fun case2(kotlinClass: KotlinClass) {
 
     lambda.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Unit, KotlinClass?>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, operator, override, primaryConstructor, propertyDeclaration, safeCall,
+typeParameter, typeWithExtension */

@@ -2,3 +2,12 @@ package
 
 public fun passAnonymousFunction(/*0*/ x: kotlin.Boolean): kotlin.Unit
 public fun passLambdaValue(/*0*/ l: kotlin.contracts.ContractBuilder.() -> kotlin.Unit): kotlin.Unit
+
+public open class OpenClass {
+    public constructor OpenClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun passLambdaValue(/*0*/ l: kotlin.contracts.ContractBuilder.() -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

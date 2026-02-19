@@ -32,14 +32,16 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun TypeConstructorMarker.isInlineClass(): Boolean
     fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean
-    fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>?
+    fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>?
     fun TypeConstructorMarker.isInnerClass(): Boolean
     fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker
+
     fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker?
-    fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker?
+    fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
+        typeSubstitutorByTypeConstructor(map)
 
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
-        asSimpleType()?.withNullability(true) ?: this
+        asRigidType()?.withNullability(true) ?: this
     fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType?
     fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType?
 
@@ -58,8 +60,8 @@ interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackend
     fun TypeConstructorMarker.defaultType(): KotlinTypeMarker
     fun TypeConstructorMarker.isScript(): Boolean
 
-    fun SimpleTypeMarker.isSuspendFunction(): Boolean
-    fun SimpleTypeMarker.isKClass(): Boolean
+    fun RigidTypeMarker.isSuspendFunction(): Boolean
+    fun RigidTypeMarker.isKClass(): Boolean
 
     fun TypeConstructorMarker.typeWithArguments(arguments: List<KotlinTypeMarker>): SimpleTypeMarker
     fun TypeConstructorMarker.typeWithArguments(vararg arguments: KotlinTypeMarker): SimpleTypeMarker {
@@ -67,8 +69,7 @@ interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackend
     }
 
     fun TypeArgumentMarker.adjustedType(): KotlinTypeMarker {
-        if (this.isStarProjection()) return nullableAnyType()
-        return getType()
+        return getType() ?: nullableAnyType()
     }
 
     fun TypeParameterMarker.representativeUpperBound(): KotlinTypeMarker

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // check that there is no SOE on checking for instance
 interface Visitor<T>
@@ -13,3 +14,6 @@ class S<T : Acceptor<U>, U : Visitor<T>>(val visitor: U, val acceptor: T) {
         acceptor is Word
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, nullableType,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 
 public class A {
@@ -16,3 +17,5 @@ fun test(x: List<Int>, y: List<String>) {
     A<String>("", y)
     A<CharSequence>("", y)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, stringLiteral */

@@ -1,8 +1,9 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: Foo
+KaNamedClassSymbol:
+  annotations: []
+  classId: Foo
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -11,12 +12,13 @@ KtNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Foo
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: [
+    KaUsualClassType:
+      annotations: [
         Anno1()
           psi: KtAnnotationEntry
         Anno2()
@@ -24,12 +26,13 @@ KtNamedClassOrObjectSymbol:
         Anno3()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
+      typeArguments: []
+      type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperClassCall.kt)
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Foo

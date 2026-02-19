@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-52825
 
@@ -9,3 +10,5 @@ fun foo(a: LLL, b: LLL) {}
 fun test() {
     foo(0, 0)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, typeAliasDeclaration */

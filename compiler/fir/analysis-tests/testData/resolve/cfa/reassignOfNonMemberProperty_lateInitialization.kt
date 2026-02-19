@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55493
 // WITH_STDLIB
 
@@ -14,7 +15,7 @@ class Some {
         <!VAL_REASSIGNMENT!>z<!> = "error"
 
         fun foo() {
-            <!VAL_REASSIGNMENT!>x<!> = "error"
+            <!CAPTURED_MEMBER_VAL_INITIALIZATION!>x<!> = "error"
             <!CAPTURED_MEMBER_VAL_INITIALIZATION!>y<!> = "error"
             <!VAL_REASSIGNMENT!>z<!> = "error"
         }
@@ -43,3 +44,6 @@ class Some {
         <!VAL_REASSIGNMENT!>z<!> = "error"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, init, integerLiteral, lambdaLiteral,
+localFunction, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

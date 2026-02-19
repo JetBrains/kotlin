@@ -1,0 +1,7 @@
+KtPropertyDelegate(13,21): 'by Bar()'
+  KtPropertyDelegationMethodsReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

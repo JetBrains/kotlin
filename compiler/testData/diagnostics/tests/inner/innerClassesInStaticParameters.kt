@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Test {
     companion object {
@@ -10,3 +11,6 @@ class Test {
 
     inner class TestInner
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, nestedClass,
+objectDeclaration */

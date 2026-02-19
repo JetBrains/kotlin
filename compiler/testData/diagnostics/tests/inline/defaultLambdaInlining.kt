@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !LANGUAGE: +InlineDefaultFunctionalParameters
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// LANGUAGE: +InlineDefaultFunctionalParameters
 
 fun test() = "OK"
 
@@ -46,3 +46,6 @@ class Derived : Base() {
 }
 
 inline fun default11(s : () -> Derived = ::Derived) {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration,
+functionalType, inline, lambdaLiteral, objectDeclaration, operator, override, propertyDeclaration, stringLiteral */

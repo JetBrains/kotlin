@@ -8,6 +8,7 @@ package kotlin.reflect
 import java.lang.reflect.*
 import kotlin.internal.LowPriorityInOverloadResolution
 import kotlin.jvm.internal.KTypeBase
+import kotlin.jvm.internal.KTypeParameterBase
 
 /**
  * Returns a Java [Type] instance corresponding to the given Kotlin type.
@@ -16,9 +17,6 @@ import kotlin.jvm.internal.KTypeBase
  * In particular, the following is not supported correctly or at all:
  * - declaration-site variance
  * - variance of types annotated with [JvmSuppressWildcards]
- * - obtaining the containing declaration of a type parameter ([TypeVariable.getGenericDeclaration])
- * - annotations of type parameters and their bounds ([TypeVariable.getAnnotation], [TypeVariable.getAnnotations],
- *   [TypeVariable.getDeclaredAnnotations], [TypeVariable.getAnnotatedBounds])
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
@@ -36,7 +34,13 @@ public val KType.javaType: Type
 @ExperimentalStdlibApi
 private fun KType.computeJavaType(forceWrapper: Boolean = false): Type {
     when (val classifier = classifier) {
-        is KTypeParameter -> return TypeVariableImpl(classifier)
+        is KTypeParameter -> {
+            if (classifier !is KTypeParameterBase) return ObsoleteFallbackTypeVariableImpl(classifier)
+
+            val container = classifier.javaContainingDeclaration
+                ?: throw UnsupportedOperationException("javaType is not supported for this type: $this")
+            return container.typeParameters.single { it.name == classifier.name }
+        }
         is KClass<*> -> {
             val jClass = if (forceWrapper) classifier.javaObjectType else classifier.java
             val arguments = arguments
@@ -103,15 +107,25 @@ private interface TypeImpl : Type {
     fun getTypeName(): String
 }
 
+/**
+ * This class is used only to support the case of kotlin-stdlib 2.3.20+ at runtime with kotlin-reflect earlier than 2.3.20.
+ * In this case, the kotlin-reflect implementation of a type parameter `KTypeParameterImpl` does not yet inherit from `KTypeParameterBase`,
+ * so kotlin-stdlib implementation of `javaType` cannot obtain its container to find the corresponding Java type variable object.
+ * So we fall back to behavior that was there before 2.3.20: a custom `TypeVariable` instance that does not support everything
+ * (in fact, even its `equals` is broken, since in Java reflection, it's identity-based), but one can at least obtain its name and bounds.
+ */
 // Suppression of the error is needed for `AnnotatedType[] getAnnotatedBounds()` which is impossible to implement on JDK 6
 // because `AnnotatedType` has only appeared in JDK 8.
 @Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
 @ExperimentalStdlibApi
-private class TypeVariableImpl(private val typeParameter: KTypeParameter) : TypeVariable<GenericDeclaration>, TypeImpl {
+private class ObsoleteFallbackTypeVariableImpl(private val typeParameter: KTypeParameter) : TypeVariable<GenericDeclaration>, TypeImpl {
     override fun getName(): String = typeParameter.name
 
     override fun getGenericDeclaration(): GenericDeclaration =
-        TODO("getGenericDeclaration() is not yet supported for type variables created from KType: $typeParameter")
+        throw UnsupportedOperationException(
+            "getGenericDeclaration() is not supported for type variables created from KType: $typeParameter.\n" +
+                    "Update kotlin-reflect dependency to 2.3.20+."
+        )
 
     override fun getBounds(): Array<Type> = typeParameter.upperBounds.map { it.computeJavaType(forceWrapper = true) }.toTypedArray()
 

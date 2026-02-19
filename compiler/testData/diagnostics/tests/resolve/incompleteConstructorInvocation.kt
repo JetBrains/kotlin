@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package p
 
 class X<V>(provider: () -> V, trackValue: Boolean) {
@@ -8,3 +9,6 @@ class B {
         "e"
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter */

@@ -1,0 +1,51 @@
+FILE: kt56215.kt
+    public final object ObjectWithExtension : R|kotlin/Any| {
+        private [ContainingClassKey=ObjectWithExtension] constructor(): R|ObjectWithExtension| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun R|ObjectWithExtension?|.nullableExtensionFun(): R|kotlin/String| {
+        ^nullableExtensionFun when () {
+            ==(this@R|/nullableExtensionFun|, Null(null)) ->  {
+                String(Null)
+            }
+            else ->  {
+                String(Not null)
+            }
+        }
+
+    }
+    public final fun R|ObjectWithExtension|.extensionFun(): R|kotlin/String| {
+        ^extensionFun when () {
+            ==(this@R|/extensionFun|, Null(null)) ->  {
+                String(Null)
+            }
+            else ->  {
+                String(Not null)
+            }
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval nullObjectWithExtension: R|ObjectWithExtension?| = Null(null)
+        when () {
+            !=(<strcat>(R|<local>/nullObjectWithExtension|.R|/nullableExtensionFun|()), String(Null)) ->  {
+                ^box String(Fail 1)
+            }
+        }
+
+        when () {
+            !=(<strcat>(Q|ObjectWithExtension|.R|/nullableExtensionFun|()), String(Not null)) ->  {
+                ^box String(Fail 2)
+            }
+        }
+
+        when () {
+            !=(<strcat>(Q|ObjectWithExtension|.R|/extensionFun|()), String(Not null)) ->  {
+                ^box String(Fail 3)
+            }
+        }
+
+        ^box String(OK)
+    }

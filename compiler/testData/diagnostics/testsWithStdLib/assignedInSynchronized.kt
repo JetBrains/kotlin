@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class A {
     fun test() {
@@ -11,3 +12,6 @@ class A {
 
     fun bar() = false
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, lambdaLiteral, localProperty,
+propertyDeclaration, thisExpression */

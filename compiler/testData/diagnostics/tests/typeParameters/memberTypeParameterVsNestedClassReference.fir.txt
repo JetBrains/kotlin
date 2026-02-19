@@ -1,0 +1,99 @@
+FILE: memberTypeParameterVsNestedClassReference.fir.kt
+    public final class OuterClassWithObject<OuterParam> : R|kotlin/Any| {
+        public constructor<OuterParam>(): R|OuterClassWithObject<OuterParam>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object OuterParam : R|kotlin/Any| {
+            private constructor(): R|OuterClassWithObject.OuterParam| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final val k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
+            public get(): <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>
+
+        public final val l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
+            public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
+            lval l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
+        }
+
+        public final inner class Inner<NestedParam : R|OuterParam|, Outer(OuterParam)> : R|kotlin/Any| {
+            public OuterClassWithObject<OuterParam>.constructor<NestedParam : R|OuterParam|>(t: R|NestedParam|): R|OuterClassWithObject.Inner<NestedParam, OuterParam>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
+                public get(): <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>
+
+            public final val l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
+                public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
+
+            init {
+                lval k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
+                lval l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
+            }
+
+        }
+
+    }
+    public final class OuterClassWithClass<OuterParam> : R|kotlin/Any| {
+        public constructor<OuterParam>(): R|OuterClassWithClass<OuterParam>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class OuterParam : R|kotlin/Any| {
+            public constructor(): R|OuterClassWithClass.OuterParam| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final val k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
+            public get(): R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>|
+
+        public final val l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
+            public get(): R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>|
+
+        public final val m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
+            public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
+            lval l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
+            lval m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
+        }
+
+        public final inner class Inner<NestedParam : R|OuterParam|, Outer(OuterParam)> : R|kotlin/Any| {
+            public OuterClassWithClass<OuterParam>.constructor<NestedParam : R|OuterParam|>(t: R|NestedParam|): R|OuterClassWithClass.Inner<NestedParam, OuterParam>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
+                public get(): R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>|
+
+            public final val l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
+                public get(): R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>|
+
+            public final val m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
+                public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
+
+            init {
+                lval k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
+                lval l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
+                lval m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
+            }
+
+        }
+
+    }

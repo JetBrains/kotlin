@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2397 Prohibit final methods in traits with no implementation
 package a
 
@@ -16,3 +16,6 @@ interface T {
 class A {
     <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>final fun foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration */

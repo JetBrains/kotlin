@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
@@ -18,16 +16,23 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetNa
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 import org.jetbrains.kotlin.gradle.plugin.sources.android.variantType
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSourceSetConfigurator {
-    @Suppress("DEPRECATION")
-    override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
+    override fun configure(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
+    ) {
         val androidBaseSourceSetName = AndroidBaseSourceSetName.byName(androidSourceSet.name) ?: return
         setDefaultDependsOn(target, kotlinSourceSet, androidBaseSourceSetName.variantType)
     }
 
-    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+    override fun configureWithVariant(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ) {
         setDefaultDependsOn(target, kotlinSourceSet, variant.type)
     }
 

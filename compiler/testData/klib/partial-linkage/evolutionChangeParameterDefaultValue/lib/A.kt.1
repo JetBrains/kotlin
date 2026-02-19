@@ -1,0 +1,6 @@
+fun foo(param: String = "in file") = "foo after change $param"
+
+class X(val constructorParam: String = "in constructor") {
+    fun bar(param: String = "in class") = "bar after change $param and $constructorParam"
+}
+

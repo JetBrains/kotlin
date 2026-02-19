@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 operator fun Foo.plusAssign(x: Any) {}
 
 class Foo {
@@ -20,3 +21,6 @@ fun test_3(f: Foo) {
     f += ""
     f += 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, propertyDeclaration, stringLiteral */

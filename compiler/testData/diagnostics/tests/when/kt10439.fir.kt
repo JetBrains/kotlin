@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -22,3 +23,6 @@ fun test1(flag: Boolean) {
         else -> ""
     }<!>)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, intersectionType, stringLiteral,
+whenExpression, whenWithSubject */

@@ -1,0 +1,140 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:module_main_functionReference.kt
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+            FUN name:Test visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:$composer index:0 type:androidx.compose.runtime.Composer? [assignable]
+              VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
+              annotations:
+                Composable
+              BLOCK_BODY
+                BLOCK type=kotlin.Unit origin=null
+                  CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                    ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x.Test' type=androidx.compose.runtime.Composer? origin=null
+                    ARG key: CONST Int type=kotlin.Int value=1096806409
+                  CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                    ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x.Test' type=androidx.compose.runtime.Composer? origin=null
+                    ARG sourceInformation: CONST String type=kotlin.String value="C(Test):module_main_functionReference.kt"
+                CALL 'public final fun Test ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x.Test' type=androidx.compose.runtime.Composer? origin=null
+                  ARG $changed: CONST Int type=kotlin.Int value=0
+                CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x.Test' type=androidx.compose.runtime.Composer? origin=null
+            FUNCTION_REFERENCE 'local final fun Test ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>.x' type=kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=public final fun Test ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+    PROPERTY name:x1 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+            FUN name:TestWithParams visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:param index:0 type:kotlin.Int
+              VALUE_PARAMETER kind:Regular name:$composer index:1 type:androidx.compose.runtime.Composer? [assignable]
+              VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
+              annotations:
+                Composable
+              BLOCK_BODY
+                BLOCK type=kotlin.Unit origin=null
+                  CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                    ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x1.TestWithParams' type=androidx.compose.runtime.Composer? origin=null
+                    ARG key: CONST Int type=kotlin.Int value=-1597133635
+                  CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                    ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x1.TestWithParams' type=androidx.compose.runtime.Composer? origin=null
+                    ARG sourceInformation: CONST String type=kotlin.String value="C(TestWithParams)N(param):module_main_functionReference.kt"
+                CALL 'public final fun TestWithParams (param: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG param: GET_VAR 'param: kotlin.Int declared in <root>.x1.TestWithParams' type=kotlin.Int origin=null
+                  ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x1.TestWithParams' type=androidx.compose.runtime.Composer? origin=null
+                  ARG $changed: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=14
+                    ARG other: GET_VAR '$changed: kotlin.Int declared in <root>.x1.TestWithParams' type=kotlin.Int origin=null
+                CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x1.TestWithParams' type=androidx.compose.runtime.Composer? origin=null
+            FUNCTION_REFERENCE 'local final fun TestWithParams (param: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>.x1' type=kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=public final fun TestWithParams (param: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL returnType:kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
+        correspondingProperty: PROPERTY name:x1 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x1> (): kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+    FUN name:App visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:$composer index:0 type:androidx.compose.runtime.Composer? [assignable]
+      VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
+      annotations:
+        Composable
+      BLOCK_BODY
+        BLOCK type=kotlin.Unit origin=null
+          SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=kotlin.Unit origin=null
+            CALL 'public abstract fun startRestartGroup (key: kotlin.Int): androidx.compose.runtime.Composer declared in androidx.compose.runtime.Composer' type=androidx.compose.runtime.Composer origin=null
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
+              ARG key: CONST Int type=kotlin.Int value=1442719953
+          CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+            ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
+            ARG sourceInformation: CONST String type=kotlin.String value="C(App)18@145L3,19@153L5:module_main_functionReference.kt"
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
+              ARG parametersChanged: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                  ARG arg0: GET_VAR '$changed: kotlin.Int declared in <root>.App' type=kotlin.Int origin=null
+                  ARG arg1: CONST Int type=kotlin.Int value=0
+              ARG flags: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.App' type=kotlin.Int origin=null
+                ARG other: CONST Int type=kotlin.Int value=1
+            then: BLOCK type=kotlin.Unit origin=null
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+                  then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                    ARG key: CONST Int type=kotlin.Int value=1442719953
+                    ARG dirty1: GET_VAR '$changed: kotlin.Int declared in <root>.App' type=kotlin.Int origin=null
+                    ARG dirty2: CONST Int type=kotlin.Int value=-1
+                    ARG info: CONST String type=kotlin.String value="App (module_main_functionReference.kt:17)"
+              CALL 'public abstract fun invoke ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): R of androidx.compose.runtime.internal.KComposableFunction0 [fake_override,operator] declared in androidx.compose.runtime.internal.KComposableFunction0' type=kotlin.Unit origin=null
+                ARG <this>: CALL 'public final fun <get-x> (): kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=GET_PROPERTY
+                ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
+                ARG $changed: CONST Int type=kotlin.Int value=6
+              CALL 'public abstract fun invoke (p1: P1 of androidx.compose.runtime.internal.KComposableFunction1, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): R of androidx.compose.runtime.internal.KComposableFunction1 [fake_override,operator] declared in androidx.compose.runtime.internal.KComposableFunction1' type=kotlin.Unit origin=null
+                ARG <this>: CALL 'public final fun <get-x1> (): kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>' type=kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=GET_PROPERTY
+                ARG p1: CONST Int type=kotlin.Int value=0
+                ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
+                ARG $changed: CONST Int type=kotlin.Int value=54
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+                  then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL 'public abstract fun skipToGroupEnd (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
+        BLOCK type=kotlin.Unit origin=null
+          BLOCK type=kotlin.Unit origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:androidx.compose.runtime.ScopeUpdateScope? [val]
+              CALL 'public abstract fun endRestartGroup (): androidx.compose.runtime.ScopeUpdateScope? declared in androidx.compose.runtime.Composer' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
+            WHEN type=kotlin.Unit origin=IF
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                  ARG arg0: GET_VAR 'val tmp_0: androidx.compose.runtime.ScopeUpdateScope? [val] declared in <root>.App' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                  ARG arg1: CONST Null type=kotlin.Any? value=null
+                then: CONST Null type=kotlin.Any? value=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CALL 'public abstract fun updateScope (block: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in androidx.compose.runtime.ScopeUpdateScope' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'val tmp_0: androidx.compose.runtime.ScopeUpdateScope? [val] declared in <root>.App' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                  ARG block: FUN_EXPR type=kotlin.Function2<androidx.compose.runtime.Composer?, kotlin.Int, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                      VALUE_PARAMETER kind:Regular name:$composer index:0 type:androidx.compose.runtime.Composer?
+                      VALUE_PARAMETER kind:Regular name:$force index:1 type:kotlin.Int
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> ($composer: androidx.compose.runtime.Composer?, $force: kotlin.Int): kotlin.Unit declared in <root>.App'
+                          CALL 'public final fun App ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                            ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.App.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                            ARG $changed: CALL 'internal final fun updateChangedFlags (flags: kotlin.Int): kotlin.Int declared in androidx.compose.runtime' type=kotlin.Int origin=null
+                              ARG flags: CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                                ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.App' type=kotlin.Int origin=null
+                                ARG other: CONST Int type=kotlin.Int value=1

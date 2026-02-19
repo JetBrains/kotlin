@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package org.jetbrains.kotlin.codegen.range.inExpression
 
 interface ExpressionCodegen
@@ -38,3 +39,7 @@ class CallBasedInExpressionGenerator(
             }
         }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, override, primaryConstructor,
+propertyDeclaration */

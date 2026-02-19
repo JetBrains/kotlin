@@ -27,6 +27,6 @@ interface CodeAnalyzerInitializer {
     }
 }
 
-class DummyCodeAnalyzerInitializer : CodeAnalyzerInitializer {
-    override fun createTrace(): BindingTrace = BindingTraceContext(true)
+class DummyCodeAnalyzerInitializer(val project: Project) : CodeAnalyzerInitializer {
+    override fun createTrace(): BindingTrace = BindingTraceContext(/* allowSliceRewrite = */ true, project)
 }

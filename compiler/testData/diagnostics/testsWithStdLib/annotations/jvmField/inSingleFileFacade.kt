@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 @file:JvmName("SomeName")
 
@@ -11,3 +12,5 @@ class C {
     @JvmField
     var g = 5
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, integerLiteral, propertyDeclaration, stringLiteral */

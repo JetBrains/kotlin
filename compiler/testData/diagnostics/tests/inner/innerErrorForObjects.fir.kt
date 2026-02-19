@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class SomeClass<T>
 class TestSome<P> {
     object Some : SomeClass<<!UNRESOLVED_REFERENCE!>P<!>>() {
@@ -5,15 +6,15 @@ class TestSome<P> {
 }
 
 class Test {
-    object Some : <!UNRESOLVED_REFERENCE!>InnerClass<!>() {
-        val a = object: <!UNRESOLVED_REFERENCE!>InnerClass<!>() {
+    object Some : <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>InnerClass<!>() {
+        val a = object: <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>InnerClass<!>() {
         }
 
         fun more(): InnerClass {
-            val b = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>InnerClass<!>()
+            val b = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>InnerClass<!>()
 
-            val testVal = <!UNRESOLVED_REFERENCE!>inClass<!>
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            val testVal = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>inClass<!>
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>foo<!>()
 
             return b
         }
@@ -25,3 +26,6 @@ class Test {
 
     open inner class InnerClass
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, integerLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

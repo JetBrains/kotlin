@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Foo
 
@@ -122,3 +123,6 @@ fun test(u: U, v: V, x: X) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+lambdaLiteral, operator, propertyDeclaration, propertyWithExtensionReceiver */

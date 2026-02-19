@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 const val aConst = 1
 const val bConst = aConst + 1
 
@@ -16,3 +18,6 @@ class B {
         const val recursive2: Int = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>A.recursive1 + 2<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, companionObject, comparisonExpression, const,
+disjunctionExpression, equalityExpression, integerLiteral, objectDeclaration, propertyDeclaration, stringLiteral */

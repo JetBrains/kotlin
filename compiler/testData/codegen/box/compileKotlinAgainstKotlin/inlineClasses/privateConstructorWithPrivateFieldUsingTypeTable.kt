@@ -1,4 +1,4 @@
-// !LANGUAGE: +GenericInlineClassParameter
+// LANGUAGE: +GenericInlineClassParameter
 // WITH_STDLIB
 // USE_TYPE_TABLE
 // MODULE: lib

@@ -1,4 +1,4 @@
-KtTypeScope:
+KaTypeScope:
 fun contains(element: AAA): kotlin.Boolean
 fun containsAll(elements: kotlin.collections.Collection<AAA>): kotlin.Boolean
 fun get(index: kotlin.Int): AAA
@@ -13,6 +13,8 @@ val size: kotlin.Int
 fun equals(other: kotlin.Any?): kotlin.Boolean
 fun hashCode(): kotlin.Int
 fun toString(): kotlin.String
+fun getFirst(): AAA
+fun getLast(): AAA
 
 
 Declaration Scope:
@@ -30,4 +32,6 @@ val size: kotlin.Int
 fun equals(other: kotlin.Any?): kotlin.Boolean
 fun hashCode(): kotlin.Int
 fun toString(): kotlin.String
+fun getFirst(): E
+fun getLast(): E
 

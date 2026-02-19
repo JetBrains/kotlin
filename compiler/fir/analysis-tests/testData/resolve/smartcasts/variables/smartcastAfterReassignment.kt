@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun test_1() {
     var x: Any = 1
     x = ""
@@ -20,3 +21,6 @@ fun test_3() {
     x = null
     x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

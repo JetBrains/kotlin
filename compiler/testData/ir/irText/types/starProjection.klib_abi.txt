@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    abstract fun dispatchResumeWithException(kotlin/Throwable, /Continuation<*>): kotlin/Boolean // /C.dispatchResumeWithException|dispatchResumeWithException(kotlin.Throwable;Continuation<*>){}[0]
+}
+abstract interface <#A: in kotlin/Any?> /Continuation // /Continuation|null[0]

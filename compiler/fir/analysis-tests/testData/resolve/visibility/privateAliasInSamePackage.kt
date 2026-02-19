@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-49652
 // FILE: First.kt
 package first
@@ -5,7 +6,7 @@ package first
 private typealias Key = String
 
 // FILE: second/Second.java
-package second
+package second;
 
 public class Second {
     public static class Key {
@@ -31,3 +32,6 @@ class Derived : Base<Key>()
 fun test(d: Derived) {
     d.get()?.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, safeCall,
+typeAliasDeclaration, typeParameter */

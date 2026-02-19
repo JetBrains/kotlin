@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: 1.kt
@@ -23,3 +24,5 @@ class c {
 package test
 
 fun test() = a.b.c::foo
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nestedClass */

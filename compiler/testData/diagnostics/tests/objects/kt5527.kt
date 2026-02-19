@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 object Boo {}
 class A {
@@ -17,3 +18,6 @@ fun bar() {
 }
 
 fun useInt(i: Int) = i
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, objectDeclaration,
+propertyDeclaration */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
@@ -17,3 +18,6 @@ fun use(): String {
     @OptIn(ExperimentalAPI::class)
     return function()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, forLoop, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration, rangeExpression, stringLiteral */

@@ -1,0 +1,13 @@
+compiler/testData/javaModules/noDependencyOnNamed/main/usage.kt:3:15: error: symbol is declared in module 'lib' which current module does not depend on
+fun test(foo: Foo) {
+              ^^^
+compiler/testData/javaModules/noDependencyOnNamed/main/usage.kt:4:9: error: symbol is declared in module 'lib' which current module does not depend on
+    foo.field
+        ^^^^^
+compiler/testData/javaModules/noDependencyOnNamed/main/usage.kt:5:9: error: symbol is declared in module 'lib' which current module does not depend on
+    foo.method()
+        ^^^^^^
+compiler/testData/javaModules/noDependencyOnNamed/main/usage.kt:6:5: error: symbol is declared in module 'lib' which current module does not depend on
+    Foo()
+    ^^^
+COMPILATION_ERROR

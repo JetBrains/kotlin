@@ -1,4 +1,5 @@
-// !MARK_DYNAMIC_CALLS
+// RUN_PIPELINE_TILL: FRONTEND
+// MARK_DYNAMIC_CALLS
 
 // FILE: p/J.java
 
@@ -24,7 +25,7 @@ class K: J.C() {
         sam(null)
         sam(
             name = null,
-            name = null
+            <!ARGUMENT_PASSED_TWICE!>name<!> = null
         )
     }
 
@@ -33,3 +34,6 @@ class K: J.C() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction,
+javaType, nullableType */

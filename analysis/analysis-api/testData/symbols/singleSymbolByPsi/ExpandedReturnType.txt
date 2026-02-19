@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,17 +17,23 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: Base
-  symbolKind: TOP_LEVEL
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: {SecondAlias=} Base
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(ExpandedReturnType.kt)
+  getContainingJvmClassName: ExpandedReturnTypeKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: foo

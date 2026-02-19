@@ -1,0 +1,70 @@
+STEP 0:
+    dependencies: libA
+    added file: b.kt
+STEP 1:
+    dependencies: libA
+    modifications:
+        U: b.1.kt -> b.kt
+    modified ir: b.kt
+STEP 2:
+    dependencies: libA
+    modifications:
+        U: b.2.kt -> b.kt
+    modified ir: b.kt
+STEP 3:
+    dependencies: libA
+    modifications:
+        U: b.3.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+STEP 4:
+    dependencies: libA
+    modifications:
+        U: b.4.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+STEP 5:
+    dependencies: libA
+    modifications:
+        U: b.5.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+STEP 6:
+    dependencies: libA
+    modifications:
+        U: b.6.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+STEP 7:
+    modifications:
+        U: b.7.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+STEP 8:
+    modifications:
+        U: b.8.kt -> b.kt
+    modified ir: b.kt
+STEP 9:
+    modifications:
+        U: b.9.kt -> b.kt
+    modified ir: b.kt
+STEP 10:
+    modifications:
+        U: b.10.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+STEP 11:
+    modifications:
+        U: b.11.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+STEP 12:
+    modifications:
+        U: b.12.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+STEP 13:
+    modifications:
+        U: b.13.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt

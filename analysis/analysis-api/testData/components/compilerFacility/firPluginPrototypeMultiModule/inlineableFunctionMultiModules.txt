@@ -1,0 +1,5 @@
+public final class MainKt {
+    // source: 'main.kt'
+    private final static method Bar$lambda$0(): kotlin.Unit
+    public final static method Bar(): void
+}

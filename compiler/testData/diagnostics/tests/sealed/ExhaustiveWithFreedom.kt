@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-13495
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // FILE: Base.kt
 
@@ -63,3 +64,6 @@ fun test_error_4(base: Base) {
         is Containter.C -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, isExpression, localProperty,
+nestedClass, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

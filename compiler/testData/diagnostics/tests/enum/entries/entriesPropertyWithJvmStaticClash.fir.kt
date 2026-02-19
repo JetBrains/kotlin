@@ -1,4 +1,5 @@
-// !LANGUAGE: -EnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -EnumEntries, -PrioritizedEnumEntries
 // WITH_STDLIB
 
 enum class A {
@@ -19,3 +20,6 @@ fun test() {
 
     A.Companion.entries
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

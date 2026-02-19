@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 fun foo(a: String, b: Int = 5): String {
     return a + b
 }
@@ -14,3 +16,6 @@ fun test() {
     bar1(::foo)
     bar2(::foo)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, callableReference, functionDeclaration, functionalType, integerLiteral,
+stringLiteral */

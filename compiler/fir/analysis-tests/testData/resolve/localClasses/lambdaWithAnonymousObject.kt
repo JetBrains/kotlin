@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-57839
 
 fun <R> myRun(block: () -> R): R {
@@ -13,3 +14,6 @@ val cardModel = myRun {
         override val action = {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, override, propertyDeclaration, typeParameter */

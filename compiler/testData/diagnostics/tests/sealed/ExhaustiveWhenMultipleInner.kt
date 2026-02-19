@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 sealed class Sealed() {
     object First: Sealed()
@@ -46,3 +47,5 @@ fun barWithoutElse(s: Sealed) = <!NO_ELSE_IN_WHEN!>when<!>(s) {
     is Sealed.NonFirst.NonSecond.NonThird.Fifth -> 10
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nestedClass, objectDeclaration, primaryConstructor, sealed, smartcast, whenExpression, whenWithSubject */

@@ -16,13 +16,19 @@ public sealed interface SourcesChanges : Serializable {
      * A marker object stating that the API consumer cannot calculate changes (either because it's an initial build or for some other reason).
      * The Build Tools API will not enable its source file changes detector in this mode, expecting the API consumer to provide file changes as [Known] for the consequent builds.
      */
-    public object Unknown : SourcesChanges
+    public object Unknown : SourcesChanges {
+        @Suppress("unused") // KT-40218
+        private fun readResolve(): Any = Unknown
+    }
 
     /**
      * A marker object stating that the API consumer is not capable of calculating source file changes.
      * In this mode, the Build Tools API will enable its source file changes detector and detect changes itself.
      */
-    public object ToBeCalculated : SourcesChanges
+    public object ToBeCalculated : SourcesChanges {
+        @Suppress("unused") // KT-40218
+        private fun readResolve(): Any = ToBeCalculated
+    }
 
     /**
      * A class containing [modifiedFiles] and [removedFiles] calculated from source file changes by the API consumer.

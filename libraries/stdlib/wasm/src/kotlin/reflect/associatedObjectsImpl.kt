@@ -5,38 +5,30 @@
 
 package kotlin.wasm.internal
 
-import kotlin.reflect.wasm.internal.KClassImpl
 import kotlin.reflect.KClass
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
-internal var associatedObjects: Map<ULong, Any>? = null
+private fun KClass<*>.getTypeId(): Long? = when (this) {
+    is KClassImpl<*> -> getTypeId(rtti)
+    is KClassInterfaceImpl<*> -> typeData.typeId
+    else -> return null
+}
 
 @PublishedApi
-internal fun findAssociatedObject(klass: KClass<*>, key: Int): Any? {
-    val klassId = (klass as? KClassImpl<*>)?.typeData?.typeId ?: return null
+internal fun findAssociatedObject(klass: KClass<*>, key: KClass<*>): Any? {
+    val klassId = klass.getTypeId() ?: return null
+    val keyId = key.getTypeId() ?: return null
+    return tryGetAssociatedObjectWithWrapper(klassId, keyId)
+}
 
-    val map = associatedObjects ?: run {
-        val newMap: MutableMap<ULong, Any> = mutableMapOf()
-        initAssociatedObjects(newMap)
-        associatedObjects = newMap
-        newMap
+// TODO: Should be removed after bootstrap
+@UsedFromCompilerGeneratedCode
+internal fun tryGetAssociatedObject(klassId: Long, keyId: Long): Any? = null
+
+// TODO: Should be renamed after bootstrap
+@UsedFromCompilerGeneratedCode
+internal fun tryGetAssociatedObjectWithWrapper(klassId: Long, keyId: Long): Any? {
+    return moduleDescriptors.firstNotNullOfOrNull { moduleDescriptor ->
+        callAssociatedObjectGetter(klassId, keyId, moduleDescriptor.associatedObjectGetter)
     }
-
-    return map[packIntoULong(klassId, key)]
-}
-
-internal fun packIntoULong(a: Int, b: Int): ULong =
-    (a.toUInt().toULong() shl Int.SIZE_BITS) or b.toUInt().toULong()
-
-internal fun addAssociatedObject(
-    mapToInit: MutableMap<ULong, Any>,
-    klassId: Int,
-    keyId: Int,
-    instance: Any
-) {
-    mapToInit[packIntoULong(klassId, keyId)] = instance
-}
-
-internal fun initAssociatedObjects(@Suppress("UNUSED_PARAMETER") mapToInit: MutableMap<ULong, Any>) {
-    // Init implicitly with AssociatedObjectsLowering
-    // addAssociatedObject(mapToInit, ...)
 }

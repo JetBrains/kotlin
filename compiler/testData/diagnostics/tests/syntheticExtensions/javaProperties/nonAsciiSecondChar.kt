@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: A.java
@@ -9,3 +10,5 @@ public class A {
 fun foo(a: A) {
     a.s4ClassRepresentation.length
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType */

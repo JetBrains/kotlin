@@ -1,0 +1,19 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/BooleanArray
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: BooleanArray
+      symbol: KaNamedClassSymbol(kotlin/BooleanArray)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/BooleanArray)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.BooleanArray

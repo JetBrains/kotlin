@@ -1,3 +1,4 @@
+
 // FILE: box.kt
 
 object Test {

@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -26,9 +29,9 @@ class FirPackageMemberScope(
     private val symbolProvider: FirSymbolProvider = session.symbolProvider,
     private val excludedNames: Set<Name> = emptySet(),
 ) : FirScope() {
-    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
-    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
-    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = mutableMapOf()
+    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = hashMapOf()
+    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = hashMapOf()
+    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = hashMapOf()
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
@@ -70,6 +73,11 @@ class FirPackageMemberScope(
     }
 
     override val scopeOwnerLookupNames: List<String> = SmartList(fqName.asString())
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirPackageMemberScope {
+        return FirPackageMemberScope(fqName, newSession, excludedNames = excludedNames)
+    }
 }
 
-val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
+val PACKAGE_MEMBER: ScopeSessionKey<Pair<FqName, FirSession>, FirPackageMemberScope> = scopeSessionKey()

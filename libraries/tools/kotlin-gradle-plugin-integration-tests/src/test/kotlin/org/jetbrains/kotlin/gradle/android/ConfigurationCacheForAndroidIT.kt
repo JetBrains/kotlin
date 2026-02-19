@@ -13,6 +13,13 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Configuration cache in Android project")
 @AndroidGradlePluginTests
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
+
+    fun buildOptions(gradleVersion: GradleVersion) = if (gradleVersion.version < TestVersions.Gradle.MAX_SUPPORTED) {
+        defaultBuildOptions.disableIsolatedProjects()
+    } else {
+        defaultBuildOptions
+    }
+
     @DisplayName("works in android plus kapt project")
     @GradleAndroidTest
     fun testAndroidKaptProject(
@@ -23,7 +30,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         project(
             "kapt2/android-dagger",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             gradleProperties.append("\nkapt.incremental.apt=false")
@@ -31,7 +38,8 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
             testConfigurationCacheOf(
                 ":app:compileDebugKotlin",
                 ":app:kaptDebugKotlin",
-                ":app:kaptGenerateStubsDebugKotlin"
+                ":app:kaptGenerateStubsDebugKotlin",
+                suppressAgpWarnings = true,
             )
         }
     }
@@ -46,12 +54,13 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             testConfigurationCacheOf(
                 ":Lib:compileFlavor1DebugKotlin",
-                ":Android:compileFlavor1DebugKotlin"
+                ":Android:compileFlavor1DebugKotlin",
+                suppressAgpWarnings = true,
             )
         }
     }
@@ -66,12 +75,13 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         project(
             "AndroidIncrementalMultiModule",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             testConfigurationCacheOf(
                 ":app:compileDebugAndroidTestKotlin",
-                ":app:compileDebugUnitTestKotlin"
+                ":app:compileDebugUnitTestKotlin",
+                suppressAgpWarnings = true,
             )
         }
     }

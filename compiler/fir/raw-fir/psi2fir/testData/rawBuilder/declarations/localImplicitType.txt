@@ -1,0 +1,43 @@
+FILE: localImplicitType.kt
+    public? final? fun check(): R|kotlin/Unit| {
+        local final? class A : R|kotlin/Any| {
+            public? [ContainingClassKey=A] constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? val bar: <implicit>
+                public? [ContainingClassKey=A] get(): <implicit> {
+                    ^ B#().foo#
+                }
+
+            public? final? fun baz(): <implicit> {
+                ^baz B#().doo#()
+            }
+
+            local final? inner [ContainingClassKey=A] class B : R|kotlin/Any| {
+                public? [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? var foo: @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>? = Null(null)
+                    public? [ContainingClassKey=B] get(): @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>?
+                    public? [ContainingClassKey=B] set(value: @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>?): R|kotlin/Unit|
+
+                public? final? fun doo(): @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>? {
+                    ^doo Null(null)
+                }
+
+                local final? inner [ContainingClassKey=B] class C : R|kotlin/Any| {
+                    public? [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        lval a: <implicit> = A#().bar#
+        lval b: <implicit> = A#().baz#()
+    }

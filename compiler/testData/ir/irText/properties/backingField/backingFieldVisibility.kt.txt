@@ -1,16 +1,6 @@
 class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val a: Int
     field = 1
-    get
-
-  val b: Int
-    field = <this>.<get-a>().plus(other = 2)
     get
 
   val c: Int
@@ -21,14 +11,15 @@ class A {
     field = <this>.<get-c>().plus(other = 2)
     get
 
-  fun rest() {
-    val aI: Int = A().<get-a>().plus(other = 10)
-    val bI: Int = A().<get-b>().plus(other = 20)
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
   }
 
-}
+  fun rest() {
+    val aI: Int = A().<get-a>() /*as Int */.plus(other = 10)
+  }
 
-fun test() {
-  val bA: Int = A().<get-b>().plus(other = 20)
 }
 

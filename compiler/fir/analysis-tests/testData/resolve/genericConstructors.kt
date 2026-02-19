@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A<T>(t: T) {
     fun foo(x: T) {}
 }
@@ -14,3 +15,6 @@ class C : B<String>("") {
         a.foo("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter */

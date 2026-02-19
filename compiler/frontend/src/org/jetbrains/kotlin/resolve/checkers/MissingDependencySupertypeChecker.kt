@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -51,7 +50,7 @@ object MissingDependencySupertypeChecker {
                 context.trace, context.missingSupertypesResolver
             )
 
-            val eagerChecksAllowed = context.languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)
+            val eagerChecksAllowed = context.languageVersionSettings.supportsFeature(LanguageFeature.AllowEagerSupertypeAccessibilityChecks)
             val unresolvedLazySupertypesByDefault = descriptor is ConstructorDescriptor || descriptor is FakeCallableDescriptorForObject
 
             if (eagerChecksAllowed || !unresolvedLazySupertypesByDefault && !errorReported) {

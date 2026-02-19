@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile1.kt
 package k
 
@@ -16,3 +17,5 @@ fun foo(javaClass: JavaClass) {
 public class JavaClass {
     void doSomething(Runnable runnable) { runnable.run(); }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

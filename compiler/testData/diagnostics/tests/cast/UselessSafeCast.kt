@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun test(x: Int?) {
     val a1 = x <!USELESS_CAST!>as? Int<!>
@@ -20,3 +21,6 @@ fun test(x: Int?) {
 }
 
 fun foo(x: Number?) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

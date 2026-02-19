@@ -1,0 +1,6 @@
+abi_version=1.8.0
+builtins_platform=JS
+compiler_version=2.0.0
+ir_signature_versions=1,2
+metadata_version=1.4.1
+unique_name=malformed-klib4

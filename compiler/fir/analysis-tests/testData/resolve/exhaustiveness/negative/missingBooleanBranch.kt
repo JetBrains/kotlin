@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test_1(cond: Boolean) {
     val x = <!NO_ELSE_IN_WHEN!>when<!> (cond) {
         true -> 1
@@ -10,6 +11,11 @@ fun test_1(cond: Boolean) {
     val z = when (cond) {
         true -> 1
         false -> 2
+    }
+
+    val k = when (cond) {
+        true -> 1
+        else -> 2
     }
 }
 
@@ -31,3 +37,6 @@ fun test_3(cond: Boolean) {
         true -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, whenExpression, whenWithSubject */

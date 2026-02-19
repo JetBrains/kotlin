@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package test
 
@@ -48,3 +49,6 @@ class Test5(val y: Y, val x: X) : X by x, Y by y, Incompatible {
         return 3
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, nullableType, override, primaryConstructor, propertyDeclaration, stringLiteral */

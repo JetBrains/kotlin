@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KProperty
 
 class Del {
@@ -15,3 +16,6 @@ fun test(del: Any?) {
     val delegatedVal1: Int by df(del)
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression, localClass,
+nullableType, operator, propertyDeclaration, propertyDelegate, smartcast, starProjection */

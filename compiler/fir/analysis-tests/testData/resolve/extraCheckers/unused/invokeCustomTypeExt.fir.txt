@@ -1,0 +1,13 @@
+FILE: invokeCustomTypeExt.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|Foo|.invoke(): R|kotlin/Unit| {
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval x: R|Foo| = R|/Foo.Foo|()
+        R|<local>/x|.R|/invoke|()
+    }

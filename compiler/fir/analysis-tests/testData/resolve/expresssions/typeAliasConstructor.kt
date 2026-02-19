@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A(i: Int)
 
 typealias AA = A
@@ -11,3 +12,6 @@ fun main() {
     val y = BB<String>("bb")
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter */

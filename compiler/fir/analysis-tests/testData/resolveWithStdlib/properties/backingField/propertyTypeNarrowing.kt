@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val it: Number
         field = 4
@@ -13,3 +14,6 @@ fun test() {
     val d = test()
     val b = A().p + 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, explicitBackingField, functionDeclaration, getter,
+integerLiteral, localProperty, propertyDeclaration, smartcast */

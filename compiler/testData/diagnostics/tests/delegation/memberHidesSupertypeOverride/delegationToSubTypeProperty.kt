@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 public interface Base {
     val test: String
@@ -19,3 +20,6 @@ fun box(): String {
 
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, getter, inheritanceDelegation,
+interfaceDeclaration, propertyDeclaration, stringLiteral */

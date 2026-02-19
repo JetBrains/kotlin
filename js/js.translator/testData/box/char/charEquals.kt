@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1372
 package foo
 
 // CHECK_NEW_COUNT: function=box max=10

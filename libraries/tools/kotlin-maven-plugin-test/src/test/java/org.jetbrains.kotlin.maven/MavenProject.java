@@ -1,19 +1,35 @@
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.TextStreamsKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContext;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.jetbrains.kotlin.maven.MavenTestUtils.getNotNullSystemProperty;
+import static org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContextKt.createMavenTestExecutionContextFromEnvironment;
+import static org.jetbrains.kotlin.maven.test.MavenSettingsXmlBuilderKt.checkOrWriteKotlinMavenTestSettingsXml;
 
 class MavenProject {
     @NotNull
     private final File workingDir;
+
+    @NotNull
+    private final File mavenSettingsXml;
+
+    @NotNull
+    private final MavenTestExecutionContext mavenTestExecutionContext;
+
+    public enum ExecutionStrategy {
+        IN_PROCESS,
+        DAEMON,
+        ;
+    }
 
     MavenProject(@NotNull String name) throws IOException {
         File originalProjectDir = new File("src/test/resources/" + name);
@@ -24,6 +40,16 @@ class MavenProject {
             File to = new File(workingDir, from.getName());
             FileUtil.copyFileOrDir(from, to);
         }
+
+        mavenTestExecutionContext = createMavenTestExecutionContextFromEnvironment(
+                // this argument is required but is not used later in the test, so I set it to a random value
+                Paths.get(workingDir.getAbsolutePath(), "tmp")
+        );
+        mavenSettingsXml = new File(workingDir, "maven-settings.xml");
+        checkOrWriteKotlinMavenTestSettingsXml(
+                Paths.get(mavenSettingsXml.getAbsolutePath()),
+                mavenTestExecutionContext.getKotlinBuildRepo()
+        );
     }
 
     @NotNull
@@ -32,7 +58,29 @@ class MavenProject {
     }
 
     MavenExecutionResult exec(String... targets) throws Exception {
+        return exec(null, targets);
+    }
+
+    MavenExecutionResult exec(@Nullable ExecutionStrategy executionStrategy, String... targets) throws Exception {
         List<String> cmd = buildCmd(targets);
+        if (executionStrategy != null) { // else use the default strategy
+            boolean daemonEnabled;
+            switch (executionStrategy) {
+                case IN_PROCESS:
+                    daemonEnabled = false;
+                    break;
+                case DAEMON:
+                    daemonEnabled = true;
+                    break;
+                default: throw new IllegalArgumentException("Unknown execution strategy: " + executionStrategy);
+            }
+            cmd.add("-Dkotlin.compiler.daemon=" + daemonEnabled);
+        }
+
+        assert mavenSettingsXml.exists() : "Could not find Maven settings file: " + mavenSettingsXml.getAbsolutePath();
+        cmd.add("--settings");
+        cmd.add(mavenSettingsXml.getAbsolutePath());
+
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
 
         processBuilder.directory(workingDir);
@@ -67,9 +115,9 @@ class MavenProject {
         cmd.add("-D" + kotlinVersionProperty + "=" + getNotNullSystemProperty(kotlinVersionProperty));
 
         String mavenRepoLocalProperty = "maven.repo.local";
-        String localRepoPath = System.getProperty(mavenRepoLocalProperty);
         try {
-            if (localRepoPath != null && !StringsKt.isBlank(localRepoPath) && new File(localRepoPath).isDirectory()) {
+            String localRepoPath = mavenTestExecutionContext.getSharedMavenLocal().toAbsolutePath().toString();
+            if (!StringsKt.isBlank(localRepoPath) && new File(localRepoPath).isDirectory()) {
                 cmd.add("-D" + mavenRepoLocalProperty + "=" + localRepoPath);
             }
         }
@@ -82,4 +130,3 @@ class MavenProject {
         return cmd;
     }
 }
-

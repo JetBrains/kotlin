@@ -1,0 +1,12 @@
+KT element: KtProperty
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] lvar j: R|kotlin/Int| = Int(1)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] labelUnderscore.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        ERROR_EXPR(Names _, __, ___, ..., are reserved in Kotlin)
+    }

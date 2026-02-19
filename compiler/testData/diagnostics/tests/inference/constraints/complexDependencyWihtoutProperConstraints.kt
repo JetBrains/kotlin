@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // Isuue: KT-37627
 
 class Inv<T>(arg: T)
@@ -66,3 +67,7 @@ fun test(bool: Boolean) {
     } else null
     <!DEBUG_INFO_EXPRESSION_TYPE("Pair<kotlin.Int, () -> () -> kotlin.String>?")!>test13<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeParameter, vararg */

@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface /SuspendRunnable { // /SuspendRunnable|null[0]
+    abstract suspend fun invoke() // /SuspendRunnable.invoke|invoke(){}[0]
+}
+final fun /bar1() // /bar1|bar1(){}[0]
+final fun /bar2(kotlin/String = ...): kotlin/Int // /bar2|bar2(kotlin.String){}[0]
+final fun /bar3() // /bar3|bar3(){}[0]
+final suspend fun /bar3(kotlin/String = ...): kotlin/Int // /bar3|bar3(kotlin.String){}[0]
+final fun /box() // /box|box(){}[0]
+final fun /foo1(/SuspendRunnable) // /foo1|foo1(SuspendRunnable){}[0]

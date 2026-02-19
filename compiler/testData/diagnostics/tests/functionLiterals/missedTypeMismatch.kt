@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNCHECKED_CAST
 // Issues: KT-38890, KT-38439
 
 fun foo(x: () -> Int) {}
@@ -38,3 +39,6 @@ fun main() {
     val a20: () -> () -> () -> Unit = fun() = fun() = {}
     val a21: () -> () -> () -> Int = <!TYPE_MISMATCH!>fun() = fun() = {}<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, asExpression, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

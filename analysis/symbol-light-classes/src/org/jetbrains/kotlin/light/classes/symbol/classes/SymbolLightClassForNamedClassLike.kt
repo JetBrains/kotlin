@@ -1,26 +1,16 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiModifier
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
-import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
@@ -28,34 +18,30 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiers
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KtNamedClassOrObjectSymbol> {
+internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KaNamedClassSymbol> {
     constructor(
-        ktAnalysisSession: KtAnalysisSession,
-        ktModule: KtModule,
-        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
-        manager: PsiManager
+        ktModule: KaModule,
+        classSymbol: KaNamedClassSymbol,
+        manager: PsiManager,
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
-        classOrObjectSymbol = classOrObjectSymbol,
+        classSymbol = classSymbol,
         manager = manager,
     )
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
-        ktModule: KtModule,
+        classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager
     )
 
-    protected val isLocal: Boolean by lazyPub {
-        classOrObjectDeclaration?.isLocal ?: withClassOrObjectSymbol { it.symbolKind == KtSymbolKind.LOCAL }
-    }
+    protected val isLocal: Boolean get() = withClassSymbol { it.isLocal }
 
     override fun getParent(): PsiElement? {
         if (isLocal) {
@@ -65,50 +51,42 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         return containingClass ?: containingFile
     }
 
-    context(KtAnalysisSession)
-    protected fun addMethodsFromCompanionIfNeeded(
-        result: MutableList<KtLightMethod>,
-        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+    protected fun KaSession.addMethodsFromCompanionIfNeeded(
+        result: MutableList<PsiMethod>,
+        classSymbol: KaNamedClassSymbol,
     ) {
-        val companionObjectSymbol = classOrObjectSymbol.companionObject ?: return
-        val methods = companionObjectSymbol.getDeclaredMemberScope()
-            .getCallableSymbols()
-            .filterIsInstance<KtFunctionSymbol>()
-            .filter { it.hasJvmStaticAnnotation() }
+        val companionObjectSymbol = classSymbol.companionObject ?: return
+        val methods = companionObjectSymbol.declaredMemberScope
+            .callables
+            .filter { it is KaNamedFunctionSymbol || it is KaPropertySymbol }
 
-        createMethods(methods, result)
-
-        companionObjectSymbol.getDeclaredMemberScope()
-            .getCallableSymbols()
-            .filterIsInstance<KtPropertySymbol>()
-            .forEach { property ->
-                createPropertyAccessors(
-                    result,
-                    property,
-                    isTopLevel = false,
-                    onlyJvmStatic = true,
-                )
-            }
+        createMethods(
+            this@SymbolLightClassForNamedClassLike,
+            methods,
+            result,
+            staticsFromCompanion = true,
+        )
     }
 
-    private val isInner: Boolean
-        get() = classOrObjectDeclaration?.hasModifier(KtTokens.INNER_KEYWORD) ?: withClassOrObjectSymbol { it.isInner }
+    private val isInner: Boolean get() = withClassSymbol { it.isInner }
 
-    context(KtAnalysisSession)
-    protected fun addFieldsFromCompanionIfNeeded(
-        result: MutableList<KtLightField>,
-        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+    internal val isSealed: Boolean get() = withClassSymbol { it.modality == KaSymbolModality.SEALED }
+
+    internal fun KaSession.addFieldsFromCompanionIfNeeded(
+        result: MutableList<PsiField>,
+        classSymbol: KaNamedClassSymbol,
+        nameGenerator: SymbolLightField.FieldNameGenerator,
     ) {
-        val nameGenerator = SymbolLightField.FieldNameGenerator()
-        classOrObjectSymbol.companionObject
-            ?.getDeclaredMemberScope()
-            ?.getCallableSymbols()
-            ?.filterIsInstance<KtPropertySymbol>()
+        classSymbol.companionObject
+            ?.declaredMemberScope
+            ?.callables
+            ?.filterIsInstance<KaPropertySymbol>()
             ?.applyIf(isInterface) {
                 filter { it.isConstOrJvmField }
             }
             ?.forEach {
-                createField(
+                createAndAddField(
+                    lightClass = this@SymbolLightClassForNamedClassLike,
                     declaration = it,
                     nameGenerator = nameGenerator,
                     isStatic = true,
@@ -117,18 +95,16 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
             }
     }
 
-    context(KtAnalysisSession)
-    protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
-        val companionObjectSymbols: List<KtNamedClassOrObjectSymbol>? = classOrObjectDeclaration?.companionObjects?.mapNotNull {
-            it.getNamedClassOrObjectSymbol()
-        } ?: classOrObjectSymbol.companionObject?.let(::listOf)
+    protected fun KaSession.addCompanionObjectFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
+        val companionObjectSymbols: List<KaNamedClassSymbol>? = classOrObjectDeclaration?.companionObjects?.mapNotNull {
+            it.namedClassSymbol
+        } ?: classSymbol.companionObject?.let(::listOf)
 
         companionObjectSymbols?.forEach {
             result.add(
                 SymbolLightFieldForObject(
-                    ktAnalysisSession = this@KtAnalysisSession,
                     objectSymbol = it,
-                    containingClass = this,
+                    containingClass = this@SymbolLightClassForNamedClassLike,
                     name = it.name.asString(),
                     lightMemberOrigin = null,
                     isCompanion = true,
@@ -139,11 +115,11 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
 
     internal fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
-            GranularModifiersBox.computeVisibilityForClass(ktModule, classOrObjectSymbolPointer, isTopLevel)
+            GranularModifiersBox.computeVisibilityForClass(ktModule, classSymbolPointer, isTopLevel)
         }
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
-            GranularModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)
+            GranularModifiersBox.computeSimpleModality(ktModule, classSymbolPointer)
         }
 
         PsiModifier.STATIC -> {

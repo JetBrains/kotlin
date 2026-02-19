@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // FILE: Test.java
 public class Test {
     public static int i1 = 1;
@@ -23,3 +25,6 @@ annotation class Ann(vararg val i: Int)
         <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test().i7<!>
 )
 class A
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, javaFunction, javaProperty, javaType, primaryConstructor,
+propertyDeclaration, vararg */

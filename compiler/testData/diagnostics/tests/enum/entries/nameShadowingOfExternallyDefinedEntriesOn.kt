@@ -1,4 +1,5 @@
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -39,3 +40,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, enumDeclaration, functionDeclaration, integerLiteral,
+nestedClass, propertyDeclaration, stringLiteral, thisExpression */

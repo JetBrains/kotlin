@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 import Obj.ext
 import A.Companion.ext2
@@ -24,3 +26,6 @@ fun test() {
     A::<!UNRESOLVED_REFERENCE!>foo<!>
     A::<!UNRESOLVED_REFERENCE!>bar<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, getter,
+objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, thisExpression */

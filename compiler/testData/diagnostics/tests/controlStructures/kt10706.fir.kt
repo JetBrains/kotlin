@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun fn(c: Char?): Any? =
         if (c == null) TODO()
         else when (c) {
@@ -8,3 +9,6 @@ fun fn(c: Char?): Any? =
             }
             else -> TODO()
         }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

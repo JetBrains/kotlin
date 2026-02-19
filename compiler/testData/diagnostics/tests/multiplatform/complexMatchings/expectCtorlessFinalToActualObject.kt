@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -45,3 +47,6 @@ actual object M01 {
 actual <!ACTUAL_WITHOUT_EXPECT!>object<!> ENUM01
 
 actual <!ACTUAL_WITHOUT_EXPECT!>object<!> ANNO01
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, enumDeclaration, expect, functionDeclaration,
+interfaceDeclaration, objectDeclaration, primaryConstructor, secondaryConstructor */

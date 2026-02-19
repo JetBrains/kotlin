@@ -1,9 +1,0 @@
-Before shortening: _root_ide_package_.dependency.Foo
-with DO_NOT_SHORTEN:
-[kdoc] _root_ide_package_.dependency
-with SHORTEN_IF_ALREADY_IMPORTED:
-[kdoc] _root_ide_package_.dependency.Foo
-with SHORTEN_AND_IMPORT:
-[kdoc] _root_ide_package_.dependency.Foo
-with SHORTEN_AND_STAR_IMPORT:
-[kdoc] _root_ide_package_.dependency.Foo

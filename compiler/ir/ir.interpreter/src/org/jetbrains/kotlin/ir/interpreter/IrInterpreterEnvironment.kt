@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -16,13 +16,16 @@ import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isSubclassOf
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrInterpreterEnvironment(
     val irBuiltIns: IrBuiltIns,
@@ -40,6 +43,10 @@ class IrInterpreterEnvironment(
     internal val kTypeProjectionClass by lazy { kTypeClass.getIrClassOfReflectionFromList("arguments")!! }
     internal val kTypeClass: IrClassSymbol by lazy { irBuiltIns.kTypeClass }
 
+    internal val toStringSymbol: IrSimpleFunctionSymbol by lazy {
+        irBuiltIns.anyClass.owner.functions.first { it.name == OperatorNameConventions.TO_STRING && it.hasShape(dispatchReceiver = true) }.symbol
+    }
+
     init {
         mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)
     }
@@ -47,9 +54,8 @@ class IrInterpreterEnvironment(
     private data class CacheFunctionSignature(
         val symbol: IrFunctionSymbol,
 
-        // must create different invoke function for function expression with and without receivers
-        val hasDispatchReceiver: Boolean,
-        val hasExtensionReceiver: Boolean,
+        // must create different invoke function for function expression for which different parameters are bound
+        val boundParameters: Set<IrValueParameter>,
 
         // must create different default functions for constructor call and delegating call;
         // their symbols are the same but calls are different, so default function must return different calls
@@ -62,36 +68,25 @@ class IrInterpreterEnvironment(
         mapOfObjects = environment.mapOfObjects
     }
 
-    constructor(irModule: IrModuleFragment) : this(irModule.irBuiltins) {
-        irExceptions.addAll(
-            irModule.files
-                .flatMap { it.declarations }
-                .filterIsInstance<IrClass>()
-                .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
-        )
-    }
-
     fun copyWithNewCallStack(): IrInterpreterEnvironment {
         return IrInterpreterEnvironment(this)
     }
 
     internal fun getCachedFunction(
         symbol: IrFunctionSymbol,
-        hasDispatchReceiver: Boolean = false,
-        hasExtensionReceiver: Boolean = false,
+        boundParameters: Set<IrValueParameter> = emptySet(),
         fromDelegatingCall: Boolean = false
     ): IrFunctionSymbol? {
-        return functionCache[CacheFunctionSignature(symbol, hasDispatchReceiver, hasExtensionReceiver, fromDelegatingCall)]
+        return functionCache[CacheFunctionSignature(symbol, boundParameters, fromDelegatingCall)]
     }
 
     internal fun setCachedFunction(
         symbol: IrFunctionSymbol,
-        hasDispatchReceiver: Boolean = false,
-        hasExtensionReceiver: Boolean = false,
+        boundParameters: Set<IrValueParameter> = emptySet(),
         fromDelegatingCall: Boolean = false,
         newFunction: IrFunctionSymbol
     ): IrFunctionSymbol {
-        functionCache[CacheFunctionSignature(symbol, hasDispatchReceiver, hasExtensionReceiver, fromDelegatingCall)] = newFunction
+        functionCache[CacheFunctionSignature(symbol, boundParameters, fromDelegatingCall)] = newFunction
         return newFunction
     }
 
@@ -102,7 +97,7 @@ class IrInterpreterEnvironment(
         return when (value) {
             is Proxy -> value.state
             is State -> value
-            is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
+            is Boolean, is Char, is Byte, is Short, is Int, is ULong, is UByte, is UShort, is UInt, is Long,is String, is Float, is Double, is Array<*>, is ByteArray,
             is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(value, irType)
             null -> Primitive.nullStateOfType(irType)
             else -> irType.classOrNull?.owner?.let { Wrapper(value, it, this) }
@@ -115,10 +110,10 @@ class IrInterpreterEnvironment(
         val end = original.endOffset
         val type = original.type.makeNotNull()
         return when (state) {
-            is Primitive<*> -> when {
+            is Primitive -> when {
                 configuration.platform.isJs() && state.value is Float -> IrConstImpl.float(start, end, type, state.value)
                 configuration.platform.isJs() && state.value is Double -> IrConstImpl.double(start, end, type, state.value)
-                state.value == null || type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
+                state.value == null || type.isPrimitiveType() || type.isUnsignedType() || type.isString() -> state.value.toIrConst(type, start, end)
                 else -> original // TODO support for arrays
             }
             is ExceptionState -> {
@@ -128,7 +123,7 @@ class IrInterpreterEnvironment(
             is Complex -> {
                 val stateType = state.irClass.defaultType
                 when {
-                    stateType.isUnsignedType() -> (state.fields.values.single() as Primitive<*>).value.toIrConst(type, start, end)
+                    stateType.isUnsignedType() -> (state.fields.values.single() as Primitive).value.toIrConst(type, start, end)
                     else -> original
                 }
             }

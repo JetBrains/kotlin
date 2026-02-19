@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -USELESS_ELVIS -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -USELESS_ELVIS -UNUSED_EXPRESSION
 
 class X {
     fun toLong(): Long? = TODO()
@@ -20,3 +21,6 @@ fun test_3(list: List<X>) {
     val props = list.map { Pair(it.toLong() ?: 0, it.toLong() ?: 0) }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Pair<kotlin.Long, kotlin.Long>>")!>props<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, ifExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration */

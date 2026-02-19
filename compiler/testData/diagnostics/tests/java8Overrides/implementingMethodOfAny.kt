@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface IA {
     <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString(): String = "IA"<!>
 
@@ -7,3 +8,6 @@ interface IA {
         return 42;
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, nullableType, operator, override,
+stringLiteral, superExpression */

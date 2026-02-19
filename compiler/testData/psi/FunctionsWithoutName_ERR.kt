@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun )
 fun @[a] T.(a : ) : bar
 fun @[a()] T.<>(a : foo) : bar

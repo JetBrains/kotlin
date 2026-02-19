@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.reflect.KProperty
 import kotlin.properties.ReadWriteProperty
@@ -47,3 +48,8 @@ class CleanupTestExample {
         var thing2: TestHolder by cleanup(testHolder) { println("cleaning up $it") }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, data, dnnType, elvisExpression, equalityExpression,
+functionDeclaration, functionalType, ifExpression, init, integerLiteral, lambdaLiteral, localProperty, nestedClass,
+nullableType, operator, override, primaryConstructor, propertyDeclaration, propertyDelegate, setter, smartcast,
+starProjection, stringLiteral, thisExpression, typeConstraint, typeParameter */

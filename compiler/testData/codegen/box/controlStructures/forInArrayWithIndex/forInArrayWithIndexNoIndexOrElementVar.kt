@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val arr = arrayOf("a", "b", "c", "d")
@@ -5,7 +6,7 @@ val arr = arrayOf("a", "b", "c", "d")
 fun box(): String {
     var count = 0
 
-    for ((_, _) in arr.withIndex()) {
+    for ([_, _] in arr.withIndex()) {
         count++
     }
 

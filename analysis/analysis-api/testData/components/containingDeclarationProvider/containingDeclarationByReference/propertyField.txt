@@ -1,0 +1,3 @@
+field
+/Foo.foo
+/Foo

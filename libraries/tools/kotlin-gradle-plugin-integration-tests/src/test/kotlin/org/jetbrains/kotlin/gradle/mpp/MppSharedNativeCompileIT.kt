@@ -9,7 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.properties.hasProperty
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -26,13 +26,10 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
     fun `test - shared native klib - does not contain 'depends=' manifest property`(gradleVersion: GradleVersion) {
         project("kt-54995-compileSharedNative-with-okio", gradleVersion) {
             build("compileNativeMainKotlinMetadata") {
-                val nativeMainKlib = projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain.klib")
-                assertFileExists(nativeMainKlib)
+                val nativeMainKlib = projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain")
+                assertDirectoryExists(nativeMainKlib)
 
-                val libraryFile = org.jetbrains.kotlin.library.resolveSingleFileKlib(
-                    org.jetbrains.kotlin.konan.file.File(nativeMainKlib),
-                    strategy = ToolingSingleFileKlibResolveStrategy
-                )
+                val libraryFile = KlibLoader { libraryPaths(nativeMainKlib) }.load().librariesStdlibFirst.single()
 
                 if (libraryFile.unresolvedDependencies.isNotEmpty()) {
                     fail("Expected metadata klib to not list dependencies. Found ${libraryFile.unresolvedDependencies}")

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument
+// LANGUAGE: +SamConversionPerArgument
 // FILE: J.java
 public interface J {
     public void foo1(Runnable r);
@@ -33,3 +34,5 @@ fun test(j: J, r: Runnable) {
     j.foo3({}, {}, r)
     j.foo3({}, {}, {})
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

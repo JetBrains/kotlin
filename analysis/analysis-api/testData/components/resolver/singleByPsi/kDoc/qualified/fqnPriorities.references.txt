@@ -1,0 +1,35 @@
+<caret_1>:
+  KDocName(17,23): 'com.AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in com) class AA
+
+<caret_2>:
+  KDocName(42,48): 'com.AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in com) class AA
+
+<caret_3>:
+  KDocName(80,86): 'com.AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in com) class AA
+
+<caret_4>:
+  KDocName(95,98): 'com'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        package com

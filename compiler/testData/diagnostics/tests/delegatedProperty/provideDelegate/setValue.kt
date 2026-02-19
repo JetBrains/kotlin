@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// ISSUE: KT-61077
 class Delegate<T>
 
 operator fun Delegate<*>.getValue(receiver: Any?, p: Any): String = ""
@@ -14,3 +15,6 @@ var test3: String by <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCT
 
 var test4: String by "OK".provideDelegate(null, "")
 var test5: String by "OK".provideDelegate<String>(null, "")
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, operator,
+propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

@@ -1,0 +1,11 @@
+package
+
+public final class Foo</*0*/ I, /*1*/ out O> {
+    public constructor Foo</*0*/ I, /*1*/ out O>(/*0*/ transformer: (I) -> O)
+    private final val transformer: (I) -> O
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun </*0*/ I, /*1*/ O> transform(/*0*/ foo: Foo<I, O>, /*1*/ bar: I): kotlin.Unit
+}
+

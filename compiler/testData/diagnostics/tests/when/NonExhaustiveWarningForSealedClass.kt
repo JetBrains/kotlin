@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -28,3 +29,6 @@ fun foo(s: S) {
         is Derived -> use(<!DEBUG_INFO_SMARTCAST!>s<!>.s)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, isExpression, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

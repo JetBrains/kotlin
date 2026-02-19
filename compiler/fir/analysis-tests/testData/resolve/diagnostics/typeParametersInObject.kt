@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object A<!TYPE_PARAMETERS_IN_OBJECT!><T, K : T><!> {
     object B<!TYPE_PARAMETERS_IN_OBJECT!><L><!>
 }
@@ -13,3 +14,6 @@ fun test() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localClass, nestedClass, nullableType,
+objectDeclaration, typeConstraint, typeParameter */

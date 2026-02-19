@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 class X {
     fun T_X() {}
@@ -36,3 +37,5 @@ class B: A() {
         <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Y()<!>.<!UNRESOLVED_REFERENCE!>T_Y<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, nestedClass, objectDeclaration */

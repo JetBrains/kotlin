@@ -1,3 +1,4 @@
 expression: STRING_TEMPLATE
 text: "this is a template"
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -1,62 +1,34 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.backend.common.ir.BackendSymbols
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSupportForLowerings
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-interface LoggingContext {
-    var inVerbosePhase: Boolean
-    fun log(message: () -> String)
-}
+/**
+ * A context that is used to pass data to the second stage compiler lowerings
+ * (those that are executed after deserializing IR from KLIBs, or any lowering in the JVM backend).
+ */
+interface CommonBackendContext : LoweringContext, BackendContextHolder {
+    abstract override val symbols: BackendSymbols
+    val typeSystem: IrTypeSystemContext
 
-interface ErrorReportingContext {
-    fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
-}
-
-interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingContext {
-    override val ir: Ir<CommonBackendContext>
-
-    val configuration: CompilerConfiguration
-    val scriptMode: Boolean
-
-    fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
-        val throwErrorFunction = ir.symbols.throwUninitializedPropertyAccessException.owner
-        return builder.irCall(throwErrorFunction).apply {
-            putValueArgument(0, builder.irString(name))
-        }
-    }
-
-    val mapping: Mapping
-
-    // Adjust internal structures after a deep copy of some declarations.
-    fun handleDeepCopy(
-        fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
-        classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
-        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
-    ) {}
-
-    fun isSideEffectFree(call: IrCall): Boolean {
-        return false
-    }
+    override val heldBackendContext: CommonBackendContext
+        get() = this
 
     val preferJavaLikeCounterLoop: Boolean
         get() = false
@@ -73,11 +45,6 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
     val optimizeNullChecksUsingKotlinNullability: Boolean
         get() = true
 
-    fun remapMultiFieldValueClassStructure(
-        oldFunction: IrFunction, newFunction: IrFunction,
-        parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?
-    ) = Unit
-
     /**
      * See [InlineClassesUtils].
      */
@@ -86,6 +53,11 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
 
     val partialLinkageSupport: PartialLinkageSupportForLowerings
         get() = PartialLinkageSupportForLowerings.DISABLED
+
+    val innerClassesSupport: InnerClassesSupport
+
+    val shouldGenerateHandlerParameterForDefaultBodyFun
+        get() = false
 }
 
 /**
@@ -106,7 +78,7 @@ interface InlineClassesUtils {
      * for some reason it can be called for classes which are not inline, e.g. `kotlin.Double`.
      */
     fun getInlineClassUnderlyingType(irClass: IrClass): IrType =
-        irClass.declarations.firstIsInstanceOrNull<IrConstructor>()?.takeIf { it.isPrimary }?.valueParameters?.get(0)?.type
+        irClass.declarations.firstIsInstanceOrNull<IrConstructor>()?.takeIf { it.isPrimary }?.parameters[0]?.type
             ?: error("Class has no primary constructor: ${irClass.fqNameWhenAvailable}")
 }
 

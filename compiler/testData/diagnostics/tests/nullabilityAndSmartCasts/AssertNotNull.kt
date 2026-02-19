@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun main() {
     val a : Int? = null
@@ -36,3 +37,7 @@ fun main() {
     val f : String = <!TYPE_MISMATCH!>a<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     checkSubtype<String>(<!TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, infix, integerLiteral, isExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, typeParameter, typeWithExtension */

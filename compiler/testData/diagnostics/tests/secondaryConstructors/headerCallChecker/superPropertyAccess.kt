@@ -1,6 +1,11 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class B(val prop: Int)
 class A : B {
     constructor(x: Int, y: Int = x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.prop + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>super<!>.prop) :
         super(x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.prop + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>super<!>.prop)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, primaryConstructor, propertyDeclaration,
+secondaryConstructor, thisExpression */

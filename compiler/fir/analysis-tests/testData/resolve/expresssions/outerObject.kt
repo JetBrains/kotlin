@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
  object Outer {
      val x = 0
      fun Nested.foo() {}
@@ -8,3 +9,6 @@
          }
      }
  }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, propertyDeclaration */

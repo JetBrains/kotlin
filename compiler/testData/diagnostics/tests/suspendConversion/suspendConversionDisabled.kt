@@ -1,5 +1,6 @@
-// !LANGUAGE: -SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo1(f: suspend () -> String) {}
 fun foo2(f: suspend (Int) -> String) {}
@@ -25,3 +26,5 @@ fun test(
     foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f2<!>)
     foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f3<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, stringLiteral, suspend */

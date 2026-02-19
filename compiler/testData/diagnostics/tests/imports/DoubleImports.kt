@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: StarImported.kt
 
@@ -44,3 +45,6 @@ fun test() {
     val x = bar
     val y = gau
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+propertyDeclaration */

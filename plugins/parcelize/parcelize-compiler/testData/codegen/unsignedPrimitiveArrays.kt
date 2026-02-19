@@ -1,6 +1,5 @@
 // CURIOUS_ABOUT: writeToParcel, createFromParcel
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 import kotlinx.parcelize.*
 import android.os.Parcelable

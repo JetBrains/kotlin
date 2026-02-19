@@ -9,35 +9,40 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.name.Name
 
-object FirNativeIdentifierChecker : FirBasicDeclarationChecker() {
+object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     // Also includes characters used by IR mangler (see MangleConstant).
     private val invalidChars = setOf(
         '.', ';', ',', '(', ')', '[', ']', '{', '}', '/', '<', '>',
         ':', '\\', '$', '&', '~', '*', '?', '#', '|', '§', '%', '@',
     )
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val source = declaration.source
         when (declaration) {
-            is FirRegularClass -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirSimpleFunction -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeParameter -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirProperty -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeAlias -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirValueParameter -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirEnumEntry -> checkNameAndReport(declaration.name, source, context, reporter)
+            is FirRegularClass -> checkNameAndReport(declaration.name, source)
+            is FirNamedFunction -> checkNameAndReport(declaration.name, source)
+            is FirTypeParameter -> checkNameAndReport(declaration.name, source)
+            is FirProperty -> checkNameAndReport(declaration.name, source)
+            is FirTypeAlias -> checkNameAndReport(declaration.name, source)
+            is FirValueParameter -> checkNameAndReport(declaration.name, source)
+            is FirEnumEntry -> checkNameAndReport(declaration.name, source)
             else -> return
         }
     }
 
-    private fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    internal fun checkNameAndReport(
+        name: Name,
+        source: KtSourceElement?,
+    ) {
         if (source != null && source.kind !is KtFakeSourceElementKind && !name.isSpecial) {
             val text = name.asString()
             val message = when {
@@ -48,7 +53,7 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker() {
             }
 
             if (message != null) {
-                reporter.reportOn(source, FirNativeErrors.INVALID_CHARACTERS_NATIVE, message, context)
+                reporter.reportOn(source, FirNativeErrors.INVALID_CHARACTERS_NATIVE_ERROR, message)
             }
         }
     }

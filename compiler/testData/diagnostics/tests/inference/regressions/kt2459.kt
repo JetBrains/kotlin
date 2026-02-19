@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-2459 Type inference error
 package b
@@ -9,3 +10,6 @@ fun <T> f(x: T): B<T> = B(arrayList(x))
 
 // from standard library
 fun <T> arrayList(vararg values: T) : ArrayList<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+typeParameter, vararg */

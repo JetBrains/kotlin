@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun varargByte(vararg v: Byte) = v
 
@@ -51,3 +52,6 @@ fun test() {
     testFun(1.0.toFloat())
     testFun<Float>(1.0.toFloat())
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, nullableType, typeParameter, typeWithExtension, unaryExpression, vararg */

@@ -1,43 +1,51 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
-import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByClassIdWithoutDependencies
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByPsiWithoutDependencies
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
  * Allows to search for FIR declarations by compiled [KtDeclaration]s.
  */
-internal class FirDeclarationForCompiledElementSearcher(private val symbolProvider: FirSymbolProvider) {
-    private val projectStructureProvider by lazy {
-        val project = symbolProvider.session.llFirModuleData.ktModule.project
-        ProjectStructureProvider.getInstance(project)
+internal class FirDeclarationForCompiledElementSearcher(private val session: LLFirSession) {
+    private val project get() = session.project
+
+    private val projectStructureProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinProjectStructureProvider.getInstance(project)
+    }
+
+    private val firElementByPsiElementChooser by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLFirElementByPsiElementChooser.getInstance(project)
     }
 
     fun findNonLocalDeclaration(ktDeclaration: KtDeclaration): FirDeclaration = when (ktDeclaration) {
@@ -53,13 +61,13 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         else -> errorWithFirSpecificEntries("Unsupported compiled declaration of type", psi = ktDeclaration)
     }
 
-    private fun FirSymbolProvider.findFunctionCandidates(function: KtNamedFunction): List<FirFunctionSymbol<*>> =
+    private fun findFunctionCandidates(function: KtNamedFunction): List<FirFunctionSymbol<*>> =
         findCallableCandidates(function, function.isTopLevel).filterIsInstance<FirFunctionSymbol<*>>()
 
-    private fun FirSymbolProvider.findPropertyCandidates(property: KtProperty): List<FirPropertySymbol> =
+    private fun findPropertyCandidates(property: KtProperty): List<FirPropertySymbol> =
         findCallableCandidates(property, property.isTopLevel).filterIsInstance<FirPropertySymbol>()
 
-    private fun FirSymbolProvider.findCallableCandidates(
+    private fun findCallableCandidates(
         declaration: KtCallableDeclaration,
         isTopLevel: Boolean,
     ): List<FirCallableSymbol<*>> {
@@ -68,13 +76,11 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         if (isTopLevel) {
             val packageFqName = declaration.containingKtFile.packageFqName
 
-            @OptIn(FirSymbolProviderInternals::class)
-            return when (this) {
-                is LLFirModuleWithDependenciesSymbolProvider -> buildList {
-                    getTopLevelDeserializedCallableSymbolsToWithoutDependencies(this, packageFqName, shortName, declaration)
-                    friendBuiltinsProvider?.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
-                }
-                else -> getTopLevelCallableSymbols(packageFqName, shortName)
+            return when (val symbolProvider = session.symbolProvider) {
+                is LLModuleWithDependenciesSymbolProvider ->
+                    symbolProvider.getTopLevelDeserializedCallableSymbolsWithoutDependencies(packageFqName, shortName, declaration)
+
+                else -> symbolProvider.getTopLevelCallableSymbols(packageFqName, shortName)
             }
         }
 
@@ -101,19 +107,33 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             fir = firDeclaration,
         )
 
-        return firTypeParameterRefOwner.typeParameters.find { it.realPsi === param } as FirDeclaration
+        return firTypeParameterRefOwner.typeParameters.find { typeParameterRef ->
+            firElementByPsiElementChooser.isMatchingTypeParameter(param, typeParameterRef.symbol.fir)
+        } as FirDeclaration
     }
 
     private fun findParameter(param: KtParameter): FirDeclaration {
-        val ownerFunction = param.ownerFunction ?: errorWithFirSpecificEntries("Unsupported compiled parameter", psi = param)
-        val firDeclaration = findNonLocalDeclaration(ownerFunction)
-        val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
-            "No fir function found by ktFunction",
-            psi = ownerFunction,
-            fir = firDeclaration
-        )
-        return firFunction.valueParameters.find { it.realPsi === param }
-            ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
+        val ownerDeclaration = param.ownerDeclaration ?: errorWithFirSpecificEntries("Unsupported compiled parameter", psi = param)
+        val firDeclaration = findNonLocalDeclaration(ownerDeclaration)
+        return if (param.isContextParameter) {
+            val firCallable = firDeclaration as? FirCallableDeclaration ?: errorWithFirSpecificEntries(
+                "${FirCallableDeclaration::class.simpleName} expected but ${firDeclaration::class.simpleName} found",
+                psi = ownerDeclaration,
+                fir = firDeclaration,
+            )
+
+            firCallable.contextParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
+                ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firCallable)
+        } else {
+            val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
+                "${FirFunction::class.simpleName} expected but ${firDeclaration::class.simpleName} found",
+                psi = ownerDeclaration,
+                fir = firDeclaration,
+            )
+
+            firFunction.valueParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
+                ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
+        }
     }
 
     private fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {
@@ -121,42 +141,53 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             ?: errorWithFirSpecificEntries("Enum entry must have containing class", psi = declaration)
 
         return (classCandidate as FirRegularClass).declarations.first {
-            it is FirEnumEntry && it.realPsi === declaration
+            it is FirEnumEntry && firElementByPsiElementChooser.isMatchingEnumEntry(declaration, it)
         } as FirEnumEntry
     }
 
     private fun findNonLocalClassLikeDeclaration(declaration: KtClassLikeDeclaration): FirClassLikeDeclaration {
         val classId = declaration.getClassId() ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
-        val classCandidate = when (symbolProvider) {
-            is LLFirModuleWithDependenciesSymbolProvider -> {
-                symbolProvider.getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId, declaration)
-                    ?: symbolProvider.friendBuiltinsProvider?.getClassLikeSymbolByClassId(classId)
-            }
-            else -> {
-                symbolProvider.getClassLikeSymbolByClassId(classId)
-            }
+        // With the `BINARIES` origin, deserialized FIR declarations don't have associated PSI elements. Hence, we cannot use `*ByPsi*
+        // functions, as they check the candidate's associated PSI.
+        val classLikeSymbol = when (KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin) {
+            KotlinDeserializedDeclarationsOrigin.BINARIES -> findBinaryClassLikeSymbol(classId)
+            KotlinDeserializedDeclarationsOrigin.STUBS -> findStubClassLikeSymbol(classId, declaration)
         }
 
-        if (classCandidate == null) {
-            errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
-                withEntry("classId", classId) { it.asString() }
+        classLikeSymbol?.let { return it.fir }
 
-                val contextualModule = symbolProvider.session.llFirModuleData.ktModule
-                val moduleForFile = projectStructureProvider.getModule(declaration, contextualModule)
-                withEntry("ktModule", moduleForFile) { it.moduleDescription }
-            }
+        errorWithFirSpecificEntries(
+            "We should be able to find a symbol for class-like declaration",
+            psi = declaration,
+        ) {
+            withEntry("classId", classId) { it.asString() }
+
+            val contextualModule = session.llFirModuleData.ktModule
+            val moduleForFile = projectStructureProvider.getModule(declaration, contextualModule)
+            withEntry("ktModule", moduleForFile) { it.moduleDescription }
         }
-
-        return classCandidate.fir
     }
+
+    private fun findBinaryClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? =
+        session.symbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(classId)
+
+    /**
+     * Note regarding [LLModuleSpecificSymbolProviderAccess]: [FirDeclarationForCompiledElementSearcher] must be queried with PSI elements
+     * that are contained in the compiled element searcher's module. As such, it's also legal to call module-specific symbol provider
+     * functions on that module's symbol provider.
+     */
+    @OptIn(LLModuleSpecificSymbolProviderAccess::class)
+    private fun findStubClassLikeSymbol(classId: ClassId, declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
+        session.symbolProvider.getClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
 
     private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
         val containingClass = declaration.containingClassOrObject
             ?: errorWithFirSpecificEntries("Constructor must have outer class", psi = declaration)
 
         val containingFirClass = findNonLocalClassLikeDeclaration(containingClass) as FirClass
-        val constructorCandidate = containingFirClass.constructors(symbolProvider.session).singleOrNull { it.fir.realPsi === declaration }
+        val constructorCandidate = containingFirClass.constructors(session)
+            .singleOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
             ?: errorWithFirSpecificEntries("We should be able to find a constructor", psi = declaration, fir = containingFirClass)
 
         return constructorCandidate.fir
@@ -165,8 +196,8 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
     private fun findNonLocalFunction(declaration: KtNamedFunction): FirFunction {
         require(!declaration.isLocal)
 
-        val candidates = symbolProvider.findFunctionCandidates(declaration)
-        val functionCandidate = candidates.firstOrNull { it.fir.realPsi === declaration }
+        val candidates = findFunctionCandidates(declaration)
+        val functionCandidate = candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
                 withCandidates(candidates)
             }
@@ -174,12 +205,11 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         return functionCandidate.fir
     }
 
-
     private fun findNonLocalProperty(declaration: KtProperty): FirProperty {
         require(!declaration.isLocal)
 
-        val candidates = symbolProvider.findPropertyCandidates(declaration)
-        val propertyCandidate = candidates.firstOrNull { it.fir.realPsi === declaration }
+        val candidates = findPropertyCandidates(declaration)
+        val propertyCandidate = candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
                 withCandidates(candidates)
             }
@@ -193,22 +223,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         return (if (declaration.isGetter) firProperty.getter else firProperty.setter)
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for property accessor", psi = declaration)
     }
-
 }
-
-// Returns a built-in provider for a Kotlin standard library, as built-in declarations are its logical part.
-// Returns one for built-ins modules as well, as these modules have empty scope and their content comes from the dependency provider.
-private val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSymbolProvider?
-    get() {
-        val moduleData = this.session.moduleData
-        if (getPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE) != null
-            || moduleData is LLFirModuleData && moduleData.ktModule is KtBuiltinsModule
-        ) {
-            return dependencyProvider.providers.find { it.session is LLFirBuiltinsAndCloneableSession }
-        }
-
-        return null
-    }
 
 private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {
     withEntry("Candidates count", candidates.size.toString())

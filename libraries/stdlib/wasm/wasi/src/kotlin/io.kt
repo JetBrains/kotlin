@@ -8,6 +8,7 @@ package kotlin.io
 import kotlin.wasm.WasiError
 import kotlin.wasm.WasiErrorCode
 import kotlin.wasm.WasmImport
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.MemoryAllocator
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
@@ -17,9 +18,11 @@ private const val STDERR = 2
 /**
  * Write to a file descriptor. Note: This is similar to `writev` in POSIX.
  */
+@ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "fd_write")
 private external fun wasiRawFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, errorPtr: Int): Int
 
+@OptIn(ExperimentalWasmInterop::class)
 internal fun wasiPrintImpl(
     allocator: MemoryAllocator,
     data: ByteArray?,
@@ -57,7 +60,7 @@ internal fun wasiPrintImpl(
         )
 
     if (ret != 0) {
-        throw WasiError(WasiErrorCode.values()[ret])
+        throw WasiError(WasiErrorCode.entries[ret])
     }
 }
 
@@ -72,7 +75,7 @@ private fun printImpl(message: String?, useErrorStream: Boolean, newLine: Boolea
     }
 }
 
-internal fun printError(error: String?) {
+internal actual fun printError(error: String?) {
     printImpl(error, useErrorStream = true, newLine = false)
 }
 

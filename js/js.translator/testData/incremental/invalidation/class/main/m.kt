@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val d = Demo(15)
     when (stepId) {
         0, 2 -> {
@@ -9,7 +9,7 @@ fun box(stepId: Int): String {
         1, 3-> {
             if (testEquals(d, Demo(15))) return "Fail equals"
             if (testHashCode(d) == Demo(15).hashCode()) return "Fail hashCode"
-            if (testToString(d) != "[object Object]") return "Fail toString"
+            if (testToString(d) != "Simple Demo") return "Fail toString"
         }
         else -> return "Unknown"
     }

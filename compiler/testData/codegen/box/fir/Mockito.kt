@@ -1,7 +1,6 @@
 // ISSUE: KT-58893
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_INLINER: IR
 
 // FILE: InOrder.java
 

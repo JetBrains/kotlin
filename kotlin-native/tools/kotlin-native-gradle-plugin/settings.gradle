@@ -1,2 +1,0 @@
-rootProject.name = "kotlin-native-gradle-plugin"
-includeBuild '../../shared'

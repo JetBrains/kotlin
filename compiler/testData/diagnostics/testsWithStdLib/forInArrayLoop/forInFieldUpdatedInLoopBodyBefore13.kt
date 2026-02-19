@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
-// !DIAGNOSTICS: -UNUSED_VALUE
+// LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
+// DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 
 var xs: IntArray = intArrayOf(1, 2, 3)
@@ -14,3 +15,6 @@ var xs: IntArray = intArrayOf(1, 2, 3)
         if (sum != 123) throw AssertionError("sum=$sum")
         field = ys
     }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, forLoop, getter, ifExpression, integerLiteral,
+localProperty, multiplicativeExpression, propertyDeclaration, setter, stringLiteral */

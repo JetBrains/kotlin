@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 sealed class A {
     class A1 : A()
@@ -40,3 +41,7 @@ fun foo(a: A) {
         is <!INCOMPATIBLE_TYPES!>B.B1<!> -> "..."
     }.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, intersectionType, isExpression, nestedClass, nullableType, sealed, smartcast, stringLiteral, typeParameter,
+typeWithExtension, whenExpression, whenWithSubject */

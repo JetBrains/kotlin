@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See KT-15334: incorrect reassignment in do...while
 
@@ -22,3 +23,6 @@ fun test3() {
         <!VAL_REASSIGNMENT!>s<!> = ""
     } while (s != "")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, doWhileLoop, equalityExpression, functionDeclaration,
+localProperty, propertyDeclaration, stringLiteral */

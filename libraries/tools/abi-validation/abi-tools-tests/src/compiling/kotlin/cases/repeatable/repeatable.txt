@@ -1,0 +1,3 @@
+public abstract interface annotation class cases/repeatable/RepeatableAnnotation : java/lang/annotation/Annotation {
+}
+

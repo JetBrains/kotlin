@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface T {
     fun foo() {}
     fun buzz() {}
@@ -20,3 +21,6 @@ class C : T {
         super.buzz1(<!TYPE_MISMATCH!>""<!>) // Resolved to a member
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+localFunction, stringLiteral, superExpression */

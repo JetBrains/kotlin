@@ -41,9 +41,9 @@ class KotlinJvmApiTest : KGPBaseTest() {
                                                 
                         apiPlugin.registerKotlinJvmCompileTask("foo").configure {
                             it.source("src/main")
+                            it.libraries.from(configurations.compileClasspath)
                             it.multiPlatformEnabled.set(false)
                             it.moduleName.set("main")
-                            it.ownModuleName.set("main")
                             it.sourceSetName.set("main")
                             it.useModuleDetection.set(false)
                             it.destinationDirectory.fileValue(new File(project.buildDir, "fooOutput"))
@@ -75,9 +75,10 @@ class KotlinJvmApiTest : KGPBaseTest() {
 
                 apply<KotlinBaseApiPlugin>()
 
-                val myCustomTask = plugins
-                    .findPlugin(KotlinBaseApiPlugin::class)!!
-                    .registerKotlinJvmCompileTask("$customTaskName", moduleName = "$customModuleName")
+                val kotlinApiPlugin = plugins.getPlugin(KotlinBaseApiPlugin::class)
+                val kotlinJvmOptions = kotlinApiPlugin.createCompilerJvmOptions()
+                kotlinJvmOptions.moduleName.set("$customModuleName")
+                val myCustomTask = kotlinApiPlugin.registerKotlinJvmCompileTask("$customTaskName", kotlinJvmOptions)
                     
                 myCustomTask {
                     source("src/jvmMain", "src/commonMain")
@@ -90,7 +91,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
             )
 
             build(customTaskName) {
-                assertOutputDoesNotContain("No value has been specified for property 'ownModuleName'")
                 assertFileInProjectExists("build/$outputDirName/org/example/application/MainKt.class")
                 assertFileInProjectExists("build/$outputDirName/org/example/Lib.class")
                 assertFileInProjectExists("build/$outputDirName/META-INF/$customModuleName.kotlin_module")
@@ -100,7 +100,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
 
     @DisplayName("KAPT can be set up using APIs")
     @OtherGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleTest
     internal fun kaptShouldRunIfSetUpWithApi(gradleVersion: GradleVersion) {
         project(
@@ -136,7 +135,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
                             it.source("src/main")
                             it.multiPlatformEnabled.set(false)
                             it.moduleName.set("main")
-                            it.ownModuleName.set("main")
                             it.sourceSetName.set("main")
                             it.useModuleDetection.set(false)
                             it.destinationDirectory.fileValue(new File(project.buildDir, "fooOutput"))

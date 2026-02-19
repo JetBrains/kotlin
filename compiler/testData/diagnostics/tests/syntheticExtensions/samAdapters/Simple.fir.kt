@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 class KotlinClass {
     public fun doSomething(runnable: Runnable) { runnable.run() }
@@ -28,3 +29,6 @@ public class JavaClass {
     public void doSomething(Runnable runnable) { runnable.run(); }
     public void doSomething2(I i) { i.doIt(); }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaFunction, javaType,
+lambdaLiteral, samConversion */

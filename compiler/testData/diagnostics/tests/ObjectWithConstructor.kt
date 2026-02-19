@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object A1<!CONSTRUCTOR_IN_OBJECT!>()<!> {
     <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = <!TYPE_MISMATCH!>""<!>, y: Int)<!> : this() {
         x + y
@@ -22,3 +23,7 @@ class A3 {
         public <!CONSTRUCTOR_IN_OBJECT!>constructor()<!> : this(2)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, companionObject, integerLiteral,
+localProperty, multiplicativeExpression, objectDeclaration, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

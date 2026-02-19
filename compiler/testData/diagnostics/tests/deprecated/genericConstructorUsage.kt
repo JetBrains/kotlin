@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
 
 open class C<T>() {
     @Deprecated("")
@@ -7,3 +7,6 @@ open class C<T>() {
 }
 
 class D : <!DEPRECATION!>C<String><!>(1)
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, secondaryConstructor,
+stringLiteral, typeParameter */

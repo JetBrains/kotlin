@@ -1,0 +1,24 @@
+Module: m1
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <m1>
+abstract class <#A: kotlin/Any?> /BaseFirBuilder { // /BaseFirBuilder|null[0]
+    constructor <init>() // /BaseFirBuilder.<init>|<init>(){}[0]
+    final inline fun <#A1: kotlin/Any?> withCapturedTypeParameters(kotlin/Function0<#A1>): #A1 // /BaseFirBuilder.withCapturedTypeParameters|withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
+}
+Module: m2
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <m2>
+open class /BaseConverter : /BaseFirBuilder<kotlin/Any> { // /BaseConverter|null[0]
+    constructor <init>() // /BaseConverter.<init>|<init>(){}[0]
+}
+final class /DeclarationsConverter : /BaseConverter { // /DeclarationsConverter|null[0]
+    constructor <init>() // /DeclarationsConverter.<init>|<init>(){}[0]
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class First {
     val x: String
 
@@ -54,3 +55,6 @@ class Fourth {
 
     val y = x // null!
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, init, override, propertyDeclaration,
+secondaryConstructor, setter, stringLiteral, thisExpression */

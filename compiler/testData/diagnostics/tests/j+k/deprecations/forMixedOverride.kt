@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: J.java
 public class J {
@@ -26,3 +27,6 @@ fun main() {
     J2().foo()
     A().foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaFunction, javaType, override,
+stringLiteral */

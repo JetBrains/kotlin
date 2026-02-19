@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: a/x.java
 package a;
@@ -29,3 +30,5 @@ public class y extends x implements i2 {
 package a
 
 fun test() = y().<!MISSING_DEPENDENCY_CLASS!>getZ<!>()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

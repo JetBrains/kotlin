@@ -1,0 +1,13 @@
+BODY_RESOLVE:
+TARGET: public final inline [ResolvedTo(BODY_RESOLVE)] fun require([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> value
+    >
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|library/FunctionWithContract.FunctionWithContract|().R|library/FunctionWithContract.require|(Boolean(true))
+    }

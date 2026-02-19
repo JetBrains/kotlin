@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 public class A {
     static void foo() {}
@@ -43,3 +44,5 @@ import B.baz
 
 // class cannot be imported by subclass
 import B.<!CANNOT_BE_IMPORTED!>quux2<!>
+
+/* GENERATED_FIR_TAGS:  */

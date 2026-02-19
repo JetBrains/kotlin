@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContractSyntaxV2
 import kotlin.contracts.*
 
@@ -21,3 +22,6 @@ fun test3(arg: Any?): Boolean contract [
     require(arg != null)
     return true
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contractConditionalEffect, contracts, equalityExpression,
+functionDeclaration, functionalType, nullableType */

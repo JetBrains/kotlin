@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test1(a:) {}
 
 fun foo(inlineOptions(InlineOp)) { }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface IsolatedFunFace {
 }
 
@@ -10,3 +11,5 @@ fun callIsolatedFunFace() {
     referIsolatedFunFace(<!INTERFACE_AS_FUNCTION!>FunAlias<!> {})
     referIsolatedFunFace(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, typeAliasDeclaration */

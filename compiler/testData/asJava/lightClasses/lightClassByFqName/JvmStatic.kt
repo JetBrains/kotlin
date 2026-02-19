@@ -1,5 +1,6 @@
 // A
 // WITH_STDLIB
+// LIBRARY_PLATFORMS: JVM
 
 class A {
     companion object {
@@ -21,5 +22,3 @@ class A {
         }
     }
 }
-
-// FIR_COMPARISON

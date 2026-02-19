@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /with1(kotlin/Any?, kotlin/Function1<kotlin/Any?, kotlin/Unit>) // /with1|with1(kotlin.Any?;kotlin.Function1<kotlin.Any?,kotlin.Unit>){}[0]
+final fun /with2(kotlin/Any?, kotlin/Function1<kotlin/Any?, kotlin/Unit>) // /with2|with2(kotlin.Any?;kotlin.Function1<kotlin.Any?,kotlin.Unit>){}[0]

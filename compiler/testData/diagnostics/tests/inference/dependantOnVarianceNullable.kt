@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package b
 //+JDK
@@ -13,3 +14,6 @@ fun foo(list: List<String>) : String {
 
 //from library
 fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, integerLiteral, javaFunction, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

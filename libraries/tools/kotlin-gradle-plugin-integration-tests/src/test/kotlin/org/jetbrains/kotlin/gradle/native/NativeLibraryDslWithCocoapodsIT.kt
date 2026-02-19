@@ -169,6 +169,7 @@ class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {
             subProject("shared").buildGradleKts.appendText(
                 //language=kotlin
                 """
+                @Suppress("DEPRECATION_ERROR")
                 kotlinArtifacts {
                     Native.Library {
                          target = linuxX64
@@ -185,7 +186,7 @@ class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {
 
     private fun buildNewKnLibraryDslCocoapodsProjectWithTasks(
         gradleVersion: GradleVersion,
-        buildBlock: TestProject.() -> Unit
+        buildBlock: TestProject.() -> Unit,
     ) {
         nativeProject("new-kn-library-dsl-cocoapods", gradleVersion, test = buildBlock)
     }

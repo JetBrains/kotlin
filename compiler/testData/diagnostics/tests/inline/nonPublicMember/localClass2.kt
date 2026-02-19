@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 public fun test() {
 
     class Z {
@@ -12,3 +12,5 @@ public fun test() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, localClass, localFunction */

@@ -1,8 +1,8 @@
 interface Foo<in T : Any?> {
+  abstract fun foo(x: T)
+
   abstract val x: Int
     abstract get
-
-  abstract fun foo(x: T)
 
 }
 
@@ -18,3 +18,4 @@ fun Foo<*>.testSmartCastOnExtensionReceiver() {
 fun testValueParameter(vp: Foo<*>): Int {
   return vp.<get-x>()
 }
+

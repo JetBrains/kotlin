@@ -1,0 +1,26 @@
+<caret_1>:
+  KDocName(96,103): 'Foo.ext'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in test) fun test.Foo.ext()
+
+<caret_2>:
+  KDocName(113,116): 'Foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in test) class Foo
+
+<caret_3>:
+  KDocName(137,140): 'Foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in test.WithMember) fun Foo()

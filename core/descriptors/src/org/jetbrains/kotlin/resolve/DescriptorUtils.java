@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
+import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
@@ -442,15 +444,6 @@ public class DescriptorUtils {
     }
 
     /**
-     * @return true iff {@code descriptor}'s first non-class container is a package
-     */
-    public static boolean isTopLevelOrInnerClass(@NotNull ClassDescriptor descriptor) {
-        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-        return isTopLevelDeclaration(descriptor) ||
-               containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
-    }
-
-    /**
      * Given a fake override, finds any declaration of it in the overridden descriptors. Keep in mind that there may be many declarations
      * of the fake override in the supertypes, this method finds just only one of them.
      * TODO: probably some call-sites of this method are wrong, they should handle all super-declarations
@@ -651,19 +644,5 @@ public class DescriptorUtils {
         return descriptor instanceof PropertyAccessorDescriptor
                ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
                : descriptor;
-    }
-
-    public static boolean isMethodOfAny(@NotNull CallableMemberDescriptor descriptor) {
-        if (!(descriptor instanceof FunctionDescriptor)) return false;
-
-        String name = descriptor.getName().asString();
-        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
-        if (parameters.isEmpty()) {
-            return name.equals("hashCode") || name.equals("toString");
-        }
-        else if (parameters.size() == 1 && name.equals("equals")) {
-            return isNullableAny(parameters.get(0).getType());
-        }
-        return false;
     }
 }

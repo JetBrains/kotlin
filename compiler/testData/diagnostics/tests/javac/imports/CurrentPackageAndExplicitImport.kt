@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/Y.java
 package a;
@@ -26,3 +27,5 @@ public class T {
 package b
 
 fun test() = T().getY().test()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

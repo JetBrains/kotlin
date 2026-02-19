@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-49200
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: first/KtNodeTypes.java
 
 package first;
@@ -27,3 +28,6 @@ fun test(arg: String): Boolean {
         else -> false
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, whenExpression,
+whenWithSubject */

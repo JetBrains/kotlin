@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 import java.util.*;
 
@@ -24,7 +25,7 @@ val testSafeCall1: String = <!TYPE_MISMATCH!>J.s?.let { it }<!>
 val testSafeCall2: String? = J.s?.let { it }
 
 val testSafeCall3: String = <!TYPE_MISMATCH!>J.m[""]?.let { it }<!>
-val testSafeCall4: String? = J.m[""]?.let { it.toString() }
+val testSafeCall4: String? = J.m[""]?.let { it }
 
 val testIf1: String = if (true) J.s else J.s
 val testIf2: String? = if (true) J.s else J.s
@@ -37,3 +38,6 @@ val testWhen2: String? = when { else -> J.s }
 
 val testWhen3: String = when { else -> <!TYPE_MISMATCH!>J.m[""]<!> }
 val testWhen4: String? = when { else -> J.m[""] }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, ifExpression, javaProperty, lambdaLiteral, nullableType,
+propertyDeclaration, safeCall, stringLiteral, whenExpression */

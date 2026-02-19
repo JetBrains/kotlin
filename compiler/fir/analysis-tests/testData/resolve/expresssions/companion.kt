@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A {
     companion object {
         fun foo() {}
@@ -24,3 +25,6 @@ fun test() {
     val y = B.C
     val z = B.<!UNRESOLVED_REFERENCE!>D<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, objectDeclaration,
+propertyDeclaration, stringLiteral */

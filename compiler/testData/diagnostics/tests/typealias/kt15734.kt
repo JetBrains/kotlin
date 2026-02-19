@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// WITH_EXTENDED_CHECKERS
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
 
@@ -19,3 +19,6 @@ val test6: () -> List<TNString> = TODO()
 fun test(x: TNString) {
     x<!UNSAFE_CALL!>.<!>hashCode()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, nullableType, propertyDeclaration,
+typeAliasDeclaration */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 interface A
 abstract class B
 annotation class C
@@ -10,3 +11,6 @@ fun main() {
     ::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>C<!>   // KT-3465
     ::<!INVISIBLE_MEMBER!>D<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, enumDeclaration, functionDeclaration,
+interfaceDeclaration */

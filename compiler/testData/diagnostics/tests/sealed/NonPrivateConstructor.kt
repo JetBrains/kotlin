@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 sealed class Sealed protected constructor(val x: Int) {
     object FIRST : Sealed()
 
@@ -5,3 +6,6 @@ sealed class Sealed protected constructor(val x: Int) {
 
     constructor(y: Int, z: Int): this(y + z)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, integerLiteral, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, secondaryConstructor */

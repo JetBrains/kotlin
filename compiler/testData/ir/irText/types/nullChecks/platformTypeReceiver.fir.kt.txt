@@ -1,7 +1,0 @@
-fun test1(): Boolean {
-  return #BOOL_NULL.equals(other = null)
-}
-
-fun test2(): Boolean {
-  return boolNull().equals(other = null)
-}

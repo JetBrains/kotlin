@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 package localObjects
@@ -23,3 +24,6 @@ fun test() {
 }
 
 val bb = <!UNRESOLVED_REFERENCE!>B<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral, localClass,
+localProperty, objectDeclaration, propertyDeclaration */

@@ -3,24 +3,24 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    namespace "com.example.dagger.kotlin"
-    compileSdkVersion 23
+    namespace = "com.example.dagger.kotlin"
+    compileSdkVersion = 23
 
     kotlin {
         jvmToolchain(8)
     }
 
     defaultConfig {
-        applicationId "com.example.dagger.kotlin"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.dagger.kotlin"
+        minSdkVersion = 14
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

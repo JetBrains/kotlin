@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/x.java
 package a;
@@ -24,3 +25,5 @@ package test
 import a.*
 
 fun test() = x.Nested().getT().getT()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

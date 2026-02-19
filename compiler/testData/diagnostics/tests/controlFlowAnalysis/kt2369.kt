@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-2369 Variable is not marked as uninitialized in 'finally' section
 
@@ -12,3 +13,6 @@ fun main() {
 }
 
 fun doSmth(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, tryExpression */

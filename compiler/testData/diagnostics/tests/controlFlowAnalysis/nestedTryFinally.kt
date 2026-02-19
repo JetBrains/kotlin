@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun use(arg: String?) = arg
 
@@ -23,3 +24,6 @@ fun sample(): String? {
     } finally {}
     return null
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration,
+stringLiteral, tryExpression */

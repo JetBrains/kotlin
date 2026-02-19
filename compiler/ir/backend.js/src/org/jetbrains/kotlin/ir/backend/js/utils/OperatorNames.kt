@@ -15,7 +15,6 @@ object OperatorNames {
     val SUB = OperatorNameConventions.MINUS
     val MUL = OperatorNameConventions.TIMES
     val DIV = OperatorNameConventions.DIV
-    val MOD = OperatorNameConventions.MOD
     val REM = OperatorNameConventions.REM
 
     val AND = OperatorNameConventions.AND
@@ -33,7 +32,7 @@ object OperatorNames {
     val DEC = OperatorNameConventions.DEC
 
 
-    val BINARY = setOf(ADD, SUB, MUL, DIV, MOD, REM, AND, OR, XOR, SHL, SHR, SHRU)
+    val BINARY = setOf(ADD, SUB, MUL, DIV, REM, AND, OR, XOR, SHL, SHR, SHRU)
     val UNARY = setOf(UNARY_PLUS, UNARY_MINUS, INV, NOT, INC, DEC)
     val ALL = BINARY + UNARY
 }

@@ -1,0 +1,21 @@
+KT element: KtClass
+KT element text:
+public final class Foo public constructor() {
+    context(a: kotlin.Boolean) public final inline fun conditionInContext(block: () -> kotlin.Int): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    context([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Boolean|)
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun conditionInContext([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Int|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            a HoldsIn(block)
+        >
+
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
+
+}

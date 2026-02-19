@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Context
 class Point
@@ -22,3 +23,6 @@ class Example {
     private val point4 = Point()
     private var nullPoint: Point? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+lateinit, nullableType, propertyDeclaration, secondaryConstructor */

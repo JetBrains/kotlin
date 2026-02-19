@@ -3,7 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE")
 package kotlinx.cinterop
+
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @ExperimentalForeignApi
 public interface NativePlacement {
@@ -19,15 +24,15 @@ public interface NativeFreeablePlacement : NativePlacement {
 }
 
 @ExperimentalForeignApi
-public fun NativeFreeablePlacement.free(pointer: CPointer<*>) = this.free(pointer.rawValue)
+public fun NativeFreeablePlacement.free(pointer: CPointer<*>): Unit = this.free(pointer.rawValue)
 @ExperimentalForeignApi
-public fun NativeFreeablePlacement.free(pointed: NativePointed) = this.free(pointed.rawPtr)
+public fun NativeFreeablePlacement.free(pointed: NativePointed): Unit = this.free(pointed.rawPtr)
 
 @ExperimentalForeignApi
 public object nativeHeap : NativeFreeablePlacement {
-    override fun alloc(size: Long, align: Int) = nativeMemUtils.alloc(size, align)
+    override fun alloc(size: Long, align: Int): NativePointed = nativeMemUtils.alloc(size, align)
 
-    override fun free(mem: NativePtr) = nativeMemUtils.free(mem)
+    override fun free(mem: NativePtr): Unit = nativeMemUtils.free(mem)
 }
 
 @ExperimentalForeignApi
@@ -46,7 +51,7 @@ public open class DeferScope {
         }
     }
 
-    inline fun defer(crossinline block: () -> Unit) {
+    public inline fun defer(crossinline block: () -> Unit) {
         val currentTop = topDeferred
         topDeferred = {
             try {
@@ -97,7 +102,7 @@ public open class ArenaBase(private val parent: NativeFreeablePlacement = native
 
 @ExperimentalForeignApi
 public class Arena(parent: NativeFreeablePlacement = nativeHeap) : ArenaBase(parent) {
-    fun clear() = this.clearImpl()
+    public fun clear(): Unit = this.clearImpl()
 }
 
 /**
@@ -113,6 +118,7 @@ public inline fun <reified T : CVariable> NativePlacement.alloc(): T =
 @PublishedApi
 @Suppress("DEPRECATION")
 @ExperimentalForeignApi
+@UsedFromCompilerGeneratedCode
 internal fun NativePlacement.alloc(type: CVariable.Type): NativePointed =
         alloc(type.size, type.align)
 
@@ -188,7 +194,7 @@ public fun <T : CPointed> NativePlacement.allocArrayOfPointersTo(elements: List<
  * Allocates C array of pointers to given elements.
  */
 @ExperimentalForeignApi
-public fun <T : CPointed> NativePlacement.allocArrayOfPointersTo(vararg elements: T?) =
+public fun <T : CPointed> NativePlacement.allocArrayOfPointersTo(vararg elements: T?): CArrayPointer<CPointerVar<T>> =
         allocArrayOfPointersTo(listOf(*elements))
 
 /**
@@ -235,7 +241,7 @@ public fun NativePlacement.allocArrayOf(vararg elements: Float): CArrayPointer<F
 }
 
 @ExperimentalForeignApi
-public fun <T : CPointed> NativePlacement.allocPointerTo() = alloc<CPointerVar<T>>()
+public fun <T : CPointed> NativePlacement.allocPointerTo(): CPointerVar<T> = alloc<CPointerVar<T>>()
 
 @PublishedApi
 @ExperimentalForeignApi
@@ -309,6 +315,7 @@ public fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T>
 @Suppress("DEPRECATION")
 @PublishedApi
 @ExperimentalForeignApi
+@UsedFromCompilerGeneratedCode
 internal fun <T : CVariable> CPointed.readValue(type: CVariable.Type): CValue<T> =
         readValue(type.size, type.align)
 
@@ -339,8 +346,15 @@ public fun <T : CVariable> CValues<T>.getBytes(): ByteArray = memScoped {
  * Calls the [block] with temporary copy of this value as receiver.
  */
 @ExperimentalForeignApi
-public inline fun <reified T : CStructVar, R> CValue<T>.useContents(block: T.() -> R): R = memScoped {
-    this@useContents.placeTo(memScope).pointed.block()
+@OptIn(kotlin.contracts.ExperimentalContracts::class)
+public inline fun <reified T : CStructVar, R> CValue<T>.useContents(block: T.() -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
+    return memScoped {
+        this@useContents.placeTo(memScope).pointed.block()
+    }
 }
 
 @ExperimentalForeignApi
@@ -354,7 +368,7 @@ public inline fun <reified T : CStructVar> cValue(initialize: T.() -> Unit): CVa
     zeroValue<T>().copy(modify = initialize)
 
 @ExperimentalForeignApi
-public inline fun <reified T : CVariable> createValues(count: Int, initializer: T.(index: Int) -> Unit) = memScoped {
+public inline fun <reified T : CVariable> createValues(count: Int, initializer: T.(index: Int) -> Unit): CValues<T> = memScoped {
     val array = allocArray<T>(count, initializer)
     array[0].readValues(count)
 }
@@ -403,21 +417,21 @@ public fun <T : CPointed> cValuesOf(vararg elements: CPointer<T>?): CValues<CPoi
         createValues(elements.size) { index -> this.value = elements[index] }
 
 @ExperimentalForeignApi
-public fun ByteArray.toCValues() = cValuesOf(*this)
+public fun ByteArray.toCValues(): CValues<ByteVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-public fun ShortArray.toCValues() = cValuesOf(*this)
+public fun ShortArray.toCValues(): CValues<ShortVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-public fun IntArray.toCValues() = cValuesOf(*this)
+public fun IntArray.toCValues(): CValues<IntVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-public fun LongArray.toCValues() = cValuesOf(*this)
+public fun LongArray.toCValues(): CValues<LongVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-public fun FloatArray.toCValues() = cValuesOf(*this)
+public fun FloatArray.toCValues(): CValues<FloatVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-public fun DoubleArray.toCValues() = cValuesOf(*this)
+public fun DoubleArray.toCValues(): CValues<DoubleVar> = cValuesOf(*this)
 @ExperimentalForeignApi
-public fun <T : CPointed> Array<CPointer<T>?>.toCValues() = cValuesOf(*this)
+public fun <T : CPointed> Array<CPointer<T>?>.toCValues(): CValues<CPointerVar<T>> = cValuesOf(*this)
 @ExperimentalForeignApi
-public fun <T : CPointed> List<CPointer<T>?>.toCValues() = this.toTypedArray().toCValues()
+public fun <T : CPointed> List<CPointer<T>?>.toCValues(): CValues<CPointerVar<T>> = this.toTypedArray().toCValues()
 
 @ExperimentalForeignApi
 private class CString(val bytes: ByteArray) : CValues<ByteVar>() {
@@ -683,10 +697,10 @@ private fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
 @ExperimentalForeignApi
 public class MemScope : ArenaBase() {
 
-    val memScope: MemScope
+    public val memScope: MemScope
         get() = this
 
-    val <T: CVariable> CValues<T>.ptr: CPointer<T>
+    public val <T: CVariable> CValues<T>.ptr: CPointer<T>
         get() = this@ptr.getPointer(this@MemScope)
 }
 
@@ -697,7 +711,12 @@ public class MemScope : ArenaBase() {
  * which will be automatically disposed at the end of this scope.
  */
 @ExperimentalForeignApi
+@OptIn(kotlin.contracts.ExperimentalContracts::class)
 public inline fun <R> memScoped(block: MemScope.()->R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
     val memScope = MemScope()
     try {
         return memScope.block()

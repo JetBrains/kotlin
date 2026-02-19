@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // SKIP_JAVAC
 // ALLOW_KOTLIN_PACKAGE
 
@@ -43,3 +45,6 @@ const val explicit: UInt = UInt(2)
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val nullable: UInt? = UInt(3)
 
 annotation class NullableAnno(val u: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>UInt?<!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, functionDeclaration, integerLiteral, nullableType,
+primaryConstructor, propertyDeclaration */

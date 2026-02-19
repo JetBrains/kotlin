@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !API_VERSION: 1.0
+// API_VERSION: 1.0
 
 // FILE: a.kt
 package a
@@ -17,3 +18,5 @@ package b
 
 import a.<!API_NOT_AVAILABLE!>Since_1_1_Alias<!>
 import a.<!API_NOT_AVAILABLE!>Alias_1_1<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, stringLiteral, typeAliasDeclaration */

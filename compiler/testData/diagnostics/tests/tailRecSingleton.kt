@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 object Foo {
     tailrec fun foo1() {
         foo1()
@@ -51,3 +52,6 @@ enum class E {
 
     abstract fun rec()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+objectDeclaration, tailrec, thisExpression */

@@ -1,0 +1,26 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /Base // /Base|null[0]
+final class /DataClass : /Delegate, /Derived { // /DataClass|null[0]
+    final val delegate // /DataClass.delegate|{}delegate[0]
+        final fun <get-delegate>(): /Delegate // /DataClass.delegate.<get-delegate>|<get-delegate>(){}[0]
+    constructor <init>(/Delegate) // /DataClass.<init>|<init>(Delegate){}[0]
+    final fun bar() // /DataClass.bar|bar(){}[0]
+    final fun component1(): /Delegate // /DataClass.component1|component1(){}[0]
+    final fun copy(/Delegate = ...): /DataClass // /DataClass.copy|copy(Delegate){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /DataClass.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /DataClass.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /DataClass.toString|toString(){}[0]
+}
+abstract interface /Delegate : /Base { // /Delegate|null[0]
+    abstract fun bar() // /Delegate.bar|bar(){}[0]
+}
+abstract interface /Derived : /Delegate // /Derived|null[0]
+final object /Factory { // /Factory|null[0]
+    final fun foo(kotlin/String): kotlin/String // /Factory.foo|foo(kotlin.String){}[0]
+    final fun foo(kotlin/String, kotlin/Function1<kotlin/Any, kotlin/String?>): kotlin/String // /Factory.foo|foo(kotlin.String;kotlin.Function1<kotlin.Any,kotlin.String?>){}[0]
+}

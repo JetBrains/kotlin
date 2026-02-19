@@ -43,7 +43,7 @@ import kotlin.script.experimental.jvm.util.SnippetsHistory
 
 open class ReplCodeAnalyzerBase(
     environment: KotlinCoreEnvironment,
-    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace(),
+    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace(environment.project),
     implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null
 ) {
     protected val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
@@ -60,6 +60,7 @@ open class ReplCodeAnalyzerBase(
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
         // to be found via ResolveSession. The latter is true as long as light classes are not needed in REPL (which is currently true
         // because no symbol declared in the REPL session can be used from Java)
+        @Suppress("DEPRECATION_ERROR")
         container = TopDownAnalyzerFacadeForJVM.createContainer(
             environment.project,
             emptyList(),
@@ -128,6 +129,7 @@ open class ReplCodeAnalyzerBase(
     }
 
     protected fun runAnalyzer(linePsi: KtFile, importedScripts: List<KtFile>): TopDownAnalysisContext {
+        @Suppress("DEPRECATION_ERROR")
         return topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi) + importedScripts)
     }
 
@@ -306,8 +308,8 @@ internal fun SourceCode.addNo(no: Int) = SourceCodeByReplLine(text, no, name, lo
 data class SourceCodeByReplLine(
     override val text: String,
     val no: Int,
-    override val name: String? = null,
-    override val locationId: String? = null
+    override val name: String? = "Line_$no",
+    override val locationId: String? = "$name.kts"
 ) : SourceCode
 
 private typealias ReplSourceHistoryList<ResultT> = List<CompiledHistoryItem<SourceCodeByReplLine, ResultT>>

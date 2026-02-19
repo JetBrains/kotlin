@@ -5,21 +5,24 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.substitution.NoSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeContext {
@@ -38,26 +42,53 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     val symbolProvider: FirSymbolProvider get() = session.symbolProvider
 
     override fun nullableNothingType(): ConeClassLikeType {
-        return session.builtinTypes.nullableNothingType.type
+        return session.builtinTypes.nullableNothingType.coneType
     }
 
     override fun nullableAnyType(): ConeClassLikeType {
-        return session.builtinTypes.nullableAnyType.type
+        return session.builtinTypes.nullableAnyType.coneType
     }
 
     override fun nothingType(): ConeClassLikeType {
-        return session.builtinTypes.nothingType.type
+        return session.builtinTypes.nothingType.coneType
     }
 
     override fun anyType(): ConeClassLikeType {
-        return session.builtinTypes.anyType.type
+        return session.builtinTypes.anyType.coneType
     }
 
-    override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
-        require(lowerBound is ConeKotlinType)
-        require(upperBound is ConeKotlinType)
+    override fun createFlexibleType(lowerBound: RigidTypeMarker, upperBound: RigidTypeMarker): KotlinTypeMarker {
+        require(lowerBound is ConeRigidType)
+        require(upperBound is ConeRigidType)
 
-        return coneFlexibleOrSimpleType(this, lowerBound, upperBound)
+        return coneFlexibleOrSimpleType(this, lowerBound, upperBound, isTrivial = false)
+    }
+
+    override fun createTrivialFlexibleTypeOrSelf(lowerBound: KotlinTypeMarker): KotlinTypeMarker {
+        require(lowerBound is ConeKotlinType)
+
+        // We need to ensure that the returned type is not a flexible type with two equal bounds.
+        // This can happen if the given type is marked nullable or if it's an error type.
+        return if (lowerBound is ConeRigidType && !lowerBound.isMarkedNullable && lowerBound !is ConeErrorType) {
+            lowerBound.toTrivialFlexibleType(this)
+        } else {
+            lowerBound
+        }
+    }
+
+    override fun isTriviallyFlexible(flexibleType: FlexibleTypeMarker): Boolean {
+        require(flexibleType is ConeFlexibleType)
+        return flexibleType.isTrivial
+    }
+
+    override fun makeLowerBoundDefinitelyNotNullOrNotNull(flexibleType: FlexibleTypeMarker): KotlinTypeMarker {
+        require(flexibleType is ConeFlexibleType)
+
+        return ConeFlexibleType(
+            flexibleType.lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(this, preserveAttributes = true),
+            flexibleType.upperBound,
+            isTrivial = flexibleType.isTrivial
+        )
     }
 
     override fun createSimpleType(
@@ -65,19 +96,23 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
+        contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
-        val attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
-        val coneAttributes: ConeAttributes = if (isExtensionFunction) {
-            require(constructor is ConeClassLikeLookupTag && constructor.isSomeFunctionType(session))
+        require(constructor is ConeTypeConstructorMarker)
+        var attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, _>(mutableListOf())
+        val coneAttributes: ConeAttributes = if (isExtensionFunction || contextParameterCount > 0) {
+            require(constructor is ConeClassLikeLookupTag)
             // We don't want to create new instance of ConeAttributes which
             //   contains only CompilerConeAttributes.ExtensionFunctionType
             //   to avoid memory consumption
-            if (attributesList != null) {
-                attributesList += CompilerConeAttributes.ExtensionFunctionType
-                ConeAttributes.create(attributesList)
-            } else {
+            if (attributesList.isNullOrEmpty() && contextParameterCount == 0) {
                 ConeAttributes.WithExtensionFunctionType
+            } else {
+                if (attributesList == null) attributesList = mutableListOf()
+                if (isExtensionFunction) attributesList += CompilerConeAttributes.ExtensionFunctionType
+                if (contextParameterCount > 0) attributesList += CompilerConeAttributes.ContextFunctionTypeParams(contextParameterCount)
+                ConeAttributes.create(attributesList)
             }
         } else {
             attributesList?.let { ConeAttributes.create(it) } ?: ConeAttributes.Empty
@@ -95,9 +130,22 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 nullable,
                 coneAttributes
             )
-            else -> error("!")
+            is ConeIntersectionType -> if (coneAttributes === constructor.attributes) {
+                constructor
+            } else {
+                ConeIntersectionType(
+                    constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
+                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
+                )
+            }
+            is ConeCapturedTypeConstructor,
+            is ConeIntegerLiteralType,
+            is ConeStubTypeConstructor,
+            is ConeTypeVariableTypeConstructor,
+                -> error("Unsupported type constructor: ${constructor::class}")
+            is ConeClassifierLookupTag
+                -> error("Unexpected /* sealed */ ConeClassifierLookupTag inheritor: ${constructor::class}")
         }
-
     }
 
     override fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker {
@@ -115,10 +163,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
+        dnnTypesEqualToFlexible: Boolean,
     ): TypeCheckerState = TypeCheckerState(
         errorTypesEqualToAnything,
         stubTypesEqualToAnything,
+        dnnTypesEqualToFlexible,
         allowedTypeVariable = true,
         typeSystemContext = this,
         kotlinTypePreparator = ConeTypePreparator(session),
@@ -131,8 +181,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 || this is ConeTypeParameterType
     }
 
-    override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
-        require(this is ConeKotlinType)
+    override fun RigidTypeMarker.isExtensionFunction(): Boolean {
+        require(this is ConeRigidType)
         return this.isExtensionFunctionType
     }
 
@@ -141,17 +191,25 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.constructor.variable.typeConstructor
     }
 
-    override fun KotlinTypeMarker.typeDepth() = when (this) {
-        is ConeSimpleKotlinType -> typeDepth()
-        is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
-        else -> errorWithAttachment("Type should be simple or flexible: ${this::class.java}") {
-            withConeTypeEntry("type", this@typeDepth as? ConeKotlinType)
+    override fun KotlinTypeMarker.typeDepth(): Int {
+        require(this is ConeKotlinType)
+        return when (this) {
+            is ConeSimpleKotlinType -> typeDepth()
+            is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
+            is ConeDefinitelyNotNullType -> original.typeDepth()
         }
     }
 
-    override fun SimpleTypeMarker.typeDepth(): Int {
-        require(this is ConeKotlinType)
-        // if (this is TypeUtils.SpecialType) return 0 // TODO: WTF?
+    override fun KotlinTypeMarker.typeDepthForApproximation(): Int {
+        return if (this is ConeCapturedType) {
+            constructor.projection.type?.typeDepth() ?: 1
+        } else {
+            typeDepth()
+        }
+    }
+
+    override fun RigidTypeMarker.typeDepth(): Int {
+        require(this is ConeRigidType)
 
         if (this is ConeClassLikeType) {
             val fullyExpanded = fullyExpandedType(session)
@@ -162,7 +220,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
         var maxArgumentDepth = 0
         for (arg in typeArguments) {
-            val current = if (arg is ConeStarProjection) 1 else (arg as ConeKotlinTypeProjection).type.typeDepth()
+            val current = when (arg) {
+                is ConeStarProjection -> 1
+                is ConeKotlinTypeProjection -> arg.type.typeDepth()
+            }
             if (current > maxArgumentDepth) {
                 maxArgumentDepth = current
             }
@@ -183,10 +244,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         if (predicate(this)) return true
 
         val flexibleType = this as? ConeFlexibleType
-        if (flexibleType != null
-            && (flexibleType.lowerBound.containsInternal(predicate) || flexibleType.upperBound.containsInternal(predicate))
-        ) {
-            return true
+        if (flexibleType != null) {
+            if (flexibleType.lowerBound.containsInternal(predicate)) {
+                return true
+            }
+            if (!flexibleType.isTrivial && flexibleType.upperBound.containsInternal(predicate)) {
+                return true
+            }
         }
 
 
@@ -198,6 +262,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             return this.intersectedTypes.any { it.containsInternal(predicate) }
         }
 
+        if (this is ConeCapturedType) {
+            return this.constructor.projection.type?.containsInternal(predicate) == true
+        }
+
         repeat(argumentsCount()) { index ->
             val argument = getArgument(index)
             if (!argument.isStarProjection() && argument.getType().containsInternal(predicate)) return true
@@ -206,7 +274,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return false
     }
 
-    override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
+    private fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
         return this is ConeClassLikeLookupTag && this.classId == StandardClassIds.Unit
     }
 
@@ -225,30 +293,29 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.isUnit(): Boolean {
         require(this is ConeKotlinType)
-        return this.typeConstructor().isUnitTypeConstructor() && !this.isNullable
+        return this.typeConstructor().isUnitTypeConstructor() && !this.isMarkedOrFlexiblyNullable
     }
 
     override fun KotlinTypeMarker.isBuiltinFunctionTypeOrSubtype(): Boolean {
         require(this is ConeKotlinType)
         return this.isTypeOrSubtypeOf {
-            (it.lowerBoundIfFlexible() as ConeKotlinType).isSomeFunctionType(session)
+            it.lowerBoundIfFlexible().asCone().isSomeFunctionType(session)
         }
     }
 
-
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return this.withNullability(ConeNullability.create(nullable), this@ConeInferenceContext)
+        return this.withNullability(nullable, this@ConeInferenceContext)
     }
 
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext)
+        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext, preserveAttributes = preserveAttributes)
     }
 
-    override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
-        require(this is ConeKotlinType)
-        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext) as SimpleTypeMarker
+    override fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker {
+        require(this is ConeRigidType)
+        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext) as RigidTypeMarker
     }
 
     override fun createCapturedType(
@@ -261,20 +328,21 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         require(constructorProjection is ConeTypeProjection)
         @Suppress("UNCHECKED_CAST")
         return ConeCapturedType(
-            captureStatus,
-            lowerType,
-            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes as List<ConeKotlinType>)
+            constructor = ConeCapturedTypeConstructor(
+                constructorProjection,
+                lowerType, captureStatus,
+                constructorSupertypes as List<ConeKotlinType>
+            )
         )
     }
 
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
-        require(typeVariable is ConeTypeVariable) { "$typeVariable should subtype of ${ConeTypeVariable::class.qualifiedName}" }
-        return ConeStubTypeForChainInference(typeVariable, ConeNullability.create(typeVariable.defaultType().isMarkedNullable()))
+        shouldNotBeCalled("PCLA does not use stub types for builder inference")
     }
 
     override fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker {
         require(typeVariable is ConeTypeVariable) { "$typeVariable should subtype of ${ConeTypeVariable::class.qualifiedName}" }
-        return ConeStubTypeForTypeVariableInSubtyping(typeVariable, ConeNullability.create(typeVariable.defaultType().isMarkedNullable()))
+        return ConeStubTypeForTypeVariableInSubtyping(typeVariable, typeVariable.defaultType().isMarkedNullable())
     }
 
     override fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker {
@@ -282,15 +350,15 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return withAttributes(ConeAttributes.Empty)
     }
 
-    override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
-        require(this is ConeKotlinType)
+    override fun RigidTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): RigidTypeMarker {
+        require(this is ConeRigidType)
         @Suppress("UNCHECKED_CAST")
         return this.withArguments((newArguments as List<ConeTypeProjection>).toTypedArray())
     }
 
-    override fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
-        require(this is ConeKotlinType)
-        return this.withArguments { replacement(it) as ConeTypeProjection }
+    override fun RigidTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): RigidTypeMarker {
+        require(this is ConeRigidType)
+        return this.withArguments { replacement(it).asCone() }
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {
@@ -300,7 +368,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean {
         require(this is ConeKotlinType)
-        return attributes.noInfer != null
+        return hasNoInfer
     }
 
     override fun TypeConstructorMarker.isFinalClassConstructor(): Boolean {
@@ -310,7 +378,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return classSymbol.modality == Modality.FINAL
     }
 
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
+    override fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker {
         require(this is ConeTypeVariable)
         return this.typeConstructor
     }
@@ -325,17 +393,29 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.constructor.typeParameterMarker
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
-        require(this is ConeCapturedType)
-        return ConeCapturedType(captureStatus, lowerType, nullability, constructor, attributes, isProjectionNotNull = true)
+        error("AllowedToUsedOnlyInK1")
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
-        require(this is ConeCapturedType)
-        return isProjectionNotNull
+        return false
     }
 
-    override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
+    @K2Only
+    override fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean {
+        require(this is ConeCapturedType)
+        return hasRawSuperTypeInternal(hashSetOf())
+    }
+
+    private fun ConeCapturedType.hasRawSuperTypeInternal(seen: HashSet<ConeCapturedType>): Boolean {
+        return constructor.supertypes?.any { superType ->
+            superType.isRaw() || superType.contains { it is ConeCapturedType && seen.add(it) && it.hasRawSuperTypeInternal(seen) }
+        } == true
+    }
+
+    override fun DefinitelyNotNullTypeMarker.original(): ConeSimpleKotlinType {
         require(this is ConeDefinitelyNotNullType)
         return this.original
     }
@@ -351,14 +431,22 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeSubstitutor.Empty
     }
 
+    override fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker {
+        return object : AbstractConeSubstitutor(this@ConeInferenceContext) {
+            override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+                return ((type as? ConeStubTypeForTypeVariableInSubtyping)
+                    ?.constructor?.variable?.defaultType)?.withNullabilityOf(type, this@ConeInferenceContext)
+            }
+        }
+    }
+
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
-        if (this === NoSubstitutor) return type
         require(this is ConeSubstitutor)
         require(type is ConeKotlinType)
         return this.substituteOrSelf(type)
     }
 
-    override fun TypeVariableMarker.defaultType(): SimpleTypeMarker {
+    override fun TypeVariableMarker.defaultType(): ConeTypeVariableType {
         require(this is ConeTypeVariable)
         return this.defaultType
     }
@@ -366,6 +454,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun KotlinTypeMarker.isSpecial(): Boolean {
         // Cone type system doesn't have special types
         return false
+    }
+
+    @K2Only
+    override fun KotlinTypeMarker.hasEnhancedNullability(): Boolean {
+        require(this is ConeKotlinType)
+        return hasEnhancedNullability
     }
 
     override fun TypeConstructorMarker.isTypeVariable(): Boolean {
@@ -377,8 +471,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return isContainedInInvariantOrContravariantPositions
     }
 
-    override fun createErrorType(debugName: String): ConeErrorType {
-        return ConeErrorType(ConeIntermediateDiagnostic(debugName))
+    override fun createErrorType(debugName: String, delegatedType: RigidTypeMarker?): ConeErrorType {
+        return ConeErrorType(ConeIntermediateDiagnostic(debugName), delegatedType = delegatedType?.asCone())
     }
 
     override fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker {
@@ -387,7 +481,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
         require(this is ConeCapturedType)
-        return this.captureStatus
+        return this.constructor.captureStatus
     }
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false
@@ -398,12 +492,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.eraseContainingTypeParameters(): KotlinTypeMarker {
         val typeParameterErasureMap = this.extractTypeParameters()
-            .map { (it as ConeTypeParameterLookupTag).typeParameterSymbol }
+            .map { it.asCone().typeParameterSymbol }
             .eraseToUpperBoundsAssociated(session)
-        val substitutor by lazy { ConeSubstitutorByMap(typeParameterErasureMap, session) }
+        val substitutor by lazy(LazyThreadSafetyMode.NONE) { substitutorByMap(typeParameterErasureMap, session) }
         val typeWithErasedTypeParameters = if (argumentsCount() != 0) {
             replaceArgumentsDeeply {
-                val type = it.getType()
+                val type = it.getType() ?: return@replaceArgumentsDeeply it
                 val typeParameter =
                     (type.typeConstructor().getTypeParameterClassifier() as? ConeTypeParameterLookupTag)?.typeParameterSymbol
                 if (typeParameter != null) {
@@ -426,13 +520,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return withAttributes(attributes.remove(CompilerConeAttributes.Exact))
     }
 
-    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
-        if (this is ErrorTypeConstructor) return createErrorType(reason)
-        if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId")
-        return createErrorType("Unknown reason")
+    override fun TypeConstructorMarker.toErrorType(): ConeErrorType {
+        if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId", delegatedType = null)
+        return createErrorType("Unknown reason", delegatedType = null)
     }
 
-    override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
+    override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<RigidTypeMarker>): RigidTypeMarker? {
         return ConeIntegerLiteralType.findCommonSuperType(explicitSupertypes)
     }
 
@@ -443,7 +536,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     private fun AnnotationMarker.isCustomAttribute(): Boolean {
         val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
-        return (this as? ConeAttribute<*>)?.key !in compilerAttributes && this !is CustomAnnotationTypeAttribute
+        return (this as? ConeAttribute<*>)?.key !in compilerAttributes &&
+                this !is ParameterNameTypeAttribute &&
+                this !is CustomAnnotationTypeAttribute
     }
 
     override fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
@@ -454,9 +549,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return withAttributes(ConeAttributes.create(newCustomAttributes + attributesToKeep))
     }
 
-    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
-        require(this is ConeIntegerLiteralType)
-        return this.getApproximatedType()
+    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker {
+        require(this is ConeIntegerLiteralType && expectedType is ConeKotlinType?)
+        return this.getApproximatedType(expectedType)
     }
 
     override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {
@@ -496,15 +591,24 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is ConeKotlinType)
-        return (this.lowerBoundIfFlexible() as? ConeKotlinType)?.isExtensionFunctionType(session) == true
+        return isExtensionFunctionType(session)
+    }
+
+    override fun KotlinTypeMarker.contextParameterCount(): Int {
+        require(this is ConeKotlinType)
+        return unwrapToSimpleTypeUsingLowerBound().contextParameterTypes(session).size
     }
 
     override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {
-        val builtInFunctionType = getFunctionTypeFromSupertypes() as ConeKotlinType
+        val builtInFunctionType = getFunctionTypeFromSupertypes().asCone()
         return buildList {
             // excluding return type
             for (index in 0 until builtInFunctionType.argumentsCount() - 1) {
-                add(builtInFunctionType.getArgument(index).getType())
+                val type = when (val arg = builtInFunctionType.getArgument(index)) {
+                    is ConeKotlinTypeProjection -> arg.type
+                    else -> StandardClassIds.Any.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = true)
+                }
+                add(type)
             }
         }
     }
@@ -515,15 +619,27 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
-        return fullyExpandedType(session).let {
-            val simpleType = it.lowerBoundIfFlexible()
-            if ((simpleType as ConeKotlinType).isSomeFunctionType(session))
-                this
-            else {
+        val rigidType = fullyExpandedType(session).lowerBoundIfFlexible().asCone()
+
+        return when {
+            rigidType.isSomeFunctionType(session) -> this
+            rigidType is ConeCapturedType -> {
+                rigidType.constructor.supertypes?.firstNotNullOfOrNull { it.getFunctionTypeFromSupertypesOrNull() }
+            }
+            rigidType is ConeTypeParameterType -> {
+                rigidType.lookupTag.typeParameterSymbol.resolvedBounds.firstNotNullOfOrNull { it.coneType.getFunctionTypeFromSupertypesOrNull() }
+            }
+            rigidType is ConeIntersectionType -> {
+                rigidType.intersectedTypes.firstNotNullOfOrNull { it.getFunctionTypeFromSupertypesOrNull() }
+            }
+            else -> {
                 var functionalSupertype: KotlinTypeMarker? = null
-                simpleType.anySuperTypeConstructor { type ->
-                    simpleType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
-                        val isFunction = (superType as ConeKotlinType).isSomeFunctionType(session)
+                rigidType.anySuperTypeConstructor { type ->
+                    // `fastCorrespondingSupertypes` only works for `ConeClassLikeType`.
+                    // We need a special case above for every type for which `TypeConstructorMarker.supertypes`
+                    // returns something non-trivial.
+                    rigidType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
+                        val isFunction = superType.isSomeFunctionType(session)
                         if (isFunction) {
                             functionalSupertype = superType
                         }
@@ -531,16 +647,28 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                     } ?: false
                 }
                 functionalSupertype
-                    ?: errorWithAttachment("Failed to find functional supertype for ${simpleType::class.java}") {
-                    withConeTypeEntry("type", simpleType)
-                }
             }
+        } ?: errorWithAttachment(
+            """
+            Failed to find functional supertype for ${rigidType::class.java}.
+            The contract of this function is that it returns a non-null value iff `isBuiltinFunctionTypeOrSubtype` returns `true`.
+            """.trimIndent()
+        ) {
+            withConeTypeEntry("type", rigidType)
+        }
+    }
+
+    private fun KotlinTypeMarker.getFunctionTypeFromSupertypesOrNull(): KotlinTypeMarker? {
+        return if (isBuiltinFunctionTypeOrSubtype()) {
+            getFunctionTypeFromSupertypes()
+        } else {
+            null
         }
     }
 
     override fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind? {
         require(this is ConeKotlinType)
-        return this.functionTypeKind(session)
+        return this.lowerBoundIfFlexible().asCone().functionTypeKind(session)
     }
 
     override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
@@ -551,7 +679,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return kind.reflectKind().numberedClassId(parametersNumber).toLookupTag()
     }
 
-    override fun createTypeWithAlternativeForIntersectionResult(
+    override fun createTypeWithUpperBoundForIntersectionResult(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker {
@@ -560,10 +688,20 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val intersectionType = firstCandidate.lowerBoundIfFlexible() as? ConeIntersectionType ?: error {
             "Expected type is intersection, found $firstCandidate"
         }
-        return intersectionType.withAlternative(secondCandidate)
+        return intersectionType.withUpperBound(secondCandidate)
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = true
+    override fun RigidTypeMarker.getUpperBoundForApproximationOfIntersectionType(): KotlinTypeMarker? {
+        return (this as? ConeIntersectionType)?.upperBoundForApproximation
+    }
+
+    override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = session.languageVersionSettings.supportsFeature(
+        LanguageFeature.PreciseSimplificationToFlexibleLowerConstraint
+    )
+
+    override fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean = !session.languageVersionSettings.supportsFeature(
+        LanguageFeature.DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound
+    )
 
     override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
         require(this is ConeKotlinType)
@@ -573,6 +711,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker? =
         if (baseType is ConeLookupTagBasedType) createSubstitutionForSupertype(baseType, session) else null
 
+    override fun supportsImprovedVarianceInCst(): Boolean {
+        return session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedVarianceInCst)
+    }
+
     override val isK2: Boolean
         get() = true
+
+    override val lexicographicVariableReadinessCalculation: Boolean
+        get() = session.languageVersionSettings.supportsFeature(LanguageFeature.LexicographicVariableReadinessCalculation)
 }

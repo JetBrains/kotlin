@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(x: List<Int>): Int {
     x myMap {
         return@myMap
@@ -15,3 +16,6 @@ fun myMap(x: List<Int>): Int {
 }
 
 infix fun List<Int>.myMap(x: () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, infix, integerLiteral,
+lambdaLiteral */

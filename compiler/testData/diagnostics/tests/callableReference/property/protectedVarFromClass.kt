@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-12982 Incorrect type inference when accessing mutable protected property via reflection
 
@@ -21,3 +22,5 @@ open class B : A() {
 }
 
 class C : B()
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

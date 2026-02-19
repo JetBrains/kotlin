@@ -80,7 +80,7 @@ class CallInstruction private constructor(
         CallInstruction(element, blockScope, resolvedCall, receiverValues, arguments).setResult(resultValue)
 
     override fun toString() =
-        renderInstruction("call", "${render(element)}, ${resolvedCall.resultingDescriptor!!.name}")
+        renderInstruction("call", "${render(element)}, ${resolvedCall.resultingDescriptor.name}")
 }
 
 // Introduces black-box operation

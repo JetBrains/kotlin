@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class TestOk(val x: String = "OK") {
     TEST1,
     TEST2(),
@@ -19,3 +20,6 @@ enum class TestVarargs(val x: Int) {
     TEST;
     constructor(vararg xs: Any) : this(xs.size)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, integerLiteral, outProjection, primaryConstructor,
+propertyDeclaration, secondaryConstructor, stringLiteral, vararg */

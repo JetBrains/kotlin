@@ -1,0 +1,21 @@
+plugins {
+    id "java"
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+configurations {
+    baseAnnos
+    kapt.extendsFrom(baseAnnos)
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    baseAnnos "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+}

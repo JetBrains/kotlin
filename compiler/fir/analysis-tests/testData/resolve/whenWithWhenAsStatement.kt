@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(value: Int) {
     when (value) {
         0 -> {}
@@ -6,3 +7,5 @@ fun test(value: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, whenExpression, whenWithSubject */

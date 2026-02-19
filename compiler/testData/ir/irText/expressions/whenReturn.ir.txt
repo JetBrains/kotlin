@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/whenReturn.kt
-  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
-    VALUE_PARAMETER name:grade index:0 type:kotlin.String
+  FUN name:toString visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER kind:Regular name:grade index:0 type:kotlin.String
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=WHEN
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String [val]
@@ -8,26 +8,26 @@ FILE fqName:<root> fileName:/whenReturn.kt
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value="A"
+              ARG arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
+              ARG arg1: CONST String type=kotlin.String value="A"
             then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Excellent"
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value="B"
+              ARG arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
+              ARG arg1: CONST String type=kotlin.String value="B"
             then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Good"
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value="C"
+              ARG arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
+              ARG arg1: CONST String type=kotlin.String value="C"
             then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Mediocre"
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value="D"
+              ARG arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
+              ARG arg1: CONST String type=kotlin.String value="D"
             then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Fair"
           BRANCH

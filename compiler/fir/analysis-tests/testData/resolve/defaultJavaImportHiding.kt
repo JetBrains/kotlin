@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // FILE: util/HashMap.java
 
@@ -51,3 +52,6 @@ fun test_4() {
 fun test_5() {
     val map = LinkedHashMap<Int, Int>() // should be foo.LinkedHashMap
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+nullableType, propertyDeclaration, typeParameter */

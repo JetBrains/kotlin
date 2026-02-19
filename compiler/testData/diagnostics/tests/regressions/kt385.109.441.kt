@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-385 type inference does not work properly`
 // KT-109 Good code is red: type arguments are not inferred
@@ -32,3 +33,7 @@ fun main() {
 
     println(run { 1 })
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+incrementDecrementExpression, infix, integerLiteral, javaFunction, javaProperty, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter, whileLoop */

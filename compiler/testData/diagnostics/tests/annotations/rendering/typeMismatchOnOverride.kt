@@ -1,4 +1,5 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.PROPERTY,  AnnotationTarget.VALUE_PARAMETER)
 annotation class An
@@ -24,3 +25,5 @@ interface B : A {
 interface C : A {
     override var p2: <!VAR_TYPE_MISMATCH_ON_OVERRIDE("p2; public abstract var p2: String defined in A")!>Int<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

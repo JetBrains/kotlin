@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-45052
 // FULL_JDK
 // JVM_TARGET: 1.8
@@ -16,3 +17,6 @@ fun takeFunWithA(func: (A) -> Unit) {}
 fun test() {
     takeFunWithA(::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, javaCallableReference, javaFunction, samConversion, vararg */

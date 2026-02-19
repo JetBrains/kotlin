@@ -1,7 +1,7 @@
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JS, JVM, JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // FIR status: not supported in JVM
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 
 import kotlin.coroutines.*
 
@@ -18,7 +18,7 @@ interface I2: suspend (Int) -> Unit, suspend (Int, Int) -> Unit {
 
 }
 
-@Suppress("INCOMPATIBLE_TYPES")
+@Suppress("INCOMPATIBLE_TYPES", "IMPOSSIBLE_IS_CHECK_ERROR")
 fun box(): String {
     val c = C()
     if (c !is SuspendFunction0<*>) return "FAIL 1"

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: test.kt
 
@@ -23,3 +24,4 @@ class A : KTrait {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, stringLiteral, superExpression */

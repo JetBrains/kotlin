@@ -1,3 +1,5 @@
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
+
 import kotlin.sequences.*
 import kotlin.experimental.*
 
@@ -13,10 +15,5 @@ fun main(args: Array<String>) {
 @OptIn(ExperimentalTypeInference::class)
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
-// JVM_IR_TEMPLATES
-// 1 LINENUMBER 8 L13
-// 1 LOCALVARIABLE a I L[0-9]+ L4
-
-// JVM_TEMPLATES
-// 1 LINENUMBER 9 L18
-// 1 LOCALVARIABLE a I L[0-9]+ L18
+// 1 LINENUMBER 10 L11
+// 1 LOCALVARIABLE a I L[0-9]+ L5

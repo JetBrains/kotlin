@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-37516
 
 class A<T> {
@@ -29,3 +30,6 @@ fun test_2(a: A<C>) {
 fun test_3(a: A<D>) {
     a[0] = D() // set
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+operator, thisExpression, typeParameter */

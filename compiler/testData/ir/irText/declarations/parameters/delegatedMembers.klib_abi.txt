@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface <#A: kotlin/Any?> /IBase { // /IBase|null[0]
+    abstract val bar // /IBase.bar|{}bar[0]
+        abstract fun <get-bar>(): kotlin/Int // /IBase.bar.<get-bar>|<get-bar>(){}[0]
+    abstract fun foo(kotlin/Int) // /IBase.foo|foo(kotlin.Int){}[0]
+    abstract fun <#A1: kotlin/Any?> qux(#A, #A1) // /IBase.qux|qux(1:0;0:0){0§<kotlin.Any?>}[0]
+}
+final class <#A: kotlin/Any?> /Test : /IBase<#A> { // /Test|null[0]
+    final val bar // /Test.bar|{}bar[0]
+        final fun <get-bar>(): kotlin/Int // /Test.bar.<get-bar>|<get-bar>(){}[0]
+    constructor <init>(/IBase<#A>) // /Test.<init>|<init>(IBase<1:0>){}[0]
+    final fun foo(kotlin/Int) // /Test.foo|foo(kotlin.Int){}[0]
+    final fun <#A1: kotlin/Any?> qux(#A, #A1) // /Test.qux|qux(1:0;0:0){0§<kotlin.Any?>}[0]
+}

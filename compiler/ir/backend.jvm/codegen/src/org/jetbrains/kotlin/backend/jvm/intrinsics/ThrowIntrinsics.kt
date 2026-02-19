@@ -17,7 +17,7 @@ class ThrowException(private val exceptionClass: Type) : IntrinsicMethod() {
         with(codegen) {
             mv.anew(exceptionClass)
             mv.dup()
-            gen(expression.getValueArgument(0)!!, AsmTypes.JAVA_STRING_TYPE, codegen.context.irBuiltIns.stringType, data)
+            gen(expression.arguments[0]!!, AsmTypes.JAVA_STRING_TYPE, codegen.context.irBuiltIns.stringType, data)
             mv.invokespecial(exceptionClass.internalName, "<init>", "(Ljava/lang/String;)V", false)
             mv.athrow()
             return null

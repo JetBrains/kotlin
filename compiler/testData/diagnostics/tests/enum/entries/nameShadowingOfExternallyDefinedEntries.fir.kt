@@ -1,4 +1,5 @@
-// !LANGUAGE: -EnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -EnumEntries, -PrioritizedEnumEntries
 // WITH_STDLIB
 
 package pckg
@@ -38,3 +39,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, functionDeclaration, integerLiteral, nestedClass,
+propertyDeclaration, stringLiteral, thisExpression */

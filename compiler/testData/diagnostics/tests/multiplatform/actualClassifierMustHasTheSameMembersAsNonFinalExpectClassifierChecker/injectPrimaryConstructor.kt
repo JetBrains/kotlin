@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -14,3 +15,6 @@ actual open class Foo(injectedConstructor: Int) {
     actual fun existingFun() {}
     actual val existingParam: Int = 904
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

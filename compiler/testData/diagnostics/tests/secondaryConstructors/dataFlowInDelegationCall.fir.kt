@@ -1,7 +1,11 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     constructor(x: Any, y: Any, z: Any)
     constructor(x: String?, y: String?): this(x!!, x.length.toString() + y!!, "") {
         x.length + y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, nullableType, secondaryConstructor,
+smartcast, stringLiteral */

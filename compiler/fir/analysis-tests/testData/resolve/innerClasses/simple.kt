@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Owner {
 
     fun foo() {
@@ -22,7 +23,7 @@ class Owner {
         }
 
         fun err() {
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>foo<!>()
             this.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
     }
@@ -34,3 +35,6 @@ fun test() {
     val n = Owner.Nested()
     n.baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration,
+thisExpression */

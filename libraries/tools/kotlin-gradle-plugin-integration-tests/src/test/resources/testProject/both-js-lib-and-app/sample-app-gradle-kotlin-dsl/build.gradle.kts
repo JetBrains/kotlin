@@ -1,28 +1,27 @@
+import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
     id("maven-publish")
 }
 
 group = "com.example"
 version = "1.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     val nodeJs = js("nodeJs")
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation("com.example:sample-lib:1.0")
             }
         }
-        nodeJs.compilations["main"].defaultSourceSet {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-            }
-        }
     }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    /** Add a changing input, to enforce re-running KotlinCompile tasks in specific tests, without needing to re-run _all_ tasks. */
+    val kotlinCompileCacheBuster = 0
+    inputs.property("kotlinCompileCacheBuster", kotlinCompileCacheBuster)
 }

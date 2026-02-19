@@ -1,0 +1,9 @@
+fun unspecified(): kotlin.String
+
+@kotlin.MustUseReturnValues
+class Marked {
+  fun mustUse(): kotlin.String
+
+  @kotlin.IgnorableReturnValue
+  fun ignorable(): kotlin.String
+}

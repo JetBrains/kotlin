@@ -1,4 +1,4 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 
 val dz = -0.0
 val fz = -0.0f

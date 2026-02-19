@@ -1,0 +1,10 @@
+FILE: annotatedTypealiasAsFunctionBody.kt
+    public final? annotation class Anno : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Anno] constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? fun foo(): <implicit> {
+        ^foo ERROR_EXPR(Function has no body (but should))
+    }

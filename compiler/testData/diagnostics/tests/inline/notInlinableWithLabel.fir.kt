@@ -1,0 +1,16 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-65319
+
+fun noInline(x: () -> Unit) {
+    x.hashCode()
+}
+
+inline fun bar(s: () -> Unit) {
+    noInline(l1@ <!USAGE_IS_NOT_INLINABLE!>s<!>)
+}
+
+fun main() {
+    bar { }
+}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral */

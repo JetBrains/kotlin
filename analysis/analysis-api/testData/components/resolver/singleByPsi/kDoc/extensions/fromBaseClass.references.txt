@@ -1,0 +1,17 @@
+<caret_1>:
+  KDocName(85,97): 'Receiver.ext'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in test.Base) fun test.Receiver.ext()
+
+<caret_2>:
+  KDocName(142,154): 'Receiver.ext'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in test.Base) fun test.Receiver.ext()

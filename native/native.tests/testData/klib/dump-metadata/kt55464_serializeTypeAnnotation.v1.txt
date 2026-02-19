@@ -1,0 +1,22 @@
+library {
+  // module name: <kt55464_serializeTypeAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+
+    // signature: test/C|null[0]
+    public final class test/C : kotlin/Any {
+
+      // signature: test/C.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: test/builder|-5741056786925655007[0]
+      public final fun test/C.builder(c: @kotlin/ExtensionFunctionType kotlin/Function1<test/C, kotlin/Unit>): kotlin/Unit
+    }
+  }
+}

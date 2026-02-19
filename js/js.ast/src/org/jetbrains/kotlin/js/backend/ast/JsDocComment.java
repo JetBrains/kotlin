@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class JsDocComment extends JsExpression {
@@ -30,14 +29,6 @@ public class JsDocComment extends JsExpression {
 
     public Map<String, Object> getTags() {
         return tags;
-    }
-
-    public JsDocComment(String tagName, JsNameRef tagValue) {
-        tags = Collections.<String, Object>singletonMap(tagName, tagValue);
-    }
-
-    public JsDocComment(String tagName, String tagValue) {
-        tags = Collections.<String, Object>singletonMap(tagName, tagValue);
     }
 
     @Override

@@ -23,21 +23,21 @@ tvos*)
   SIM_SDK=$(xcrun --show-sdk-path --sdk appletvsimulator)
   OS_NAME="tvOS"
   DEVICES=("tvos_arm64")
-  SIMULATORS=("tvos_x64")
+  SIMULATORS=("tvos_x64" "tvos_simulator_arm64")
   ;;
 ios*)
   DEV_SDK=$(xcrun --show-sdk-path --sdk iphoneos)
   SIM_SDK=$(xcrun --show-sdk-path --sdk iphonesimulator)
   OS_NAME="iOS"
-  DEVICES=("ios_arm32" "ios_arm64")
-  SIMULATORS=("ios_x64")
+  DEVICES=("ios_arm64")
+  SIMULATORS=("ios_x64" "ios_simulator_arm64")
   ;;
 watchos*)
   DEV_SDK=$(xcrun --show-sdk-path --sdk watchos)
   SIM_SDK=$(xcrun --show-sdk-path --sdk watchsimulator)
   OS_NAME="watchOS"
-  DEVICES=("watchos_arm32" "watchos_arm64")
-  SIMULATORS=("watchos_i386")
+  DEVICES=("watchos_arm32" "watchos_arm64" "watchos_device_arm64")
+  SIMULATORS=("watchos_x64" "watchos_simulator_arm64")
   ;;
 osx*)
   DEV_SDK=$(xcrun --show-sdk-path)
@@ -51,7 +51,9 @@ esac
 
 DEFS=$NATIVE_SRCDIR/platformLibs/src/platform/$1
 FRAMEWORKS_DEV=$DEV_SDK/System/Library/Frameworks
+SUBFRAMEWORKS_DEV=$DEV_SDK/System/Library/SubFrameworks
 FRAMEWORKS_SIM=$SIM_SDK/System/Library/Frameworks
+SUBFRAMEWORKS_SIM=$SIM_SDK/System/Library/SubFrameworks
 
 DEFS_FILE=$(mktemp)
 FRAMEWORKS_DEV_FILE=$(mktemp)
@@ -60,8 +62,8 @@ FRAMEWORKS_COMMON_FILE=$(mktemp)
 FRAMEWORKS_DEV_ONLY_FILE=$(mktemp)
 FRAMEWORKS_SIM_ONLY_FILE=$(mktemp)
 ls $DEFS | grep .def | cut -d '.' -f 1 > $DEFS_FILE
-ls $FRAMEWORKS_DEV | grep .framework | cut -d '.' -f 1 > $FRAMEWORKS_DEV_FILE
-ls $FRAMEWORKS_SIM | grep .framework | cut -d '.' -f 1 > $FRAMEWORKS_SIM_FILE
+{ ls "$FRAMEWORKS_DEV" 2>/dev/null || true; ls "$SUBFRAMEWORKS_DEV" 2>/dev/null || true; } | grep .framework | cut -d '.' -f 1 | sort -u > $FRAMEWORKS_DEV_FILE
+{ ls "$FRAMEWORKS_SIM" 2>/dev/null || true; ls "$SUBFRAMEWORKS_SIM" 2>/dev/null || true; } | grep .framework | cut -d '.' -f 1 | sort -u > $FRAMEWORKS_SIM_FILE
 
 comm -12 $FRAMEWORKS_DEV_FILE $FRAMEWORKS_SIM_FILE > $FRAMEWORKS_COMMON_FILE
 comm -13 $FRAMEWORKS_DEV_FILE $FRAMEWORKS_SIM_FILE > $FRAMEWORKS_SIM_ONLY_FILE
@@ -101,20 +103,20 @@ function classify {
         return
     fi
     # DriverKit is C++. Drop it.
-    if [[ $(cat $JSON | jq '.metadata.platforms[] | .name' | grep DriverKit) ]]
+    if [[ $(cat $JSON | jq '.metadata.platforms[]? | .name' | grep DriverKit) ]]
     then
         DRIVER_KIT+=($FRAMEWORK_NAME)
         return
     fi
     # Sometimes framework is present in SDK directory, but actually it isn't supported on
     # current OS.
-    if [[ ! $(cat $JSON | jq '.metadata.platforms[] | .name' | grep $OS_NAME) ]]
+    if [[ ! $(cat $JSON | jq '.metadata.platforms[]? | .name' | grep $OS_NAME) ]]
     then
         OS_UNSUPPORTED+=($FRAMEWORK_NAME)
         return
     fi
-    LANG=$(cat $JSON | jq '.identifier.interfaceLanguage' | grep swift || true)
-    if [[ $LANG = \"swift\" ]]
+    # Filter out Swift-only frameworks
+    if [[ ! $(cat $JSON | jq '.variants[]? | .traits[]? | .interfaceLanguage' | grep \"occ\") ]]
     then
         SWIFT_ONLY+=($FRAMEWORK_NAME)
         return
@@ -212,7 +214,7 @@ then
 fi
 for framework in "${AVAILABLE[@]}"
 do
-    if [[ -d $DEV_SDK/System/Library/Frameworks/$framework.framework/Modules ]]
+    if [[ -d "$DEV_SDK/System/Library/Frameworks/$framework.framework/Modules" || -d "$DEV_SDK/System/Library/SubFrameworks/$framework.framework/Modules" ]]
     then
         create_def $framework
     else

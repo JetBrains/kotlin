@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun main() {
     val baseDir: String? = ""
@@ -17,3 +18,6 @@ fun main() {
 
     <!DEBUG_INFO_SMARTCAST!>networkParameters<!>.length // unsafe call
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

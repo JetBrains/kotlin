@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // TARGET_BACKEND: JVM
 // MODULE: lib
 // FILE: test/Parent.java

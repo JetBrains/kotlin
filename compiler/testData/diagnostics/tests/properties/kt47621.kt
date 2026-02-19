@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 
@@ -22,3 +23,6 @@ fun box(): String {
     C().foo()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaProperty,
+javaType, safeCall, stringLiteral */

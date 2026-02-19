@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS,
         AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION,
         AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
@@ -17,3 +18,6 @@ annotation class Ann(val x: Int = 6)
 
     fun bar(x: @Ann(1) @Ann(2) @Ann(3) Int) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localFunction,
+primaryConstructor, propertyDeclaration, stringLiteral */

@@ -6,24 +6,24 @@
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class FirSyntheticPropertyAccessor(
-    val delegate: FirSimpleFunction,
+class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor(
+    val delegate: FirNamedFunction,
     override val isGetter: Boolean,
     override val propertySymbol: FirPropertySymbol,
 ) : FirPropertyAccessor() {
@@ -46,7 +46,7 @@ class FirSyntheticPropertyAccessor(
         get() = delegate.dispatchReceiverType
 
     override val receiverParameter: FirReceiverParameter?
-        get() = null
+        get() = delegate.receiverParameter
 
     override val deprecationsProvider: DeprecationsProvider
         get() = delegate.deprecationsProvider
@@ -58,7 +58,7 @@ class FirSyntheticPropertyAccessor(
         get() = delegate.annotations
 
     override val typeParameters: List<FirTypeParameter>
-        get() = emptyList()
+        get() = delegate.typeParameters
 
     override val isSetter: Boolean
         get() = !isGetter
@@ -69,23 +69,27 @@ class FirSyntheticPropertyAccessor(
     override val attributes: FirDeclarationAttributes
         get() = delegate.attributes
 
-    override val symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol().apply {
+    override val symbol: FirSyntheticPropertyAccessorSymbol = FirSyntheticPropertyAccessorSymbol().apply {
+        @OptIn(FirImplementationDetail::class)
         bind(this@FirSyntheticPropertyAccessor)
     }
 
-    override val contextReceivers: List<FirContextReceiver>
-        get() = emptyList()
+    override val contextParameters: List<FirValueParameter>
+        get() = delegate.contextParameters
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 
-    override val contractDescription: FirContractDescription = FirEmptyContractDescription
+    override val contractDescription: FirContractDescription? = null
 
     override val containerSource: DeserializedContainerSource? get() = null
+
+    override val isLocal: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegate.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
-        contractDescription.accept(visitor, data)
+        contractDescription?.accept(visitor, data)
     }
 
     override fun replaceBody(newBody: FirBlock?) {
@@ -101,6 +105,10 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        notSupported()
+    }
+
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
         notSupported()
     }
 
@@ -144,7 +152,7 @@ class FirSyntheticPropertyAccessor(
         notSupported()
     }
 
-    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+    override fun replaceContractDescription(newContractDescription: FirContractDescription?) {
         notSupported()
     }
 
@@ -152,7 +160,7 @@ class FirSyntheticPropertyAccessor(
         notSupported()
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {
         notSupported()
     }
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
     @set:CfgInternals
-    var nodeCount = 0
+    var nodeCount: Int = 0
 
     lateinit var nodes: List<CFGNode<*>>
         private set
@@ -26,15 +26,81 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     val subGraphs: List<ControlFlowGraph>
         get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
+    /**
+     * Copies relation data from the [from] graph.
+     * The [mapper] must provide nodes of the same type that belong to this graph.
+     */
+    @CfgInternals
+    fun copyData(from: ControlFlowGraph, mapper: ControlFlowNodeMapper) {
+        /** Sic! [nodeCount] is intentionally ignored as it's incremented on node creation. See [CFGNode.id]. */
+
+        if (from::nodes.isInitialized) {
+            nodes = from.nodes.map(mapper::get)
+        }
+        if (from::enterNode.isInitialized) {
+            enterNode = mapper[from.enterNode]
+        }
+        if (from::exitNode.isInitialized) {
+            exitNode = mapper[from.exitNode]
+        }
+    }
+
     @CfgInternals
     fun complete() {
-        nodes = orderNodes()
+        nodes = orderNodes(isComplete = true)
+    }
+
+    /**
+     * Traverses all nodes starting from [enterNode], making a flat list of nodes.
+     *
+     * Normally, you do not need to call [orderNodes] manually.
+     * When working with complete graphs, use [nodes] instead.
+     */
+    @CfgInternals
+    fun orderNodes(isComplete: Boolean): List<CFGNode<*>> {
+        // NOTE: this produces a BFS order. If desired, a DFS order can be created instead by using a linked list,
+        // iterating over `followingNodes` in reverse order, and inserting new nodes at the current iteration point.
+        val result = ArrayList<CFGNode<*>>(nodeCount).apply { add(enterNode) }
+        val countdowns = IntArray(nodeCount)
+        var i = 0
+        while (i < result.size) {
+            val node = result[i++]
+            for (next in node.followingNodes) {
+                if (next.owner != this) {
+                    // Assume nodes in this graph can be ordered in isolation. If necessary, dead edges
+                    // should be used to go around subgraphs that always execute.
+                } else if (next.previousNodes.size == 1) {
+                    // Fast path: assume `next.previousNodes` is `listOf(node)`, and the edge is forward.
+                    // In tests, the consistency checker will validate this assumption.
+                    result.add(next)
+                } else if (!node.edgeTo(next).kind.isBack) {
+                    // Can only read a 0 if never seen this node before.
+                    val remaining = countdowns[next.id].let { if (it == 0) next.previousNodeCount else it } - 1
+                    if (remaining == 0) {
+                        result.add(next)
+                    }
+                    countdowns[next.id] = remaining
+                }
+            }
+        }
+
+        if (isComplete) {
+            assert(result.size == nodeCount) {
+                // TODO: can theoretically dump loop nodes into the output in some order so that `ControlFlowGraphRenderer`
+                //  could show them for debugging purposes.
+                "some nodes ${if (countdowns.all { it == 0 }) "are not reachable" else "form loops"} in control flow graph $name"
+            }
+        }
+
+        return result
     }
 
     enum class Kind {
         File,
         Class,
+        Constructor,
         Function,
+        Script,
         LocalFunction,
         AnonymousFunction,
         AnonymousFunctionCalledInPlace,
@@ -46,18 +112,14 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     }
 
     // NOTE: this is only for dynamic dispatch on node types. If you're collecting data from predecessors,
-    // use `collectDataForNode` instead to account for `finally` block deduplication. If you don't need that,
-    // then you probably don't need this either. Hint: if the only thing you need from nodes is the corresponding
-    // FIR structure, then traverse the `FirFile` instead.
-    fun <D> traverse(visitor: ControlFlowGraphVisitor<*, D>, data: D) {
-        for (node in nodes) {
-            node.accept(visitor, data)
-            (node as? CFGNodeWithSubgraphs<*>)?.subGraphs?.forEach { it.traverse(visitor, data) }
-        }
-    }
-
+    // use `traverseToFixedPoint` instead to account for loops and `finally` block deduplication. If you
+    // don't need that, then you probably don't need this either. Hint: if the only thing you need from nodes
+    // is the corresponding FIR structure, then you use a FIR visitor instead.
     fun traverse(visitor: ControlFlowGraphVisitorVoid) {
-        traverse(visitor, null)
+        for (node in nodes) {
+            node.accept(visitor)
+            (node as? CFGNodeWithSubgraphs<*>)?.subGraphs?.forEach { it.traverse(visitor) }
+        }
     }
 }
 
@@ -66,23 +128,27 @@ data class Edge(
     val kind: EdgeKind,
 ) {
     companion object {
-        val Normal_Forward = Edge(NormalPath, EdgeKind.Forward)
-        private val Normal_DeadForward = Edge(NormalPath, EdgeKind.DeadForward)
-        private val Normal_DfgForward = Edge(NormalPath, EdgeKind.DfgForward)
-        private val Normal_CfgForward = Edge(NormalPath, EdgeKind.CfgForward)
-        private val Normal_CfgBackward = Edge(NormalPath, EdgeKind.CfgBackward)
-        private val Normal_DeadBackward = Edge(NormalPath, EdgeKind.DeadBackward)
+        val Normal_Forward: Edge = Edge(NormalPath, EdgeKind.Forward)
+        private val Normal_DfgForward: Edge = Edge(NormalPath, EdgeKind.DfgForward)
+        private val Normal_CfgForward: Edge = Edge(NormalPath, EdgeKind.CfgForward)
+        private val Normal_DeadForward: Edge = Edge(NormalPath, EdgeKind.DeadForward)
+        private val Normal_DeadDfgForward: Edge = Edge(NormalPath, EdgeKind.DeadDfgForward)
+        private val Normal_DeadCfgForward: Edge = Edge(NormalPath, EdgeKind.DeadCfgForward)
+        private val Normal_CfgBackward: Edge = Edge(NormalPath, EdgeKind.CfgBackward)
+        private val Normal_DeadCfgBackward: Edge = Edge(NormalPath, EdgeKind.DeadCfgBackward)
 
         fun create(label: EdgeLabel, kind: EdgeKind): Edge =
             when (label) {
                 NormalPath -> {
                     when (kind) {
                         EdgeKind.Forward -> Normal_Forward
-                        EdgeKind.DeadForward -> Normal_DeadForward
                         EdgeKind.DfgForward -> Normal_DfgForward
                         EdgeKind.CfgForward -> Normal_CfgForward
+                        EdgeKind.DeadForward -> Normal_DeadForward
+                        EdgeKind.DeadDfgForward -> Normal_DeadDfgForward
+                        EdgeKind.DeadCfgForward -> Normal_DeadCfgForward
                         EdgeKind.CfgBackward -> Normal_CfgBackward
-                        EdgeKind.DeadBackward -> Normal_DeadBackward
+                        EdgeKind.DeadCfgBackward -> Normal_DeadCfgBackward
                     }
                 }
                 else -> {
@@ -104,6 +170,14 @@ object UncaughtExceptionPath : EdgeLabel {
     override val label: String get() = "onUncaughtException"
 }
 
+object PostponedPath : EdgeLabel {
+    override val label: String get() = "Postponed"
+}
+
+data object CapturedByValue : EdgeLabel {
+    override val label: String get() = "CapturedByValue"
+}
+
 enum class EdgeKind(
     val usedInDfa: Boolean, // propagate flow to alive nodes
     val usedInDeadDfa: Boolean, // propagate flow to dead nodes
@@ -112,46 +186,39 @@ enum class EdgeKind(
     val isDead: Boolean
 ) {
     Forward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = false),
-    DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true),
     DfgForward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = false),
     CfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = false),
+
+    DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true),
+    DeadDfgForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = true),
+    DeadCfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = true),
+
     CfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = false),
-    DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true)
+    DeadCfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true),
+    ;
+
+    fun toDead(): EdgeKind = when (this) {
+        Forward -> DeadForward
+        DfgForward -> DeadDfgForward
+        CfgForward -> DeadCfgForward
+        DeadForward -> DeadForward
+        DeadDfgForward -> DeadDfgForward
+        DeadCfgForward -> DeadCfgForward
+        CfgBackward -> DeadCfgBackward
+        DeadCfgBackward -> DeadCfgBackward
+    }
+
+    companion object {
+        fun forward(usedInCfa: Boolean = false, usedInDfa: Boolean = false): EdgeKind? {
+            return when {
+                usedInCfa && usedInDfa -> Forward
+                usedInCfa -> CfgForward
+                usedInDfa -> DfgForward
+                else -> null
+            }
+        }
+    }
 }
 
 private val CFGNode<*>.previousNodeCount
     get() = previousNodes.count { it.owner == owner && !edgeFrom(it).kind.isBack }
-
-private fun ControlFlowGraph.orderNodes(): List<CFGNode<*>> {
-    // NOTE: this produces a BFS order. If desired, a DFS order can be created instead by using a linked list,
-    // iterating over `followingNodes` in reverse order, and inserting new nodes at the current iteration point.
-    val result = ArrayList<CFGNode<*>>(nodeCount).apply { add(enterNode) }
-    val countdowns = IntArray(nodeCount)
-    var i = 0
-    while (i < result.size) {
-        val node = result[i++]
-        for (next in node.followingNodes) {
-            if (next.owner != this) {
-                // Assume nodes in this graph can be ordered in isolation. If necessary, dead edges
-                // should be used to go around subgraphs that always execute.
-            } else if (next.previousNodes.size == 1) {
-                // Fast path: assume `next.previousNodes` is `listOf(node)`, and the edge is forward.
-                // In tests, the consistency checker will validate this assumption.
-                result.add(next)
-            } else if (!node.edgeTo(next).kind.isBack) {
-                // Can only read a 0 if never seen this node before.
-                val remaining = countdowns[next.id].let { if (it == 0) next.previousNodeCount else it } - 1
-                if (remaining == 0) {
-                    result.add(next)
-                }
-                countdowns[next.id] = remaining
-            }
-        }
-    }
-    assert(result.size == nodeCount) {
-        // TODO: can theoretically dump loop nodes into the output in some order so that `ControlFlowGraphRenderer`
-        //  could show them for debugging purposes.
-        "some nodes ${if (countdowns.all { it == 0 }) "are not reachable" else "form loops"} in control flow graph $name"
-    }
-    return result
-}

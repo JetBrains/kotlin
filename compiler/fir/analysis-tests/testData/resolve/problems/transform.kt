@@ -1,4 +1,4 @@
-// IGNORE_REVERSED_RESOLVE
+// RUN_PIPELINE_TILL: BACKEND
 interface FirElement {
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R
 
@@ -74,3 +74,7 @@ class FirRenderer : FirVisitorVoid() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+in, interfaceDeclaration, localProperty, nullableType, out, override, primaryConstructor, propertyDeclaration, smartcast,
+starProjection, thisExpression, typeConstraint, typeParameter */

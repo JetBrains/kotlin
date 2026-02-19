@@ -1,5 +1,6 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 // FILE: test/Java.java
 package test;
@@ -46,3 +47,6 @@ class Derived : Base() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, functionDeclaration, integerLiteral, javaProperty,
+javaType, lambdaLiteral, localProperty, nestedClass, objectDeclaration, propertyDeclaration */

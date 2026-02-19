@@ -25,16 +25,30 @@ class AnalysisFlag<out T> internal constructor(
     }
 
     object Delegates {
-        object Boolean {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, false)
+        open class Boolean(val defaultValue: kotlin.Boolean) {
+            companion object : Boolean(defaultValue = false)
+
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, defaultValue)
         }
 
         object ApiModeDisabledByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ExplicitApiMode.DISABLED)
         }
 
+        object ReturnValueCheckerDisabledByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ReturnValueCheckerMode.DISABLED)
+        }
+
+        object HeaderModeTypeAnyByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, HeaderMode.ANY)
+        }
+
         object ListOfStrings {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<String>())
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<kotlin.String>())
+        }
+
+        object WarningLevelMap {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): Delegate<Map<kotlin.String, WarningLevel>> = Delegate(property.name, emptyMap())
         }
     }
 }

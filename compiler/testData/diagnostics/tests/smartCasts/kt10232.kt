@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //  Type inference failed after smart cast
 
@@ -14,3 +15,6 @@ fun <T> test(a: A<T>) {
     }   
     foo(a) // ok
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType,
+typeParameter */

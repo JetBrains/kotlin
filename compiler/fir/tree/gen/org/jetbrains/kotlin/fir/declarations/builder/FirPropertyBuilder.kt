@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 @file:Suppress("DuplicatedCode", "unused")
 
@@ -13,42 +16,16 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirBackingField
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
-import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
-import org.jetbrains.kotlin.fir.declarations.asResolveState
-import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirVariableBuilder
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
 
 @FirBuilderDsl
 class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
@@ -58,11 +35,13 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var status: FirDeclarationStatus
+    override var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverParameter: FirReceiverParameter? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
+    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var delegate: FirExpression? = null
@@ -71,10 +50,8 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override var setter: FirPropertyAccessor? = null
     override var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
-    var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
@@ -86,11 +63,13 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
             origin,
             attributes,
             status,
+            isLocal,
             returnTypeRef,
             receiverParameter,
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
+            contextParameters.toMutableOrEmpty(),
             name,
             initializer,
             delegate,
@@ -99,10 +78,8 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
             setter,
             backingField,
             annotations.toMutableOrEmpty(),
-            contextReceivers.toMutableOrEmpty(),
             symbol,
             delegateFieldSymbol,
-            isLocal,
             bodyResolveState,
             typeParameters,
         )
@@ -113,7 +90,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
 @OptIn(ExperimentalContracts::class)
 inline fun buildProperty(init: FirPropertyBuilder.() -> Unit): FirProperty {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirPropertyBuilder().apply(init).build()
 }
@@ -121,7 +98,7 @@ inline fun buildProperty(init: FirPropertyBuilder.() -> Unit): FirProperty {
 @OptIn(ExperimentalContracts::class)
 inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() -> Unit): FirProperty {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirPropertyBuilder()
     copyBuilder.source = original.source
@@ -130,11 +107,13 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.status = original.status
+    copyBuilder.isLocal = original.isLocal
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverParameter = original.receiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
+    copyBuilder.contextParameters.addAll(original.contextParameters)
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer
     copyBuilder.delegate = original.delegate
@@ -143,10 +122,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.setter = original.setter
     copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
-    copyBuilder.symbol = original.symbol
     copyBuilder.delegateFieldSymbol = original.delegateFieldSymbol
-    copyBuilder.isLocal = original.isLocal
     copyBuilder.bodyResolveState = original.bodyResolveState
     copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()

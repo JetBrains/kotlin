@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.java.structure
@@ -102,8 +91,11 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val isEnum: Boolean
     val isRecord: Boolean
     val isSealed: Boolean
-    val permittedTypes: Collection<JavaClassifierType>
+    val permittedTypes: Sequence<JavaClassifierType>
     val lightClassOriginKind: LightClassOriginKind?
+
+    /** Returns the original ClsJavaClass in the case of decompiled light classes */
+    val originalClsJavaClass: JavaClass get() = this
 
     val methods: Collection<JavaMethod>
     val fields: Collection<JavaField>
@@ -133,6 +125,8 @@ interface JavaMethod : JavaMember, JavaTypeParameterListOwner {
 
     val hasAnnotationParameterDefaultValue: Boolean
         get() = annotationParameterDefaultValue != null
+
+    val isNative: Boolean
 }
 
 interface JavaField : JavaMember {
@@ -147,10 +141,23 @@ interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {
 }
 
 interface JavaValueParameter : JavaAnnotationOwner {
+    /**
+     * The name of the parameter if present and not auto-generated
+     *
+     * @see nameOrGeneratedName
+     */
     val name: Name?
     val type: JavaType
     val isVararg: Boolean
     val isFromSource: Boolean
+
+    /**
+     * The name of the parameter if present or the generated name (like 'p0')
+     * if the parameter is the binary one and its name is auto-generated.
+     *
+     * Should be preferred over [name] where possible since it is expected to be more performant
+     */
+    val nameOrGeneratedName: Name? get() = name
 }
 
 interface JavaRecordComponent : JavaMember {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A() {
     var x: Int = 0
         get() = <!TYPE_MISMATCH!>"s"<!>
@@ -31,3 +32,6 @@ class A() {
         }
 
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, integerLiteral, primaryConstructor, propertyDeclaration,
+setter, stringLiteral */

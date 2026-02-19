@@ -23,7 +23,6 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                 is FirFunction -> 3
                 is FirClass -> 2
                 is FirTypeAlias -> 1
-                is FirErrorProperty -> 0
                 is FirValueParameter -> 0
                 is FirBackingField -> 0
             }

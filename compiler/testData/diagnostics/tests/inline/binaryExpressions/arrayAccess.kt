@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 operator inline fun <T, U> Function1<T, U>.get(index : Int) {
 
 }
@@ -22,3 +23,6 @@ inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, 
     <!USAGE_IS_NOT_INLINABLE!>s<!>[1]
     <!USAGE_IS_NOT_INLINABLE!>ext<!>[1]
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, integerLiteral,
+nullableType, operator, typeParameter, typeWithExtension */

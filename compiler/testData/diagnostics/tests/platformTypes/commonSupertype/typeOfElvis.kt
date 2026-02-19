@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/J.java
 
@@ -19,3 +20,6 @@ fun main() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaFunction, javaType, localProperty, nullableType, propertyDeclaration */

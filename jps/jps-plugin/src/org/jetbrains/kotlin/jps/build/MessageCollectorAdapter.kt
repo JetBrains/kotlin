@@ -21,6 +21,7 @@ class MessageCollectorAdapter(
     private val kotlinTarget: KotlinModuleBuildTarget<*>?
 ) : MessageCollector {
     private var hasErrors = false
+    val filesWithErrors = mutableSetOf<String>()
 
     override fun report(severity: CompilerMessageSeverity, @Nls message: String, location: CompilerMessageSourceLocation?) {
         hasErrors = hasErrors || severity.isError
@@ -36,6 +37,9 @@ class MessageCollectorAdapter(
             if (location != null && kotlinTarget != null && kotlinTarget.isFromIncludedSourceRoot(File(location.path))) {
                 val moduleName = kotlinTarget.module.name
                 prefix += "[$moduleName] "
+            }
+            if(severity.isError) {
+                location?.let { filesWithErrors.add(it.path) }
             }
 
             context.processMessage(
@@ -65,7 +69,7 @@ class MessageCollectorAdapter(
         return when (severity) {
             CompilerMessageSeverity.INFO -> BuildMessage.Kind.INFO
             CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION -> BuildMessage.Kind.ERROR
-            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> BuildMessage.Kind.WARNING
+            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.FIXED_WARNING -> BuildMessage.Kind.WARNING
             CompilerMessageSeverity.LOGGING -> null
             else -> throw IllegalArgumentException("Unsupported severity: $severity")
         }

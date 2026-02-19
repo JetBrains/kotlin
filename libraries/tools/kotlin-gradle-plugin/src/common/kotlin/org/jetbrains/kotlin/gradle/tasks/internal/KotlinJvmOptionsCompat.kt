@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * Temporary workaround for external plugins that tries to set up freeCompilerArgs
  * in task execution phase.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR", "OVERRIDE_DEPRECATION")
 class KotlinJvmOptionsCompat(
     private val task: () -> KotlinCompile,
     override val options: KotlinJvmCompilerOptions

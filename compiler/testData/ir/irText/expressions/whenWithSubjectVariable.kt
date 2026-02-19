@@ -1,4 +1,4 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 
 fun foo(): Any = 1
 

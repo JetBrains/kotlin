@@ -1,3 +1,4 @@
 expression: INTEGER_CONSTANT
 text: 66
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

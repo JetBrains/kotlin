@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -RECURSION_IN_INLINE
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -RECURSION_IN_INLINE
 
 inline operator fun <T, U> Function1<T, U>.rangeTo(p: Function1<T, U>): ClosedRange<Int> {
     this..p
@@ -29,3 +30,6 @@ inline fun <T, U, V> inlineFunWithInvoke(s: (p: T, l: U) -> U, ext: T.(p: U, l: 
     <!USAGE_IS_NOT_INLINABLE!>ext<!>..<!USAGE_IS_NOT_INLINABLE!>ext<!>
     <!USAGE_IS_NOT_INLINABLE!>ext<!>..<!USAGE_IS_NOT_INLINABLE!>ext<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, integerLiteral,
+nullableType, operator, rangeExpression, thisExpression, typeParameter, typeWithExtension */

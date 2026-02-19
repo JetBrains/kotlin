@@ -8,7 +8,7 @@ FILE: calls.kt
     public? final? fun testRegular(): Int {
         ^testRegular IntegerLiteral(3).distance#(IntegerLiteral(4))
     }
-    public? final? class My : R|kotlin/Any| {
+    public final? class My : R|kotlin/Any| {
         public? [ContainingClassKey=My] constructor([CorrespondingProperty=/My.x] x: Int): R|My| {
             super<R|kotlin/Any|>()
         }

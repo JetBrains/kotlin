@@ -1,30 +1,18 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.internal.*
-import kotlinx.metadata.internal.common.KmModuleFragment
-import kotlinx.metadata.klib.KlibSourceFile
+import kotlin.metadata.internal.*
+import kotlin.metadata.internal.common.KmModuleFragment
+import kotlinx.metadata.klib.KlibMetadataVersion
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 
-class ReverseSourceFileIndexWriteExtension : WriteContextExtension {
-    private val filesReverseIndex = mutableMapOf<KlibSourceFile, Int>()
-
-    val fileIndex: List<KlibSourceFile>
-        get() = filesReverseIndex
-            .map { (file, index) -> index to file }
-            .sortedBy { it.first }
-            .map { it.second }
-
-    fun getIndexOf(file: KlibSourceFile): Int = filesReverseIndex.getOrPut(file) {
-        filesReverseIndex.size
-    }
-}
+class KlibMetadataVersionWriteExtension(val version: KlibMetadataVersion) : WriteContextExtension
 
 class KlibModuleFragmentWriter(
     stringTable: ApproximatingStringTable,

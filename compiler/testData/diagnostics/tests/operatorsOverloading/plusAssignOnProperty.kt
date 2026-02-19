@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
     val c: C = C()
@@ -18,3 +19,6 @@ fun test() {
     var c1 = C1()
     c1.c <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, operator,
+propertyDeclaration, stringLiteral, thisExpression */

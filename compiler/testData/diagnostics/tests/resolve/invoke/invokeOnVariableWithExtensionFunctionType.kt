@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: 1.kt
 package fooIsExtension
 
@@ -81,3 +82,6 @@ fun test(a: A, b: B) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression, typeWithExtension */

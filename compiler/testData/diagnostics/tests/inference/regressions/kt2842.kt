@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package c
 
@@ -26,3 +27,6 @@ fun foo() : Boolean {
 }
 
 fun getNullableList(): List<String>? = null
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

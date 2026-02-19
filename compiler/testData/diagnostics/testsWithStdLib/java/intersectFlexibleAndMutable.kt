@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Util.java
 import java.util.List;
@@ -12,3 +13,6 @@ fun main() {
     list = Util.id(list)
     list += 2
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration */

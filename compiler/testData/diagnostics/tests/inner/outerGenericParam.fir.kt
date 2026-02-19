@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Outer<T> {
     class Nested {
         fun foo(t: <!UNRESOLVED_REFERENCE!>T<!>) = t
@@ -11,3 +12,5 @@ class Outer<T> {
         fun foo(t: T) = t
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, nullableType, typeParameter */

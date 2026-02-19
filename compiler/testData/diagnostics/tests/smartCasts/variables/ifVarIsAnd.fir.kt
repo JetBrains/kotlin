@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-5737
 fun get(): Any {
     return "abc"
@@ -11,3 +12,6 @@ fun foo(): Int {
     else
         0
 }
+
+/* GENERATED_FIR_TAGS: andExpression, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+isExpression, localProperty, propertyDeclaration, smartcast, stringLiteral */

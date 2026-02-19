@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +SafeCallsAreAlwaysNullable
 // ISSUE: KT-46860
 
@@ -18,3 +19,6 @@ fun test_2(a: A?) {
         takeInt(<!ARGUMENT_TYPE_MISMATCH!>x<!>) // should be an error
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, localProperty,
+nullableType, propertyDeclaration, safeCall, smartcast */

@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 
 @<!INVISIBLE_MEMBER!>kotlin.internal.<!INVISIBLE_REFERENCE!>InlineOnly<!><!>
@@ -14,3 +15,7 @@ fun usage(c: List<String>) {
     val cs = c.ifEmpty { listOf("x") }
     cs checkType { _<List<String>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, starProjection, stringLiteral,
+thisExpression, typeConstraint, typeParameter, typeWithExtension */

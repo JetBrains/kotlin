@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: InOut.kt
 interface In<in T>
@@ -60,3 +61,5 @@ interface TestK1K2J2 : K1, K2, J2
 interface TestJ3K1K2 : J3, K1, K2
 interface TestK1J3K2 : K1, J3, K2
 interface TestK1K2J3 : K1, K2, J3
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, interfaceDeclaration, javaType, nullableType, typeParameter */

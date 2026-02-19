@@ -1,0 +1,17 @@
+KaDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = try {
+            dangerous()
+        } catch (e: FooException) {
+            consume(e.message?.length ?: 0)
+            throw e
+        }
+    type = kotlin.String
+  hasEscapingJumps = false
+  hasJumps = false
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = false
+  jumpExpressions = []
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

@@ -1,0 +1,80 @@
+FILE fqName:foo fileName:/generatedFunctionWithDefaultParameter.kt
+  CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.MyAnnotation
+    CONSTRUCTOR visibility:public returnType:foo.MyAnnotation [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
+    annotations:
+      MyAnnotation
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.Foo
+    CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.Foo.Nested
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] visibility:public returnType:foo.Foo.Nested
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CONSTRUCTOR visibility:public returnType:foo.Foo [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] name:idWithDefault visibility:public modality:FINAL returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.Foo
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] kind:Regular name:x index:1 type:kotlin.String
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="OK"
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun idWithDefault (x: kotlin.String): kotlin.String declared in foo.Foo'
+          GET_VAR 'x: kotlin.String declared in foo.Foo.idWithDefault' type=kotlin.String origin=null
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] name:materialize visibility:public modality:FINAL returnType:foo.Foo
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.Foo
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun materialize (): foo.Foo declared in foo.Foo'
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.Foo' type=foo.Foo origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:foo type:foo.Foo [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.Foo' type=foo.Foo origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo'
+        CALL 'public final fun idWithDefault (x: kotlin.String): kotlin.String declared in foo.Foo' type=kotlin.String origin=null
+          ARG <this>: GET_VAR 'val foo: foo.Foo declared in foo.box' type=foo.Foo origin=null

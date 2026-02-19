@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 private typealias A = String.(Int) -> Int
 
 private fun b(a: A) {
@@ -9,3 +10,6 @@ fun main() {
         length + it
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+stringLiteral, typeAliasDeclaration, typeWithExtension */

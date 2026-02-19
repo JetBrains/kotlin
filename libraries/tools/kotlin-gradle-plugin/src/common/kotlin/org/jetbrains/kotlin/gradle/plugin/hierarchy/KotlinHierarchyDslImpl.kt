@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 internal class KotlinHierarchyDslImpl(
     private val targets: DomainObjectCollection<KotlinTarget>,
     private val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
+    private val redundantDependsOnEdgesTracker: RedundantDependsOnEdgesTracker,
 ) : KotlinHierarchyDsl {
 
     private val appliedTemplatesImpl = mutableSetOf<KotlinHierarchyTemplate>()
@@ -60,10 +61,12 @@ internal class KotlinHierarchyDslImpl(
         if (sharedSourceSet == null) return null
 
         if (hierarchy.children.isNotEmpty()) {
-            childSourceSets.forEach { childSourceSet -> childSourceSet.dependsOn(sharedSourceSet) }
+            childSourceSets.forEach { childSourceSet ->
+                redundantDependsOnEdgesTracker.addDependsOnEdgeFromTemplate(childSourceSet, sharedSourceSet)
+            }
         } else {
             compilation.internal.kotlinSourceSets.forAll { compilationSourceSet ->
-                compilationSourceSet.dependsOn(sharedSourceSet)
+                redundantDependsOnEdgesTracker.addDependsOnEdgeFromTemplate(compilationSourceSet, sharedSourceSet)
             }
         }
 

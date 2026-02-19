@@ -17,17 +17,6 @@ fun test(uis: UIntArray): UInt {
     return s
 }
 
-// JVM_TEMPLATES
-// 1 withIndex
-// 1 iterator
-// 1 hasNext
-// 1 next
-// 1 component1
-// 1 component2
-// 0 ARRAYLENGTH
-// 1 ICONST_0
-
-// JVM_IR_TEMPLATES
 // 0 withIndex
 // 0 iterator
 // 0 hasNext
@@ -37,7 +26,6 @@ fun test(uis: UIntArray): UInt {
 // 1 INVOKESTATIC kotlin\/UIntArray\.getSize\-impl \(\[I\)I
 // 2 ICONST_0
 
-// JVM_IR_TEMPLATES
 // 7 ILOAD
 // 6 ISTORE
 // 1 IADD

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: k.kt
 
@@ -18,3 +19,5 @@ interface J extends K {
     SubG bar();
     SubG baz();
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeParameter */

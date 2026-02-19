@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(x: String) = x
 
 fun test1() {
@@ -33,3 +34,5 @@ fun test3() {
     foo(<!DEBUG_INFO_SMARTCAST!>c<!>)
 }
 
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

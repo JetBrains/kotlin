@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
 
 class Foo<T> {
@@ -16,3 +17,6 @@ class Foo<T> {
 
     fun or(left: T, right: T): T = left
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, dnnType, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

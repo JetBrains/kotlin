@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 open class IIterator<out T> {
   fun next() : T
   val hasNext : Boolean

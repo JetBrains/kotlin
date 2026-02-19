@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun none() {}
 
@@ -72,7 +73,7 @@ fun blockReturnValueTypeMatch2() : Int {
     return <!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) 1
 }
 fun blockReturnValueTypeMatch3() : Int {
-    return <!RETURN_TYPE_MISMATCH!>if (1 > 2) else 1<!>
+    return <!RETURN_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) else 1<!>
 }
 fun blockReturnValueTypeMatch4() : Int {
     if (1 > 2)
@@ -158,6 +159,8 @@ fun illegalReturnIf(): Char {
 fun returnNothing(): Nothing {
     throw <!TYPE_MISMATCH!>1<!>
 }
+fun returnNothingEmpty(): Nothing {
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
 }
@@ -170,31 +173,31 @@ class B() {
 }
 
 fun testFunctionLiterals() {
-    val endsWithVarDeclaration : () -> Boolean = <!INITIALIZER_TYPE_MISMATCH!>{
-        val x = 2
-    }<!>
+    val endsWithVarDeclaration : () -> Boolean = {
+        <!RETURN_TYPE_MISMATCH!>val x = 2<!>
+    }
 
-    val endsWithAssignment: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
+    val endsWithAssignment: () -> Int = {
+        var x = 1
+        <!RETURN_TYPE_MISMATCH!>x = 333<!>
+    }
+
+    val endsWithReAssignment: () -> Int = {
+        var x = 1
+        <!RETURN_TYPE_MISMATCH!>x += 333<!>
+    }
+
+    val endsWithFunDeclaration : () -> String = {
         var x = 1
         x = 333
-    }<!>
+        <!RETURN_TYPE_MISMATCH!>fun meow() : Unit {}<!>
+    }
 
-    val endsWithReAssignment: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
-        var x = 1
-        x += 333
-    }<!>
-
-    val endsWithFunDeclaration : () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+    val endsWithObjectDeclaration : () -> Int = {
         var x = 1
         x = 333
-        fun meow() : Unit {}
-    }<!>
-
-    val endsWithObjectDeclaration : () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
-        var x = 1
-        x = 333
-        <!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
-    }<!>
+        <!RETURN_TYPE_MISMATCH!><!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}<!>
+    }
 
     val expectedUnitReturnType1: () -> Unit = {
         val x = 1
@@ -206,3 +209,8 @@ fun testFunctionLiterals() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, classDeclaration, comparisonExpression,
+disjunctionExpression, equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, localClass, localFunction, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral, whenExpression, whenWithSubject */

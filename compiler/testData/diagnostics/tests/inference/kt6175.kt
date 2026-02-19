@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 fun <T, R : Any> foo(body: (R?) -> T): T = fail()
 
@@ -46,3 +47,5 @@ fun test4() {
 }
 
 fun fail(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, typeConstraint, typeParameter */

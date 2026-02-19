@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
@@ -17,3 +18,6 @@ fun foo() {
         104
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

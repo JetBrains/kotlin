@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 fun Any.test_1(): Int = when (this) {
     is List<*> -> this.size
     is String -> length
@@ -16,3 +17,6 @@ fun Any.test_2(): Int = when (val x = this) {
     }
     else -> 0
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, isExpression, localProperty,
+propertyDeclaration, smartcast, starProjection, thisExpression, whenExpression, whenWithSubject */

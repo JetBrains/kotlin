@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 fun cond() = false
 
@@ -9,7 +9,14 @@ fun box() {
          false
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
+// test.kt:6 box
+// test.kt:3 cond
+// test.kt:6 box
+// test.kt:9 box
+// test.kt:10 box
+
+// EXPECTATIONS NATIVE
 // test.kt:6 box
 // test.kt:3 cond
 // test.kt:6 box
@@ -19,4 +26,12 @@ fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:6 box
 // test.kt:3 cond
+// test.kt:9 box
 // test.kt:10 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box (8)
+// test.kt:3 $cond (13, 18)
+// test.kt:6 $box (8)
+// test.kt:9 $box (9)
+// test.kt:10 $box (1)

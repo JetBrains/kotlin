@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 
 // FILE: j/JavaPublic.java
@@ -75,3 +76,5 @@ import j.JavaProtected.javaPProtected
 import j.JavaPrivate
 import j.JavaPrivate.<!INVISIBLE_REFERENCE!>javaMPrivate<!>
 import j.JavaPrivate.<!INVISIBLE_REFERENCE!>javaPPrivate<!>
+
+/* GENERATED_FIR_TAGS:  */

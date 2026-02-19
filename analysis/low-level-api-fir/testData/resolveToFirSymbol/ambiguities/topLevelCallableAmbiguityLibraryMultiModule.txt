@@ -1,0 +1,16 @@
+KtNamedFunction 'callable' in 'library1.jar!/library/Library1Kt.class':
+  public final fun callable(): R|library/L1|
+
+
+KtNamedFunction 'callable' in 'library2.jar!/library/Library2Kt.class':
+  public final fun callable(): R|library/L2|
+
+
+KtProperty 'callable' in 'library3.jar!/library/Library3Kt.class':
+  public final val callable: R|library/L3|
+      public get(): R|library/L3|
+
+
+KtProperty 'callable' in 'library4.jar!/library/Library4Kt.class':
+  public final val callable: R|library/L4|
+      public get(): R|library/L4|

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun testEquals(x: Int) {
     if (<!SENSELESS_COMPARISON!>x == null<!>) {}
     if (<!SENSELESS_COMPARISON!>x == (null)<!>) {}
@@ -21,3 +22,5 @@ fun testNotEqualsFlipped(x: Int) {
     if (<!SENSELESS_COMPARISON!>(null) != x<!>) {}
     if (<!SENSELESS_COMPARISON!>foo@ null != x<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression */

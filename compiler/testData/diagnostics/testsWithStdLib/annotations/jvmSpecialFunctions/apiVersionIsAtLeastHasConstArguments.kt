@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 // FILE: test.kt
 package test
@@ -22,3 +23,5 @@ package kotlin.internal
 
 fun apiVersionIsAtLeast(epic: Int, major: Int, minor: Int): Boolean =
         false
+
+/* GENERATED_FIR_TAGS: additiveExpression, const, functionDeclaration, integerLiteral, propertyDeclaration */

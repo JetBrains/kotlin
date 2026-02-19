@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-58579
 // FILE: Invariant.java
@@ -18,3 +19,6 @@ fun main() {
 }
 
 fun <T> T.bar() {}
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction, localProperty,
+nullableType, outProjection, propertyDeclaration, typeParameter */

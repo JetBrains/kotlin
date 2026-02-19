@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
@@ -66,13 +67,13 @@ private val LANGUAGE_FEATURE_SETTINGS =
     )
 
 private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
-    val configuration = CompilerConfiguration()
+    val configuration = CompilerConfiguration.create()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
-    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-common/resources")
+    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-base/resources")
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.configureJdkClasspathRoots()
-    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    configuration.messageCollector = MessageCollector.NONE
 
     val newInferenceState = if (useNewInference) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
     configuration.languageVersionSettings = LanguageVersionSettingsImpl(
@@ -137,10 +138,11 @@ abstract class AbstractSimpleFileBenchmark {
             )
         val moduleContext = context.withProject(env.project).withModule(module)
 
+        @Suppress("DEPRECATION_ERROR")
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             moduleContext.project,
             listOf(file),
-            NoScopeRecordCliBindingTrace(),
+            NoScopeRecordCliBindingTrace(env.project),
             env.configuration,
             { scope -> JvmPackagePartProvider(LANGUAGE_FEATURE_SETTINGS, scope) }
         )
@@ -153,8 +155,8 @@ abstract class AbstractSimpleFileBenchmark {
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun analyzeGreenFileIr(bh: Blackhole) {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
-        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toAbstractProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
+            .uniteWith(AllJavaSourcesInProjectScope(env.project))
+        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
         val firProvider = session.firProvider as FirProviderImpl
         val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
 

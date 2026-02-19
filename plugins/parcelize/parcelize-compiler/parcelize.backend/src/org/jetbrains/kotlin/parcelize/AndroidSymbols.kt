@@ -1,27 +1,25 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.parcelize
 
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
@@ -32,10 +30,11 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 // hence contain just enough information to produce correct JVM bytecode for *calls*. In particular, we omit generic types and
 // supertypes, which are not needed to produce correct bytecode.
 class AndroidSymbols(
-    val irBuiltIns: IrBuiltIns,
-    private val moduleFragment: IrModuleFragment
+    private val pluginContext: IrPluginContext,
+    private val moduleFragment: IrModuleFragment,
 ) {
     private val irFactory: IrFactory = IrFactoryImpl
+    val irBuiltIns: IrBuiltIns = pluginContext.irBuiltIns
 
     private val javaIo: IrPackageFragment = createPackage("java.io")
     private val javaLang: IrPackageFragment = createPackage("java.lang")
@@ -44,10 +43,12 @@ class AndroidSymbols(
     private val kotlin: IrPackageFragment = createPackage("kotlin")
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage("kotlin.jvm.internal")
+    private val kotlinTime: IrPackageFragment = createPackage("kotlin.time")
 
     private val androidOs: IrPackageFragment = createPackage("android.os")
     private val androidUtil: IrPackageFragment = createPackage("android.util")
     private val androidText: IrPackageFragment = createPackage("android.text")
+    private val runtimePackage: IrPackageFragment = createPackage("kotlinx.parcelize")
 
     private val androidOsBundle: IrClassSymbol =
         createClass(androidOs, "Bundle", ClassKind.CLASS, Modality.FINAL)
@@ -57,6 +58,9 @@ class AndroidSymbols(
 
     val androidOsParcel: IrClassSymbol =
         createClass(androidOs, "Parcel", ClassKind.CLASS, Modality.FINAL)
+
+    val directInitializerMarker: IrClassSymbol =
+        createClass(runtimePackage,"DirectInitializerMarker", ClassKind.OBJECT, Modality.FINAL)
 
     private val androidOsParcelFileDescriptor: IrClassSymbol =
         createClass(androidOs, "ParcelFileDescriptor", ClassKind.CLASS, Modality.OPEN)
@@ -166,7 +170,7 @@ class AndroidSymbols(
         kind = ClassKind.INTERFACE
         modality = Modality.ABSTRACT
     }.apply {
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
         val t = addTypeParameter("T", irBuiltIns.anyNType)
         parent = androidOsParcelable.owner
 
@@ -182,12 +186,18 @@ class AndroidSymbols(
         }
     }.symbol
 
+    val kotlinTimeDuration: IrClassSymbol = createClass(
+        kotlinTime, "Duration", ClassKind.CLASS, Modality.FINAL, true
+    ).apply {
+        owner.valueClassRepresentation = InlineClassRepresentation(Name.identifier("rawValue"), irBuiltIns.longType as IrSimpleType)
+    }
+
     val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {
         name = Name.identifier("java")
     }.apply {
         parent = kotlinJvm
         addGetter().apply {
-            addExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+            parameters += createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
             returnType = javaLangClass.defaultType
         }
     }.symbol
@@ -499,6 +509,33 @@ class AndroidSymbols(
         isStatic = true
     }.symbol
 
+    private val kotlinxCollectionsImmutable = FqName(kotlinxImmutable())
+    private val kotlinCollections = FqName("kotlin.collections")
+    private val kotlinIterable: FqName = kotlinCollections.child(Name.identifier("Iterable"))
+    private val kotlinMap: FqName = kotlinCollections.child(Name.identifier("Map"))
+
+    private fun findKotlinxImmutableCollectionExtensionFunction(
+        receiver: FqName,
+        functionName: String,
+    ): IrSimpleFunctionSymbol {
+        val callableId = CallableId(kotlinxCollectionsImmutable, Name.identifier(functionName))
+        return pluginContext.finderForBuiltins().findFunctions(callableId)
+            .firstOrNull { it.owner.parameters.singleOrNull()?.type?.classFqName == receiver }
+            ?: error("Function from kotlinx.collections.immutable is not found on classpath: $callableId")
+    }
+
+    val kotlinIterableToPersistentListExtension: IrSimpleFunctionSymbol by lazy {
+        findKotlinxImmutableCollectionExtensionFunction(kotlinIterable, "toPersistentList")
+    }
+
+    val kotlinIterableToPersistentSetExtension: IrSimpleFunctionSymbol by lazy {
+        findKotlinxImmutableCollectionExtensionFunction(kotlinIterable, "toPersistentSet")
+    }
+
+    val kotlinMapToPersistentMapExtension: IrSimpleFunctionSymbol by lazy {
+        findKotlinxImmutableCollectionExtensionFunction(kotlinMap, "toPersistentMap")
+    }
+
     val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
         irFactory.buildFun {
             name = Name.special("<unsafe-coerce>")
@@ -512,7 +549,7 @@ class AndroidSymbols(
         }.symbol
 
     private fun createPackage(packageName: String): IrPackageFragment =
-        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+        createEmptyExternalPackageFragment(
             moduleFragment.descriptor,
             FqName(packageName)
         )
@@ -530,7 +567,7 @@ class AndroidSymbols(
         isValue = isValueClass
     }.apply {
         parent = irPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
     }.symbol
 
     fun createBuilder(

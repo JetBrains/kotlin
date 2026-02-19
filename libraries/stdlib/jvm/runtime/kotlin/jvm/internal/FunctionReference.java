@@ -13,29 +13,6 @@ import kotlin.reflect.KFunction;
 public class FunctionReference extends CallableReference implements FunctionBase, KFunction {
     private final int arity;
 
-    /**
-     * Bitmask where bits represent the following flags:<br/>
-     * <li>
-     *     <ul>0 - whether the vararg to element parameter type conversion happened, i.e.<pre>
-     *         fun target(vararg xs: Int) {}
-     *         fun use(f: (Int, Int, Int) -> Unit) {}
-     *         use(::target)
-     *     </pre></ul>
-     *     <ul>1 - whether coercion of return type to Unit happened, i.e.<pre>
-     *         fun target(): Boolean = true
-     *         fun use(f: () -> Unit) {}
-     *         use(::target)
-     *     </pre></ul>
-     *     <ul>2 - whether suspend conversion happened, i.e.,<pre>
-     *         fun target() {}
-     *         fun useSuspend(f: suspend () -> Unit) {}
-     *         useSuspend(::target)
-     *     </pre></ul>
-     * </li>
-     */
-    @SinceKotlin(version = "1.4")
-    private final int flags;
-
     public FunctionReference(int arity) {
         this(arity, NO_RECEIVER, null, null, null, 0);
     }
@@ -46,10 +23,9 @@ public class FunctionReference extends CallableReference implements FunctionBase
     }
 
     @SinceKotlin(version = "1.4")
-    public FunctionReference(int arity, Object receiver, Class owner, String name, String signature, int flags) {
-        super(receiver, owner, name, signature, (flags & 1) == 1);
+    public FunctionReference(int arity, Object receiver, Class owner, String name, String signature, int flagsWithIsTopLevel) {
+        super(receiver, owner, name, signature, (flagsWithIsTopLevel & 1) == 1);
         this.arity = arity;
-        this.flags = flags >> 1;
     }
 
     @Override
@@ -107,8 +83,6 @@ public class FunctionReference extends CallableReference implements FunctionBase
 
             return getName().equals(other.getName()) &&
                    getSignature().equals(other.getSignature()) &&
-                   flags == other.flags &&
-                   arity == other.arity &&
                    Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver()) &&
                    Intrinsics.areEqual(getOwner(), other.getOwner());
         }

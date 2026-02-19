@@ -71,7 +71,8 @@ class KtLightMethodForDecompiledDeclaration(
     override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean): List<MethodSignatureBackedByPsiMethod> =
         PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
 
-    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+    @Deprecated("Deprecated in Java")
+    override fun findDeepestSuperMethod(): PsiMethod? = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
 
     override fun findDeepestSuperMethods(): Array<out PsiMethod> = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
 
@@ -97,8 +98,6 @@ class KtLightMethodForDecompiledDeclaration(
     override fun copy(): PsiElement = this
 
     override fun clone(): Any = this
-
-    override fun toString(): String = "${this.javaClass.simpleName} of $funParent"
 
     override fun isValid(): Boolean = parent.isValid
 

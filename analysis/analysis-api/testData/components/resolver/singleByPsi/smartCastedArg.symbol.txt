@@ -1,0 +1,5 @@
+KtCallExpression(108,119): 'processB(a)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /processB(b: B): kotlin.Int
+    ]

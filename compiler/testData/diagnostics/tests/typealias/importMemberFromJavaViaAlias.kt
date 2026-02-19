@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_JAVAC
 
 // FILE: test/jv/JavaSample.java
@@ -27,3 +27,5 @@ fun foo(
 ) {
     member()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, typeAliasDeclaration */

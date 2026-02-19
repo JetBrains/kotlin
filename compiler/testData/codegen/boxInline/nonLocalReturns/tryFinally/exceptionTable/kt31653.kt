@@ -1,5 +1,4 @@
-// !LANGUAGE: +ProperFinally
-// IGNORE_BACKEND: WASM
+// LANGUAGE: +ProperFinally
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
@@ -17,14 +16,10 @@ inline fun a(f: () -> Any) =
 fun b(vararg functions: () -> Any) = a {
     for (function in functions) {
         try {
-            return function()
+            return@a function()
         } catch (fail: Throwable) {
         }
     }
-}
-
-fun main(args: Array<String>) {
-    b({ result += "OK"; 1 }, { result += "fail"; 2 })
 }
 
 // FILE: 2.kt

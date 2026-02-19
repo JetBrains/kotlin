@@ -1,11 +1,4 @@
-// !LANGUAGE: +KotlinFunInterfaceConstructorReference
-
-// DONT_TARGET_EXACT_BACKEND: JVM
-//  ^ old JVM BE generates bogus code
-
-// IGNORE_BACKEND: JS
-//  ^ Failed: kr is class Function1
-
+// LANGUAGE: +KotlinFunInterfaceConstructorReference
 // WITH_REFLECT
 
 import kotlin.reflect.KFunction

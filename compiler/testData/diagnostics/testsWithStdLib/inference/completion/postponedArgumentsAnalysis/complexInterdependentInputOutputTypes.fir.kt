@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER
 
 interface AssertionPlant<out T : Any>
 interface AssertionPlantNullable<out T : Any?>: BaseAssertionPlant<T, AssertionPlantNullable<T>>
@@ -39,3 +40,6 @@ private fun <K, V : Any, M> containsNullable(
     { option, key -> option.withParameterObjectNullable(createGetParameterObject(plant, key)) },
     assertionCreator
 )
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, out, outProjection, typeConstraint, typeParameter, typeWithExtension */

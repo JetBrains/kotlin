@@ -1,8 +1,5 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=inline
+// STRING_CONCAT: inline
 // WITH_STDLIB
-
-// IGNORE_BACKEND: WASM
-//  ^  wasm-function[2283]:0x218da: RuntimeError: wasm exception
 
 import kotlin.test.assertEquals
 
@@ -27,5 +24,4 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 7 INVOKEVIRTUAL java/lang/StringBuilder\.append \(Ljava/lang/Object;\)Ljava/lang/StringBuilder;

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-49035, KT-51201
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
@@ -15,3 +16,6 @@ class Bar
 fun <MY_TYPE_PARAM : I> myRun(action: () -> MY_TYPE_PARAM): MY_TYPE_PARAM = action()
 
 val a = myRun<Foo> { <!TYPE_MISMATCH("Foo; Bar"), TYPE_MISMATCH("I; Bar")!>Bar()<!> }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

@@ -25,8 +25,8 @@ STEP 4:
         U : JsModuleB.0.kt -> JsModuleB.kt
     modified ir: JsModuleA.kt, JsModuleB.kt
 STEP 5:
-    modifications:
+    modifications <js>:
         U : JsModuleA.1.kt -> JsModuleA.kt
-    modified ir: JsModuleA.kt
-    updated exports: JsModuleA.kt
+    modified ir  <js>: JsModuleA.kt
+    updated exports <js>: JsModuleA.kt
 STEP 6:

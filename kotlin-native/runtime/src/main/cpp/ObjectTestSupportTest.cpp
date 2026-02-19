@@ -5,21 +5,22 @@
 
 #include "ObjectTestSupport.hpp"
 
+#include <vector>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "Natives.h"
 #include "TestSupport.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
 namespace {
 
 struct RegularPayload {
-    ObjHeader* field1;
-    ObjHeader* field2;
-    ObjHeader* field3;
+    mm::RefField field1;
+    mm::RefField field2;
+    mm::RefField field3;
 
     static constexpr std::array kFields{
             &RegularPayload::field1,
@@ -30,11 +31,11 @@ struct RegularPayload {
 
 struct IrregularPayload {
     int skipBefore;
-    ObjHeader* field1;
+    mm::RefField field1;
     int skip;
-    ObjHeader* field2;
+    mm::RefField field2;
     std::array<int, 10> skipALot;
-    ObjHeader* field3;
+    mm::RefField field3;
 
     static constexpr std::array kFields{
             &IrregularPayload::field1,
@@ -69,8 +70,8 @@ using ObjectTestCases = testing::Types<RegularObjectTestCase, IrregularObjectTes
 TYPED_TEST_SUITE(ObjectTestSupportObjectTest, ObjectTestCases, ObjectTestCaseNames);
 
 template <typename Payload>
-std_support::vector<ObjHeader**> Collect(test_support::Object<Payload>& object) {
-    std_support::vector<ObjHeader**> result;
+std::vector<mm::RefField*> Collect(test_support::Object<Payload>& object) {
+    std::vector<mm::RefField*> result;
     for (auto& field : object.fields()) {
         result.push_back(&field);
     }
@@ -107,9 +108,9 @@ TYPED_TEST(ObjectTestSupportObjectTest, Local) {
 
     EXPECT_THAT(Collect(object), testing::ElementsAre(&object->field1, &object->field2, &object->field3));
 
-    EXPECT_THAT(object.fields()[0], nullptr);
-    EXPECT_THAT(object.fields()[1], nullptr);
-    EXPECT_THAT(object.fields()[2], nullptr);
+    EXPECT_THAT(object.fields()[0].direct().load(), nullptr);
+    EXPECT_THAT(object.fields()[1].direct().load(), nullptr);
+    EXPECT_THAT(object.fields()[2].direct().load(), nullptr);
 
     auto& recoveredObject = test_support::Object<Payload>::FromObjHeader(object.header());
     EXPECT_THAT(&recoveredObject, &object);
@@ -148,9 +149,9 @@ TYPED_TEST(ObjectTestSupportObjectTest, Heap) {
 
         EXPECT_THAT(Collect(object), testing::ElementsAre(&object->field1, &object->field2, &object->field3));
 
-        EXPECT_THAT(object.fields()[0], nullptr);
-        EXPECT_THAT(object.fields()[1], nullptr);
-        EXPECT_THAT(object.fields()[2], nullptr);
+        EXPECT_THAT(object.fields()[0].direct().load(), nullptr);
+        EXPECT_THAT(object.fields()[1].direct().load(), nullptr);
+        EXPECT_THAT(object.fields()[2].direct().load(), nullptr);
     });
 }
 
@@ -160,7 +161,7 @@ template <typename Payload>
 struct PayloadTraits;
 
 template <>
-struct PayloadTraits<ObjHeader*> {
+struct PayloadTraits<mm::RefField> {
     template <size_t Size>
     using Array = test_support::ObjectArray<Size>;
     static const TypeInfo* GetTypeInfo() { return theArrayTypeInfo; }
@@ -283,8 +284,8 @@ public:
 template <typename TestCase>
 class ObjectTestSupportArrayTest : public testing::Test {};
 using ArrayTestCases = testing::Types<
-        ArrayTestCase<ObjHeader*, 0>,
-        ArrayTestCase<ObjHeader*, 3>,
+        ArrayTestCase<mm::RefField, 0>,
+        ArrayTestCase<mm::RefField, 3>,
         ArrayTestCase<KBoolean, 0>,
         ArrayTestCase<KBoolean, 3>,
         ArrayTestCase<KByte, 0>,
@@ -308,8 +309,8 @@ using ArrayTestCases = testing::Types<
 TYPED_TEST_SUITE(ObjectTestSupportArrayTest, ArrayTestCases, ArrayTestCaseNames);
 
 template <typename Payload, size_t ElementCount>
-std_support::vector<Payload*> Collect(test_support::internal::Array<Payload, ElementCount>& array) {
-    std_support::vector<Payload*> result;
+std::vector<Payload*> Collect(test_support::internal::Array<Payload, ElementCount>& array) {
+    std::vector<Payload*> result;
     for (auto& element : array.elements()) {
         result.push_back(&element);
     }
@@ -330,11 +331,11 @@ TYPED_TEST(ObjectTestSupportArrayTest, Local) {
     EXPECT_THAT(array.arrayHeader()->count_, size);
     EXPECT_THAT(array.elements().size(), size);
 
-    std_support::vector<Payload*> expected;
+    std::vector<Payload*> expected;
     for (size_t i = 0; i < size; ++i) {
         auto* element = AddressOfElementAt<Payload>(array.arrayHeader(), i);
         EXPECT_THAT(&array.elements()[i], element);
-        EXPECT_THAT(array.elements()[i], Payload{});
+        EXPECT_TRUE(array.elements()[i] == Payload{});
         expected.push_back(element);
     }
 
@@ -361,11 +362,11 @@ TYPED_TEST(ObjectTestSupportArrayTest, Heap) {
         EXPECT_THAT(array.arrayHeader()->count_, size);
         EXPECT_THAT(array.elements().size(), size);
 
-        std_support::vector<Payload*> expected;
+        std::vector<Payload*> expected;
         for (size_t i = 0; i < size; ++i) {
             auto* element = AddressOfElementAt<Payload>(array.arrayHeader(), i);
             EXPECT_THAT(&array.elements()[i], element);
-            EXPECT_THAT(array.elements()[i], Payload{});
+            EXPECT_TRUE(array.elements()[i] == Payload{});
             expected.push_back(element);
         }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-668 Failed to resolve generic parameter
 open class A()
 open class B() : A() {
@@ -12,3 +13,6 @@ class C() {
 
   val x: B = a({it.b()}, B())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

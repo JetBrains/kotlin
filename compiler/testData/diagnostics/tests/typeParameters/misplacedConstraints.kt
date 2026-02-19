@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class Foo<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T : Cloneable<!>> where T : Comparable<T> {
     fun <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>U : Cloneable<!>> foo(u: U): U where U: Comparable<U> {
@@ -12,3 +13,6 @@ class Foo<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T : Cloneable<!>> where T : Co
 class Bar<T : Cloneable, U> where U: Comparable<T> {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, localFunction, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, typeConstraint, typeParameter */

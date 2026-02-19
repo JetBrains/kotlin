@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -53,10 +53,12 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
         fun analyzeTestFile(testType: String) = run {
             val test = declarationsText.replace("#TestType#", testType)
             val testFile = KtPsiFactory(project).createFile(test)
+
+            @Suppress("DEPRECATION_ERROR")
             val bindingContext = JvmResolveUtil.analyze(testFile, environment).bindingContext
             val functions = bindingContext.getSliceContents(BindingContext.FUNCTION)
-            val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" } ?:
-                              throw AssertionError("Function 'foo' is not declared")
+            val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" }
+                ?: throw AssertionError("Function 'foo' is not declared")
             Pair(bindingContext, functionFoo)
         }
 
@@ -73,12 +75,16 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
             val t = typeParameters[0]
             val r = typeParameters[1]
             if (oneTypeVariable)
-                listOf(mapOf(t to TypeProjectionImpl(IN_VARIANCE, intType)),
-                       mapOf(t to TypeProjectionImpl(OUT_VARIANCE, intType)))
+                listOf(
+                    mapOf(t to TypeProjectionImpl(IN_VARIANCE, intType)),
+                    mapOf(t to TypeProjectionImpl(OUT_VARIANCE, intType))
+                )
             else {
-                listOf(mapOf(
+                listOf(
+                    mapOf(
                         t to TypeProjectionImpl(IN_VARIANCE, intType),
-                        r to TypeProjectionImpl(OUT_VARIANCE, stringType))
+                        r to TypeProjectionImpl(OUT_VARIANCE, stringType)
+                    )
                 )
             }
         }
@@ -113,8 +119,9 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
 
                     val (lower, upper) = approximateCapturedTypes(typeWithCapturedType)
                     val substitution =
-                            approximateCapturedTypesIfNecessary(
-                                    TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false)
+                        approximateCapturedTypesIfNecessary(
+                            TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false
+                        )
 
                     append("  ")
                     for (typeParameter in testSubstitution.keys) {
@@ -127,7 +134,7 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(testDataPath + "/" + filePath), result)
+        TestDataAssertions.assertEqualsToFile(File(testDataPath + "/" + filePath), result)
     }
 
     private fun getTypePatternsForOneTypeVariable() = listOf("In<#T#>", "Out<#T#>", "Inv<#T#>", "Inv<in #T#>", "Inv<out #T#>")

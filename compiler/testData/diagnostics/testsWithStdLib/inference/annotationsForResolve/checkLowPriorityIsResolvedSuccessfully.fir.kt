@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo {
     @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
     @kotlin.internal.LowPriorityInOverloadResolution
@@ -24,3 +25,6 @@ fun Baz(x: Foo): Baz {
 }
 
 fun testBaz(e: Foo) = Baz(e)
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+operator, primaryConstructor, propertyDeclaration, stringLiteral */

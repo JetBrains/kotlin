@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 open class A {
     inner class B {
@@ -35,10 +36,10 @@ class E: A() {
 
     object Z {
         init {
-            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B<!>().<!UNRESOLVED_REFERENCE!>foo<!>()
-            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B<!>().<!UNRESOLVED_REFERENCE!>bar<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>B<!>().foo()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>B<!>().<!UNRESOLVED_REFERENCE!>bar<!>()
 
-            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>D<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>D<!>()
             <!UNRESOLVED_REFERENCE!>C<!>()
         }
     }
@@ -64,3 +65,6 @@ class F: A() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, inner, nestedClass,
+objectDeclaration */

@@ -9,13 +9,16 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
 internal class FirAnonymousObjectExpressionImpl(
     override val source: KtSourceElement?,
+    @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var anonymousObject: FirAnonymousObject,
 ) : FirAnonymousObjectExpression() {

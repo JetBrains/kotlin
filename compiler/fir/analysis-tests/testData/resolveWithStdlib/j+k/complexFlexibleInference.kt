@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: BindingContext.java
 public interface BindingContext {
     @org.jetbrains.annotations.Nullable
@@ -19,3 +20,6 @@ public class Slices {
 fun bar(bindingContext: BindingContext) {
     bindingContext[Slices.X, bindingContext[Slices.Y, 1]]
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty, javaType,
+nullableType */

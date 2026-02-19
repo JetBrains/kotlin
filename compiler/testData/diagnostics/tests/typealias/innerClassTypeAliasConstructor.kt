@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // NI_EXPECTED_FILE
 
@@ -22,3 +23,6 @@ fun <T> test3(x: Generic<T>) = x.GI()
 fun <T> test4(x: Generic<List<T>>) = x.GI()
 fun <T> test5(x: Generic<T>) = x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GIntI<!>()
 fun Generic<Int>.test6() = GIntI()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inner, nullableType,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

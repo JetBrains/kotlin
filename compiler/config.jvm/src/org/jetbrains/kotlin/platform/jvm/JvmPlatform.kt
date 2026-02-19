@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.platform.jvm
@@ -8,19 +8,18 @@ package org.jetbrains.kotlin.platform.jvm
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.toTargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
+import org.jetbrains.kotlin.platform.toTargetPlatform
 
 abstract class JvmPlatform : SimplePlatform("JVM") {
     override val oldFashionedDescription: String
         get() = "JVM "
 }
 
-@Suppress("DEPRECATION_ERROR")
 object JvmPlatforms {
-    private val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.DEFAULT)
+    val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.DEFAULT)
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
-        JvmTarget.values().map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
+        JvmTarget.entries.map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 
     // This platform is needed mostly for compatibility and migration of code base,
     // as previously some clients used TargetPlatform just as platform-marker
@@ -41,16 +40,7 @@ object JvmPlatforms {
 
     val allJvmPlatforms: List<TargetPlatform> = jvmTargetToJdkPlatform.values.toList()
 
-    @Deprecated(
-        message = "Should be accessed only by compatibility layer, other clients should use 'unspecifiedJvmPlatform'",
-        level = DeprecationLevel.ERROR
-    )
-    object CompatJvmPlatform : TargetPlatform(setOf(UNSPECIFIED_SIMPLE_JVM_PLATFORM)),
-        // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
-        org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform {
-        override val platformName: String
-            get() = "JVM"
-    }
+    private object CompatJvmPlatform : TargetPlatform(setOf(UNSPECIFIED_SIMPLE_JVM_PLATFORM))
 }
 
 class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {

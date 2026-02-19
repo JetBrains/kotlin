@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -16,3 +17,6 @@ public class B {
 fun test() {
     B.bar() { it<!UNSAFE_CALL!>.<!>hashCode() > 0 }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+lambdaLiteral, nullableType, samConversion */

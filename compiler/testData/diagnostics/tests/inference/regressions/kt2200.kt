@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 //KT-2200 array(array()) breaks compiler
 package n
@@ -16,3 +17,7 @@ fun main() {
 //from library
 @Suppress("UNCHECKED_CAST")
 fun <T> array(vararg t : T) : Array<T> = t as Array<T>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension,
+vararg */

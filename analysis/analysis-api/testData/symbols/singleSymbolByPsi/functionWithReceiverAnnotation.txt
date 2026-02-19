@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,32 +17,54 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: [
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/foo)
-    type: KtUsualClassType:
-      annotationsList: [
+    owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: [
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Int
-    getContainingModule: KtSourceModule "Sources of main"
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(functionWithReceiverAnnotation.kt)
+    getContainingJvmClassName: FunctionWithReceiverAnnotationKt
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+    importableFqName: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(functionWithReceiverAnnotation.kt)
+  getContainingJvmClassName: FunctionWithReceiverAnnotationKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: foo

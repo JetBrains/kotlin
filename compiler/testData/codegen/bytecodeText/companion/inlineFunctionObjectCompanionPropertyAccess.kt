@@ -56,8 +56,6 @@ class A {
 // One direct `A.v` set in `A.<clinit>`
 // 2 PUTSTATIC A.v
 
-// JVM_IR_TEMPLATES
-
 // Two accesses from the inline function code for `g` and `g2`.
 // Four accesses from the code for `g` and `g2` inlined in `useInline`.
 // Two accesses from the lambdas inlined in `useInline`.
@@ -77,25 +75,3 @@ class A {
 // One call to the accessibility bridge `access$getS$cp` from Companion.getS.
 // Two uses of the direct accessor from the lambdas inlined in useNonInline.
 // 3 INVOKESTATIC A.access\$getS\$cp
-
-// JVM_TEMPLATES
-
-// Two accesses from the inline function code for `g` and `g2`.
-// Four accesses from the code for `g` and `g2` inlined in `useInline`.
-// Two accesses from the lambdas inlined in `useInline`.
-// Four accesses from the code for `g` and `g2` inlined in `useNonInline`.
-// Two accesses from the lambdas inlined in `useNonInline`.
-// 14 INVOKEVIRTUAL A\$Companion.getS
-
-// Two accesses from the inline function code for `g` and `g2`.
-// Four accesses from the code for `g` and `g2` inlined in `useInline`.
-// Two accesses from the lambdas inlined in `useInline`.
-// Four accesses from the code for `g` and `g2` inlined in `useNonInline`.
-// Two accesses from the lambdas inlined in `useNonInline`.
-// 14 INVOKEVIRTUAL A\$Companion.setV
-
-// One call to the accessibility bridge `access$setV$cp` from Companion.setV.
-// 1 INVOKESTATIC A.access\$setV\$cp
-
-// One call to the accessibility bridge `access$getS$cp` from Companion.getS.
-// 1 INVOKESTATIC A.access\$getS\$cp

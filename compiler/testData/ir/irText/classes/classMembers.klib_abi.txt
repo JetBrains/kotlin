@@ -1,0 +1,34 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final val property // /C.property|{}property[0]
+        final fun <get-property>(): kotlin/Int // /C.property.<get-property>|<get-property>(){}[0]
+    final val propertyWithGet // /C.propertyWithGet|{}propertyWithGet[0]
+        final fun <get-propertyWithGet>(): kotlin/Int // /C.propertyWithGet.<get-propertyWithGet>|<get-propertyWithGet>(){}[0]
+    final var propertyWithGetAndSet // /C.propertyWithGetAndSet|{}propertyWithGetAndSet[0]
+        final fun <get-propertyWithGetAndSet>(): kotlin/Int // /C.propertyWithGetAndSet.<get-propertyWithGetAndSet>|<get-propertyWithGetAndSet>(){}[0]
+        final fun <set-propertyWithGetAndSet>(kotlin/Int) // /C.propertyWithGetAndSet.<set-propertyWithGetAndSet>|<set-propertyWithGetAndSet>(kotlin.Int){}[0]
+    final val y // /C.y|{}y[0]
+        final fun <get-y>(): kotlin/Int // /C.y.<get-y>|<get-y>(){}[0]
+    final var z // /C.z|{}z[0]
+        final fun <get-z>(): kotlin/Int // /C.z.<get-z>|<get-z>(){}[0]
+        final fun <set-z>(kotlin/Int) // /C.z.<set-z>|<set-z>(kotlin.Int){}[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int = ...) // /C.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun function() // /C.function|function(){}[0]
+    final fun (kotlin/Int).memberExtensionFunction() // /C.memberExtensionFunction|memberExtensionFunction@kotlin.Int(){}[0]
+    final object Companion // /C.Companion|null[0]
+    final class NestedClass { // /C.NestedClass|null[0]
+        constructor <init>() // /C.NestedClass.<init>|<init>(){}[0]
+        final fun function() // /C.NestedClass.function|function(){}[0]
+        final fun (kotlin/Int).memberExtensionFunction() // /C.NestedClass.memberExtensionFunction|memberExtensionFunction@kotlin.Int(){}[0]
+    }
+    abstract interface NestedInterface { // /C.NestedInterface|null[0]
+        open fun bar() // /C.NestedInterface.bar|bar(){}[0]
+        abstract fun foo() // /C.NestedInterface.foo|foo(){}[0]
+    }
+}

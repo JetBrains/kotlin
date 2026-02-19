@@ -3,8 +3,7 @@ plugins {
 }
 
 publishTestJarsForIde(
-    listOf(
-        ":jps:jps-plugin",
-        ":kotlin-build-common",
-    )
+    projectNames = listOf(":jps:jps-plugin"),
+    projectWithFixturesNames = listOf(":kotlin-build-common"),
+    projectWithRenamedTestJarNames = listOf(":kotlin-build-common"),
 )

@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /d1 // /d1|{}d1[0]
+    final fun <get-d1>(): dynamic // /d1.<get-d1>|<get-d1>(){}[0]
+final var /d2 // /d2|{}d2[0]
+    final fun <get-d2>(): dynamic // /d2.<get-d2>|<get-d2>(){}[0]
+    final fun <set-d2>(dynamic) // /d2.<set-d2>|<set-d2>(<dynamic>){}[0]
+final val /p // /p|{}p[0]
+    final fun <get-p>(): kotlin/Int // /p.<get-p>|<get-p>(){}[0]
+final fun /test1(kotlin/String) // /test1|test1(kotlin.String){}[0]
+final fun /test2(kotlin/Any) // /test2|test2(kotlin.Any){}[0]
+final fun /test3(kotlin/Any?) // /test3|test3(kotlin.Any?){}[0]
+final fun /test4(kotlin/Any, kotlin/String, kotlin/Any?) // /test4|test4(kotlin.Any;kotlin.String;kotlin.Any?){}[0]
+final fun /test5(kotlin/Any, kotlin/String, kotlin/Any?) // /test5|test5(kotlin.Any;kotlin.String;kotlin.Any?){}[0]
+final fun /withDynamic(dynamic): dynamic // /withDynamic|withDynamic(<dynamic>){}[0]

@@ -1,9 +1,9 @@
 class A(var b: Byte) {
-  fun c(d: Short)  = (b + d.toByte()).toChar()
+  fun c(d: Short)  = (b + d.toByte()).toInt().toChar()
 }
 
 fun box() : String {
-    if(A(10.toByte()).c(20.toShort()) != 30.toByte().toChar()) return "plus failed"
+    if(A(10.toByte()).c(20.toShort()) != 30.toByte().toInt().toChar()) return "plus failed"
 
     var x = 20.toByte()
     var y = 20.toByte()
@@ -25,15 +25,15 @@ fun box() : String {
     if(++xs != 21.toShort() || xs++ != 21.toShort() || foos() != 24.toShort() || xs != 24.toShort()) return "shared short fail"
     if(++ys != 21.toShort() || ys++ != 21.toShort() || ys != 22.toShort()) return "short fail"
  
-    var xc = 20.toChar()
-    var yc = 20.toChar()
+    var xc = 20.toInt().toChar()
+    var yc = 20.toInt().toChar()
     val fooc = {
         xc++
         ++xc
     }
 
-    if(++xc != 21.toChar() || xc++ != 21.toChar() || fooc() != 24.toChar() || xc != 24.toChar()) return "shared char fail"
-    if(++yc != 21.toChar() || yc++ != 21.toChar() || yc != 22.toChar()) return "char fail"
+    if(++xc != 21.toInt().toChar() || xc++ != 21.toInt().toChar() || fooc() != 24.toInt().toChar() || xc != 24.toInt().toChar()) return "shared char fail"
+    if(++yc != 21.toInt().toChar() || yc++ != 21.toInt().toChar() || yc != 22.toInt().toChar()) return "char fail"
  
     return "OK"
 }

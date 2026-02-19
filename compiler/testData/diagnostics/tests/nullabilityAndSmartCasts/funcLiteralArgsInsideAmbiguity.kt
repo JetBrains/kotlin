@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 package d
 
 fun bar() {
@@ -12,3 +13,6 @@ fun bar() {
 
 fun doSmth1(f: ()->Unit) {}
 fun doSmth1(g: (Int)->Unit) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

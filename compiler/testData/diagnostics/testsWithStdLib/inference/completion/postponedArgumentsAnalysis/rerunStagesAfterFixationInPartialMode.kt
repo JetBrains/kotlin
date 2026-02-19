@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Wrapper<T> (val x: T)
 
@@ -25,3 +26,6 @@ class Foo<W>(y: Wrapper<List<W>>) {
         ArrayList<W>().foo(y.unwrap { it })
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, init, inline,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

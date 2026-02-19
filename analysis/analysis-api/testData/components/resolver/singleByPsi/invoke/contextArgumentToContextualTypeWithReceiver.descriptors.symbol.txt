@@ -1,0 +1,7 @@
+KtCallExpression(118,125): 'block()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Function2.invoke(<extension receiver>: P1, <dispatch receiver>: kotlin.Function2<P1, P2, R>, p2: P2): R
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+    public abstract operator fun String.invoke(p2: Int): Unit defined in kotlin.Function2>

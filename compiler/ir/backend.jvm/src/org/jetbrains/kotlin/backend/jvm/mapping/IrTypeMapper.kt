@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.backend.jvm.mapping
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.classNameOverride
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.types.AbstractTypeMapper
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContextForTypeMapping
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
@@ -55,22 +57,24 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
     override fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type =
         mapType(type as IrType, mode)
 
-    private fun computeClassInternalNameAsString(irClass: IrClass): String {
-        context.getLocalClassType(irClass)?.internalName?.let {
+    private fun computeClassLikeDeclarationInternalNameAsString(irClassLikeDeclaration: IrDeclarationBase): String {
+        irClassLikeDeclaration.localClassType?.internalName?.let {
             return it
         }
 
-        return computeClassInternalName(irClass, 0).toString()
+        return computeClassLikeDeclarationInternalName(irClassLikeDeclaration, 0).toString()
     }
 
-    private fun computeClassInternalName(irClass: IrClass, capacity: Int): StringBuilder {
-        context.getLocalClassType(irClass)?.internalName?.let {
+    private fun computeClassLikeDeclarationInternalName(irClassLikeDeclaration: IrDeclarationBase, capacity: Int): StringBuilder {
+        require(irClassLikeDeclaration is IrClass || irClassLikeDeclaration is IrTypeAlias)
+
+        irClassLikeDeclaration.localClassType?.internalName?.let {
             return StringBuilder(it)
         }
 
-        val shortName = SpecialNames.safeIdentifier(irClass.name).identifier
+        val shortName = SpecialNames.safeIdentifier(irClassLikeDeclaration.name).identifier
 
-        when (val parent = irClass.parent) {
+        when (val parent = irClassLikeDeclaration.parent) {
             is IrPackageFragment -> {
                 val fqName = parent.packageFqName
                 var ourCapacity = shortName.length
@@ -85,39 +89,41 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
                 }
             }
             is IrClass ->
-                return computeClassInternalName(parent, 1 + shortName.length).append("$").append(shortName)
+                return computeClassLikeDeclarationInternalName(parent, 1 + shortName.length).append("$").append(shortName)
             is IrFunction ->
                 if (parent.isSuspend && parent.parentAsClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
                     val parentName = parent.name.asString()
-                    return computeClassInternalName(parent.parentAsClass.parentAsClass, 1 + parentName.length)
+                    return computeClassLikeDeclarationInternalName(parent.parentAsClass.parentAsClass, 1 + parentName.length)
                         .append("$").append(parentName)
                 }
         }
 
         error(
-            "Local class should have its name computed in InventNamesForLocalClasses: ${irClass.fqNameWhenAvailable}\n" +
-                    "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
+            "Local class-like declaration should have its name computed in InventNamesForLocalClasses: ${irClassLikeDeclaration.fqNameWhenAvailable}\n" +
+                    "Ensure that any lowering that transforms elements with local class-like declaration info (classes, function references) " +
                     "invokes `copyAttributes` on the transformed element."
         )
     }
 
-    fun classInternalName(irClass: IrClass): String {
-        context.getLocalClassType(irClass)?.internalName?.let { return it }
-        context.classNameOverride[irClass]?.let { return it.internalName }
+    fun classLikeDeclarationInternalName(irClassLikeDeclaration: IrDeclarationBase): String {
+        irClassLikeDeclaration.localClassType?.internalName?.let { return it }
+        if (irClassLikeDeclaration is IrClass) {
+            irClassLikeDeclaration.classNameOverride?.let { return it.internalName }
+        }
 
-        return JvmCodegenUtil.sanitizeNameIfNeeded(
-            computeClassInternalNameAsString(irClass),
-            context.state.languageVersionSettings
+        return sanitizeNameIfNeeded(
+            computeClassLikeDeclarationInternalNameAsString(irClassLikeDeclaration),
+            context.config.languageVersionSettings
         )
     }
 
     override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String =
-        classInternalName((typeConstructor as IrClassSymbol).owner)
+        classLikeDeclarationInternalName((typeConstructor as IrClassSymbol).owner)
 
     override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String {
         val script = (typeConstructor as IrScriptSymbol).owner
         val targetClass = script.targetClass ?: error("No target class computed for script: ${script.render()}")
-        return classInternalName(targetClass.owner)
+        return classLikeDeclarationInternalName(targetClass.owner)
     }
 
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) {
@@ -260,12 +266,12 @@ private class IrTypeCheckerContextForTypeMapping(
         return this is IrScriptSymbol
     }
 
-    override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
+    override fun RigidTypeMarker.isSuspendFunction(): Boolean {
         if (this !is IrSimpleType) return false
         return isSuspendFunctionImpl()
     }
 
-    override fun SimpleTypeMarker.isKClass(): Boolean {
+    override fun RigidTypeMarker.isKClass(): Boolean {
         require(this is IrSimpleType)
         return isKClassImpl()
     }
@@ -291,7 +297,7 @@ private class IrTypeCheckerContextForTypeMapping(
     }
 
     override fun continuationTypeConstructor(): IrClassSymbol {
-        return backendContext.ir.symbols.continuationClass
+        return backendContext.symbols.continuationClass
     }
 
     override fun functionNTypeConstructor(n: Int): IrClassSymbol {

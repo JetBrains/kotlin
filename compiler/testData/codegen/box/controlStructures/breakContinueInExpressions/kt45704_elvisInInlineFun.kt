@@ -1,3 +1,4 @@
+// FILE: lib.kt
 inline fun inlineCall(block: (CharSequence, CharSequence) -> Unit) {
     for (i in 0..0) {
         val s = "K".takeIf { true }
@@ -9,6 +10,7 @@ inline fun inlineCall(block: (CharSequence, CharSequence) -> Unit) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     inlineCall { a, b ->
         return a.toString() + b

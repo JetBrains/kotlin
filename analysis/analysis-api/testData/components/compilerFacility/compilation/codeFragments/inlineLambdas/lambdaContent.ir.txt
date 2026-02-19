@@ -1,0 +1,162 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.Int
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Int origin=INVOKE
+              ARG <this>: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                  VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                  BLOCK_BODY
+                    FUN LOCAL_FUNCTION name:localFunWithLocalClass visibility:local modality:FINAL returnType:kotlin.Int
+                      VALUE_PARAMETER kind:Regular name:p index:0 type:kotlin.Int
+                      BLOCK_BODY
+                        CLASS CLASS name:X modality:FINAL visibility:local superTypes:[kotlin.Any]
+                          thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X
+                          PROPERTY name:x visibility:public modality:FINAL [val]
+                            FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+                              EXPRESSION_BODY
+                                GET_VAR 'x: kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+                            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+                              VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X
+                              correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+                              BLOCK_BODY
+                                RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X'
+                                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                                    receiver: GET_VAR '<this>: <root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X declared in <root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X.<get-x>' type=<root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X origin=null
+                          CONSTRUCTOR visibility:public returnType:<root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X [primary]
+                            VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:X modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
+                          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+                            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                            VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+                            overridden:
+                              public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+                          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+                            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                            overridden:
+                              public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+                            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                            overridden:
+                              public open fun toString (): kotlin.String declared in kotlin.Any
+                        RETURN type=kotlin.Nothing from='local final fun localFunWithLocalClass (p: kotlin.Int): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>'
+                          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X' type=kotlin.Int origin=GET_PROPERTY
+                            ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X' type=<root>.CodeFragment.run.<anonymous>.localFunWithLocalClass.X origin=null
+                              ARG x: GET_VAR 'p: kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.localFunWithLocalClass' type=kotlin.Int origin=null
+                    FUN LOCAL_FUNCTION name:createFunWithLocalObj visibility:local modality:FINAL returnType:kotlin.Function0<kotlin.Int>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun createFunWithLocalObj (): kotlin.Function0<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>'
+                          FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                              BLOCK_BODY
+                                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.createFunWithLocalObj'
+                                  CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided>' type=kotlin.Int origin=GET_PROPERTY
+                                    ARG <this>: BLOCK type=<root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                                      CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+                                        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided>
+                                        PROPERTY name:x visibility:public modality:FINAL [val]
+                                          FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+                                            EXPRESSION_BODY
+                                              CONST Int type=kotlin.Int value=1
+                                          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+                                            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided>
+                                            correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+                                            BLOCK_BODY
+                                              RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided>'
+                                                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                                                  receiver: GET_VAR '<this>: <root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided> declared in <root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided>.<get-x>' type=<root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided> origin=null
+                                        CONSTRUCTOR visibility:public returnType:<root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided> [primary]
+                                          BLOCK_BODY
+                                            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                                            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
+                                        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+                                          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                                          VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+                                          overridden:
+                                            public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+                                        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+                                          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                                          overridden:
+                                            public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                                        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+                                          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                                          overridden:
+                                            public open fun toString (): kotlin.String declared in kotlin.Any
+                                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided>' type=<root>.CodeFragment.run.<anonymous>.createFunWithLocalObj.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                    VAR name:complexLambda type:kotlin.Function0<kotlin.Int> [val]
+                      CALL 'public final fun <get-prop> (): kotlin.Function0<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>.<no name provided>' type=kotlin.Function0<kotlin.Int> origin=GET_PROPERTY
+                        ARG <this>: BLOCK type=<root>.CodeFragment.run.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+                            thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment.run.<anonymous>.<no name provided>
+                            PROPERTY name:prop visibility:public modality:FINAL [val]
+                              FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.Function0<kotlin.Int> visibility:private [final]
+                                EXPRESSION_BODY
+                                  FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+                                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                                      BLOCK_BODY
+                                        VAR name:x type:kotlin.Int [var]
+                                          CONST Int type=kotlin.Int value=10
+                                        SET_VAR 'var x: kotlin.Int [var] declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop.<anonymous>' type=kotlin.Unit origin=PLUSEQ
+                                          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                                            ARG <this>: GET_VAR 'var x: kotlin.Int [var] declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop.<anonymous>' type=kotlin.Int origin=PLUSEQ
+                                            ARG other: CONST Int type=kotlin.Int value=100
+                                        VAR name:y type:kotlin.Int [val]
+                                          CALL 'local final fun localFunWithLocalClass (p: kotlin.Int): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>' type=kotlin.Int origin=null
+                                            ARG p: CONST Int type=kotlin.Int value=1000
+                                        VAR name:z type:kotlin.Int [val]
+                                          CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
+                                            ARG <this>: CALL 'local final fun createFunWithLocalObj (): kotlin.Function0<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>' type=kotlin.Function0<kotlin.Int> origin=null
+                                        VAR name:l type:kotlin.Function0<kotlin.Int> [val]
+                                          FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+                                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                                              BLOCK_BODY
+                                                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop.<anonymous>'
+                                                  CONST Int type=kotlin.Int value=10000
+                                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop'
+                                          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                                            ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                                              ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                                                ARG <this>: GET_VAR 'var x: kotlin.Int [var] declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop.<anonymous>' type=kotlin.Int origin=null
+                                                ARG other: GET_VAR 'val y: kotlin.Int [val] declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop.<anonymous>' type=kotlin.Int origin=null
+                                              ARG other: GET_VAR 'val z: kotlin.Int [val] declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop.<anonymous>' type=kotlin.Int origin=null
+                                            ARG other: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
+                                              ARG <this>: GET_VAR 'val l: kotlin.Function0<kotlin.Int> [val] declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.prop.<anonymous>' type=kotlin.Function0<kotlin.Int> origin=VARIABLE_AS_FUNCTION
+                              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> visibility:public modality:FINAL returnType:kotlin.Function0<kotlin.Int>
+                                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.<no name provided>
+                                correspondingProperty: PROPERTY name:prop visibility:public modality:FINAL [val]
+                                BLOCK_BODY
+                                  RETURN type=kotlin.Nothing from='public final fun <get-prop> (): kotlin.Function0<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>.<no name provided>'
+                                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop type:kotlin.Function0<kotlin.Int> visibility:private [final]' type=kotlin.Function0<kotlin.Int> origin=null
+                                      receiver: GET_VAR '<this>: <root>.CodeFragment.run.<anonymous>.<no name provided> declared in <root>.CodeFragment.run.<anonymous>.<no name provided>.<get-prop>' type=<root>.CodeFragment.run.<anonymous>.<no name provided> origin=null
+                            CONSTRUCTOR visibility:public returnType:<root>.CodeFragment.run.<anonymous>.<no name provided> [primary]
+                              BLOCK_BODY
+                                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
+                            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+                              VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                              VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+                              overridden:
+                                public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+                            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+                              VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                              overridden:
+                                public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+                              VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                              overridden:
+                                public open fun toString (): kotlin.String declared in kotlin.Any
+                          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CodeFragment.run.<anonymous>.<no name provided>' type=<root>.CodeFragment.run.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.CodeFragment.run'
+                      CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                        ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
+                          ARG <this>: GET_VAR 'val complexLambda: kotlin.Function0<kotlin.Int> [val] declared in <root>.CodeFragment.run.<anonymous>' type=kotlin.Function0<kotlin.Int> origin=VARIABLE_AS_FUNCTION
+                        ARG other: GET_VAR 'it: kotlin.Int declared in <root>.CodeFragment.run.<anonymous>' type=kotlin.Int origin=null
+              ARG p1: CONST Int type=kotlin.Int value=100000

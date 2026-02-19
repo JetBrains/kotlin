@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 interface A<T> {
     fun foo(x: T): T
@@ -35,3 +36,6 @@ interface G<T3 : Any> : A<T3> {
     override fun foo(x: T3): T3
     override fun bar(x: T3): T3
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, interfaceDeclaration, nullableType, override, typeConstraint,
+typeParameter */

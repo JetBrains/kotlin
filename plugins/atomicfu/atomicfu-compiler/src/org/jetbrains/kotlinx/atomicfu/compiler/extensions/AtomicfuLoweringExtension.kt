@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.JvmAtomicSymbols
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.js.AtomicfuJsIrTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicfuJvmIrTransformer
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.JvmAtomicSymbols
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.native.AtomicfuNativeIrTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.native.NativeAtomicSymbols
 
@@ -31,14 +31,10 @@ public open class AtomicfuLoweringExtension : IrGenerationExtension {
     ) {
         val platform = pluginContext.platform
         when {
-            platform.isJvm() -> {
-                val atomicSymbols = JvmAtomicSymbols(pluginContext, moduleFragment)
-                AtomicfuJvmIrTransformer(pluginContext, atomicSymbols).transform(moduleFragment)
-            }
-            platform.isNative() -> {
-                val atomicSymbols = NativeAtomicSymbols(pluginContext, moduleFragment)
-                AtomicfuNativeIrTransformer(pluginContext, atomicSymbols).transform(moduleFragment)
-            }
+            platform.isJvm() ->
+                AtomicfuJvmIrTransformer(JvmAtomicSymbols(pluginContext, moduleFragment), pluginContext).transform(moduleFragment)
+            platform.isNative() ->
+                AtomicfuNativeIrTransformer(NativeAtomicSymbols(pluginContext, moduleFragment), pluginContext).transform(moduleFragment)
             platform.isJs() -> {
                 for (file in moduleFragment.files) {
                     AtomicfuClassLowering(pluginContext).runOnFileInOrder(file)
@@ -62,7 +58,7 @@ private class AtomicfuClassLowering(
  * Copy of [runOnFilePostfix], but this implementation first lowers declaration, then its children.
  */
 fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
+    irFile.acceptVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

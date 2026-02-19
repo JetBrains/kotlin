@@ -10,7 +10,8 @@ interface ITest {
     var nullableTest: Z?
 }
 
-inline class Z(val x: Int) : ITest {
+@JvmInline
+value class Z(val x: Int) : ITest {
     override var nonNullTest: Z
         get() = Z(global.x + this.x)
         set(value) {
@@ -24,7 +25,8 @@ inline class Z(val x: Int) : ITest {
         }
 }
 
-inline class S(val x: String) : ITest {
+@JvmInline
+value class S(val x: String) : ITest {
     override var nonNullTest: Z
         get() = Z(global.x + x.toInt())
         set(value) {
@@ -38,7 +40,8 @@ inline class S(val x: String) : ITest {
         }
 }
 
-inline class A(val x: Any) : ITest {
+@JvmInline
+value class A(val x: Any) : ITest {
     override var nonNullTest: Z
         get() = Z(global.x + this.x as Int)
         set(value) {

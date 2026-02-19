@@ -1,0 +1,6 @@
+/namedArgumentsInOverrides.kt:23:11: error: named argument is not allowed for a parameter with an ambiguous name
+    c.foo(b1 = 1, b2 = 1.0)
+          ^^
+/namedArgumentsInOverrides.kt:23:19: error: named argument is not allowed for a parameter with an ambiguous name
+    c.foo(b1 = 1, b2 = 1.0)
+                  ^^

@@ -38,7 +38,7 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
         return result.toList()
     }
 
-    private val allPackageNames: Set<String> by lazy {
+    protected open val allPackageNames: Set<String> by lazy {
         loadedModules.flatMapTo(mutableSetOf()) { it.mapping.packageFqName2Parts.keys }
     }
 

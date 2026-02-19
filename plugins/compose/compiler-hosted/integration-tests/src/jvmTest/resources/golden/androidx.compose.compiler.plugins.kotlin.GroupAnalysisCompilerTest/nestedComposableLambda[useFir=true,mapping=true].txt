@@ -1,0 +1,31 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun Test(param1: String, param2: String) {
+    Content {
+        Content {
+            Text(param1)
+            Text(param2)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+  1:1:kotlin.Unit TestKt.Test$lambda$0$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
+  1:1:kotlin.Unit TestKt.Test$lambda$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+  1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+========= FunctionMeta: false, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+  1:1:kotlin.Unit TestKt.Test$lambda$0$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
+  1:1:kotlin.Unit TestKt.Test$lambda$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+  1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$<key>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 class MyList<T>(t: T) {}
@@ -66,3 +67,6 @@ fun test1(int: Int, any: Any) {
 }
 
 fun use(vararg a: Any) = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, typeParameter, vararg */

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // IGNORE_LIGHT_TREE
 // Does not work in light tree mode due to lack of Java element finder there
 // FILE: KotlinTypeChecker.java
@@ -33,3 +35,6 @@ fun main() {
         false
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, interfaceDeclaration,
+javaFunction, javaType, lambdaLiteral, propertyDeclaration, samConversion */

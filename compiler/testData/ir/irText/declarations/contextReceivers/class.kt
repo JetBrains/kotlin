@@ -1,9 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// DUMP_LOCAL_DECLARATION_SIGNATURES
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57428
+// IGNORE_BACKEND_K2: ANY
+// LANGUAGE: +ContextReceivers
 
 class Outer {
     val x: Int = 1

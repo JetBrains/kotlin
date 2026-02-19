@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 // FILE: foo/View.java
 
@@ -23,3 +24,6 @@ fun String.gah(view:View ?) {
         view
     else <!UNRESOLVED_REFERENCE!>TextView<!>() as foo.TextView
 }
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, isExpression, javaType,
+nullableType, smartcast */

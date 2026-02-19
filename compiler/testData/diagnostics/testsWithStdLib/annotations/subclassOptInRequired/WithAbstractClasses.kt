@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-
 @RequiresOptIn
 annotation class ApiMarker
 
@@ -7,7 +7,7 @@ annotation class ApiMarker
 abstract class AbstractKlassOptInApi
 
 // no opt-in: diagnostic reported
-abstract class AbstractKlassOptInApiInheritorA: <!OPT_IN_USAGE_ERROR!>AbstractKlassOptInApi<!>()
+abstract class AbstractKlassOptInApiInheritorA: <!OPT_IN_TO_INHERITANCE_ERROR!>AbstractKlassOptInApi<!>()
 
 // opt-in present: no diagnostic, opt-in isn't propagated
 @OptIn(ApiMarker::class)
@@ -22,7 +22,7 @@ abstract class AbstractKlassOptInApiInheritorC: AbstractKlassOptInApi()
 abstract class AbstractKlassOptInApiInheritorD: AbstractKlassOptInApi()
 
 abstract class AbstractKlassOptInApiInheritorE: AbstractKlassOptInApiInheritorB() // inheritance opt-in isn't propagated
-abstract class AbstractKlassOptInApiInheritorF: <!OPT_IN_USAGE_ERROR!>AbstractKlassOptInApiInheritorC<!>() // inheritance opt-in is propagated
+abstract class AbstractKlassOptInApiInheritorF: <!OPT_IN_TO_INHERITANCE_ERROR!>AbstractKlassOptInApiInheritorC<!>() // inheritance opt-in is propagated
 abstract class AbstractKlassOptInApiInheritorG: <!OPT_IN_USAGE_ERROR!>AbstractKlassOptInApiInheritorD<!>() // inheritance opt-in is propagated
 
 fun useSiteTestAbstractClasses(
@@ -32,3 +32,5 @@ fun useSiteTestAbstractClasses(
     d: <!OPT_IN_USAGE_ERROR!>AbstractKlassOptInApiInheritorD<!>, // usage opt-in is required
     e: AbstractKlassOptInApiInheritorE  // usage opt-in isn't required
 ) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration */

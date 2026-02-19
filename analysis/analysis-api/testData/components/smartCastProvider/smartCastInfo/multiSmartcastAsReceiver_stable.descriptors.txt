@@ -1,3 +1,0 @@
-expression: a
-isStable: null
-smartCastType: null

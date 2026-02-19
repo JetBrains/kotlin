@@ -6,32 +6,57 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
 
-abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
+@Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION_ERROR")
+internal fun ObjectFactory.KotlinWithJavaTargetForJvm(
+    project: Project,
+    targetName: String = "",
+): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> = (newInstance(
+    KotlinWithJavaTarget::class.java,
+    project,
+    KotlinPlatformType.jvm,
+    targetName,
+    {
+        object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
+            override val options: KotlinJvmCompilerOptions =
+                project.objects.KotlinJvmCompilerOptionsDefault(project)
+        }
+    },
+    { compilerOptions: KotlinJvmCompilerOptions ->
+        object : KotlinJvmOptions {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
+            override val options: KotlinJvmCompilerOptions get() = compilerOptions
+        }
+    }
+) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>)
+
+@Suppress("DEPRECATION")
+abstract class KotlinWithJavaTarget<KotlinOptionsType : Any, CO : KotlinCommonCompilerOptions> @Inject constructor(
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,
-    compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     kotlinOptionsFactory: (CO) -> KotlinOptionsType
-) : AbstractKotlinTarget(project) {
+) : AbstractKotlinTarget(project),
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
     override var disambiguationClassifier: String? = null
         internal set
 
@@ -61,24 +86,8 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
 
     internal val buildDir: Provider<Directory> = layout.buildDirectory.dir(KOTLIN_BUILD_DIR_NAME)
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance<KotlinJvmCompilerOptionsDefault>()
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 }
 
 private fun sanitizeFileName(candidate: String): String = candidate.filter { it.isLetterOrDigit() }
-
-internal val Project.javaSourceSets: SourceSetContainer
-    get() = variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-        .getInstance(project)
-        .sourceSets

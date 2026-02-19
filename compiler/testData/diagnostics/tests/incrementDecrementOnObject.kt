@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // ISSUE: KT-56659
 
@@ -20,3 +21,6 @@ fun test4() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = AAA
     x = ++<!VAL_REASSIGNMENT!>AAA<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, localProperty, objectDeclaration,
+operator, propertyDeclaration, thisExpression */

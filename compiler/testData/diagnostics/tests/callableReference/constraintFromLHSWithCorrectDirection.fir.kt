@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty1
 
@@ -18,6 +19,10 @@ fun <K, V> B<K>.star(p: KProperty1<*, V>): B<V> = TODO()
 fun <R : A> B<R>.test(){
     foo(A::bla)
     bar(A::bla)
-    baz(A::<!UNRESOLVED_REFERENCE!>bla<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(A::<!INAPPLICABLE_CANDIDATE!>bla<!>)
     star(A::bla)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+inProjection, integerLiteral, interfaceDeclaration, nullableType, outProjection, propertyDeclaration,
+propertyWithExtensionReceiver, starProjection, typeConstraint, typeParameter */

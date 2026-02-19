@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 
@@ -24,3 +25,7 @@ class Some {
             }
         }.map { it.second }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionalType, getter,
+integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, smartcast, suspend, typeAliasDeclaration,
+whenExpression, whenWithSubject */

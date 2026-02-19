@@ -18,21 +18,21 @@ dependencies {
     implementation("org.codehaus.mojo:animal-sniffer:1.21")
     implementation(kotlinStdlib())
 
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
 
     testArtifacts(project(":kotlin-reflect"))
 
     signature("org.codehaus.mojo.signature:java16:1.1@signature")
 }
 
-val signaturesDirectory = buildDir.resolve("signatures")
+val signaturesDirectory = layout.buildDirectory.get().asFile.resolve("signatures")
 
 val collectSignatures by tasks.registering(Sync::class) {
     from(signature)
     into(signaturesDirectory)
 }
 
-tasks.getByName<Test>("test") {
+tasks.named<Test>("test") {
     dependsOn(collectSignatures)
     dependsOn(testArtifacts)
 

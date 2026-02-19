@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: A.java
 public class A {
     public int foo(Runnable r) { return 0; }
@@ -35,3 +36,7 @@ fun x(a: A, r: Runnable) {
     a.bar("") checkType { _<String>() }
     a.<!NONE_APPLICABLE!>bar<!>(123)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, javaFunction, javaType, lambdaLiteral, nullableType,
+samConversion, stringLiteral, typeParameter, typeWithExtension */

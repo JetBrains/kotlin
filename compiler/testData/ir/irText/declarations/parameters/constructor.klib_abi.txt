@@ -1,0 +1,37 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?, #B: kotlin/Any?> /Test1 { // /Test1|null[0]
+    final val x // /Test1.x|{}x[0]
+        final fun <get-x>(): #A // /Test1.x.<get-x>|<get-x>(){}[0]
+    final val y // /Test1.y|{}y[0]
+        final fun <get-y>(): #B // /Test1.y.<get-y>|<get-y>(){}[0]
+    constructor <init>(#A, #B) // /Test1.<init>|<init>(1:0;1:1){}[0]
+}
+final class /Test2 { // /Test2|null[0]
+    final val y // /Test2.y|{}y[0]
+        final fun <get-y>(): kotlin/String // /Test2.y.<get-y>|<get-y>(){}[0]
+    constructor <init>(kotlin/Int, kotlin/String) // /Test2.<init>|<init>(kotlin.Int;kotlin.String){}[0]
+    final inner class <#A1: kotlin/Any?> TestInner { // /Test2.TestInner|null[0]
+        final val z // /Test2.TestInner.z|{}z[0]
+            final fun <get-z>(): #A1 // /Test2.TestInner.z.<get-z>|<get-z>(){}[0]
+        constructor <init>(#A1) // /Test2.TestInner.<init>|<init>(1:0){}[0]
+        constructor <init>(#A1, kotlin/Int) // /Test2.TestInner.<init>|<init>(1:0;kotlin.Int){}[0]
+    }
+}
+final class /Test3 { // /Test3|null[0]
+    final val x // /Test3.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Test3.x.<get-x>|<get-x>(){}[0]
+    final val y // /Test3.y|{}y[0]
+        final fun <get-y>(): kotlin/String // /Test3.y.<get-y>|<get-y>(){}[0]
+    constructor <init>(kotlin/Int, kotlin/String = ...) // /Test3.<init>|<init>(kotlin.Int;kotlin.String){}[0]
+}
+final class <#A: kotlin/Any?> /Test4 { // /Test4|null[0]
+    final val x // /Test4.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Test4.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /Test4.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int, kotlin/Int = ...) // /Test4.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+}

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class SomeContainer {
     protected class Limit
@@ -16,3 +17,5 @@ open class A protected constructor() {
         <!PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE!>A<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, nestedClass, primaryConstructor */

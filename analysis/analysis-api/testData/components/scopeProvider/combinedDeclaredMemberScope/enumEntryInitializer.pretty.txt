@@ -1,0 +1,3 @@
+val x: kotlin.String
+
+private constructor()

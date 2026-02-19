@@ -1,7 +1,10 @@
 element: e
-implicit receivers:
-  type: A
-  owner symbol: KtFirFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = A
+    ownerSymbol = KaNamedFunctionSymbol:
+      /test(<extension receiver>: kotlin.Any): () -> kotlin.Int
 
 scopes:
   LocalScope, index = 0
@@ -74,6 +77,5 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 11
+  DefaultStarImportingScope, index = 11
 
-  DefaultStarImportingScope, index = 12

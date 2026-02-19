@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun main() {
     null + $foo.$bar.
 }

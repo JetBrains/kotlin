@@ -7,31 +7,31 @@ fun testMemberIncrementDecrement(d: dynamic) {
 
 fun testSafeMemberIncrementDecrement(d: dynamic) {
   val t1: dynamic = { // BLOCK
-    val tmp0_safe_receiver: dynamic = d
+    val tmp_0: dynamic = d
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> ++tmp0_safe_receiver.prefixIncr
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> ++tmp_0.prefixIncr
     }
   }
   val t2: dynamic = { // BLOCK
-    val tmp1_safe_receiver: dynamic = d
+    val tmp_1: dynamic = d
     when {
-      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> --tmp1_safe_receiver.prefixDecr
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> --tmp_1.prefixDecr
     }
   }
   val t3: dynamic = { // BLOCK
-    val tmp2_safe_receiver: dynamic = d
+    val tmp_2: dynamic = d
     when {
-      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-      else -> tmp2_safe_receiver.postfixIncr++
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.postfixIncr++
     }
   }
   val t4: dynamic = { // BLOCK
-    val tmp3_safe_receiver: dynamic = d
+    val tmp_3: dynamic = d
     when {
-      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
-      else -> tmp3_safe_receiver.postfixDecr--
+      EQEQ(arg0 = tmp_3, arg1 = null) -> null
+      else -> tmp_3.postfixDecr--
     }
   }
 }

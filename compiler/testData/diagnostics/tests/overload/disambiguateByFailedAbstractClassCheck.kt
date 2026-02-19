@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !WITH_NEW_IFERENCE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// WITH_NEW_INFERENCE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: packageA.kt
 
@@ -32,3 +33,5 @@ fun test() {
     <!UNRESOLVED_REFERENCE!>Cls2<!>()
     take(<!UNRESOLVED_REFERENCE!>Cls2<!>())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

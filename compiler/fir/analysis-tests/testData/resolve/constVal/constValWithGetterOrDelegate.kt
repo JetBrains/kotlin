@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KProperty
 
 const val f = 24
@@ -5,7 +6,7 @@ const val f = 24
 const val l = 3
     <!CONST_VAL_WITH_GETTER!>get<!>
 
-<!MUST_BE_INITIALIZED!>const val k: Int<!>
+const <!MUST_BE_INITIALIZED!>val k: Int<!>
     <!CONST_VAL_WITH_GETTER!>get<!>
 
 const val t: Int
@@ -24,3 +25,6 @@ const val e: Boolean
 
 const val property: String = "123"
     <!CONST_VAL_WITH_GETTER!>get() = field + " 123 123"<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, const, functionDeclaration, getter, integerLiteral,
+nullableType, operator, propertyDeclaration, propertyDelegate, starProjection, stringLiteral */

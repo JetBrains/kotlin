@@ -1,0 +1,189 @@
+KtFile: 'ClassNameBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,27): 'class Foo {'
+  null
+
+KtClassBody(10,27): '{'
+  null
+
+KtClass(16,25): 'class Bar'
+  null
+
+KtClass(29,67): 'class C {'
+  null
+
+KtClassBody(37,67): '{'
+  null
+
+KtProperty(43,65): 'val prop: Foo.Bar.Baz.'
+  null
+
+KtTypeReference(53,65): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(53,65): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(53,64): 'Foo.Bar.Baz'
+  null
+
+KtUserType(53,60): 'Foo.Bar'
+  null
+
+KtUserType(53,56): 'Foo'
+  null
+
+KtNameReferenceExpression(53,56): 'Foo'
+  null
+
+KtNameReferenceExpression(57,60): 'Bar'
+  null
+
+KtNameReferenceExpression(61,64): 'Baz'
+  null
+
+KtNamedFunction(69,118): 'fun testFun() {'
+  null
+
+KtParameterList(80,82): '()'
+  null
+
+KtBlockExpression(83,118): '{'
+  null
+
+KtProperty(89,116): 'val localProp: Foo.Bar.Baz.'
+  null
+
+KtTypeReference(104,116): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(104,116): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(104,115): 'Foo.Bar.Baz'
+  null
+
+KtUserType(104,111): 'Foo.Bar'
+  null
+
+KtUserType(104,107): 'Foo'
+  null
+
+KtNameReferenceExpression(104,107): 'Foo'
+  null
+
+KtNameReferenceExpression(108,111): 'Bar'
+  null
+
+KtNameReferenceExpression(112,115): 'Baz'
+  null
+
+KtNamedFunction(120,156): 'fun <T> take(action: (T) -> Unit) {}'
+  null
+
+KtTypeParameterList(124,127): '<T>'
+  null
+
+KtTypeParameter(125,126): 'T'
+  null
+
+KtParameterList(132,153): '(action: (T) -> Unit)'
+  null
+
+KtParameter(133,152): 'action: (T) -> Unit'
+  null
+
+KtTypeReference(141,152): '(T) -> Unit'
+  null
+
+KtFunctionType(141,152): '(T) -> Unit'
+  null
+
+KtParameterList(141,144): '(T)'
+  null
+
+KtParameter(142,143): 'T'
+  null
+
+KtTypeReference(142,143): 'T'
+  null
+
+KtUserType(142,143): 'T'
+  null
+
+KtNameReferenceExpression(142,143): 'T'
+  null
+
+KtTypeReference(148,152): 'Unit'
+  null
+
+KtUserType(148,152): 'Unit'
+  null
+
+KtNameReferenceExpression(148,152): 'Unit'
+  null
+
+KtBlockExpression(154,156): '{}'
+  null
+
+KtProperty(158,210): 'val prop = take {'
+  null
+
+KtCallExpression(169,210): 'take {'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /take(action: (T) -> kotlin.Unit): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Incomplete user type)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
+
+KtNameReferenceExpression(169,173): 'take'
+  null
+
+KtLambdaArgument(174,210): '{'
+  null
+
+KtLambdaExpression(174,210): '{'
+  null
+
+KtFunctionLiteral(174,210): '{'
+  null
+
+KtParameterList(180,205): 'lambdaParam: Foo.Bar.Baz.'
+  null
+
+KtParameter(180,205): 'lambdaParam: Foo.Bar.Baz.'
+  null
+
+KtTypeReference(193,205): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(193,205): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(193,204): 'Foo.Bar.Baz'
+  null
+
+KtUserType(193,200): 'Foo.Bar'
+  null
+
+KtUserType(193,196): 'Foo'
+  null
+
+KtNameReferenceExpression(193,196): 'Foo'
+  null
+
+KtNameReferenceExpression(197,200): 'Bar'
+  null
+
+KtNameReferenceExpression(201,204): 'Baz'
+  null
+
+KtBlockExpression(209,209): ''
+  null

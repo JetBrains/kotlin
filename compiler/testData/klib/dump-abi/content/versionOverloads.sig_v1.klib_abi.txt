@@ -1,0 +1,53 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <versionOverloads_library>
+open class /A { // /A|null[0]
+    final val a // /A.a|-1200697420457237799[0]
+        final fun <get-a>(): kotlin/Int // /A.a.<get-a>|6785176174175479410[0]
+    final val b // /A.b|772347207915745207[0]
+        final fun <get-b>(): kotlin/String // /A.b.<get-b>|812004636995167743[0]
+    final val c // /A.c|-4416962153448040627[0]
+        final fun <get-c>(): kotlin/Float // /A.c.<get-c>|2368736057102379596[0]
+    constructor <init>(kotlin/Int = ...) // /A.<init>|-5182794243525578284[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ...) // /A.<init>|-6994814679185246063[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ..., kotlin/Float = ...) // /A.<init>|-1561525639104944507[0]
+}
+final class /B : /A { // /B|null[0]
+    constructor <init>() // /B.<init>|-5645683436151566731[0]
+    constructor <init>(kotlin/Boolean) // /B.<init>|-3281220317975457238[0]
+    constructor <init>(kotlin/Int) // /B.<init>|-5182794243525578284[0]
+    constructor <init>(kotlin/String = ...) // /B.<init>|1280618353163213788[0]
+    constructor <init>(kotlin/Int, kotlin/String = ...) // /B.<init>|-6994814679185246063[0]
+}
+final class /C { // /C|null[0]
+    final val a // /C.a|-1200697420457237799[0]
+        final fun <get-a>(): kotlin/Int // /C.a.<get-a>|6785176174175479410[0]
+    final val b // /C.b|772347207915745207[0]
+        final fun <get-b>(): kotlin/String // /C.b.<get-b>|812004636995167743[0]
+    final val c // /C.c|-4416962153448040627[0]
+        final fun <get-c>(): kotlin/Float // /C.c.<get-c>|2368736057102379596[0]
+    constructor <init>(kotlin/Int = ...) // /C.<init>|-5182794243525578284[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ...) // /C.<init>|-3992148856591180140[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ..., kotlin/Float = ...) // /C.<init>|4694034368509730213[0]
+    final fun component1(): kotlin/Int // /C.component1|162597135895221648[0]
+    final fun component2(): kotlin/String // /C.component2|3796717572321500973[0]
+    final fun component4(): kotlin/Float // /C.component4|-5228865120014592696[0]
+    final fun copy(kotlin/Int = ...): /C // /C.copy|-6971662324481626298[0]
+    final fun copy(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ...): /C // /C.copy|4820681922999180728[0]
+    final fun copy(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ..., kotlin/Float = ...): /C // /C.copy|-2495944615506134658[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /C.equals|4638265728071529943[0]
+    final fun (kotlin/Int).extensionFn(): kotlin/String // /C.extensionFn|-8863650799069591473[0]
+    final fun (kotlin/Int).extensionFn(kotlin/String = ...): kotlin/String // /C.extensionFn|2370512975981300777[0]
+    final fun (kotlin/Int).extensionFn(kotlin/String = ..., kotlin/Boolean = ...): kotlin/String // /C.extensionFn|-3202724372971341889[0]
+    final fun hashCode(): kotlin/Int // /C.hashCode|3409210261493131192[0]
+    final suspend fun suspendFn(kotlin/Int = ...): kotlin/String // /C.suspendFn|2865635064850377431[0]
+    final suspend fun suspendFn(kotlin/Int = ..., kotlin/String = ...): kotlin/String // /C.suspendFn|9006959657700655272[0]
+    final suspend fun suspendFn(kotlin/Int = ..., kotlin/String = ..., kotlin/Boolean = ...): kotlin/String // /C.suspendFn|-3939745114214108160[0]
+    final fun toString(): kotlin/String // /C.toString|-1522858123163872138[0]
+    final fun trailingLambda(kotlin/Int = ..., kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /C.trailingLambda|7962648338748407524[0]
+    final fun trailingLambda(kotlin/Int = ..., kotlin/String = ..., kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /C.trailingLambda|7236274470894830536[0]
+    final fun trailingLambda(kotlin/Int = ..., kotlin/String = ..., kotlin/Boolean = ..., kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /C.trailingLambda|2780754925425547780[0]
+}

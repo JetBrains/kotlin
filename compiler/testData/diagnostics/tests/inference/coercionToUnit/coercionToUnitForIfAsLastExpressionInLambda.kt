@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 class Obj
 
@@ -39,3 +40,6 @@ fun foo(): String? {
 
     return ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+stringLiteral */

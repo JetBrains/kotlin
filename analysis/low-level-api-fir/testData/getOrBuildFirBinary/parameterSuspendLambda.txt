@@ -1,0 +1,8 @@
+KT element: KtParameter
+KT element text:
+p: suspend () -> kotlin.Unit
+FIR element: FirValueParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] p: R|suspend () -> kotlin/Unit|

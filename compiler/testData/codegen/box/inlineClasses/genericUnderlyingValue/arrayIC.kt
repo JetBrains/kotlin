@@ -1,7 +1,7 @@
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
-// LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
-// IGNORE_BACKEND: JVM
+// LANGUAGE: +GenericInlineClassParameter
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 inline class ICStr(val value: String)
 inline class ICIStr<T : ICStr>(val value: T)

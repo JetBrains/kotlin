@@ -1,22 +1,6 @@
 package test
 
 class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  constructor(x: Int) {
-    this/*A*/()
-  }
-
-  fun b() {
-  }
-
-  fun a() {
-  }
-
   val b: Int
     field = 1
     get
@@ -25,14 +9,32 @@ class A {
     field = 2
     get
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  constructor(x: Double) {
+    this/*A*/()
+  }
+
+  constructor(x: Int) {
+    this/*A*/()
+  }
+
   constructor(x: String) {
     this/*A*/()
   }
 
-  val Int.b: String
-    get(): String {
-      return "b"
-    }
+  fun a() {
+  }
+
+  fun String.a() {
+  }
+
+  fun b() {
+  }
 
   fun String.b() {
   }
@@ -42,12 +44,10 @@ class A {
       return "a"
     }
 
-  fun String.a() {
-  }
-
-  constructor(x: Double) {
-    this/*A*/()
-  }
+  val Int.b: String
+    get(): String {
+      return "b"
+    }
 
 }
 

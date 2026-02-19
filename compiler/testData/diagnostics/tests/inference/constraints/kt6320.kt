@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // AssertionError in ConstraintSystem(The constraint shouldn't contain different type variables on both sides: Y <: X)
 
 class A<X, Y : X>
@@ -18,3 +19,6 @@ class D<X, Z, Y : X>(foo: C<X, Z, Y>) {
         val d: D<X, Y, Y> = <!TYPE_MISMATCH, TYPE_MISMATCH!>D(a)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

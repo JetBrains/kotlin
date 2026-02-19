@@ -1,0 +1,5 @@
+FILE: invokeSuspend.kt
+    public final suspend fun foo(action: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
+        lval x: R|suspend () -> kotlin/Unit| = R|<local>/action|
+        R|<local>/x|.R|SubstitutionOverride<kotlin/coroutines/SuspendFunction0.invoke: R|kotlin/Unit|>|()
+    }

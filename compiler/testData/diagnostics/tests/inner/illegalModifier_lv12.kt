@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +InnerClassInEnumEntryClass
+// LANGUAGE: +InnerClassInEnumEntryClass
 <!WRONG_MODIFIER_TARGET!>inner<!> fun foo() {}
 <!WRONG_MODIFIER_TARGET!>inner<!> val prop = 42
 
@@ -44,3 +45,7 @@ class P {
 val R = object {
     inner class S
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, companionObject,
+enumDeclaration, enumEntry, functionDeclaration, inner, integerLiteral, interfaceDeclaration, localClass,
+objectDeclaration, propertyDeclaration */

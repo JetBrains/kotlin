@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /ValidatedProperties { // /ValidatedProperties|null[0]
+    open val test1 // /ValidatedProperties.test1|{}test1[0]
+        open fun <get-test1>(): kotlin/String // /ValidatedProperties.test1.<get-test1>|<get-test1>(){}[0]
+    open val test2 // /ValidatedProperties.test2|{}test2[0]
+        open fun <get-test2>(): kotlin/String // /ValidatedProperties.test2.<get-test2>|<get-test2>(){}[0]
+    constructor <init>(kotlin/String, kotlin/String) // /ValidatedProperties.<init>|<init>(kotlin.String;kotlin.String){}[0]
+    final fun component1(): kotlin/String // /ValidatedProperties.component1|component1(){}[0]
+    final fun component2(): kotlin/String // /ValidatedProperties.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): /ValidatedProperties // /ValidatedProperties.copy|copy(kotlin.String;kotlin.String){}[0]
+    open fun equals(kotlin/Any?): kotlin/Boolean // /ValidatedProperties.equals|equals(kotlin.Any?){}[0]
+    open fun hashCode(): kotlin/Int // /ValidatedProperties.hashCode|hashCode(){}[0]
+    open fun toString(): kotlin/String // /ValidatedProperties.toString|toString(){}[0]
+}

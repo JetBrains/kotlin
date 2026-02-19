@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public open class X {
     protected val x : String? = null
     public fun fn(): Int {
@@ -15,3 +16,6 @@ public class Y: X() {
         return if (x != null) <!DEBUG_INFO_SMARTCAST!>x<!>.length else 0
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, propertyDeclaration, smartcast */

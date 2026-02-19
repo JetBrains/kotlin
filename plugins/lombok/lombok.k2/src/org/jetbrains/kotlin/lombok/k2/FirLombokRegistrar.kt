@@ -13,11 +13,13 @@ import java.io.File
 class FirLombokRegistrar(private val lombokConfigFile: File?) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +LombokService.getFactory(lombokConfigFile)
-        +::GetterGenerator
-        +::SetterGenerator
+        +::AccessorGenerator
         +::WithGenerator
         +::LombokConstructorsGenerator
         +::BuilderGenerator
-        +::ValueFieldVisibilityTransformer
+        +::SuperBuilderGenerator
+        +::DeclarationWithValueAnnStatusTransformer
+
+        registerDiagnosticContainers(LombokDiagnostics)
     }
 }

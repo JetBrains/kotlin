@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 fun <T> r(x: suspend () -> T): T = null!!
@@ -11,3 +12,6 @@ object MyObject {
 }
 
 suspend operator fun <R> String.invoke(): R = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, objectDeclaration, operator, propertyDeclaration, stringLiteral, suspend, typeParameter */

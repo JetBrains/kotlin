@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
-
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 fun f(): Metadata = Metadata(
     kind = 0,
@@ -16,7 +15,8 @@ fun f(): Metadata = Metadata(
 
 fun box(): String {
     val m = f()
-    if (m.toString() == """@kotlin.Metadata(bytecodeVersion=[1, 0, 3], data1=[], data2=[], extraInt=0, extraString=, kind=0, metadataVersion=[], packageName=foo)""")
+    if (m.toString() == """@kotlin.Metadata(kind=0, metadataVersion=[], bytecodeVersion=[1, 0, 3], data1=[], data2=[], extraString=, packageName=foo, extraInt=0)""" ||  // K2
+        m.toString() == """@kotlin.Metadata(bytecodeVersion=[1, 0, 3], data1=[], data2=[], extraInt=0, extraString=, kind=0, metadataVersion=[], packageName=foo)""")    // K1
         return "OK"
     return m.toString()
 }

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 
 fun <T> foo1(x: T!!, y: List<T!!>, z: T!!.(T!!) -> T!!): T!! {}
 

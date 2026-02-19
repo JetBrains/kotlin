@@ -4,10 +4,10 @@ fun length(s: String): Int {
 
 fun lengthN(s: String?): Int? {
   return { // BLOCK
-    val tmp0_safe_receiver: String? = s
+    val tmp_0: String? = s
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.<get-length>()
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.<get-length>()
     }
   }
 }

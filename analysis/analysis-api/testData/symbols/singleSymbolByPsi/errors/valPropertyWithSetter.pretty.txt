@@ -1,0 +1,2 @@
+val i: kotlin.Int
+  set(value: kotlin.Int)

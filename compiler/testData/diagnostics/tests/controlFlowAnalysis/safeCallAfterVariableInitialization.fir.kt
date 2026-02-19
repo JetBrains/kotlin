@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-41198, KT-59860
 
 fun test() {
@@ -5,3 +6,6 @@ fun test() {
     run { b = 1 }<!UNNECESSARY_SAFE_CALL!>?.<!>let {}
     b.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall */

@@ -1,3 +1,0 @@
-KtErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<NO_CONSTRUCTOR: This class does not have a constructor>

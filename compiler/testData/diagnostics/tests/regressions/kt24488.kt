@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 class Bar {
@@ -12,3 +13,6 @@ fun testFrontend() {
     val bar = Bar()
     foo(bar)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, funWithExtensionReceiver, functionDeclaration, localProperty,
+nullableType, outProjection, propertyDeclaration, safeCall, typeParameter */

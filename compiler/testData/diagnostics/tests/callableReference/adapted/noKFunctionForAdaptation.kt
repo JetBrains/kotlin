@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 fun foo(x: String = "O"): String = x
 fun bar(x: String = "K"): String = x
@@ -14,3 +15,6 @@ fun dump(dumpStrategy: String) {
 }
 
 fun returnAdapter(a: kotlin.reflect.KFunction0<String>) = a
+
+/* GENERATED_FIR_TAGS: callableReference, equalityExpression, functionDeclaration, ifExpression, localProperty,
+propertyDeclaration, stringLiteral */

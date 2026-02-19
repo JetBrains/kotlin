@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
+import org.jetbrains.kotlin.resolve.codegen.CodegenUtil
+import org.jetbrains.kotlin.resolve.codegen.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.JVM_RECORD_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
@@ -48,11 +48,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: KtUltraLightSupport) :
-    KtLightClassImpl(classOrObject, support.jvmDefaultMode) {
+    KtLightClassImpl(classOrObject, support.languageVersionSettings.jvmDefaultMode) {
 
     private class KtUltraLightClassModifierList(
         private val containingClass: KtLightClassForSourceDeclaration,
@@ -97,7 +96,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun mapSupertype(supertype: KotlinType, kotlinCollectionAsIs: Boolean = false) =
         supertype.asPsiType(
             support,
-            if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE,
+            if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE_AS_IS,
             this
         ) as? PsiClassType
 
@@ -262,7 +261,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         result.updateWithCompilerPlugins()
     }
 
-    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.cast<KtObjectDeclaration>().isCompanion()
+    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
@@ -403,7 +402,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         val bindingContext = typeReference.analyze()
 
         val superClassDescriptor = CodegenUtil.getSuperClassBySuperTypeListEntry(superTypeEntry, bindingContext) ?: return
-        val delegationType = superTypeEntry.delegateExpression.kotlinType(bindingContext)
+        val delegationType = superTypeEntry.delegateExpression?.let(bindingContext::getType)
 
         for (delegate in DelegationResolver.getDelegates(classDescriptor, superClassDescriptor, delegationType).keys) {
             when (delegate) {
@@ -510,8 +509,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun getScope(): PsiElement? = parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
-        baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean =
+        InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
 
     override fun isDeprecated(): Boolean = _deprecated
 

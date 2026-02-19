@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 class A<T> {
     class Nested<N>
@@ -24,3 +25,6 @@ val m3 = Map.Entry::class
 
 val b1 = Int::class
 val b2 = Nothing::class
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, inner, nestedClass, nullableType, outProjection,
+propertyDeclaration, starProjection, typeParameter */

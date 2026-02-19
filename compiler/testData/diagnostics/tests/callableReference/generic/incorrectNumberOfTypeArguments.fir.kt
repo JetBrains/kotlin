@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-56186
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
 
 class Foo<I, J : Number, K> {
     val value: String = "OK"
@@ -12,3 +14,6 @@ fun test_1() {
     val c = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<!>::genericValue
     val d = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<String><!>::genericValue
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

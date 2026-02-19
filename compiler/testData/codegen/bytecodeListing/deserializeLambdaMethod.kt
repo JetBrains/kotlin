@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 // FILE: deserializeLambdaMethod.kt
 
 fun plusK(s: String) = s + "K"

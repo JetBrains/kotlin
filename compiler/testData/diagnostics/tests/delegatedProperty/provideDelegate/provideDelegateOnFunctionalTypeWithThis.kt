@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
 
 import kotlin.properties.ReadOnlyProperty
@@ -20,3 +22,7 @@ fun box(): String {
     Right().prop()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, operator, override, primaryConstructor, propertyDeclaration,
+propertyDelegate, starProjection, stringLiteral, thisExpression, typeParameter */

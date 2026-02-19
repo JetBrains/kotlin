@@ -1,3 +1,4 @@
+// FILE: main.kt
 fun box(): String {
     return "OK"
 }
@@ -10,6 +11,7 @@ fun foo() {
     foldingBuiltinBinary(null, null)
 }
 
+// FILE: lib.kt
 class Foo {
     fun foo() {}
     fun foo(foo: Foo?) {}

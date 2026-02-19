@@ -1,6 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // ISSUE: KT-56942
 // FILE: Base.java
-public sealed class Base permits A, B {
+public sealed abstract class Base permits A, B {
     public static Base provide() { return new A(); }
 }
 
@@ -57,3 +59,6 @@ fun test_1() {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, isExpression, javaType, smartcast,
+whenExpression, whenWithSubject */

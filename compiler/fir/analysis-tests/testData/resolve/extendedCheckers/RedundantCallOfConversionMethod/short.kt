@@ -1,2 +1,0 @@
-// WITH_STDLIB
-val foo = Short.MAX_VALUE.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toShort()<!>

@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 @file:Suppress("DuplicatedCode", "unused")
 
@@ -13,20 +16,16 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedErrorReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
 
 @FirBuilderDsl
 class FirResolvedErrorReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     lateinit var diagnostic: ConeDiagnostic
 
     fun build(): FirResolvedErrorReference {
@@ -34,6 +33,7 @@ class FirResolvedErrorReferenceBuilder {
             source,
             name,
             resolvedSymbol,
+            resolvedSymbolOrigin,
             diagnostic,
         )
     }
@@ -43,7 +43,7 @@ class FirResolvedErrorReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedErrorReference(init: FirResolvedErrorReferenceBuilder.() -> Unit): FirResolvedErrorReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedErrorReferenceBuilder().apply(init).build()
 }

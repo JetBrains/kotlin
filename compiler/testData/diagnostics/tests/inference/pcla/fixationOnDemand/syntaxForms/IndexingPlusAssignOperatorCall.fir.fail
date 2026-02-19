@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: FirResolvedNamedReference expected, got R?C|/ScopeOwner.get|

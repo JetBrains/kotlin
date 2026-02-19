@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KotlinFile.kt
 fun Any.foo(): Int {
     if (this is JavaClass) {
@@ -21,3 +22,6 @@ public abstract class BaseClass implements JavaInterface {
 public interface JavaInterface {
     int getX();
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, isExpression, javaProperty, javaType, smartcast, thisExpression */

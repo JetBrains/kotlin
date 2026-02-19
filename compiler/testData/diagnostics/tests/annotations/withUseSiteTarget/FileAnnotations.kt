@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: annotations.kt
 @Target(AnnotationTarget.CLASS)
@@ -11,3 +12,5 @@ public annotation class FileAnn
 
 // FILE: 2.kt
 @file:FileAnn
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile */

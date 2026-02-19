@@ -4,19 +4,16 @@ fun test1(a: Any?): Any {
 
 fun test2(a: Any?): Int {
   return CHECK_NOT_NULL<Int>(arg0 = { // BLOCK
-    val tmp0_safe_receiver: Any? = a
+    val tmp_0: Any? = a
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.hashCode()
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.hashCode()
     }
   })
 }
 
 fun <X : Any?> test3(a: X): (X & Any) {
   return CHECK_NOT_NULL<X>(arg0 = a)
-}
-
-fun useString(s: String) {
 }
 
 fun <X : Any?> test4(a: X) {
@@ -27,3 +24,7 @@ fun <X : Any?> test4(a: X) {
     a is String? -> useString(s = CHECK_NOT_NULL<X>(arg0 = a) /*as String */)
   }
 }
+
+fun useString(s: String) {
+}
+

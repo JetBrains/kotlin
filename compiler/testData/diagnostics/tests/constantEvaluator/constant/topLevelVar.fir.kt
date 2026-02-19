@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 var a = 1
@@ -45,3 +46,6 @@ fun foo() {
 interface Foo {
     fun f()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, override, propertyDeclaration */

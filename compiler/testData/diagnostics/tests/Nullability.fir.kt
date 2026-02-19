@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 
 fun test() {
@@ -293,3 +294,7 @@ fun f9(a : Int?) : Int {
     return a
   return 1
 }
+
+/* GENERATED_FIR_TAGS: andExpression, break, comparisonExpression, disjunctionExpression, doWhileLoop,
+equalityExpression, functionDeclaration, ifExpression, integerLiteral, javaFunction, localProperty, nullableType,
+propertyDeclaration, safeCall, smartcast, whileLoop */

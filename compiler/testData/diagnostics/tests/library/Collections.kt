@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package collections
 
 fun <T> testCollection(c: Collection<T>, t: T) {
@@ -108,3 +109,6 @@ fun <K, V> testMutableMap(m: MutableMap<K, V>) {
 }
 
 fun <T> array(vararg t: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, vararg */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class In<in I>(arg: I)
 class Out<out O>(val prop: O)
@@ -15,3 +16,6 @@ fun test(lower: Lower) {
     id<In<Upper>>(In(lower))
     id<Out<Upper>>(Out(lower))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, nullableType, out,
+primaryConstructor, propertyDeclaration, typeParameter */

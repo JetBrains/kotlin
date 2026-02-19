@@ -1,0 +1,15 @@
+Classifier names:
+
+Callable names:
+  <init>
+  equals
+  hashCode
+  noGeneric
+  noGenericWithExplicitType
+  toString
+  withOuterAndOwnGeneric
+  withOuterAndOwnGenericWithExplicitType
+  withOuterGeneric
+  withOuterGenericWithExplicitType
+  withOwnGeneric
+  withOwnGenericWithExplicitType

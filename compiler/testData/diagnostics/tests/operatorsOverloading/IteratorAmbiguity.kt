@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-1821 Write test for ITERATOR_AMBIGUITY diagnostic
 
@@ -26,3 +27,6 @@ fun test1(collection: MyCollection) {
     for (element in <!ITERATOR_AMBIGUITY!>collection<!>) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+localProperty, propertyDeclaration */

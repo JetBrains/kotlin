@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
-import org.gradle.api.attributes.*
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.capabilities.Capability
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
@@ -18,35 +20,49 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
+import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
+import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
 import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class KotlinSoftwareComponent(
     private val project: Project,
     private val name: String,
     protected val kotlinTargets: Iterable<KotlinTarget>,
+    private val includeExtraUsagesFrom: SoftwareComponentInternal,
 ) : SoftwareComponentInternal, ComponentWithVariants {
 
     override fun getName(): String = name
 
-    private val metadataTarget get() = project.multiplatformExtension.metadata() as KotlinMetadataTarget
+    private val metadataTarget get() = project.multiplatformExtension.metadataTarget
 
-    private val _variants = project.future {
+    internal val uklibUsages: CompletableFuture<List<DefaultKotlinUsageContext>> = CompletableFuture()
+
+    private suspend fun subcomponentTargetsWithAvailableAtPointers(): List<KotlinTarget> {
         AfterFinaliseCompilations.await()
-        kotlinTargets
-            .filter { target -> target !is KotlinMetadataTarget }
+        return kotlinTargets
+            .filter { target ->
+                if (target is KotlinMetadataTarget) return@filter false
+                true
+            }
+    }
+
+    /**
+     * These are variants pointing to subcomponent variants via available-at pointers
+     */
+    private val _variants = project.future {
+        subcomponentTargetsWithAvailableAtPointers()
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
@@ -59,43 +75,31 @@ abstract class KotlinSoftwareComponent(
 
     override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
 
+    /**
+     * These are variants exposed directly through the root component
+     */
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
 
-        if (!project.isKotlinGranularMetadataEnabled) {
-            val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
-            return@future metadataTarget.createUsageContexts(metadataCompilation)
-        }
+        // FIXME: Remove this, for now we definitely want to continue publishing existing KMP publication together with Uklib variants
+        // if (onlyPublishUklib) return
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
-            val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
-            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
-            }
-
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 mavenScope = KotlinUsageContext.MavenScope.COMPILE,
-                dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
-                overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
+                dependencyConfigurationName = metadataTarget.apiElementsConfigurationName
             )
-
-            if (project.isCompatibilityMetadataVariantEnabled) {
-                // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
-                // publish the old metadata artifact:
-                this += run {
-                    DefaultKotlinUsageContext(
-                        metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        KotlinUsageContext.MavenScope.COMPILE,
-                        /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
-                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-                    )
-                }
-            }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {
-                addSourcesJarArtifactToConfiguration(sourcesElements)
+                addSourcesJarArtifactToConfiguration(
+                    sourcesElements,
+                    classifierPrefix = when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+                        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> "metadata"
+                        KmpPublicationStrategy.StandardKMPPublication -> null
+                    },
+                )
                 this += DefaultKotlinUsageContext(
                     compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                     dependencyConfigurationName = sourcesElements,
@@ -108,7 +112,7 @@ abstract class KotlinSoftwareComponent(
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages()
+        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages + uklibUsages.getOrThrow().toSet()
     }
 
     private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
@@ -122,23 +126,35 @@ abstract class KotlinSoftwareComponent(
         "sourcesJar",
         name,
         project,
-        project.future { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
+        project.future { allPublishableCommonSourceSets().associate { it.name to it.defaultImpl.allKotlin } },
         name.toLowerCaseAsciiOnly()
     )
 
-    private fun addSourcesJarArtifactToConfiguration(configurationName: String): PublishArtifact {
+    private fun addSourcesJarArtifactToConfiguration(
+        configurationName: String,
+        classifierPrefix: String?,
+    ): PublishArtifact {
         return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->
-            sourcesJarArtifact.classifier = "sources"
+            sourcesJarArtifact.classifier = dashSeparatedName(
+                listOfNotNull(
+                    classifierPrefix,
+                    "sources",
+                )
+            )
         }
     }
 
-    // This property is declared in the parent type to allow the usages to reference it without forcing the subtypes to load,
-    // which is needed for compatibility with older Gradle versions
-    var publicationDelegate: MavenPublication? = null
+    val publicationDelegate: MavenPublication? get() = project.kotlinMultiplatformRootPublication.lenient.getOrNull()
 }
 
-class KotlinSoftwareComponentWithCoordinatesAndPublication(project: Project, name: String, kotlinTargets: Iterable<KotlinTarget>) :
-    KotlinSoftwareComponent(project, name, kotlinTargets), ComponentWithCoordinates {
+class KotlinSoftwareComponentWithCoordinatesAndPublication
+@InternalKotlinGradlePluginApi
+constructor(
+    project: Project,
+    name: String,
+    kotlinTargets: Iterable<KotlinTarget>,
+    includeExtraUsagesFrom: AdhocComponentWithVariants,
+) : KotlinSoftwareComponent(project, name, kotlinTargets, includeExtraUsagesFrom as SoftwareComponentInternal), ComponentWithCoordinates {
 
     override fun getCoordinates(): ModuleVersionIdentifier = getCoordinatesFromPublicationDelegateAndProject(
         publicationDelegate, kotlinTargets.first().project, null
@@ -172,13 +188,6 @@ class DefaultKotlinUsageContext(
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
-    @Deprecated(
-        message = "Usage is no longer supported. Use `usageScope`",
-        replaceWith = ReplaceWith("usageScope"),
-        level = DeprecationLevel.ERROR
-    )
-    override fun getUsage(): Usage = error("Usage is no longer supported. Use `usageScope`")
-
     override fun getName(): String = dependencyConfigurationName
 
     private val configuration: Configuration
@@ -204,15 +213,13 @@ class DefaultKotlinUsageContext(
          * attributes schema migration, or create proper, non-detached configurations for publishing that are separated from the
          * configurations used for project-to-project dependencies
          */
-        val result = project.configurations.detachedConfiguration().markResolvable().attributes
+        val result = project.configurations.detachedResolvable().attributes
 
-        // Capture type parameter T:
-        fun <T> copyAttribute(attribute: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-            to.attribute<T>(attribute, from.getAttribute(attribute)!!)
-        }
-
-        filterOutNonPublishableAttributes(configurationAttributes.keySet())
-            .forEach { copyAttribute(it, configurationAttributes, result) }
+        configurationAttributes.copyAttributesTo(
+            project.providers,
+            dest = result,
+            keys = filterOutNonPublishableAttributes(configurationAttributes.keySet())
+        )
 
         return result
     }
@@ -245,7 +252,15 @@ class DefaultKotlinUsageContext(
                      * as it will switch to KotlinPlatformType.jvm and requires this additional attribute to disambiguate
                      * Android from the JVM
                      */
-                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute)
+                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute) &&
+                    /**
+                     * Non-packed klibs are used only locally and should not be published.
+                     * Thus, it does not make sense to publish this attribute as well.
+                     *
+                     * Another option could be to put this attribute only on the secondary variant that is non-packed.
+                     * However, disambiguation rules do not work well on old Gradle versions with this.
+                     */
+                    it.name != KlibPackaging.ATTRIBUTE.name
         }
 
 }

@@ -1,0 +1,35 @@
+FILE: main.kt
+    public abstract interface InterfaceB<E> : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|InterfaceB.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun <E : R|kotlin/Enum<E>|> default(): R|InterfaceB<E>| {
+                ^default object : R|InterfaceB<E>| {
+                    private constructor(): R|<anonymous><E>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public abstract interface InterfaceA<T> : R|kotlin/Any| {
+    }
+    public abstract interface InterfaceC : R|kotlin/Any| {
+    }
+    public final fun <E : R|InterfaceC|> createInterfaceAKotlin(): R|InterfaceA<E>| {
+        ^createInterfaceAKotlin R|kotlin/TODO|()
+    }
+    public final fun <E : R|kotlin/Any|> funA(intA: R|InterfaceA<E>|, intB: R|InterfaceB<E>|): R|kotlin/Unit| {
+    }
+    public final fun <E : R|kotlin/Enum<E>|, R|InterfaceC|> funB(): R|kotlin/Unit| {
+        R|/funA<CS errors: /funA>#|<R|InterfaceC!|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|InterfaceC!|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|InterfaceC!|>())
+        R|/funA|<R|E|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|E!|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|E|>())
+        R|/funA<CS errors: /funA>#|<R|InterfaceC|>(R|/createInterfaceAKotlin|<R|InterfaceC|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|InterfaceC|>())
+        R|/funA|<R|E|>(R|/createInterfaceAKotlin|<R|E|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|E|>())
+    }

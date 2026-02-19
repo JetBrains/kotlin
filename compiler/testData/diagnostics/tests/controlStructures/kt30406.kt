@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
+// CHECK_TYPE
 // Issue: KT-30406
 
 interface Option<out T> {
@@ -13,3 +14,7 @@ fun test(a: Int): Option<Any> =
         <!DEBUG_INFO_EXPRESSION_TYPE("Some<kotlin.Any>")!>Some("239")<!>
     else
         <!DEBUG_INFO_EXPRESSION_TYPE("None")!>None()<!><!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, interfaceDeclaration, nullableType, out, override,
+primaryConstructor, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

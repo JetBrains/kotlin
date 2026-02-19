@@ -1,4 +1,4 @@
-// LANGUAGE: +ProhibitConfusingSyntaxInWhenBranches
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -INCOMPATIBLE_TYPES, -NON_EXHAUSTIVE_WHEN_STATEMENT, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // ISSUE: KT-48385
 
@@ -234,3 +234,8 @@ fun testWithRange_bad_4(b: B) {
         in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, comparisonExpression,
+disjunctionExpression, elvisExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, interfaceDeclaration, isExpression, localProperty, multiplicativeExpression, nullableType,
+operator, propertyDeclaration, rangeExpression, safeCall, whenExpression, whenWithSubject */

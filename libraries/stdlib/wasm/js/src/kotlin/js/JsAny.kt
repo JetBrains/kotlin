@@ -12,12 +12,14 @@ import kotlin.wasm.internal.implementedAsIntrinsic
 /**
  * Any JavaScript value except null or undefined
  */
-public external interface JsAny
+@ExperimentalWasmJsInterop
+public actual external interface JsAny
 
 /**
  * Cast JsAny to other Js type without runtime check
  */
 @WasmNoOpCast
 @ExcludedFromCodegen
-public fun <T : JsAny> JsAny.unsafeCast(): T =
+@ExperimentalWasmJsInterop
+public actual fun <T : JsAny> JsAny.unsafeCast(): T =
     implementedAsIntrinsic

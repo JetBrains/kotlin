@@ -1,0 +1,20 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// ISSUE: KT-64089
+
+fun <T> contentReturner(f: () -> T): T {
+    return null <!UNCHECKED_CAST!>as T<!>
+}
+
+fun main(number: Int? = null) {
+    contentReturner {
+        "".apply {
+            number!!
+        }
+    }
+
+    number != null
+}
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, equalityExpression, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, stringLiteral, typeParameter */

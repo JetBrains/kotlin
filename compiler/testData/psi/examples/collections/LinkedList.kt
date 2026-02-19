@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class LinkedList<T> : IMutableList<T> {
   private class Item(var value : Item) {
     var next : Item

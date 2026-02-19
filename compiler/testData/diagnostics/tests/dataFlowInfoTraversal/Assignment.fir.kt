@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A
 interface B : A {
     fun foo()
@@ -15,3 +16,6 @@ fun bar2(a: A) {
     a.foo()
     b.foo()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, interfaceDeclaration, localProperty, propertyDeclaration,
+smartcast */

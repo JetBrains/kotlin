@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: C:foo;x, D:foo;x
 
 interface A {
@@ -16,3 +17,5 @@ interface D : C {
     override fun foo(): Any
     override val x: Any
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

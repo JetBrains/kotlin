@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +ContractsOnCallsWithImplicitReceiver
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +ContractsOnCallsWithImplicitReceiver
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 //
 // ISSUE: KT-28672
 
@@ -36,3 +37,7 @@ fun mixedReceiver(s: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, disjunctionExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, nullableType, smartcast,
+thisExpression */

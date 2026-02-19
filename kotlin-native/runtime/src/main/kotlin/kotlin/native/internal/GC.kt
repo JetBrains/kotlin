@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE") // Scheduled for eventual removal
+
 package kotlin.native.internal
 
 import kotlin.time.*
@@ -33,7 +35,7 @@ import kotlin.time.*
  * are less desirable than cyclical garbage leaks.
  */
 @Deprecated("Use kotlin.native.runtime.GC instead.", ReplaceWith("GC", "kotlin.native.runtime.GC"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 object GC {
     /**
@@ -42,23 +44,20 @@ object GC {
      * Legacy MM: force garbage collection immediately, unless collector is stopped
      * with [stop] operation. Even if GC is suspended, [collect] still triggers collection.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_collect")
-    external fun collect()
+    fun collect(): Unit = kotlin.native.runtime.GC.collect()
 
     /**
      * Trigger new collection without waiting for its completion.
      */
-     @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
-     external fun schedule()
+     fun schedule(): Unit = kotlin.native.runtime.GC.schedule()
 
     /**
      * Deprecated and unused.
      *
      * Legacy MM: Request global cyclic collector, operation is async and just triggers the collection.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_collectCyclic")
     @Deprecated("No-op in modern GC implementation")
-    external fun collectCyclic()
+    fun collectCyclic() {}
 
     /**
      * Deprecated and unused.
@@ -66,26 +65,24 @@ object GC {
      * Legacy MM: Suspend garbage collection. Release candidates are still collected, but
      * GC algorithm is not executed.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_suspend")
-    external fun suspend()
+    @Deprecated("No-op in modern GC implementation")
+    fun suspend() {}
 
     /**
      * Deprecated and unused.
      *
      * Legacy MM: Resume garbage collection. Can potentially lead to GC immediately.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_resume")
     @Deprecated("No-op in modern GC implementation")
-    external fun resume()
+    fun resume() {}
 
     /**
      * Deprecated and unused.
      *
      * Legacy MM: Stop garbage collection. Cyclical garbage is no longer collected.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_stop")
     @Deprecated("No-op in modern GC implementation")
-    external fun stop()
+    fun stop() {}
 
     /**
      * Deprecated and unused.
@@ -93,9 +90,8 @@ object GC {
      * Legacy MM: Start garbage collection. Cyclical garbage produced while GC was stopped
      * cannot be reclaimed, but all new garbage is collected.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_start")
     @Deprecated("No-op in modern GC implementation")
-    external fun start()
+    fun start() {}
 
     /**
      * Deprecated and unused.
@@ -137,6 +133,8 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
+    @Suppress("DEPRECATION")
+    @Deprecated("No-op in modern GC implementation")
     var thresholdAllocations: Long by kotlin.native.runtime.GC::thresholdAllocations
 
     /**
@@ -232,9 +230,8 @@ object GC {
      * or `null` if the leak detector is not available. Use [Platform.isMemoryLeakCheckerActive] to check
      * leak detector availability.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_detectCycles")
     @Deprecated("No-op in modern GC implementation")
-    external fun detectCycles(): Array<Any>?
+    fun detectCycles(): Array<Any>? = null
 
     /**
      * Returns statistics of the last finished garbage collection run.
@@ -245,7 +242,7 @@ object GC {
      * Legacy MM: Always returns null
      */
     @ExperimentalStdlibApi
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val lastGCInfo: kotlin.native.internal.gc.GCInfo?
         get() = kotlin.native.internal.gc.GCInfo.lastGCInfo
 }

@@ -46,6 +46,8 @@ object StandardNames {
 
     @JvmField val CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME = Name.identifier("count")
 
+    @JvmField val DEFAULT_IMPLS_CLASS_NAME = Name.identifier("DefaultImpls")
+
     @JvmField val DYNAMIC_FQ_NAME = FqName("<dynamic>")
 
     @JvmField val COROUTINES_PACKAGE_FQ_NAME = FqName("kotlin.coroutines")
@@ -53,6 +55,8 @@ object StandardNames {
     @JvmField val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.jvm.internal")
 
     @JvmField val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.intrinsics")
+
+    @JvmField val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
 
     @JvmField val CONTINUATION_INTERFACE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"))
 
@@ -69,6 +73,10 @@ object StandardNames {
     @JvmField
     val BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin")
 
+    @JvmField val MAP_ENTRY_KEY = Name.identifier("key")
+
+    @JvmField val MAP_ENTRY_VALUE = DEFAULT_VALUE_PARAMETER
+
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME)
 
@@ -79,6 +87,9 @@ object StandardNames {
     val COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"))
 
     @JvmField
+    val SEQUENCES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("sequences"))
+
+    @JvmField
     val RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"))
 
     @JvmField
@@ -86,6 +97,12 @@ object StandardNames {
 
     @JvmField
     val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
+
+    @JvmField
+    val CONCURRENT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("concurrent"))
+
+    @JvmField
+    val CONCURRENT_ATOMICS_PACKAGE_FQ_NAME = CONCURRENT_PACKAGE_FQ_NAME.child(Name.identifier("atomics"))
 
     val NON_EXISTENT_CLASS = FqName("error.NonExistentClass")
 
@@ -97,7 +114,8 @@ object StandardNames {
         ANNOTATION_PACKAGE_FQ_NAME,
         KOTLIN_REFLECT_FQ_NAME,
         KOTLIN_INTERNAL_FQ_NAME,
-        COROUTINES_PACKAGE_FQ_NAME
+        COROUTINES_PACKAGE_FQ_NAME,
+        CONCURRENT_ATOMICS_PACKAGE_FQ_NAME
     )
 
     object FqNames {
@@ -151,6 +169,9 @@ object StandardNames {
         @JvmField val unsafeVariance: FqName = fqName("UnsafeVariance")
         @JvmField val publishedApi: FqName = fqName("PublishedApi")
         @JvmField val accessibleLateinitPropertyLiteral: FqName = internalName("AccessibleLateinitPropertyLiteral")
+        @JvmField val platformDependent: FqName = FqName("kotlin.internal.PlatformDependent")
+        @JvmField val platformDependentClassId: ClassId = ClassId.topLevel(platformDependent)
+        @JvmField val introducedAt: FqName = fqName("IntroducedAt")
 
         @JvmField val iterator: FqName = collectionsFqName("Iterator")
         @JvmField val iterable: FqName = collectionsFqName("Iterable")
@@ -182,6 +203,7 @@ object StandardNames {
         @JvmField val kMutablePropertyFqName: FqNameUnsafe = reflect("KMutableProperty")
         @JvmField val kProperty: ClassId = ClassId.topLevel(kPropertyFqName.toSafe())
         @JvmField val kDeclarationContainer: FqNameUnsafe = reflect("KDeclarationContainer")
+        @JvmField val findAssociatedObject: FqNameUnsafe = reflect("findAssociatedObject")
 
         @JvmField val uByteFqName: FqName = fqName("UByte")
         @JvmField val uShortFqName: FqName = fqName("UShort")
@@ -195,6 +217,14 @@ object StandardNames {
         @JvmField val uShortArrayFqName: FqName = fqName("UShortArray")
         @JvmField val uIntArrayFqName: FqName = fqName("UIntArray")
         @JvmField val uLongArrayFqName: FqName = fqName("ULongArray")
+
+        @JvmField val atomicInt: FqName = concurrentAtomics("AtomicInt")
+        @JvmField val atomicLong: FqName = concurrentAtomics("AtomicLong")
+        @JvmField val atomicBoolean: FqName = concurrentAtomics("AtomicBoolean")
+        @JvmField val atomicReference: FqName = concurrentAtomics("AtomicReference")
+        @JvmField val atomicIntArray: FqName = concurrentAtomics("AtomicIntArray")
+        @JvmField val atomicLongArray: FqName = concurrentAtomics("AtomicLongArray")
+        @JvmField val atomicArray: FqName = concurrentAtomics("AtomicArray")
 
         @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
             PrimitiveType.values().mapTo(this) { it.typeName }
@@ -246,6 +276,14 @@ object StandardNames {
 
         private fun internalName(simpleName: String): FqName {
             return KOTLIN_INTERNAL_FQ_NAME.child(Name.identifier(simpleName))
+        }
+
+        private fun concurrent(simpleName: String): FqName {
+            return CONCURRENT_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
+        }
+
+        private fun concurrentAtomics(simpleName: String): FqName {
+            return CONCURRENT_ATOMICS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
         }
     }
 

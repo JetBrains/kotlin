@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:a.kt
 package a
@@ -11,3 +12,5 @@ fun foo() = a
 package b
 
 object a {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 val x get() = 1
 val y get() = id(1)
 val y2 get() = id(id(2))
@@ -20,3 +21,7 @@ fun foo() {
 
     1.u checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

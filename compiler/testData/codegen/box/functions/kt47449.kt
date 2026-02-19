@@ -1,15 +1,16 @@
-// IGNORE_BACKEND: JS
-
-typealias EmptyFunctionResult<T> = () -> T
-
-typealias LoggingFunctionType<T> = (tag: String, message: String, throwable: Throwable?) -> T
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: main.kt
 fun box(): String {
     tryAndLog {
         throw RuntimeException()
     }
     return "OK"
 }
+
+// FILE: lib.kt
+typealias EmptyFunctionResult<T> = () -> T
+
+typealias LoggingFunctionType<T> = (tag: String, message: String, throwable: Throwable?) -> T
 
 inline fun <T> tryAndLog(
     title: String = "",

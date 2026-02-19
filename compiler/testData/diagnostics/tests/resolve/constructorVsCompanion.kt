@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A private constructor()
 
 class B {
@@ -21,3 +22,6 @@ val <!EXPOSED_PROPERTY_TYPE!>b<!> = <!INVISIBLE_MEMBER!>B<!>
 val c = <!NO_COMPANION_OBJECT!>C<!>
 val d = D
 val e = E(42)
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, objectDeclaration,
+operator, primaryConstructor, propertyDeclaration */

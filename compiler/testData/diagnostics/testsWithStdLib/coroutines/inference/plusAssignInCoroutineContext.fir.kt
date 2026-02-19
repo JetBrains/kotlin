@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNCHECKED_CAST -OPT_IN_USAGE_ERROR -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNCHECKED_CAST -OPT_IN_USAGE_ERROR -UNUSED_PARAMETER
 
 class Bar
 
@@ -35,3 +36,8 @@ suspend fun foo(x: Int) = flow {
 
     newValue += listOf<Int>().asSequence().fold(0) { total, next -> total + next }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, asExpression, assignment, callableReference,
+classDeclaration, comparisonExpression, functionDeclaration, functionalType, ifExpression, in, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration, suspend, typeParameter,
+typeWithExtension */

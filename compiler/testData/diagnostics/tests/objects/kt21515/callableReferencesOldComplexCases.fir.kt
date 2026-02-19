@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 // ===== Case 1: LHS is a class
 //
@@ -67,3 +68,6 @@ object D {
         val a = <!UNRESOLVED_REFERENCE!>FromBaseCompanion<!>::foo
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, propertyDeclaration */

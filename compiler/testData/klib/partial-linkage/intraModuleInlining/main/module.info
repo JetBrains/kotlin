@@ -1,0 +1,3 @@
+STEP 0:
+    arguments: -Xklib-ir-inliner=intra-module -Xskip-prerelease-check -Xcontext-parameters
+    dependencies: stdlib, full, intraModule, disabled

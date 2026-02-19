@@ -1,8 +1,9 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface KtScope {
     fun getAllNames(): Set<String>
 }
 
-inline fun <E> buildSet(@<!OPT_IN_USAGE_ERROR!>BuilderInference<!> builderAction: MutableSet<E>.() -> Unit): Set<E> {
+inline fun <E> buildSet(builderAction: MutableSet<E>.() -> Unit): Set<E> {
     return null!!
 }
 
@@ -17,3 +18,7 @@ class KtFirCompositeScope(val subScopes: List<KtScope>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, inline,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, thisExpression,
+typeParameter, typeWithExtension */

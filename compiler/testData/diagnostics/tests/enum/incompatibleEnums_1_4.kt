@@ -1,4 +1,5 @@
-// !LANGUAGE: +ProhibitComparisonOfIncompatibleEnums
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitComparisonOfIncompatibleEnums
 
 enum class E1 {
     A, B
@@ -143,3 +144,7 @@ fun foo10(e4: E4, invString: Inv<String>) {
     E4.A == invString
     invString == E4.A
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+interfaceDeclaration, nullableType, smartcast, starProjection, typeConstraint, typeParameter, whenExpression,
+whenWithSubject */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-57543
@@ -32,3 +33,6 @@ class A(
         A(myType = if (false) null else fun(): Int { return c!! })
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, classDeclaration, flexibleType, functionalType, ifExpression,
+integerLiteral, javaFunction, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate */

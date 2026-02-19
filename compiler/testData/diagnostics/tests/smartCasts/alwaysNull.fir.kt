@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(): String {
     var s: String?
     s = null
@@ -7,7 +8,7 @@ fun foo(): String {
     var t: String? = "y"
     if (t == null) t = "x"
     var x: Int? = null
-    if (x == null) <!ASSIGNMENT_TYPE_MISMATCH!>x += null<!>
+    if (x == null) x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> null
     return t + s
 }
 
@@ -16,7 +17,11 @@ fun String?.gav() {}
 fun bar(s: String?) {
     if (s != null) return
     s.gav()
-    s as? String
+    s <!USELESS_CAST!>as? String<!>
     s as String?
-    s as String
+    s <!CAST_NEVER_SUCCEEDS!>as<!> String
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, checkNotNullCall, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast, stringLiteral */

@@ -1,0 +1,33 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /B { // /B|null[0]
+    final var s // /B.s|{}s[0]
+        final fun <get-s>(): kotlin/Int // /B.s.<get-s>|<get-s>(){}[0]
+        final fun <set-s>(kotlin/Int) // /B.s.<set-s>|<set-s>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int = ...) // /B.<init>|<init>(kotlin.Int){}[0]
+}
+final object /Host { // /Host|null[0]
+    final fun (/B).plusAssign(/B) // /Host.plusAssign|plusAssign@B(B){}[0]
+}
+final object /X1 { // /X1|null[0]
+    final var x1 // /X1.x1|{}x1[0]
+        final fun <get-x1>(): kotlin/Int // /X1.x1.<get-x1>|<get-x1>(){}[0]
+        final fun <set-x1>(kotlin/Int) // /X1.x1.<set-x1>|<set-x1>(kotlin.Int){}[0]
+    final object X2 { // /X1.X2|null[0]
+        final var x2 // /X1.X2.x2|{}x2[0]
+            final fun <get-x2>(): kotlin/Int // /X1.X2.x2.<get-x2>|<get-x2>(){}[0]
+            final fun <set-x2>(kotlin/Int) // /X1.X2.x2.<set-x2>|<set-x2>(kotlin.Int){}[0]
+        final object X3 { // /X1.X2.X3|null[0]
+            final var x3 // /X1.X2.X3.x3|{}x3[0]
+                final fun <get-x3>(): kotlin/Int // /X1.X2.X3.x3.<get-x3>|<get-x3>(){}[0]
+                final fun <set-x3>(kotlin/Int) // /X1.X2.X3.x3.<set-x3>|<set-x3>(kotlin.Int){}[0]
+        }
+    }
+}
+final fun /test1(kotlin/IntArray) // /test1|test1(kotlin.IntArray){}[0]
+final fun /test2() // /test2|test2(){}[0]
+final fun (/Host)./test3(/B) // /test3|test3@Host(B){}[0]

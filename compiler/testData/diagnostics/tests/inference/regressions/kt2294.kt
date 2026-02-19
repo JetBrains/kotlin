@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-2294 Type inference infers DONT_CARE instead of correct type
 package a
@@ -18,3 +19,7 @@ public fun test()
 //--------------------
 @Suppress("UNCHECKED_CAST")
 fun <T> array(vararg t : T) : Array<T> = t as Array<T>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension, vararg */

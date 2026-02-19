@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
     fun bar1() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!><!DEBUG_INFO_MISSING_UNRESOLVED!>bar1<!>()<!>
 
@@ -6,3 +7,5 @@ fun foo() {
 }
 
 fun <T> id(x: T) = x
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, localFunction, nullableType, typeParameter */

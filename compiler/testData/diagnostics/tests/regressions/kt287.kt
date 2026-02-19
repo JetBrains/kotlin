@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-287 Infer constructor type arguments
 
@@ -11,3 +12,5 @@ fun foo(m : Map<String, String>) {}
 fun test() {
     foo(HashMap())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, propertyDeclaration */

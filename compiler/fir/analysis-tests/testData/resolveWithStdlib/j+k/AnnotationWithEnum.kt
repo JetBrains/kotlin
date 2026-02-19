@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: some/Nls.java
 package some
 public @interface Nls {
@@ -15,3 +16,5 @@ import some.Nls
 fun f() {
 
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

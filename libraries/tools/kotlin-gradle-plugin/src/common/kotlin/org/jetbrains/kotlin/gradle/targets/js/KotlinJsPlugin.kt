@@ -10,40 +10,27 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.setupGeneralKotlinExtensionParameters
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 
 open class KotlinJsPlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.setupGeneralKotlinExtensionParameters()
-
         // TODO get rid of this plugin, too? Use the 'base' plugin instead?
         // in fact, the attributes schema of the Java base plugin may be required to consume non-MPP Kotlin/JS libs,
         // so investigation is needed
         project.plugins.apply(JavaBasePlugin::class.java)
 
-        checkGradleCompatibility()
-
-        project.enableKgpDependencyResolution(isEnabled = false)
-
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
-        customizeKotlinDependencies(project)
 
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project)
-            legacyPreset = KotlinJsSingleTargetPreset(project)
         }
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
-            @Suppress("DEPRECATION")
-            if (kotlinExtension._target == null) {
+            if (!kotlinExtension.targetFuture.isCompleted) {
                 project.logger.warn(
                     """
                         Please initialize the Kotlin/JS target. Use:
@@ -80,7 +67,7 @@ open class KotlinJsPlugin: Plugin<Project> {
                     API,
                     RUNTIME_ONLY
                 ).forEach { baseConfigurationName ->
-                    configurations.maybeCreate(
+                    configurations.maybeCreateDependencyScope(
                         lowerCamelCaseName(
                             baseCompilationName,
                             baseConfigurationName
@@ -94,7 +81,7 @@ open class KotlinJsPlugin: Plugin<Project> {
         kotlinExtension.sourceSets.maybeCreate(TEST_COMPILATION_NAME)
 
         kotlinExtension.registerTargetObserver { target ->
-            target?.compilerOptions?.configureExperimentalTryK2(project)
+            target?.compilerOptions?.configureCommonCompilerOptions(project)
         }
     }
 }

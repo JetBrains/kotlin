@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 
 interface IdeCompilerArgumentsResolver {
     fun resolveCompilerArguments(any: Any): List<String>?
@@ -20,12 +18,11 @@ interface IdeCompilerArgumentsResolver {
 
         @JvmStatic
         fun instance(project: Project): IdeCompilerArgumentsResolver {
-            return project.extraProperties.getOrPut(IdeCompilerArgumentsResolver::class.java.name) {
-                IdeCompilerArgumentsResolverImpl()
-            }
+            return project.kotlinIdeCompilerArgumentsResolver
         }
     }
 }
 
-internal val Project.kotlinIdeCompilerArgumentsResolver: IdeCompilerArgumentsResolver get() = IdeCompilerArgumentsResolver.instance(project)
-
+internal val Project.kotlinIdeCompilerArgumentsResolver: IdeCompilerArgumentsResolver by projectStoredProperty {
+    IdeCompilerArgumentsResolverImpl()
+}

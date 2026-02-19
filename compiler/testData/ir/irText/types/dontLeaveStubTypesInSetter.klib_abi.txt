@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Foo { // /Foo|null[0]
+    final var x // /Foo.x|{}x[0]
+        final fun <get-x>(): #A // /Foo.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(#A) // /Foo.x.<set-x>|<set-x>(1:0){}[0]
+    constructor <init>(#A) // /Foo.<init>|<init>(1:0){}[0]
+}
+final fun <#A: kotlin/Any?> /foo(kotlin.collections/MutableList<#A>): /Foo<#A> // /foo|foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}[0]
+final fun /runMe() // /runMe|runMe(){}[0]

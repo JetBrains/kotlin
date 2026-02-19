@@ -1,3 +1,4 @@
+// FILE: lib.kt
 inline fun <R> f(size: Int, block: () -> R): R {
     var result: R
     while (true) {
@@ -7,6 +8,7 @@ inline fun <R> f(size: Int, block: () -> R): R {
     return result
 }
 
+// FILE: main.kt
 fun computeResult(size: Int) = f(size) {
     42
 }

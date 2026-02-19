@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(action: () -> Unit = {}): Int = 0
 
 fun usageResolved1() {
@@ -28,3 +29,4 @@ fun usageUnresolved3() {
     }.<!SYNTAX!><!>
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */

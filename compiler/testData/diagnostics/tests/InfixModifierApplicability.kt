@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Pair<A, B>(val a: A, val b: B)
 infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
@@ -25,3 +26,6 @@ class Example {
     <!INAPPLICABLE_INFIX_MODIFIER("must have a single value parameter")!>infix<!> fun e9(s: String, a: Int) {}
     <!INAPPLICABLE_INFIX_MODIFIER("must have a single value parameter")!>infix<!> fun e10() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, infix, integerLiteral,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression, typeParameter */

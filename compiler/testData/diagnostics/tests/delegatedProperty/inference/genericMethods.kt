@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 import kotlin.reflect.KProperty
 
@@ -24,3 +25,6 @@ class C
 
 operator inline fun <reified T> C.getValue(t: Any?, p: KProperty<*>): T = null!!
 operator inline fun <reified T> C.setValue(t: Any?, p: KProperty<*>, x: T) = Unit
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, inline,
+nullableType, operator, propertyDeclaration, propertyDelegate, reified, setter, starProjection, typeParameter */

@@ -26,16 +26,17 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  *
  * Examples:
  *
- * ``` kotlin
+ * ```kotlin
  * external fun foo(): String = definedExternally
  * external fun bar(x: Int) { definedExternally }
  * external fun baz(z: Any = definedExternally): Array<Any>
  * external val prop: Float = definedExternally
  * ```
  */
+@ExperimentalWasmJsInterop
 @ExcludedFromCodegen
 @Suppress("WRONG_JS_INTEROP_TYPE")
-public external val definedExternally: Nothing
+public actual external val definedExternally: Nothing
 
 /**
  * This function allows you to incorporate JavaScript [code] into Kotlin/Wasm codebase.
@@ -48,14 +49,14 @@ public external val definedExternally: Nothing
  *
  * When used in an expression context, [code] should contain a single JavaScript expression. For example:
  *
- * ``` kotlin
+ * ```kotlin
  * val version: String = js("process.version")
  * fun newEmptyJsArray(): JsValue = js("[]")
  * ```
  *
  * When used in a function body, [code] is expected to be a list of JavaScript statements. For example:
  *
- * ``` kotlin
+ * ```kotlin
  * fun log(message1: String, message2: String) {
  *     js("""
  *     console.log(message1);
@@ -67,6 +68,7 @@ public external val definedExternally: Nothing
  * You can use parameters of calling function in JavaScript [code].
  * However, other Kotlin declarations are not visible inside the [code] block.
  */
+@ExperimentalWasmJsInterop
 @ExcludedFromCodegen
 @SinceKotlin("1.9")
-public external fun js(code: String): Nothing
+public actual external fun js(code: String): Nothing

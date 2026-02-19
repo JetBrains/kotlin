@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class UnionFind {
   private val data = IMutableList<Int>()
 

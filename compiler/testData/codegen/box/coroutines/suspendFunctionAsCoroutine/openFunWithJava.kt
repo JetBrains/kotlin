@@ -1,7 +1,7 @@
+// TARGET_BACKEND: JVM
 // WITH_STDLIB
 // WITH_COROUTINES
 // FILE: main.kt
-// TARGET_BACKEND: JVM
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

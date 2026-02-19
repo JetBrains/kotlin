@@ -13,6 +13,9 @@ interface RemovedInterface {
 class ClassWithChangedMembers {
     fun removedFun() = "removedFun"
     fun changedFun(x: String) = x
+
+    class NestedToInner(private val x: Int)
+    inner class InnerToNested(private val x: Int)
 }
 
 interface InterfaceWithChangedMembers {

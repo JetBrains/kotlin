@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +NestedClassesInAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +NestedClassesInAnnotations
 
 annotation class Foo {
     class Nested
@@ -22,3 +22,7 @@ annotation class Foo {
     <!ANNOTATION_CLASS_MEMBER!>fun function() {}<!>
     <!ANNOTATION_CLASS_MEMBER!>val property get() = Unit<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, const, enumDeclaration, enumEntry,
+functionDeclaration, getter, init, inner, integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

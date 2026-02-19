@@ -1,5 +1,4 @@
-// !LANGUAGE: +SuspendConversion
-// IGNORE_BACKEND: JVM
+// LANGUAGE: +SuspendConversion
 
 fun box(): String {
     val foo: String.(suspend () -> Unit) -> String = { this }

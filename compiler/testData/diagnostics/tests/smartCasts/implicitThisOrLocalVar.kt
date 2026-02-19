@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Box(var item: String?)
 
 fun expectString(it: String) {}
@@ -24,3 +25,7 @@ fun Box.test() {
 }
 
 fun myRun(block: () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+smartcast, stringLiteral, thisExpression */

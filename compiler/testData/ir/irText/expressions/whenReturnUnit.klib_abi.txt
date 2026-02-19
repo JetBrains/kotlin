@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /branch(kotlin/Int) // /branch|branch(kotlin.Int){}[0]
+final fun /run(kotlin/Function0<kotlin/Unit>) // /run|run(kotlin.Function0<kotlin.Unit>){}[0]

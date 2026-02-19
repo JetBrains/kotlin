@@ -10,23 +10,30 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.EnumIntrinsicsUtils
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.putClassTypeArgument
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.getArrayElementType
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.parentOrNull
 
 class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -43,14 +50,17 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         builder: DeclarationIrBuilder
     ): IrExpression {
         when (val symbol = call.symbol) {
+            irBuiltins.linkageErrorSymbol -> {
+                return irCall(call, context.wasmSymbols.throwLinkageError)
+            }
             irBuiltins.ieee754equalsFunByOperandType[irBuiltins.floatClass] -> {
-                if (call.getValueArgument(0)!!.type.isNullable() || call.getValueArgument(1)!!.type.isNullable()) {
+                if (call.arguments[0]!!.type.isNullable() || call.arguments[1]!!.type.isNullable()) {
                     return irCall(call, symbols.nullableFloatIeee754Equals)
                 }
                 return irCall(call, symbols.floatEqualityFunctions.getValue(irBuiltins.floatType))
             }
             irBuiltins.ieee754equalsFunByOperandType[irBuiltins.doubleClass] -> {
-                if (call.getValueArgument(0)!!.type.isNullable() || call.getValueArgument(1)!!.type.isNullable()) {
+                if (call.arguments[0]!!.type.isNullable() || call.arguments[1]!!.type.isNullable()) {
                     return irCall(call, symbols.nullableDoubleIeee754Equals)
                 }
                 return irCall(call, symbols.floatEqualityFunctions.getValue(irBuiltins.doubleType))
@@ -59,17 +69,17 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             irBuiltins.eqeqeqSymbol -> {
                 fun callRefIsNull(expr: IrExpression): IrCall {
                     if (
-                        context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI &&
-                        expr.type.erasedUpperBound?.isExternal == true
+                        !context.isWasmJsTarget &&
+                        expr.type.erasedUpperBound.isExternal
                     ) {
                         error("Unexpected external refs in wasi mode")
                     }
-                    val refIsNull = if (expr.type.erasedUpperBound?.isExternal == true) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
-                    return builder.irCall(refIsNull).apply { putValueArgument(0, expr) }
+                    val refIsNull = if (expr.type.erasedUpperBound.isExternal) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
+                    return builder.irCall(refIsNull).apply { arguments[0] = expr }
                 }
 
-                val lhs = call.getValueArgument(0)!!
-                val rhs = call.getValueArgument(1)!!
+                val lhs = call.arguments[0]!!
+                val rhs = call.arguments[1]!!
 
                 if (lhs.isNullConst()) return callRefIsNull(rhs)
 
@@ -91,8 +101,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 }
 
                 // For eqeqSymbol use overridden `Any.equals(Any?)` if there is any.
-                if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable()) {
-                    return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
+                if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable() && !lhsType.isNothing()) {
+                    return irCall(call, lhsType.findEqualsMethod().symbol)
                 }
 
                 val fallbackEqFun = if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.refEq else symbols.nullableEquals
@@ -100,7 +110,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
 
             irBuiltins.checkNotNullSymbol -> {
-                val arg = call.getValueArgument(0)!!
+                val arg = call.arguments[0]!!
 
                 if (arg.isNullConst()) {
                     return builder.irCall(symbols.throwNullPointerException)
@@ -125,12 +135,12 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return builder.irCall(symbols.throwNoBranchMatchedException, irBuiltins.nothingType)
 
             irBuiltins.illegalArgumentExceptionSymbol ->
-                return builder.irCall(symbols.throwIAE, irBuiltins.nothingType, 1).apply {
-                    putValueArgument(0, call.getValueArgument(0)!!)
+                return builder.irCall(symbols.throwIAE, irBuiltins.nothingType).apply {
+                    arguments[0] = call.arguments[0]!!
                 }
 
             irBuiltins.dataClassArrayMemberHashCodeSymbol, irBuiltins.dataClassArrayMemberToStringSymbol -> {
-                val argument = call.getValueArgument(0)!!
+                val argument = call.arguments[0]!!
                 val argumentType = argument.type
                 val overloadSymbol: IrSimpleFunctionSymbol
                 val returnType: IrType
@@ -146,46 +156,50 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     overloadSymbol,
                     returnType,
                 ).apply {
-                    extensionReceiver = argument
+                    val extensionIndex = overloadSymbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
+                    arguments[extensionIndex] = argument
                     if (argumentType.classOrNull == irBuiltins.arrayClass) {
-                        putTypeArgument(0, argumentType.getArrayElementType(irBuiltins))
+                        typeArguments[0] = argumentType.getArrayElementType(irBuiltins)
                     }
                 }
             }
             in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
                 val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
                 val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-                return irCall(call, newSymbol, argumentsAsReceivers = true)
+                return irCall(call, newSymbol)
             }
-            symbols.reflectionSymbols.getClassData -> {
-                val type = call.getTypeArgument(0)!!
+            context.reflectionSymbols.getKClass -> {
+                val type = call.typeArguments[0]!!
                 val klass = type.classOrNull?.owner ?: error("Invalid type")
 
-                val typeId = builder.irCall(symbols.wasmTypeId).also {
-                    it.putTypeArgument(0, type)
+                val constructorArgument: IrExpression
+                val kclassConstructor: IrConstructor
+                if (klass.isEffectivelyExternal()) {
+                    check(context.isWasmJsTarget) { "External classes reflection in WASI mode are not supported" }
+                    kclassConstructor = symbols.jsRelatedSymbols.kExternalClassImpl.owner.constructors.first()
+                    constructorArgument = getExternalKClassCtorArgument(type, builder)
+                } else {
+                    if (type.isInterface()) {
+                        kclassConstructor = symbols.reflectionSymbols.kClassInterfaceImpl.owner.constructors.first()
+                    } else {
+                        kclassConstructor = symbols.reflectionSymbols.kClassImpl.owner.constructors.first()
+                    }
+                    constructorArgument = getKClassCtorArgument(type, builder)
                 }
 
-                if (!klass.isInterface) {
-                    return builder.irCall(context.wasmSymbols.reflectionSymbols.getTypeInfoTypeDataByPtr).also {
-                        it.putValueArgument(0, typeId)
-                    }
-                } else {
-                    val infoDataCtor = symbols.reflectionSymbols.wasmTypeInfoData.constructors.first()
-                    val fqName = type.classFqName!!
-                    val fqnShouldBeEmitted =
-                        context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
-                    val packageName = if (fqnShouldBeEmitted) fqName.parentOrNull()?.asString() ?: "" else ""
-                    val typeName = fqName.shortName().asString()
-
-                    return with(builder) {
-                        irCallConstructor(infoDataCtor, emptyList()).also {
-                            it.putValueArgument(0, typeId)
-                            it.putValueArgument(1, packageName.toIrConst(context.irBuiltIns.stringType))
-                            it.putValueArgument(2, typeName.toIrConst(context.irBuiltIns.stringType))
-                        }
-                    }
+                return IrConstructorCallImpl(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    type = kclassConstructor.returnType,
+                    symbol = kclassConstructor.symbol,
+                    typeArgumentsCount = 1,
+                    constructorTypeArgumentsCount = 0
+                ).also {
+                    it.putClassTypeArgument(0, type)
+                    it.arguments[0] = constructorArgument
                 }
             }
+
             symbols.enumValueOfIntrinsic ->
                 return EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
             symbols.enumValuesIntrinsic ->
@@ -195,6 +209,38 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         }
 
         return call
+    }
+
+    private fun getKClassCtorArgument(type: IrType, builder: DeclarationIrBuilder): IrExpression {
+        val klass = type.classOrNull?.owner ?: error("Invalid type")
+
+        if (!klass.isInterface) {
+            return builder.irCall(symbols.wasmGetTypeRtti).also {
+                it.typeArguments[0] = type
+            }
+        } else {
+            val typeId = builder.irCall(symbols.wasmTypeId).also {
+                it.typeArguments[0] = type
+            }
+
+            val fqName = type.classFqName!!
+            val fqnShouldBeEmitted =
+                context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
+            val packageName = if (fqnShouldBeEmitted) fqName.parentOrNull()?.asString() ?: "" else ""
+            val typeName = fqName.shortName().asString()
+
+            return builder.irCallConstructor(symbols.reflectionSymbols.wasmTypeInfoData.constructors.first(), emptyList()).also {
+                it.arguments[0] = typeId
+                it.arguments[1] = packageName.toIrConst(context.irBuiltIns.stringType)
+                it.arguments[2] = typeName.toIrConst(context.irBuiltIns.stringType)
+            }
+        }
+    }
+
+    private fun getExternalKClassCtorArgument(type: IrType, builder: DeclarationIrBuilder): IrExpression {
+        val klass = type.classOrNull?.owner ?: error("Invalid type")
+        check(klass.kind != ClassKind.INTERFACE) { "External interface must not be a class literal" }
+        return builder.irCall(klass.getJsClassForExternalClass!!)
     }
 
     override fun lower(irFile: IrFile) {

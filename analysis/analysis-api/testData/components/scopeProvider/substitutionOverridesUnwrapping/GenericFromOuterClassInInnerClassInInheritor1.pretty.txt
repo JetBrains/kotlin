@@ -1,6 +1,6 @@
 fun noGeneric()
 
-fun withOuter(): test.SomeClass?
+override fun withOuter(): test.SomeClass?
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

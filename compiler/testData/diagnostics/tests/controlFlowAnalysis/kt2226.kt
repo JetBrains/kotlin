@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2226 Parameter used as delegation by object marked as unused
 package a
@@ -14,3 +15,6 @@ fun foo(b: B) : Int {
     }
     return o.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inheritanceDelegation,
+integerLiteral, interfaceDeclaration, localProperty, override, propertyDeclaration */

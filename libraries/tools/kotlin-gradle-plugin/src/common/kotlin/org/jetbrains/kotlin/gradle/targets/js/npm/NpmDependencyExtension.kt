@@ -10,6 +10,7 @@ import groovy.lang.GString
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.warnNpmGenerateExternals
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -27,7 +28,10 @@ interface NpmDirectoryDependencyExtension : BaseNpmDependencyExtension {
 }
 
 interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension {
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     operator fun invoke(
         name: String,
         version: String,
@@ -36,14 +40,20 @@ interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension {
 }
 
 interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyExtension {
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     operator fun invoke(
         name: String,
         directory: File,
         generateExternals: Boolean
     ): NpmDependency
 
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     operator fun invoke(
         directory: File,
         generateExternals: Boolean
@@ -63,9 +73,8 @@ interface DevNpmDependencyExtension :
 interface PeerNpmDependencyExtension :
     BaseNpmDependencyExtension
 
-internal fun Project.addNpmDependencyExtension() {
+internal val AddNpmDependencyExtensionProjectSetupAction = KotlinProjectSetupAction {
     val extensions = (dependencies as ExtensionAware).extensions
-
     values()
         .forEach { scope ->
             val type = when (scope) {
@@ -208,20 +217,32 @@ private class DefaultNpmDependencyExtension(
     override fun invoke(name: String, version: String): NpmDependency =
         delegate.invoke(name, version)
 
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-    override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency  {
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
+    override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return invoke(name, version)
     }
 
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-    override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency  {
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
+    override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return invoke(name, directory)
     }
 
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-    override fun invoke(directory: File, generateExternals: Boolean): NpmDependency  {
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
+    override fun invoke(directory: File, generateExternals: Boolean): NpmDependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return invoke(directory)
     }
@@ -266,20 +287,32 @@ private fun defaultNpmDependencyDelegate(
         project,
         scope,
     ) {
-        @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-        override fun invoke(directory: File, generateExternals: Boolean): NpmDependency  {
+        @Deprecated(
+            "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+            level = DeprecationLevel.ERROR
+        )
+        override fun invoke(directory: File, generateExternals: Boolean): NpmDependency {
+            @Suppress("deprecation_error")
             warnNpmGenerateExternals(project.logger)
             return invoke(directory)
         }
 
-        @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-        override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency  {
+        @Deprecated(
+            "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+            level = DeprecationLevel.ERROR
+        )
+        override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency {
+            @Suppress("deprecation_error")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, version)
         }
 
-        @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-        override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency  {
+        @Deprecated(
+            "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+            level = DeprecationLevel.ERROR
+        )
+        override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency {
+            @Suppress("deprecation_error")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, directory)
         }
@@ -337,20 +370,32 @@ private class DefaultPeerNpmDependencyExtension(
         project,
         PEER,
     ) {
-        @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-        override fun invoke(directory: File, generateExternals: Boolean): NpmDependency  {
+        @Deprecated(
+            "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+            level = DeprecationLevel.ERROR
+        )
+        override fun invoke(directory: File, generateExternals: Boolean): NpmDependency {
+            @Suppress("deprecation_error")
             warnNpmGenerateExternals(project.logger)
             return invoke(directory)
         }
 
-        @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-        override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency  {
+        @Deprecated(
+            "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+            level = DeprecationLevel.ERROR
+        )
+        override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency {
+            @Suppress("deprecation_error")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, version)
         }
 
-        @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
-        override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency  {
+        @Deprecated(
+            "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+            level = DeprecationLevel.ERROR
+        )
+        override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency {
+            @Suppress("deprecation_error")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, directory)
         }

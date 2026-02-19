@@ -1,6 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +SuspendFunctionAsSupertype
-// IGNORE_BACKEND: JS
+// LANGUAGE: +SuspendFunctionAsSupertype
 
 import kotlin.coroutines.*
 
@@ -13,7 +12,7 @@ interface I: suspend () -> Unit {}
 
 fun interface FI: suspend () -> Unit {}
 
-@Suppress("INCOMPATIBLE_TYPES")
+@Suppress("INCOMPATIBLE_TYPES", "IMPOSSIBLE_IS_CHECK_ERROR")
 fun box(): String {
     val c = C()
     if (c !is SuspendFunction0<*>) return "FAIL 1"

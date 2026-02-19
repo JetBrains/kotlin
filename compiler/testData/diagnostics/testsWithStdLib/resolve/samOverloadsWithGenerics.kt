@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 
 // FILE: Foo.java
 import kotlin.Unit;
@@ -23,3 +24,6 @@ fun test() {
     Foo().foo {} checkType { _<Int>() }
     Foo().bar {} checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, samConversion, typeParameter, typeWithExtension */

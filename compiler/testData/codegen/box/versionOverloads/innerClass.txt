@@ -1,0 +1,34 @@
+@kotlin.Metadata
+public final class C$A {
+    // source: 'innerClass.kt'
+    private final field a: int
+    private final @org.jetbrains.annotations.NotNull field b1: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field b: java.lang.String
+    private final field c: float
+    synthetic final field this$0: C
+    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method <init>(p0: C, p1: int): void
+    public method <init>(p0: C, p1: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p2: java.lang.String, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p3: java.lang.String, @kotlin.IntroducedAt(version="2") p4: float): void
+    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method <init>(p0: C, p1: int, @kotlin.IntroducedAt(version="1") p2: java.lang.String, @kotlin.IntroducedAt(version="1") p3: java.lang.String): void
+    public synthetic deprecated method <init>(p0: C, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: C, p1: int, p2: java.lang.String, p3: java.lang.String, p4: float, p5: int, p6: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic deprecated method <init>(p0: C, p1: int, p2: java.lang.String, p3: java.lang.String, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getA(): int
+    public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
+    public final method getC(): float
+    public final inner class C$A
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'innerClass.kt'
+    public method <init>(): void
+    public final inner class C$A
+}
+
+@kotlin.Metadata
+public final class InnerClassKt {
+    // source: 'innerClass.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class C$A
+}

@@ -1,0 +1,6 @@
+KtCallExpression(86,92): 'foo(x)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(x: kotlin.Int): T
+    ]
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : ??? (Unresolved qualified name: NonExistent)> foo(x: Int): T>

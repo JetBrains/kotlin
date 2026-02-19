@@ -1,6 +1,8 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -NOTHING_TO_INLINE -ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS -ABSTRACT_FUNCTION_WITH_BODY -UNUSED_PARAMETER -UNUSED_VARIABLE -EXPERIMENTAL_FEATURE_WARNING
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
+// LANGUAGE: -AllowContractsOnPropertyAccessors
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -NOTHING_TO_INLINE -ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS -ABSTRACT_FUNCTION_WITH_BODY -UNUSED_PARAMETER -UNUSED_VARIABLE -EXPERIMENTAL_FEATURE_WARNING
 
 import kotlin.contracts.*
 
@@ -78,11 +80,11 @@ val topLevelAnonymousFunction = fun (x: Boolean) {
 
 var topLevelPropertyAccessors: Int? = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>42<!>
     get() {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null)<!> }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null) }
         return 42
     }
     set(value) {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null)<!> }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null) }
     }
 
 
@@ -104,3 +106,8 @@ fun test() {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, contractCallsEffect, contractConditionalEffect, contracts,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, getter, inline, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localFunction, localProperty, nullableType, operator, override, propertyDeclaration,
+secondaryConstructor, setter, suspend */

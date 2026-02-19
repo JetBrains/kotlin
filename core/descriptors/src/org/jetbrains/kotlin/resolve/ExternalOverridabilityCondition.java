@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 public interface ExternalOverridabilityCondition {
     enum Result {
-        OVERRIDABLE, CONFLICT, INCOMPATIBLE, UNKNOWN
+        OVERRIDABLE, INCOMPATIBLE, UNKNOWN
     }
 
     enum Contract {

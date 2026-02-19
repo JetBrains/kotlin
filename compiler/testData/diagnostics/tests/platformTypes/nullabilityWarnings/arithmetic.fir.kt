@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -52,3 +53,6 @@ fun test() {
     platformN += 1
     platformJ += 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, flexibleType, functionDeclaration, incrementDecrementExpression,
+integerLiteral, javaProperty, localProperty, nullableType, propertyDeclaration, smartcast, unaryExpression */

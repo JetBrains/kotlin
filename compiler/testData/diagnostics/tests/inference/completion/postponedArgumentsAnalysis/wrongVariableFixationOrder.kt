@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 // Issue: KT-40045
 
 interface AAA
@@ -13,3 +14,6 @@ fun <T: AAA> jsObject(builder: T.() -> Unit): T = null as T
 fun foo(x: DIV) {
     assign(x, jsObject { tabIndex }) // tabIndex is resolved in OI and unresolved in NI because T is inferred to Any instead of DIV
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension, vararg */

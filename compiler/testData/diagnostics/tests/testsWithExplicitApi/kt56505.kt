@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // ISSUE: KT-56505
@@ -16,3 +17,6 @@
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, localClass,
+propertyDeclaration, setter */

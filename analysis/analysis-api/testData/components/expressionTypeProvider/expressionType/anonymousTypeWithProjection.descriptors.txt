@@ -1,0 +1,2 @@
+expression: privateFunc()
+type: `<anonymous>`<in kotlin.Number>

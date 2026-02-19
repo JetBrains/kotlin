@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 
 interface Base {
@@ -83,3 +84,6 @@ abstract class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+nestedClass, override, primaryConstructor, propertyDeclaration, smartcast */

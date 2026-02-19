@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface A {
     fun ok(): Boolean
@@ -22,3 +23,6 @@ fun foo(): Boolean {
     // We cannot choose between B and C
     return v.ok()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration,
+localProperty, override, propertyDeclaration, smartcast */

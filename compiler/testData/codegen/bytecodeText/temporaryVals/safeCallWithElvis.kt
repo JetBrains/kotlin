@@ -8,13 +8,6 @@ fun test(a: Any?) =
 // 1 POP
 // 0 valueOf
 
-// JVM_IR_TEMPLATES
-// 2 DUP
-// 2 IFNULL
-// 0 ACONST_NULL
-// 0 IFNONNULL
-
-// JVM_TEMPLATES
 // 2 DUP
 // 2 IFNULL
 // 0 ACONST_NULL

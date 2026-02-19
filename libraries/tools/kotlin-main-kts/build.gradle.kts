@@ -5,10 +5,9 @@ description = "Kotlin \"main\" script definition"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
-val jarBaseName = property("archivesBaseName") as String
+val jarBaseName = the<BasePluginExtension>().archivesName
 
 val localPackagesToRelocate =
     listOf(
@@ -22,14 +21,8 @@ val proguardLibraryJars by configurations.creating {
     }
 }
 
-val embedded by configurations
-
-val relocatedJarContents by configurations.creating {
-    extendsFrom(embedded)
-}
-
 dependencies {
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     compileOnly(project(":kotlin-scripting-dependencies-maven"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
@@ -53,22 +46,25 @@ dependencies {
     proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     proguardLibraryJars(project(":kotlin-compiler"))
 
-    relocatedJarContents(mainSourceSet.output)
+    testImplementation(project(":kotlin-scripting-dependencies"))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { }
+    "test" { projectDefault() }
 }
 
 publish()
 
 noDefaultJar()
 
+val embeddedConfiguration = configurations.named("embedded")
 val relocatedJar by task<ShadowJar> {
-    configurations = listOf(relocatedJarContents)
+    configurations.set(setOf(embeddedConfiguration.get()))
+    from(mainSourceSet.output)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    destinationDirectory.set(File(buildDir, "libs"))
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")
 
     // don't add this files to resources classpath to avoid IDE exceptions on kotlin project
@@ -87,7 +83,7 @@ val proguard by task<CacheableProguardTask> {
 
     injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), relocatedJar.get().outputs.files)
 
-    outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
+    outjars(layout.buildDirectory.file(jarBaseName.map { "libs/$it-$version-after-proguard.jar" }))
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 
@@ -120,7 +116,7 @@ val resultJar by task<Jar> {
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
-        zipTree(pack.get().singleOutputFile())
+        zipTree(pack.map { it.singleOutputFile(layout) })
     }
 }
 

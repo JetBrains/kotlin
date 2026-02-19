@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
@@ -20,7 +21,6 @@ interface IrNamer {
     fun getNameForClass(klass: IrClass): JsName
     fun getRefForExternalClass(klass: IrClass): JsNameRef
     fun getNameForProperty(property: IrProperty): JsName
-    fun getAssociatedObjectKey(irClass: IrClass): Int?
 }
 
 abstract class IrNamerBase : IrNamer {
@@ -62,7 +62,10 @@ abstract class IrNamerBase : IrNamer {
             }
 
             else ->
-                error("Unsupported external class parent $parent")
+                irError("Unsupported external class parent") {
+                    withIrEntry("parent", parent)
+                    withIrEntry("klass", klass)
+                }
         }
     }
 
@@ -72,15 +75,5 @@ abstract class IrNamerBase : IrNamer {
         } else {
             getNameForStaticDeclaration(property)
         }
-    }
-
-    private val associatedObjectKeyMap = hashMapOf<IrClass, Int>()
-
-    override fun getAssociatedObjectKey(irClass: IrClass): Int? {
-        if (irClass.isAssociatedObjectAnnotatedAnnotation) {
-
-            return associatedObjectKeyMap.getOrPut(irClass) { associatedObjectKeyMap.size }
-        }
-        return null
     }
 }

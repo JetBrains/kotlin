@@ -1,0 +1,5 @@
+public final class mixed/MarkedPublicWithPrivateMembers {
+	public fun <init> ()V
+	public final fun otherFun ()V
+}
+

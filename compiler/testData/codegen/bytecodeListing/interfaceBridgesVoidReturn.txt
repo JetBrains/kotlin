@@ -1,0 +1,25 @@
+@kotlin.Metadata
+public interface I1 {
+    // source: 'interfaceBridgesVoidReturn.kt'
+    public abstract method foo(): void
+}
+
+@kotlin.Metadata
+public interface I2 {
+    // source: 'interfaceBridgesVoidReturn.kt'
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Void
+    public synthetic bridge method foo(): void
+}
+
+@kotlin.Metadata
+public interface I3 {
+    // source: 'interfaceBridgesVoidReturn.kt'
+    public abstract method foo(): void
+}
+
+@kotlin.Metadata
+public interface I4 {
+    // source: 'interfaceBridgesVoidReturn.kt'
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Void
+    public synthetic bridge method foo(): void
+}

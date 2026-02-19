@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1
 // FILE: a.kt
 
@@ -44,3 +45,5 @@ fun test(a: <!NONE_APPLICABLE!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>v2<!>
     a.<!UNRESOLVED_REFERENCE!>v3<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

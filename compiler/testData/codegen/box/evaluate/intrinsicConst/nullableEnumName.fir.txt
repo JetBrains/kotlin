@@ -1,0 +1,47 @@
+FILE: nullableEnumName.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        private [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+            super<R|kotlin/Enum<EnumClass>|>()
+        }
+
+        public final static [ContainingClassKey=EnumClass] enum entry OK: R|EnumClass|
+        public final static [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
+    }
+    public final val shouldNotBeEvaluated1: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.OK|?.{ $subj$.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>| } ?: String()
+        public get(): R|kotlin/String|
+    public final val shouldNotBeEvaluated2: R|kotlin/String?| = Q|EnumClass|.R|/EnumClass.OK|?.{ $subj$.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>| }?.{ $subj$.R|kotlin/String.toString|() }
+        public get(): R|kotlin/String?|
+    public final val shouldNotBeEvaluated3: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.OK|?.{ $subj$.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>| }.R|kotlin/toString|()
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/shouldNotBeEvaluated1|, String(OK)) ->  {
+                ^box String(Fail 1)
+            }
+        }
+
+        when () {
+            !=(R|/shouldNotBeEvaluated2|, String(OK)) ->  {
+                ^box String(Fail 2)
+            }
+        }
+
+        when () {
+            !=(R|/shouldNotBeEvaluated3|, String(OK)) ->  {
+                ^box String(Fail 3)
+            }
+        }
+
+        ^box R|/shouldNotBeEvaluated1|.R|/id|<R|kotlin/String|>()
+    }

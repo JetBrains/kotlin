@@ -1,0 +1,1 @@
+(first: ERROR(component1() return type), second: ERROR(component2() return type))

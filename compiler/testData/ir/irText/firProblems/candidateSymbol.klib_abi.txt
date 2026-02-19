@@ -1,0 +1,27 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class <#A: /FirDeclaration & /FirSymbolOwner<#A>> /AbstractFirBasedSymbol { // /AbstractFirBasedSymbol|null[0]
+    final var fir // /AbstractFirBasedSymbol.fir|{}fir[0]
+        final fun <get-fir>(): #A // /AbstractFirBasedSymbol.fir.<get-fir>|<get-fir>(){}[0]
+        final fun <set-fir>(#A) // /AbstractFirBasedSymbol.fir.<set-fir>|<set-fir>(1:0){}[0]
+    constructor <init>() // /AbstractFirBasedSymbol.<init>|<init>(){}[0]
+}
+final class /Candidate { // /Candidate|null[0]
+    final val symbol // /Candidate.symbol|{}symbol[0]
+        final fun <get-symbol>(): /AbstractFirBasedSymbol<*> // /Candidate.symbol.<get-symbol>|<get-symbol>(){}[0]
+    constructor <init>(/AbstractFirBasedSymbol<*>) // /Candidate.<init>|<init>(AbstractFirBasedSymbol<*>){}[0]
+}
+abstract interface <#A: /FirCallableMemberDeclaration<#A>> /FirCallableMemberDeclaration : /FirDeclaration, /FirSymbolOwner<#A> { // /FirCallableMemberDeclaration|null[0]
+    abstract val symbol // /FirCallableMemberDeclaration.symbol|{}symbol[0]
+        abstract fun <get-symbol>(): /AbstractFirBasedSymbol<#A> // /FirCallableMemberDeclaration.symbol.<get-symbol>|<get-symbol>(){}[0]
+}
+abstract interface /FirDeclaration // /FirDeclaration|null[0]
+abstract interface <#A: /FirDeclaration & /FirSymbolOwner<#A>> /FirSymbolOwner { // /FirSymbolOwner|null[0]
+    abstract val symbol // /FirSymbolOwner.symbol|{}symbol[0]
+        abstract fun <get-symbol>(): /AbstractFirBasedSymbol<#A> // /FirSymbolOwner.symbol.<get-symbol>|<get-symbol>(){}[0]
+}
+final fun /foo(/Candidate) // /foo|foo(Candidate){}[0]

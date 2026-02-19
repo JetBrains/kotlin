@@ -1,8 +1,8 @@
+// TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 // ASSERTIONS_MODE: jvm
 // FILE: inline.kt
-// TARGET_BACKEND: JVM
 
 package test
 

@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 interface A<T>
 
 interface In<in T>
@@ -22,3 +23,7 @@ fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
     // T? >: Int => error
     doA(<!TYPE_MISMATCH!>inv<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in, infix,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, propertyDeclaration,
+typeConstraint, typeParameter, typeWithExtension */

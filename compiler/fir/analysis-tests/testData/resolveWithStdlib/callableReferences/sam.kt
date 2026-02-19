@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun interface MySam {
     fun run(x: String): Int
 }
@@ -12,3 +13,6 @@ fun main() {
     val a = A()
     foo(a::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funInterface, functionDeclaration, interfaceDeclaration,
+localProperty, propertyDeclaration, samConversion */

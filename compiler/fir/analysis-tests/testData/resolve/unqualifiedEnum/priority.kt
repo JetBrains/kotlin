@@ -1,4 +1,5 @@
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // FILE: first.kt
 
 package first
@@ -23,12 +24,14 @@ enum class Second {
 val ONE = Second.THREE
 
 fun foo(f: First) = <!NO_ELSE_IN_WHEN!>when<!> (f) {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>ONE<!> -> 1
+    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_ENUM_COMPARISON_ERROR!>ONE<!> -> 1
     TWO -> 2
 }
 
 fun bar(s: Second) = <!NO_ELSE_IN_WHEN!>when<!> (s) {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>THREE<!> -> 3
+    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_ENUM_COMPARISON_ERROR!>THREE<!> -> 3
     FOUR -> 4
 }
 
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+propertyDeclaration, whenExpression, whenWithSubject */

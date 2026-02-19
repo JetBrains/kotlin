@@ -6,37 +6,27 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 enum class DefaultImportPriority {
     HIGH {
         override fun getAllDefaultImports(
-            platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
+            defaultImportsProvider: DefaultImportsProvider?,
             languageVersionSettings: LanguageVersionSettings
         ): List<ImportPath>? =
-            platformDependentAnalyzerServices?.getDefaultImports(languageVersionSettings, includeLowPriorityImports = false)?.let {
-                it
-            }
+            defaultImportsProvider?.getDefaultImports(includeLowPriorityImports = false)
     },
     LOW {
         override fun getAllDefaultImports(
-            platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
+            defaultImportsProvider: DefaultImportsProvider?,
             languageVersionSettings: LanguageVersionSettings
         ): List<ImportPath>? =
-            platformDependentAnalyzerServices?.defaultLowPriorityImports
-    },
-    KOTLIN_THROWS {
-        override fun getAllDefaultImports(
-            platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
-            languageVersionSettings: LanguageVersionSettings
-        ): List<ImportPath> {
-            return listOf(ImportPath.fromString("kotlin.Throws"))
-        }
+            defaultImportsProvider?.defaultLowPriorityImports
     };
 
     abstract fun getAllDefaultImports(
-        platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
+        defaultImportsProvider: DefaultImportsProvider?,
         languageVersionSettings: LanguageVersionSettings
     ): List<ImportPath>?
 }

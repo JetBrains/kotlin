@@ -1,8 +1,7 @@
 // WITH_STDLIB
 // FULL_JDK
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: ANDROID
+// TARGET_BACKEND: JVM
+
 
 import kotlin.coroutines.*
 

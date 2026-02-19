@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun println() {}
 fun foo(x: Any) {}
@@ -81,3 +83,6 @@ val testUsage5: Any get() =
             true -> 42
             else -> println()
         }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration,
+typeParameter, whenExpression */

@@ -1,0 +1,35 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /testExtVal // /testExtVal|@kotlin.Any{}testExtVal[0]
+    final fun (kotlin/Any).<get-testExtVal>(): kotlin/Int // /testExtVal.<get-testExtVal>|<get-testExtVal>@kotlin.Any(){}[0]
+final var /testLateinitVar // /testLateinitVar|{}testLateinitVar[0]
+    final fun <get-testLateinitVar>(): kotlin/Any // /testLateinitVar.<get-testLateinitVar>|<get-testLateinitVar>(){}[0]
+    final fun <set-testLateinitVar>(kotlin/Any) // /testLateinitVar.<set-testLateinitVar>|<set-testLateinitVar>(kotlin.Any){}[0]
+final val /testVal // /testVal|{}testVal[0]
+    final fun <get-testVal>(): kotlin/Int // /testVal.<get-testVal>|<get-testVal>(){}[0]
+final val /testValWithExplicitDefaultGet // /testValWithExplicitDefaultGet|{}testValWithExplicitDefaultGet[0]
+    final fun <get-testValWithExplicitDefaultGet>(): kotlin/Int // /testValWithExplicitDefaultGet.<get-testValWithExplicitDefaultGet>|<get-testValWithExplicitDefaultGet>(){}[0]
+final val /testValWithExplicitGet // /testValWithExplicitGet|{}testValWithExplicitGet[0]
+    final fun <get-testValWithExplicitGet>(): kotlin/Int // /testValWithExplicitGet.<get-testValWithExplicitGet>|<get-testValWithExplicitGet>(){}[0]
+final var /testVar // /testVar|{}testVar[0]
+    final fun <get-testVar>(): kotlin/Int // /testVar.<get-testVar>|<get-testVar>(){}[0]
+    final fun <set-testVar>(kotlin/Int) // /testVar.<set-testVar>|<set-testVar>(kotlin.Int){}[0]
+final var /testVarWithExplicitDefaultGet // /testVarWithExplicitDefaultGet|{}testVarWithExplicitDefaultGet[0]
+    final fun <get-testVarWithExplicitDefaultGet>(): kotlin/Int // /testVarWithExplicitDefaultGet.<get-testVarWithExplicitDefaultGet>|<get-testVarWithExplicitDefaultGet>(){}[0]
+    final fun <set-testVarWithExplicitDefaultGet>(kotlin/Int) // /testVarWithExplicitDefaultGet.<set-testVarWithExplicitDefaultGet>|<set-testVarWithExplicitDefaultGet>(kotlin.Int){}[0]
+final var /testVarWithExplicitDefaultGetSet // /testVarWithExplicitDefaultGetSet|{}testVarWithExplicitDefaultGetSet[0]
+    final fun <get-testVarWithExplicitDefaultGetSet>(): kotlin/Int // /testVarWithExplicitDefaultGetSet.<get-testVarWithExplicitDefaultGetSet>|<get-testVarWithExplicitDefaultGetSet>(){}[0]
+    final fun <set-testVarWithExplicitDefaultGetSet>(kotlin/Int) // /testVarWithExplicitDefaultGetSet.<set-testVarWithExplicitDefaultGetSet>|<set-testVarWithExplicitDefaultGetSet>(kotlin.Int){}[0]
+final var /testVarWithExplicitDefaultSet // /testVarWithExplicitDefaultSet|{}testVarWithExplicitDefaultSet[0]
+    final fun <get-testVarWithExplicitDefaultSet>(): kotlin/Int // /testVarWithExplicitDefaultSet.<get-testVarWithExplicitDefaultSet>|<get-testVarWithExplicitDefaultSet>(){}[0]
+    final fun <set-testVarWithExplicitDefaultSet>(kotlin/Int) // /testVarWithExplicitDefaultSet.<set-testVarWithExplicitDefaultSet>|<set-testVarWithExplicitDefaultSet>(kotlin.Int){}[0]
+final var /testVarWithExplicitGetSet // /testVarWithExplicitGetSet|{}testVarWithExplicitGetSet[0]
+    final fun <get-testVarWithExplicitGetSet>(): kotlin/Int // /testVarWithExplicitGetSet.<get-testVarWithExplicitGetSet>|<get-testVarWithExplicitGetSet>(){}[0]
+    final fun <set-testVarWithExplicitGetSet>(kotlin/Int) // /testVarWithExplicitGetSet.<set-testVarWithExplicitGetSet>|<set-testVarWithExplicitGetSet>(kotlin.Int){}[0]
+final var /textExtVar // /textExtVar|@kotlin.Any{}textExtVar[0]
+    final fun (kotlin/Any).<get-textExtVar>(): kotlin/Int // /textExtVar.<get-textExtVar>|<get-textExtVar>@kotlin.Any(){}[0]
+    final fun (kotlin/Any).<set-textExtVar>(kotlin/Int) // /textExtVar.<set-textExtVar>|<set-textExtVar>@kotlin.Any(kotlin.Int){}[0]

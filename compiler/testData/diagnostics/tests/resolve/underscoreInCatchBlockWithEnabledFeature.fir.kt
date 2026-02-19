@@ -1,5 +1,6 @@
-// !LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
 // FULL_JDK
 
 fun foo() {
@@ -29,7 +30,7 @@ fun foo() {
         }
     } catch (_: Exception) {
         <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
-        val y1 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>
+        val y1 = <!UNRESOLVED_REFERENCE!>_<!>
         val y2 = (<!UNRESOLVED_REFERENCE!>`_`<!>)
     }
     try {
@@ -56,3 +57,7 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, integerLiteral, javaProperty,
+lambdaLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration, tryExpression,
+unnamedLocalVariable */

@@ -1,10 +1,16 @@
 // LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // WITH_STDLIB
 // On JVM, isInitialized on a property from another file is forbidden because lateinit-ness is not included in the an ABI of a property.
-// IGNORE_BACKEND_K1: JVM, JVM_IR
+// Native became stable in 1.9.20 while `NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess` was introduced in 1.9. Disabling old features in stable Native is not supported.
+// IGNORE_BACKEND_K1: JVM_IR, NATIVE
 // In K2, isInitialized on a property from another file is forbidden for all backends.
-// IGNORE_BACKEND_K2: JVM_IR
-// IGNORE_LIGHT_ANALYSIS
+// IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
+
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ isInitialized results in private field access which is reported by the visibility checker.
 
 // FILE: A.kt
 

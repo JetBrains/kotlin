@@ -6,26 +6,36 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.buildProject
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
+import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import java.io.File
 
 class KotlinCompileApiTest {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     private lateinit var project: ProjectInternal
-    private lateinit var plugin: KotlinJvmFactory
+    private lateinit var plugin: KotlinApiPlugin
+    private lateinit var topLevelCompilerOptions: KotlinJvmCompilerOptions
     private lateinit var taskApi: KotlinJvmCompile
     private lateinit var taskImpl: KotlinCompile
 
@@ -34,11 +44,13 @@ class KotlinCompileApiTest {
         private const val MODULE_NAME = "customModuleName"
     }
 
-    @Before
+    @BeforeEach
     fun setUpProject() {
         project = buildProject {}
         plugin = project.plugins.apply(KotlinApiPlugin::class.java)
-        plugin.registerKotlinJvmCompileTask(TASK_NAME, MODULE_NAME).configure { task ->
+        topLevelCompilerOptions = plugin.createCompilerJvmOptions()
+        topLevelCompilerOptions.moduleName.convention(MODULE_NAME)
+        plugin.registerKotlinJvmCompileTask(TASK_NAME, topLevelCompilerOptions).configure { task ->
             taskApi = task
         }
         taskImpl = project.tasks.getByName(TASK_NAME) as KotlinCompile
@@ -51,13 +63,13 @@ class KotlinCompileApiTest {
 
     @Test
     fun testSources() {
-        val sourcePath = tmpDir.newFolder().resolve("foo.kt").also {
+        val sourcePath = tmpDir.resolve("source").also { it.mkdirs() }.resolve("foo.kt").also {
             it.createNewFile()
         }
         taskApi.setSource(sourcePath)
         assertEquals(setOf(sourcePath), taskImpl.sources.files)
 
-        val sourcesDir = tmpDir.newFolder().also {
+        val sourcesDir = tmpDir.resolve("sourcesDir").also { it.mkdirs() }.also {
             it.resolve("a.kt").createNewFile()
             it.resolve("b.kt").createNewFile()
         }
@@ -70,29 +82,29 @@ class KotlinCompileApiTest {
 
     @Test
     fun testFriendPaths() {
-        val friendPath = tmpDir.newFolder()
+        val friendPath = tmpDir.resolve("friendPath").also { it.mkdirs() }
         taskApi.friendPaths.from(friendPath)
         assertEquals(setOf(friendPath), taskImpl.friendPaths.files)
     }
 
     @Test
     fun testLibraries() {
-        val classpathEntries = setOf(tmpDir.newFolder(), tmpDir.newFolder())
+        val classpathEntries = setOf(tmpDir.resolve("cp1").also { it.mkdirs() }, tmpDir.resolve("cp2").also { it.mkdirs() })
         taskApi.libraries.from(classpathEntries)
         assertEquals(classpathEntries, taskImpl.libraries.files)
     }
 
     @Test
     fun testPluginClasspath() {
-        val pluginDependency = tmpDir.newFile()
+        val pluginDependency = tmpDir.resolve("pluginDependency.jar").also { it.createNewFile() }
         plugin.addCompilerPluginDependency(project.provider { project.files(pluginDependency) })
 
-        val anotherCompilerPlugin = tmpDir.newFile()
+        val anotherCompilerPlugin = tmpDir.resolve("anotherPlugin.jar").also { it.createNewFile() }
         taskApi.pluginClasspath.from(plugin.getCompilerPlugins(), anotherCompilerPlugin)
         assertEquals(setOf(pluginDependency, anotherCompilerPlugin), taskImpl.pluginClasspath.files)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test
     fun testModuleName() {
         taskApi.moduleName.set("foo")
@@ -107,14 +119,14 @@ class KotlinCompileApiTest {
 
     @Test
     fun testTaskBuildDirectory() {
-        val taskBuildDir = tmpDir.newFolder()
+        val taskBuildDir = tmpDir.resolve("taskBuildDir").also { it.mkdirs() }
         taskApi.destinationDirectory.fileValue(taskBuildDir)
         assertEquals(taskBuildDir, taskImpl.destinationDirectory.get().asFile)
     }
 
     @Test
     fun testDestinationDirectory() {
-        val destinationDir = tmpDir.newFolder()
+        val destinationDir = tmpDir.resolve("destinationDir").also { it.mkdirs() }
         taskApi.destinationDirectory.fileValue(destinationDir)
         assertEquals(destinationDir, taskImpl.destinationDirectory.get().asFile)
     }
@@ -139,8 +151,142 @@ class KotlinCompileApiTest {
 
     @Test
     fun testTopLevelExtension() {
+        @Suppress("DEPRECATION") val task = plugin.registerKotlinJvmCompileTask("customCompileKotlin", "some-module")
+        @Suppress("DEPRECATION")
         plugin.kotlinExtension.explicitApi = ExplicitApiMode.Strict
         project.evaluate()
-        assertEquals(ExplicitApiMode.Strict, taskImpl.explicitApiMode.orNull)
+        assertEquals(ExplicitApiMode.Strict, (task.get() as KotlinCompile).explicitApiMode.orNull)
+    }
+
+    @Test
+    fun testCustomExplicitApiMode() {
+        val task = plugin.registerKotlinJvmCompileTask(
+            "customKotlinCompile",
+            topLevelCompilerOptions,
+            project.provider { ExplicitApiMode.Strict }
+        )
+
+        assertEquals((task.get() as KotlinCompile).explicitApiMode.get(), ExplicitApiMode.Strict)
+    }
+
+    @Test
+    fun testTopLevelCompilerOptionsCouldBeOverriden() {
+        taskApi.compilerOptions.progressiveMode.set(false)
+        topLevelCompilerOptions.progressiveMode.set(true)
+
+        assertEquals(false, taskApi.compilerOptions.progressiveMode.get())
+    }
+
+    @Test
+    fun testBuiltToolsApiVersion() {
+        val compilerDependency = project.configurations
+            .getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME)
+            .incoming
+            .dependencies
+            .single { it.name == KOTLIN_BUILD_TOOLS_API_IMPL }
+
+        assertEquals(
+            "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:${plugin.pluginVersion}",
+            "${compilerDependency.group}:${compilerDependency.name}:${compilerDependency.version}"
+        )
+    }
+
+    @Test
+    fun testCreatingJvmExtension() {
+        val jvmExtension = plugin.createKotlinJvmExtension()
+
+        val jvmTask = plugin.registerKotlinJvmCompileTask(
+            "jvmTask",
+            jvmExtension.compilerOptions,
+            plugin.providerFactory.provider {  jvmExtension.explicitApi }
+        )
+
+        jvmExtension.compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+        jvmExtension.compilerOptions.javaParameters.set(true)
+        jvmExtension.explicitApi = ExplicitApiMode.Strict
+        jvmExtension.sourceSets.register("main")
+        jvmExtension.target.withSourcesJar(false)
+        jvmExtension.target.compilations.register("main")
+
+        project.evaluate()
+
+        assertEquals(JvmTarget.JVM_21, jvmTask.get().compilerOptions.jvmTarget.get())
+        assertEquals(true, jvmTask.get().compilerOptions.javaParameters.get())
+        assertEquals(
+            ExplicitApiMode.Strict,
+            (jvmTask.get() as KotlinCompile).explicitApiMode.get()
+        )
+        assertNotNull(jvmExtension.sourceSets.findByName("main"))
+    }
+
+    @Test
+    fun testEachUniqueCreatedJvmExtensionUnique() {
+        val jvmExtension1 = plugin.createKotlinJvmExtension()
+        val jvmExtension2 = plugin.createKotlinJvmExtension()
+
+        assertNotEquals(jvmExtension1, jvmExtension2)
+    }
+
+    @Test
+    fun testCreatingAndroidExtension() {
+        val androidExtension = plugin.createKotlinAndroidExtension()
+
+        val androidTask = plugin.registerKotlinJvmCompileTask(
+            "jvmTask",
+            androidExtension.compilerOptions,
+            plugin.providerFactory.provider { androidExtension.explicitApi }
+        )
+
+        androidExtension.compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+        androidExtension.compilerOptions.javaParameters.set(true)
+        androidExtension.explicitApi = ExplicitApiMode.Strict
+        androidExtension.sourceSets.register("main")
+        androidExtension.target.withSourcesJar(false)
+        androidExtension.target.compilations.register("main")
+
+        project.evaluate()
+
+        assertEquals(JvmTarget.JVM_21, androidTask.get().compilerOptions.jvmTarget.get())
+        assertEquals(true, androidTask.get().compilerOptions.javaParameters.get())
+        assertEquals(
+            ExplicitApiMode.Strict,
+            (androidTask.get() as KotlinCompile).explicitApiMode.get()
+        )
+        assertNotNull(androidExtension.sourceSets.findByName("main"))
+    }
+
+    @Test
+    fun testEachUniqueCreatedAndroidExtensionUnique() {
+        val androidExtension1 = plugin.createKotlinAndroidExtension()
+        val androidExtension2 = plugin.createKotlinAndroidExtension()
+
+        assertNotEquals(androidExtension1, androidExtension2)
+    }
+
+    @Test
+    fun testCreatingAndroidJvmCompilation() {
+        val androidExtension = plugin.createKotlinAndroidExtension()
+        project.extensions.add("kotlin", androidExtension)
+        val javaCompileTask = project.tasks.register("mainJavaCompile", JavaCompile::class.java)
+        val compilation = plugin.createKotlinAndroidCompilation(
+            "main",
+            androidExtension.target as KotlinAndroidTarget,
+            javaCompileTask,
+            AndroidVariantType.Main
+        )
+        val kotlinCompileTask = plugin.registerKotlinJvmCompileTask(
+            compilation.compileKotlinTaskName,
+            plugin.createCompilerJvmOptions(),
+            project.provider { ExplicitApiMode.Disabled }
+        )
+
+        project.evaluate()
+
+        assertEquals(androidExtension.target, compilation.target)
+        assertEquals(javaCompileTask, compilation.compileJavaTaskProvider)
+        @Suppress("DEPRECATION")
+        assertNull(compilation.androidVariant)
+        assertEquals("main", compilation.name)
+        assertEquals(kotlinCompileTask, compilation.compileTaskProvider)
     }
 }

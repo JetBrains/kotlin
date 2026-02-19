@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-31219
 
 import kotlin.reflect.KProperty
@@ -14,3 +15,6 @@ class Foo {
         object : LocalIntf() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, interfaceDeclaration, lambdaLiteral, localClass,
+nullableType, propertyDeclaration, propertyDelegate, typeParameter */

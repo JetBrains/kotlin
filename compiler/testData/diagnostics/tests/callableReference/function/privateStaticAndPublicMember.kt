@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: A.java
@@ -9,3 +11,5 @@ class A {
 fun main() {
     (A::foo)(A(), 1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaCallableReference, javaFunction, javaType */

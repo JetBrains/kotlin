@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-1189 StackOverflow in ide
 package kt1189
@@ -37,3 +38,7 @@ fun foo() {
         for (i in 1..10) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, equalityExpression, flexibleType, forLoop,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline, integerLiteral, javaFunction,
+localProperty, nullableType, propertyDeclaration, rangeExpression, tryExpression, typeParameter */

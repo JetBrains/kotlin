@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test5() {
     var a: Int
     try {
@@ -8,3 +9,6 @@ fun test5() {
     }
     a.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+tryExpression */

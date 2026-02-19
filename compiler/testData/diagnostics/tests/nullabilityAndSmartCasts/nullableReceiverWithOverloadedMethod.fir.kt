@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A {
     fun f(x: Boolean): Int = 0
@@ -15,7 +16,7 @@ class B {
         a = A()
         a<!UNSAFE_CALL!>.<!>f(true)
         takeInt(a<!UNSAFE_CALL!>.<!>f(""))
-        a.<!NONE_APPLICABLE!>f<!>()
+        a.<!NONE_APPLICABLE, UNSAFE_CALL!>f<!>()
     }
 
     fun g() {
@@ -27,3 +28,6 @@ class B {
         })
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, functionDeclaration, ifExpression,
+integerLiteral, nullableType, propertyDeclaration, stringLiteral */

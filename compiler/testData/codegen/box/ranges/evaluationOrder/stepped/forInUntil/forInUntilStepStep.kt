@@ -1,4 +1,5 @@
 // WITH_STDLIB
+
 import kotlin.test.*
 
 val log = StringBuilder()

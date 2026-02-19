@@ -1,0 +1,17 @@
+Classifier names:
+
+Callable names:
+  abstractProperty
+  customAccessorAndBackingField
+  customGetter
+  customGetterDelegation
+  customGetterDelegationWithBackingField
+  customSetter
+  defaultGetterWithAnnotation
+  defaultProperty
+  defaultSetterWithAnotherVisibility
+  defaultVariable
+  extensionProperty
+  fromConstructor
+  lateinitVariable
+  postponed

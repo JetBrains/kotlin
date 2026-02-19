@@ -1,0 +1,23 @@
+FILE: complexTypeUnwrapping2.kt
+    public abstract class AbstractField<out Field : R|AbstractField<Field>|> : R|kotlin/Any| {
+        public constructor<out Field : R|AbstractField<Field>|>(): R|AbstractField<Field>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class AbstractElement<Element : R|AbstractElement<Element, Field>|, Field : R|AbstractField<Field>|> : R|kotlin/Any| {
+        public constructor<Element : R|AbstractElement<Element, Field>|, Field : R|AbstractField<Field>|>(): R|AbstractElement<Element, Field>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface ElementOrRef<Element : R|AbstractElement<Element, Field>|, Field : R|AbstractField<Field>|> : R|kotlin/Any| {
+        public abstract val element: R|Element|
+            public get(): R|Element|
+
+    }
+    public final fun elvis(x: R|ElementOrRef<*, *>?|, y: R|ElementOrRef<*, *>?|): R|kotlin/Unit| {
+        lval xElement: R|AbstractElement<out AbstractElement<*, out AbstractField<*>>, out AbstractField<*>>?| = R|<local>/x|?.{ $subj$.R|SubstitutionOverride</ElementOrRef.element: R|CapturedType(*)|>| }
+        lval yElement: R|AbstractElement<out AbstractElement<*, out AbstractField<*>>, out AbstractField<*>>?| = R|<local>/y|?.{ $subj$.R|SubstitutionOverride</ElementOrRef.element: R|CapturedType(*)|>| }
+        lval e: R|AbstractElement<*, out AbstractField<*>>?| = R|<local>/xElement| ?: R|<local>/yElement|
+    }

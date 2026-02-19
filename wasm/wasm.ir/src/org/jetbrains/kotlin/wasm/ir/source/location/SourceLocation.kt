@@ -6,9 +6,26 @@
 package org.jetbrains.kotlin.wasm.ir.source.location
 
 sealed class SourceLocation {
-    private object NoLocation : SourceLocation()
+    sealed interface WithFileAndLineNumberInformation {
+        val file: String
+        val line: Int
+        val column: Int
+    }
 
-    data class Location(val file: String, val line: Int, val column: Int) : SourceLocation()
+    object NoLocation : SourceLocation()
+    object NextLocation : SourceLocation()
+    object IgnoredLocation : SourceLocation(), WithFileAndLineNumberInformation {
+        override val file = "NATIVE_IMPLEMENTATIONS.kt"
+        override val line = 0
+        override val column = 0
+    }
+
+    // Both line and column are zero-based
+    data class DefinedLocation(
+        override val file: String,
+        override val line: Int,
+        override val column: Int
+    ) : SourceLocation(), WithFileAndLineNumberInformation
 
     companion object {
         @Suppress("FunctionName", "UNUSED_PARAMETER")

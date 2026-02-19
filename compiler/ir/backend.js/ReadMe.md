@@ -1,0 +1,1 @@
+Compilation of IR into `.js` files.

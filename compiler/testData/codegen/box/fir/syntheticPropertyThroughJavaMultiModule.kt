@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
+// LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
 // ISSUE: KT-59550 (related)
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61370
-
 // MODULE: m1
 // FILE: Base.kt
 abstract class Base(internal val foo: String) {

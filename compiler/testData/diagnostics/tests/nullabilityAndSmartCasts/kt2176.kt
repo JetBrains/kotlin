@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 //KT-2176 non-nullability is not inferred after !! or "as"
 package kt2176
@@ -29,3 +30,6 @@ fun f5(a: String) {
     a <!USELESS_CAST!>as Any?<!>
     checkSubtype<String>(a)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, nullableType, smartcast, typeParameter, typeWithExtension */

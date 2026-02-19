@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
 
@@ -31,3 +32,5 @@ class Host5 {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun provideDelegate(x: Any?, p: KProperty<*>, vararg foo: Int) {}
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+operator, starProjection, vararg */

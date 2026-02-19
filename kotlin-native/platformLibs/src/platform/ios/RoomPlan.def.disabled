@@ -4,4 +4,4 @@ package = platform.RoomPlan
 modules = RoomPlan
 compilerOpts = -framework RoomPlan
 linkerOpts = -framework RoomPlan
-#Disabled: Swift-only framework
+# The framework has no ObjC API surface

@@ -6,47 +6,48 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
- * Adding associated objects into objects dictionary
+ * Adds associated objects into the objects dictionary.
  *
  * For code like this:
- * annotation class Key(klass: KClass<*>)
- * object OBJ
  *
- * @Key(OBJ::class)
- * class C
+ *     annotation class Key(klass: KClass<*>)
+ *     object OBJ
  *
- * add initializer expression into initAssociatedObjects() body:
- * internal fun initAssociatedObjects(mapToInit: MutableMap<Int, MutableMap<Int, Any>>) {
- *   ...
- *   addAssociatedObject(mapToInit, C.klassId, Key.klassId, OBJ)
- * }
+ *     @Key(OBJ::class)
+ *     class C
+ *
+ * Adds getter expression into `tryGetAssociatedObject` body:
+ *
+ *     internal fun tryGetAssociatedObject(klassId: Long, keyId: Long): Any? {
+ *         ...
+ *         if (C.klassId == klassId) if (Key.klassId == keyId) return OBJ
+ *         ...
+ *         return null
+ *     }
  */
+@PhasePrerequisites(LocalDeclarationPopupLowering::class)
 class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringPass {
+    lateinit var currentFile: IrFile
+
     override fun lower(irFile: IrFile) {
+        currentFile = irFile
         irFile.acceptChildrenVoid(visitor)
     }
 
-    private val visitor = object : IrElementVisitorVoid {
-        val initFunctionStatements = (context.wasmSymbols.initAssociatedObjects.owner.body as IrBlockBody).statements
-
+    private val visitor = object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             if (element is IrClass) {
                 element.acceptChildrenVoid(this)
@@ -56,55 +57,17 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
         override fun visitClass(declaration: IrClass) {
             super.visitClass(declaration)
 
-            var cachedBuilder: IrBuilderWithScope? = null
+            val associatedObjects = mutableListOf<Pair<IrClass, IrClass>>()
             for (klassAnnotation in declaration.annotations) {
                 val annotationClass = klassAnnotation.symbol.owner.parentClassOrNull ?: continue
-                if (klassAnnotation.valueArgumentsCount != 1) continue
+                if (klassAnnotation.arguments.size != 1) continue
+                if (declaration.isEffectivelyExternal()) continue
                 val associatedObject = klassAnnotation.associatedObject() ?: continue
-
-                val builder = cachedBuilder ?: context.createIrBuilder(context.wasmSymbols.initAssociatedObjects)
-                cachedBuilder = builder
-
-                val addCall = builder.createAssociatedObjectAdd(
-                    wasmSymbols = context.wasmSymbols,
-                    irBuiltIns = context.irBuiltIns,
-                    targetClass = declaration.symbol,
-                    keyAnnotation = annotationClass.symbol,
-                    associatedObject = associatedObject.symbol
-                )
-                initFunctionStatements.add(addCall)
+                associatedObjects += Pair(annotationClass, associatedObject)
+            }
+            if (associatedObjects.isNotEmpty()) {
+                context.getFileContext(currentFile).classAssociatedObjects[declaration] = associatedObjects
             }
         }
-    }
-}
-
-private fun IrBuilderWithScope.createAssociatedObjectAdd(
-    wasmSymbols: WasmSymbols,
-    irBuiltIns: IrBuiltIns,
-    targetClass: IrClassSymbol,
-    keyAnnotation: IrClassSymbol,
-    associatedObject: IrClassSymbol
-): IrCall = buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-    irCall(wasmSymbols.addAssociatedObject, irBuiltIns.unitType).also { addCall ->
-        addCall.putValueArgument(
-            0,
-            irGet(wasmSymbols.initAssociatedObjects.owner.valueParameters[0])
-        )
-        addCall.putValueArgument(
-            1,
-            irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
-                it.putTypeArgument(0, targetClass.defaultType)
-            }
-        )
-        addCall.putValueArgument(
-            2,
-            irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
-                it.putTypeArgument(0, keyAnnotation.defaultType)
-            }
-        )
-        addCall.putValueArgument(
-            3,
-            irGetObjectValue(irBuiltIns.anyType, associatedObject)
-        )
     }
 }

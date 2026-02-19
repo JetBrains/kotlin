@@ -152,7 +152,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicClassSymbol(declaration: Class, signature: IdSignature): IrClassSymbol {
-        return IrClassPublicSymbolImpl(signature)
+        return IrClassSymbolImpl(signature = signature)
     }
 
     protected open fun createPrivateClassSymbol(descriptor: Class): IrClassSymbol {
@@ -200,7 +200,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicConstructorSymbol(declaration: Constructor, signature: IdSignature): IrConstructorSymbol {
-        return IrConstructorPublicSymbolImpl(signature)
+        return IrConstructorSymbolImpl(signature = signature)
     }
 
     protected open fun createPrivateConstructorSymbol(declaration: Constructor): IrConstructorSymbol {
@@ -254,7 +254,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicEnumEntrySymbol(declaration: Class, signature: IdSignature): IrEnumEntrySymbol {
-        return IrEnumEntryPublicSymbolImpl(signature)
+        return IrEnumEntrySymbolImpl(signature = signature)
     }
 
     protected open fun createPrivateEnumEntrySymbol(declaration: Class): IrEnumEntrySymbol {
@@ -330,7 +330,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicFieldSymbol(declaration: Property, signature: IdSignature): IrFieldSymbol {
-        return IrFieldPublicSymbolImpl(signature)
+        return IrFieldSymbolImpl(signature = signature)
     }
 
     protected open fun createPrivateFieldSymbol(declaration: Property): IrFieldSymbol {
@@ -398,7 +398,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicPropertySymbol(declaration: Property, signature: IdSignature): IrPropertySymbol {
-        return IrPropertyPublicSymbolImpl(signature)
+        return IrPropertySymbolImpl(signature = signature)
     }
 
     protected open fun createPrivatePropertySymbol(declaration: Property): IrPropertySymbol {
@@ -452,7 +452,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicTypeAliasSymbol(declaration: TypeAlias, signature: IdSignature): IrTypeAliasSymbol {
-        return IrTypeAliasPublicSymbolImpl(signature)
+        return IrTypeAliasSymbolImpl(signature = signature)
     }
 
     protected open fun createPrivateTypeAliasSymbol(declaration: TypeAlias): IrTypeAliasSymbol {
@@ -513,7 +513,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicFunctionSymbol(declaration: Function, signature: IdSignature): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionPublicSymbolImpl(signature)
+        return IrSimpleFunctionSymbolImpl(signature = signature)
     }
 
     protected open fun createPrivateFunctionSymbol(declaration: Function): IrSimpleFunctionSymbol {
@@ -583,7 +583,7 @@ abstract class SymbolTableExtension<
     }
 
     protected open fun createPublicTypeParameterSymbol(declaration: TypeParameter, signature: IdSignature): IrTypeParameterSymbol {
-        return IrTypeParameterPublicSymbolImpl(signature)
+        return IrTypeParameterSymbolImpl(signature = signature)
     }
 
     protected open fun createPrivateTypeParameterSymbol(declaration: TypeParameter): IrTypeParameterSymbol {

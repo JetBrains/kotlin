@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: Kt-47447, KT-47729
 
@@ -20,3 +21,5 @@ fun test_1() {
     takeGeneric(1 + 1) // ok
     takeGenericX(1 + 1) // ok
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter */

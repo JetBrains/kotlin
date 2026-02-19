@@ -1,0 +1,45 @@
+package
+
+public val functionalType: @MyAnnotation context(Context) () -> kotlin.Unit
+public val functionalTypeNullable: @MyAnnotation() (context(Context) () -> kotlin.Unit)?
+public val functionalTypeWithReceiver: @MyAnnotation() (context(Context) Receiver.() -> kotlin.Unit)
+context(Context) @MyAnnotation public val propertyWithContext: kotlin.Int
+context(Context) @MyAnnotation public fun functionWithContext(): kotlin.Unit
+
+context(Context) @MyAnnotation public final class ClassWithContext {
+    public constructor ClassWithContext()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ClassWithoutContext {
+    public constructor ClassWithoutContext()
+    context(Context) @MyAnnotation public final val memberPropertyWithContext: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(Context) @MyAnnotation public final fun memberFunctionWithContext(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Context {
+    public constructor Context()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) public final annotation class MyAnnotation : kotlin.Annotation {
+    public constructor MyAnnotation()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Receiver {
+    public constructor Receiver()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

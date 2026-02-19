@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(
     x1: String,
     x2: Collection<CharSequence>,
@@ -7,3 +8,5 @@ fun foo(
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.CharSequence>")!>x2<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.CharSequence, in kotlin.collections.MutableList<*>>")!>x3<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inProjection, outProjection, starProjection */

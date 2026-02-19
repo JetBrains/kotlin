@@ -34,9 +34,8 @@ abstract class KlibMetadataSerializer(
     val metadataVersion: BinaryVersion,
     val project: Project?,
     val exportKDoc: Boolean = false,
-    val skipExpects: Boolean = false,
+    val skipExpects: Boolean,
     val includeOnlyModuleContent: Boolean = false,
-    private val allowErrorTypes: Boolean,
     val produceHeaderKlib: Boolean = false,
 ) {
 
@@ -54,7 +53,6 @@ abstract class KlibMetadataSerializer(
             languageVersionSettings,
             metadataVersion,
             ApproximatingStringTable(),
-            allowErrorTypes,
             exportKDoc,
             produceHeaderKlib
         )
@@ -113,9 +111,10 @@ abstract class KlibMetadataSerializer(
 
     private fun Sequence<DeclarationDescriptor>.filterPrivate(): Sequence<DeclarationDescriptor> =
         if (produceHeaderKlib) {
-            // We keep all interfaces since publicly accessible classes can inherit from private interfaces.
             this.filter {
-                it is ClassDescriptor && it.kind.isInterface || it is DeclarationDescriptorWithVisibility && it.effectiveVisibility().publicApi
+                val isPublicOrInternal = it is DeclarationDescriptorWithVisibility
+                        && (it.visibility.isPublicAPI || it.visibility.delegate == Visibilities.Internal)
+                it is ClassDescriptor && it.kind.isInterface || isPublicOrInternal
             }
         } else this
 

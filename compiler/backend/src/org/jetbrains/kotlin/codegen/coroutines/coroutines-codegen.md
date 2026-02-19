@@ -661,17 +661,23 @@ suspend fun cleanUpExample(a: String, b: String) {
     blackhole(b) // 2
 }
 ```
-After line (1) `a` is dead, but `b` is still alive. So, we spill only `b`. There is no variable alive after line (2), but the continuation
+After line (1) `a` is dead, but `b` is still alive. So, we spill only `b`, and instead of `a` we spill `null` by default. 
+There is no variable alive after line (2), but the continuation
 object still holds a reference to `b` in the `L$0` field. So, to clean it up and avoid memory leaks, we push `null` to it.
+
+If API Version >= 2.2, 
+the `null` spilling process is done via calls to `kotlin.coroutines.jvm.internal.SpillingKt.nullOutSpilledVariable` function and
+pushing the return value to the continuation field. By default, it just returns null, but debugger is expected to replace the body
+of the function with one returning its arguments, so the variable will be visible even when it is dead. This way, we both avoid 
+memory leaks and make the code debuggable.
+
+If API Version < 2.2, the compiler just pushes `null` to continuations, unless `-Xdebug` flag is used. When the flag is used,
+the compiler does nothing in terms of variable cleanup. Without the flag, the compiler does not spill dead variables, including
+arguments, removes LVT records for them, and shrinks LVT records for alive variables, so the debugger will not see dead variables.
 
 Generally, the compiler generates spilling and unspilling code so that it uses only the first fields. If there are M fields for references,
 but we spill only N (where N ≤ M, of course) objects at the suspension point, everything else should be `null`. However, we do not need to
 nullify all of them every suspension point. Instead, the compiler checks which of the fields hold references and clears only them.
-
-Additionally, the compiler shrinks and splits LVT records for local variables, so a debugger will not show dead variables as uninitialized.
-
-FIXME: Currently, dead variables do not present in LVT. So, if a programmer defines a variable but does not use it, the compiler removes its
-LVT record. We can ease this restriction and assume the variable to be alive until the following suspension point.
 
 #### Stack spilling
 In the previous examples, the stack was clean before a call, meaning that there were only call arguments before the call, and only the call
@@ -1028,6 +1034,12 @@ receiver, `J$0` - the first argument, `L$1` - the second one.
 
 This way, we can reuse spilled variables cleanup logic for parameters. If we used separate fields for parameters, we would need to manually
 push `null` to them as we do for spilled variable fields if we do not need them anymore.
+
+We unspill the lambda parameter before state-machine in `invokeSuspend` - this way, their values are visible in debugger.
+
+If lambda parameter is unboxed inline class with reference underlying type, we store only unboxed value.
+
+We store the parameters in `create`, if there is one, or in `invoke`'s mangled function.
 
 #### invoke
 `invoke` is basically `startCoroutine` without an interception. In `invoke`, we call `create` and resume a new instance with dummy value by
@@ -1710,6 +1722,12 @@ results in a bunch of repeated ASTORE and ALOAD instructions, which can break ta
 optimization for these cases.
 
 #### Tail-Call Optimization for Functions Returning Unit
+**NOTE:** The implementation for this optimization is being changed, and some statements in this section became obsolete:
+1. There is no `ICONST_2` suspend marker anymore.
+2. There is a new `BIPUSH 11` suspend marker marking Unit-returned suspension points.
+3. Calls of non-Unit functions and lambdas from Unit-returning function are not considered tail-calls anymore.
+
+
 There are some challenges if we want to make suspending functions, returning `Unit` tail-call. Let us have a look at one of them. If the
 function returns `Unit`, `return` keyword is optional:
 ```kotlin
@@ -3232,9 +3250,48 @@ Continuation's `toString` method uses the debug metadata to show the location wh
 Note that tail-call optimization removes continuations. So, there are gaps in the async stack trace. Additionally, only line numbers of
 suspension points are stored; thus, line numbers are not always accurate.
 
+Since 2.2.20 - we store linenumbers of next statements after suspension points in the metadata annotation.
+The debugger is expected to use this information to set a breakpoint there when step-over is pressed.
+This way, step-over works even if the suspension point suspends. 
+
+Since 2.3.20 and Api Version 2.4 - the compiler generates calls to `wrapContinuation`, which by default returns its argument.
+However, the debugger is expected to replace the function with one, which wraps the continuation with fictitious one, just to hold
+`StackTraceElement` and local variables, just like usual continuation - this way, when debugging coroutines, there will be no gaps in async
+stack trace because of tail-call functions.
+
 ### Probes
 `kotlin.coroutines.jvm.internal` package contains probe functions replaced by the debugger to show current coroutines (in a broad sense)
 and their statuses: suspended or running.
 1. `probeCoroutineCreate` is invoked in `createCoroutine` function.
 2. `probeCoroutineResumed` is invoked in `BaseContinuationImpl.resumeWith` function.
 3. `probeCoroutineSuspended` call is generated by the codegen if `suspendCoroutineUninterceptedOrReturn` returns `COROUTINE_SUSPENDED`.
+
+### Spilling
+
+The compiler cleans up dead variables by calling `kotlin.coroutines.jvm.internal.SpillingKt.nullOutSpilledVariable`. The debugger is
+expected to replace the variable, just like probes.
+
+See "Spilled Variables Cleanup" section.
+
+### Generated Code Markers
+`-Xenhanced-coroutines-debugging` forces the compiler to generate additional linenumbers before the compiler generated code in suspend
+functions and lambdas in order to distinguish them from user code. Additionally, LVT entries are added.
+
+The additional linenumbers mark
+1. Continuation check at the beginning of a suspend function.
+2. Unspilling of arguments of a suspend lambda.
+3. State-machine header (TABLESWITCH of the state-machine).
+4. Check of $result variable at the beginning of the state-machine and after each suspend call.
+5. Check for COROUTINE_SUSPENDED marker after each suspend call.
+6. Default label, which throws IllegalStateException - which is unreachable in normal execution.
+
+The additional LVT entries are
+1. $ecd$checkContinuation$<linenumber>
+2. $ecd$lambdaArgumentsUnspilling$<linenumber>
+3. $ecd$tableswitch$<linenumber>
+4. $ecd$checkResult$<linenumber>
+5. $ecd$checkCOROUTINE_SUSPENDED$<linenumber>
+6. $ecd$unreachable$<linenumber>
+
+These linenumbers are mapped to `GeneratedCodeMarkers.kt` file in stdlib via SMAP by inliner, and point to one-line marker inline function.
+This way, even if unsupported version of debugger is used, it will assume, that this is just normal inlining taking place. 

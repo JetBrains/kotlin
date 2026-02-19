@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Task
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 /**
  * Analogous to [KotlinCompilationTask] for K2

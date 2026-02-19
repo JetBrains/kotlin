@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
 // This directive is needed to skip this test in LazyBodyIsNotTouchedTilContractsPhaseTestGenerated,
 //  because it fails to parse module structure of multimodule test
@@ -64,3 +65,6 @@ fun takeIntFinal(x: Final<Int>) {}
 fun takeIntBase(x: Base<Int>) {}
 fun takeIntDerived(x: Derived<Int>) {}
 fun takeIntFinalWithOverride(x: FinalWithOverride<Int>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType, operator,
+override, smartcast, starProjection, thisExpression, typeParameter */

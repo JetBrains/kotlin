@@ -5,6 +5,10 @@ fun test1(): J<String> {
  /*-> J<String> */
 }
 
+fun test10(fn: Function1<Int, String>) {
+  bar2x<@FlexibleNullability Int?>(j2x = fn /*-> J2X<@FlexibleNullability Int?> */)
+}
+
 fun test2(): J<@FlexibleNullability String?> {
   return local fun <anonymous>(x: String): @FlexibleNullability String? {
     return x
@@ -16,7 +20,7 @@ fun test3() {
   return bar<@FlexibleNullability String?>(j = local fun <anonymous>(x: String): @FlexibleNullability String? {
     return x
   }
- /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
+ /*-> J<@FlexibleNullability String?> */)
 }
 
 fun test4(a: Any) {
@@ -26,16 +30,16 @@ fun test4(a: Any) {
 
 fun test5(a: Any) {
   a as Function1<String, String> /*~> Unit */
-  bar<@FlexibleNullability String?>(j = a /*as Function1<String, String> */ /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
+  bar<@FlexibleNullability String?>(j = a /*as Function1<String, String> */ /*-> J<@FlexibleNullability String?> */)
 }
 
 fun <T : Any?> test6(a: Function1<T, T>) {
-  bar<@FlexibleNullability T?>(j = a /*-> @FlexibleNullability J<@FlexibleNullability T?>? */)
+  bar<@FlexibleNullability T?>(j = a /*-> J<@FlexibleNullability T?> */)
 }
 
 fun <T : Any?> test7(a: Any) {
   a as Function1<T, T> /*~> Unit */
-  bar<@FlexibleNullability T?>(j = a /*as Function1<T, T> */ /*-> @FlexibleNullability J<@FlexibleNullability T?>? */)
+  bar<@FlexibleNullability T?>(j = a /*as Function1<T, T> */ /*-> J<@FlexibleNullability T?> */)
 }
 
 fun test8(efn: @ExtensionFunctionType Function1<String, String>): J<@FlexibleNullability String?> {
@@ -43,9 +47,5 @@ fun test8(efn: @ExtensionFunctionType Function1<String, String>): J<@FlexibleNul
 }
 
 fun test9(efn: @ExtensionFunctionType Function1<String, String>) {
-  bar<@FlexibleNullability String?>(j = efn /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
-}
-
-fun test10(fn: Function1<Int, String>) {
-  bar2x<@FlexibleNullability Int?>(j2x = fn /*-> @FlexibleNullability J2X<@FlexibleNullability Int?>? */)
+  bar<@FlexibleNullability String?>(j = efn /*-> J<@FlexibleNullability String?> */)
 }

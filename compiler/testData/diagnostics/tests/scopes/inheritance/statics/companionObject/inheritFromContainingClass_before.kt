@@ -1,5 +1,6 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: J.java
 public class J {
@@ -51,3 +52,6 @@ open class A<T> : J() {
         fun bar() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, init, javaFunction,
+javaType, localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

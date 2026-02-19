@@ -1,0 +1,1 @@
+/implicitTypeOrder.kt:(90,93): error: 'operator' modifier is required on 'fun invoke(): A' defined in 'A'.

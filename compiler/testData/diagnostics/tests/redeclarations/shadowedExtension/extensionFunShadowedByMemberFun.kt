@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Test1 {
     fun test1() {}
@@ -30,3 +31,20 @@ interface Test6 {
     fun <T : List<Any>> test6(x: T) {}
 }
 fun <T : Set<Any>> Test6.test6(x: T) {}
+
+interface Test7 {
+    fun test7()
+}
+
+fun Test7?.test7() {}
+
+interface Test8 {
+    fun test8()
+}
+
+typealias NullableTest8 = Test8?
+
+fun NullableTest8.test8() {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nullableType,
+typeAliasDeclaration, typeConstraint, typeParameter */

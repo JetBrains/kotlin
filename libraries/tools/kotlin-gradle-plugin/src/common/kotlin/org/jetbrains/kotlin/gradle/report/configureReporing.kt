@@ -8,27 +8,27 @@ package org.jetbrains.kotlin.gradle.report
 import org.gradle.api.Project
 import org.jetbrains.kotlin.build.report.FileReportSettings
 import org.jetbrains.kotlin.build.report.HttpReportSettings
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.getAllMetrics
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_FILE_DIR
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import java.io.File
 
-private val availableMetrics = GradleBuildTime.values().map { it.name } + GradleBuildPerformanceMetric.values().map { it.name }
+private val availableMetrics = getAllMetrics().map { it.name }.toSet()
 
 internal fun reportingSettings(project: Project): ReportingSettings {
     val properties = PropertiesProvider(project)
-    val experimentalTryK2Enabled = properties.kotlinExperimentalTryK2.get()
+    val experimentalTryNextEnabled = properties.kotlinExperimentalTryNext.get()
     val buildReportOutputTypes = properties.buildReportOutputs
         .map {
             BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCaseAsciiOnly() }
                 ?: throw IllegalStateException("Unknown output type: $it")
         }
-        .plus(if (experimentalTryK2Enabled) listOf(BuildReportType.TRY_K2_CONSOLE) else emptyList())
+        .plus(if (experimentalTryNextEnabled) listOf(BuildReportType.TRY_NEXT_CONSOLE) else emptyList())
         .toMutableList() //temporary solution. support old property
 
     val buildReportMode =
@@ -37,14 +37,20 @@ internal fun reportingSettings(project: Project): ReportingSettings {
             else -> BuildReportMode.VERBOSE
         }
     val fileReportSettings = if (buildReportOutputTypes.contains(BuildReportType.FILE)) {
-        val buildReportDir = properties.buildReportFileOutputDir ?: (if (project.isProjectIsolationEnabled) {
+        val buildReportDir = properties.buildReportFileOutputDir?.let {
+            validateFileName(it, KOTLIN_BUILD_REPORT_FILE_DIR)
+            File(it)
+        } ?: (if (project.isProjectIsolationEnabled) {
             // TODO: it's a workaround for KT-52963, should be reworked – KT-55763
             project.rootDir.resolve("build")
         } else {
-            project.rootProject.buildDir
+            project.rootProject.layout.buildDirectory.asFile.get()
         }).resolve("reports/kotlin-build")
         val includeMetricsInReport = properties.buildReportMetrics || buildReportMode == BuildReportMode.VERBOSE
-        FileReportSettings(buildReportDir = buildReportDir, includeMetricsInReport = includeMetricsInReport)
+        FileReportSettings(
+            buildReportDir = buildReportDir,
+            includeMetricsInReport = includeMetricsInReport
+        )
     } else {
         null
     }
@@ -55,7 +61,8 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         val password = properties.buildReportHttpPassword
         val user = properties.buildReportHttpUser
         val includeGitBranchName = properties.buildReportHttpIncludeGitBranchName
-        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment, includeGitBranchName)
+        val useExecutor = properties.buildReportHttpUseExecutor
+        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment, includeGitBranchName, useExecutor)
     } else {
         null
     }
@@ -63,7 +70,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
     val buildScanSettings = if (buildReportOutputTypes.contains(BuildReportType.BUILD_SCAN)) {
         val metrics = properties.buildReportBuildScanMetrics?.split(",")?.toSet()
         metrics?.forEach {
-            if (!availableMetrics.contains(it.trim().toUpperCase())) {
+            if (!availableMetrics.contains(it.trim().uppercase())) {
                 throw IllegalStateException("Unknown metric: '$it', list of available metrics: $availableMetrics")
             }
         }
@@ -73,12 +80,18 @@ internal fun reportingSettings(project: Project): ReportingSettings {
     }
 
     val singleOutputFile = if (buildReportOutputTypes.contains(BuildReportType.SINGLE_FILE)) {
-        properties.buildReportSingleFile
-            ?: throw IllegalStateException("Can't configure single file report: '$KOTLIN_BUILD_REPORT_SINGLE_FILE' property is mandatory")
+        properties.buildReportSingleFile?.let {
+            validateFileName(it, KOTLIN_BUILD_REPORT_SINGLE_FILE)
+            File(it)
+        } ?: throw IllegalStateException("Can't configure single file report: '$KOTLIN_BUILD_REPORT_SINGLE_FILE' property is mandatory")
     } else null
 
-    //temporary solution. support old property
-    val oldSingleBuildMetric = properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
+    val jsonReportDir = if (buildReportOutputTypes.contains(BuildReportType.JSON)) {
+        properties.buildReportJsonDir?.let {
+            validateFileName(it, KOTLIN_BUILD_REPORT_JSON_DIR)
+            File(it)
+        } ?: throw IllegalStateException("Can't configure json report: '$KOTLIN_BUILD_REPORT_JSON_DIR' property is mandatory")
+    } else null
 
     return ReportingSettings(
         buildReportMode = buildReportMode,
@@ -87,10 +100,18 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         httpReportSettings = httpReportSettings,
         buildScanReportSettings = buildScanSettings,
         buildReportOutputs = buildReportOutputTypes,
-        singleOutputFile = singleOutputFile ?: oldSingleBuildMetric,
+        singleOutputFile = singleOutputFile,
+        jsonOutputDir = jsonReportDir,
         includeCompilerArguments = properties.buildReportIncludeCompilerArguments,
-        experimentalTryK2ConsoleOutput = experimentalTryK2Enabled
+        experimentalTryNextConsoleOutput = experimentalTryNextEnabled
     )
 }
+
+private fun validateFileName(fileName: String, propertyName: String) {
+    if (fileName.isBlank()) {
+        throw IllegalStateException("The property '$propertyName' must not be empty. Please provide a valid value.")
+    }
+}
+
 
 

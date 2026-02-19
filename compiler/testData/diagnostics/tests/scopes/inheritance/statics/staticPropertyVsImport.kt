@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 public class A {
     static byte foo = 1;
@@ -58,3 +59,5 @@ class W: A() {
         val a: Int = bar
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaProperty, javaType, localProperty, propertyDeclaration, stringLiteral */

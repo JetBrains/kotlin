@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -136,4 +136,3 @@ class JavaElementSnapshot(
  * require recompilation of other source files).
  */
 data object InaccessibleClassSnapshot : ClassSnapshot()
-

@@ -1,3 +1,4 @@
+
 // FILE: accessorForProtectedPropertyWithPrivateSetterWithIntermediateClass.kt
 import a.A
 

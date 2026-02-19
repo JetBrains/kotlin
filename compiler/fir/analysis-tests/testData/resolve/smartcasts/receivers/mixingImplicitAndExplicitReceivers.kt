@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!CONFLICTING_OVERLOADS!>fun takeString(s: String)<!> {}
 
 class Wrapper(val s: String?) {
@@ -12,3 +13,6 @@ class Wrapper(val s: String?) {
 }
 
 <!CONFLICTING_OVERLOADS!>fun takeString(s: String)<!> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, thisExpression */

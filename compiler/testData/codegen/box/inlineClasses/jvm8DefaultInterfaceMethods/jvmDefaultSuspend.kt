@@ -1,9 +1,9 @@
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // JVM_TARGET: 1.8
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlin.coroutines.*
 

@@ -1,0 +1,5 @@
+expression: arg
+smartCastInfo:
+    originalType: kotlin.Any?
+    smartCastType: kotlin.Any
+    isStable: true

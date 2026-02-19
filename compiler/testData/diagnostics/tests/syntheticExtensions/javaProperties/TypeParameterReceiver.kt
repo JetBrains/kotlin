@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: KotlinFile.kt
 
@@ -15,3 +16,6 @@ public interface A {
 public interface B extends A {
     void setSomething(int value);
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, integerLiteral,
+javaFunction, javaType, typeConstraint, typeParameter */

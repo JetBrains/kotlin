@@ -1,0 +1,179 @@
+KtFile: 'regularlyResolvedNoGenericArgument.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,188): 'sealed interface MySealed {'
+  null
+
+KtDeclarationModifierList(78,84): 'sealed'
+  null
+
+KtClassBody(104,188): '{'
+  null
+
+KtClass(110,145): 'class Left(val x: String): MySealed'
+  null
+
+KtPrimaryConstructor(120,135): '(val x: String)'
+  null
+
+KtParameterList(120,135): '(val x: String)'
+  null
+
+KtParameter(121,134): 'val x: String'
+  null
+
+KtTypeReference(128,134): 'String'
+  null
+
+KtUserType(128,134): 'String'
+  null
+
+KtNameReferenceExpression(128,134): 'String'
+  null
+
+KtSuperTypeList(137,145): 'MySealed'
+  null
+
+KtSuperTypeEntry(137,145): 'MySealed'
+  null
+
+KtTypeReference(137,145): 'MySealed'
+  null
+
+KtUserType(137,145): 'MySealed'
+  null
+
+KtNameReferenceExpression(137,145): 'MySealed'
+  null
+
+KtClass(150,186): 'class Right(val y: String): MySealed'
+  null
+
+KtPrimaryConstructor(161,176): '(val y: String)'
+  null
+
+KtParameterList(161,176): '(val y: String)'
+  null
+
+KtParameter(162,175): 'val y: String'
+  null
+
+KtTypeReference(169,175): 'String'
+  null
+
+KtUserType(169,175): 'String'
+  null
+
+KtNameReferenceExpression(169,175): 'String'
+  null
+
+KtSuperTypeList(178,186): 'MySealed'
+  null
+
+KtSuperTypeEntry(178,186): 'MySealed'
+  null
+
+KtTypeReference(178,186): 'MySealed'
+  null
+
+KtUserType(178,186): 'MySealed'
+  null
+
+KtNameReferenceExpression(178,186): 'MySealed'
+  null
+
+KtClass(190,229): 'interface Left<T> {'
+  null
+
+KtTypeParameterList(204,207): '<T>'
+  null
+
+KtTypeParameter(205,206): 'T'
+  null
+
+KtClassBody(208,229): '{'
+  null
+
+KtProperty(214,227): 'val z: String'
+  null
+
+KtTypeReference(221,227): 'String'
+  null
+
+KtUserType(221,227): 'String'
+  null
+
+KtNameReferenceExpression(221,227): 'String'
+  null
+
+KtNamedFunction(231,323): 'fun MySealed.getOrElse() = when (this) {'
+  null
+
+KtTypeReference(235,243): 'MySealed'
+  null
+
+KtUserType(235,243): 'MySealed'
+  null
+
+KtNameReferenceExpression(235,243): 'MySealed'
+  null
+
+KtParameterList(253,255): '()'
+  null
+
+KtWhenExpression(258,323): 'when (this) {'
+  null
+
+KtThisExpression(264,268): 'this'
+  null
+
+KtNameReferenceExpression(264,268): 'this'
+  null
+
+KtWhenEntry(276,288): 'is Left -> z'
+  null
+
+KtWhenConditionIsPattern(276,283): 'is Left'
+  null
+
+KtTypeReference(279,283): 'Left'
+  null
+
+KtUserType(279,283): 'Left'
+  null
+
+KtNameReferenceExpression(279,283): 'Left'
+  null
+
+KtNameReferenceExpression(287,288): 'z'
+  null
+
+KtWhenEntry(293,306): 'is Right -> y'
+  null
+
+KtWhenConditionIsPattern(293,301): 'is Right'
+  null
+
+KtTypeReference(296,301): 'Right'
+  null
+
+KtUserType(296,301): 'Right'
+  null
+
+KtNameReferenceExpression(296,301): 'Right'
+  null
+
+KtNameReferenceExpression(305,306): 'y'
+  null
+
+KtWhenEntry(311,321): 'else -> ""'
+  null
+
+KtStringTemplateExpression(319,321): '""'
+  null

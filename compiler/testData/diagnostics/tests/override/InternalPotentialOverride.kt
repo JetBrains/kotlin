@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: A.kt
@@ -20,3 +21,5 @@ class B : A() {
 class BG : AG<String>() {
     fun bar(arg: Int) = arg
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter */

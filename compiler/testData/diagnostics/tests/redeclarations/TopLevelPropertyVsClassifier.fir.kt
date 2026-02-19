@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 
 val <!REDECLARATION!>Test1<!> = null
@@ -10,9 +11,9 @@ val <!REDECLARATION!>Test3<!> = null
 object <!REDECLARATION!>Test3<!>
 
 val <!REDECLARATION!>Test4<!> = null
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>
-interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>
-object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>
+class <!CLASSIFIER_REDECLARATION!>Test4<!>
+interface <!CLASSIFIER_REDECLARATION!>Test4<!>
+object <!CLASSIFIER_REDECLARATION!>Test4<!>
 
 val <!REDECLARATION!>Test5<!> = null
 class <!REDECLARATION!>Test6<!>
@@ -21,3 +22,5 @@ class <!REDECLARATION!>Test6<!>
 
 class <!REDECLARATION!>Test5<!>
 val <!REDECLARATION!>Test6<!> = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, objectDeclaration, propertyDeclaration */

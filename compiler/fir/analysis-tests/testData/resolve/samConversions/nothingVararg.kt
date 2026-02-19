@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-41721
 
 // FILE: SAM.java
@@ -14,3 +15,6 @@ public class A<T> {
 fun test(x: A<*>) {
     x.call({ y: Any? -> Unit })
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral, nullableType, samConversion,
+starProjection */

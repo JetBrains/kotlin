@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: MenuItemBase.java
 
@@ -20,3 +21,5 @@ public class SubMenuBase<C extends ContextMenuBase<C, I, S>, I extends MenuItemB
 fun test(m: MenuItemBase<*, *, *>) {
     m.text
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, starProjection */

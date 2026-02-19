@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -FINAL_UPPER_BOUND -CAST_NEVER_SUCCEEDS
-// !LANGUAGE: -AllowEmptyIntersectionsInResultTypeResolver
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -FINAL_UPPER_BOUND -CAST_NEVER_SUCCEEDS
+// LANGUAGE: -AllowEmptyIntersectionsInResultTypeResolver
 
 interface I
 
@@ -82,3 +83,6 @@ open class B {
     fun <T> f(): T where T : A, T : B = null as T
     fun g(): A = f()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, inline, interfaceDeclaration,
+intersectionType, objectDeclaration, reified, typeConstraint, typeParameter */

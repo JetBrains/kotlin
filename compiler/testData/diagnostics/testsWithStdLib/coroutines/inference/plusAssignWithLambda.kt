@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER
 
 fun foo(total: Int, next: Int) = 10
 fun foo(total: Int, next: Float) = 10
@@ -40,3 +41,7 @@ fun foo3(x: B) = {
     x += { <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
     x += id { <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, assignment, callableReference, classDeclaration,
+functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType, operator,
+propertyDeclaration, stringLiteral, typeParameter */

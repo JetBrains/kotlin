@@ -14,4 +14,4 @@ std::atomic<test_support::manual_clock::time_point> test_support::manual_clock::
 std::mutex test_support::manual_clock::pendingWaitsMutex_;
 
 // static
-std_support::multiset<test_support::manual_clock::time_point> test_support::manual_clock::pendingWaits_;
+std::multiset<test_support::manual_clock::time_point> test_support::manual_clock::pendingWaits_;

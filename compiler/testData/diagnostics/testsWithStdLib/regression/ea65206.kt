@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val x = arrayListOf<(A<<!SYNTAX!><!>>) -> Unit>()
 
@@ -7,3 +8,5 @@ class A {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration */

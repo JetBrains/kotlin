@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 // FULL_JDK
 
@@ -62,8 +62,8 @@ public class JavaClassCase3{
 // TESTCASE NUMBER: 3
 fun case3() {
     val x = JavaClassCase3.id(null) // Nothing!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing..kotlin.Nothing?!")!>x<!>
-    val a = if (x) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+    val a = if (<!CONDITION_TYPE_MISMATCH!>x<!>) {
         "NOK"
     } else "NOK"
 }

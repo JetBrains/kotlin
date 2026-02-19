@@ -14,10 +14,13 @@ import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
 
-private typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, MappedByteBuffer>
+private typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, LargeDynamicMappedBuffer>
 
 class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByteBuffer.() -> Unit) : DeprecatedVirtualFileSystem() {
     private val myHandlers: MutableMap<String, FastJarHandler> =
@@ -28,13 +31,19 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
             @Throws(IOException::class)
             override fun createAccessor(file: File): RandomAccessFileAndBuffer {
                 val randomAccessFile = RandomAccessFile(file, "r")
-                return Pair(randomAccessFile, randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length()))
+                val buffer = LargeDynamicMappedBuffer(
+                    randomAccessFile.length(),
+                    { offset, size -> randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, offset, size) },
+                    unmapBuffer,
+                    defaultByteOrder = ByteOrder.LITTLE_ENDIAN,
+                )
+                return Pair(randomAccessFile, buffer)
             }
 
             @Throws(IOException::class)
             override fun disposeAccessor(fileAccessor: RandomAccessFileAndBuffer) {
                 fileAccessor.first.close()
-                fileAccessor.second.unmapBuffer()
+                fileAccessor.second.unmap()
             }
 
             override fun isEqual(val1: File, val2: File): Boolean {
@@ -69,7 +78,7 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
         fun splitPath(path: String): Couple<String> {
             val separator = path.indexOf("!/")
             require(separator >= 0) { "Path in JarFileSystem must contain a separator: $path" }
-            val localPath = path.substring(0, separator)
+            val localPath = Paths.get(path.substring(0, separator)).toAbsolutePath().normalize().toString()
             val pathInJar = path.substring(separator + 2)
             return Couple.of(localPath, pathInJar)
         }
@@ -93,7 +102,7 @@ private fun prepareCleanerCallback(): ((ByteBuffer) -> Unit)? {
             val clean = Class.forName("sun.misc.Cleaner").getMethod("clean")
             clean.isAccessible = true
 
-            { buffer: ByteBuffer -> clean.invoke(cleaner.invoke(buffer)) }
+            { buffer: ByteBuffer -> cleaner.invoke(buffer)?.let { clean.invoke(it) } }
         } else {
             val unsafeClass = try {
                 Class.forName("sun.misc.Unsafe")

@@ -25,7 +25,9 @@ internal sealed class KotlinCompilationInfo {
     abstract val targetDisambiguationClassifier: String?
     abstract val compilationName: String
     abstract val moduleName: String
-    abstract val compilerOptions: HasCompilerOptions<*>
+
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
+    abstract val compilerOptions: DeprecatedHasCompilerOptions<*>
     abstract val compileKotlinTaskName: String
     abstract val compileAllTaskName: String
     abstract val languageSettings: LanguageSettings
@@ -56,7 +58,8 @@ internal sealed class KotlinCompilationInfo {
         override val moduleName: String
             get() = origin.moduleNameForCompilation().get()
 
-        override val compilerOptions: HasCompilerOptions<*>
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
+        override val compilerOptions: DeprecatedHasCompilerOptions<*>
             get() = origin.compilerOptions
 
         override val compileKotlinTaskName: String
@@ -88,7 +91,7 @@ internal sealed class KotlinCompilationInfo {
             get() = project.filesProvider { origin.compileDependencyFiles }
 
         override val sources: List<SourceDirectorySet>
-            get() = origin.allKotlinSourceSets.map { it.kotlin }
+            get() = origin.allKotlinSourceSets.flatMap { listOf(it.kotlin, it.generatedKotlin) }
 
         override val displayName: String
             get() = "compilation '${compilation.name}' in target '${compilation.target.name}'"
@@ -99,9 +102,7 @@ internal sealed class KotlinCompilationInfo {
     }
 }
 
-internal fun KotlinCompilationInfo(compilation: KotlinCompilation<*>): KotlinCompilationInfo.TCS {
-    return KotlinCompilationInfo.TCS(compilation)
-}
+internal fun KotlinCompilationInfo(compilation: KotlinCompilation<*>): KotlinCompilationInfo.TCS = KotlinCompilationInfo.TCS(compilation)
 
 internal val KotlinCompilationInfo.tcs: KotlinCompilationInfo.TCS
     get() = this as KotlinCompilationInfo.TCS

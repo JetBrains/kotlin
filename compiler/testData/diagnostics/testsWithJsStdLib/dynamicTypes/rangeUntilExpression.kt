@@ -1,11 +1,12 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +RangeUntilOperator
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +RangeUntilOperator
 
 fun foo() {
     val a: dynamic = Any()
     val b: dynamic = Any()
     val c = C()
-    println(a<!WRONG_OPERATION_WITH_DYNAMIC("`..<` operation")!>..<<!>b)
+    println(<!WRONG_OPERATION_WITH_DYNAMIC!>a..<b<!>)
     println(c..<a)
     println(a.rangeUntil(b))
 }

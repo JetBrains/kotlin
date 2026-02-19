@@ -3,5 +3,5 @@ FILE: funInterfaceConstructorReference.kt
         public abstract fun foo(): R|kotlin/Unit|
 
     }
-    public final val f: R|kotlin/reflect/KFunction1<kotlin/Function0<kotlin/Unit>, Test>| = ::R|/Test|
-        public get(): R|kotlin/reflect/KFunction1<kotlin/Function0<kotlin/Unit>, Test>|
+    public final val f: R|kotlin/reflect/KFunction1<() -> kotlin/Unit, Test>| = ::R|/Test|
+        public get(): R|kotlin/reflect/KFunction1<() -> kotlin/Unit, Test>|

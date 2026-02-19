@@ -18,16 +18,15 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string>
 
 #include "cbigint.h"
 #include "../Exceptions.h"
 #include "../KString.h"
 #include "../Natives.h"
 #include "../Porting.h"
-#include "../utf8.h"
+#include "utf8.h"
 #include "../DoubleConversions.h"
-#include "../std_support/CStdlib.hpp"
-#include "../std_support/String.hpp"
 
 using namespace kotlin;
 
@@ -45,7 +44,7 @@ using namespace kotlin;
 #define DEFAULT_WIDTH MAX_ACCURACY_WIDTH
 
 extern "C" {
-KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e);
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KConstRef s, KInt e);
 
 void Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
                                                          KRef uArray,
@@ -179,8 +178,8 @@ static const KDouble tens[] = {
         }
 #define ERROR_OCCURED(x) (HIGH_I32_FROM_VAR(x) < 0)
 
-#define allocateU64(x, n) if (!((x) = (U_64*) std_support::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
-#define release(r) if ((r)) std_support::free((r));
+#define allocateU64(x, n) if (!((x) = (U_64*) std::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
+#define release(r) if ((r)) std::free((r));
 
 /*NB the Number converter methods are synchronized so it is possible to
  *have global data for use by bigIntDigitGenerator */
@@ -644,15 +643,13 @@ OutOfMemory:
 #pragma optimize("",on)         /*restore optimizations */
 #endif
 
-KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KConstRef s, KInt e)
 {
-  const KChar* utf16 = CharArrayAddressOfElementAt(s, 0);
-  std_support::string utf8;
-  utf8.reserve(s->count_);
+  std::string utf8;
   try {
-    utf8::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8));
+    utf8 = kotlin::to_string<KStringConversionMode::CHECKED>(s);
   } catch (...) {
-    /* Illegal UTF-16 string. */
+    /* Illegal string. */
     ThrowNumberFormatException();
   }
   const char *str = utf8.c_str();

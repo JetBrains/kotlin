@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See KT-13997
 
@@ -18,3 +19,4 @@ class Bar {
         external set
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, propertyDeclaration */

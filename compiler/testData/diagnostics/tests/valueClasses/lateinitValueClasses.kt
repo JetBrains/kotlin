@@ -1,7 +1,8 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FIR_IDENTICAL
 
 package kotlin.jvm
@@ -16,3 +17,6 @@ value class Foo(val x: Int)
 fun foo() {
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var b: Foo
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, lateinit, localProperty,
+primaryConstructor, propertyDeclaration, value */

@@ -1,0 +1,7 @@
+KDocName(8,10): 'AA'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: x) AA

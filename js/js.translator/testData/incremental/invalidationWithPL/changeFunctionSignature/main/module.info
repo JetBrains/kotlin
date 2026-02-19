@@ -15,10 +15,10 @@ STEP 3:
 STEP 4:
     dependencies: lib1
     rebuild klib: false
-    updated imports: test.kt
+    updated imports <js>: test.kt
 STEP 5:
     dependencies: lib1
-    modified ir: test.kt
+    modified ir <js>: test.kt
 STEP 6:
     dependencies: lib1
     rebuild klib: false

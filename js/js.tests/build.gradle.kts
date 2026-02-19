@@ -1,319 +1,120 @@
 import com.github.gradle.node.npm.task.NpmTask
-import com.github.gradle.node.variant.computeNodeExec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.ideaExt.idea
-import org.apache.tools.ant.filters.FixCrLfFilter
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import java.util.Properties
+import java.util.*
 
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("jps-compatible")
-    id("com.github.node-gradle.node") version "5.0.0"
+    alias(libs.plugins.gradle.node)
+    id("d8-configuration")
+    // TODO: uncomment this line after bootstrap
+    // id("swc-configuration")
+    id("nodejs-configuration")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
-val nodeDir = buildDir.resolve("node")
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 node {
     download.set(true)
-    version.set(nodejsVersion)
-    nodeProjectDir.set(nodeDir)
+    version.set(nodejsLtsVersion)
+    nodeProjectDir.set(layout.buildDirectory.dir("node"))
+    if (cacheRedirectorEnabled) {
+        distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
+    }
 }
 
-val antLauncherJar by configurations.creating
 val testJsRuntime by configurations.creating {
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 
 dependencies {
-    testApiJUnit5(vintageEngine = true)
+    testFixturesApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
 
-    testApi(protobufFull())
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":compiler:fir:analysis-tests"))
+    testFixturesApi(protobufFull())
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesApi(testFixtures(project(":kotlin-util-klib")))
+    testFixturesApi(testFixtures(project(":compiler:ir.backend.common")))
 
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCore())
-    testApi(project(":compiler:backend.js"))
-    testApi(project(":js:js.translator"))
-    testApi(project(":js:js.serializer"))
-    testApi(project(":js:js.dce"))
-    testApi(project(":js:js.engines"))
-    testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(commonDependency("junit:junit"))
-    testApi(projectTests(":kotlin-build-common"))
-    testApi(projectTests(":generators:test-generator"))
+    testFixturesApi(project(":compiler:backend.js"))
+    testFixturesApi(project(":js:js.translator"))
+    testFixturesApi(project(":js:typescript-export-standalone"))
+    testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testImplementation(libs.junit4)
+    testFixturesApi(testFixtures(project(":kotlin-build-common")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
 
-    testApi(intellijCore())
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:util"))
+    testFixturesApi(intellijCore())
+    testFixturesApi(project(":compiler:frontend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":compiler:util"))
 
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(libs.guava)
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testRuntimeOnly(intellijJDom())
 
     testRuntimeOnly(kotlinStdlib())
     testJsRuntime(kotlinStdlib())
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
-    }
+    testJsRuntime(kotlinTest("js")) // to be sure that kotlin-test-js built before tests run
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
-    testRuntimeOnly(project(":compiler:backend-common"))
+    testRuntimeOnly(project(":compiler:ir.backend.common"))
+    testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
-    antLauncherJar(commonDependency("org.apache.ant", "ant"))
-    antLauncherJar(toolsJar())
+    testRuntimeOnly(libs.junit.vintage.engine)
 
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${commonDependencyVersion("org.junit", "junit-bom")}")
-
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
-    testImplementation(libs.ktor.client.cio)
-    testImplementation(libs.ktor.client.core)
-    testImplementation(libs.ktor.client.websockets)
+    // these dependencies shouldn't be exposed to other modules
+    // to avoid potential clashes in cases when another module
+    // also needs one of these dependencies but of different
+    // version (e.g. tests of kotlinx.serialization)
+    testFixturesCompileOnly(libs.kotlinx.serialization.json)
+    testRuntimeOnly(libs.kotlinx.serialization.json)
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
-useD8Plugin()
 optInToExperimentalCompilerApi()
+optInToK1Deprecation()
 
 sourceSets {
     "main" { }
-    "test" {
-        projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
+    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
-}
-
-abstract class MochaTestTask : NpmTask(), VerificationTask
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
-val typescriptTestsDir = testDataDir.resolve("typescript-export")
 
-val installTsDependencies = task<NpmTask>("installTsDependencies") {
-    val packageLockFile = testDataDir.resolve("package-lock.json")
-    inputs.file(testDataDir.resolve("package.json"))
-    outputs.file(packageLockFile)
-    outputs.upToDateWhen { packageLockFile.exists() }
-
-    workingDir.set(testDataDir)
-    args.set(listOf("install"))
-}
-
-fun parallel(tasksToRun: List<Task>, beforeAll: Task? = null, afterAll: Task? = null) = tasks.registering {
-    tasksToRun.forEach { dependsOn(it) }
-
-    if (beforeAll != null) {
-        tasksToRun.forEach { it.dependsOn(beforeAll) }
+fun Test.setUpJsBoxTests() {
+    with(nodeJsKotlinBuild) {
+        setupNodeJs(nodejsVersion)
     }
 
-    if (afterAll != null) {
-        finalizedBy(afterAll)
-    }
-}
+    dependsOn(npmInstall)
 
-val exportFileDirPostfix = "-in-exported-file"
-
-fun generateJsExportOnFileTestFor(dir: String): Task = task<Copy>("generate-js-export-on-file-for-$dir") {
-    val dirPostfix = exportFileDirPostfix
-    val inputDir = fileTree(typescriptTestsDir.resolve(dir))
-    val outputDir = typescriptTestsDir.resolve("$dir$dirPostfix")
-
-    inputs.files(inputDir.matching {
-        include("**/*.kt")
-        include("**/*.ts")
-        include("**/tsconfig.json")
-    })
-    outputs.dir(outputDir)
-
-    from(inputDir) {
-        include("**/*.kt")
-        include("**/*.ts")
-        include("**/tsconfig.json")
-    }
-
-    eachFile {
-        var isFirstLine = true
-
-        filter {
-            when {
-                isFirstLine && name.endsWith(".kt") -> "/** This file is generated by {@link :js:js.test:generateJsExportOnFileTestFilesForTS} task. DO NOT MODIFY MANUALLY */\n\n$it"
-                    .also { isFirstLine = false }
-
-                it.contains("// FILE") -> "$it\n\n@file:JsExport"
-                else -> it.replace("@JsExport(?!.)".toRegex(), "")
-            }
-        }
-
-        filter(
-            FixCrLfFilter::class,
-            "eol" to FixCrLfFilter.CrLf.newInstance("lf"),
-            "fixlast" to false
-        )
-    }
-
-    into(outputDir)
-}
-
-fun generateTypeScriptTestFor(dir: String): Task = task<NpmTask>("generate-ts-for-$dir") {
-    val baseDir = typescriptTestsDir.resolve(dir)
-    val mainTsFile = fileTree(baseDir).files.find { it.name.endsWith("__main.ts") } ?: return@task
-    val mainJsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.js")
-
-    workingDir.set(testDataDir)
-
-    inputs.file(mainTsFile)
-    outputs.file(mainJsFile)
-    outputs.upToDateWhen { mainJsFile.exists() }
-
-    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/$dir/tsconfig.json"))
-}
-
-val generateTypeScriptTests by parallel(
-    beforeAll = installTsDependencies,
-    tasksToRun = typescriptTestsDir.listFiles { it: File ->
-        it.isDirectory &&
-                !it.path.endsWith("module-systems") &&
-                !it.path.endsWith("module-systems-in-exported-file")
-    }
-        .map { generateTypeScriptTestFor(it.name) }
-)
-
-val generateTypeScriptJsExportOnFileTests by parallel(
-    typescriptTestsDir
-        .listFiles { it: File ->
-            it.isDirectory &&
-                    !it.path.endsWith("selective-export") &&
-                    !it.path.endsWith("implicit-export") &&
-                    !it.path.endsWith("inheritance") &&
-                    !it.path.endsWith("strict-implicit-export") &&
-                    !it.path.endsWith("private-primary-constructor") &&
-                    !it.path.endsWith(exportFileDirPostfix)
-        }
-        .map { generateJsExportOnFileTestFor(it.name) }
-)
-
-fun Test.setupNodeJs() {
-    systemProperty("javascript.engine.path.NodeJs", com.github.gradle.node.variant.VariantComputer()
-        .let { variantComputer ->
-            computeNodeExec(node, variantComputer.computeNodeBinDir(node.computedNodeDir)).get()
-        }
+    systemProperty(
+        "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"
     )
-}
 
-fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: Boolean, es6Enabled: Boolean) {
-    setupV8()
-
-    if (jsIrEnabled) {
-        setupNodeJs()
-        dependsOn(npmInstall)
-    }
-
-    inputs.files(rootDir.resolve("js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js"))
-
-    dependsOn(":dist")
-    dependsOn(generateTypeScriptTests)
-
-    if (jsEnabled) {
-        dependsOn(testJsRuntime)
-        inputs.files(testJsRuntime)
-    }
-
-    if (jsIrEnabled) {
-        dependsOn(":kotlin-stdlib:jsJar")
-        systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/build/classes/kotlin/js/main")
-        inputs.dir(rootDir.resolve("libraries/stdlib/build/classes/kotlin/js/main"))
-
-        systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
-        inputs.file(rootDir.resolve("libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib"))
-
-        dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
-        systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
-        inputs.dir(rootDir.resolve("libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main"))
-
-        dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
-        systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
-        inputs.dir(rootDir.resolve("libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"))
-    }
-
-    exclude("org/jetbrains/kotlin/js/testOld/api/*")
-
-    if (jsEnabled && !jsIrEnabled) {
-        include("org/jetbrains/kotlin/integration/AntTaskJsTest.class")
-        include("org/jetbrains/kotlin/js/testOld/*")
-        include("org/jetbrains/kotlin/js/testOld/ast/*")
-        include("org/jetbrains/kotlin/js/testOld/optimizer/*")
-        include("org/jetbrains/kotlin/js/test/*")
-    }
-    if (!jsEnabled) {
-        when {
-            firEnabled && !es6Enabled -> {
-                include("org/jetbrains/kotlin/js/test/fir/*")
-
-                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6BoxTestGenerated.class")
-                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxTestGenerated.class")
-                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenInlineTestGenerated.class")
-                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxErrorTestGenerated.class")
-                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenWasmJsInteropTestGenerated.class")
-            }
-            es6Enabled -> {
-                if (firEnabled) {
-                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6BoxTestGenerated.class")
-                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxTestGenerated.class")
-                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenInlineTestGenerated.class")
-                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxErrorTestGenerated.class")
-                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenWasmJsInteropTestGenerated.class")
-                } else {
-                    include("org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class")
-                    include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
-                    include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
-                    include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
-
-                    include("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
-                }
-            }
-            else -> {
-                include("org/jetbrains/kotlin/js/test/ir/*")
-
-                include("org/jetbrains/kotlin/incremental/*")
-                include("org/jetbrains/kotlin/js/testOld/compatibility/binary/JsKlibBinaryCompatibilityTestGenerated.class")
-                include("org/jetbrains/kotlin/benchmarks/GenerateIrRuntime.class")
-                include("org/jetbrains/kotlin/integration/JsIrAnalysisHandlerExtensionTest.class")
-
-                exclude("org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class")
-                exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
-                exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
-                exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
-
-                exclude("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
-            }
-        }
-    }
-
-    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
-    setUpBoxTests()
+    forwardProperties()
 }
 
 fun Test.forwardProperties() {
@@ -333,155 +134,92 @@ fun Test.forwardProperties() {
     }
 }
 
-fun Test.setUpBoxTests() {
-    workingDir = rootDir
-    dependsOn(antLauncherJar)
-    inputs.files(antLauncherJar)
-    val antLauncherJarPath = antLauncherJar.asPath
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJarPath)
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+projectTests {
+    jsTestTask {
+        setUpJsBoxTests()
     }
 
-    systemProperty("kotlin.js.test.root.out.dir", "$nodeDir/")
-    systemProperty(
-        "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"
+    jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
+    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
+    testTask("invalidationTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
+        include("org/jetbrains/kotlin/incremental/*")
+        forwardProperties()
+    }
+
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/klib/partial-linkage")
+    testData(project(":compiler").isolated, "testData/klib/resolve")
+    testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
+    testData(project(":compiler").isolated, "testData/klib/__utils__")
+
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+    testData(project(":js:js.translator").isolated, "testData/moduleEmulation.js")
+    testData(project(":js:js.translator").isolated, "testData/incremental")
+    testData(project(":js:js.translator").isolated, "testData/box")
+    testData(project(":js:js.translator").isolated, "testData/lineNumbers")
+    testData(project(":js:js.translator").isolated, "testData/js-optimizer/")
+    testData(project(":js:js.translator").isolated, "testData/js-name-resolution")
+    testData(project(":js:js.translator").isolated, "testData/multiModuleOrder")
+    testData(project(":js:js.translator").isolated, "testData/sourcemap")
+    testData(project(":js:js.translator").isolated, "testData/typescript-export/js/")
+    testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/debug/localVariables")
+
+    testGenerator(
+        "org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt",
+        generateTestsInBuildDirectory = true,
     )
 
-    forwardProperties()
-}
-
-val test = projectTest(jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true, firEnabled = true, es6Enabled = true)
-
-    inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
-
-    inputs.dir(testDataDir)
-    inputs.dir(rootDir.resolve("dist"))
-    inputs.dir(rootDir.resolve("compiler/testData"))
-
-    outputs.dir("$buildDir/out")
-    outputs.dir("$buildDir/out-min")
-
-    configureTestDistribution()
-}
-
-val jsTest = projectTest("jsTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
-    useJUnitPlatform()
-}
-
-projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = false)
-    useJUnitPlatform()
-}
-
-projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = true)
-    useJUnitPlatform()
-}
-
-projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = false)
-    useJUnitPlatform()
-}
-
-projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = true)
-    useJUnitPlatform()
-}
-
-projectTest("quickTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
-    systemProperty("kotlin.js.skipMinificationTest", "true")
-    useJUnitPlatform()
-}
-
-projectTest("jsStdlibApiTest", parallel = true, maxHeapSizeMb = 4096) {
-    setupV8()
-    setupNodeJs()
-    dependsOn(npmInstall)
-
-    dependsOn(":dist")
-    inputs.dir(rootDir.resolve("dist"))
-
-    include("org/jetbrains/kotlin/js/testOld/api/*")
-    inputs.dir(rootDir.resolve("libraries/stdlib/api/js"))
-
-    dependsOn(":kotlin-stdlib:jsJar")
-    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/build/classes/kotlin/js/main")
-    inputs.dir(rootDir.resolve("libraries/stdlib/build/classes/kotlin/js/main"))
-
-    setTestNameIncludePatterns(listOf("org.jetbrains.kotlin.js.testOld.api.ApiTest.*"))
-
-    setUpBoxTests()
+    withJsRuntime()
+    withStdlibWeb()
+    withStdlibCommon()
+    withWasmRuntime()
 }
 
 testsJar {}
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
-    dependsOn(":compiler:generateTestData")
-    dependsOn(generateTypeScriptJsExportOnFileTests)
-}
-
-
 val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")
+val packageLockJsonFile = testDataDir.resolve("package-lock.json")
 
 val prepareNpmTestData by task<Copy> {
-    inputs.files(testJsFile, packageJsonFile)
-    outputs.dir(nodeDir)
-
     from(testJsFile)
     from(packageJsonFile)
-    into(nodeDir)
+    from(packageLockJsonFile)
+    into(node.nodeProjectDir)
 }
 
 val npmInstall by tasks.getting(NpmTask::class) {
     val packageLockFile = testDataDir.resolve("package-lock.json")
 
-    inputs.file(nodeDir.resolve("package.json"))
-    outputs.file(packageLockFile)
+    inputs.file(node.nodeProjectDir.file("package.json"))
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("packageJson")
+
+    inputs.file(packageLockFile)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("packageLockFile")
     outputs.upToDateWhen { packageLockFile.exists() }
 
-    workingDir.set(nodeDir)
+    workingDir.fileProvider(node.nodeProjectDir.asFile)
     dependsOn(prepareNpmTestData)
+    npmCommand.set(listOf("ci"))
 }
 
-val mochaTest by task<MochaTestTask> {
-    workingDir.set(nodeDir)
-
-    val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
-    args.set(listOf("run", target))
-
-    ignoreExitValue.set(kotlinBuildProperties.ignoreTestFailures)
-
-    dependsOn(npmInstall)
-
-    environment.set(
-        mapOf(
-            "KOTLIN_JS_LOCATION" to rootDir.resolve("dist/js/kotlin.js").toString(),
-            "KOTLIN_JS_TEST_LOCATION" to rootDir.resolve("dist/js/kotlin-test.js").toString(),
-            "BOX_FLAG_LOCATION" to rootDir.resolve("compiler/testData/jsBoxFlag.js").toString()
-        )
-    )
-}
-
-val runMocha by tasks.registering {
-    dependsOn(jsTest)
-    finalizedBy(mochaTest)
-}
-
-projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-
-    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
-    include("org/jetbrains/kotlin/incremental/*")
-    dependsOn(":dist")
-    forwardProperties()
-    useJUnitPlatform()
-}
-
-tasks.named("check") {
-    dependsOn(runMocha)
+tasks.processTestFixturesResources.configure {
+    from(project.layout.projectDirectory.dir("_additionalFilesForTests"))
+    from(project(":compiler").layout.projectDirectory.dir("testData/debug")) {
+        into("debugTestHelpers")
+        include("jsTestHelpers/")
+    }
 }

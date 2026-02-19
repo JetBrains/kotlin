@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A {
     <!WRONG_MODIFIER_TARGET!>external<!> constructor() {}
@@ -9,3 +10,5 @@ class A {
 }
 
 class C <!WRONG_MODIFIER_TARGET!>external<!> constructor()
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, primaryConstructor, secondaryConstructor */

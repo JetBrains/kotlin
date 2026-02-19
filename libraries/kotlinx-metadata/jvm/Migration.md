@@ -3,6 +3,67 @@
 Starting with 0.6.0 release, Kotlin team is focused on revisiting and improving kotlinx-metadata-jvm API, with an aim to provide a stable release
 in the near future. As a result, the API was reshaped, with cuts here and there, so we've provided a migration guide to help you with updates.
 
+Starting with the 2.0 release, the library is considered stable and will be evolving in a backwards compatible way.
+
+## Migrating from 0.9.0 to stable (2.x.x)
+
+Starting with Kotlin 2.0, kotlin-metadata-jvm library is promoted to stable, and is a part of Kotlin distribution now.
+Therefore, library coordinates and package were changed.
+
+To migrate, one needs to perform three simple steps:
+
+1. Make sure that you do not use any deprecated APIs, as they were removed completely in the stable version. 
+To migrate from deprecated APIs, study the migration guide for previous versions.
+If you used version lower than 0.9.0 before, we advise you to perform two step migration: first, upgrade to 0.9.0, and after
+resolving all deprecation errors, upgrade to stable 2.x.
+2. Change coordinates of the library in your dependency declarations. The new coordinates are `org.jetbrains.kotlin:kotlin-metadata-jvm`.
+For example: `implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:2.0.0-RC")`
+3. Update imports in your code so they are pointing to correct package. 
+Change `import kotlinx.metadata` to `import kotlin.metadata`, `import kotlinx.metadata.jvm` to `import kotlin.metadata.jvm`, and so on.
+As declarations themselves were not changed, this should be straightforward.
+
+## Migrating from 0.8.0 to 0.9.0
+
+There are no new deprecated or removed APIs in 0.9.0. The main difference with 0.8.0 is that deprecations that were warnings
+report errors in 0.9.0. Study the migration guide for previous versions to learn how to get rid of usages of deprecated APIs.
+
+## Migrating from 0.7.0 to 0.8.0
+
+### Choosing between read methods
+
+In 0.8.0, a standard entry point, `KotlinClassMetadata.read()`, is deprecated. Instead, we offer two new methods that take same instance
+of `Metadata`: `KotlinClassMetadata.readLenient()` and `KotlinClassMetadata.readStrict()`.
+You have to choose which method better suites your application needs.
+In short, `readStrict()` is fully equivalent to old `read()`. `readLenient()` allows you to read potentially incompatible metadata, but
+doesn't allow you to write anything afterward.
+You can read more about the differences in the [readme](ReadMe.md#working-with-different-versions).
+Detailed description of the problem being solved is presented [in this ticket](https://youtrack.jetbrains.com/issue/KT-59441).
+
+### Replacement for IntArray as a metadata version
+
+Historically, a metadata version in kotlinx-metadata-jvm API was represented as `IntArray` (because this is how it is stored in the `Metadata` annotation).
+However, having a general-purpose array for storing versions is not very handy: making comparisons or simply converting to string is notoriously inconvenient for arrays.
+Therefore, we decided to replace `IntArray` with a new specialized type, `JvmMetadataVersion`.
+It carries the same three components: `major`, `minor`, and `patch` (with possibility to add new in the future) and provides convenient `equals`, `compareTo`, `toString`, and other methods.
+`KotlinClassMetadata.version` (described below) is exposed as a value of this type.
+Main migration path here is to replace `KotlinClassMetadata.COMPATIBLE_METADATA_VERSION` with new value with the same meaning: `JvmMetadataVersion.LATEST_STABLE_SUPPORTED`.
+
+### Write is now a member method
+
+Previously, the way to write some metadata were companion methods like `KotlinClassMetadata.writeClass()`, etc.
+It was not very convenient:
+- Function names are different and don't look nice if you use them in e.g., `when`.
+- It is easy to forget `metadataVersion` or `flags` parameter since they are not present in `KmClass` and have default values.
+
+To mitigate these problems, we have changed the API in a way that version and flags are always stored in the corresponding `KotlinClassMetadata` instance.
+You can access and change them with `kotlinClassMetadata.version` and `kotlinClassMetadata.flag` properties.
+Consequently, there is no need for companion object methods anymore, as we have all information required in the instance.
+To write the metadata and get `Metadata` annotation, simply call `kotlinClassMetadata.write()` without arguments.
+
+Note: we strongly recommend doing it at the same instance you received from `KotlinClassMetadata.read()` instead of creating a new one.
+It would be easier not to forget the correct version that way.
+See usage example in [this readme section](ReadMe.md#transforming-metadata).
+ 
 ## Migrating from 0.6.x to 0.7.0
 
 ### Migration from Flags API to Attributes API
@@ -172,7 +233,7 @@ a [helper function](https://github.com/JetBrains/kotlin/blob/3d679b76bce04a9bfbb
 or by [directly calling the annotation constructor](https://kotlinlang.org/docs/annotations.html#instantiation).
 
 > Note: as annotation instantiation is not available for Java clients, `KotlinClassHeader` is still present and reserved for construction from Java.
-It implements `kotlin.Metadata` annotation interface, so they can be used interchangeably.
+> It implements `kotlin.Metadata` annotation interface, so they can be used interchangeably.
 
 Additionally, the property `KotlinClassMetadata.header: KotlinClassHeader` was changed into `KotlinClassMetadata.annotationData: Metadata`, so it is 
 also possible to use `Metadata` directly to write metadata back (see example in the section below).

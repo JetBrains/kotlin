@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 data class SomeObject(val n: SomeObject?) {
     fun doSomething() {}
     fun next(): SomeObject? = n    
@@ -12,3 +13,6 @@ fun list(start: SomeObject) {
         e = <!DEBUG_INFO_SMARTCAST!>e<!>.next()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, equalityExpression, functionDeclaration, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast, whileLoop */

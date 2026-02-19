@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     open inner class Inner
 
@@ -5,3 +6,5 @@ class A {
         <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nestedClass, secondaryConstructor */

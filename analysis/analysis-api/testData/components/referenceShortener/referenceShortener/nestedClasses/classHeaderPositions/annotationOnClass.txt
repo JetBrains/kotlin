@@ -1,7 +1,0 @@
-Before shortening: @Outer.Ann
-with DO_NOT_SHORTEN:
-with SHORTEN_IF_ALREADY_IMPORTED:
-with SHORTEN_AND_IMPORT:
-[type] Outer.Ann
-with SHORTEN_AND_STAR_IMPORT:
-[type] Outer.Ann

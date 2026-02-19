@@ -1,0 +1,6 @@
+STEP 0:
+    dependencies: stdlib, base
+STEP 1:
+    dependencies: stdlib, base
+    modifications:
+        U : move.kt.1 -> move.kt

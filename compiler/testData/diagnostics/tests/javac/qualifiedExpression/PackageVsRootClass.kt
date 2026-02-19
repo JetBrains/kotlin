@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/b.java
 package a;
@@ -54,3 +55,5 @@ fun test() {
     val _ab = c3().test()
     _ab._ab()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

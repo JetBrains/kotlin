@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.internal.JvmBuiltin
+
 package kotlin.reflect
 
 /**
@@ -16,7 +18,7 @@ package kotlin.reflect
  * @see [KTypeProjection]
  */
 @SinceKotlin("1.1")
-enum class KVariance {
+public enum class KVariance {
     /**
      * The affected type parameter or type is *invariant*, which means it has no variance applied to it.
      */

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -25,7 +25,7 @@ class Case1() {
     }
 
     fun case() {
-        Companion(::<!UNRESOLVED_REFERENCE!>x<!>)
+        Companion(::<!NONE_APPLICABLE!>x<!>)
     }
 
     val x = ""
@@ -41,7 +41,7 @@ class Case2() {
     }
 
     fun case() {
-        Companion(::<!UNRESOLVED_REFERENCE!>x<!>)
+        Companion(::<!NONE_APPLICABLE!>x<!>)
     }
 
     val x = C()

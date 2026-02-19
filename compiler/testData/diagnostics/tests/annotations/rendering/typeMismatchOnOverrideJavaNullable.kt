@@ -1,15 +1,19 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
 // SKIP_JAVAC
 
-// FILE: A.java
+// FILE: MyTypeQualifier.java
 
-import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @javax.annotation.meta.TypeQualifier
 public @interface MyTypeQualifier {}
+
+// FILE: A.java
+
+import org.jetbrains.annotations.NotNull;
 
 @An
 public interface A {
@@ -40,3 +44,6 @@ public interface C {
 class D : C {
     override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; public abstract fun foo(): String defined in C")!>String?<!> = null
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, javaType,
+nullableType, override */

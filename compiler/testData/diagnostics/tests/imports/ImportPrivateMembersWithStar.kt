@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 import test.TopLevelClass.NestedClass.*
@@ -30,3 +31,6 @@ fun testAccess() {
     <!INVISIBLE_MEMBER!>A1<!>()
     <!INVISIBLE_MEMBER!>A2<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration */

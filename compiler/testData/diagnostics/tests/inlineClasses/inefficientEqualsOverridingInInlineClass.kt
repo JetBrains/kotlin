@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 // LANGUAGE: +CustomEqualsInValueClasses
 
 @JvmInline
@@ -35,3 +36,6 @@ value class IC4<T>(val x: Int) {
 
     override fun hashCode() = 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+isExpression, nullableType, operator, override, primaryConstructor, propertyDeclaration, smartcast, typeParameter, value */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Foo()
 
@@ -10,3 +11,6 @@ fun test() {
 
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, primaryConstructor, propertyDeclaration */

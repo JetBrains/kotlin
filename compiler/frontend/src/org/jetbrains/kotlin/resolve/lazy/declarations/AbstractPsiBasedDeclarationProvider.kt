@@ -54,7 +54,7 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                 is KtClassOrObject ->
                     classesAndObjects.put(declaration.nameAsName.safeNameForLazyResolve(), KtClassInfoUtil.createClassOrObjectInfo(declaration))
                 is KtScript ->
-                    scripts.put(KtScriptInfo(declaration).script.nameAsName, KtScriptInfo(declaration))
+                    scripts.put(KtScriptInfo(declaration).script.nameAsName!!, KtScriptInfo(declaration))
                 is KtDestructuringDeclaration -> {
                     for (entry in declaration.entries) {
                         val name = entry.nameAsName.safeNameForLazyResolve()

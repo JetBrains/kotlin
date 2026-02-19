@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package kt244
 
 
@@ -31,3 +32,7 @@ class A(a: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+init, integerLiteral, isExpression, javaFunction, javaProperty, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, smartcast */

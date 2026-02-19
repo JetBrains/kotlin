@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// WITH_EXTENDED_CHECKERS
 fun <NN: Any, NNN: NN> nonMisleadingNullable(
         nn: NN?,
         nnn: NNN?
@@ -13,3 +13,5 @@ fun <T, N: T, INDIRECT: N> misleadingNullableSimple(
 ) {}
 
 fun <T> interactionWithRedundant(t: T?<!REDUNDANT_NULLABLE!>?<!>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeConstraint, typeParameter */

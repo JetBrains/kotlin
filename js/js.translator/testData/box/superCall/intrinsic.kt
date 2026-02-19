@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1297
 class A(val x: Int) {
     override fun equals(other: Any?): Boolean = other is A && other.x == x
 

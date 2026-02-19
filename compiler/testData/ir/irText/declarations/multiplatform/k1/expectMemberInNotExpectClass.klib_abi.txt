@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /C1 { // /C1|null[0]
+    final val p // /C1.p|{}p[0]
+        final fun <get-p>(): kotlin/Int // /C1.p.<get-p>|<get-p>(){}[0]
+    constructor <init>() // /C1.<init>|<init>(){}[0]
+    final fun f(): kotlin/String // /C1.f|f(){}[0]
+}
+final class /C2 : /C1 { // /C2|null[0]
+    constructor <init>() // /C2.<init>|<init>(){}[0]
+}

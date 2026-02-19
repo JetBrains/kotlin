@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     val x: Int
     var y: Int
@@ -38,3 +39,5 @@ class A {
         y = 12
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, propertyDeclaration, secondaryConstructor */

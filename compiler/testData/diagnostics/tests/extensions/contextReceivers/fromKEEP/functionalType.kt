@@ -1,6 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
 class Context
 class Receiver
@@ -20,3 +22,6 @@ fun main() {
     g = ::bar         // OK
     g = Receiver::baz // OK
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, functionalType, localProperty, propertyDeclaration, typeWithContext, typeWithExtension */

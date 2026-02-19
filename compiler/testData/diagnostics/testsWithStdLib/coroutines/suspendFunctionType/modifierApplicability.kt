@@ -1,4 +1,7 @@
-// !LANGUAGE: -SuspendFunctionAsSupertype
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -SuspendFunctionAsSupertype
+// IGNORE_PHASE_VERIFICATION: invalid code inside annotations
+
 typealias Action = () -> Unit
 
 interface SAM {
@@ -38,3 +41,7 @@ interface Supertype2 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend String.() -
 annotation class A(val value: String = "")
 
 interface RS
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, suspend, typeAliasDeclaration,
+typeWithExtension */

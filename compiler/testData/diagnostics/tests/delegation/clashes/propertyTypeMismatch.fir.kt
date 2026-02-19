@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface IStr {
     val foo: String
 }
@@ -55,3 +56,5 @@ abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, PROPERTY_TYPE_MISMATCH_ON_INHERITAN
 
 abstract <!PROPERTY_TYPE_MISMATCH_ON_INHERITANCE!>class Test12<!> : IInt, IStr, IAny by CAny()
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, getter, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, nullableType, override, propertyDeclaration, stringLiteral, typeParameter */

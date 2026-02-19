@@ -1,5 +1,11 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
+inline fun <T> Array<out T>.firstOrDefault(predicate: (T) -> Boolean, default: T): T {
+    return firstOrNull(predicate) ?: default
+}
+
+// FILE: main.kt
 enum class ResultType constructor(val reason: String) {
     SOMETHING("123"),
     OK("OK"),
@@ -10,10 +16,6 @@ enum class ResultType constructor(val reason: String) {
             return ResultType.values().firstOrDefault({ it.reason == reason }, UNKNOWN)
         }
     }
-}
-
-inline fun <T> Array<out T>.firstOrDefault(predicate: (T) -> Boolean, default: T): T {
-    return firstOrNull(predicate) ?: default
 }
 
 fun box(): String = ResultType.getByVal("OK").reason

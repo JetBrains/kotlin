@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun fun1() {}
 fun fun1(x: Int) {}
@@ -15,3 +16,5 @@ fun fun3(x0: Int, vararg xs: Int) {}
 fun fun3(x0: String, vararg xs: String) {}
 
 val ref3 = ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>fun3<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration, vararg */

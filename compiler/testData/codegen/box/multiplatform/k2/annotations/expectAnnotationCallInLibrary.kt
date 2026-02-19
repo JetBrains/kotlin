@@ -1,9 +1,7 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE, WASM
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-57963
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 @file:Ann

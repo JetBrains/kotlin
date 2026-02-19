@@ -80,9 +80,8 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
         return when {
             context.checkIfJsCode(jsOrJsFuncCall.symbol) -> {
                 translateJsCodeIntoStatementList(
-                    jsOrJsFuncCall.getValueArgument(0) ?: compilationException("JsCode is expected", jsOrJsFuncCall),
-                    context.staticContext.backendContext,
-                    context.currentFile.fileEntry
+                    jsOrJsFuncCall.arguments[0] ?: compilationException("JsCode is expected", jsOrJsFuncCall),
+                    context.currentFileEntry
                 )
                     ?: compilationException("Cannot compute js code", jsOrJsFuncCall)
             }

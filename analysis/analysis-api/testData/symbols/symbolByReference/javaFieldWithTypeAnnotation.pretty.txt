@@ -1,2 +1,2 @@
 @Anno1
-open var field: @Anno1 kotlin.String!
+var field: @Anno1 kotlin.String!

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE:+ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
@@ -11,3 +12,6 @@ class Foo : Base {
         x = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor, setter, stringLiteral */

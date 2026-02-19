@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -18,3 +19,6 @@ fun foo(arg: Boolean): String {
         (2 == 1) -> "falsehood"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, stringLiteral, whenExpression,
+whenWithSubject */

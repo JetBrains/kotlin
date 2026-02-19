@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._GeoToolbox_AppIntents
+
+modules = _GeoToolbox_AppIntents
+compilerOpts = -framework _GeoToolbox_AppIntents
+linkerOpts = -framework _GeoToolbox_AppIntents
+#Disabled: Unavailable

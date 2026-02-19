@@ -6,28 +6,18 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
-import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
-import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.klibModuleName
-import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.native.*
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -36,23 +26,36 @@ import javax.inject.Inject
 
 abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
-    val konanTarget: KonanTarget
-) : KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
-    project,
-    KotlinPlatformType.native
-) {
+    val konanTarget: KonanTarget,
+) : HasConfigurableKotlinCompilerOptions<KotlinNativeCompilerOptions>,
+    KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
+        project,
+        KotlinPlatformType.native
+    ) {
 
     init {
         attributes.attribute(konanTargetAttribute, konanTarget.name)
     }
 
-    private val hostSpecificMetadataJarTaskName get() = disambiguateName("MetadataJar")
-
     internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
 
+    /**
+     * Indicates whether cross-compilation is supported on the current host for the associated Kotlin Native Target.
+     */
+    internal val crossCompilationOnCurrentHostSupported: Future<Boolean> = project.future {
+        if (!HostManager.hostIsSupported) return@future false
+        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
+        val isSupportedHost = hostManager.isEnabled(konanTarget)
+
+        // Supported hosts can always compile
+        if (isSupportedHost) return@future true
+
+        // Unsupported hosts require cross-compilation enabled and no cinterops
+        KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+        crossCompilationEnabled && compilations.none { it.cinterops.isNotEmpty() }
+    }
+
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
-        if (!project.isKotlinGranularMetadataEnabled)
-            return@lazy super.kotlinComponents
 
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
@@ -64,44 +67,11 @@ abstract class KotlinNativeTarget @Inject constructor(
                 .intersect(mainCompilation.allKotlinSourceSets)
 
             if (hostSpecificSourceSets.isNotEmpty()) {
-                val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) { metadataJar ->
-                    metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCaseAsciiOnly() })
-                    metadataJar.archiveClassifier.set("metadata")
-                    metadataJar.group = BasePlugin.BUILD_GROUP
-                    metadataJar.description = "Assembles Kotlin metadata of target '${name}'."
-
-                    val publishable = this@KotlinNativeTarget.publishable
-                    metadataJar.onlyIf { publishable }
-
-                    launch {
-                        val metadataCompilations = hostSpecificSourceSets.mapNotNull {
-                            project.findMetadataCompilation(it)
-                        }
-
-                        metadataCompilations.forEach { compilation ->
-                            metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
-                                spec.into(compilation.name)
-                            }
-                            metadataJar.dependsOn(compilation.output.classesDirs)
-
-                            if (compilation is KotlinSharedNativeCompilation) {
-                                project.includeCommonizedCInteropMetadata(metadataJar, compilation)
-                            }
-                        }
-                    }
-                }
-                project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
-
-                val metadataConfiguration = project.configurations.getByName(hostSpecificMetadataElementsConfigurationName)
-                project.artifacts.add(metadataConfiguration.name, hostSpecificMetadataJar) { artifact ->
-                    artifact.classifier = "metadata"
-                }
-
                 mutableUsageContexts.add(
                     DefaultKotlinUsageContext(
                         mainCompilation,
                         KotlinUsageContext.MavenScope.COMPILE,
-                        metadataConfiguration.name,
+                        hostSpecificMetadataElementsConfigurationName,
                         includeIntoProjectStructureMetadata = false
                     )
                 )
@@ -116,12 +86,18 @@ abstract class KotlinNativeTarget @Inject constructor(
             )
         )
 
+        mutableUsageContexts.addIfNotNull(
+            setUpResourcesVariant(
+                mainCompilation
+            )
+        )
+
         val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
 
         setOf(result)
     }
 
-    override val binaries =
+    override val binaries: KotlinNativeBinaryContainer =
         // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
         project.objects.newInstance(
             KotlinNativeBinaryContainer::class.java,
@@ -133,9 +109,8 @@ abstract class KotlinNativeTarget @Inject constructor(
         get() = disambiguateName("binaries")
 
     override val publishable: Boolean
-        get() = konanTarget.enabledOnCurrentHost
+        get() = publishableWithFallback
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinNativeCompilerOptions = project.objects
         .newInstance<KotlinNativeCompilerOptionsDefault>()
         .apply {
@@ -145,16 +120,6 @@ abstract class KotlinNativeTarget @Inject constructor(
                 )
             )
         }
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinNativeCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinNativeCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 
     // User-visible constants
     val DEBUG = NativeBuildType.DEBUG
@@ -196,7 +161,7 @@ internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>):
 private suspend fun <T> getHostSpecificElements(
     fragments: Iterable<T>,
     isNativeShared: suspend (T) -> Boolean,
-    getKonanTargets: suspend (T) -> Set<KonanTarget>
+    getKonanTargets: suspend (T) -> Set<KonanTarget>,
 ): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
 
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
@@ -234,15 +199,19 @@ internal suspend fun getHostSpecificMainSharedSourceSets(project: Project): Set<
 
 abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
     project: Project,
-    konanTarget: KonanTarget
-) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, T> {
-
-    override lateinit var testRuns: NamedDomainObjectContainer<T>
-        internal set
-}
+    konanTarget: KonanTarget,
+) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, T>
 
 abstract class KotlinNativeTargetWithHostTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
-    KotlinNativeTargetWithTests<KotlinNativeHostTestRun>(project, konanTarget)
+    KotlinNativeTargetWithTests<KotlinNativeHostTestRun>(project, konanTarget) {
+    override val testRuns: NamedDomainObjectContainer<KotlinNativeHostTestRun> by lazy {
+        project.objects.domainObjectContainer(KotlinNativeHostTestRun::class.java, KotlinNativeHostTestRunFactory(this))
+    }
+}
 
 abstract class KotlinNativeTargetWithSimulatorTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
-    KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>(project, konanTarget)
+    KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>(project, konanTarget) {
+    override val testRuns: NamedDomainObjectContainer<KotlinNativeSimulatorTestRun> by lazy {
+        project.objects.domainObjectContainer(KotlinNativeSimulatorTestRun::class.java, KotlinNativeSimulatorTestRunFactory(this))
+    }
+}

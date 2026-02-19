@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
-// !DIAGNOSTICS: -UNUSED_VALUE
+// LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
+// DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 
 class Delegate<T>(var v: T) {
@@ -15,3 +16,6 @@ fun testLocalDelegatedProperty() {
         xs = arrayOf("d", "e", "f")
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, functionDeclaration, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, setter, stringLiteral, typeParameter */

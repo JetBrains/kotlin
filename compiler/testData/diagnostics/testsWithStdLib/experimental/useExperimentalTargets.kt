@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: api.kt
 
 package api
@@ -57,3 +58,7 @@ fun expression(): String {
 
 @OptIn(E::class)
 typealias TypeAlias = Foo
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, getter, init,
+localProperty, primaryConstructor, propertyDeclaration, secondaryConstructor, setter, stringLiteral,
+typeAliasDeclaration */

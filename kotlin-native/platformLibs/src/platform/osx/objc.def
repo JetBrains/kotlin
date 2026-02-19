@@ -13,3 +13,13 @@ excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN
 linkerOpts = -lobjc
 ---
 // objc-auto.h is excluded so far due to interop issues.
+
+#include <objc/runtime.h>
+
+OBJC_EXPORT const char * _Nonnull
+sel_getName(SEL _Nonnull sel)
+    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0, 2.0);
+
+OBJC_EXPORT SEL _Nonnull
+sel_registerName(const char * _Nonnull str)
+    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0, 2.0);

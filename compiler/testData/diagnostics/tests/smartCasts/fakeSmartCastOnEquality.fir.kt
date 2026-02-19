@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class Base {
     override fun equals(other: Any?) = other is Base
 }
@@ -93,3 +94,7 @@ sealed class Sealed {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, isExpression, nestedClass, nullableType, objectDeclaration, operator, override,
+sealed, smartcast, thisExpression, whenExpression, whenWithSubject */

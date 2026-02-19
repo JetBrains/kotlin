@@ -1,21 +1,32 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.utils.AccessorNames
-import org.jetbrains.kotlin.lombok.utils.toPropertyName
+import org.jetbrains.kotlin.lombok.utils.capitalize
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -24,22 +35,22 @@ import kotlin.contracts.contract
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun FirJavaField.toAccessorBaseName(config: ConeLombokAnnotations.Accessors): String? {
-    val isPrimitiveBoolean = returnTypeRef.isPrimitiveBoolean()
-    return if (config.prefix.isEmpty()) {
-        val prefixes = if (isPrimitiveBoolean) listOf(AccessorNames.IS) else emptyList()
-        toPropertyName(name.identifier, prefixes)
+fun String.normalizeAndCapitalize(isPrimitiveBoolean: Boolean): String {
+    return (if (isPrimitiveBoolean && isPrefixed(AccessorNames.IS)) {
+        this.removePrefix(AccessorNames.IS)
     } else {
-        val id = name.identifier
-        val name = toPropertyName(id, config.prefix)
-        name.takeIf { it.length != id.length}
-    }
+        this
+    }).capitalize()
+}
+
+fun String.isPrefixed(prefix: String): Boolean {
+    return startsWith(prefix) && length > prefix.length && this[prefix.length].isUpperCase()
 }
 
 fun FirTypeRef.isPrimitiveBoolean(): Boolean {
     return when (this) {
         is FirJavaTypeRef -> (type as? JavaPrimitiveType)?.type == PrimitiveType.BOOLEAN
-        else -> this.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.isBoolean ?: false
+        else -> this.coneTypeOrNull?.lowerBoundIfFlexible()?.isBoolean ?: false
     }
 }
 
@@ -52,6 +63,7 @@ fun FirClassSymbol<*>.isSuitableJavaClass(): Boolean {
 }
 
 @OptIn(SymbolInternals::class)
+@DirectDeclarationsAccess
 fun List<FirFunction>.filterClashingDeclarations(classSymbol: FirClassSymbol<*>): List<FirFunctionSymbol<*>> {
     @Suppress("UNCHECKED_CAST")
     val allStaticFunctionsAndConstructors = classSymbol.fir.declarations.filterIsInstance<FirFunction>().toMutableList()
@@ -81,3 +93,46 @@ private fun sameSignature(a: FirFunction, b: FirFunction): Boolean {
             bVararg && aSize >= (bSize - 1) ||
             aSize == bSize
 }
+
+fun FirClassSymbol<*>.createJavaMethod(
+    name: Name,
+    valueParameters: List<ConeLombokValueParameter>,
+    returnTypeRef: FirTypeRef,
+    visibility: Visibility,
+    modality: Modality,
+    dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
+    isStatic: Boolean = false,
+    methodSymbol: FirNamedFunctionSymbol? = null,
+    methodTypeParameters: Collection<FirTypeParameter> = emptyList(),
+): FirJavaMethod {
+    return buildJavaMethod {
+        containingClassSymbol = this@createJavaMethod
+        moduleData = this@createJavaMethod.moduleData
+        this.returnTypeRef = returnTypeRef
+        this.dispatchReceiverType = dispatchReceiverType
+        this.name = name
+        symbol = methodSymbol ?: FirNamedFunctionSymbol(CallableId(classId, name))
+        status = FirResolvedDeclarationStatusImpl(visibility, modality, visibility.toEffectiveVisibility(this@createJavaMethod)).apply {
+            this.isStatic = isStatic
+        }
+        isFromSource = true
+        typeParameters += methodTypeParameters
+
+        for (valueParameter in valueParameters) {
+            this.valueParameters += buildJavaValueParameter {
+                moduleData = this@createJavaMethod.moduleData
+                this.returnTypeRef = valueParameter.typeRef
+                containingDeclarationSymbol = this@buildJavaMethod.symbol
+                this.name = valueParameter.name
+                isVararg = false
+                isFromSource = true
+            }
+        }
+    }.apply {
+        if (isStatic) {
+            containingClassForStaticMemberAttr = this@createJavaMethod.toLookupTag()
+        }
+    }
+}
+
+class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)

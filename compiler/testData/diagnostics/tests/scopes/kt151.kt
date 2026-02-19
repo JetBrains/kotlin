@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-151 Inherit visibility when overriding
 package kt151
 
@@ -38,3 +39,5 @@ class F : C(), T {
 class G : C(), T {
     public override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

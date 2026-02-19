@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package a
 
@@ -9,3 +10,5 @@ interface A {
     val a: Nested
     val b: X
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nestedClass, propertyDeclaration */

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE:-TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck
 open class Base {
     open var x: String = ""
@@ -11,3 +11,5 @@ class Foo : Base() {
         x = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, override, propertyDeclaration, stringLiteral */

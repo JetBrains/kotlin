@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -25,7 +26,7 @@ actual typealias A1 = J1
 actual typealias A2 = J2
 actual typealias A3 = J3
 actual typealias A4 = J4
-actual typealias A5 = J5
+<!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>actual<!> typealias A5 = J5
 
 // FILE: J1.java
 
@@ -61,3 +62,6 @@ public @interface J5 {
     int x() default 239;
     String y() default "OK";
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, integerLiteral, javaType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */

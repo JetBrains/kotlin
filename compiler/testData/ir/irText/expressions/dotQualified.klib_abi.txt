@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /length(kotlin/String): kotlin/Int // /length|length(kotlin.String){}[0]
+final fun /lengthN(kotlin/String?): kotlin/Int? // /lengthN|lengthN(kotlin.String?){}[0]

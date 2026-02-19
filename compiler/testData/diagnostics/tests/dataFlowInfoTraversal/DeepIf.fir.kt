@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 fun bar(x: Int) = x + 1
 
 fun foo() {
@@ -29,3 +30,6 @@ fun foo() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

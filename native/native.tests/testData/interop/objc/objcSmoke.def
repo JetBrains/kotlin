@@ -1,0 +1,5 @@
+language = Objective-C
+headers = Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h Foundation/NSStream.h Foundation/NSBundle.h
+headerFilter = smoke.h Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h Foundation/NSStream.h \
+    objc/objc.h Foundation/NSBundle.h
+linkerOpts = -lobjcsmoke

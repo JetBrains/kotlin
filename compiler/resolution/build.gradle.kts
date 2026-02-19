@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -8,7 +7,7 @@ dependencies {
     api(project(":core:descriptors"))
     api(project(":compiler:resolution.common"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(libs.intellij.fastutil)
 }
 
 sourceSets {

@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 interface A {
     fun foo()
     val b: Boolean
@@ -67,3 +68,6 @@ fun test_8(b: Boolean?) {
         b.not() // OK
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+propertyDeclaration, smartcast */

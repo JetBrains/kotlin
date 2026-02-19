@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 
-/** Look for when-constructs where subject is enum entry.
- * Replace branches that are comparisons with compile-time known enum entries
- * with comparisons of ordinals.
+/**
+ * Optimization: replaces `when` subjects of enum types with their ordinals.
  */
 open class EnumWhenLowering(protected open val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
@@ -85,8 +83,8 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
             if (condition.symbol != context.irBuiltIns.eqeqSymbol)
                 return false
 
-            val lhs = condition.getValueArgument(0)!!
-            val rhs = condition.getValueArgument(1)!!
+            val lhs = condition.arguments[0]!!
+            val rhs = condition.arguments[1]!!
             val other = getOther(lhs, rhs, subject)
             if (other is IrCall) {
                 return false
@@ -150,8 +148,8 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
         if (expression.symbol != context.irBuiltIns.eqeqSymbol) {
             return expression
         }
-        val lhs = expression.getValueArgument(0)!!
-        val rhs = expression.getValueArgument(1)!!
+        val lhs = expression.arguments[0]!!
+        val rhs = expression.arguments[1]!!
         val other = getOther(lhs, rhs, subject) ?: return expression
         val entryOrdinal = when {
             other is IrGetEnumValue && subject.type.classifierOrNull?.owner == other.symbol.owner.parent ->
@@ -165,11 +163,10 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
         return IrCallImpl(
             expression.startOffset, expression.endOffset,
             expression.type, expression.symbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 2
+            typeArgumentsCount = 0
         ).apply {
-            putValueArgument(0, IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.type, subjectOrdinal.symbol))
-            putValueArgument(1, IrConstImpl.int(rhs.startOffset, rhs.endOffset, context.irBuiltIns.intType, entryOrdinal))
+            arguments[0] = IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.type, subjectOrdinal.symbol)
+            arguments[1] = IrConstImpl.int(rhs.startOffset, rhs.endOffset, context.irBuiltIns.intType, entryOrdinal)
         }
     }
 

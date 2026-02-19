@@ -39,6 +39,7 @@ open class ClassicTypeCheckerState(
 ) : TypeCheckerState(
     isErrorTypeEqualsToAnything,
     isStubTypeEqualsToAnything,
+    isDnnTypesEqualToFlexible = false,
     allowedTypeVariable = true,
     typeSystemContext,
     kotlinTypePreparator,
@@ -55,6 +56,7 @@ fun createClassicTypeCheckerState(
     return TypeCheckerState(
         isErrorTypeEqualsToAnything,
         isStubTypeEqualsToAnything,
+        isDnnTypesEqualToFlexible = false,
         allowedTypeVariable = true,
         typeSystemContext,
         kotlinTypePreparator,

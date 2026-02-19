@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1379
-
 external interface Foo {
     var externalProperty: String?
         get() = definedExternally

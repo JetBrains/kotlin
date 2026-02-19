@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57198
 // FILE: CustomGdbServerRunConfiguration.java
@@ -15,3 +16,6 @@ fun main() {
     // That is not a subtype of CidrRunConfiguration<Any?, CidrBuildTarget<Any?>>
     applyEditorTo(<!ARGUMENT_TYPE_MISMATCH!>CustomGdbServerRunConfiguration()<!>) // K1: ok, K2: was ARGUMENT_TYPE_MISMATCH
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaFunction, javaType, nullableType, typeConstraint,
+typeParameter */

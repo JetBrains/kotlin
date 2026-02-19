@@ -5,20 +5,20 @@
 
 package kotlin.jvm.internal.markers
 
-interface KMappedMarker
+public interface KMappedMarker
 
-interface KMutableIterable : KMappedMarker
+public interface KMutableIterable : KMappedMarker
 
-interface KMutableCollection : KMutableIterable
+public interface KMutableCollection : KMutableIterable
 
-interface KMutableList : KMutableCollection
+public interface KMutableList : KMutableCollection
 
-interface KMutableIterator : KMappedMarker
+public interface KMutableIterator : KMappedMarker
 
-interface KMutableListIterator : KMutableIterator
+public interface KMutableListIterator : KMutableIterator
 
-interface KMutableMap : KMappedMarker {
-    interface Entry : KMappedMarker
+public interface KMutableMap : KMappedMarker {
+    public interface Entry : KMappedMarker
 }
 
-interface KMutableSet : KMutableCollection
+public interface KMutableSet : KMutableCollection

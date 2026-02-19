@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JS_IR
-// IGNORE_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// ^EagerInitialization is not supported
 // PROPERTY_LAZY_INITIALIZATION
 
 // FILE: lib.kt

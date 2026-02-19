@@ -5,9 +5,6 @@
 
 package kotlin.js
 
-@Deprecated(message = "Use `definedExternally` instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("definedExternally"))
-public external val noImpl: Nothing
-
 @Deprecated("Use toInt() instead.", ReplaceWith("s.toInt()"), level = DeprecationLevel.ERROR)
 public external fun parseInt(s: String): Int
 

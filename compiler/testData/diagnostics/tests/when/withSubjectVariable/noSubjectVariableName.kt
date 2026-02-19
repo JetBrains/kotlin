@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 
 fun testNoSubjectVariableName(x: Int?) {
@@ -9,3 +10,6 @@ fun testNoSubjectVariableName(x: Int?) {
         else -> "not 0"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

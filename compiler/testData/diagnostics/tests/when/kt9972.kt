@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -26,3 +27,6 @@ fun test2(): Int {
                     } ?: return 0<!>
     return x.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, stringLiteral, whenExpression */

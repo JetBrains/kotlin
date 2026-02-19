@@ -1,0 +1,2 @@
+expression: Int::class
+receiver:: type: kotlin.Int

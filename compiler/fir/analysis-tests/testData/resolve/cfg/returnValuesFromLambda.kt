@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface A
 
 class B : A
@@ -20,3 +21,6 @@ fun test_2() {
 fun test_3() {
     val x = run { return }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, propertyDeclaration */

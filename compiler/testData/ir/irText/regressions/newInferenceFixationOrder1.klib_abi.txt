@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> /Inv2 // /Inv2|null[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> /check(#A, #B, kotlin/Function1<#A, #B>): /Inv2<#A, #B> // /check|check(0:0;0:1;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> /foo(): kotlin/Function1<#A, #B> // /foo|foo(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final fun /test(): /Inv2<kotlin/String, kotlin/Int> // /test|test(){}[0]

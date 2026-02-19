@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -24,12 +25,21 @@ class FirContractSerializer {
         proto: ProtoBuf.Function.Builder,
         parentSerializer: FirElementSerializer
     ) {
-        val contractDescription = (function as? FirSimpleFunction)?.contractDescription
+        val contractDescription = (function as? FirNamedFunction)?.contractDescription
         if (contractDescription == null || contractDescription.effects.isNullOrEmpty()) {
             return
         }
         val worker = ContractSerializerWorker(parentSerializer)
         proto.setContract(worker.contractProto(contractDescription))
+    }
+
+    fun buildAccessorContractProtoIfAny(accessor: FirPropertyAccessor, parentSerializer: FirElementSerializer): ProtoBuf.Contract.Builder? {
+        val contractDescription = accessor.contractDescription
+        if (contractDescription == null || contractDescription.effects.isNullOrEmpty()) {
+            return null
+        }
+        val worker = ContractSerializerWorker(parentSerializer)
+        return worker.contractProto(contractDescription)
     }
 
     private class ContractSerializerWorker(private val parentSerializer: FirElementSerializer) {
@@ -80,6 +90,27 @@ class FirContractSerializer {
                     if (invocationKindProtobufEnum != null) {
                         builder.kind = invocationKindProtobufEnum
                     }
+                }
+
+                is ConeConditionalReturnsDeclaration -> {
+                    builder.conditionKind = ProtoBuf.Effect.EffectConditionKind.RETURNS_CONDITION
+                    builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.argumentsCondition, contractDescription))
+                    fillEffectProto(builder, effectDeclaration.returnsEffect, contractDescription)
+                }
+
+                is ConeHoldsInEffectDeclaration -> {
+                    builder.conditionKind = ProtoBuf.Effect.EffectConditionKind.HOLDSIN_CONDITION
+                    builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.argumentsCondition, contractDescription))
+                    builder.addEffectConstructorArgument(
+                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
+                    )
+                }
+
+                is ConeReturnsResultOfDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF
+                    builder.addEffectConstructorArgument(
+                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
+                    )
                 }
 
                 else -> {

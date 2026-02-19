@@ -9,28 +9,23 @@ plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
-@Suppress("DEPRECATION")
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions {
-        apiVersion.value(KotlinVersion.KOTLIN_1_5).finalizeValueOnRead()
-        languageVersion.value(KotlinVersion.KOTLIN_1_5).finalizeValueOnRead()
-        freeCompilerArgs.add("-Xsuppress-version-warnings")
-    }
-}
+configureKotlinCompileTasksGradleCompatibility()
 
 kotlin.sourceSets.configureEach {
     languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
 }
 
 dependencies {
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly(kotlin("stdlib", coreDepsVersion))
     api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-annotations"))
-    compileOnly(kotlinStdlib())
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
 
     testImplementation("org.reflections:reflections:0.10.2") {
         because("Tests on the object graph are performed. This library will find implementations of interfaces at runtime")
@@ -40,7 +35,8 @@ dependencies {
     testFixturesImplementation(gradleKotlinDsl())
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testFixturesImplementation(kotlin("stdlib", coreDepsVersion))
+    testFixturesImplementation(kotlin("test", coreDepsVersion)) // no test annotations, only assertions are needed
 }
 
 

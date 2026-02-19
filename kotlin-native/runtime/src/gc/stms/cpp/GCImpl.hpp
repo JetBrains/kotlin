@@ -6,36 +6,27 @@
 #pragma once
 
 #include "GC.hpp"
+#include "GCState.hpp"
+#include "MainGCThread.hpp"
+#include "StwmsGCTraits.hpp"
 
-#include "AllocatorImpl.hpp"
-#include "SameThreadMarkAndSweep.hpp"
+namespace kotlin::gc {
 
-namespace kotlin {
-namespace gc {
-
+// Stop-the-world mark & sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
 class GC::Impl : private Pinned {
 public:
-    explicit Impl(gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(allocator_, gcScheduler) {}
+    Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept
+        : gcThread_(state_, allocator, gcScheduler, mark_) {}
 
-    alloc::Allocator::Impl& allocator() noexcept { return allocator_; }
-    SameThreadMarkAndSweep& gc() noexcept { return gc_; }
-
-private:
-    alloc::Allocator::Impl allocator_;
-    SameThreadMarkAndSweep gc_;
+    GCStateHolder state_;
+    internal::StwmsGCTraits::Mark mark_{};
+    internal::MainGCThread<internal::StwmsGCTraits> gcThread_;
 };
 
-class GC::ThreadData::Impl : private Pinned {
-public:
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept : gc_(gc.impl_->gc(), threadData), allocator_(gc.impl_->allocator()) {}
+class GC::ThreadData::Impl {};
 
-    SameThreadMarkAndSweep::ThreadData& gc() noexcept { return gc_; }
-    alloc::Allocator::ThreadData::Impl& allocator() noexcept { return allocator_; }
+namespace barriers {
+class ExternalRCRefReleaseGuard::Impl {};
+} // namespace barriers
 
-private:
-    SameThreadMarkAndSweep::ThreadData gc_;
-    alloc::Allocator::ThreadData::Impl allocator_;
-};
-
-} // namespace gc
-} // namespace kotlin
+} // namespace kotlin::gc

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import java.util.*
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K/N tests of apple native common libs")
@@ -58,10 +57,11 @@ class CommonNativeIT : KGPBaseTest() {
         appTargets: List<String>,
         gradleVersion: GradleVersion,
     ) {
-        nativeProject(projectName.withPrefix, gradleVersion) {
-
-            configureJvmMemory()
-
+        nativeProject(
+            projectName.withPrefix,
+            gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.capitalize()}" }
             val appCompileTasks = appTargets.map { ":app:compileKotlin${it.capitalize()}" }
             val appLinkFrameworkTasks = appTargets.map { ":app:linkDebugFramework${it.capitalize()}" }
@@ -70,7 +70,7 @@ class CommonNativeIT : KGPBaseTest() {
                 assertTasksExecuted(libCompileTasks)
                 libTargets.forEach {
                     assertOutputContains("Configuring $it")
-                    assertFileInProjectExists("lib/build/classes/kotlin/$it/main/klib/lib.klib")
+                    assertDirectoryInProjectExists("lib/build/classes/kotlin/$it/main/klib/lib")
                 }
             }
 
@@ -80,7 +80,7 @@ class CommonNativeIT : KGPBaseTest() {
                 assertTasksExecuted(appLinkTestTasks)
 
                 appTargets.forEach {
-                    assertFileInProjectExists("app/build/classes/kotlin/$it/main/klib/app.klib")
+                    assertDirectoryInProjectExists("app/build/classes/kotlin/$it/main/klib/app")
                     assertDirectoryInProjectExists("app/build/bin/$it/debugFramework")
                     assertDirectoryInProjectExists("app/build/bin/$it/debugTest")
                 }

@@ -1,0 +1,19 @@
+KtNameReferenceExpression(61,62): 'f'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = f
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.Unit>
+        symbol = val f: kotlin.Function0<kotlin.Unit>
+        contextParameters = []
+        callableId = /A.f
+      typeArgumentsMapping = {}

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -USELESS_ELVIS
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -USELESS_ELVIS
 
 fun test() {
     bar(<!TYPE_MISMATCH, TYPE_MISMATCH!>if (true) {
@@ -11,3 +12,5 @@ fun test() {
 }
 
 fun bar(s: String) = s
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, integerLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: root.kt
 fun testFun() = 12
@@ -11,3 +12,5 @@ fun testFun() = 12
 package test
 
 val t = testFun()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, propertyDeclaration */

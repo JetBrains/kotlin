@@ -1,0 +1,36 @@
+context(@R|test/Ann|() c: R|test/A|)
+public final fun f(): R|kotlin/Unit|
+
+context(@R|test/Ann|() <unused var>: R|test/A|)
+public final fun fUnnamed(): R|kotlin/Unit|
+
+context(@R|test/Ann|() c: R|test/B|)
+public final val p: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
+context(@R|test/Ann|() <unused var>: R|test/B|)
+public final val pUnnamed: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
+public abstract interface A : R|kotlin/Any| {
+}
+
+public final annotation class Ann : R|kotlin/Annotation| {
+    public constructor(): R|test/Ann|
+
+}
+
+public abstract interface B : R|kotlin/Any| {
+}
+
+public final class C : R|kotlin/Any| {
+    context(@R|test/Ann|() c: R|test/B|)
+    public final fun f(): R|kotlin/Unit|
+
+    context(@R|test/Ann|() c: R|test/B|)
+    public final val p: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(): R|test/C|
+
+}

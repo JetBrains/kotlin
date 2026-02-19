@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1571 Frontend fails to check val reassigment for operator overloading.
 package kt1571
 
@@ -40,3 +41,7 @@ fun box() : String {
     }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, getter, ifExpression,
+incrementDecrementExpression, integerLiteral, multiplicativeExpression, operator, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */

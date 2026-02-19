@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-9682 Overload Resolution Ambiguity after casting to Interface
 
 open class Foo {
@@ -26,3 +27,6 @@ fun test2(foo: Foo) {
     foo as IFoo2
     foo.bar() // should be ambiguity
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType,
+localProperty, propertyDeclaration, smartcast, thisExpression */

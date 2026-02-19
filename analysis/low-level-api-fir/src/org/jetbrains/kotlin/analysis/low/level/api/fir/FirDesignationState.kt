@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,15 +42,14 @@ private class FirDesignationState(val designation: FirDesignation) {
      * Holds current declaration index
      * if `currentIndex in [0, designation.path.lastIndex]` then current declaration is in path
      * if `currentIndex == `designation.path.lastIndex + 1` then current declaration is our target declaration
-     * if `currentIndex > designation.path.lastIndex + 1` then we are inside current declaration
+     * if `currentIndex > designation.path.lastIndex + 1` then we are inside target declaration
      */
     private var currentIndex = -1
 
     fun canGoNext(): Boolean = currentIndex < designation.path.size
 
     val currentDeclarationIfPresent: FirElementWithResolveState?
-        get() = when (currentIndex) {
-            in designation.path.indices -> designation.path[currentIndex]
+        get() = designation.path.getOrNull(currentIndex) ?: when (currentIndex) {
             designation.path.size -> designation.target
             else -> null
         }

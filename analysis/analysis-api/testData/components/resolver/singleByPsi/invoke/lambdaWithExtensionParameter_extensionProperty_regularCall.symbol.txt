@@ -1,0 +1,2 @@
+KtNameReferenceExpression(94,100): 'action'
+  null

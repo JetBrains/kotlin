@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -7,29 +10,30 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.constant.ConstantValue
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationLoader
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.psi.KtContextParameterList
+import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -53,14 +57,18 @@ fun createDeclarationsStubs(
     propertyProtos: List<ProtoBuf.Property>,
 ) {
     for (propertyProto in propertyProtos) {
-        if (!shouldSkip(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
-            PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
+        if (mustNotBeWrittenToStubs(propertyProto.flags)) {
+            continue
         }
+
+        PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
     }
     for (functionProto in functionProtos) {
-        if (!shouldSkip(functionProto.flags, outerContext.nameResolver.getName(functionProto.name))) {
-            FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
+        if (mustNotBeWrittenToStubs(functionProto.flags)) {
+            continue
         }
+
+        FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
     }
 }
 
@@ -84,17 +92,11 @@ fun createConstructorStub(
     ConstructorClsStubBuilder(parentStub, outerContext, protoContainer, constructorProto).build()
 }
 
-private fun shouldSkip(flags: Int, name: Name): Boolean {
-    return when (Flags.MEMBER_KIND.get(flags)) {
-        MemberKind.FAKE_OVERRIDE, MemberKind.DELEGATION -> true
-        //TODO: fix decompiler to use sane criteria
-        MemberKind.SYNTHESIZED -> !DataClassResolver.isComponentLike(name) && name !in listOf(
-            OperatorNameConventions.EQUALS,
-            StandardNames.HASHCODE_NAME,
-            OperatorNameConventions.TO_STRING
-        )
-        else -> false
-    }
+/**
+ * @see org.jetbrains.kotlin.analysis.decompiler.psi.text.mustNotBeWrittenToDecompiledText
+ */
+private fun mustNotBeWrittenToStubs(flags: Int): Boolean {
+    return Flags.MEMBER_KIND.get(flags) == MemberKind.FAKE_OVERRIDE
 }
 
 abstract class CallableClsStubBuilder(
@@ -105,12 +107,11 @@ abstract class CallableClsStubBuilder(
 ) {
     protected val c = outerContext.child(typeParameters)
     protected val typeStubBuilder = TypeClsStubBuilder(c)
-    private val contextReceiversListStubBuilder = ContextReceiversListStubBuilder(c)
     protected val isTopLevel: Boolean get() = protoContainer is ProtoContainer.Package
     protected val callableStub: StubElement<out PsiElement> by lazy(LazyThreadSafetyMode.NONE) { doCreateCallableStub(parent) }
+    protected abstract val callableProto: MessageLite
 
     fun build() {
-        contextReceiversListStubBuilder.createContextReceiverStubs(callableStub, contextReceiverTypes)
         createModifierListStub()
         val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(callableStub, typeParameters)
         createReceiverTypeReferenceStub()
@@ -125,6 +126,7 @@ abstract class CallableClsStubBuilder(
 
     abstract val returnType: ProtoBuf.Type?
     abstract val contextReceiverTypes: List<ProtoBuf.Type>
+    abstract val contextParameters: List<ProtoBuf.ValueParameter>
 
     private fun createReceiverTypeReferenceStub() {
         receiverType?.let {
@@ -136,6 +138,50 @@ abstract class CallableClsStubBuilder(
         returnType?.let {
             typeStubBuilder.createTypeReferenceStub(callableStub, it)
         }
+    }
+
+    protected fun createModifierListStubForCallableDeclaration(
+        flags: Int,
+        flagsToTranslate: List<FlagsToModifiers>,
+        returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>,
+    ): KotlinModifierListStubImpl {
+        val modifierListStub = createModifierListStubForDeclaration(
+            callableStub,
+            flags,
+            flagsToTranslate,
+            additionalModifiers = emptyList(),
+            returnValueStatus = returnValueStatus,
+        )
+
+        createContextParameterStubs(modifierListStub)
+        return modifierListStub
+    }
+
+    protected fun createContextParameterStubs(modifierListStub: KotlinModifierListStubImpl) {
+        val contextParameters = contextParameters
+        if (contextParameters.isEmpty()) {
+            // Fallback for old metadata where context parameters don't exist (KT-74546)
+            return typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
+        }
+
+        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
+            modifierListStub,
+            KtStubElementTypes.CONTEXT_PARAMETER_LIST,
+        )
+
+        typeStubBuilder.createValueParameterStubs(
+            contextParameters,
+            contextReceiverListStub,
+            protoContainer,
+            callableProto,
+            when (callableProto) {
+                is ProtoBuf.Function -> AnnotatedCallableKind.FUNCTION
+                // Context parameters are declared on getters/setters
+                is ProtoBuf.Property -> AnnotatedCallableKind.PROPERTY_GETTER
+                else -> error("Unsupported callable proto: ${callableProto::class.simpleName}")
+            },
+            isContextParameter = true,
+        )
     }
 
     abstract fun createModifierListStub()
@@ -166,8 +212,14 @@ private class FunctionClsStubBuilder(
     override val returnType: ProtoBuf.Type
         get() = functionProto.returnType(c.typeTable)
 
+    override val callableProto: MessageLite
+        get() = functionProto
+
     override val contextReceiverTypes: List<ProtoBuf.Type>
         get() = functionProto.contextReceiverTypes(c.typeTable)
+
+    override val contextParameters: List<ProtoBuf.ValueParameter>
+        get() = functionProto.contextParameterList
 
     override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, functionProto, functionProto.valueParameterList, protoContainer)
@@ -175,13 +227,21 @@ private class FunctionClsStubBuilder(
 
     override fun createModifierListStub() {
         val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
-        val modifierListStubImpl = createModifierListStubForDeclaration(
-            callableStub, functionProto.flags,
-            listOf(VISIBILITY, OPERATOR, INFIX, EXTERNAL_FUN, INLINE, TAILREC, SUSPEND, EXPECT_FUNCTION) + modalityModifier
+        val flags = functionProto.flags
+        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+            flags = flags,
+            flagsToTranslate = listOf(
+                VISIBILITY,
+                OPERATOR,
+                INFIX,
+                EXTERNAL_FUN,
+                INLINE,
+                TAILREC,
+                SUSPEND,
+                EXPECT_FUNCTION,
+            ) + modalityModifier,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
         )
-
-        // If function is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return
 
         val annotations = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
@@ -202,12 +262,14 @@ private class FunctionClsStubBuilder(
             isTopLevel,
             c.containerFqName.child(callableName),
             isExtension = functionProto.hasReceiver(),
-            hasBlockBody = true,
+            hasNoExpressionBody = true,
             hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
             mayHaveContract = hasContract,
             runIf(hasContract) {
-                ClsContractBuilder(c, typeStubBuilder).loadContract(functionProto)
+                ClsContractBuilder(c, typeStubBuilder).loadContract(
+                    contractOwner = ClsContractOwner.Function(functionProto),
+                )
             },
             origin = createStubOrigin(protoContainer)
         )
@@ -233,23 +295,27 @@ private class PropertyClsStubBuilder(
     override val returnType: ProtoBuf.Type
         get() = propertyProto.returnType(c.typeTable)
 
+    override val contextParameters: List<ProtoBuf.ValueParameter>
+        get() = propertyProto.contextParameterList
+
     override val contextReceiverTypes: List<ProtoBuf.Type>
         get() = propertyProto.contextReceiverTypes(c.typeTable)
+
+    override val callableProto: MessageLite
+        get() = propertyProto
 
     override fun createValueParameterList() {
     }
 
     override fun createModifierListStub() {
+        val flags = propertyProto.flags
         val constModifier = if (isVar) listOf() else listOf(CONST)
-        val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
-
-        val modifierListStubImpl = createModifierListStubForDeclaration(
-            callableStub, propertyProto.flags,
-            listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier
+        val modalityModifier = if (isTopLevel || Flags.IS_CONST[flags]) listOf() else listOf(MODALITY)
+        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+            flags = flags,
+            flagsToTranslate = listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
         )
-
-        // If field is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(propertyProto.flags)) return
 
         val propertyAnnotations =
             c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
@@ -270,84 +336,180 @@ private class PropertyClsStubBuilder(
 
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
+        val isDelegatedProperty = Flags.IS_DELEGATED[propertyProto.flags]
         return KotlinPropertyStubImpl(
             parent,
             callableName.ref(),
             isVar,
             isTopLevel,
-            hasDelegate = false,
-            hasDelegateExpression = false,
+            hasDelegate = isDelegatedProperty,
+            hasDelegateExpression = isDelegatedProperty,
             hasInitializer = initializer != null,
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName),
             initializer,
-            origin = createStubOrigin(protoContainer)
+            origin = createStubOrigin(protoContainer),
+            hasBackingField = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature)?.hasField(),
         )
     }
 
     override fun createCallableSpecialParts() {
-        if ((callableStub as KotlinPropertyStub).hasInitializer()) {
-            KotlinNameReferenceExpressionStubImpl(callableStub, StringRef.fromString(COMPILED_DEFAULT_INITIALIZER))
-        }
-        val flags = propertyProto.flags
-        if (Flags.HAS_GETTER[flags] && propertyProto.hasGetterFlags()) {
-            val getterFlags = propertyProto.getterFlags
-            if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
-                createModifierListAndAnnotationStubsForAccessor(
-                    KotlinPropertyAccessorStubImpl(callableStub, true, false, true),
-                    flags = getterFlags,
-                    callableKind = AnnotatedCallableKind.PROPERTY_GETTER
-                )
-            }
+        val propertyStub = callableStub as KotlinPropertyStub
+        if (propertyStub.hasInitializer && !propertyStub.hasDelegate) {
+            KotlinNameReferenceExpressionStubImpl(
+                callableStub,
+                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
+                false,
+            )
         }
 
-        if (Flags.HAS_SETTER[flags] && propertyProto.hasSetterFlags()) {
-            val setterFlags = propertyProto.setterFlags
-            if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
-                val setterStub = KotlinPropertyAccessorStubImpl(callableStub, false, true, true)
-                createModifierListAndAnnotationStubsForAccessor(
-                    setterStub,
-                    flags = setterFlags,
-                    callableKind = AnnotatedCallableKind.PROPERTY_SETTER
+        createGetterStubsIfNeeded(callableStub)
+        createSetterStubsIfNeeded(callableStub)
+    }
+
+    private fun createGetterStubsIfNeeded(callableStub: StubElement<*>) {
+        val propertyFlags = propertyProto.flags
+        if (!Flags.HAS_GETTER[propertyFlags]) return
+
+        val getterFlags = if (propertyProto.hasGetterFlags()) {
+            propertyProto.getterFlags
+        } else {
+            getDefaultPropertyAccessorFlags(propertyFlags)
+        }
+
+        val annotations = loadAccessorAnnotations(AnnotatedCallableKind.PROPERTY_GETTER)
+        if (annotations.isEmpty() && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = getterFlags)) {
+            return
+        }
+
+        val isNotDefault = Flags.IS_NOT_DEFAULT.get(getterFlags)
+        val hasContract = propertyProto.hasGetterContract()
+        val getterStub = KotlinPropertyAccessorStubImpl(
+            parent = callableStub,
+            isGetter = true,
+            hasBody = isNotDefault,
+            hasNoExpressionBody = true,
+            mayHaveContract = hasContract,
+            contract = runIf(hasContract) {
+                ClsContractBuilder(c, typeStubBuilder).loadContract(
+                    contractOwner = ClsContractOwner.PropertyAccessor(propertyProto, isGetter = true),
                 )
-                if (propertyProto.hasSetterValueParameter()) {
-                    typeStubBuilder.createValueParameterListStub(
-                        setterStub,
-                        propertyProto,
-                        listOf(propertyProto.setterValueParameter),
-                        protoContainer,
-                        AnnotatedCallableKind.PROPERTY_SETTER
-                    )
-                }
-            }
+            },
+        )
+
+        createModifierListAndAnnotationStubsForAccessor(
+            accessorStub = getterStub,
+            accessorFlags = getterFlags,
+            annotations = annotations,
+        )
+
+        // Getter with a body expect to have a value parameter list
+        if (isNotDefault) {
+            KotlinPlaceHolderStubImpl<KtParameterList>(getterStub, KtStubElementTypes.VALUE_PARAMETER_LIST)
         }
     }
 
+    private fun createSetterStubsIfNeeded(callableStub: StubElement<*>) {
+        val propertyFlags = propertyProto.flags
+        if (!Flags.HAS_SETTER[propertyFlags]) return
+
+        val setterFlags = if (propertyProto.hasSetterFlags()) {
+            propertyProto.setterFlags
+        } else {
+            getDefaultPropertyAccessorFlags(propertyFlags)
+        }
+
+        val annotations = loadAccessorAnnotations(AnnotatedCallableKind.PROPERTY_SETTER)
+        if (annotations.isEmpty() && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = setterFlags)) {
+            return
+        }
+
+        val isNotDefault = Flags.IS_NOT_DEFAULT.get(setterFlags)
+        val hasContract = propertyProto.hasSetterContract()
+        val setterStub = KotlinPropertyAccessorStubImpl(
+            parent = callableStub,
+            isGetter = false,
+            hasBody = isNotDefault,
+            hasNoExpressionBody = true,
+            mayHaveContract = hasContract,
+            contract = runIf(hasContract) {
+                ClsContractBuilder(c, typeStubBuilder).loadContract(
+                    contractOwner = ClsContractOwner.PropertyAccessor(propertyProto, isGetter = false),
+                )
+            },
+        )
+
+        createModifierListAndAnnotationStubsForAccessor(
+            accessorStub = setterStub,
+            accessorFlags = setterFlags,
+            annotations = annotations,
+        )
+
+        if (propertyProto.hasSetterValueParameter()) {
+            typeStubBuilder.createValueParameterListStub(
+                setterStub,
+                propertyProto,
+                listOf(propertyProto.setterValueParameter),
+                protoContainer,
+                AnnotatedCallableKind.PROPERTY_SETTER,
+            )
+        }
+    }
+
+    private fun shouldGenerateAccessor(propertyFlags: Int, accessorFlags: Int): Boolean = when {
+        Flags.IS_NOT_DEFAULT.get(accessorFlags) -> true
+        Flags.IS_INLINE_ACCESSOR.get(accessorFlags) -> true
+        Flags.IS_EXTERNAL_ACCESSOR.get(accessorFlags) -> true
+        Flags.VISIBILITY.get(accessorFlags) != Flags.VISIBILITY.get(propertyFlags) -> true
+        Flags.MODALITY.get(accessorFlags) != Flags.MODALITY.get(propertyFlags) -> true
+        else -> false
+    }
+
+    /**
+     * Per documentation on [ProtoBuf.Property.getGetterFlags], if an accessor flags field is absent, its value should be computed
+     * by taking hasAnnotations/visibility/modality from property flags, and using false for the rest
+     */
+    private fun getDefaultPropertyAccessorFlags(flags: Int): Int = Flags.getAccessorFlags(
+        Flags.HAS_ANNOTATIONS[flags],
+        Flags.VISIBILITY[flags],
+        Flags.MODALITY[flags],
+        false,
+        false,
+        false,
+    )
+
+    private fun loadAccessorAnnotations(
+        callableKind: AnnotatedCallableKind,
+    ): List<AnnotationWithArgs> =
+        c.components.annotationLoader.loadCallableAnnotations(
+            protoContainer,
+            propertyProto,
+            callableKind,
+        )
+
     private fun createModifierListAndAnnotationStubsForAccessor(
         accessorStub: KotlinPropertyAccessorStubImpl,
-        flags: Int,
-        callableKind: AnnotatedCallableKind
+        accessorFlags: Int,
+        annotations: List<AnnotationWithArgs>,
     ) {
         val modifierList = createModifierListStubForDeclaration(
             accessorStub,
-            flags,
-            listOf(VISIBILITY, MODALITY, INLINE_ACCESSOR, EXTERNAL_ACCESSOR)
+            accessorFlags,
+            ACCESSOR_FLAGS,
+            additionalModifiers = emptyList(),
+            returnValueStatus = null,
         )
-        if (Flags.HAS_ANNOTATIONS.get(flags)) {
-            val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
-                protoContainer,
-                propertyProto,
-                callableKind
-            )
-            createAnnotationStubs(annotationIds, modifierList)
+
+        if (annotations.isNotEmpty()) {
+            createAnnotationStubs(annotations, modifierList)
         }
     }
 
     private fun calcInitializer(): ConstantValue<*>? {
         val classFinder = c.components.classFinder
         val containerClass =
-            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.jvmMetadataVersion!!) else null
+            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.metadataVersion!!) else null
         val source = protoContainer.source
         val binaryClass = containerClass ?: (source as? KotlinJvmBinarySourceElement)?.binaryClass
         var constantInitializer: ConstantValue<*>? = null
@@ -405,7 +567,7 @@ private class PropertyClsStubBuilder(
 
     private fun getSpecialCaseContainerClass(
         classFinder: KotlinClassFinder,
-        jvmMetadataVersion: JvmMetadataVersion
+        metadataVersion: MetadataVersion
     ): KotlinJvmBinaryClass? {
         return AbstractBinaryClassAnnotationLoader.getSpecialCaseContainerClass(
             container = protoContainer,
@@ -414,7 +576,7 @@ private class PropertyClsStubBuilder(
             isConst = Flags.IS_CONST.get(propertyProto.flags),
             isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyProto),
             kotlinClassFinder = classFinder,
-            jvmMetadataVersion = jvmMetadataVersion
+            metadataVersion = metadataVersion
         )
     }
 }
@@ -434,18 +596,26 @@ private class ConstructorClsStubBuilder(
     override val returnType: ProtoBuf.Type?
         get() = null
 
+    override val contextParameters: List<ProtoBuf.ValueParameter>
+        get() = emptyList()
+
     override val contextReceiverTypes: List<ProtoBuf.Type>
         get() = emptyList()
+
+    override val callableProto: MessageLite
+        get() = constructorProto
 
     override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, constructorProto, constructorProto.valueParameterList, protoContainer)
     }
 
     override fun createModifierListStub() {
-        val modifierListStubImpl = createModifierListStubForDeclaration(callableStub, constructorProto.flags, listOf(VISIBILITY))
-
-        // If constructor is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(constructorProto.flags)) return
+        val flags = constructorProto.flags
+        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+            flags = flags,
+            flagsToTranslate = listOf(VISIBILITY),
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
+        )
 
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
@@ -460,9 +630,19 @@ private class ConstructorClsStubBuilder(
         // delegated call is not to this (as there is no this keyword) and it has body (while primary does not have one)
         // This info is anyway irrelevant for the purposes these stubs are used
         return if (Flags.IS_SECONDARY.get(constructorProto.flags))
-            KotlinConstructorStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true, isDelegatedCallToThis = false)
+            KotlinSecondaryConstructorStubImpl(
+                parent = parent,
+                containingClassName = name,
+                hasBody = true,
+                isDelegatedCallToThis = false,
+                isExplicitDelegationCall = false,
+                mayHaveContract = false, // constructors don't have contracts in the metadata yet
+            )
         else
-            KotlinConstructorStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false, isDelegatedCallToThis = false)
+            KotlinPrimaryConstructorStubImpl(
+                parent = parent,
+                containingClassName = name,
+            )
     }
 }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
 interface FirExpression
@@ -13,3 +14,7 @@ private fun List<FirExpression>.toAnnotationUseSiteTargets2(): Set<AnnotationUse
         else -> setOf()
     }
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, lambdaLiteral, localProperty, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

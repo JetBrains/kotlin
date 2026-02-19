@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package dollar
 
@@ -11,3 +12,5 @@ open class `$$`(`$$$$` : `$$$$$`?) : `$`() {
         return `$$$`
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration */

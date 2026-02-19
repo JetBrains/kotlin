@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A<T> {
     fun T.foo() {}
@@ -16,3 +17,6 @@ fun test(x: A<out CharSequence>, y: Out<CharSequence>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, lambdaLiteral, nullableType, out,
+outProjection, stringLiteral, typeParameter */

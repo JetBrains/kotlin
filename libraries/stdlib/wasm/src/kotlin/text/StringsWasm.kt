@@ -82,7 +82,6 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
  * Concatenates characters in this [CharArray] into a String.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun CharArray.concatToString(): String {
     val thisStorage = this.storage
     val thisLength = thisStorage.len()
@@ -101,7 +100,6 @@ public actual fun CharArray.concatToString(): String {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
@@ -116,9 +114,8 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
  * Returns a [CharArray] containing characters of this string.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.toCharArray(): CharArray {
-    val thisChars = this.chars
+    val thisChars = this.getChars()
     val thisLength = thisChars.len()
     val newArray = CharArray(thisLength)
     copyWasmArray(thisChars, newArray.storage, 0, 0, thisLength)
@@ -135,13 +132,12 @@ public actual fun String.toCharArray(): CharArray {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     val newLength = endIndex - startIndex
     val newArray = CharArray(newLength)
-    copyWasmArray(this.chars, newArray.storage, startIndex, 0, newLength)
+    copyWasmArray(this.getChars(), newArray.storage, startIndex, 0, newLength)
     return newArray
 }
 
@@ -157,9 +153,9 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@SinceKotlin("2.0")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@IgnorableReturnValue
 public actual fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,
@@ -169,7 +165,7 @@ public actual fun String.toCharArray(
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     val rangeSize = endIndex - startIndex
     AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    copyWasmArray(this.chars, destination.storage, startIndex, destinationOffset, rangeSize)
+    copyWasmArray(this.getChars(), destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -179,7 +175,6 @@ public actual fun String.toCharArray(
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun ByteArray.decodeToString(): String {
     return decodeUtf8(this, 0, size, false)
 }
@@ -196,7 +191,6 @@ public actual fun ByteArray.decodeToString(): String {
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(
     startIndex: Int = 0,
@@ -211,9 +205,10 @@ public actual fun ByteArray.decodeToString(
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.encodeToByteArray(): ByteArray {
     return encodeUtf8(this, 0, length, false)
 }
@@ -228,9 +223,10 @@ public actual fun String.encodeToByteArray(): ByteArray {
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(
     startIndex: Int = 0,
@@ -243,6 +239,12 @@ public actual fun String.encodeToByteArray(
 
 /**
  * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
+ *
+ * @param startIndex the start index (inclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative or exceeds the length if the string.
+ *
+ * @sample samples.text.Strings.substringFromStartIndex
  */
 public actual fun String.substring(startIndex: Int): String =
     subSequence(startIndex, this.length) as String
@@ -252,6 +254,11 @@ public actual fun String.substring(startIndex: Int): String =
  *
  * @param startIndex the start index (inclusive).
  * @param endIndex the end index (exclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative, [endIndex] exceeds the length if the string, or
+ *  if [startIndex] is greater than [endIndex].
+ *
+ * @sample samples.text.Strings.substringByStartAndEndIndices
  */
 public actual fun String.substring(startIndex: Int, endIndex: Int): String =
     subSequence(startIndex, endIndex) as String
@@ -260,7 +267,7 @@ public actual fun String.substring(startIndex: Int, endIndex: Int): String =
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toUpperCase(): String = uppercase()
 
 /**
@@ -278,7 +285,7 @@ public actual fun String.uppercase(): String = uppercaseImpl()
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toLowerCase(): String = lowercase()
 
 /**
@@ -486,6 +493,13 @@ public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: 
 
 /**
  * Returns `true` if this string starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string should start with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.startsWithPrefixCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean =
@@ -493,6 +507,16 @@ public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string's substring beginning at [startIndex] should start with.
+ * @param startIndex the start index (inclusive).
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is negative or exceeds the length of the string.
+ *
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean =
@@ -500,6 +524,13 @@ public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase:
 
 /**
  * Returns `true` if this string ends with the specified suffix.
+ *
+ * @param suffix the suffix with which this string should end with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [suffix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.endsWithSuffixCaseSensitive
+ * @sample samples.text.Strings.endsWithSuffixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean =
@@ -508,20 +539,13 @@ public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): 
 // From stringsCode.kt
 
 /**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
-
-/**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
  * @param thisOffset the start offset in this char sequence of the substring to compare.
  * @param other the string against a substring of which the comparison is performed.
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
-actual fun CharSequence.regionMatches(
+public actual fun CharSequence.regionMatches(
     thisOffset: Int,
     other: CharSequence,
     otherOffset: Int,

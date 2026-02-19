@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 // Generic interface, nothing interesting here
 interface UseCase<in I, out O> {
@@ -34,3 +35,6 @@ fun main() {
     baz.execute(Unit)
     baz.execute()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, in, interfaceDeclaration,
+localProperty, nullableType, out, override, propertyDeclaration, stringLiteral, typeParameter */

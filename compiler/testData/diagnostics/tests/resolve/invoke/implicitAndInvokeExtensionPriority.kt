@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-58943
 
@@ -15,3 +16,6 @@ class A {
 }
 
 fun takeInt(x: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localFunction, localProperty, propertyDeclaration, stringLiteral, typeWithExtension */

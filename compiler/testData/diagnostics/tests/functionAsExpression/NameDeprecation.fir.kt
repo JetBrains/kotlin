@@ -1,9 +1,12 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
     class A
     fun bar() {}
-    (<!ANONYMOUS_FUNCTION_WITH_NAME!>fun bar() {}<!>)
+    (fun <!ANONYMOUS_FUNCTION_WITH_NAME!>bar<!>() {})
     fun A.foo() {}
-    (<!ANONYMOUS_FUNCTION_WITH_NAME!>fun A.foo() {}<!>)
+    (fun A.<!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() {})
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>run<!>(<!ANONYMOUS_FUNCTION_WITH_NAME!>fun foo() {}<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>run<!>(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() {})
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localClass, localFunction */

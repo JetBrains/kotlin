@@ -1,0 +1,7 @@
+KDocName(79,88): 'Child.foo'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

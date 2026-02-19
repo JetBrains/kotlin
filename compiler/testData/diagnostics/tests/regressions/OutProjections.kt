@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Point() {
 }
 
@@ -19,3 +20,6 @@ fun fooout() : Out<Point> {
   val p = Point();
   return fout<Point>(p);
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, typeParameter */

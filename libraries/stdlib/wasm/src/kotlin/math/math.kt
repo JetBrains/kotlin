@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,26 +7,35 @@ package kotlin.math
 
 // region ================ Double Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sin
  */
 @SinceKotlin("1.2")
 public actual fun sin(x: Double): Double = kotlin.math.fdlibm.sin(x)
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.cos
  */
 @SinceKotlin("1.2")
 public actual fun cos(x: Double): Double = kotlin.math.fdlibm.cos(x)
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.tan
  */
 @SinceKotlin("1.2")
 public actual fun tan(x: Double): Double = kotlin.math.fdlibm.tan(x)
@@ -36,7 +45,9 @@ public actual fun tan(x: Double): Double = kotlin.math.fdlibm.tan(x)
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.asin
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
@@ -46,7 +57,9 @@ public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`fasin
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.acos
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Double): Double = kotlin.math.fdlibm.__ieee754_acos(x)
@@ -57,6 +70,8 @@ public actual fun acos(x: Double): Double = kotlin.math.fdlibm.__ieee754_acos(x)
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.atan
  */
 @SinceKotlin("1.2")
 public actual fun atan(x: Double): Double = kotlin.math.fdlibm.atan(x)
@@ -66,16 +81,24 @@ public actual fun atan(x: Double): Double = kotlin.math.fdlibm.atan(x)
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
+ *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
- *   - `atan2(-0.0, x)` is `-0.0` for 'x > 0` and `-PI` for `x < 0`
- *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for '-Inf < y < 0`
+ *   - `atan2(-0.0, x)` is `-0.0` for `x > 0` and `-PI` for `x < 0`
+ *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Doubles.atan2
  */
 @SinceKotlin("1.2")
 public actual fun atan2(y: Double, x: Double): Double = kotlin.math.fdlibm.__ieee754_atan2(y, x)
@@ -158,6 +181,8 @@ public actual fun atanh(x: Double): Double = kotlin.math.fdlibm.__ieee754_atanh(
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Doubles.hypot
  */
 @SinceKotlin("1.2")
 public actual fun hypot(x: Double, y: Double): Double = kotlin.math.fdlibm.__ieee754_hypot(x, y)
@@ -166,7 +191,11 @@ public actual fun hypot(x: Double, y: Double): Double = kotlin.math.fdlibm.__iee
  * Computes the positive square root of the value [x].
  *
  * Special cases:
- *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *   - `sqrt(NaN)` is `NaN`
+ *   - `sqrt(-0.0)` is `-0.0`
+ *   - `sqrt(x)` is `NaN` when `x < 0`
+ *
+ * @sample samples.math.MathSamples.Doubles.sqrt
  */
 @SinceKotlin("1.2")
 public actual fun sqrt(x: Double): Double = kotlin.wasm.internal.wasm_f64_sqrt(x)
@@ -178,6 +207,8 @@ public actual fun sqrt(x: Double): Double = kotlin.wasm.internal.wasm_f64_sqrt(x
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 public actual fun exp(x: Double): Double = kotlin.math.fdlibm.__ieee754_exp(x)
@@ -193,6 +224,8 @@ public actual fun exp(x: Double): Double = kotlin.math.fdlibm.__ieee754_exp(x)
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Doubles.expm1
  */
 @SinceKotlin("1.2")
 public actual fun expm1(x: Double): Double = kotlin.math.fdlibm.expm1(x)
@@ -205,9 +238,11 @@ public actual fun expm1(x: Double): Double = kotlin.math.fdlibm.expm1(x)
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Doubles.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Double, base: Double): Double {
@@ -226,6 +261,8 @@ public actual fun log(x: Double, base: Double): Double {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithm
  */
 @SinceKotlin("1.2")
 public actual fun ln(x: Double): Double = kotlin.math.fdlibm.__ieee754_log(x)
@@ -234,6 +271,8 @@ public actual fun ln(x: Double): Double = kotlin.math.fdlibm.__ieee754_log(x)
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase10
  */
 @SinceKotlin("1.2")
 public actual fun log10(x: Double): Double = kotlin.math.fdlibm.__ieee754_log10(x)
@@ -242,6 +281,8 @@ public actual fun log10(x: Double): Double = kotlin.math.fdlibm.__ieee754_log10(
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Double): Double = kotlin.math.fdlibm.__ieee754_log2(x)
@@ -259,28 +300,36 @@ public actual fun log2(x: Double): Double = kotlin.math.fdlibm.__ieee754_log2(x)
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 public actual fun ln1p(x: Double): Double = kotlin.math.fdlibm.log1p(x)
 
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
-
- * @return the smallest double value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the smallest double value that is greater than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.ceil
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun ceil(x: Double): Double = kotlin.wasm.internal.wasm_f64_ceil(x)
 
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
-
- * @return the largest double value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the largest double value that is smaller than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.floor
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun floor(x: Double): Double = kotlin.wasm.internal.wasm_f64_floor(x)
@@ -288,10 +337,13 @@ public actual fun floor(x: Double): Double = kotlin.wasm.internal.wasm_f64_floor
 /**
  * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [x] having its fractional part truncated.
- *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the value [x] having its fractional part truncated.
+ *
+ * @sample samples.math.MathSamples.Doubles.truncate
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun truncate(x: Double): Double = kotlin.wasm.internal.wasm_f64_truncate(x)
@@ -301,6 +353,9 @@ public actual fun truncate(x: Double): Double = kotlin.wasm.internal.wasm_f64_tr
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.round
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun round(x: Double): Double = kotlin.math.fdlibm.rint(x)
@@ -312,6 +367,7 @@ public actual fun round(x: Double): Double = kotlin.math.fdlibm.rint(x)
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Double]
+ * @sample samples.math.MathSamples.Doubles.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(x: Double): Double = kotlin.wasm.internal.wasm_f64_abs(x)
@@ -324,6 +380,8 @@ public actual fun abs(x: Double): Double = kotlin.wasm.internal.wasm_f64_abs(x)
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.signFun
  */
 @SinceKotlin("1.2")
 public actual fun sign(x: Double): Double = when {
@@ -352,15 +410,16 @@ public actual fun max(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_
 /**
  * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
- * of that value's magnitude. Special cases:
+ * of that value's magnitude.
  *
  * Special cases:
  *   - If the argument is `NaN`, then the result is `NaN`.
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ *
+ * @sample samples.math.MathSamples.Doubles.cbrt
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun cbrt(x: Double): Double = kotlin.math.fdlibm.__ieee754_cbrt(x)
 
 
@@ -376,6 +435,8 @@ public actual fun cbrt(x: Double): Double = kotlin.math.fdlibm.__ieee754_cbrt(x)
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Doubles.powDouble
  */
 @SinceKotlin("1.2")
 public actual fun Double.pow(x: Double): Double = kotlin.math.fdlibm.__ieee754_pow(this, x)
@@ -384,6 +445,8 @@ public actual fun Double.pow(x: Double): Double = kotlin.math.fdlibm.__ieee754_p
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Doubles.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.pow(n: Int): Double = kotlin.math.fdlibm.__ieee754_pow(this, n.toDouble())
@@ -395,6 +458,7 @@ public actual fun Double.pow(n: Int): Double = kotlin.math.fdlibm.__ieee754_pow(
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Doubles.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Double.absoluteValue: Double get() = kotlin.wasm.internal.wasm_f64_abs(this)
@@ -407,6 +471,8 @@ public actual val Double.absoluteValue: Double get() = kotlin.wasm.internal.wasm
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sign
  */
 @SinceKotlin("1.2")
 public actual val Double.sign: Double get() = sign(this)
@@ -415,12 +481,16 @@ public actual val Double.sign: Double get() = sign(this)
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignDouble
  */
 @SinceKotlin("1.2")
 public actual fun Double.withSign(sign: Double): Double = kotlin.wasm.internal.wasm_f64_copysign(this, sign)
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.withSign(sign: Int): Double = kotlin.wasm.internal.wasm_f64_copysign(this, sign.toDouble())
@@ -483,6 +553,7 @@ public actual fun Double.nextTowards(to: Double): Double = kotlin.math.fdlibm.ne
  *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.roundToInt(): Int = when {
@@ -501,6 +572,7 @@ public actual fun Double.roundToInt(): Int = when {
  *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToLong
  */
 @SinceKotlin("1.2")
 public actual fun Double.roundToLong(): Long = when {
@@ -516,26 +588,35 @@ public actual fun Double.roundToLong(): Long = when {
 
 // region ================ Float Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sin
  */
 @SinceKotlin("1.2")
 public actual fun sin(x: Float): Float = kotlin.math.fdlibm.sin(x.toDouble()).toFloat()
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.cos
  */
 @SinceKotlin("1.2")
 public actual fun cos(x: Float): Float = kotlin.math.fdlibm.cos(x.toDouble()).toFloat()
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.tan
  */
 @SinceKotlin("1.2")
 public actual fun tan(x: Float): Float = kotlin.math.fdlibm.tan(x.toDouble()).toFloat()
@@ -545,7 +626,9 @@ public actual fun tan(x: Float): Float = kotlin.math.fdlibm.tan(x.toDouble()).to
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.asin
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.toDouble()).toFloat()
@@ -555,7 +638,9 @@ public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.to
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.acos
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Float): Float = kotlin.math.fdlibm.__ieee754_acos(x.toDouble()).toFloat()
@@ -566,6 +651,8 @@ public actual fun acos(x: Float): Float = kotlin.math.fdlibm.__ieee754_acos(x.to
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.atan
  */
 @SinceKotlin("1.2")
 public actual fun atan(x: Float): Float = kotlin.math.fdlibm.atan(x.toDouble()).toFloat()
@@ -575,16 +662,24 @@ public actual fun atan(x: Float): Float = kotlin.math.fdlibm.atan(x.toDouble()).
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
+ *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
- *   - `atan2(-0.0, x)` is `-0.0` for 'x > 0` and `-PI` for `x < 0`
- *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for '-Inf < y < 0`
+ *   - `atan2(-0.0, x)` is `-0.0` for `x > 0` and `-PI` for `x < 0`
+ *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Floats.atan2
  */
 @SinceKotlin("1.2")
 public actual fun atan2(y: Float, x: Float): Float = kotlin.math.fdlibm.__ieee754_atan2(y.toDouble(), x.toDouble()).toFloat()
@@ -667,6 +762,8 @@ public actual fun atanh(x: Float): Float = kotlin.math.fdlibm.__ieee754_atanh(x.
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Floats.hypot
  */
 @SinceKotlin("1.2")
 public actual fun hypot(x: Float, y: Float): Float = kotlin.math.fdlibm.__ieee754_hypot(x.toDouble(), y.toDouble()).toFloat()
@@ -675,7 +772,11 @@ public actual fun hypot(x: Float, y: Float): Float = kotlin.math.fdlibm.__ieee75
  * Computes the positive square root of the value [x].
  *
  * Special cases:
- *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *   - `sqrt(NaN)` is `NaN`
+ *   - `sqrt(-0.0)` is `-0.0`
+ *   - `sqrt(x)` is `NaN` when `x < 0`
+ *
+ * @sample samples.math.MathSamples.Floats.sqrt
  */
 @SinceKotlin("1.2")
 public actual fun sqrt(x: Float): Float = kotlin.wasm.internal.wasm_f32_sqrt(x)
@@ -687,6 +788,8 @@ public actual fun sqrt(x: Float): Float = kotlin.wasm.internal.wasm_f32_sqrt(x)
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 public actual fun exp(x: Float): Float = kotlin.math.fdlibm.__ieee754_exp(x.toDouble()).toFloat()
@@ -702,6 +805,8 @@ public actual fun exp(x: Float): Float = kotlin.math.fdlibm.__ieee754_exp(x.toDo
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Floats.expm1
  */
 @SinceKotlin("1.2")
 public actual fun expm1(x: Float): Float = kotlin.math.fdlibm.expm1(x.toDouble()).toFloat()
@@ -714,9 +819,11 @@ public actual fun expm1(x: Float): Float = kotlin.math.fdlibm.expm1(x.toDouble()
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Floats.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Float, base: Float): Float {
@@ -732,6 +839,8 @@ public actual fun log(x: Float, base: Float): Float {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithm
  */
 @SinceKotlin("1.2")
 public actual fun ln(x: Float): Float = kotlin.math.fdlibm.__ieee754_log(x.toDouble()).toFloat()
@@ -740,6 +849,8 @@ public actual fun ln(x: Float): Float = kotlin.math.fdlibm.__ieee754_log(x.toDou
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase10
  */
 @SinceKotlin("1.2")
 public actual fun log10(x: Float): Float = kotlin.math.fdlibm.__ieee754_log10(x.toDouble()).toFloat()
@@ -748,6 +859,8 @@ public actual fun log10(x: Float): Float = kotlin.math.fdlibm.__ieee754_log10(x.
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Float): Float = kotlin.math.fdlibm.__ieee754_log2(x.toDouble()).toFloat()
@@ -765,28 +878,36 @@ public actual fun log2(x: Float): Float = kotlin.math.fdlibm.__ieee754_log2(x.to
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 public actual fun ln1p(x: Float): Float = kotlin.math.fdlibm.log1p(x.toDouble()).toFloat()
 
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
-
- * @return the smallest Float value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the smallest Float value that is greater than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.ceil
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun ceil(x: Float): Float = kotlin.wasm.internal.wasm_f32_ceil(x)
 
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
-
- * @return the largest Float value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the largest Float value that is smaller than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.floor
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun floor(x: Float): Float = kotlin.wasm.internal.wasm_f32_floor(x)
@@ -794,10 +915,13 @@ public actual fun floor(x: Float): Float = kotlin.wasm.internal.wasm_f32_floor(x
 /**
  * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [x] having its fractional part truncated.
- *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the value [x] having its fractional part truncated.
+ *
+ * @sample samples.math.MathSamples.Floats.truncate
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun truncate(x: Float): Float = kotlin.wasm.internal.wasm_f32_truncate(x)
@@ -807,6 +931,9 @@ public actual fun truncate(x: Float): Float = kotlin.wasm.internal.wasm_f32_trun
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.round
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun round(x: Float): Float = round(x.toDouble()).toFloat()
@@ -819,6 +946,7 @@ public actual fun round(x: Float): Float = round(x.toDouble()).toFloat()
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Float]
+ * @sample samples.math.MathSamples.Floats.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(x: Float): Float = kotlin.wasm.internal.wasm_f32_abs(x)
@@ -831,6 +959,8 @@ public actual fun abs(x: Float): Float = kotlin.wasm.internal.wasm_f32_abs(x)
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.signFun
  */
 @SinceKotlin("1.2")
 public actual fun sign(x: Float): Float = when {
@@ -860,15 +990,16 @@ public actual fun max(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32
 /**
  * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
- * of that value's magnitude. Special cases:
+ * of that value's magnitude.
  *
  * Special cases:
  *   - If the argument is `NaN`, then the result is `NaN`.
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ *
+ * @sample samples.math.MathSamples.Floats.cbrt
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun cbrt(x: Float): Float = kotlin.math.fdlibm.__ieee754_cbrt(x.toDouble()).toFloat()
 
 
@@ -885,6 +1016,8 @@ public actual fun cbrt(x: Float): Float = kotlin.math.fdlibm.__ieee754_cbrt(x.to
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Floats.powFloat
  */
 @SinceKotlin("1.2")
 public actual fun Float.pow(x: Float): Float = kotlin.math.fdlibm.__ieee754_pow(this.toDouble(), x.toDouble()).toFloat()
@@ -893,6 +1026,8 @@ public actual fun Float.pow(x: Float): Float = kotlin.math.fdlibm.__ieee754_pow(
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Floats.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.pow(n: Int): Float = kotlin.math.fdlibm.__ieee754_pow(this.toDouble(), n.toDouble()).toFloat()
@@ -904,6 +1039,7 @@ public actual fun Float.pow(n: Int): Float = kotlin.math.fdlibm.__ieee754_pow(th
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Floats.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Float.absoluteValue: Float get() = kotlin.wasm.internal.wasm_f32_abs(this)
@@ -916,6 +1052,8 @@ public actual val Float.absoluteValue: Float get() = kotlin.wasm.internal.wasm_f
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sign
  */
 @SinceKotlin("1.2")
 public actual val Float.sign: Float get() = sign(this)
@@ -924,12 +1062,16 @@ public actual val Float.sign: Float get() = sign(this)
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignFloat
  */
 @SinceKotlin("1.2")
 public actual fun Float.withSign(sign: Float): Float = kotlin.wasm.internal.wasm_f32_copysign(this, sign)
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.withSign(sign: Int): Float = kotlin.wasm.internal.wasm_f32_copysign(this, sign.toFloat())
@@ -944,6 +1086,7 @@ public actual fun Float.withSign(sign: Int): Float = kotlin.wasm.internal.wasm_f
  *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.roundToInt(): Int = when {
@@ -962,6 +1105,7 @@ public actual fun Float.roundToInt(): Int = when {
  *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToLong
  */
 @SinceKotlin("1.2")
 public actual fun Float.roundToLong(): Long = when {
@@ -983,6 +1127,7 @@ public actual fun Float.roundToLong(): Long = when {
  *   - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Int]
+ * @sample samples.math.MathSamples.Ints.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(n: Int): Int = if (n < 0) -n else n
@@ -1006,6 +1151,7 @@ public actual fun max(a: Int, b: Int): Int = if (a > b) a else b
  *   - `Int.MIN_VALUE.absoluteValue` is `Int.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Ints.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Int.absoluteValue: Int get() = abs(this)
@@ -1015,14 +1161,11 @@ public actual val Int.absoluteValue: Int get() = abs(this)
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Ints.sign
  */
 @SinceKotlin("1.2")
-public actual val Int.sign: Int
-    get() = when {
-        this < 0 -> -1
-        this > 0 -> 1
-        else -> 0
-    }
+public actual val Int.sign: Int get() = (this shr (Int.SIZE_BITS - 1)) or (-this ushr (Int.SIZE_BITS - 1))
 
 /**
  * Returns the absolute value of the given value [n].
@@ -1031,6 +1174,7 @@ public actual val Int.sign: Int
  *   - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Long]
+ * @sample samples.math.MathSamples.Longs.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(n: Long): Long = if (n < 0) -n else n
@@ -1054,6 +1198,7 @@ public actual fun max(a: Long, b: Long): Long = if (a >= b) a else b
  *   - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Longs.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Long.absoluteValue: Long get() = abs(this)
@@ -1063,12 +1208,10 @@ public actual val Long.absoluteValue: Long get() = abs(this)
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Longs.sign
  */
 @SinceKotlin("1.2")
-public actual val Long.sign: Int get() = when {
-    this < 0L -> -1
-    this > 0L -> 1
-    else -> 0
-}
+public actual val Long.sign: Int get() = ((this shr (Long.SIZE_BITS - 1)) or (-this ushr (Long.SIZE_BITS - 1))).toInt()
 
 // endregion

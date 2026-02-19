@@ -1,2 +1,0 @@
-error: file '$TMP_DIR$/library.meta.js' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$
-COMPILATION_ERROR

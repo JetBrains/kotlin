@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 interface A {
     fun foo(): CharSequence?
@@ -14,3 +15,7 @@ fun test(a: A) {
         a.foo().checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, interfaceDeclaration, isExpression, lambdaLiteral, nullableType, override, smartcast, typeParameter,
+typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 annotation class Ann(
@@ -12,8 +13,11 @@ annotation class Ann(
     p1 = java.lang.Integer.MAX_VALUE + 1,
     p2 = 1 + 1,
     p3 = <!ARGUMENT_TYPE_MISMATCH!>java.lang.Integer.MAX_VALUE + 1<!>,
-    p4 = <!ARGUMENT_TYPE_MISMATCH!>1.toInt() + 1.toInt()<!>,
-    p5 = 1.toInt() + 1.toInt()
+    p4 = <!ARGUMENT_TYPE_MISMATCH!>1L.toInt() + 1L.toInt()<!>,
+    p5 = 1L.toInt() + 1L.toInt()
 ) class MyClass
 
 // EXPECTED: @Ann(p1 = -2147483648, p2 = 2, p3 = -2147483648, p4 = 2, p5 = 2)
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, integerLiteral, javaProperty,
+primaryConstructor, propertyDeclaration */

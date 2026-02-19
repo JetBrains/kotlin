@@ -1,0 +1,16 @@
+KtNameReferenceExpression(124,133): 'parameter'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = parameter
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = parameter: kotlin.Any
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}

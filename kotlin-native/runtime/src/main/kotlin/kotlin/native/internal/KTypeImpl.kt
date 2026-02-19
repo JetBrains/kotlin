@@ -5,10 +5,11 @@
 
 package kotlin.native.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.*
 
 internal object KVarianceMapper {
-    // this constants are copypasted to ReflectionSupport.kt
+    // this constants are copypasted to NativeReflectionIrBuilder.kt
     const val VARIANCE_STAR = -1
     const val VARIANCE_INVARIANT = 0
     const val VARIANCE_IN = 1
@@ -36,6 +37,7 @@ internal object KVarianceMapper {
  *
  * When this issue is resolved, this class can be replaced with just ArrayList
  */
+@UsedFromCompilerGeneratedCode
 internal class KTypeProjectionList(val variance: IntArray, val type: Array<KType?>) : AbstractList<KTypeProjection>() {
     override val size
         get() = variance.size
@@ -49,54 +51,7 @@ internal class KTypeProjectionList(val variance: IntArray, val type: Array<KType
 
 }
 
-internal class KTypeImpl<T>(
-        override val classifier: KClassifier?,
-        override val arguments: List<KTypeProjection>,
-        override val isMarkedNullable: Boolean
-) : KType {
-
-    @ExportForCompiler
-    @ConstantConstructorIntrinsic("KTYPE_IMPL")
-    @Suppress("UNREACHABLE_CODE")
-    constructor() : this(null, TODO("This is intrinsic constructor and it shouldn't be used directly"), false)
-
-    override fun equals(other: Any?) =
-            other is KTypeImpl<*> &&
-                    this.classifier == other.classifier &&
-                    this.arguments == other.arguments &&
-                    this.isMarkedNullable == other.isMarkedNullable
-
-    override fun hashCode(): Int {
-        return (classifier?.hashCode() ?: 0) * 31 * 31 + this.arguments.hashCode() * 31 + if (isMarkedNullable) 1 else 0
-    }
-
-    override fun toString(): String {
-        val classifierString = when (classifier) {
-            is KClass<*> -> classifier.qualifiedName ?: classifier.simpleName
-            is KTypeParameter -> classifier.name
-            else -> null
-        } ?: return "(non-denotable type)"
-
-        return buildString {
-            append(classifierString)
-
-            if (arguments.isNotEmpty()) {
-                append('<')
-
-                arguments.forEachIndexed { index, argument ->
-                    if (index > 0) append(", ")
-
-                    append(argument)
-                }
-
-                append('>')
-            }
-
-            if (isMarkedNullable) append('?')
-        }
-    }
-}
-
+@UsedFromCompilerGeneratedCode
 internal class KTypeImplForTypeParametersWithRecursiveBounds : KType {
     override val classifier: KClassifier?
         get() = error("Type parameters with recursive bounds are not yet supported in reflection")

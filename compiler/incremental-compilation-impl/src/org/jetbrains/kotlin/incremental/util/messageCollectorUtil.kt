@@ -14,6 +14,5 @@ public fun MessageCollector.reportException(e: Throwable, location: ExceptionLoc
 public enum class ExceptionLocation(val readableName: String) {
     INCREMENTAL_COMPILATION("Incremental compilation"),
     DAEMON("Daemon compilation"),
-    OUT_OF_PROCESS_COMPILATION("Out of process compilation")
 }
 

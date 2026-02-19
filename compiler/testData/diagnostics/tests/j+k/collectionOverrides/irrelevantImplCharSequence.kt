@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: AImpl.java
 
@@ -24,3 +25,6 @@ fun main() {
     x[0]
     x.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaProperty, javaType, localProperty,
+propertyDeclaration */

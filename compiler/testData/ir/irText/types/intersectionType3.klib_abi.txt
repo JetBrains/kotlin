@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /A // /A|null[0]
+abstract interface /A1 : /A // /A1|null[0]
+abstract interface /A2 : /A // /A2|null[0]
+abstract interface /B // /B|null[0]
+abstract interface <#A: in kotlin/Any?> /In // /In|null[0]
+abstract interface /Z1 : /A, /B // /Z1|null[0]
+abstract interface /Z2 : /A, /B // /Z2|null[0]
+final inline fun <#A: reified kotlin/Any?> (/In<#A>)./asT() // /asT|asT@In<0:0>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (/In<#A>)./isT(): kotlin/Boolean // /isT|isT@In<0:0>(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /sel(#A, #A): #A // /sel|sel(0:0;0:0){0§<kotlin.Any?>}[0]
+final fun /testInAs1(/In</A>, /In</B>) // /testInAs1|testInAs1(In<A>;In<B>){}[0]
+final fun /testInAs2(/In</Z1>, /In</Z2>) // /testInAs2|testInAs2(In<Z1>;In<Z2>){}[0]
+final fun /testInAs3(/In</A1>, /In</A2>) // /testInAs3|testInAs3(In<A1>;In<A2>){}[0]
+final fun /testInIs1(/In</A>, /In</B>): kotlin/Boolean // /testInIs1|testInIs1(In<A>;In<B>){}[0]
+final fun /testInIs2(/In</Z1>, /In</Z2>): kotlin/Boolean // /testInIs2|testInIs2(In<Z1>;In<Z2>){}[0]
+final fun /testInIs3(/In</A1>, /In</A2>): kotlin/Boolean // /testInIs3|testInIs3(In<A1>;In<A2>){}[0]

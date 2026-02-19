@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ir.isBox
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
+import org.jetbrains.kotlin.backend.konan.ir.isUnbox
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -76,20 +79,18 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
             }
             return with(coercion) {
                 IrCallImpl(
-                        startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin
+                        startOffset, endOffset, type, symbol, typeArguments.size, origin
                 ).apply {
-                    putValueArgument(0, result)
+                    arguments[0] = result
                 }
             }
         }
     }
 
-    private fun IrFunction.getCoercedClass(): IrClass {
-        if (name.asString().endsWith("-box>"))
-            return valueParameters[0].type.classifierOrFail.owner as IrClass
-        if (name.asString().endsWith("-unbox>"))
-            return returnType.classifierOrFail.owner as IrClass
-        error("Unexpected coercion: ${this.render()}")
+    private fun IrFunction.getCoercedClass() = when {
+        isBox() -> parameters[0].type.getClass()!!
+        isUnbox() -> returnType.getClass()!!
+        else -> error("Unexpected coercion: ${this.render()}")
     }
 
     private fun IrTypeOperator.isCast() =
@@ -97,7 +98,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
 
     private data class PossiblyFoldedExpression(val expression: IrExpression, val folded: Boolean)
 
-    private val transformer = object : IrElementTransformer<TransformerState?> {
+    private val transformer = object : IrTransformer<TransformerState?>() {
         override fun visitElement(element: IrElement, data: TransformerState?) = super.visitElement(element, null)
         override fun visitDeclaration(declaration: IrDeclarationBase, data: TransformerState?) = super.visitDeclaration(declaration, null)
         override fun visitExpression(expression: IrExpression, data: TransformerState?) = super.visitExpression(expression, null)
@@ -109,7 +110,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
             if (!expression.isBoxOrUnboxCall())
                 return super.visitCall(expression, null)
 
-            val argument = expression.getValueArgument(0)!!
+            val argument = expression.arguments[0]!!
             return if (expression.symbol.owner.getCoercedClass() == data?.coercion?.symbol?.owner?.getCoercedClass()) {
                 data.folded = true
                 argument.transform(this, null)
@@ -119,7 +120,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                 if (state.folded)
                     result
                 else
-                    expression.also { it.putValueArgument(0, result) }
+                    expression.also { it.arguments[0] = result }
             }
         }
 

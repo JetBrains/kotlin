@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package unresolved
 
 class Pair<A, B>(val a: A, val b: B)
@@ -30,3 +31,7 @@ fun testUnresolved() {
 }
 
 fun foo1(i: Int) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, forLoop, functionDeclaration, ifExpression,
+integerLiteral, isExpression, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, whenExpression, whenWithSubject */

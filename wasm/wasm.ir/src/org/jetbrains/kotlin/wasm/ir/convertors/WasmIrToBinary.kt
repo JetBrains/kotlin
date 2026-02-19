@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
-import kotlinx.collections.immutable.*
-import org.jetbrains.kotlin.wasm.ir.source.location.Box
-import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
+import org.jetbrains.kotlin.wasm.ir.debug.DebugData
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformation
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationConsumer
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGenerator
+import org.jetbrains.kotlin.wasm.ir.source.location.*
 
 private object WasmBinary {
     const val MAGIC = 0x6d736100u
@@ -26,8 +25,8 @@ private object WasmBinary {
     const val STRUCT_TYPE: Byte = -0x21 // 0x5F
     const val ARRAY_TYPE: Byte = -0x22 // 0x5E
     const val SUB_TYPE: Byte = -0x30 // 0x50
-    const val SUB_FINAL_TYPE: Byte = -0x32 // 0x4E
-    const val REC_GROUP: Byte = -0x31 // 0x4F
+    const val SUB_FINAL_TYPE: Byte = -0x31 // 0x4F
+    const val REC_GROUP: Byte = -0x32 // 0x4E
 
     @JvmInline
     value class Section private constructor(val id: UShort) {
@@ -52,19 +51,38 @@ private object WasmBinary {
 }
 
 class WasmIrToBinary(
-    outputStream: OutputStream,
+    val b: ByteWriterWithOffsetWrite,
     val module: WasmModule,
     val moduleName: String,
     val emitNameSection: Boolean,
-    private val sourceMapFileName: String? = null,
-    private val sourceLocationMappings: MutableList<SourceLocationMapping>? = null
-) {
-    private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
+    private val debugInformationGenerator: DebugInformationGenerator? = null,
+) : DebugInformationConsumer {
+    private var codeSectionOffset = Box(0)
+    private val appendImmediateDelegate = ::appendImmediate
+    private val defaultEndInstruction = wasmInstrWithoutLocation(WasmOp.END)
+    private val resolver = module.resolver
 
-    // "Stack" of offsets waiting initialization. 
-    // Since blocks has as a prefix variable length number encoding its size we can't calculate absolute offsets inside those blocks 
-    // until we generate whole block and generate size. So, we put them into "stack" and initialize as soo as we have all required data.
-    private var offsets = persistentListOf<Box>()
+    override fun consumeDebugInformation(debugInformation: DebugInformation) {
+        debugInformation.forEach {
+            appendSection(WasmBinary.Section.CUSTOM) {
+                b.writeString(it.name)
+                when (it.data) {
+                    is DebugData.StringData -> b.writeString(it.data.value)
+                    is DebugData.RawBytes -> b.writeBytes(it.data.value)
+                }
+            }
+        }
+    }
+
+    private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
+        typeList.forEach { type ->
+            when (type) {
+                is WasmStructDeclaration -> appendStructTypeDeclaration(type)
+                is WasmArrayDeclaration -> appendArrayTypeDeclaration(type)
+                is WasmFunctionType -> appendFunctionTypeDeclaration(type)
+            }
+        }
+    }
 
     fun appendWasmModule() {
         b.writeUInt32(WasmBinary.MAGIC)
@@ -73,18 +91,14 @@ class WasmIrToBinary(
         with(module) {
             // type section
             appendSection(WasmBinary.Section.TYPE) {
-                val numRecGroups = if (recGroupTypes.isEmpty()) 0 else 1
-                appendVectorSize(functionTypes.size + numRecGroups)
-                functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                if (!recGroupTypes.isEmpty()) {
-                    b.writeVarInt7(WasmBinary.REC_GROUP)
-                    appendVectorSize(recGroupTypes.size)
-                    recGroupTypes.forEach {
-                        when (it) {
-                            is WasmStructDeclaration -> appendStructTypeDeclaration(it)
-                            is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
-                            is WasmFunctionType -> appendFunctionTypeDeclaration(it)
-                        }
+                appendVectorSize(recGroups.size)
+                recGroups.forEach { recGroup ->
+                    if (recGroup.size > 1) {
+                        b.writeVarInt7(WasmBinary.REC_GROUP)
+                        appendVectorSize(recGroup.size)
+                        appendWasmTypeList(recGroup)
+                    } else {
+                        appendWasmTypeList(recGroup)
                     }
                 }
             }
@@ -174,13 +188,7 @@ class WasmIrToBinary(
                 appendTextSection(definedFunctions)
             }
 
-            if (sourceMapFileName != null) {
-                // Custom section with URL to sourcemap
-                appendSection(WasmBinary.Section.CUSTOM) {
-                    b.writeString("sourceMappingURL")
-                    b.writeString(sourceMapFileName)
-                }
-            }
+            debugInformationGenerator?.let { consumeDebugInformation(it.generateDebugInformation()) }
         }
     }
 
@@ -213,10 +221,12 @@ class WasmIrToBinary(
             // https://github.com/WebAssembly/extended-name-section/blob/main/document/core/appendix/custom.rst
 
             appendSection(WasmBinary.Section.TABLE) {
-                appendVectorSize(module.recGroupTypes.size)
-                module.recGroupTypes.forEach {
-                    appendModuleFieldReference(it)
-                    b.writeString(it.name)
+                appendVectorSize(module.recGroups.sumOf { it.size })
+                module.recGroups.forEach { recGroup ->
+                    recGroup.forEach {
+                        appendModuleFieldReference(it)
+                        b.writeString(it.name)
+                    }
                 }
             }
 
@@ -231,7 +241,7 @@ class WasmIrToBinary(
             // Experimental fields name section
             // https://github.com/WebAssembly/gc/issues/193
             appendSection(WasmBinary.Section.CODE) {
-                val structDeclarations = module.recGroupTypes.filterIsInstance<WasmStructDeclaration>()
+                val structDeclarations = module.recGroups.flatMap { it.filterIsInstance<WasmStructDeclaration>() }
                 appendVectorSize(structDeclarations.size)
                 structDeclarations.forEach {
                     appendModuleFieldReference(it)
@@ -247,7 +257,7 @@ class WasmIrToBinary(
 
     private fun appendInstr(instr: WasmInstr) {
         instr.location?.let {
-            sourceLocationMappings?.add(SourceLocationMapping(offsets + Box(b.written), it))
+            debugInformationGenerator?.addSourceLocation(getCurrentSourceLocationMapping(it))
         }
 
         val opcode = instr.operator.opcode
@@ -262,10 +272,15 @@ class WasmIrToBinary(
             b.writeByte(opcode.toByte())
         }
 
-        instr.immediates.forEach {
-            appendImmediate(it)
-        }
+        instr.forEachImmediates(appendImmediateDelegate)
     }
+
+    private fun getCurrentSourceLocationMapping(sourceLocation: SourceLocation): SourceLocationMappingToBinary =
+        SourceLocationMappingToBinary(
+            sourceLocation = sourceLocation,
+            codeSectionOffset = codeSectionOffset,
+            offset = b.written
+        )
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
@@ -280,15 +295,16 @@ class WasmIrToBinary(
                 b.writeVarUInt32(x.offset)
             }
             is WasmImmediate.BlockType -> appendBlockType(x)
-            is WasmImmediate.FuncIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.LocalIdx -> appendLocalReference(x.value.owner)
-            is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.TypeIdx -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.FuncIdx -> appendModuleFieldReference(resolver.resolve(x))
+            is WasmImmediate.LocalIdx -> appendLocalReference(x.value)
+            is WasmImmediate.GlobalIdx -> appendModuleFieldReference(resolver.resolve(x))
+            is WasmImmediate.TypeIdx -> appendModuleFieldReference(resolver.resolve(x))
+
             is WasmImmediate.MemoryIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdx -> b.writeVarUInt32(x.value)
-            is WasmImmediate.TagIdx -> b.writeVarUInt32(x.value)
+            is WasmImmediate.TagIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdxVector -> {
                 b.writeVarUInt32(x.value.size)
                 for (target in x.value) {
@@ -302,35 +318,35 @@ class WasmIrToBinary(
                     appendType(type)
                 }
             }
-            is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value.owner)
+            is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.HeapType -> appendHeapType(x.value)
             is WasmImmediate.ConstString ->
                 error("Instructions with pseudo immediates should be skipped")
+
+            is WasmImmediate.Catch -> {
+                b.writeVarUInt32(x.type.opcode)
+                x.immediates.forEach(this::appendImmediate)
+            }
         }
     }
 
-    private fun appendSection(section: WasmBinary.Section, content: () -> Unit) {
+    private inline fun appendSection(section: WasmBinary.Section, content: () -> Unit) {
         b.writeVarUInt7(section.id)
-        withVarUInt32PayloadSizePrepended { content() }
+        codeSectionOffset = Box(-1)
+        codeSectionOffset.value = withVarUInt32PayloadSizePrepended(content)
     }
 
-    private fun withVarUInt32PayloadSizePrepended(fn: () -> Unit) {
-        val box = Box(-1)
-        val previousOffsets = offsets
-        offsets += box
+    private inline fun withVarUInt32PayloadSizePrepended(fn: () -> Unit): Int {
+        val prependOffset = b.written //offset for placeholder
+        b.writeVarUInt32Fixed(0) //placeholder for size
+        val prependStart = b.written
 
-        val previousWriter = b
-        val newWriter = b.createTemp()
-        b = newWriter
         fn()
-        b = previousWriter
-        b.writeVarUInt32(newWriter.written)
 
-        box.value = b.written
-        offsets = previousOffsets
+        val size = b.written - prependStart
+        b.writeVarUInt32FixedSize(size, prependOffset) //placeholder for size
 
-        b.write(newWriter)
+        return prependStart
     }
 
     private fun appendVectorSize(size: Int) {
@@ -347,7 +363,12 @@ class WasmIrToBinary(
 
     private fun appendBlockType(type: WasmImmediate.BlockType) {
         when (type) {
-            is WasmImmediate.BlockType.Function -> appendModuleFieldReference(type.type)
+            is WasmImmediate.BlockType.Function -> {
+                val field = type.type.owner
+                val id = field.id
+                    ?: error("${field::class} ${field.name} ID is unlinked")
+                b.writeVarInt32(id)
+            }
             is WasmImmediate.BlockType.Value -> when (type.type) {
                 null -> b.writeVarInt7(WasmBinary.EMPTY_TYPE_FOR_BLOCK)
                 else -> appendType(type.type)
@@ -355,36 +376,46 @@ class WasmIrToBinary(
         }
     }
 
-    private fun appendFiledType(field: WasmStructFieldDeclaration) {
+    private fun appendFieldType(field: WasmStructFieldDeclaration) {
         appendType(field.type)
         b.writeVarUInt1(field.isMutable)
     }
 
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
-        b.writeVarInt7(WasmBinary.SUB_TYPE)
-
         val superType = type.superType
-        if (superType != null) {
-            appendVectorSize(1)
-            appendModuleFieldReference(superType.owner)
+
+        // https://webassembly.github.io/gc/core/binary/types.html#binary-subtype
+        if (superType == null && type.isFinal) {
+            // Short encoding form for final types without subtypes.
         } else {
-            appendVectorSize(0)
+            // General encoding
+            b.writeVarInt7(
+                if (type.isFinal)
+                    WasmBinary.SUB_FINAL_TYPE
+                else
+                    WasmBinary.SUB_TYPE
+            )
+
+            if (superType != null) {
+                appendVectorSize(1)
+                val superType = resolver.resolve(superType)
+                appendModuleFieldReference(superType)
+            } else {
+                appendVectorSize(0)
+            }
         }
 
         b.writeVarInt7(WasmBinary.STRUCT_TYPE)
         b.writeVarUInt32(type.fields.size)
         type.fields.forEach {
-            appendFiledType(it)
+            appendFieldType(it)
         }
     }
 
     private fun appendArrayTypeDeclaration(type: WasmArrayDeclaration) {
         b.writeVarInt7(WasmBinary.ARRAY_TYPE)
-        appendFiledType(type.field)
+        appendFieldType(type.field)
     }
-
-    val WasmFunctionType.index: Int
-        get() = id!!
 
     private fun appendLimits(limits: WasmLimits) {
         b.writeVarUInt1(limits.maxSize != null)
@@ -395,19 +426,19 @@ class WasmIrToBinary(
 
     private fun appendImportedFunction(function: WasmFunction.Imported) {
         b.writeString(function.importPair.moduleName)
-        b.writeString(function.importPair.declarationName)
+        b.writeString(function.importPair.declarationName.owner)
         b.writeByte(0)  // Function external kind.
-        b.writeVarUInt32(function.type.owner.index)
+        b.writeVarUInt32((resolver.resolve(function.type).id!!))
     }
 
     private fun appendDefinedFunction(function: WasmFunction.Defined) {
-        b.writeVarUInt32(function.type.owner.index)
+        b.writeVarUInt32((resolver.resolve(function.type).id!!))
     }
 
     private fun appendTable(table: WasmTable) {
         if (table.importPair != null) {
             b.writeString(table.importPair.moduleName)
-            b.writeString(table.importPair.declarationName)
+            b.writeString(table.importPair.declarationName.owner)
             b.writeByte(1)
         }
 
@@ -418,7 +449,7 @@ class WasmIrToBinary(
     private fun appendMemory(memory: WasmMemory) {
         if (memory.importPair != null) {
             b.writeString(memory.importPair.moduleName)
-            b.writeString(memory.importPair.declarationName)
+            b.writeString(memory.importPair.declarationName.owner)
             b.writeByte(2)
         }
         appendLimits(memory.limits)
@@ -427,7 +458,7 @@ class WasmIrToBinary(
     private fun appendGlobal(c: WasmGlobal) {
         if (c.importPair != null) {
             b.writeString(c.importPair.moduleName)
-            b.writeString(c.importPair.declarationName)
+            b.writeString(c.importPair.declarationName.owner)
             b.writeByte(3)
             appendType(c.type)
             b.writeVarUInt1(c.isMutable)
@@ -441,18 +472,24 @@ class WasmIrToBinary(
     private fun appendTag(t: WasmTag) {
         if (t.importPair != null) {
             b.writeString(t.importPair.moduleName)
-            b.writeString(t.importPair.declarationName)
+            b.writeString(t.importPair.declarationName.owner)
             b.writeByte(4)
-            return
         }
         b.writeByte(0) // attribute
-        assert(t.type.id != null) { "Unlinked tag id" }
-        b.writeVarUInt32(t.type.id!!)
+
+        val tagType = resolver.resolve(t.type) as WasmFunctionType
+        check(tagType.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
+        val typeId = tagType.id
+        check(typeId != null) { "Unlinked tag id" }
+        b.writeVarUInt32(typeId)
     }
 
-    private fun appendExpr(expr: Iterable<WasmInstr>) {
-        expr.forEach { appendInstr(it) }
-        appendInstr(WasmInstrWithLocation(WasmOp.END, SourceLocation.NoLocation("End of instruction list")))
+    private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation? = null) {
+        expr.forEach {
+            appendInstr(it)
+        }
+        val endInstr = endLocation?.let { wasmInstrWithLocation(WasmOp.END, it) } ?: defaultEndInstruction
+        appendInstr(endInstr)
     }
 
     private fun appendExport(export: WasmExport<*>) {
@@ -528,7 +565,25 @@ class WasmIrToBinary(
     }
 
     private fun appendCode(function: WasmFunction.Defined) {
+        val shouldWriteLocationBeforeFunctionHeader = function.endLocation is SourceLocation.IgnoredLocation
+
+        if (shouldWriteLocationBeforeFunctionHeader) {
+            debugInformationGenerator?.addSourceLocation(
+                SourceLocationMappingToBinary(
+                    sourceLocation = SourceLocation.IgnoredLocation,
+                    codeSectionOffset = codeSectionOffset,
+                    offset = b.written
+                )
+            )
+        }
+
         withVarUInt32PayloadSizePrepended {
+            if (!shouldWriteLocationBeforeFunctionHeader) {
+                debugInformationGenerator?.addSourceLocation(
+                    getCurrentSourceLocationMapping(SourceLocation.NextLocation)
+                )
+            }
+
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->
                 if (!local.isParameter) {
@@ -537,7 +592,9 @@ class WasmIrToBinary(
                 }
             }
 
-            appendExpr(function.instructions)
+            debugInformationGenerator?.startFunction(getCurrentSourceLocationMapping(function.startLocation), function.name)
+            appendExpr(function.instructions, function.endLocation)
+            debugInformationGenerator?.endFunction(getCurrentSourceLocationMapping(function.endLocation))
         }
     }
 
@@ -562,7 +619,7 @@ class WasmIrToBinary(
     fun appendHeapType(type: WasmHeapType) {
         val code: Int = when (type) {
             is WasmHeapType.Simple -> type.code.toInt()
-            is WasmHeapType.Type -> type.type.owner.id!!
+            is WasmHeapType.Type -> resolver.resolve(type).id!!
         }
         b.writeVarInt32(code)
     }
@@ -578,12 +635,13 @@ class WasmIrToBinary(
         }
     }
 
-    fun appendLocalReference(local: WasmLocal) {
-        b.writeVarUInt32(local.id)
+    fun appendLocalReference(local: Int) {
+        b.writeVarUInt32(local)
     }
 
     fun appendModuleFieldReference(field: WasmNamedModuleField) {
-        val id = field.id ?: error("${field::class} ${field.name} ID is unlinked")
+        val id = field.id
+            ?: error("${field::class} ${field.name} ID is unlinked")
         b.writeVarUInt32(id)
     }
 
@@ -591,117 +649,35 @@ class WasmIrToBinary(
         this.writeVarUInt32(v.toUInt())
     }
 
+    fun ByteWriter.writeVarUInt32Fixed(v: Int) {
+        this.writeVarUInt32FixedSize(v.toUInt())
+    }
+
     private fun ByteWriter.writeString(str: String) {
         val bytes = str.toByteArray()
         this.writeVarUInt32(bytes.size)
         this.writeBytes(bytes)
     }
-}
 
-abstract class ByteWriter {
-    abstract val written: Int
 
-    abstract fun write(v: ByteWriter)
-    abstract fun writeByte(v: Byte)
-    abstract fun writeBytes(v: ByteArray)
-    abstract fun createTemp(): ByteWriter
+    private class SourceLocationMappingToBinary(
+        override val sourceLocation: SourceLocation,
+        private val codeSectionOffset: Box,
+        private val offset: Int
+    ) : SourceLocationMapping() {
 
-    fun writeUByte(v: UByte) {
-        writeByte(v.toByte())
-    }
+        override val generatedLocation: SourceLocation.DefinedLocation
+            get() = SourceLocation.DefinedLocation(
+                file = "",
+                line = 0,
+                column = offset
+            )
 
-    fun writeUInt32(v: UInt) {
-        writeByte(v.toByte())
-        writeByte((v shr 8).toByte())
-        writeByte((v shr 16).toByte())
-        writeByte((v shr 24).toByte())
-    }
-
-    fun writeUInt64(v: ULong) {
-        writeByte(v.toByte())
-        writeByte((v shr 8).toByte())
-        writeByte((v shr 16).toByte())
-        writeByte((v shr 24).toByte())
-        writeByte((v shr 32).toByte())
-        writeByte((v shr 40).toByte())
-        writeByte((v shr 48).toByte())
-        writeByte((v shr 56).toByte())
-    }
-
-    fun writeVarInt7(v: Byte) {
-        writeSignedLeb128(v.toLong())
-    }
-
-    fun writeVarInt32(v: Int) {
-        writeSignedLeb128(v.toLong())
-    }
-
-    fun writeVarInt64(v: Long) {
-        writeSignedLeb128(v)
-    }
-
-    fun writeVarUInt1(v: Boolean) {
-        writeUnsignedLeb128(if (v) 1u else 0u)
-    }
-
-    fun writeVarUInt7(v: UShort) {
-        writeUnsignedLeb128(v.toUInt())
-    }
-
-    fun writeVarUInt32(v: UInt) {
-        writeUnsignedLeb128(v)
-    }
-
-    private fun writeUnsignedLeb128(v: UInt) {
-        // Taken from Android source, Apache licensed
-        @Suppress("NAME_SHADOWING")
-        var v = v
-        var remaining = v shr 7
-        while (remaining != 0u) {
-            val byte = (v and 0x7fu) or 0x80u
-            writeByte(byte.toByte())
-            v = remaining
-            remaining = remaining shr 7
-        }
-        val byte = v and 0x7fu
-        writeByte(byte.toByte())
-    }
-
-    private fun writeSignedLeb128(v: Long) {
-        // Taken from Android source, Apache licensed
-        @Suppress("NAME_SHADOWING")
-        var v = v
-        var remaining = v shr 7
-        var hasMore = true
-        val end = if (v and Long.MIN_VALUE == 0L) 0L else -1L
-        while (hasMore) {
-            hasMore = remaining != end || remaining and 1 != (v shr 6) and 1
-            val byte = ((v and 0x7f) or if (hasMore) 0x80 else 0).toInt()
-            writeByte(byte.toByte())
-            v = remaining
-            remaining = remaining shr 7
-        }
-    }
-
-    class OutputStream(val os: java.io.OutputStream) : ByteWriter() {
-        override var written = 0; private set
-
-        override fun write(v: ByteWriter) {
-            if (v !is OutputStream || v.os !is ByteArrayOutputStream) error("Writer not created from createTemp")
-            v.os.writeTo(os)
-            written += v.os.size()
-        }
-
-        override fun writeByte(v: Byte) {
-            os.write(v.toInt())
-            written++
-        }
-
-        override fun writeBytes(v: ByteArray) {
-            os.write(v)
-            written += v.size
-        }
-
-        override fun createTemp() = OutputStream(ByteArrayOutputStream())
+        override val generatedLocationRelativeToCodeSection: SourceLocation.DefinedLocation
+            get() = SourceLocation.DefinedLocation(
+                file = "",
+                line = 0,
+                column = offset - codeSectionOffset.value
+            )
     }
 }

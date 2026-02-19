@@ -5,37 +5,35 @@
 #ifndef LIBLLVMEXT_EXTENSIONS_H
 #define LIBLLVMEXT_EXTENSIONS_H
 
-#endif //LIBLLVMEXT_EXTENSIONS_H
-
+#include <PassesProfile.h>
 #include <llvm-c/Core.h>
+#include <llvm-c/Error.h>
 #include <llvm-c/Target.h>
-
+#include <llvm-c/TargetMachine.h>
+#include <llvm-c/Transforms/PassBuilder.h>
 
 # ifdef __cplusplus
 extern "C" {
 # endif
 
-void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple);
-
-void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef);
-
-void LLVMKotlinInitializeTargets();
+void LLVMKotlinInitializeTargets(void);
 
 void LLVMSetNoTailCall(LLVMValueRef Call);
 
 int LLVMInlineCall(LLVMValueRef call);
 
-void LLVMAddThreadSanitizerPass(LLVMPassManagerRef PM);
-
-/// Control LLVM -time-passes flag.
-void LLVMSetTimePasses(int enabled);
-
-/// Print timing results. Useful in combination with LLVMSetTimePasses.
-void LLVMPrintAllTimersToStdOut();
-
-/// Clear all LLVM timers. Allows avoiding automatic printing on shutdown
-void LLVMClearAllTimers();
+/// Run `Passes` on module `M`.
+/// When `Profile` is not `NULL` also collect profiling data and store the result in it.
+LLVMErrorRef LLVMKotlinRunPasses(
+        LLVMModuleRef M,
+        const char *Passes,
+        LLVMTargetMachineRef TM,
+        int InlinerThreshold,
+        LLVMKotlinPassesProfileRef* Profile
+);
 
 # ifdef __cplusplus
 }
 # endif
+
+#endif //LIBLLVMEXT_EXTENSIONS_H

@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // FILE: A.java
 public interface A {
     String foo();
@@ -50,3 +51,7 @@ fun foo(x: Any?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.foo().checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String?>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, infix, interfaceDeclaration, intersectionType, isExpression, javaType, lambdaLiteral, nullableType,
+smartcast, typeParameter, typeWithExtension */

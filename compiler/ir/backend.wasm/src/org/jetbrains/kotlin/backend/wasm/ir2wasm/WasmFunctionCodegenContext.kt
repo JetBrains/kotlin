@@ -6,42 +6,74 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DEFINED
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DESTRUCTURED_OBJECT_PARAMETER
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FOR_LOOP_ITERATOR
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
+import java.util.LinkedList
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR, TMP_FOR_BR_ON_CAST_EMULATION }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR }
 
 class WasmFunctionCodegenContext(
-    val irFunction: IrFunction,
+    val irFunction: IrFunction?,
     private val wasmFunction: WasmFunction.Defined,
-    val backendContext: WasmBackendContext,
-    val context: WasmModuleCodegenContext,
+    private val backendContext: WasmBackendContext,
+    private val wasmFileCodegenContext: WasmFileCodegenContext,
+    private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val functionFileEntry: IrFileEntry,
 ) {
-    val bodyGen: WasmExpressionBuilder =
-        WasmIrExpressionBuilder(wasmFunction.instructions)
-
-    val tagIdx: Int
-        get() = 0
 
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
 
+    data class InlineContext(val inlineFunctionSymbol: IrFunctionSymbol?, val irFileEntry: IrFileEntry)
+
+    private val inlineContextStack = LinkedList<InlineContext>()
+
     fun defineLocal(irValueDeclaration: IrValueSymbol) {
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
+        val originalName = owner.name.asString()
+
+        // prefix internal variables with a special character, to have the debugger sort them separately from "normal" variables declared by the user
+        val internalVariablePrefix = backendContext.configuration.get(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)
+        val name = when (owner.origin) {
+            // "blacklist" internal origins
+            // TODO can unify with JVM's ExpressionCodegen.kt IrValueDeclaration.isVisibleinLVT?
+            // origins also blacklisted in the JVM backend:
+            IR_TEMPORARY_VARIABLE, FOR_LOOP_ITERATOR, UNDERSCORE_PARAMETER, DESTRUCTURED_OBJECT_PARAMETER,
+                // additional origins that only come up here:
+            IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER,
+                -> {
+                internalVariablePrefix + originalName
+            }
+            else -> originalName
+        }
+
         val wasmLocal = WasmLocal(
             wasmFunction.locals.size,
-            owner.name.asString(),
-            if (owner is IrValueParameter) context.transformValueParameterType(owner) else context.transformType(owner.type),
+            name,
+            if (owner is IrValueParameter) wasmModuleTypeTransformer.transformValueParameterType(owner) else wasmModuleTypeTransformer.transformType(owner.type),
             isParameter = irValueDeclaration is IrValueParameterSymbol
         )
 
@@ -60,9 +92,9 @@ class WasmFunctionCodegenContext(
     private val SyntheticLocalType.wasmType
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
-                WasmRefNullType(WasmHeapType.Type(context.referenceGcType(backendContext.irBuiltIns.anyClass)))
-            SyntheticLocalType.TMP_FOR_BR_ON_CAST_EMULATION ->
-                WasmRefNullType(WasmHeapType.Simple.Any)
+                WasmRefNullType(wasmFileCodegenContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
+            SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
+                WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType)
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
         }
 
@@ -93,5 +125,19 @@ class WasmFunctionCodegenContext(
 
     fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int {
         return loopLevels.getValue(Pair(irLoop, labelType))
+    }
+
+    val currentFunctionSymbol: IrFunctionSymbol?
+        get() = inlineContextStack.firstOrNull()?.inlineFunctionSymbol ?: irFunction?.symbol
+
+    val currentFileEntry: IrFileEntry?
+        get() = inlineContextStack.firstOrNull()?.irFileEntry ?: functionFileEntry
+
+    fun stepIntoInlinedFunction(inlineFunctionSymbol: IrFunctionSymbol?, irFileEntry: IrFileEntry) {
+        inlineContextStack.push(InlineContext(inlineFunctionSymbol, irFileEntry))
+    }
+
+    fun stepOutLastInlinedFunction() {
+        inlineContextStack.pop()
     }
 }

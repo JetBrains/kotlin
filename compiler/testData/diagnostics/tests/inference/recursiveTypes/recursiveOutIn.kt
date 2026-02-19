@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface Rec<out A: Rec<A, B>, in B>
 
@@ -19,3 +20,6 @@ fun testOutOut() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, {I2 & I3}>")!>cst1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, {I2 & I4}>")!>cst2<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, interfaceDeclaration, intersectionType, localProperty, nullableType,
+objectDeclaration, out, propertyDeclaration, starProjection, typeConstraint, typeParameter, vararg */

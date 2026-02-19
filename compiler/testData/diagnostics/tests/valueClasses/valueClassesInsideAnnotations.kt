@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ALLOW_KOTLIN_PACKAGE
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 
 package kotlin.jvm
 
@@ -19,3 +20,6 @@ annotation class Ann2(val a: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<MyString
 annotation class Ann3(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val a: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>MyInt<!>)
 
 annotation class Ann4(val a: KClass<MyInt>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, outProjection, primaryConstructor, propertyDeclaration,
+value, vararg */

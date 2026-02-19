@@ -1,4 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
+
 // FILE: a/A.java
 package a;
 public interface A {
@@ -20,6 +23,9 @@ public class AImpl implements A {
         return new BImpl();
     }
 }
+
+// FILE: a/BImpl.java
+package a;
 
 class BImpl implements B {
     @Override
@@ -43,3 +49,5 @@ fun test2(aImpl: AImpl) {
     a.b().bar() // Works at FE1.0, fails at FIR
 }
 
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, ifExpression, isExpression, javaFunction,
+javaType, localProperty, propertyDeclaration, smartcast */

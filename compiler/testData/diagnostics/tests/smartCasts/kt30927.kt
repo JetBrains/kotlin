@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
+// CHECK_TYPE
 
 fun case_0() {
     val z: Any? = 10
@@ -48,3 +49,7 @@ fun case_3(z: Any?) {
     y checkType { _<kotlin.String>() }
     // y is inferred to String
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, thisExpression, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

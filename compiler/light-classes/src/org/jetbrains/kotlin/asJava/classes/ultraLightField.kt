@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
@@ -85,7 +85,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
     private val containingClass: KtLightClass,
     private val support: KtUltraLightSupport,
     modifiers: Set<String>,
-) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField,
+) : LightFieldBuilder(name, PsiTypes.nullType(), declaration), KtLightField,
     KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtDeclaration, PsiField> {
 
     private val modifierList by lazyPub {
@@ -152,8 +152,8 @@ internal open class KtUltraLightFieldImpl protected constructor(
                     ?: nonExistent()
 
             else -> {
-                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
-                val descriptor = variableDescriptor ?: return@lazyPub PsiType.NULL
+                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiTypes.nullType()
+                val descriptor = variableDescriptor ?: return@lazyPub PsiTypes.nullType()
 
                 support.mapType(kotlinType, this) { typeMapper, sw ->
                     typeMapper.writeFieldSignature(kotlinType, descriptor, sw)
@@ -193,7 +193,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
     override val lightMemberOrigin = LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER)
 
     override fun setName(@NonNls name: String): PsiElement {
-        (kotlinOrigin as? KtNamedDeclaration)?.setName(name)
+        kotlinOrigin.setName(name)
         return this
     }
 

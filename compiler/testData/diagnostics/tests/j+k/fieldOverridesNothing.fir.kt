@@ -1,4 +1,5 @@
-// !LANGUAGE: +PreferJavaFieldOverload
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +PreferJavaFieldOverload
 
 // FILE: B.java
 
@@ -13,9 +14,12 @@ interface A {
 }
 
 class C : B() {
-    override val size: Int get() = 1
+    override val <!PROPERTY_HIDES_JAVA_FIELD!>size<!>: Int get() = 1
 }
 
 fun foo() {
     C().size
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, javaType,
+override, propertyDeclaration */

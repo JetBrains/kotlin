@@ -1,0 +1,4 @@
+public/*package*/ open class With$InName : R|kotlin/Any| {
+    public/*package*/ constructor(): R|pckg/With$InName|
+
+}

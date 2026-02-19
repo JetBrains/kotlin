@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -19,3 +20,6 @@ fun test(a: Any) {
     // When is not exhaustive
     return <!RETURN_TYPE_MISMATCH!>q<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, isExpression, localProperty, nullableType,
+propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

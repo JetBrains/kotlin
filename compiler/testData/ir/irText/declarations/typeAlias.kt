@@ -1,10 +1,7 @@
-// SKIP_SIGNATURE_DUMP
-// ^ KT-45285
-
 typealias Test1 = String
 
 fun foo() {
-    @Suppress("TOPLEVEL_TYPEALIASES_ONLY")
+    @Suppress("TOPLEVEL_TYPEALIASES_ONLY", "UNSUPPORTED_FEATURE")
     typealias TestLocal = String
 }
 

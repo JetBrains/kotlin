@@ -1,8 +1,9 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun test(xs: List<String>): String {
     var r = ""
-    for ((i, x) in xs.withIndex()) {
+    for ([i, x] in xs.withIndex()) {
         if (i % 2 == 0) continue
         r += "$i:$x;"
     }

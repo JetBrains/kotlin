@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/J.java
 
@@ -15,3 +16,5 @@ fun test(ia: IntArray) {
     J().intArr(ia)
     J().intArr(null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, nullableType */

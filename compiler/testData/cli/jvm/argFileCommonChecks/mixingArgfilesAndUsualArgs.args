@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/simple.kt
+-d
+@$TESTDATA_DIR$/mixingArgfilesAndUsualArgs.argfile

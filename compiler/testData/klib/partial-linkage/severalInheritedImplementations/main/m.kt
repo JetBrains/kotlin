@@ -6,12 +6,6 @@ private fun TestBuilder.fe(className: String) = linkage("Function 'foo' in class
 private fun TestBuilder.pe(className: String) = linkage("Property accessor 'bar.<get-bar>' in class '${className}' inherits more than one default implementation")
 
 fun box() = abiTest {
-    // For now it's not working with caches, because of incorrect lazy-IR usage.
-    // Check KT-54019 for details.
-    if (!testMode.lazyIr.usedEverywhere) {
-        expectSuccess("OK") { "OK" }
-        return@abiTest
-    }
     val instance_I_Default = I_Default()
     val instance_Default_I = Default_I()
     val instance_I_RemovedDefault = I_RemovedDefault()

@@ -5,9 +5,19 @@
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
@@ -22,9 +32,11 @@ val FirClassLikeDeclaration.classId: ClassId
 
 val FirClass.superConeTypes: List<ConeClassLikeType> get() = superTypeRefs.mapNotNull { it.coneTypeSafe() }
 
+@OptIn(DirectDeclarationsAccess::class)
 val FirClass.anonymousInitializers: List<FirAnonymousInitializer>
     get() = declarations.filterIsInstance<FirAnonymousInitializer>()
 
+@DirectDeclarationsAccess
 val FirClass.delegateFields: List<FirField>
     get() = declarations.filterIsInstance<FirField>().filter { it.isSynthetic }
 
@@ -37,32 +49,44 @@ inline val FirDeclaration.isPrecompiled: Boolean
 inline val FirDeclaration.isSynthetic: Boolean
     get() = origin is FirDeclarationOrigin.Synthetic
 
-// NB: This function checks transitive localness. That is,
-// if a declaration `isNonLocal`, then its parent also `isNonLocal`.
-val FirDeclaration.isNonLocal
+/**
+ * An extension to determine locality for a general [FirDeclaration].
+ *
+ * A FIR declaration is non-local iff all its parents are non-local, or it's a [FirFile].
+ */
+val FirDeclaration.isLocal: Boolean
     get() = when (this) {
-        is FirFile -> true
-        is FirCallableDeclaration -> !symbol.callableId.isLocal
-        is FirClassLikeDeclaration -> !symbol.classId.isLocal
-        else -> false
+        is FirFile -> false
+        is FirMemberDeclaration -> isLocal
+        else -> true
     }
 
-val FirCallableDeclaration.isExtension get() = receiverParameter != null
+val FirCallableDeclaration.isExtension: Boolean get() = receiverParameter != null
+val FirCallableSymbol<*>.isExtension: Boolean get() = fir.isExtension
+
+val FirBasedSymbol<*>.isMemberDeclaration: Boolean
+    // Accessing `fir` is ok, because we don't really use it
+    get() = fir is FirMemberDeclaration
+
+val FirBasedSymbol<*>.memberDeclarationNameOrNull: Name?
+    // Accessing `fir` is ok, because `nameOrSpecialName` only accesses names
+    get() = (fir as? FirMemberDeclaration)?.nameOrSpecialName
 
 val FirMemberDeclaration.nameOrSpecialName: Name
     get() = when (this) {
-        is FirCallableDeclaration ->
-            this.symbol.callableId.callableName
-        is FirClass ->
-            this.classId.shortClassName
-        is FirTypeAlias ->
-            this.name
+        is FirCallableDeclaration -> symbol.name
+        is FirClassLikeDeclaration -> classId.shortClassName
     }
+
+fun FirBasedSymbol<*>.asMemberDeclarationResolvedTo(phase: FirResolvePhase): FirMemberDeclaration? {
+    return (fir as? FirMemberDeclaration)?.also {
+        lazyResolveToPhase(phase)
+    }
+}
 
 val FirNamedFunctionSymbol.isMethodOfAny: Boolean
     get() {
-        if (receiverParameter != null) return false
-        if (resolvedContextReceivers.isNotEmpty()) return false
+        if (isExtension || hasContextParameters) return false
         return when (name) {
             OperatorNameConventions.EQUALS -> valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
             OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
@@ -70,4 +94,33 @@ val FirNamedFunctionSymbol.isMethodOfAny: Boolean
         }
     }
 
-val FirConstructorSymbol.isErrorPrimaryConstructor get() = fir is FirErrorPrimaryConstructor
+val FirConstructorSymbol.isErrorPrimaryConstructor: Boolean get() = fir is FirErrorPrimaryConstructor
+
+fun FirStatement.isDestructuredParameter(): Boolean = this is FirVariable && getDestructuredParameter() != null
+
+fun FirVariable.getDestructuredParameter(): FirValueParameterSymbol? {
+    val initializer = initializer
+    if (initializer !is FirComponentCall) return null
+    if (initializer.source?.kind !is KtFakeSourceElementKind.DesugaredComponentFunctionCall) return null
+    val receiver = initializer.dispatchReceiver ?: initializer.extensionReceiver ?: return null
+    if (receiver !is FirPropertyAccessExpression) return null
+    val calleeReference = receiver.calleeReference as? FirResolvedNamedReference ?: return null
+    return calleeReference.resolvedSymbol as? FirValueParameterSymbol
+}
+
+fun FirCallableDeclaration.contextParametersForFunctionOrContainingProperty(): List<FirValueParameter> =
+    if (this is FirPropertyAccessor)
+        this.propertySymbol.fir.contextParameters
+    else
+        this.contextParameters
+
+/**
+ * A delegated property is allowed to have accessors as long as they don't have a body.
+ *
+ * Returns `true` when the property is delegated and no accessor was defined in source or the accessor didn't have a body.
+ *
+ * The function assumes that the body is not lazy.
+ */
+fun FirPropertyAccessor.hasGeneratedDelegateBody(): Boolean {
+    return body?.statements?.firstOrNull()?.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Base.java
 
 public class Base {
@@ -43,3 +44,6 @@ class Generator(val codegen: Any) {
             }
         }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, flexibleType, functionDeclaration, inner,
+javaFunction, javaType, localProperty, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration */

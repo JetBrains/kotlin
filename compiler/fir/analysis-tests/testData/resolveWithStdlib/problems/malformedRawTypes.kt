@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Generic.java
 
 public class Generic<T> {
@@ -17,3 +18,6 @@ fun main() {
     var inner2 = generic.rawInner
     inner2 = Generic<String>().Inner()
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+localProperty, propertyDeclaration */

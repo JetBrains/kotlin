@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /IrElement { // /IrElement|null[0]
+    constructor <init>() // /IrElement.<init>|<init>(){}[0]
+}
+final fun /dump(/IrElement, kotlin/String): kotlin/String // /dump|dump(IrElement;kotlin.String){}[0]
+final fun (/IrElement)./dump(kotlin/Boolean = ..., kotlin/Boolean = ...): kotlin/String // /dump|dump@IrElement(kotlin.Boolean;kotlin.Boolean){}[0]
+final fun (/IrElement)./dumpKotlinLike(kotlin/String = ...): kotlin/String // /dumpKotlinLike|dumpKotlinLike@IrElement(kotlin.String){}[0]

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface A
 
@@ -28,3 +29,6 @@ fun <T> bar() {
 }
 
 fun baz(a: Any) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, classReference, functionDeclaration,
+interfaceDeclaration, localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

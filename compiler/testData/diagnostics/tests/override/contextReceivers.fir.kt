@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // LANGUAGE: +ContextReceivers
 
 interface I {
@@ -19,3 +21,6 @@ class C1 : I {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C4<!> : I {
     context(String, Float) <!NOTHING_TO_OVERRIDE!>override<!> fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+override */

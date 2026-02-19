@@ -1,3 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
+// influences only DEBUG_INFO_EXPRESSION_TYPE, so not important
+
 typealias Action<K> = (@UnsafeVariance K) -> Unit
 typealias Action2<K> = (@UnsafeVariance K) -> K
 
@@ -29,3 +33,7 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Action<CapturedType(*)> /* = (kotlin.Any?) -> kotlin.Unit */")!>getTag7().action<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any?) -> kotlin.Any?")!>getTag8().action<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, data, functionDeclaration, functionalType, in, inProjection,
+integerLiteral, lambdaLiteral, nullableType, out, primaryConstructor, propertyDeclaration, starProjection,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

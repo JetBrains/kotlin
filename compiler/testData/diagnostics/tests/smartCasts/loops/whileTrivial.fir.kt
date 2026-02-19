@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 fun x(): Boolean { return true }
 
@@ -10,3 +11,6 @@ public fun foo(p: String?): Int {
     // Smart cast should not work in this case, see KT-6284
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, whileLoop */

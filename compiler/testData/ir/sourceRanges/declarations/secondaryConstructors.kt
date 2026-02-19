@@ -1,4 +1,4 @@
-class C {
+class C1 {
     constructor() : super()
 
     private
@@ -11,4 +11,11 @@ class C {
 
     @Suppress("UNUSED_VARIABLE")
     constructor(x: Any): super()
+}
+
+class C2 {
+    constructor()
+
+    @Suppress("UNUSED_VARIABLE")
+    constructor(p: String = "") : this()
 }

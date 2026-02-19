@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface ILength {
     val length: Int
@@ -15,3 +16,6 @@ fun test() {
     foo<String> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
     bar<Impl> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, override, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // The type checker used to think that T is not null no matter what the upper bound
 
@@ -15,3 +16,5 @@ fun <T: Any, INDIRECT: T> notNullUpperBound(t: T, ind: INDIRECT) {
     if (<!SENSELESS_COMPARISON!>ind != null<!>) {} // still a warning
 }
 
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType, typeConstraint,
+typeParameter */

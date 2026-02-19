@@ -6,6 +6,7 @@
 package kotlin
 
 import kotlin.contracts.contract
+import kotlin.internal.DoNotInlineOnFirstStage
 
 // Here are functions specialized with String type to avoid marking Any.toString and its overrides as reachable in DCE.
 // Just making the declarations public is impossible since it may change the resolution in a user code. 
@@ -13,6 +14,7 @@ import kotlin.contracts.contract
 
 @PublishedApi
 @kotlin.internal.InlineOnly
+@DoNotInlineOnFirstStage
 internal inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
     contract {
         returns() implies value
@@ -25,4 +27,5 @@ internal inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
 
 @PublishedApi
 @kotlin.internal.InlineOnly
+@DoNotInlineOnFirstStage
 internal inline fun error(message: String): Nothing = throw IllegalStateException(message)

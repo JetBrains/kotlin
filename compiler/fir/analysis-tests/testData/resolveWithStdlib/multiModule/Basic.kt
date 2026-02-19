@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1
 // FILE: base.kt
 
@@ -17,3 +17,4 @@ import hello.Hello
 
 fun foo(hello: Hello): String = hello.msg
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, starProjection */

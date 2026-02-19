@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 class B {
     class Builder
@@ -35,3 +36,7 @@ fun problem() {
     val p = guess()
     consume(p ?: {})
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nestedClass, nullableType, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeParameter,
+typeWithExtension */

@@ -3,12 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(LegacyRenderingContextApi::class)
+
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -21,6 +25,11 @@ object CommonRenderers {
 
     @JvmField
     val NAME = Renderer<Name> { it.asString() }
+
+    @JvmField
+    val MAVEN_VERSION = Renderer<MavenComparableVersion?> {
+        it?.toString() ?: "initial version"
+    }
 
     @JvmField
     val THROWABLE = Renderer<Throwable> {
@@ -60,6 +69,36 @@ object CommonRenderers {
                 if (iterator.hasNext()) {
                     append(", ")
                 }
+            }
+        }
+    }
+
+    @JvmStatic
+    fun <T> onNextLines(itemRenderer: ContextIndependentParameterRenderer<T>): ContextIndependentParameterRenderer<Collection<T>> =
+        Renderer { elements -> elements.joinToString(separator = "\n", prefix = "\n", transform = itemRenderer::render) }
+
+    @JvmStatic
+    fun <Declaration, Data> renderConflictingSignatureData(
+        signatureKind: String,
+        sortUsing: Comparator<Declaration>,
+        declarationRenderer: DiagnosticParameterRenderer<Declaration>,
+        renderSignature: StringBuilder.(Data) -> Unit,
+        declarations: (Data) -> Collection<Declaration>,
+        declarationKind: (Data) -> String = { "declarations" },
+    ) = Renderer<Data> { data ->
+        val sortedDeclarations = declarations(data).sortedWith(sortUsing)
+        val renderingContext = RenderingContext.Impl(sortedDeclarations)
+        buildString {
+            append("The following ")
+            append(declarationKind(data))
+            append(" have the same ")
+            append(signatureKind)
+            append(" signature (")
+            renderSignature(data)
+            appendLine("):")
+            sortedDeclarations.joinToWithBuffer(this, separator = "\n") { descriptor ->
+                append("    ")
+                append(declarationRenderer.render(descriptor, renderingContext))
             }
         }
     }

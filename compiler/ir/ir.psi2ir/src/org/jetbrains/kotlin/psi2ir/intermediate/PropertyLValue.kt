@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi2ir.intermediate
@@ -22,12 +11,18 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.addIfNotNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 internal abstract class PropertyLValueBase(
     protected val context: GeneratorContext,
@@ -146,28 +141,33 @@ internal class AccessorPropertyLValue(
     private val typeArgumentsCount = typeArguments?.size ?: 0
 
     private fun IrMemberAccessExpression<*>.putTypeArguments() {
-        typeArguments?.forEachIndexed { index, irType ->
-            putTypeArgument(index, irType)
+        this@AccessorPropertyLValue.typeArguments?.forEachIndexed { index, irType ->
+            this@putTypeArguments.typeArguments[index] = irType
         }
     }
 
     override fun load(): IrExpression =
         callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
-            IrCallImpl(
+            IrCallImplWithShape(
                 startOffset, endOffset,
                 type,
-                getter!!, typeArgumentsCount,
-                contextReceiverValues.size,
-                origin,
-                superQualifier
+                getter!!,
+                typeArgumentsCount = typeArgumentsCount,
+                valueArgumentsCount = contextReceiverValues.size,
+                contextParameterCount = contextReceiverValues.size,
+                hasDispatchReceiver = dispatchReceiverValue != null,
+                hasExtensionReceiver = extensionReceiverValue != null,
+                origin = origin,
+                superQualifierSymbol = superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
+                val values = buildList {
+                    addIfNotNull(dispatchReceiverValue)
+                    addAll(contextReceiverValues)
+                    addIfNotNull(extensionReceiverValue)
                 }
+                arguments.assignFrom(values) { it.load() }
             }
         }
 
@@ -179,22 +179,26 @@ internal class AccessorPropertyLValue(
                 context.typeTranslator.translateType(it)
             } ?: context.irBuiltIns.unitType
 
-            IrCallImpl(
+            IrCallImplWithShape(
                 startOffset, endOffset,
                 returnType,
-                setter!!, typeArgumentsCount,
-                1 + contextReceiverValues.size,
-                origin,
-                superQualifier
+                setter!!,
+                typeArgumentsCount = typeArgumentsCount,
+                valueArgumentsCount = 1 + contextReceiverValues.size,
+                contextParameterCount = contextReceiverValues.size,
+                hasDispatchReceiver = dispatchReceiverValue != null,
+                hasExtensionReceiver = extensionReceiverValue != null,
+                origin = origin,
+                superQualifierSymbol = superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
-                }
-                putValueArgument(contextReceiverValues.size, irExpression)
+                val values = buildList {
+                    addIfNotNull(dispatchReceiverValue)
+                    addAll(contextReceiverValues)
+                    addIfNotNull(extensionReceiverValue)
+                }.map { it.load() }
+                arguments.assignFrom(values + irExpression)
             }
         }
 

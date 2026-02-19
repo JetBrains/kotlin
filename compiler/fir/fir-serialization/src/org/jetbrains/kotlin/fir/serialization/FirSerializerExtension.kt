@@ -5,49 +5,59 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
-import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProviderInternals
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
 
-abstract class FirSerializerExtension {
-    abstract val session: FirSession
-
+abstract class FirSerializerExtension : SessionAndScopeSessionHolder {
     abstract val stringTable: FirElementAwareStringTable
 
     abstract val metadataVersion: BinaryVersion
 
-    val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable, constValueProvider) }
-
-    protected abstract val constValueProvider: ConstValueProvider?
-    protected abstract val additionalAnnotationsProvider: FirAdditionalMetadataAnnotationsProvider?
-
-    @OptIn(ConstValueProviderInternals::class)
-    internal inline fun <T> processFile(firFile: FirFile, crossinline action: () -> T): T {
-        val previousFile = constValueProvider?.processingFirFile
-        constValueProvider?.processingFirFile = firFile
-        return try {
-            action()
-        } finally {
-            constValueProvider?.processingFirFile = previousFile
-        }
+    val annotationSerializer: FirAnnotationSerializer by lazy {
+        FirAnnotationSerializer(session, scopeSession, stringTable, localClassIdOracle)
     }
+
+    abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
+
+    protected open val localClassIdOracle: LocalClassIdOracle get() = LocalClassIdOracle.EMPTY
 
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
 
-    open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
+    open fun serializePackage(
+        packageFqName: FqName,
+        proto: ProtoBuf.Package.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: FirElementSerializer
+    ) {
     }
 
     open fun serializeClass(
         klass: FirClass,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: FirElementSerializer
+    ) {
+    }
+
+    open fun serializeScript(
+        script: FirScript,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: FirElementSerializer
+    ) {
+    }
+
+    open fun serializeSnippet(
+        snippet: FirReplSnippet,
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
@@ -94,17 +104,22 @@ abstract class FirSerializerExtension {
 
     open fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
         for (annotation in typeAlias.nonSourceAnnotations(session)) {
-            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+            val serializedAnnotation = annotationSerializer.serializeAnnotation(annotation) ?: continue
+            proto.addAnnotation(serializedAnnotation)
         }
     }
 
+    open fun getClassSupertypes(klass: FirClass): List<FirTypeRef> {
+        return klass.superTypeRefs
+    }
+
     fun hasAdditionalAnnotations(declaration: FirDeclaration): Boolean {
-        return additionalAnnotationsProvider?.hasGeneratedAnnotationsFor(declaration) ?: false
+        return additionalMetadataProvider?.hasGeneratedAnnotationsFor(declaration) ?: false
     }
 
     // TODO: add usages
     fun getAnnotationsGeneratedByPlugins(declaration: FirDeclaration): List<FirAnnotation> {
-        return additionalAnnotationsProvider?.findGeneratedAnnotationsFor(declaration) ?: emptyList()
+        return additionalMetadataProvider?.findGeneratedAnnotationsFor(declaration) ?: emptyList()
     }
 
     open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {

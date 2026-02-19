@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface LevelA
 interface LevelB : LevelA
@@ -30,3 +31,6 @@ fun <X> callAdjustIt(t: BiType<*, *>, x: X, level: LevelA) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("BiType<X, LevelA>")!>x4<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, out, propertyDeclaration, starProjection, typeParameter */

@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
+// WASM_FAILS_IN: WasmEdge
+
 // FILE: 1.kt
 
 class My(val value: Int)

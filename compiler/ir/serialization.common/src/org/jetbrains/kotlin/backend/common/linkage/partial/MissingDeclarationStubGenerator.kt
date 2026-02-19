@@ -1,54 +1,45 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.guessName
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
 /**
  * Generates the simplest possible stubs for missing declarations.
  *
- * Note: This is a special type of [IrProvider]. It should not be used in row with other IR providers, because it may bring to
- * undesired situation when stubs for unbound fake override symbols are generated even before the corresponding call of
- * [FakeOverrideBuilder.provideFakeOverrides] is made leaving no chance for proper linkage of fake overrides. This IR provider
- * should be applied only after the fake overrides generation.
+ * Note: This is a special type of stub generator. It should not be used in row with [IrProvider]s, because it may bring to
+ * an undesired situation when stubs for unbound fake override symbols are generated even before the corresponding call of
+ * [IrLinkerFakeOverrideProvider.provideFakeOverrides] is made leaving no chance for proper linkage of fake overrides.
+ * This stub generator should be applied only after the fake overrides generation.
  */
-internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns) : IrProvider {
+internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns) {
     private val commonParent by lazy {
-        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(ErrorUtils.errorModule, FqName.ROOT)
+        createEmptyExternalPackageFragment(ErrorUtils.errorModule, FqName.ROOT)
     }
-
-    private var declarationsToPatch = arrayListOf<IrDeclaration>()
 
     private val stubbedSymbols = hashSetOf<IrSymbol>()
 
     val allStubbedSymbols: Set<IrSymbol> get() = stubbedSymbols
 
-    fun grabDeclarationsToPatch(): Collection<IrDeclaration> {
-        val result = declarationsToPatch
-        declarationsToPatch = arrayListOf()
-        return result
-    }
-
-    override fun getDeclaration(symbol: IrSymbol): IrDeclaration {
+    fun getDeclaration(symbol: IrSymbol): IrDeclaration {
         require(!symbol.isBound)
 
         stubbedSymbols.add(symbol)
@@ -60,7 +51,11 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             is IrPropertySymbol -> generateProperty(symbol)
             is IrEnumEntrySymbol -> generateEnumEntry(symbol)
             is IrTypeAliasSymbol -> generateTypeAlias(symbol)
-            else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet")
+            is IrTypeParameterSymbol -> generateTypeParameter(symbol)
+            is IrFieldSymbol -> generateIrField(symbol)
+            else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet.\n" +
+                        "Signature: ${symbol.signature}\n" +
+                        "Private signature: ${symbol.privateSignature}")
         }
     }
 
@@ -76,7 +71,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             modality = Modality.OPEN,
         ).apply {
             setCommonParent()
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         }
     }
 
@@ -157,9 +152,36 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
         ).setCommonParent()
     }
 
+    private fun generateTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameter {
+        return builtIns.irFactory.createTypeParameter(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
+            name = symbol.guessName(),
+            symbol = symbol,
+            variance = Variance.INVARIANT,
+            index = 0,
+            isReified = false,
+        )
+    }
+
+    private fun generateIrField(symbol: IrFieldSymbol): IrField {
+        return builtIns.irFactory.createField(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
+            name = symbol.guessName(),
+            visibility = DescriptorVisibilities.PRIVATE,
+            symbol = symbol,
+            type = builtIns.nothingType,
+            isFinal = false,
+            isStatic = false,
+            isExternal = false
+        )
+    }
+
     private fun <T : IrDeclaration> T.setCommonParent(): T {
         parent = commonParent
-        declarationsToPatch += this
         return this
     }
 

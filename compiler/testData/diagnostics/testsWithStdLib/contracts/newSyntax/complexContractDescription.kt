@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContractSyntaxV2
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.contracts.*
 
@@ -23,3 +24,6 @@ fun bar(arg: Any?, block: () -> Int): Boolean contract <!UNSUPPORTED!>[
     }
     return false
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contractConditionalEffect, contracts, equalityExpression,
+functionDeclaration, functionalType, ifExpression, isExpression, localProperty, nullableType, propertyDeclaration */

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 interface Inv<T : CharSequence>
 
 fun <E : CharSequence> id(i: Inv<E>): Inv<E> = i
@@ -17,3 +17,6 @@ fun foo2(x: Inv<in Nothing>) {
 }
 
 fun bar2(i: Inv<in Nothing>) {}
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, inProjection, interfaceDeclaration, localProperty,
+outProjection, propertyDeclaration, typeConstraint, typeParameter */

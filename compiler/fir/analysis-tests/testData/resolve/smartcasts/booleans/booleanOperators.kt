@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 interface A {
     fun foo()
 
@@ -58,15 +59,13 @@ fun test_6(x: Any) {
 
 fun test_7(x: Any) {
     if (x is A || false) {
-        // TODO: should be smartcast
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
     }
 }
 
 fun test_8(x: Any) {
     if (false || x is A) {
-        // TODO: should be smartcast
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
     }
 }
 
@@ -107,3 +106,6 @@ fun test_14(x: Any, b: Boolean) {
         x.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, intersectionType, isExpression, smartcast */

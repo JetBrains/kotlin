@@ -1,5 +1,6 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun foo(): Any = 42
 fun useInt(i: Int) {}
@@ -25,3 +26,6 @@ fun testShadowinLocalVariable() {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, isExpression, localProperty, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

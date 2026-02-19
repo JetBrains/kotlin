@@ -1,0 +1,240 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(): String? {
+    return null
+}
+@Composable
+fun Test2(b: Boolean): String? {
+    if (b) return "true"
+    return null
+}
+@Composable
+fun Test3(b: Boolean): String? {
+    if (b) {
+        return "true"
+    } else {
+        return null
+    }
+}
+@Composable
+fun Test4(b: Boolean): String? {
+    return if (b) {
+        "true"
+    } else {
+        null
+    }
+}
+@Composable
+fun Test5(): String? {
+    var varNull = null
+    return varNull
+}
+@Composable
+fun Test6(): String? {
+    TODO()
+}
+@Composable
+fun Test7(b: Boolean): String? {
+    if (b) {
+        return null
+    }
+    return "false"
+}
+@Composable
+fun Test8(): Unit? {
+    var unitNull: Unit? = null
+    Test6()
+    return unitNull
+}
+@Composable
+fun Test9(): Unit? {
+    var unitNotNull: Unit? = Unit
+    Test6()
+    return unitNotNull
+}
+@Composable
+fun Test10(): Unit? {
+    Test6()
+    return Unit
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int): String? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = null
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Test2(b: Boolean, %composer: Composer?, %changed: Int): String? {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(Test2):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (b) {
+    val tmp1_return = "true"
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp1_return
+  }
+  val tmp0 = null
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+  return tmp0
+}
+@Composable
+fun Test3(b: Boolean, %composer: Composer?, %changed: Int): String? {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(Test3):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (b) {
+    val tmp0_return = "true"
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp0_return
+  } else {
+    val tmp1_return = null
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp1_return
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+}
+@Composable
+fun Test4(b: Boolean, %composer: Composer?, %changed: Int): String? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test4):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = if (b) {
+    "true"
+  } else {
+    null
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Test5(%composer: Composer?, %changed: Int): String? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test5):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  var varNull = null
+  val tmp0 = varNull
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Test6(%composer: Composer?, %changed: Int): String? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test6):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  TODO()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+fun Test7(b: Boolean, %composer: Composer?, %changed: Int): String? {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(Test7):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (b) {
+    val tmp1_return = null
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp1_return
+  }
+  val tmp0 = "false"
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+  return tmp0
+}
+@Composable
+fun Test8(%composer: Composer?, %changed: Int): Unit? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test8)<Test6(...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  var unitNull = null
+  Test6(%composer, 0)
+  val tmp0 = unitNull
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Test9(%composer: Composer?, %changed: Int): Unit? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test9)<Test6(...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  var unitNotNull = Unit
+  Test6(%composer, 0)
+  val tmp0 = unitNotNull
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Test10(%composer: Composer?, %changed: Int): Unit? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test10)<Test6(...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  Test6(%composer, 0)
+  val tmp0 = Unit
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

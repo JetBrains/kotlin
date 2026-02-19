@@ -88,7 +88,7 @@ internal var output = run {
 }
 
 @kotlin.internal.InlineOnly
-private inline fun String(value: Any?): String = js("String")(value)
+private inline fun String(value: Any?): String = value?.toString() ?: "null"
 
 /** Prints the line separator to the standard output stream. */
 public actual fun println() {
@@ -105,8 +105,14 @@ public actual fun print(message: Any?) {
     output.print(message)
 }
 
+/**
+ * This function is not supported in Kotlin/JS and throws [UnsupportedOperationException].
+ */
 @SinceKotlin("1.6")
 public actual fun readln(): String = throw UnsupportedOperationException("readln is not supported in Kotlin/JS")
 
+/**
+ * This function is not supported in Kotlin/JS and throws [UnsupportedOperationException].
+ */
 @SinceKotlin("1.6")
 public actual fun readlnOrNull(): String? = throw UnsupportedOperationException("readlnOrNull is not supported in Kotlin/JS")

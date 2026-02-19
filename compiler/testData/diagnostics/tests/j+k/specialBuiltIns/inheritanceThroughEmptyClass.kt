@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 // ISSUE: KT-57693
@@ -82,3 +83,5 @@ public abstract class AbstractSerializableListDecorator<E> extends AbstractColle
 import java.util.*
 
 class UniqueArrayList<E> : AbstractSerializableListDecorator<E>(), MutableSet<E>
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, nullableType, typeParameter */

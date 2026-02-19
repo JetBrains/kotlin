@@ -8,9 +8,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#include <Foundation/NSString.h>
-#include <Foundation/NSException.h>
-#include <objc/objc-exception.h>
+#include <Foundation/Foundation.h>
 
 #include <objc/objc.h>
 #include <objc/runtime.h>
@@ -22,6 +20,7 @@ extern "C" {
 
 struct KotlinObjCClassData {
   const TypeInfo* typeInfo;
+  struct KotlinObjCClassInfo* classInfo;
   Class objcClass;
   int32_t bodyOffset;
 };
@@ -56,7 +55,18 @@ struct KotlinObjCClassInfo {
 };
 
 void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info);
+
+// Returns `true` iff `cls` is created with `CreateKotlinObjCClass`.
+// Including the case when `cls` is a meta-class of a class returned from `CreateKotlinObjCClass`,
+// because `CreateKotlinObjCClass` creates both but returns only the class itself.
+RUNTIME_NOTHROW bool IsKotlinObjCClass(Class cls);
+
 RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj);
+
+// Returns `true` iff `obj` is an instance of an `IsKotlinObjCClass`-class
+// that implements the protocol with name `protocolName`.
+// It only checks direct super interfaces, not the ones adopted by super classes.
+RUNTIME_NOTHROW bool IsInstanceOfKotlinClassImplementingObjCProtocol(ObjHeader* kotlinObj, id obj, const char* protocolName);
 
 } // extern "C"
 

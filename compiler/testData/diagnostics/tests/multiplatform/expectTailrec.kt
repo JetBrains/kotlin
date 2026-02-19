@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -22,3 +24,6 @@ actual class A {
     actual tailrec fun foo(p: Int): Int = foo(p)
     actual tailrec fun bar(p: Int): Int = bar(p)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, propertyDeclaration, stringLiteral,
+tailrec */

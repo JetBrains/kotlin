@@ -5,93 +5,184 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.constructorFactory
+import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
+import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.util.isOriginallyLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 
-class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
-    private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
+private var IrSimpleFunction.replacementWithoutBoxParameter: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
+/**
+ * Optimization: replaces constructors with the `box` parameter with constructors without the `box` parameter where possible.
+ *
+ * For example, transforms this:
+ * ```kotlin
+ * open class K {
+ *   fun new_K_r03577_k$(x: Int, $box: K?): K {
+ *     val $this: K = kotlin.js.createThis(this, $box)
+ *     return $this
+ *   }
+ * }
+ *
+ * class A {
+ *   fun new_A_3zfso4_k$(x: Int, $box: A?): A {
+ *     val $this: A = this.new_K_r03577_k$(x, $box)
+ *     return $this
+ *   }
+ * }
+ * ```
+ *
+ * into this:
+ * ```kotlin
+ * open class K {
+ *   fun new_K_r03577_k$(x: Int): K {
+ *     val $this: K = kotlin.js.createThis(this, kotlin.js.VOID)
+ *     return $this
+ *   }
+ * }
+ *
+ * class A {
+ *   fun new_A_3zfso4_k$(x: Int): A {
+ *     val $this: A = this.new_K_r03577_k$(x)
+ *     return $this
+ *   }
+ * }
+ * ```
+ */
+@PhasePrerequisites(ES6CollectConstructorsWhichNeedBoxParameters::class)
+class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : FileLoweringPass {
+
+    override fun lower(irFile: IrFile) {
         if (!context.es6mode) return
-
-        val containerFunction = container as? IrFunction
-
-        val shouldRemoveBoxRelatedDeclarationsAndStatements =
-            containerFunction?.isEs6ConstructorReplacement == true && !containerFunction.parentAsClass.requiredToHaveBoxParameter()
-
-        if (containerFunction != null && shouldRemoveBoxRelatedDeclarationsAndStatements && irBody is IrBlockBody) {
-            containerFunction.valueParameters = containerFunction.valueParameters.memoryOptimizedFilterNot { it.isBoxParameter }
-        }
-
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitWhen(expression: IrWhen): IrExpression {
-                return if (shouldRemoveBoxRelatedDeclarationsAndStatements && expression.isBoxParameterDefaultResolution) {
-                    irEmpty(context)
-                } else {
-                    super.visitWhen(expression)
+        irFile.transformChildren(
+            object : IrElementTransformerVoid() {
+                override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                    val replacement = declaration.getOrCreateReplacementWithoutBoxParameter()
+                    replacement?.patchDeclarationParents()
+                    return super.visitSimpleFunction(replacement ?: declaration)
                 }
-            }
 
-            override fun visitCall(expression: IrCall): IrExpression {
-                val callee = expression.symbol.owner
-
-                return when {
-                    shouldRemoveBoxRelatedDeclarationsAndStatements && (callee.symbol == context.intrinsics.jsCreateThisSymbol || callee.symbol == context.intrinsics.jsCreateExternalThisSymbol) -> {
-                        expression.putValueArgument(expression.valueArgumentsCount - 1, context.getVoid())
-                        super.visitCall(expression)
-                    }
-                    callee.isEs6ConstructorReplacement && (!callee.parentAsClass.requiredToHaveBoxParameter() || shouldRemoveBoxRelatedDeclarationsAndStatements) -> {
-                        val newArgumentsSize = expression.valueArgumentsCount - 1
-                        super.visitCall(IrCallImpl(
-                            expression.startOffset,
-                            expression.endOffset,
-                            expression.type,
-                            expression.symbol,
-                            expression.typeArgumentsCount,
-                            newArgumentsSize,
-                            expression.origin,
-                            superQualifierSymbol = expression.superQualifierSymbol
-                        ).apply {
-                            copyTypeArgumentsFrom(expression)
-
-                            dispatchReceiver = expression.dispatchReceiver
-                            extensionReceiver = expression.extensionReceiver
-
-                            for (i in 0 until newArgumentsSize) {
-                                putValueArgument(i, expression.getValueArgument(i))
-                            }
-                        })
-                    }
-                    else -> super.visitCall(expression)
+                override fun visitCall(expression: IrCall): IrExpression {
+                    return super.visitCall(expression.replaceCalleeIfNeeded())
                 }
-            }
-        })
+            },
+            null
+        )
     }
 
-    private fun IrClass.requiredToHaveBoxParameter(): Boolean {
-        return needsOfBoxParameter == true
+    private fun IrSimpleFunction.getOrCreateReplacementWithoutBoxParameter(): IrSimpleFunction? {
+        replacementWithoutBoxParameter?.let { return it }
+        if (!isEs6ConstructorReplacement) return null
+        val constructedClass = parentAsClass
+        if (constructedClass.needsBoxParameter || parameters.none { it.isBoxParameter }) return null
+
+        val original = this
+        val newReplacement = factory.buildFun {
+            updateFrom(original)
+            name = original.name
+            returnType = original.returnType
+        }.apply {
+            parent = original.parent
+            copyAttributes(original)
+            annotations = original.annotations
+            typeParameters = original.typeParameters
+            parameters = original.parameters.memoryOptimizedFilterNot { it.isBoxParameter }
+            body = original.body
+        }
+
+        original.replacementWithoutBoxParameter = newReplacement
+
+        newReplacement.body?.transformChildren(
+            object : IrElementTransformerVoid() {
+                override fun visitWhen(expression: IrWhen): IrExpression =
+                    if (expression.isBoxParameterDefaultResolution) {
+                        irEmpty(context)
+                    } else {
+                        super.visitWhen(expression)
+                    }
+
+                override fun visitReturn(expression: IrReturn): IrExpression =
+                    if (expression.returnTargetSymbol == original.symbol) {
+                        IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, newReplacement.symbol, expression.value)
+                    } else {
+                        super.visitReturn(expression)
+                    }
+
+                override fun visitCall(expression: IrCall): IrExpression {
+                    if (expression.isSuperCallWithBoxParameter) {
+                        expression.arguments[expression.arguments.lastIndex] = context.getVoid()
+                    }
+                    return super.visitCall(expression)
+                }
+            },
+            null
+        )
+
+        // Don't forget to update the cached default constructor for use in `KClass<*>.createInstance`.
+        val defaultConstructor = constructedClass.defaultConstructorForReflection
+        if (defaultConstructor != null && defaultConstructor.constructorFactory == original) {
+            defaultConstructor.constructorFactory = newReplacement
+        }
+
+        return newReplacement
+    }
+
+    private val IrCall.isSuperCallWithBoxParameter: Boolean
+        get() = symbol == context.symbols.jsCreateThisSymbol ||
+                symbol == context.symbols.jsCreateExternalThisSymbol ||
+                symbol.owner.isEs6ConstructorReplacement && symbol.owner.boxParameter != null
+
+    private fun IrCall.replaceCalleeIfNeeded(): IrCall {
+        val replacementWithBoxParameter = symbol.owner
+        val replacementWithoutBoxParameter = replacementWithBoxParameter.getOrCreateReplacementWithoutBoxParameter()?.symbol
+            ?: return this
+        val original = this
+        return IrCallImpl(
+            startOffset,
+            endOffset,
+            type,
+            replacementWithoutBoxParameter,
+            typeArguments.size,
+            origin,
+            superQualifierSymbol,
+        ).apply {
+            copyAttributes(original)
+            copyTypeArgumentsFrom(original)
+            for ((i, argument) in original.arguments.withIndex()) {
+                // Don't copy the `box` argument
+                if (replacementWithBoxParameter.parameters[i].isBoxParameter) continue
+                arguments[i] = argument
+            }
+        }
     }
 }
 
+/**
+ * Optimization: collects all constructors which require a box parameter.
+ */
 class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private var IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrClass) return null
@@ -99,10 +190,9 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
         val hasSuperClass = declaration.superClass != null
 
         if (hasSuperClass && declaration.isInner) {
-            declaration.addToClassListWhichNeedBoxParameter()
-        }
-        if (hasSuperClass && declaration.isLocal && declaration.containsCapturedValues()) {
-            declaration.addToClassListWhichNeedBoxParameter()
+            declaration.markAsNeedsBoxParameter()
+        } else if (hasSuperClass && declaration.isOriginallyLocal && declaration.containsCapturedValues()) {
+            declaration.markAsNeedsBoxParameter()
         }
 
         return null
@@ -117,7 +207,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
                 var meetCapturing = false
                 val boxParameter = it.boxParameter
 
-                it.body?.acceptChildrenVoid(object : IrElementVisitorVoid {
+                it.body?.acceptChildrenVoid(object : IrVisitorVoid() {
                     override fun visitSetField(expression: IrSetField) {
                         val receiver = expression.receiver as? IrGetValue
                         if (receiver != null && receiver.symbol == boxParameter?.symbol) {
@@ -133,9 +223,9 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
         return false
     }
 
-    private fun IrClass.addToClassListWhichNeedBoxParameter() {
+    private fun IrClass.markAsNeedsBoxParameter() {
         if (isExternal) return
-        needsOfBoxParameter = true
-        superClass?.addToClassListWhichNeedBoxParameter()
+        needsBoxParameter = true
+        superClass?.markAsNeedsBoxParameter()
     }
 }

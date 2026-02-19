@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A
 
 class B: A() {
@@ -11,3 +12,5 @@ class B: A() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral */

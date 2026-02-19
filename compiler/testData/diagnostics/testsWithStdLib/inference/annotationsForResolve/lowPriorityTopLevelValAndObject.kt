@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -EXTENSION_SHADOWED_BY_MEMBER
 
 // FILE: a.kt
@@ -34,3 +35,6 @@ fun Foo.test() {
     bar.length
     baz.qux
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+objectDeclaration, propertyDeclaration, stringLiteral */

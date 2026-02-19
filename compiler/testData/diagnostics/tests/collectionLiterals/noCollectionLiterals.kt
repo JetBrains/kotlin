@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(): Array<Int> {
     <!UNSUPPORTED!>[1, 2]<!>
     <!UNSUPPORTED!>[1, 2]<!>[0]
@@ -13,3 +14,6 @@ fun test(): Array<Int> {
 fun foo(a: Array<String> = <!UNSUPPORTED!>[""]<!>) {}
 
 class A(val a: Array<Int> = <!UNSUPPORTED!>[]<!>)
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

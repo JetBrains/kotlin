@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-10824: Smart cast depending on control flow does not work inside `if`
 class A
 fun foo(a: A?, aOther: A?): A {
@@ -50,3 +51,6 @@ fun bar1(a: A?, aOther: A?): A {
     }
     return result
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast */

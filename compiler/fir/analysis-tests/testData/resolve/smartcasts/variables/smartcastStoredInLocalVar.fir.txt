@@ -120,3 +120,22 @@ FILE: smartcastStoredInLocalVar.kt
         }
 
     }
+    public final fun test_6(a: R|kotlin/String?|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|kotlin/String.length| }
+        when () {
+            !=(R|<local>/b|, Null(null)) ->  {
+                R|<local>/a|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+            }
+        }
+
+        R|/nonInPlaceRun|(<L> = nonInPlaceRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/b| = Int(0)
+        }
+        )
+        when () {
+            !=(R|<local>/b|, Null(null)) ->  {
+                R|<local>/a|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+            }
+        }
+
+    }

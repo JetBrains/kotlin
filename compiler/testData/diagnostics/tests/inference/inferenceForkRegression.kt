@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FIR_IDENTICAL
 // FULL_JDK
@@ -24,3 +25,6 @@ fun main() {
         listOf("")
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

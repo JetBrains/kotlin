@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class Foo(val bar: Bar)
 

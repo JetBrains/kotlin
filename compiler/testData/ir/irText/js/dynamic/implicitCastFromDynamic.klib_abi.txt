@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /d // /d|{}d[0]
+    final fun <get-d>(): dynamic // /d.<get-d>|<get-d>(){}[0]
+final val /p // /p|{}p[0]
+    final fun <get-p>(): kotlin/Int // /p.<get-p>|<get-p>(){}[0]
+final fun /test1(dynamic): kotlin/Int // /test1|test1(<dynamic>){}[0]
+final fun /test2(dynamic): kotlin/Any // /test2|test2(<dynamic>){}[0]
+final fun /test3(dynamic): kotlin/Any? // /test3|test3(<dynamic>){}[0]
+final fun /test4(dynamic): kotlin/String // /test4|test4(<dynamic>){}[0]

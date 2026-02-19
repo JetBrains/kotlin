@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
 
 class Inv<T>
 class Out<out T>
@@ -10,3 +11,6 @@ fun <R> test(x: Inv<Out<R>>): R = TODO()
 fun testNothing() {
     <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>test<!>(invOut(null)) checkType { _<Nothing>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, out, typeParameter, typeWithExtension */

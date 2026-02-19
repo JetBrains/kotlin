@@ -17,12 +17,13 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 package kotlin.internal.jdk8
 
+import java.util.concurrent.ConcurrentMap
 import java.util.regex.MatchResult
 import java.util.regex.Matcher
-import kotlin.internal.PlatformImplementations
 import kotlin.internal.jdk7.JDK7PlatformImplementations
 import kotlin.random.Random
 import kotlin.random.jdk8.PlatformThreadLocalRandom
+import kotlin.time.*
 
 internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() {
 
@@ -49,6 +50,27 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
             null
     }
 
+    override fun <K, V> getOrDefault(map: Map<K, V>, key: K, default: V): V? {
+        if (sdkIsNullOrAtLeast(24)) {
+            // getOrDefault is available since Android SDK 24.
+            return map.getOrDefault(key, default)
+        } else {
+            // Use non-atomic getOrDefault as a fallback.
+            return map.get(key) ?: if (key in map) null else default
+        }
+    }
+
+    // computeIfAbsent doesn't put the newValue if it's null, hence require non-null newValue
+    override fun <K, V, NewV : V & Any> computeIfAbsent(map: ConcurrentMap<K, V>, key: K, newValue: NewV): V =
+        if (sdkIsNullOrAtLeast(24)) {
+            // computeIfAbsent is available since Android SDK 24.
+            map.computeIfAbsent(key) { newValue }
+        } else {
+            // Use putIfAbsent for older SDKs as a fallback.
+            // Note: If the key was mapped to a null value, putIfAbsent won't replace it, but the new value will still be returned.
+            map.putIfAbsent(key, newValue) ?: newValue
+        }
+
     override fun defaultPlatformRandom(): Random =
         // while ThreadLocalRandom is available since SDK 21 (as documented), it has bugs in the implementation,
         // so we don't use it for the same reasons as why we don't use it in JDK7. ThreadLocalRandom worked on
@@ -57,4 +79,18 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
         // then.
         if (sdkIsNullOrAtLeast(34)) PlatformThreadLocalRandom() else super.defaultPlatformRandom()
 
+    override fun getSystemClock(): Clock {
+        // java.time.Instant is available since SDK 26
+        return if (sdkIsNullOrAtLeast(26)) object : Clock {
+            override fun now(): Instant =
+                java.time.Instant.now().toKotlinInstant()
+        } else object : Clock {
+            override fun now(): Instant =
+                // After experimenting in Android Studio, it seems like on Android with API < 26, only millisecond precision
+                // is available in `Instant.now()` with core library desugaring enabled. Because of that, `currentTimeMillis`
+                // is good enough + suggesting that our users enable core library desugaring isn't going to bring any benefits,
+                // so the KDoc for [Clock] does not mention any of this.
+                Instant.fromEpochMilliseconds(System.currentTimeMillis())
+        }
+    }
 }

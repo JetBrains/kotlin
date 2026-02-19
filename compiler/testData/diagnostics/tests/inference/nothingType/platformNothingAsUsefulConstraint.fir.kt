@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 // FILE: Tasks.java
 
@@ -32,3 +33,7 @@ fun test() {
         withLock { TODO() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+javaFunction, javaType, lambdaLiteral, localProperty, nullableType, out, propertyDeclaration, samConversion,
+typeParameter */

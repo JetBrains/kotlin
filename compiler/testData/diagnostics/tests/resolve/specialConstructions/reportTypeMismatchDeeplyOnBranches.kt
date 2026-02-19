@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package b
 
 fun bar(i: Int) = i
@@ -25,3 +26,5 @@ fun test(a: Int?, b: Any?, c: Int?) {
         }
     }<!>)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType */

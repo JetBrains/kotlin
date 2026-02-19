@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -11,6 +10,8 @@ dependencies {
     implementation(project(":core:deserialization.common.jvm"))
     api(project(":compiler:frontend.java"))
 }
+
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" {

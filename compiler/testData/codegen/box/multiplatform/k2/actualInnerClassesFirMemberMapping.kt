@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: ANY
+
 // MODULE: common
 // FILE: common.kt
 expect class A {

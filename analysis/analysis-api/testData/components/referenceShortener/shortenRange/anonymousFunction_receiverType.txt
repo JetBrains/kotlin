@@ -1,0 +1,9 @@
+Before shortening: dependency.Type
+with default settings:
+[type] dependency.Type
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[type] dependency.Type
+with SHORTEN_AND_STAR_IMPORT:
+[type] dependency.Type

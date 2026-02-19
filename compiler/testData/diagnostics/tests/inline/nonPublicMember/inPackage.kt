@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 
 private val privateProperty = 11;
 private fun privateFun() {}
@@ -26,3 +27,5 @@ internal inline fun test2Internal() {
     internalFun()
     internalProperty
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, integerLiteral, propertyDeclaration */

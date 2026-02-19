@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
-@Deprecated("Use 'KotlinHierarchyTemplate' instead")
+/**
+ * @suppress
+ */
+@Deprecated("Scheduled for removal in Kotlin 2.3. Use 'KotlinHierarchyTemplate' instead", level = DeprecationLevel.ERROR)
 @ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyDsl {
     fun apply(hierarchyDescriptor: KotlinHierarchyTemplate, describeExtension: (KotlinHierarchyBuilder.Root.() -> Unit)? = null)

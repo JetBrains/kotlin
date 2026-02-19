@@ -1,0 +1,71 @@
+Analysis attempt #0
+KT element: KtLambdaExpression
+KT element text:
+{ }
+FIR element: FirAnonymousFunctionExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+    ^ Unit
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] lambdaFromContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=0(0/2) #1] fun runSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+    ): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(action, AT_MOST_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/contracts/ContractBuilder.() -> kotlin/Unit] contract@fun [ResolvedTo(RAW_FIR)] R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/action|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+            }
+            )
+        }
+
+        Unit#
+    }
+
+=====
+
+Analysis attempt #1
+KT element: KtLambdaArgument
+KT element text:
+{
+        callsInPlace(action, InvocationKind.AT_MOST_ONCE)
+    }
+FIR element: FirAnonymousFunctionExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/contracts/ContractBuilder.() -> kotlin/Unit] contract@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+    this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/action|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] lambdaFromContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #2] fun runSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+    ): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(action, AT_MOST_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/contracts/ContractBuilder.() -> kotlin/Unit] contract@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/action|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+            }
+            )
+        }
+
+        Unit#
+    }

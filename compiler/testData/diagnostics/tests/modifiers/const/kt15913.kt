@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
 // FILE: Context.java
 
@@ -18,3 +20,6 @@ class MyController {
     fun setContext() {
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, const, functionDeclaration,
+javaProperty, objectDeclaration, primaryConstructor, propertyDeclaration */

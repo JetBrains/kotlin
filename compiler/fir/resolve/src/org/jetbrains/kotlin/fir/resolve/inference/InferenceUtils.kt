@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.removeParameterNameAnnotation
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -20,73 +24,67 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 fun extractLambdaInfoFromFunctionType(
     expectedType: ConeKotlinType?,
-    argument: FirAnonymousFunction,
+    argument: FirAnonymousFunctionExpression,
+    lambda: FirAnonymousFunction,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
-    candidate: Candidate?,
     allowCoercionToExtensionReceiver: Boolean,
-): ResolvedLambdaAtom? {
+    sourceForFunctionExpression: KtSourceElement?,
+): ConeResolvedLambdaAtom? {
     val session = components.session
-    if (expectedType == null) return null
-    if (expectedType is ConeFlexibleType) {
-        return extractLambdaInfoFromFunctionType(
-            expectedType.lowerBound,
-            argument,
-            returnTypeVariable,
-            components,
-            candidate,
-            allowCoercionToExtensionReceiver,
-        )
-    }
-    val expectedFunctionKind = expectedType.functionTypeKind(session) ?: return null
+    val expectedClassLikeType = expectedType?.fullyExpandedType(session)?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
+    val expectedFunctionKind = expectedClassLikeType.functionTypeKind(session) ?: return null
 
-    val actualFunctionKind = session.functionTypeService.extractSingleSpecialKindForFunction(argument.symbol)
-        ?: runIf(!argument.isLambda) {
+    val actualFunctionKind = session.functionTypeService.extractSingleSpecialKindForFunction(lambda.symbol)
+        ?: runIf(!lambda.isLambda) {
             // There is no function -> suspend function conversions for non-lambda anonymous functions
             // If function is suspend then functionTypeService will return SuspendFunction kind
             FunctionTypeKind.Function
         }
 
-    val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
-    if (argument.returnType == null && singleStatement != null &&
-        singleStatement.target.labeledElement == argument && singleStatement.result is FirUnitExpression
-    ) {
-        // Simply { }, i.e., function literals without body. Raw FIR added an implicit return with an implicit unit type ref.
-        argument.replaceReturnTypeRef(session.builtinTypes.unitType)
-    }
-    val returnType = argument.returnType ?: expectedType.returnType(session)
+    val returnType = lambda.returnType ?: expectedClassLikeType.returnType(session)
 
     // `fun (x: T) = ...` and `fun T.() = ...` are both instances of `T.() -> V` and `(T) -> V`; `fun () = ...` is not.
     // For lambdas, the existence of the receiver is always implied by the expected type, and a value parameter
     // can never fill its role.
-    val receiverType = if (argument.isLambda) expectedType.receiverType(session) else argument.receiverType
-    val contextReceiversNumber =
-        if (argument.isLambda) expectedType.contextReceiversNumberForFunctionType else argument.contextReceivers.size
+    val receiverType = if (lambda.isLambda) expectedClassLikeType.receiverType(session) else lambda.receiverType
+    val contextParameterNumber =
+        if (lambda.isLambda) expectedClassLikeType.contextParameterNumberForFunctionType else lambda.contextParameters.size
 
-    val valueParametersTypesIncludingReceiver = expectedType.valueParameterTypesIncludingReceiver(session)
-    val isExtensionFunctionType = expectedType.isExtensionFunctionType(session)
+    val valueParametersTypesIncludingReceiver = expectedClassLikeType.valueParameterTypesIncludingReceiver(session)
+    val isExtensionFunctionType = expectedClassLikeType.isExtensionFunctionType(session)
     val expectedParameters = valueParametersTypesIncludingReceiver.let {
         val forExtension = if (receiverType != null && isExtensionFunctionType) 1 else 0
-        val toDrop = forExtension + contextReceiversNumber
+        val toDrop = forExtension + contextParameterNumber
 
         if (toDrop > 0) it.drop(toDrop) else it
+    }.map {
+        // @ParameterName is assumed to be used for Ctrl+P on the call site of a property with a function type.
+        // Propagating it further may affect further inference might work weirdly, and for sure,
+        // it's not expected to leak in implicitly typed declarations.
+        it.removeParameterNameAnnotation()
     }
 
     var coerceFirstParameterToExtensionReceiver = false
-    val argumentValueParameters = argument.valueParameters
-    val parameters = if (argument.isLambda && !argument.hasExplicitParameterList && expectedParameters.size < 2) {
+    val argumentValueParameters = lambda.valueParameters
+    val parameters = if (lambda.isLambda && !lambda.hasExplicitParameterList && expectedParameters.size < 2) {
         expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
     } else {
         if (allowCoercionToExtensionReceiver &&
-            argument.isLambda &&
+            lambda.isLambda &&
             isExtensionFunctionType &&
             valueParametersTypesIncludingReceiver.size == argumentValueParameters.size
         ) {
-            // (T, ...) -> V can be converter to T.(...) -> V
-            val firstValueParameter = argumentValueParameters.firstOrNull()
-            val extensionParameter = valueParametersTypesIncludingReceiver.firstOrNull()
-            if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter?.type) {
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.LexicographicVariableReadinessCalculation)) {
                 coerceFirstParameterToExtensionReceiver = true
+            } else {
+                // (legacy code for pre-2.4 versions)
+                // (T, ...) -> V can be converter to T.(...) -> V
+                val firstValueParameter = argumentValueParameters.firstOrNull()
+                val extensionParameter = valueParametersTypesIncludingReceiver.firstOrNull()
+                if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter) {
+                    coerceFirstParameterToExtensionReceiver = true
+                }
             }
         }
 
@@ -101,23 +99,23 @@ fun extractLambdaInfoFromFunctionType(
         }
     }
 
-    val contextReceivers =
+    val contextParameters =
         when {
-            contextReceiversNumber == 0 -> emptyList()
-            argument.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextReceiversNumber)
-            else -> argument.contextReceivers.map { it.typeRef.coneType }
+            contextParameterNumber == 0 -> emptyList()
+            lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextParameterNumber)
+            else -> lambda.contextParameters.map { it.returnTypeRef.coneType }
         }
 
-    return ResolvedLambdaAtom(
+    return ConeResolvedLambdaAtom(
         argument,
-        expectedType,
+        expectedClassLikeType,
         actualFunctionKind ?: expectedFunctionKind,
         receiverType,
-        contextReceivers,
+        contextParameters,
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
-        candidate,
-        coerceFirstParameterToExtensionReceiver
+        coerceFirstParameterToExtensionReceiver,
+        sourceForFunctionExpression,
     )
 }

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-2505 Type mismatch: inferred type is T but T was expected
 
@@ -23,3 +24,7 @@ fun <R> test (httpResponse: HttpResponse, rtype: MyClass<R>) {
     val res = httpResponse.parseAs( rtype )
     checkSubtype<R>(res) //type mismatch: required R, found T
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

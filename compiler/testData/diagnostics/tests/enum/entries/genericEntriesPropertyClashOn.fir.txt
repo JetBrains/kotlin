@@ -28,6 +28,6 @@ FILE: genericEntriesPropertyClashOn.fir.kt
             ^ Int(0)
         }
     public final fun test(): R|kotlin/Unit| {
-        Q|pckg/A|.R|pckg/entries|<R|pckg/A.Companion|>
+        lval i: R|kotlin/Int| = Q|pckg/A|.R|pckg/entries|<R|pckg/A.Companion|>
         Q|pckg/A.Companion|.R|pckg/entries|<R|pckg/A.Companion|>
     }

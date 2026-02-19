@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface Rec<out A: Rec<A, B>, B>
 
@@ -20,3 +21,6 @@ fun testOutOut() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, out I1>")!>cst1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, out kotlin.Any>")!>cst2<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, localProperty, nullableType, objectDeclaration, out,
+outProjection, propertyDeclaration, starProjection, typeConstraint, typeParameter, vararg */

@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: BACKEND
+// OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
@@ -42,3 +43,6 @@ import api.*
 
 @Anno(<!OPT_IN_USAGE!>MEANING<!>)
 fun usage() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classReference, const, functionDeclaration,
+integerLiteral, primaryConstructor, propertyDeclaration */

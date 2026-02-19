@@ -1,0 +1,27 @@
+Module: lib
+@kotlin.Metadata
+public final class Accessor {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public final method access(): void
+}
+
+@kotlin.Metadata
+final class HolderWrapper {
+    // source: 'lib.kt'
+    private final @org.jetbrains.annotations.NotNull field any: java.lang.Object
+    private synthetic final static field flag$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field flag$volatile: int
+    static method <clinit>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final @org.jetbrains.annotations.NotNull method getAny(): java.lang.Object
+    public synthetic final static method getFlag$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public synthetic final method getFlag$volatile(): int
+    public synthetic final method setFlag$volatile(p0: int): void
+}
+Module: app
+@kotlin.Metadata
+public final class AppKt {
+    // source: 'app.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

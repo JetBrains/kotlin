@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Hello.kt
-private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Hello<!>()
+private class <!CLASSIFIER_REDECLARATION!>Hello<!>()
 {
     val a = 4
 }
@@ -11,3 +12,5 @@ fun test() {
 
 // FILE: Hello.java
 public class Hello {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

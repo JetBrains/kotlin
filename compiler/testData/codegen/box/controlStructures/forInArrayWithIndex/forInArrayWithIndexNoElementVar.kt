@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val arr = arrayOf("a", "b", "c", "d")
@@ -5,7 +6,7 @@ val arr = arrayOf("a", "b", "c", "d")
 fun box(): String {
     val s = StringBuilder()
 
-    for ((i, _) in arr.withIndex()) {
+    for ([i, _] in arr.withIndex()) {
         s.append("$i;")
     }
 

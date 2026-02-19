@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 import kotlin.reflect.KProperty
@@ -58,3 +59,6 @@ suspend fun D.get(x: Int) =1
 suspend fun D.set(x: Int, v: String) {}
 
 suspend fun D.contains(y: String): Boolean = true
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, operator, starProjection, suspend, thisExpression */

@@ -7,25 +7,54 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputLibraries
+import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
+import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.*
-import kotlin.test.assertTrue
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 
 @DisplayName("K/N tests for commonizer")
 @NativeGradlePluginTests
 open class CommonizerIT : KGPBaseTest() {
-
     companion object {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
     }
@@ -35,15 +64,15 @@ open class CommonizerIT : KGPBaseTest() {
     fun testCommonizeNativeDistributionWithIosLinuxWindows(gradleVersion: GradleVersion) {
         nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
 
-            build(":cleanNativeDistributionCommonization")
+            build(":p1:cleanNativeDistributionCommonization")
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertOutputContains(commonizerOutput)
             }
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertTasksUpToDate(":p1:commonizeNativeDistribution")
                 assertNativeDistributionCommonizationCacheHit()
                 assertOutputContains("Native Distribution Commonization: All available targets are commonized already")
                 assertOutputContains("Native Distribution Commonization: Lock acquired")
@@ -52,9 +81,37 @@ open class CommonizerIT : KGPBaseTest() {
             }
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertOutputContains("Native Distribution Commonization: Cache disabled")
                 assertOutputContains(commonizerOutput)
+            }
+        }
+    }
+
+    @DisplayName("Clean commonized native distribution")
+    @GradleTest
+    fun testCleanNativeDistributionCommonization(gradleVersion: GradleVersion, @TempDir konanData: Path) {
+        nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
+            val buildOptions = defaultBuildOptions.withBundledKotlinNative().copy(
+                konanDataDir = konanData
+            )
+
+            fun commonizationResultFilesCount() = konanData
+                .walk()
+                .filter { it.contains(Path(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)) }
+                .count()
+
+            build(":p1:cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertTasksExecuted(":p1:cleanNativeDistributionCommonization")
+            }
+            build(":p1:commonizeNativeDistribution", buildOptions = buildOptions) {
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
+                if (commonizationResultFilesCount() == 0) fail("Expected some files after executing commonizeNativeDistribution")
+            }
+
+            build(":p1:cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertTasksExecuted(":p1:cleanNativeDistributionCommonization")
+                if (commonizationResultFilesCount() != 1) fail("Expected only .lock file after cleaning")
             }
         }
     }
@@ -62,7 +119,13 @@ open class CommonizerIT : KGPBaseTest() {
     @DisplayName("Commonize Curl Interop UP-TO-DATE check")
     @GradleTest
     fun testCommonizeCurlInteropUTDCheck(gradleVersion: GradleVersion) {
-        nativeProject("commonizeCurlInterop", gradleVersion) {
+        nativeProject(
+            "commonizeCurlInterop",
+            gradleVersion,
+            // with CC enabled on Gradle 7 `CInteropCommonizerTask.getAllInteropGroupsForUpToDateCheck` nested input
+            // always fails the up-to-date check
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
 
             configureCommonizerTargets()
 
@@ -93,8 +156,10 @@ open class CommonizerIT : KGPBaseTest() {
             }
             build(":commonize") {
                 assertNativeDistributionCommonizationCacheHit()
-                assertTasksNotExecuted(":cinteropCurlTargetA")
-                assertTasksNotExecuted(":cinteropCurlTargetB")
+                assertTasksAreNotInTaskGraph(
+                    ":cinteropCurlTargetA",
+                    ":cinteropCurlTargetB",
+                )
             }
         }
     }
@@ -113,9 +178,11 @@ open class CommonizerIT : KGPBaseTest() {
 
             build(":commonize") {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksNotExecuted(":cinteropCurlTargetA")
-                assertTasksNotExecuted(":cinteropCurlTargetB")
-                assertTasksNotExecuted(":commonizeCInterop")
+                assertTasksAreNotInTaskGraph(
+                    ":cinteropCurlTargetA",
+                    ":cinteropCurlTargetB",
+                    ":commonizeCInterop",
+                )
             }
 
             build(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=true") {
@@ -127,35 +194,39 @@ open class CommonizerIT : KGPBaseTest() {
 
             build(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
                 assertNativeDistributionCommonizationCacheHit()
-                assertTasksNotExecuted(":cinteropCurlTargetA")
-                assertTasksNotExecuted(":cinteropCurlTargetB")
-                assertTasksNotExecuted(":commonizeCInterop")
+                assertTasksAreNotInTaskGraph(
+                    ":cinteropCurlTargetA",
+                    ":cinteropCurlTargetB",
+                    ":commonizeCInterop",
+                )
             }
         }
     }
 
-
     @DisplayName("Commonize Curl Interop copy CommonizeCInterop for Ide")
     @GradleTest
-    fun testCommonizeCurlInteropcopyCommonizeCInteropForIde(gradleVersion: GradleVersion) {
+    fun testCommonizeCurlInteropcopyCommonizeCInteropForIde(
+        gradleVersion: GradleVersion,
+    ) {
         nativeProject("commonizeCurlInterop", gradleVersion) {
 
             configureCommonizerTargets()
 
-            val expectedOutputDirectoryForIde = projectPath.resolve(".gradle/kotlin/commonizer")
+            val commonizerIdeOutput: Path = projectPersistentCache.resolve("metadata").resolve("commonizer")
+
             val expectedOutputDirectoryForBuild = projectPath.resolve("build/classes/kotlin/commonizer")
 
             build(":copyCommonizeCInteropForIde") {
                 assertTasksExecuted(":cinteropCurlTargetB")
                 assertTasksExecuted(":commonizeCInterop")
 
-                assertDirectoryExists(expectedOutputDirectoryForIde, "Missing output directory for IDE")
+                assertDirectoryExists(commonizerIdeOutput, "Missing output directory for IDE")
                 assertDirectoryExists(expectedOutputDirectoryForBuild, "Missing output directory for build")
-                assertEqualDirectories(expectedOutputDirectoryForBuild.toFile(), expectedOutputDirectoryForIde.toFile(), false)
+                assertEqualDirectories(expectedOutputDirectoryForBuild.toFile(), commonizerIdeOutput.toFile(), false)
             }
 
             build(":clean") {
-                assertDirectoryExists(expectedOutputDirectoryForIde, "Expected ide output directory to survive cleaning")
+                assertDirectoryExists(commonizerIdeOutput, "Expected ide output directory to survive cleaning")
                 assertFileNotExists(expectedOutputDirectoryForBuild, "Expected output directory for build to be cleaned")
             }
         }
@@ -246,79 +317,112 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-46234 intermediate source set with only one native target")
-    @GradleTest
-    fun testIntermediateSourceSetWithOnlyOneNativeTarget(gradleVersion: GradleVersion) {
-        testSingleNativePlatform("commonize-kt-46234-singleNativeTarget", gradleVersion)
-    }
-
     @DisplayName("KT-46142 standalone native source set")
+    @TestMetadata("commonize-kt-46142-singleNativeTarget")
     @GradleTest
     fun testStandaloneNativeSourceSet(gradleVersion: GradleVersion) {
-        testSingleNativePlatform("commonize-kt-46142-singleNativeTarget", gradleVersion)
-    }
-
-    @DisplayName("KT-46248 single supported native target dependency propagation")
-    @GradleTest
-    fun testSingleSupportedNativeTargetDependencyPropagation(gradleVersion: GradleVersion) {
-        val posixDependencyRegex = Regex(""".*Dependency:.*[pP]osix""")
-        val dummyCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-dummy.*""")
-        nativeProject("commonize-kt-46248-singleNativeTargetPropagation", gradleVersion) {
-            build(":p1:listNativeMainDependencies") {
-                assertOutputContains(posixDependencyRegex)
-                assertOutputContains(dummyCInteropDependencyRegex)
+        val project = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
             }
 
-            build(":p1:listNativeMainParentDependencies") {
-                assertOutputContains(posixDependencyRegex)
-                assertOutputContains(dummyCInteropDependencyRegex)
-            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    jvm()
 
-            build(":p1:listCommonMainDependencies") {
-                assertOutputDoesNotContain(posixDependencyRegex)
-                assertOutputDoesNotContain(dummyCInteropDependencyRegex)
-            }
-
-            build("assemble") {
-                assertTasksExecuted(":p1:compileCommonMainKotlinMetadata")
-                assertTasksExecuted(":p1:compileKotlinNativePlatform")
+                    sourceSets.commonMain.get().compileSource(
+                        """                            
+                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                        fun common() {
+                            platform.posix.usleep(100u)
+                        }
+                        """.trimIndent()
+                    )
+                }
             }
         }
+        project.resolveIdeDependencies {
+            val linuxMatchers = arrayOf(
+                nativeStdlibDependency,
+                IdeaKotlinDependencyMatcher("Platform cinterops matcher") {
+                    (it is IdeaKotlinResolvedBinaryDependency)
+                            && it.isNativeDistribution
+                            && it.klibExtra?.commonizerTarget == null
+                            && it.klibExtra?.isInterop == true
+                            && it.klibExtra?.nativeTargets == listOf(LINUX_ARM64.name)
+                }
+            )
+            it["commonMain"].assertMatches(
+                kotlinStdlibDependencies,
+            )
+            it["nativeMain"].assertMatches(
+                dependsOnDependency(":/commonMain"),
+                *linuxMatchers,
+            )
+            it["linuxArm64Main"].assertMatches(
+                dependsOnDependency(":/commonMain"),
+                dependsOnDependency(":/nativeMain"),
+                dependsOnDependency(":/linuxMain"),
+                *linuxMatchers,
+            )
+        }
+        project.build("compileKotlinLinuxArm64")
+        project.buildAndFail("compileCommonMainKotlinMetadata")
     }
 
-    @DisplayName("KT-46248 single supported native target dependency propagation - cinterop")
+
+    @DisplayName("KT-47523 single supported native target dependency propagation - cinterop")
+    @TestMetadata("commonize-kt-47523-singleNativeTargetPropagation-cinterop")
     @GradleTest
     fun testSingleSupportedNativeTargetDependencyPropagationCInterop(gradleVersion: GradleVersion) {
-        val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-dummy.*""")
+        val cinteropKlibMatcher = IdeaKotlinDependencyMatcher("cinteropKlib") {
+            (it is IdeaKotlinResolvedBinaryDependency)
+                    && it.coordinates?.module == "commonize-kt-47523-singleNativeTargetPropagation-cinterop-cinterop-dummy"
+                    && it.klibExtra?.commonizerTarget == null
+                    && it.klibExtra?.isInterop == true
+        }
         nativeProject("commonize-kt-47523-singleNativeTargetPropagation-cinterop", gradleVersion) {
-            build("listNativePlatformMainDependencies") {
-                assertOutputDoesNotContain(nativeMainContainsCInteropDependencyRegex)
-            }
-
-            build("listNativeMainDependencies") {
-                assertOutputContains(nativeMainContainsCInteropDependencyRegex)
-            }
-
-            build("listCommonMainDependencies") {
-                assertOutputContains(nativeMainContainsCInteropDependencyRegex)
+            resolveIdeDependencies {
+                it["nativePlatformMain"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    cinteropKlibMatcher,
+                    dependsOnDependency(":/commonMain"),
+                    dependsOnDependency(":/nativeMain"),
+                )
+                it["nativeMain"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    cinteropKlibMatcher,
+                    dependsOnDependency(":/commonMain"),
+                )
+                it["commonMain"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    cinteropKlibMatcher,
+                )
             }
 
             build("assemble")
         }
     }
 
+
     @DisplayName("KT-48856 single native target dependency propagation - test source set - cinterop")
     @GradleTest
     fun testSingleSupportedNativeTargetDependencyPropagationTestSourceSetCInterop(gradleVersion: GradleVersion) {
-        val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-sampleInterop.*""")
         nativeProject("commonize-kt-48856-singleNativeTargetPropagation-testSourceSet", gradleVersion) {
-            build("listNativeTestDependencies") {
-                assertOutputContains(
-                    nativeMainContainsCInteropDependencyRegex,
-                    "Expected sourceSet 'nativeTest' to list cinterop dependency"
+            resolveIdeDependencies {
+                it["nativeTest"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    friendSourceDependency(":/commonMain"),
+                    friendSourceDependency(":/platformMain"),
+                    IdeaKotlinDependencyMatcher("cinteropKlib") {
+                        (it is IdeaKotlinResolvedBinaryDependency)
+                                && it.coordinates?.module == "commonize-kt-48856-singleNativeTargetPropagation-testSourceSet-cinterop-sampleInterop"
+                                && it.klibExtra?.commonizerTarget == null
+                                && it.klibExtra?.isInterop == true
+                    }
                 )
             }
-
             build("assemble")
         }
     }
@@ -341,38 +445,6 @@ open class CommonizerIT : KGPBaseTest() {
     @GradleTest
     fun testMultipleCinteropsWithTestSourceSetsAndCompilations(gradleVersion: GradleVersion) {
         `test multiple cinterops with test source sets and compilations`(gradleVersion, false)
-    }
-
-    @DisplayName("KT-49735 two kotlin targets with same konanTarget")
-    @GradleTest
-    fun testTwoKotlinTargetsWithSameKonanTarget(gradleVersion: GradleVersion) {
-        nativeProject("commonize-kt-49735-twoKotlinTargets-oneKonanTarget", gradleVersion) {
-            build(":assemble") {
-                assertTasksExecuted(":compileCommonMainKotlinMetadata")
-            }
-        }
-    }
-
-    @DisplayName("KT-48118 c-interops available in commonMain")
-    @GradleTest
-    fun testCInteropsAvailableInCommonMain(gradleVersion: GradleVersion) {
-        nativeProject("commonize-kt-48118-c-interop-in-common-main", gradleVersion) {
-            reportSourceSetCommonizerDependencies {
-                val upperMain = getCommonizerDependencies("upperMain")
-                val konanDataDirProperty = buildOptions.konanDataDir
-                    ?: error("konanDataDir must not be null in this test. Please set a custom konanDataDir property.")
-                upperMain.withoutNativeDistributionDependencies(konanDataDirProperty).assertDependencyFilesMatches(".*cinterop-dummy")
-                upperMain.onlyNativeDistributionDependencies(konanDataDirProperty).assertNotEmpty()
-
-                val commonMain = getCommonizerDependencies("commonMain")
-                commonMain.withoutNativeDistributionDependencies(konanDataDirProperty).assertDependencyFilesMatches(".*cinterop-dummy")
-                commonMain.onlyNativeDistributionDependencies(konanDataDirProperty).assertNotEmpty()
-            }
-
-            build(":compileCommonMainKotlinMetadata")
-
-            build(":compileUpperMainKotlinMetadata")
-        }
     }
 
     @DisplayName("KT-47641 commonizing c-interops does not depend on any source compilation")
@@ -441,30 +513,79 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-52243 cinterop caching")
+    @DisplayName("KT-48118 c-interops available in commonMain")
     @GradleTest
-    fun testCInteropCaching(gradleVersion: GradleVersion) {
-        nativeProject("commonizeCurlInterop", gradleVersion) {
-
-            configureCommonizerTargets()
-
-            val localBuildCacheDir = projectPath.resolve("local-build-cache-dir").also { assertTrue(it.toFile().mkdirs()) }
-            enableLocalBuildCache(localBuildCacheDir)
-
-            build(":commonize", buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)) {
-                assertTasksExecuted(":cinteropCurlTargetA", ":cinteropCurlTargetB")
+    fun testCInteropsAvailableInCommonMain(gradleVersion: GradleVersion) {
+        val project = project("empty", gradleVersion) {
+            buildScriptInjection {
+                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
             }
-            build(":clean") {}
-            build(":commonize", buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)) {
-                assertTasksFromCache(":cinteropCurlTargetA", ":cinteropCurlTargetB")
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                val defFile = project.layout.projectDirectory.file("foo.def").asFile
+                defFile.writeText("""
+                    language = C
+                    ---
+                    void bar(void);
+                """.trimIndent())
+                project.applyMultiplatform {
+                    listOf(
+                        linuxX64(),
+                        linuxArm64(),
+                    ).forEach {
+                        it.compilations.getByName("main").cinterops.create("foo") {
+                            it.definitionFile.set(defFile)
+                        }
+                    }
+
+                    val commonMain = sourceSets.commonMain.get()
+                    val linuxArm64Main = sourceSets.linuxArm64Main.get()
+                    val linuxX64Main = sourceSets.linuxX64Main.get()
+
+                    val upperMain = sourceSets.create("upperMain") {
+                        it.dependsOn(commonMain)
+                    }
+
+                    upperMain.compileSource(
+                        """
+                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                        fun consumeCinteropUpperMain() {
+                            foo.bar()
+                        }
+                        """.trimIndent()
+                    )
+                    commonMain.compileSource(
+                        """
+                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                        fun consumeCinteropCommonMain() {
+                            foo.bar()
+                        }
+                        """.trimIndent()
+                    )
+
+                    sourceSets.create("lowerMain") {
+                        it.dependsOn(upperMain)
+                        it.dependsOn(commonMain)
+                        linuxArm64Main.dependsOn(it)
+                        linuxX64Main.dependsOn(it)
+                    }
+                }
             }
         }
+        project.build("compileUpperMainKotlinMetadata")
+        project.build("compileCommonMainKotlinMetadata")
     }
+
 
     @DisplayName("KT-51517 commonization with transitive cinterop")
     @GradleTest
     fun testCommonizationWithTransitiveCinterop(gradleVersion: GradleVersion) {
-        nativeProject("commonize-kt-51517-transitive-cinterop", gradleVersion) {
+        nativeProject(
+            "commonize-kt-51517-transitive-cinterop",
+            gradleVersion
+        ) {
             build(":app:assemble") {
                 assertTasksExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":lib:commonizeCInterop")
@@ -480,10 +601,14 @@ open class CommonizerIT : KGPBaseTest() {
     fun testCommonizationWithTwoCInteropCommonizerGroups(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-57796-twoCInteropCommonizerGroups", gradleVersion) {
             build(":app:commonizeCInterop") {
-                assertTasksNotExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
-                assertTasksExecuted(":lib:commonizeCInterop")
-                assertTasksNotExecuted(":app:transformCommonMainCInteropDependenciesMetadata")
-                assertTasksExecuted(":app:commonizeCInterop")
+                assertTasksExecuted(
+                    ":lib:commonizeCInterop",
+                    ":app:commonizeCInterop",
+                )
+                assertTasksAreNotInTaskGraph(
+                    ":lib:transformCommonMainCInteropDependenciesMetadata",
+                    ":app:transformCommonMainCInteropDependenciesMetadata",
+                )
             }
         }
     }
@@ -491,7 +616,11 @@ open class CommonizerIT : KGPBaseTest() {
     @DisplayName("KT-57796 commonization with two cinterop commonizer groups`")
     @GradleTest
     fun testCommonizationWithLibraryContainingTwoRoots(gradleVersion: GradleVersion) {
-        project("commonize-kt-56729-consume-library-with-two-roots", gradleVersion) {
+        project(
+            "commonize-kt-56729-consume-library-with-two-roots",
+            gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             build("publish")
 
             build(":consumer:assemble") {
@@ -502,12 +631,297 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-58223 test commonized libraries for IDE can be stored in different data dir")
+    @GradleTest
+    fun testCommonizedLibrariesForIDECanBeStoredInDifferentDir(
+        gradleVersion: GradleVersion,
+    ) {
+        nativeProject("commonizeCurlInterop", gradleVersion) {
+            configureCommonizerTargets()
+
+            val commonizerIdeOutput: Path = projectPersistentCache.resolve("metadata").resolve("commonizer")
+
+            build(":copyCommonizeCInteropForIde") {
+                assertTasksExecuted(":cinteropCurlTargetB")
+                assertTasksExecuted(":commonizeCInterop")
+
+                assertDirectoryExists(commonizerIdeOutput, "Missing output directory for IDE")
+            }
+
+            build(":clean") {
+                assertDirectoryExists(commonizerIdeOutput, "Expected ide output directory to survive cleaning")
+            }
+        }
+    }
+
+    @DisplayName("KT-74403 test that commonization of unsupported targets should not fail")
+    @OsCondition(supportedOn = [OS.LINUX], enabledOnCI = [OS.LINUX]) // Mac supports all known targets
+    @GradleTest
+    fun testCommonizationOfUnsupportedTargetsShouldNotFail(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
+
+        nativeProject("emptyKts", gradleVersion, defaultBuildOptions.copy(konanDataDir = konanDataDir)) {
+            addKgpToBuildScriptCompilationClasspath()
+
+            val app = project("emptyKts", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        macosX64()
+                        macosArm64()
+                    }
+                }
+            }
+            val lib = project("emptyKts", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        macosX64()
+                        macosArm64()
+                    }
+                }
+            }
+
+            include(app, "app")
+            include(lib, "lib")
+
+            build(
+                ":app:commonizeNativeDistribution",
+                ":lib:commonizeNativeDistribution",
+            ) {
+                assertTasksExecuted(":app:commonizeNativeDistribution")
+                assertTasksExecuted(":lib:commonizeNativeDistribution")
+            }
+        }
+    }
+
+    @DisplayName("KT-74442: commonization should work for all known targets despite `kotlin.native.enableKlibsCrossCompilation` state")
+    @TestMetadata("emptyKts")
+    @GradleTest
+    fun testCommonizationWorksForAllTargetsDespiteCrossCompilationFlagState(gradleVersion: GradleVersion) {
+        nativeProject("emptyKts", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    macosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    macosX64()
+                }
+            }
+
+            kotlinSourcesDir("nativeMain").createDirectories().resolve("OnlyLinuxClass.kt").writeText(
+                //language=kotlin
+                """
+                |fun main() {
+                |    platform.linux.epoll_create(0)
+                |}
+                """.trimMargin()
+            )
+
+            buildAndFail(
+                ":compileNativeMainKotlinMetadata",
+            ) {
+                assertTasksFailed(":compileNativeMainKotlinMetadata")
+                assertOutputContains("Unresolved reference 'linux'")
+            }
+
+            buildAndFail(":compileNativeMainKotlinMetadata") {
+                assertTasksFailed(":compileNativeMainKotlinMetadata")
+                assertOutputContains("Unresolved reference 'linux'")
+            }
+        }
+    }
+
+    @DisplayName("KT-74442: commonization of non-platform CInterop should work only for suppoted targets")
+    @TestMetadata("emptyKts")
+    @OsCondition(enabledOnCI = [OS.LINUX, OS.WINDOWS, OS.MAC])
+    @GradleTest
+    fun testCommonizationOfNonPlatformShouldWorkOnlyForSupportedTargets(gradleVersion: GradleVersion) {
+        nativeProject("emptyKts", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    fun KotlinNativeTarget.addCInterop(name: String = "nonplatform") {
+                        compilations.getByName("main") {
+                            it.cinterops.create(name)
+                        }
+                    }
+                    linuxX64().addCInterop()
+                    linuxArm64().addCInterop()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    macosX64().addCInterop()
+                    macosArm64().addCInterop()
+                }
+            }
+
+            gradleProperties.appendText("\nkotlin.mpp.enableCInteropCommonization=true")
+
+            projectPath.resolve("src/nativeInterop/cinterop").createDirectories().resolve("nonplatform.def").writeText(
+                """
+                |---
+                |
+                |#ifdef __linux
+                |    void linux_only_api(void) {}
+                |#endif
+                |
+                |#ifdef __APPLE__
+                |    void apply_only_api(void) {}
+                |#endif
+                |
+                |void sqlite_optimistically_commonized_api(void) {}    
+                """.trimMargin()
+            )
+
+            if (HostManager.hostIsMac) {
+                build(
+                    "commonizeCInterop"
+                ) {
+                    checkCommonizedMetadataBuildOnMac()
+                }
+                build("commonizeCInterop") {
+                    checkCommonizedMetadataBuildOnMac()
+                }
+            } else {
+                build(
+                    "commonizeCInterop"
+                ) {
+                    checkCommonizedMetadataBuildOnNonMac()
+                }
+
+                build("commonizeCInterop") {
+                    checkCommonizedMetadataBuildOnNonMac()
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-80675: import of commonized test compilation cinterops")
+    @GradleTest
+    fun testCommonizedTestCinteropImport(version: GradleVersion) {
+        project("empty", version) {
+            buildScriptInjection {
+                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
+            }
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                val defFile = project.layout.projectDirectory.file("foo.def").asFile
+                defFile.writeText("""
+                    language = C
+                    ---
+                    void bar(void);
+                """.trimIndent())
+                project.applyMultiplatform {
+                    listOf(
+                        linuxArm64(),
+                        linuxX64(),
+                    ).forEach {
+                        it.compilations.getByName("test").cinterops.create("foo").definitionFile.set(defFile)
+                    }
+                }
+            }
+
+            resolveIdeDependencies {
+                it["commonTest"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    IdeaKotlinDependencyMatcher("cinterop") {
+                        (it is IdeaKotlinResolvedBinaryDependency)
+                                && it.coordinates?.module == "test-cinterop-foo"
+                                && parseCommonizerTarget(it.klibExtra?.commonizerTarget!!) == CommonizerTarget(LINUX_X64, LINUX_ARM64)
+                    },
+                    friendSourceDependency(":/commonMain"),
+                    friendSourceDependency(":/linuxMain"),
+                    friendSourceDependency(":/nativeMain"),
+                )
+            }
+        }
+    }
+
+    private fun TestProject.checkCommonizedMetadataBuildOnNonMac() {
+        assertEquals(
+            """
+            |nonplatform/linux_only_api|linux_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            dumpKlibMetadataSignatures(
+                nonPlatformCinteropsClasspath("linuxMain").single(),
+            )
+        )
+
+        // In non-platform cinterops we currently commonize APIs optimistically,
+        // and we did so in platform cinterops before 2.1.0,
+        // because before then we didn't even have platform klibs for Apple targets in non-Apple Kotlin Native distributions (see KT-74442).
+        // Now we commonize platform cinterops correctly, and we continue commonizing non-platform cinterops optimistically.
+        // So, it is expected to not fail here because non-platform cinterop now works only for supported targets.
+        // The behavior of these checks must change when KT-74073 is done.
+        assertEquals(
+            """
+            |nonplatform/linux_only_api|linux_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            dumpKlibMetadataSignatures(
+                nonPlatformCinteropsClasspath("nativeMain").single()
+            )
+        )
+    }
+
+    private fun TestProject.nonPlatformCinteropsClasspath(sourceSetName: String): Set<java.io.File> {
+        return buildScriptReturn {
+            project.future {
+                val cinteropCommonizerTask = project.commonizeCInteropTask()
+                cinteropCommonizerTask!!.get().commonizedOutputLibraries(
+                    CInteropCommonizerDependent.from(
+                        kotlinMultiplatform.sourceSets.getByName(sourceSetName)
+                    )!!
+                ).files
+            }.getOrThrow()
+        }.buildAndReturn()
+    }
+
+    private fun TestProject.checkCommonizedMetadataBuildOnMac() {
+        assertEquals(
+            """
+            |nonplatform/linux_only_api|linux_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            dumpKlibMetadataSignatures(
+                nonPlatformCinteropsClasspath("linuxMain").single(),
+            )
+        )
+        assertEquals(
+            """
+            |nonplatform/apply_only_api|apply_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            dumpKlibMetadataSignatures(
+                nonPlatformCinteropsClasspath("appleMain").single(),
+            )
+        )
+        assertEquals(
+            """
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            dumpKlibMetadataSignatures(
+                nonPlatformCinteropsClasspath("nativeMain").single(),
+            )
+        )
+    }
 
     private fun `test multiple cinterops with test source sets and compilations`(
         gradleVersion: GradleVersion,
         testSourceSetsDependingOnMain: Boolean,
     ) {
-        nativeProject("commonizeMultipleCInteropsWithTests", gradleVersion) {
+        nativeProject(
+            "commonizeMultipleCInteropsWithTests",
+            gradleVersion,
+        ) {
 
             val isMac = HostManager.hostIsMac
 
@@ -532,25 +946,43 @@ open class CommonizerIT : KGPBaseTest() {
                 getCommonizerDependencies("nativeMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper")
                     assertTargetOnAllDependencies(
-                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
+                        CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
                     )
                 }
 
                 getCommonizerDependencies("nativeTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*nativeTestHelper")
                     assertTargetOnAllDependencies(
-                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
+                        CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
                     )
                 }
 
                 getCommonizerDependencies("unixMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
-                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            IOS_X64,
+                            IOS_ARM64,
+                            IOS_SIMULATOR_ARM64,
+                            LINUX_X64,
+                            LINUX_ARM64,
+                            MACOS_X64
+                        )
+                    )
                 }
 
                 getCommonizerDependencies("unixTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
-                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            IOS_X64,
+                            IOS_ARM64,
+                            IOS_SIMULATOR_ARM64,
+                            LINUX_X64,
+                            LINUX_ARM64,
+                            MACOS_X64
+                        )
+                    )
                 }
 
                 getCommonizerDependencies("linuxMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
@@ -571,24 +1003,24 @@ open class CommonizerIT : KGPBaseTest() {
                 if (isMac) {
                     getCommonizerDependencies("appleMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64))
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MACOS_X64))
                     }
 
                     getCommonizerDependencies("appleTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper", ".*nativeTestHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64))
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MACOS_X64))
                     }
 
                     getCommonizerDependencies("iosMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64))
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64))
                     }
 
                     getCommonizerDependencies("iosTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(
                             ".*nativeHelper", ".*unixHelper", ".*appleHelper", ".*nativeTestHelper", ".*iosTestHelper"
                         )
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64))
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64))
                     }
 
                     getCommonizerDependencies("macosMain").assertEmpty()
@@ -597,6 +1029,8 @@ open class CommonizerIT : KGPBaseTest() {
                     getCommonizerDependencies("iosX64Test").assertEmpty()
                     getCommonizerDependencies("iosArm64Main").assertEmpty()
                     getCommonizerDependencies("iosArm64Test").assertEmpty()
+                    getCommonizerDependencies("iosSimulatorArm64Main").assertEmpty()
+                    getCommonizerDependencies("iosSimulatorArm64Test").assertEmpty()
                 }
 
                 getCommonizerDependencies("windowsX64Main").assertEmpty()
@@ -607,7 +1041,6 @@ open class CommonizerIT : KGPBaseTest() {
                 assertTestSourceSetsDependingOnMainParameter()
                 assertTasksUpToDate(":commonizeNativeDistribution")
                 assertOutputContains("Native Distribution Commonization: Cache hit")
-                assertTasksUpToDate(":commonizeCInterop")
             }
 
             build(":compileNativeMainKotlinMetadata", buildOptions = testSourceSetsDependingOnMainParameterOption) {
@@ -632,24 +1065,6 @@ open class CommonizerIT : KGPBaseTest() {
                 }
             }
         }
-    }
-
-    private fun testSingleNativePlatform(projectName: String, gradleVersion: GradleVersion) {
-
-        val posixInIntransitiveMetadataConfigurationRegex = Regex(""".*intransitiveMetadataConfiguration:.*([pP])osix""")
-
-        nativeProject(projectName, gradleVersion) {
-            build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=false") {
-                assertOutputDoesNotContain(posixInIntransitiveMetadataConfigurationRegex)
-            }
-
-            build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=true") {
-                assertOutputContains(posixInIntransitiveMetadataConfigurationRegex)
-            }
-
-            build("assemble")
-        }
-
     }
 
     private fun TestProject.configureCommonizerTargets() {

@@ -17,7 +17,7 @@ public annotation class nativeSetter
 
 @Target(FUNCTION)
 @Deprecated("Use inline extension function with body using dynamic")
-public annotation class nativeInvoke
+public actual annotation class nativeInvoke
 
 @Target(CLASS, FUNCTION, PROPERTY)
 internal annotation class library(public val name: String = "")
@@ -40,7 +40,7 @@ internal annotation class marker
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * class Person(val name: String) {
  *     fun hello() {
  *         println("Hello $name!")
@@ -61,6 +61,23 @@ internal annotation class marker
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 public actual annotation class JsName(actual val name: String)
 
+
+/**
+ * Declare access to a declaration (right now, only functions are supported) by a well-known Symbol in JavaScript.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol#well-known_symbols
+ *
+ * This is especially useful for interop to implement different JS conventions to override JS iterability, auto-closing behavior, casting to primitives, etc
+ *
+ * @property name the name of a well-known symbol by which the declaration would be accessible.
+ *           It's required the symbol to be presented under the [name] inside the `Symbol` static scope.
+ */
+@ExperimentalStdlibApi
+@Retention(AnnotationRetention.BINARY)
+@Target(FUNCTION)
+@SinceKotlin("2.3")
+public actual annotation class JsSymbol(actual val name: String)
+
 /**
  * Specifies the name of the compiled file produced from the annotated source file instead of the default one.
  *
@@ -72,6 +89,21 @@ public actual annotation class JsName(actual val name: String)
 public actual annotation class JsFileName(actual val name: String)
 
 /**
+ * Marks an interface that is not going to be used at runtime on the JS platform.
+ *
+ * Interfaces annotated with `@JsNoRuntime` cannot be used in `is` checks, `as` casts,
+ * or with class references on the JS platform. Such interfaces can be actualized on JS as `external interface`.
+ *
+ * This annotation is available in common code and is JS-specific via [OptionalExpectation].
+ */
+@ExperimentalJsNoRuntime
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS)
+@SinceKotlin("2.3") // TODO: replace with 2.4
+@MustBeDocumented
+public actual annotation class JsNoRuntime
+
+/**
  * Denotes an `external` declaration that must be imported from native JavaScript library.
  *
  * The compiler produces the code relevant for the target module system, for example, in case of CommonJS,
@@ -80,11 +112,11 @@ public actual annotation class JsFileName(actual val name: String)
  * The annotation can be used on top-level external declarations (classes, properties, functions) and files.
  * In case of file (which can't be `external`) the following rule applies: all the declarations in
  * the file must be `external`. By applying `@JsModule(...)` on a file you tell the compiler to import a JavaScript object
- * that contain all the declarations from the file.
+ * that contains all the declarations from the file.
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * @JsModule("jquery")
  * external abstract class JQuery() {
  *     // some declarations here
@@ -101,7 +133,7 @@ public actual annotation class JsFileName(actual val name: String)
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
-public annotation class JsModule(val import: String)
+public actual annotation class JsModule(actual val import: String)
 
 /**
  * Denotes an `external` declaration that can be used without module system.
@@ -114,7 +146,7 @@ public annotation class JsModule(val import: String)
  *
  * For example:
  *
- * ``` kotlin
+ * ```kotlin
  * @JsModule("jquery")
  * @JsNonModule
  * @JsName("$")
@@ -137,7 +169,7 @@ public annotation class JsNonModule
 /**
  * Adds prefix to `external` declarations in a source file.
  *
- * JavaScript does not have concept of packages (namespaces). They are usually emulated by nested objects.
+ * JavaScript does not have a concept of packages (namespaces). They are usually emulated by nested objects.
  * The compiler turns references to `external` declarations either to plain unprefixed names (in case of *plain* modules)
  * or to plain imports.
  * However, if a JavaScript library provides its declarations in packages, you won't be satisfied with this.
@@ -164,8 +196,8 @@ public annotation class JsNonModule
  * @see JsModule
  */
 @Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FILE)
-public annotation class JsQualifier(val value: String)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
+public actual annotation class JsQualifier(actual val value: String)
 
 /**
  * Exports top-level declaration on JS platform.
@@ -201,15 +233,38 @@ public annotation class JsQualifier(val value: String)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
 @SinceKotlin("1.3")
 public actual annotation class JsExport {
-    /*
-    * The annotation prevents exporting the annotated member of an exported class.
-    * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
-    */
+    /**
+     * The annotation prevents exporting the annotated member of an exported class.
+     * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+     */
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
     @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
     @SinceKotlin("1.8")
     public actual annotation class Ignore
+
+
+    /**
+     * This annotation indicates that the exported declaration should be exported as `default` on the JS platform.
+     *
+     * In ES modules, the annotated declaration is available as the `default` export.
+     * In CommonJS, UMD, and plain modules, the annotated declaration is available under the name `default`.
+     *
+     * This annotation is experimental, meaning that the restrictions described above are subject to change.
+     *
+     * Note: If the annotation is applied multiple times across the project, the behavior depends on the compilation granularity.
+     * 
+     * - **Whole-program compilation**: If multiple libraries apply the annotation, it results in a runtime error.
+     * - **Per-module compilation**: Conflicts across dependencies (like in `whole-program` mode) are resolved.
+     *   However, a runtime error occurs if the annotation is applied multiple times within a single module.
+     * - **Per-file compilation**: This mode resolves the issues present in `whole-program` and `per-module` modes.
+     *   However, a new issue arises if `@JsExport.Default` is applied multiple times within the same file.
+     */
+    @ExperimentalJsExport
+    @Retention(AnnotationRetention.BINARY)
+    @Target(CLASS, PROPERTY, FUNCTION)
+    @SinceKotlin("2.3")
+    public actual annotation class Default
 }
 
 
@@ -300,3 +355,21 @@ public annotation class JsExternalInheritorsOnly
 @Target(VALUE_PARAMETER)
 @SinceKotlin("1.9")
 public annotation class JsExternalArgument
+
+/**
+ * Specifies that an additional static method is generated from the annotated companion object member if it's a function.
+ * If the member is a property, additional static getter/setter methods are generated.
+ */
+@ExperimentalJsStatic
+@Retention(AnnotationRetention.BINARY)
+@Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
+@MustBeDocumented
+@SinceKotlin("2.0")
+public actual annotation class JsStatic()
+
+/**
+ * Prevents the annotated contextless lambda from being transformed into a global function.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(FUNCTION)
+internal annotation class JsNoLifting

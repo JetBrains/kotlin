@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/Parent.java
 package a;
@@ -21,3 +22,5 @@ public class Outer<Foo> {
 package a
 
 fun test() = Outer<String>().Inner().bar()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

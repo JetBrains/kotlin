@@ -5,13 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.MissingInnerClassConstructorReceiver
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.delegatingConstructorScope
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -21,24 +28,26 @@ class FirTowerResolver(
     private val components: BodyResolveComponents,
     resolutionStageRunner: ResolutionStageRunner,
     private val collector: CandidateCollector = CandidateCollector(components, resolutionStageRunner)
-) {
+) : SessionAndScopeSessionHolder by components {
     private val manager = TowerResolveManager(collector)
 
     fun runResolver(
         info: CallInfo,
         context: ResolutionContext,
-        externalCollector: CandidateCollector? = null
+        externalCollector: CandidateCollector? = null,
+        candidateFactory: CandidateFactory = CandidateFactory(context, info),
     ): CandidateCollector {
-        return runResolver(info, context, externalCollector ?: collector, manager)
+        return runResolver(info, context, externalCollector ?: collector, manager, candidateFactory)
     }
 
     fun runResolver(
         info: CallInfo,
         context: ResolutionContext,
         collector: CandidateCollector,
-        manager: TowerResolveManager
+        manager: TowerResolveManager,
+        candidateFactory: CandidateFactory = CandidateFactory(context, info),
     ): CandidateCollector {
-        val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector, context)
+        val candidateFactoriesAndCollectors = CandidateFactoriesAndCollectors(candidateFactory, collector)
 
         enqueueResolutionTasks(context, manager, candidateFactoriesAndCollectors, info)
 
@@ -61,6 +70,7 @@ class FirTowerResolver(
             candidateFactoriesAndCollectors.resultCollector,
             candidateFactoriesAndCollectors.candidateFactory,
         )
+        // unwrapSmartCastExpression() shouldn't be here, otherwise we can get FirResolvedQualifier instead of 'this' (see e.g. kt2811.kt)
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> {
                 manager.enqueueResolverTask { mainTask.runResolverForQualifierReceiver(info, receiver) }
@@ -71,12 +81,10 @@ class FirTowerResolver(
                 invokeResolveTowerExtension.enqueueResolveTasksForNoReceiver(info)
             }
             else -> {
-                if (receiver is FirQualifiedAccessExpression) {
-                    if (receiver.calleeReference is FirSuperReference) {
-                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
-                        invokeResolveTowerExtension.enqueueResolveTasksForSuperReceiver(info, receiver)
-                        return
-                    }
+                if (receiver is FirSuperReceiverExpression) {
+                    manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
+                    invokeResolveTowerExtension.enqueueResolveTasksForSuperReceiver(info, receiver)
+                    return
                 }
                 if (info.isImplicitInvoke) {
                     invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver)
@@ -95,14 +103,15 @@ class FirTowerResolver(
         context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
-        val scope = constructedType.delegatingConstructorScope(components.session, components.scopeSession, derivedClassLookupTag)
-            ?: return collector
+        val scope =
+            constructedType.delegatingConstructorScope(derivedClassLookupTag, outerType)
+                ?: return collector
 
         val dispatchReceiver =
             if (outerType != null)
-                components.implicitReceiverStack.receiversAsReversed().drop(1).firstOrNull {
+                components.implicitValueStorage.receiversAsReversed().drop(1).firstOrNull {
                     AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.type, outerType)
-                } ?: return collector // TODO: report diagnostic about not-found receiver, KT-59677
+                }
             else
                 null
 
@@ -118,26 +127,22 @@ class FirTowerResolver(
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     scope,
                     dispatchReceiver?.receiverExpression,
-                    givenExtensionReceiverOptions = emptyList()
-                ),
+                    givenExtensionReceiver = null,
+                ).apply {
+                    if (outerType != null && dispatchReceiver == null) {
+                        val diagnostic = constructedType
+                            .toRegularClassSymbol(context.session)
+                            ?.let(::MissingInnerClassConstructorReceiver)
+                            ?: InapplicableCandidate
+
+                        addDiagnostic(diagnostic)
+                    }
+                },
                 context
             )
         }
 
         return collector
-    }
-
-    private fun buildCandidateFactoriesAndCollectors(
-        info: CallInfo,
-        collector: CandidateCollector,
-        context: ResolutionContext
-    ): CandidateFactoriesAndCollectors {
-        val candidateFactory = CandidateFactory(context, info)
-
-        return CandidateFactoriesAndCollectors(
-            candidateFactory,
-            collector
-        )
     }
 
     fun reset() {

@@ -1,0 +1,35 @@
+// CHECK_TYPE_WITH_EXACT
+// WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS
+// ISSUE: KT-84107
+
+import kotlin.reflect.KProperty
+
+class Buildee<CT> {
+    fun yield(arg: CT) {}
+}
+
+fun <FT> build(
+    instructions: Buildee<FT>.() -> Unit
+): Buildee<FT> {
+    return Buildee<FT>().apply(instructions)
+}
+
+class UserKlass
+
+class Delegate<T>(private val value: T) {
+    operator fun getValue(reference: Nothing?, property: KProperty<*>): T = value
+}
+
+fun testYield() {
+    val arg: UserKlass = UserKlass()
+    val buildee = build {
+        val temp by Delegate(arg)
+        yield(temp)
+    }
+    checkExactType<Buildee<UserKlass>>(buildee)
+}
+
+fun box(): String {
+    testYield()
+    return "OK"
+}

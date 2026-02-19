@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A {
     val list: List<String>
 }
@@ -14,3 +15,5 @@ fun B.foo(a: A?) {
     }
 }
 
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+propertyDeclaration, stringLiteral */

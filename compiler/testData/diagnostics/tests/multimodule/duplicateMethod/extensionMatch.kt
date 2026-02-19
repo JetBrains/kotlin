@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNNECESSARY_SAFE_CALL
+// DIAGNOSTICS: -UNNECESSARY_SAFE_CALL
 
 // MODULE: m1
 // FILE: a.kt
@@ -35,3 +36,6 @@ fun B.test() {
         "".getParent()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, nullableType, override, smartcast, stringLiteral, thisExpression */

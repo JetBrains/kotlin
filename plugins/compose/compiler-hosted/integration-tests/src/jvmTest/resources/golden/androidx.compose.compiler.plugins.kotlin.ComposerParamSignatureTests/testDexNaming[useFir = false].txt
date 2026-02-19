@@ -1,0 +1,25 @@
+//
+// Source
+// ------------------------------------------
+
+val myProperty: () -> Unit @Composable get() {
+    return {  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static getMyProperty(Landroidx/compose/runtime/Composer;I)Lkotlin/jvm/functions/Function0;
+  final static INNERCLASS TestKt%myProperty%1 null null
+}
+final class TestKt%myProperty%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+  <init>()V
+  public final invoke()V
+  public synthetic bridge invoke()Ljava/lang/Object;
+  static <clinit>()V
+  public final static LTestKt%myProperty%1; INSTANCE
+  OUTERCLASS TestKt getMyProperty (Landroidx/compose/runtime/Composer;I)Lkotlin/jvm/functions/Function0;
+  final static INNERCLASS TestKt%myProperty%1 null null
+}

@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -58,3 +59,5 @@ fun intersectingInfo2(x: Any?, y: Any?) {
     y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
 }
 
+/* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, disjunctionExpression, functionDeclaration,
+ifExpression, isExpression, lambdaLiteral, nullableType, smartcast */

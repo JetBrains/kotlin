@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Copy of IR test
 
 object A
@@ -21,3 +22,6 @@ fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+lambdaLiteral, objectDeclaration, operator, propertyDeclaration, propertyWithExtensionReceiver */

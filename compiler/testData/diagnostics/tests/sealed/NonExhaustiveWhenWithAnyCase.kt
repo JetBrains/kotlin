@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 sealed class Sealed {
     object First: Sealed()
@@ -14,3 +15,5 @@ fun foo(s: Sealed): Int {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nestedClass,
+objectDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

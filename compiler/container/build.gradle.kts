@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("test-inputs-check")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -8,16 +9,15 @@ dependencies {
     api(commonDependency("javax.inject"))
     compileOnly(kotlinStdlib())
     compileOnly(intellijCore())
-    testApi(kotlinStdlib())
+    testImplementation(kotlinStdlib())
     testCompileOnly("org.jetbrains:annotations:13.0")
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
-    testApi(commonDependency("junit:junit"))
+    testImplementation(kotlinTest("junit5"))
     testCompileOnly(intellijCore())
 
+    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
+    testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(libs.intellij.fastutil)
 }
 
 sourceSets {
@@ -27,6 +27,6 @@ sourceSets {
 
 testsJar {}
 
-projectTest(parallel = true) {
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }

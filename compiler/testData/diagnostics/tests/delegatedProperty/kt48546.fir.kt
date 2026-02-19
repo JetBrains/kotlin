@@ -1,11 +1,12 @@
-// !LANGUAGE: -ReportErrorsOnRecursiveTypeInsidePlusAssignment
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ReportErrorsOnRecursiveTypeInsidePlusAssignment
 // WITH_STDLIB
 // FIR: KT-51648
 
 object DelegateTest {
     var result = ""
     val f by lazy {
-        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: cycle"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>.toString() // Compiler crash
+        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Recursive implicit type"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>.toString() // Compiler crash
         "hello"
     }
 }
@@ -13,7 +14,10 @@ object DelegateTest {
 object DelegateTest2 {
     var result = ""
     val f by lazy {
-        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: cycle"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>
+        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Recursive implicit type"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>
         "hello"
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, lambdaLiteral, objectDeclaration, propertyDeclaration,
+propertyDelegate, stringLiteral */

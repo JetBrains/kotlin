@@ -4,10 +4,10 @@ fun testMemberAssignment(d: dynamic) {
 
 fun testSafeMemberAssignment(d: dynamic) {
   { // BLOCK
-    val tmp0_safe_receiver: dynamic = d
+    val tmp_0: dynamic = d
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.m = 1
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.m = 1
     }
   } /*~> Unit */
 }

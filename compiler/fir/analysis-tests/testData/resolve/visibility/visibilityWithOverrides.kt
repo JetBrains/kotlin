@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-38656
 
 // FILE: B.kt
@@ -21,3 +22,5 @@ abstract class A {
 fun test(b: B): String {
     return b <!INVISIBLE_REFERENCE!>foo<!> "hello" // should be an error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, infix, override, stringLiteral, thisExpression */

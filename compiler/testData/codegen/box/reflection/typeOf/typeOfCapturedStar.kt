@@ -1,7 +1,11 @@
-// IGNORE_BACKEND: JS, JS_IR, WASM
-// IGNORE_BACKEND: JS_IR_ES6
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// Should be unmuted for JS when KT-79471 is fixed
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 package test
 
 import kotlin.reflect.typeOf
@@ -26,12 +30,15 @@ inline fun <reified Q> typeOfValue(q: Q): KType {
     return typeOf<Q>()
 }
 
+// FILE: main.kt
+package test
+
 fun box(): String {
     val q: A<*> = object : A<CharSequence> {
         override val t: CharSequence
             get() = ""
     }
-    val (w, f) = bar(q) // T should be inferred to KFunction<Captured(*)> and should be approximated to KFunction<Any>, not KFunction<*>
+    val [w, f] = bar(q) // T should be inferred to KFunction<Captured(*)> and should be approximated to KFunction<Any>, not KFunction<*>
 
     val expected = "test.KFunction<kotlin.Any>"
     if (w.toString() != expected) return "Fail 1: $w"

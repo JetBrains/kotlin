@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /I.foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /I.foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,28 +17,36 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: OPEN
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
+  getContainingJvmClassName: I
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /I.bar
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /I.bar
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -51,21 +61,27 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: OPEN
   name: bar
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
+  getContainingJvmClassName: I
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: null

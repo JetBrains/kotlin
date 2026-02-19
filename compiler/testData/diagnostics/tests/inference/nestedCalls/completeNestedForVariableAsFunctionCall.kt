@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package j
 
@@ -15,3 +16,7 @@ fun <R> id(r: R) = r
 fun foo(a: A) {
     val r : MyFunc<Int> = id (a.b { x -> x + 14 })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+typeParameter */

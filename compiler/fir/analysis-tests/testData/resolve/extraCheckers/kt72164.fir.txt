@@ -1,0 +1,23 @@
+FILE: kt72164.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval y: R|kotlin/Int| =  {
+             {
+                lval <unary>: R|kotlin/Int| = Int(5)
+                Int(5) = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+             =  {
+                lval <unary>: R|kotlin/Int| = Int(5)
+                Int(5) = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+            .R|kotlin/Int.inc|()
+             {
+                lval <unary>: R|kotlin/Int| = Int(5)
+                Int(5) = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+
+    }

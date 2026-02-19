@@ -24,6 +24,6 @@ FILE: defaultFromOverrides.kt
         R|<local>/a|.R|/A.foo|(Int(1))
         R|<local>/a|.R|/A.bar<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /A.bar>#|()
         R|<local>/a|.R|/A.bar<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /A.bar>#|(String())
-        R|<local>/a|.R|/A.bar|(y = Int(1))
+        R|<local>/a|.R|/A.bar|(Int(1))
         R|<local>/a|.R|/A.bar|(String(), Int(2))
     }

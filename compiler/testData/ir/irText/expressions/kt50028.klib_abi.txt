@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test_1(): kotlin/String // /test_1|test_1(){}[0]
+final fun /test_2(kotlin/Boolean): kotlin/Boolean // /test_2|test_2(kotlin.Boolean){}[0]

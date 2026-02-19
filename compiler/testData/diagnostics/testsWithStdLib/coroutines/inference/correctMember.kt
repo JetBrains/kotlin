@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @file:OptIn(ExperimentalTypeInference::class)
 
@@ -24,3 +25,6 @@ val test2 = generate {
     yield(generidFun(2))
 }
 
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter,
+typeWithExtension */

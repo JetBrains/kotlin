@@ -16,17 +16,12 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.PsiIrFileEntry
-import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -34,14 +29,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.codegen.CodegenUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 open class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
     open fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
-        IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+        IrModuleFragmentImpl(context.moduleDescriptor).also { irModule ->
             ktFiles.toSet().mapTo(irModule.files) { ktFile ->
                 val fileContext = context.createFileScopeContext(ktFile)
                 val irDeclarationGenerator = DeclarationGenerator(fileContext)
@@ -59,7 +56,7 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val constantValueGenerator = irDeclarationGenerator.context.constantValueGenerator
         for (ktAnnotationEntry in ktFile.annotationEntries) {
             val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
-            constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor)?.let {
+            constantValueGenerator.generateAnnotationCall(annotationDescriptor)?.let {
                 irFile.annotations += it
             }
         }
@@ -101,15 +98,19 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val fakeFileEntry = object : IrFileEntry {
             override val name: String = "<error-class>"
             override val maxOffset: Int = UNDEFINED_OFFSET
+            override val lineStartOffsets: IntArray get() = TODO("Not yet implemented")
+            override val firstRelevantLineIndex: Int get() = TODO("Not yet implemented")
 
             override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = TODO("Not yet implemented")
             override fun getLineNumber(offset: Int): Int = TODO("Not yet implemented")
             override fun getColumnNumber(offset: Int): Int = TODO("Not yet implemented")
+            override fun getLineAndColumnNumbers(offset: Int): LineAndColumn = TODO("Not yet implemented")
         }
         val fakeFile = IrFileImpl(
             fakeFileEntry,
             EmptyPackageFragmentDescriptor(context.moduleDescriptor, FqName(fakeFileEntry.name)),
         )
+        fakeFile.module = IrModuleFragmentImpl(ErrorModuleDescriptor)
         val gen = SyntheticDeclarationsGenerator(context)
         gen.visitClassDescriptor(ErrorUtils.errorClass, fakeFile)
         gen.visitConstructorDescriptor(

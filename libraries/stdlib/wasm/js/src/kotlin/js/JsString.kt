@@ -6,11 +6,12 @@
 package kotlin.js
 
 import kotlin.wasm.internal.JsPrimitive
-import kotlin.wasm.internal.kotlinToJsStringAdapter
 
 /** JavaScript primitive string */
 @JsPrimitive("string")
-public external class JsString internal constructor() : JsAny
+@ExperimentalWasmJsInterop
+public actual external class JsString internal constructor() : JsAny
 
-public fun String.toJsString(): JsString =
-    kotlinToJsStringAdapter(this)!!
+@ExperimentalWasmJsInterop
+public actual fun String.toJsString(): JsString =
+    this.internalStr

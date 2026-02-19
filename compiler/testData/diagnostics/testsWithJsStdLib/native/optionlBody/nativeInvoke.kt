@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -DEPRECATION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -DEPRECATION
 @nativeInvoke
 fun String.foo(): Int
 @nativeInvoke

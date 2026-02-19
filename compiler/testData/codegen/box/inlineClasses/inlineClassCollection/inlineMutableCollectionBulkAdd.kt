@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
-// IGNORE_BACKEND: JVM
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC1<T>(val list: MutableList<T>) : MutableList<T> by list

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 <!SYNCHRONIZED_ON_INLINE!>@Synchronized<!>
 inline fun foo(f: () -> Unit): Unit = f()
@@ -15,3 +16,5 @@ inline var baz: String
     get() = ""
     <!SYNCHRONIZED_ON_INLINE!>@Synchronized<!>
     set(value) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, getter, inline, propertyDeclaration, setter, stringLiteral */

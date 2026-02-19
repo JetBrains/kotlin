@@ -3,8 +3,8 @@ FILE fqName:<root> fileName:/vararg.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
-          <T>: kotlin.String
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String>
+          TYPE_ARG T: kotlin.String
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.Array<kotlin.String>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Array<kotlin.String> declared in <root>'
@@ -13,12 +13,12 @@ FILE fqName:<root> fileName:/vararg.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
-          <T>: kotlin.String
-          elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+          TYPE_ARG T: kotlin.String
+          ARG elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             CONST String type=kotlin.String value="1"
             CONST String type=kotlin.String value="2"
             CONST String type=kotlin.String value="3"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL returnType:kotlin.Array<kotlin.String>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Array<kotlin.String> declared in <root>'
@@ -27,15 +27,15 @@ FILE fqName:<root> fileName:/vararg.kt
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
-          <T>: kotlin.String
-          elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+          TYPE_ARG T: kotlin.String
+          ARG elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             CONST String type=kotlin.String value="0"
             SPREAD_ELEMENT
               CALL 'public final fun <get-test2> (): kotlin.Array<kotlin.String> declared in <root>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
             SPREAD_ELEMENT
               CALL 'public final fun <get-test1> (): kotlin.Array<kotlin.String> declared in <root>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
             CONST String type=kotlin.String value="4"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL returnType:kotlin.Array<kotlin.String>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Array<kotlin.String> declared in <root>'

@@ -2,18 +2,18 @@
 public final class Foo {
     // source: 'simpleNamed.kt'
     public method <init>(): void
-    private final @org.jetbrains.annotations.Nullable method acceptsCrossinline$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final method acceptsCrossinline$$forInline(p0: kotlin.jvm.functions.Function0, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method acceptsCrossinline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    private final @org.jetbrains.annotations.Nullable method generic$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    private final @org.jetbrains.annotations.Nullable method generic$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final method generic$$forInline(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final method generic$$forInline(p0: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method generic(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method generic(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic final method genericWithReified(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic final method genericWithReified(p0: kotlin.coroutines.Continuation): java.lang.Object
     private final method privateInline(p0: kotlin.coroutines.Continuation): java.lang.Object
     private final @kotlin.internal.InlineOnly method shouldNotHaveSuffix(p0: kotlin.coroutines.Continuation): java.lang.Object
-    private final @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    private final @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    private final method simple$$forInline(p0: kotlin.Unit, p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final method simple$$forInline(p0: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method simple(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method simple(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -21,18 +21,18 @@ public final class Foo {
 @kotlin.Metadata
 public final class SimpleNamedKt {
     // source: 'simpleNamed.kt'
-    private final static @org.jetbrains.annotations.Nullable method acceptsCrossinline$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method acceptsCrossinline$$forInline(p0: kotlin.jvm.functions.Function0, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method acceptsCrossinline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    private final static @org.jetbrains.annotations.Nullable method generic$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    private final static @org.jetbrains.annotations.Nullable method generic$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method generic$$forInline(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method generic$$forInline(p0: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method generic(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method generic(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic final static method genericWithReified(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic final static method genericWithReified(p0: kotlin.coroutines.Continuation): java.lang.Object
     private final static method privateInline(p0: kotlin.coroutines.Continuation): java.lang.Object
     private final static @kotlin.internal.InlineOnly method shouldNotHaveSuffix(p0: kotlin.coroutines.Continuation): java.lang.Object
-    private final static @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    private final static @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method simple$$forInline(p0: kotlin.Unit, p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method simple$$forInline(p0: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method simple(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method simple(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }

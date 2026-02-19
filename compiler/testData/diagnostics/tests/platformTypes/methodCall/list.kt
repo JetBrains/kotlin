@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/J.java
 
@@ -17,3 +18,5 @@ fun test(ls: List<String>, mls: MutableList<String>, lsn: List<String?>, mlsn: M
     J().list(lsn)
     J().list(mlsn)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, nullableType */

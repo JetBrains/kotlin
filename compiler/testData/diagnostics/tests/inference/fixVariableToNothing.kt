@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 // completion order here: X, Y, WHEN_VARIABLE
 fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     0 -> emptyList() // here type variable Y will be fixed to Nothing
@@ -12,3 +14,6 @@ fun test(l: List<String>): List<String> {
     val foo = l.optimizeReadOnlyList()
     return foo
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
+nullableType, propertyDeclaration, thisExpression, typeParameter, whenExpression, whenWithSubject */

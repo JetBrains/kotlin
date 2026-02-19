@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-57477
 
 fun f(block: (Int) -> Unit) {}
@@ -10,3 +11,5 @@ fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!> {}
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>g<!> {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithExtension */

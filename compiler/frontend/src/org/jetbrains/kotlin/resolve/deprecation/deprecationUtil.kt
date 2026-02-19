@@ -40,7 +40,10 @@ fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVe
 }
 
 internal fun createDeprecationDiagnostic(
-    element: PsiElement, deprecation: DescriptorBasedDeprecationInfo, languageVersionSettings: LanguageVersionSettings
+    element: PsiElement,
+    deprecation: DescriptorBasedDeprecationInfo,
+    languageVersionSettings: LanguageVersionSettings,
+    forceWarningForSimpleDeprecation: Boolean = false,
 ): Diagnostic {
     val targetOriginal = deprecation.target.original
     return when (deprecation) {
@@ -69,7 +72,7 @@ internal fun createDeprecationDiagnostic(
         }
 
         else -> {
-            val factory = when (deprecation.deprecationLevel) {
+            val factory = if (forceWarningForSimpleDeprecation) Errors.DEPRECATION else when (deprecation.deprecationLevel) {
                 WARNING -> Errors.DEPRECATION
                 ERROR, HIDDEN -> Errors.DEPRECATION_ERROR
             }

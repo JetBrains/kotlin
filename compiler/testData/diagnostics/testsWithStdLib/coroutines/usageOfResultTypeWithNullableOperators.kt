@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
-// !LANGUAGE: -AllowNullOperatorsForResult -AllowResultInReturnType
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun <T> id(x: T): T = x
 
@@ -39,3 +39,7 @@ fun nullableOperators(r1: Result<Int>?, b: Boolean) {
         returnInt() ?: returnInt() ?: asFun() ?: 0
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, functionalType, getter, ifExpression,
+integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver, safeCall, smartcast,
+typeParameter */

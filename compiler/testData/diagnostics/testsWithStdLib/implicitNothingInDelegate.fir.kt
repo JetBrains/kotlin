@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 // WITH_REFLECT
 
@@ -17,3 +18,7 @@ fun foo() {
     println(baz) // kotlin.KotlinNothingValueException
     println(bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, funWithExtensionReceiver, functionDeclaration, getter,
+inProjection, localProperty, nullableType, operator, propertyDeclaration, propertyDelegate, starProjection,
+stringLiteral, typeConstraint, typeParameter */

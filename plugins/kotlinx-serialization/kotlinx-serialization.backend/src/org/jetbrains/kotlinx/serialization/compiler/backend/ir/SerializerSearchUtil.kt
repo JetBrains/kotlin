@@ -8,18 +8,15 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
@@ -77,6 +74,13 @@ fun BaseIrGenerator.findAddOnSerializer(propertyType: IrType, ctx: Serialization
     return null
 }
 
+fun BaseIrGenerator.findTypeSerializerOrContext(
+    kType: IrType
+): IrClassSymbol? {
+    if (kType.isTypeParameter()) return null
+    return findTypeSerializerOrContextUnchecked(compilerContext, kType) ?: error("Serializer for element of type ${kType.render()} has not been found")
+}
+
 fun BaseIrGenerator?.findTypeSerializerOrContext(
     context: SerializationBaseContext, kType: IrType
 ): IrClassSymbol? {
@@ -85,22 +89,22 @@ fun BaseIrGenerator?.findTypeSerializerOrContext(
 }
 
 fun BaseIrGenerator?.findTypeSerializerOrContextUnchecked(
-    context: SerializationBaseContext, kType: IrType
+    context: SerializationBaseContext, kType: IrType, useTypeAnnotations: Boolean = true
 ): IrClassSymbol? {
-    val annotations = kType.annotations
     if (kType.isTypeParameter()) return null
+    val annotations = if (useTypeAnnotations) kType.annotations else emptyList()
     annotations.serializableWith()?.let { return it }
     this?.additionalSerializersInScopeOfCurrentFile?.get(kType.classOrNull!! to kType.isNullable())?.let {
         return it
     }
     if (kType.isMarkedNullable()) return findTypeSerializerOrContextUnchecked(context, kType.makeNotNull())
     if (this?.contextualKClassListInCurrentFile?.contains(kType.classOrNull) == true) return context.referenceClassId(contextSerializerId)
-    return analyzeSpecialSerializers(context, annotations) ?: findTypeSerializer(context, kType)
+    return analyzeSpecialSerializers(context, annotations) ?: findTypeSerializer(context, kType, useTypeAnnotations)
 }
 
 fun analyzeSpecialSerializers(
     context: SerializationBaseContext,
-    annotations: List<IrConstructorCall>
+    annotations: List<IrAnnotation>
 ): IrClassSymbol? = when {
     annotations.hasAnnotation(SerializationAnnotations.contextualFqName) || annotations.hasAnnotation(SerializationAnnotations.contextualOnPropertyFqName) ->
         context.referenceClassId(contextSerializerId)
@@ -110,9 +114,8 @@ fun analyzeSpecialSerializers(
     else -> null
 }
 
-
-fun findTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
-    type.overriddenSerializer?.let { return it }
+fun findTypeSerializer(context: SerializationBaseContext, type: IrType, useTypeAnnotations: Boolean = true): IrClassSymbol? {
+    if (useTypeAnnotations) type.overriddenSerializer?.let { return it }
     if (type.isTypeParameter()) return null
     if (type.isArray()) return context.referenceClassId(referenceArraySerializerId)
     if (type.isGeneratedSerializableObject()) return context.referenceClassId(objectSerializerId)
@@ -123,6 +126,14 @@ fun findTypeSerializer(context: SerializationBaseContext, type: IrType): IrClass
         polymorphicSerializerId
     )
     return type.classOrNull?.owner.classSerializer(context) // check for serializer defined on the type
+}
+
+fun findKeepSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
+    if (type.isGeneratedSerializableObjectWithKeep()) return context.referenceClassId(objectSerializerId)
+    val enumSer = findEnumTypeSerializer(context, type)
+    if (enumSer != null) return enumSer
+
+    return type.classOrNull?.owner?.generatedSerializer // check for serializer defined on the type
 }
 
 fun findEnumTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
@@ -136,6 +147,15 @@ fun findEnumTypeSerializer(context: SerializationBaseContext, type: IrType): IrC
     return legacySerializer?.symbol ?: context.referenceClassId(enumSerializerId)
 }
 
+
+internal fun IrClass?.findSerializerForGeneratedMethods(context: SerializationBaseContext): IrClassSymbol? = this?.let {
+    return if (!hasKeepGeneratedSerializerAnnotation) {
+        classSerializer(context)
+    } else {
+        generatedSerializer
+    }
+}
+
 internal fun IrClass?.classSerializer(context: SerializationBaseContext): IrClassSymbol? = this?.let {
     // serializer annotation on class?
     serializableWith?.let { return it }
@@ -146,12 +166,16 @@ internal fun IrClass?.classSerializer(context: SerializationBaseContext): IrClas
     // default serializable?
     if (shouldHaveGeneratedSerializer()) {
         // $serializer nested class
-        return this.declarations
-            .filterIsInstance<IrClass>()
-            .singleOrNull { it.name == SerialEntityNames.SERIALIZER_CLASS_NAME }?.symbol
+        return this.generatedSerializer
     }
     return null
 }
+
+internal val IrClass.generatedSerializer: IrClassSymbol?
+    get() = declarations
+        .filterIsInstance<IrClass>()
+        .singleOrNull { it.name == SerialEntityNames.SERIALIZER_CLASS_NAME }?.symbol
+
 
 internal fun IrClass.polymorphicSerializerIfApplicableAutomatically(context: SerializationBaseContext): IrClassSymbol? {
     val serializer = when {
@@ -183,7 +207,7 @@ internal val IrClass.serializableWith: IrClassSymbol?
 
 internal val IrClass.serializerForClass: IrClassSymbol?
     get() = (annotations.findAnnotation(SerializationAnnotations.serializerAnnotationFqName)
-        ?.getValueArgument(0) as? IrClassReference)?.symbol as? IrClassSymbol
+        ?.arguments[0] as? IrClassReference)?.symbol as? IrClassSymbol
 
 fun findStandardKotlinTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
     val typeName = type.classFqName?.toString()
@@ -203,9 +227,9 @@ fun findStandardKotlinTypeSerializer(context: SerializationBaseContext, type: Ir
 }
 
 // @Serializable(X::class) -> X
-internal fun List<IrConstructorCall>.serializableWith(): IrClassSymbol? {
+internal fun List<IrAnnotation>.serializableWith(): IrClassSymbol? {
     val annotation = findAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return null
-    val arg = annotation.getValueArgument(0) as? IrClassReference ?: return null
+    val arg = annotation.arguments[0] as? IrClassReference ?: return null
     return arg.symbol as? IrClassSymbol
 }
 
@@ -232,7 +256,7 @@ fun BaseIrGenerator?.allSealedSerializableSubclassesFor(
     }.unzip()
 }
 
-internal fun SerializationBaseContext.getSerializableClassDescriptorBySerializer(serializer: IrClass): IrClass? {
+internal fun getSerializableClassDescriptorBySerializer(serializer: IrClass): IrClass? {
     val serializerForClass = serializer.serializerForClass
     if (serializerForClass != null) return serializerForClass.owner
     if (serializer.name !in setOf(
@@ -263,4 +287,3 @@ fun SerializationBaseContext.getClassFromRuntime(className: String, vararg packa
 fun SerializationBaseContext.getClassFromInternalSerializationPackage(className: String): IrClassSymbol =
     getClassFromRuntimeOrNull(className, SerializationPackages.internalPackageFqName)
         ?: error("Class $className wasn't found in ${SerializationPackages.internalPackageFqName}. Check that you have correct version of serialization runtime in classpath.")
-

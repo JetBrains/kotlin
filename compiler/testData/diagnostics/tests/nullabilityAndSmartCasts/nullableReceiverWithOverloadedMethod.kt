@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A {
     fun f(x: Boolean): Int = 0
@@ -27,3 +28,6 @@ class B {
         })
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, functionDeclaration, ifExpression,
+integerLiteral, nullableType, propertyDeclaration, stringLiteral */

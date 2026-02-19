@@ -1,22 +1,22 @@
 /localVariables.kt:18:5: error: val cannot be reassigned
     property = "Fail"
-    ^
+    ^^^^^^^^
 /localVariables.kt:18:16: error: type mismatch: inferred type is String but StringProperty was expected
     property = "Fail"
-               ^
+               ^^^^^^
 /localVariables.kt:23:5: error: val cannot be reassigned
     property = StringProperty("Fail")
-    ^
+    ^^^^^^^^
 /localVariables.kt:28:16: error: type mismatch: inferred type is String but StringProperty was expected
     property = "Fail"
-               ^
+               ^^^^^^
 /localVariables.kt:38:9: error: val cannot be reassigned
         property = "Fail"
-        ^
+        ^^^^^^^^
 /localVariables.kt:38:20: error: type mismatch: inferred type is String but StringProperty was expected
         property = "Fail"
-                   ^
+                   ^^^^^^
 /localVariables.kt:42:9: error: val cannot be reassigned
         property = StringProperty("Fail")
-        ^
+        ^^^^^^^^
 

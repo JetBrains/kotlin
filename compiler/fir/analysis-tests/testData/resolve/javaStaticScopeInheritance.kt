@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.java
 
 class A {
@@ -15,3 +16,5 @@ class B extends A {
 fun main() {
     val b = B.VALUE // <- should be B
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, localProperty, propertyDeclaration */

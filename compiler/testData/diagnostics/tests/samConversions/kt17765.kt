@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Test.java
 public class Test {
@@ -11,3 +12,5 @@ public class Test {
 fun main(args: Array<String>) {
     Test.foo {  }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

@@ -1,0 +1,25 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun foo() // /A.foo|foo(){}[0]
+}
+final val /qux // /qux|{}qux[0]
+    final fun <get-qux>(): kotlin/Int // /qux.<get-qux>|<get-qux>(){}[0]
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin.reflect/KClass</A> // /test1.<get-test1>|<get-test1>(){}[0]
+final val /test2 // /test2|{}test2[0]
+    final fun <get-test2>(): kotlin.reflect/KClass<out kotlin/Int> // /test2.<get-test2>|<get-test2>(){}[0]
+final val /test3 // /test3|{}test3[0]
+    final fun <get-test3>(): kotlin.reflect/KFunction1</A, kotlin/Unit> // /test3.<get-test3>|<get-test3>(){}[0]
+final val /test4 // /test4|{}test4[0]
+    final fun <get-test4>(): kotlin.reflect/KFunction0</A> // /test4.<get-test4>|<get-test4>(){}[0]
+final val /test5 // /test5|{}test5[0]
+    final fun <get-test5>(): kotlin.reflect/KFunction0<kotlin/Unit> // /test5.<get-test5>|<get-test5>(){}[0]
+final val /test6 // /test6|{}test6[0]
+    final fun <get-test6>(): kotlin.reflect/KFunction0<kotlin/Unit> // /test6.<get-test6>|<get-test6>(){}[0]
+final fun /bar() // /bar|bar(){}[0]

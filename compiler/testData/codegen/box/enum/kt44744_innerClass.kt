@@ -1,3 +1,4 @@
+
 interface IFoo {
     fun foo(e: En): String
 }

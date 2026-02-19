@@ -313,8 +313,7 @@ class KotlinToolingVersionTest {
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.") }
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.x") }
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x.1") }
-        assertNull(KotlinToolingVersionOrNull(""))
-        assertNull(KotlinToolingVersionOrNull("x"))
+        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("") }
     }
 
     @Test

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
@@ -71,3 +72,5 @@ fun test_10() {
     val y = 2
 }
 
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, doWhileLoop, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, whileLoop */

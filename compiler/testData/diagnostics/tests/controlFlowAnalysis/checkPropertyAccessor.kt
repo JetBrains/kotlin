@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_EXTRA_CHECKERS
 package d
 
 val a: Int
@@ -36,3 +39,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, localClass, localFunction,
+localProperty, propertyDeclaration */

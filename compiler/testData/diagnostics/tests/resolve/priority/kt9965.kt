@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 enum class Foo {
     FOO;
@@ -19,3 +20,7 @@ fun test() {
     Foo.valueOf("") checkType { _<Foo>() }
     Foo.Companion.valueOf("") checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, nullableType, objectDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty.Kind.DELEGATION
+import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 
@@ -25,13 +24,13 @@ class FunctionOrPropertyBaseCommonizer(
 
     data class FunctionOrProperty(
         val name: CirName,
-        val kind: CallableMemberDescriptor.Kind,
+        val kind: CirFunctionOrProperty.Kind,
         val modality: Modality,
         val visibility: Visibility,
         val extensionReceiver: CirExtensionReceiver?,
         val returnType: CirType,
         val typeParameters: List<CirTypeParameter>,
-        val additionalAnnotations: List<CirAnnotation>,
+        val annotations: List<CirAnnotation>,
     )
 
     override fun invoke(values: List<CirFunctionOrProperty>): FunctionOrProperty? {
@@ -44,7 +43,7 @@ class FunctionOrPropertyBaseCommonizer(
         }
 
         // synthesized members of data classes should not be commonized
-        if (values.any { value -> value.kind == SYNTHESIZED && value.containingClass?.isData == true }) {
+        if (values.any { value -> value.kind == SYNTHESIZED && value.containingClass?.isDataOrValue == true }) {
             return null
         }
 
@@ -57,6 +56,9 @@ class FunctionOrPropertyBaseCommonizer(
             commonizedType = returnType,
         )
 
+        val annotations = AnnotationsCommonizer.commonize(values.map { it.annotations }).orEmpty()
+            .plus(listOfNotNull(unsafeNumberAnnotation))
+
         return FunctionOrProperty(
             name = values.first().name,
             kind = values.singleDistinctValueOrNull { it.kind } ?: return null,
@@ -65,7 +67,7 @@ class FunctionOrPropertyBaseCommonizer(
             extensionReceiver = (extensionReceiverCommonizer(values.map { it.extensionReceiver }) ?: return null).receiver,
             returnType = returnTypeCommonizer(values) ?: return null,
             typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null,
-            additionalAnnotations = listOfNotNull(unsafeNumberAnnotation)
+            annotations = annotations
         )
     }
 }

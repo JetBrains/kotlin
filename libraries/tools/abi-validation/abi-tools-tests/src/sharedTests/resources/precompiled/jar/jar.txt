@@ -1,0 +1,10 @@
+public final class precompiled/jar/ClassFromFile {
+	public fun <init> ()V
+	public final fun method ()V
+}
+
+public final class precompiled/jar/ClassFromJar {
+	public fun <init> ()V
+	public final fun method ()V
+}
+

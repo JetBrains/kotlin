@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -VAL_REASSIGNMENT -UNUSED_CHANGED_VALUE -VARIABLE_EXPECTED
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -VAL_REASSIGNMENT -UNUSED_CHANGED_VALUE -VARIABLE_EXPECTED
 
 inline operator fun <T, V> Function1<T, V>.unaryPlus() = this
 operator fun <T, V> Function1<T, V>.unaryMinus() = this
@@ -35,3 +36,7 @@ inline fun <T, V> Function1<T, V>.inlineFunWithInvoke() {
     this--
     --this
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType,
+incrementDecrementExpression, inline, nullableType, operator, thisExpression, typeParameter, typeWithExtension,
+unaryExpression */

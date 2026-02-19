@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.CALL
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.NO_CALL
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinVersionDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode as JvmDefaultModeDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget as JvmTargetDsl
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -35,6 +37,8 @@ open class DefaultValues(
 
     object BooleanTrueDefault : DefaultBoolean(true)
 
+    object BooleanNullDefault : DefaultValues("null", typeOf<Boolean?>(), typeOf<Boolean?>())
+
     object StringNullDefault : DefaultValues("null", typeOf<String?>(), typeOf<String?>())
 
     object EmptyStringListDefault : DefaultValues("emptyList<String>()", typeOf<List<String>>(), typeOf<List<String>>())
@@ -50,8 +54,8 @@ open class DefaultValues(
         "null",
         typeOf<KotlinVersionDsl?>(),
         typeOf<String?>(),
-        possibleValues = LanguageVersion.values()
-            .filterNot { it.isUnsupported }
+        possibleValues = LanguageVersion.entries
+            .filterNot { it.isUnsupported && !it.isJvmOnly }
             .map { "\"${it.description}\"" },
         fromKotlinOptionConverterProp = """
         if (this != null) ${typeOf<KotlinVersionDsl>()}.fromVersion(this) else null
@@ -65,7 +69,7 @@ open class DefaultValues(
         "null",
         typeOf<KotlinVersionDsl?>(),
         typeOf<String?>(),
-        possibleValues = LanguageVersion.values()
+        possibleValues = LanguageVersion.entries
             .map(ApiVersion.Companion::createByLanguageVersion)
             .filterNot { it.isUnsupported }
             .map { "\"${it.description}\"" },
@@ -90,23 +94,33 @@ open class DefaultValues(
         """.trimIndent(),
     )
 
+    object JvmDefaultModes : DefaultValues(
+        "null",
+        typeOf<JvmDefaultModeDsl>(),
+        typeOf<String?>(),
+        possibleValues = JvmDefaultMode.entries.map { "\"${it.description}\"" },
+        toKotlinOptionConverterProp = """
+            this?.compilerArgument
+        """.trimIndent(),
+    )
+
     object JsEcmaVersions : DefaultValues(
-        "\"v5\"",
+        "\"es5\"",
         typeOf<String>(),
         typeOf<String>(),
-        possibleValues = listOf("\"v5\"")
+        possibleValues = listOf("\"es5\"", "\"es2015\"")
     )
 
     object JsModuleKinds : DefaultValues(
-        "${typeOf<JsModuleKind>()}.${JsModuleKind.MODULE_PLAIN.name}",
-        typeOf<JsModuleKind>(),
-        typeOf<String>(),
+        "null",
+        typeOf<JsModuleKind?>(),
+        typeOf<String?>(),
         possibleValues = listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\""),
         fromKotlinOptionConverterProp = """
-        ${typeOf<JsModuleKind>()}.fromKind(this)
+        this?.let { ${typeOf<JsModuleKind>()}.fromKind(it) }
         """.trimIndent(),
         toKotlinOptionConverterProp = """
-        this.kind
+        this?.kind
         """.trimIndent()
     )
 

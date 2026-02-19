@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class Base
 class Derived : Base()
 
@@ -7,3 +8,5 @@ fun main() {
     for (derived: <!TYPE_MISMATCH_IN_FOR_LOOP!>Derived<!> in derivedList) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, functionDeclaration, localProperty, propertyDeclaration */

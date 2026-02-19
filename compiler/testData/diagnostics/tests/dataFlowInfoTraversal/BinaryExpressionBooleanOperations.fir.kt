@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo1(x: Number, cond: Boolean): Boolean {
     val result = cond && ((x as Int) == 42)
@@ -23,3 +24,7 @@ fun foo4(x: Number, cond: Boolean): Boolean {
     checkSubtype<Int>(x)
     return result
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, classDeclaration, disjunctionExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, typeParameter, typeWithExtension */

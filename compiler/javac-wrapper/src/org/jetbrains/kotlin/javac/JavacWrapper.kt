@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.Closeable
 import java.io.File
+import java.net.URI
 import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileManager
@@ -113,6 +114,7 @@ class JavacWrapper(
         javac.keepComments = true
         // use rt.jar instead of lib/ct.sym
         fileManager.setSymbolFileEnabled(false)
+        System.setProperty("java.ext.dirs", System.getProperty("java.ext.dirs").split(":").filter { it.contains("/jre/lib/ext") || it.contains("\\jre\\lib\\ext") }.joinToString(":"))
         bootClasspath?.let {
             val cp = fileManager.getLocation(PLATFORM_CLASS_PATH) + jvmClasspathRoots
             fileManager.setLocation(PLATFORM_CLASS_PATH, it)
@@ -178,7 +180,7 @@ class JavacWrapper(
 
         val outputPath =
             // Includes a hack with 'takeIf' for CLI test, to have stable string here (independent from random test directory)
-            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "compilerProject_test" !in it } ?: "test directory"
+            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "tests-integrationProject_test" !in it } ?: "test directory"
         context.get(Log.outKey)?.print("Compiling $javaFilesNumber Java source files to [$outputPath]")
         compile(fileObjects)
         errorCount() == 0
@@ -286,11 +288,29 @@ class JavacWrapper(
     fun toVirtualFile(javaFileObject: JavaFileObject): VirtualFile? =
         javaFileObject.toUri().let { uri ->
             if (uri.scheme == "jar") {
-                jarFileSystem.findFileByPath(uri.schemeSpecificPart.substring("file:".length))
+                jarFileSystem.findFileByPath(uri.extractJarPath())
             } else {
-                localFileSystem.findFileByPath(uri.schemeSpecificPart)
+                localFileSystem.findFileByPath(File(uri.schemeSpecificPart).absolutePath)
             }
         }
+
+    fun URI.extractJarPath(): String {
+        require(scheme == "jar")
+
+        val parts = schemeSpecificPart.split("!/", limit = 2)
+
+        check(parts.size == 2) {
+            "Invalid jar URI format - missing '!/' separator: $schemeSpecificPart"
+        }
+
+        val jarPath = parts[0].substring("file:".length)
+
+        // Using absolutePath to ensure we use the correct separators
+        val absoluteJarPath = File(jarPath).absolutePath
+        val internalPath = parts[1]
+
+        return "$absoluteJarPath!/$internalPath"
+    }
 
     fun hasKotlinPackage(fqName: FqName) =
         if (kotlinClassifiersCache.hasPackage(fqName)) {

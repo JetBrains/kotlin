@@ -1,0 +1,203 @@
+FILE: companionAnnotations.fir.kt
+    public final class CompanionOnly : R|kotlin/Any| {
+        public constructor(): R|CompanionOnly| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|CompanionOnly.Companion.Ann|() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|CompanionOnly.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final annotation class Ann : R|kotlin/Annotation| {
+                public constructor(): R|CompanionOnly.Companion.Ann| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|CompanionOnly.Companion.Ann|() public final object Foo : R|kotlin/Any| {
+                private constructor(): R|CompanionOnly.Companion.Foo| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final annotation class Ann : R|kotlin/Annotation| {
+            public constructor(): R|Test.Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|Test.Ann|() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Test.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final annotation class Ann : R|kotlin/Annotation| {
+                public constructor(): R|Test.Companion.Ann| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|Test.Companion.Ann|() public final object Foo : R|kotlin/Any| {
+                private constructor(): R|Test.Companion.Foo| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public open class Super : R|kotlin/Any| {
+        public constructor(): R|Super| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final annotation class Ann : R|kotlin/Annotation| {
+            public constructor(): R|Super.Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class TestWithSuperAndOwn : R|Super| {
+        public constructor(): R|TestWithSuperAndOwn| {
+            super<R|Super|>()
+        }
+
+        public final annotation class Ann : R|kotlin/Annotation| {
+            public constructor(): R|TestWithSuperAndOwn.Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|TestWithSuperAndOwn.Ann|() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|TestWithSuperAndOwn.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final annotation class Ann : R|kotlin/Annotation| {
+                public constructor(): R|TestWithSuperAndOwn.Companion.Ann| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|TestWithSuperAndOwn.Companion.Ann|() public final object Foo : R|kotlin/Any| {
+                private constructor(): R|TestWithSuperAndOwn.Companion.Foo| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class TestWithSuperOnly : R|Super| {
+        public constructor(): R|TestWithSuperOnly| {
+            super<R|Super|>()
+        }
+
+        @R|TestWithSuperOnly.Companion.Ann|() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|TestWithSuperOnly.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final annotation class Ann : R|kotlin/Annotation| {
+                public constructor(): R|TestWithSuperOnly.Companion.Ann| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|TestWithSuperOnly.Companion.Ann|() public final object Foo : R|kotlin/Any| {
+                private constructor(): R|TestWithSuperOnly.Companion.Foo| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public open class SuperWithCompanion : R|kotlin/Any| {
+        public constructor(): R|SuperWithCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|SuperWithCompanion.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final annotation class Ann : R|kotlin/Annotation| {
+                public constructor(): R|SuperWithCompanion.Companion.Ann| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class TestWithSuperWithCompanionOnly : R|SuperWithCompanion| {
+        public constructor(): R|TestWithSuperWithCompanionOnly| {
+            super<R|SuperWithCompanion|>()
+        }
+
+        @R|TestWithSuperWithCompanionOnly.Companion.Ann|() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|TestWithSuperWithCompanionOnly.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final annotation class Ann : R|kotlin/Annotation| {
+                public constructor(): R|TestWithSuperWithCompanionOnly.Companion.Ann| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|TestWithSuperWithCompanionOnly.Companion.Ann|() public final object Foo : R|kotlin/Any| {
+                private constructor(): R|TestWithSuperWithCompanionOnly.Companion.Foo| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class TestWithSuperWithCompanionOnly2 : R|SuperWithCompanion| {
+        public constructor(): R|TestWithSuperWithCompanionOnly2| {
+            super<R|SuperWithCompanion|>()
+        }
+
+        @<ERROR TYPE REF: Symbol not found for Ann>() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|TestWithSuperWithCompanionOnly2.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @<ERROR TYPE REF: Symbol not found for Ann>() public final object Foo : R|kotlin/Any| {
+                private constructor(): R|TestWithSuperWithCompanionOnly2.Companion.Foo| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }

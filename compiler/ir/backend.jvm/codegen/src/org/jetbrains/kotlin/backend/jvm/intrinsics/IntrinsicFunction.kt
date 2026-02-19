@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -30,38 +28,30 @@ abstract class IntrinsicFunction(
 ) {
     abstract fun genInvokeInstruction(v: InstructionAdapter)
 
-    open fun invoke(
+    fun invoke(
         v: InstructionAdapter,
         codegen: ExpressionCodegen,
         data: BlockInfo,
         expression: IrFunctionAccessExpression,
-    ): StackValue {
+    ) {
         loadArguments(codegen, data)
         with(codegen) { expression.markLineNumber(startOffset = true) }
         genInvokeInstruction(v)
-        return StackValue.onStack(signature.returnType)
     }
 
     private fun loadArguments(codegen: ExpressionCodegen, data: BlockInfo) {
-        var offset = 0
-        expression.dispatchReceiver?.let { genArg(it, codegen, offset++, data) }
-        expression.extensionReceiver?.let { genArg(it, codegen, offset++, data) }
-        for ((i, valueParameter) in expression.symbol.owner.valueParameters.withIndex()) {
-            val argument = expression.getValueArgument(i)
-            when {
-                argument != null ->
-                    genArg(argument, codegen, i + offset, data)
-                valueParameter.isVararg -> {
-                    // TODO: is there an easier way to get the substituted type of an empty vararg argument?
-                    val arrayType = codegen.typeMapper.mapType(
-                        valueParameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments)
-                    )
-                    StackValue.operation(arrayType) {
-                        it.aconst(0)
-                        it.newarray(AsmUtil.correctElementType(arrayType))
-                    }.put(arrayType, codegen.mv)
-                }
-                else -> error("Unknown parameter ${valueParameter.name} in: ${expression.dump()}")
+        for ((parameter, argument) in expression.symbol.owner.parameters zip expression.arguments) {
+            if (argument != null) {
+                genArg(argument, codegen, parameter.indexInParameters, data)
+            } else if (parameter.isVararg) {
+                // TODO: is there an easier way to get the substituted type of an empty vararg argument?
+                val arrayType = codegen.typeMapper.mapType(
+                    parameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments.map { it!! })
+                )
+                codegen.mv.aconst(0)
+                codegen.mv.newarray(AsmUtil.correctElementType(arrayType))
+            } else {
+                error("Unknown parameter ${parameter.name} in: ${expression.dump()}")
             }
         }
     }
@@ -69,9 +59,6 @@ abstract class IntrinsicFunction(
     private fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
         codegen.gen(expression, argsTypes[index], expression.type, data)
     }
-
-    private val IrFunctionAccessExpression.typeArguments: List<IrType>
-        get() = (0 until typeArgumentsCount).map { getTypeArgument(it)!! }
 
     companion object {
         fun create(

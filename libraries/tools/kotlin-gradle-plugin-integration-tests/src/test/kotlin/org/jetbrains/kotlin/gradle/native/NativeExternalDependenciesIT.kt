@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.Project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
 import java.io.File
-import java.util.*
-import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @DisplayName("Tests for K/N builds with external dependencies")
 @NativeGradlePluginTests
@@ -48,7 +44,8 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
         ) { externalDependenciesText ->
             assertNotNull(externalDependenciesText)
 
-            assertEquals("""
+            assertEquals(
+                """
             0 native-external-dependencies
             1 io.ktor:ktor-io,io.ktor:ktor-io-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX[2.3.3] #0[2.3.3]
             	/some/path/ktor-io.klib
@@ -105,17 +102,30 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
         externalDependenciesTextConsumer: (externalDependenciesText: String?) -> Unit,
     ) {
         nativeProject("native-external-dependencies", gradleVersion) {
-            buildGradleKts.appendText(
-                """
-                |
-                |kotlin {
-                |    val commonMain by sourceSets.getting {
-                |        dependencies {${dependencies.joinToString("") { "\n|            implementation(\"$it\")" }}
-                |        }
-                |    }
-                |}
-                """.trimMargin()
-            )
+            buildScriptInjection {
+                val buildExternalDependenciesFile = project.tasks.register("buildExternalDependenciesFile") { task ->
+                    val depsBuilder = project.provider {
+                        Class.forName("org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder")
+                            .getDeclaredMethod(
+                                "buildExternalDependenciesFileForTests",
+                                Project::class.java
+                            )
+                            .apply { isAccessible = true }
+                            .invoke(null, project)
+                            ?.toString().orEmpty()
+                    }
+
+                    task.doLast {
+                        println("for_test_external_dependencies_file=${depsBuilder.get()}")
+                    }
+                }
+
+                project.tasks.getByName("assemble").dependsOn(buildExternalDependenciesFile)
+
+                kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                    dependencies.forEach(::implementation)
+                }
+            }
 
             build("buildExternalDependenciesFile") {
                 assertTasksExecuted(":buildExternalDependenciesFile")

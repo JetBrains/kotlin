@@ -180,9 +180,13 @@ private interface PrivateInterface {
 class ClassThatInheritsDefaultImplsFromInterfaces : PublicInterface, InternalInterface, PrivateInterface
 
 sealed class SealedClass {
+    constructor()
+    protected constructor(a: Int) : this()
     class SealedClass_Subclass1 : SealedClass()
+    sealed class SealedClass_SealedSubclass1 : SealedClass()
 }
 class SealedClass_Subclass2 : SealedClass()
+sealed class SealedClass_SealedSubclass2 : SealedClass()
 
 sealed interface SealedInterface {
     class SealedInterface_Subclass1 : SealedInterface

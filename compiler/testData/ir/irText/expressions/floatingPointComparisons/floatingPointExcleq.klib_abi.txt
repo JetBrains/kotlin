@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test1d(kotlin/Double, kotlin/Double): kotlin/Boolean // /test1d|test1d(kotlin.Double;kotlin.Double){}[0]
+final fun /test1f(kotlin/Float, kotlin/Float): kotlin/Boolean // /test1f|test1f(kotlin.Float;kotlin.Float){}[0]
+final fun /test2d(kotlin/Double, kotlin/Double?): kotlin/Boolean // /test2d|test2d(kotlin.Double;kotlin.Double?){}[0]
+final fun /test2f(kotlin/Float, kotlin/Float?): kotlin/Boolean // /test2f|test2f(kotlin.Float;kotlin.Float?){}[0]
+final fun /test3d(kotlin/Double, kotlin/Any): kotlin/Boolean // /test3d|test3d(kotlin.Double;kotlin.Any){}[0]
+final fun /test3f(kotlin/Float, kotlin/Any): kotlin/Boolean // /test3f|test3f(kotlin.Float;kotlin.Any){}[0]
+final fun /test4d(kotlin/Double, kotlin/Number): kotlin/Boolean // /test4d|test4d(kotlin.Double;kotlin.Number){}[0]
+final fun /test4f(kotlin/Float, kotlin/Number): kotlin/Boolean // /test4f|test4f(kotlin.Float;kotlin.Number){}[0]
+final fun /test5d(kotlin/Double, kotlin/Any): kotlin/Boolean // /test5d|test5d(kotlin.Double;kotlin.Any){}[0]
+final fun /test5f(kotlin/Float, kotlin/Any): kotlin/Boolean // /test5f|test5f(kotlin.Float;kotlin.Any){}[0]
+final fun /test6d(kotlin/Any, kotlin/Any): kotlin/Boolean // /test6d|test6d(kotlin.Any;kotlin.Any){}[0]
+final fun /test6f(kotlin/Any, kotlin/Any): kotlin/Boolean // /test6f|test6f(kotlin.Any;kotlin.Any){}[0]
+final fun /testDF(kotlin/Any, kotlin/Any): kotlin/Boolean // /testDF|testDF(kotlin.Any;kotlin.Any){}[0]
+final fun /testFD(kotlin/Any, kotlin/Any): kotlin/Boolean // /testFD|testFD(kotlin.Any;kotlin.Any){}[0]

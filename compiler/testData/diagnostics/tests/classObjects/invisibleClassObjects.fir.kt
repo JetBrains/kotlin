@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 //FILE:a.kt
 package a
@@ -41,7 +42,7 @@ import a.<!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_REFERENCE!>Companion<!>.quux
 fun test() {
     f(A)
     f(<!INVISIBLE_REFERENCE!>B<!>)
-    f(C)
+    f(<!INVISIBLE_REFERENCE!>C<!>)
     f(<!INVISIBLE_REFERENCE!>D<!>)
 
     A.foo()
@@ -54,3 +55,5 @@ fun test() {
 }
 
 fun f(unused: Any) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration */

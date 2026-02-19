@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class A {
     open val <D> Inv<D>.phasedFir: D get() = TODO()
 }
@@ -13,3 +14,6 @@ class C : B() {
         x.phasedFir
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, nullableType, override, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

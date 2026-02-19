@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-50134
 // WITH_STDLIB
 // FULL_JDK
@@ -15,3 +16,6 @@ fun foo(){
         )
     )
 }
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, inProjection, javaFunction, lambdaLiteral,
+outProjection, samConversion, starProjection, stringLiteral */

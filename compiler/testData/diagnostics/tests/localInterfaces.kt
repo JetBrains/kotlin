@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun foo() {
     <!LOCAL_INTERFACE_NOT_ALLOWED!>interface a<!> {}
@@ -13,3 +14,6 @@ fun foo() {
         <!LOCAL_INTERFACE_NOT_ALLOWED!>interface e<!> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+lambdaLiteral, localClass, localProperty, nestedClass, propertyDeclaration */

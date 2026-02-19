@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.AbstractMap
+import kotlin.collections.AbstractSet
+import kotlin.reflect.KMutableProperty0
 
 inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
@@ -51,6 +54,18 @@ inline fun <reified T> Iterable<*>.filterIsInstanceWithChecker(additionalChecker
     return result
 }
 
+fun <T> Iterator<T>.nextOrNull(): T? = if (hasNext()) next() else null
+
+class CountingIterator<T>(val delegate: Iterator<T>) : Iterator<T> {
+    var numberOfElementsSeen: Int = 0
+        private set
+
+    override fun hasNext() = delegate.hasNext()
+    override fun next() = delegate.next().also { numberOfElementsSeen++ }
+}
+
+fun <T> Iterator<T>.withSeenElementsCounting(): CountingIterator<T> = CountingIterator(this)
+
 
 inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
     when (this) {
@@ -68,12 +83,16 @@ inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
     }
 }
 
-inline fun <T, reified R> Iterable<T>.partitionIsInstance(): Pair<List<R>, List<T>> {
+inline fun <T, reified R> Iterable<T>.partitionIsInstance(): Pair<List<R>, List<T>> =
+    partitionNotNull { it as? R }
+
+inline fun <T, R> Iterable<T>.partitionNotNull(map: (T) -> R?): Pair<List<R>, List<T>> {
     val first = ArrayList<R>()
     val second = ArrayList<T>()
     for (element in this) {
-        if (element is R) {
-            first.add(element)
+        val result = map(element)
+        if (result != null) {
+            first.add(result)
         } else {
             second.add(element)
         }
@@ -102,7 +121,7 @@ fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.a
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
 @RequiresOptIn(
-    message ="""
+    message = """
         Usage of this function is unsafe because it does not have native compiler support
          This means that compiler won't report UNCHECKED_CAST, CAST_NEVER_SUCCEED or similar
          diagnostics in case of error cast (which can happen immediately or after some
@@ -284,7 +303,7 @@ inline fun <T, K> List<T>.flatGroupBy(keySelector: (T) -> Collection<K>): Map<K,
 inline fun <T, U, K, V> List<T>.flatGroupBy(
     keySelector: (T) -> Collection<U>,
     keyTransformer: (U) -> K,
-    valueTransformer: (T) -> V
+    valueTransformer: (T) -> V,
 ): Map<K, List<V>> {
     val result = mutableMapOf<K, MutableList<V>>()
     for (element in this) {
@@ -348,4 +367,138 @@ fun <T, R> Iterable<T>.zipWithNulls(other: Iterable<R>): List<Pair<T?, R?>> {
  */
 fun unreachableBranch(argument: Any?): Nothing {
     error("This argument should've been processed by previous when branches but it wasn't: $argument")
+}
+
+/**
+ * Calls [appendElement] on [buffer] for all the elements, also appending [separator] between them and using the given [prefix]
+ * and [postfix] if supplied.
+ *
+ * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ */
+fun <T, A : Appendable> Iterable<T>.joinToWithBuffer(
+    buffer: A,
+    separator: CharSequence = ", ",
+    prefix: CharSequence = "",
+    postfix: CharSequence = "",
+    limit: Int = -1,
+    truncated: CharSequence = "...",
+    appendElement: A.(T) -> Unit,
+): A {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            buffer.appendElement(element)
+        } else break
+    }
+    if (limit in 0..<count) buffer.append(truncated)
+    buffer.append(postfix)
+    return buffer
+}
+
+fun String.countOccurrencesOf(substring: String): Int {
+    var result = 0
+    var lastIndex = 0
+    while (true) {
+        lastIndex = indexOf(substring, lastIndex) + 1
+        if (lastIndex == 0) break
+        result++
+    }
+    return result
+}
+
+inline fun <V : Any> KMutableProperty0<V?>.getOrSetIfNull(compute: () -> V): V =
+    this.get() ?: compute().also {
+        this.set(it)
+    }
+
+inline fun <T, S> MutableList<T>.assignFrom(other: Collection<S>, transform: (S) -> T) {
+    clear()
+    if (this is ArrayList<*>) {
+        ensureCapacity(other.size)
+    }
+    other.mapTo(this, transform)
+}
+
+fun <T> MutableList<T>.assignFrom(other: Collection<T>) {
+    clear()
+    addAll(other)
+}
+
+fun <T : Any> List<T>.plusIfNotNull(element: T?): List<T> = when (element) {
+    null -> this
+    else -> this + element
+}
+
+/**
+ * [CombinedMap] is a view over the several maps.
+ * Underlying maps could be modified after creation of the [CombinedMap], all modifications will be reflected.
+ */
+class CombinedMap<K, T>(val maps: List<Map<K, T>>) : AbstractMap<K, T>() {
+    constructor(vararg maps: Map<K, T>) : this(maps.toList())
+
+    override val entries: Set<Map.Entry<K, T>> = CombinedSet(maps.map { it.entries })
+
+    override fun get(key: K): T? {
+        return maps.firstNotNullOfOrNull { it[key] }
+    }
+
+    override fun containsKey(key: K): Boolean {
+        return maps.any { it.containsKey(key) }
+    }
+
+    override fun containsValue(value: T): Boolean {
+        return maps.any { it.containsValue(value) }
+    }
+
+    override val size: Int
+        get() = maps.sumOf { it.size }
+}
+
+/**
+ * [CombinedSet] is a view over the several sets.
+ * Underlying maps could be modified after creation of the [CombinedSet], all modifications will be reflected.
+ */
+class CombinedSet<E>(val sets: List<Set<E>>) : AbstractSet<E>() {
+    constructor(vararg sets: Set<E>) : this(sets.toList())
+
+    override val size: Int
+        get() = sets.sumOf { it.size }
+
+    override fun iterator(): Iterator<E> {
+        return ChainedIterator(sets.map { it.iterator() })
+    }
+
+    override fun contains(element: E): Boolean {
+        return sets.any { it.contains(element) }
+    }
+}
+
+/**
+ * Note that this iterator don't properly support throwing of [ConcurrentModificationException]
+ * if one of underlying collections was modified
+ */
+class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
+    private var metaIterator = delegates.iterator()
+    private var currentIterator: Iterator<T>? = null
+
+    private fun promote() {
+        if (currentIterator?.hasNext() == true) return
+        while (metaIterator.hasNext()) {
+            currentIterator = metaIterator.next()
+            if (currentIterator!!.hasNext()) return
+        }
+    }
+
+    override fun hasNext(): Boolean {
+        promote()
+        return currentIterator?.hasNext() == true
+    }
+
+    override fun next(): T {
+        promote()
+        return currentIterator?.next() ?: throw NoSuchElementException()
+    }
 }

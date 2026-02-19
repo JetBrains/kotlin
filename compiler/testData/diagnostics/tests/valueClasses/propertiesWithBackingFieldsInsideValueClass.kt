@@ -1,8 +1,8 @@
-// FIR_IDENTICAL
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 package kotlin.jvm
 
@@ -40,3 +40,6 @@ value class Foo(val x: Int) : A, B {
 
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>lateinit var lateinitProperty: String<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, getter, integerLiteral, interfaceDeclaration,
+lateinit, override, primaryConstructor, propertyDeclaration, setter, value */

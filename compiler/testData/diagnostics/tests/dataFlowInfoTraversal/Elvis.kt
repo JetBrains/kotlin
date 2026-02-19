@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -7,3 +8,6 @@ fun foo() {
     if (x != null) bar(x <!USELESS_ELVIS!>?: <!DEBUG_INFO_SMARTCAST!>x<!><!>)
     bar(<!TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

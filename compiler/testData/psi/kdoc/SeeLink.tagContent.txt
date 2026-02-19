@@ -1,0 +1,8 @@
+ORIGINAL KDOC:
+@see Foo.bar
+CONTENT:
+
+
+ORIGINAL KDOC:
+* @see Foo.bar
+CONTENT:

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-37375
 
@@ -16,3 +17,6 @@ fun bar() {
 }
 
 fun takeInt(x: Int) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction, operator,
+propertyDeclaration, stringLiteral */

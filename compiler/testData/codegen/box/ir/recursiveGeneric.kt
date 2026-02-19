@@ -1,3 +1,4 @@
+// FILE: lib.kt
 
 open class B<T>
 
@@ -46,6 +47,7 @@ object O : II<I<Any>>
 
 inline fun <T : I<T>> testKt(): II<T> = O as II<T>
 
+// FILE: main.kt
 fun foo(a: Any): String = a.toString()
 
 fun box(): String {

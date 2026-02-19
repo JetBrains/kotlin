@@ -1,6 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
-fun foo(dn: dynamic<!REDUNDANT_NULLABLE!>?<!>, d: dynamic, dnn: dynamic<!REDUNDANT_NULLABLE!>?<!><!REDUNDANT_NULLABLE!>?<!>) {
+fun foo(dn: dynamic?, d: dynamic, dnn: dynamic??) {
     val a1 = dn.foo()
     a1.isDynamic()
 

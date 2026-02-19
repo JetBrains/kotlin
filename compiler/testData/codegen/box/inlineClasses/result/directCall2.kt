@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM, WASM
+
 interface I<T> {
     fun foo(x: T): Any?
 }
@@ -10,4 +10,6 @@ class C : I<Result<Any?>> {
 
 fun <T> Result<T>.getOrNullNoinline() = getOrNull()
 
-fun box() = C().foo(Result.success("OK"))
+fun test() = C().foo(Result.success("OK"))
+
+fun box(): String = test().toString()

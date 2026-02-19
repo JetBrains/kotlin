@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirMultipleJsExportDefaultAnnotationChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalPropertyAccessorChecker
 
 object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
-            FirJsInheritanceFunctionChecker,
+            FirJsInheritanceFunctionChecker.Regular,
+            FirJsInheritanceFunctionChecker.ForExpectClass,
         )
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -21,18 +25,28 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsExternalChecker,
             FirJsExternalFileChecker,
             FirJsNameChecker,
+            FirJsSymbolChecker,
             FirJsExportAnnotationChecker,
             FirJsExportDeclarationChecker,
+            FirJsExportedActualMatchExpectChecker,
+            FirJsActualExternalInterfaceSuggestJsNoRuntimeChecker,
             FirJsBuiltinNameClashChecker,
-            FirJsNameCharsChecker
+            FirJsNameCharsChecker,
+            FirJsStaticChecker,
+            FirJsNoRuntimeDeclarationChecker
         )
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirJsMultipleInheritanceChecker,
+            FirJsMultipleInheritanceChecker.Regular,
+            FirJsMultipleInheritanceChecker.ForExpectClass,
             FirJsDynamicDeclarationChecker,
-            FirJsInheritanceClassChecker,
-            FirJsExternalInheritorOnlyChecker
+            FirJsInheritanceClassChecker.Regular,
+            FirJsInheritanceClassChecker.ForExpectClass,
+            FirJsExternalInheritorOnlyChecker.Regular,
+            FirJsExternalInheritorOnlyChecker.ForExpectClass,
+            FirJsNameClashClassMembersChecker.Regular,
+            FirJsNameClashClassMembersChecker.ForExpectClass,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
@@ -45,5 +59,17 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
             FirJsPropertyDelegationByDynamicChecker
+        )
+
+    override val fileCheckers: Set<FirFileChecker>
+        get() = setOf(
+            FirJsPackageDirectiveChecker,
+            FirMultipleJsExportDefaultAnnotationChecker,
+            FirJsNameClashFileTopLevelDeclarationsChecker
+        )
+
+    override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker>
+        get() = setOf(
+            FirWebCommonExternalPropertyAccessorChecker,
         )
 }

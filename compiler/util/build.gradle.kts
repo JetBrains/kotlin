@@ -1,6 +1,10 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("gradle-plugin-compiler-dependency-configuration")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -10,12 +14,14 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
     compileOnly(jpsModel()) { isTransitive = false }
     compileOnly(jpsModelImpl()) { isTransitive = false }
 
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
@@ -28,8 +34,12 @@ sourceSets {
     }
 }
 
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
+}
+
 testsJar()
 
-projectTest(parallel = true) {
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4)
 }

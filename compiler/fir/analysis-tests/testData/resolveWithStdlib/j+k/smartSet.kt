@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import java.util.AbstractSet
 
 class SmartSet<T> : AbstractSet<T>() {
@@ -12,3 +13,6 @@ fun foo(x: Any) {
     val s = SmartSet<Any>()
     s.add(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType, operator,
+override, propertyDeclaration, typeParameter */

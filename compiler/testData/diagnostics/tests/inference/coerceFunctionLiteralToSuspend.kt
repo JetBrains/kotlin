@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun fail1(c: suspend () -> Unit) {}
 
@@ -27,3 +28,5 @@ suspend fun test2() {
     fun success2(c: () -> Unit) {}
     success2(fun() {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, localFunction, suspend */

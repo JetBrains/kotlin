@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun run(block: () -> Unit) {}
 
 fun test(b1: Boolean, b2: Boolean) {
@@ -8,3 +9,6 @@ fun test(b1: Boolean, b2: Boolean) {
                 result = true
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, ifExpression, lambdaLiteral, localProperty,
+propertyDeclaration */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface A
 
@@ -15,12 +16,12 @@ fun test() {
 
 fun <T> bar() {
     val typeParameter_as_val = <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>
-    val typeParameter_as_fun = <!UNRESOLVED_REFERENCE!>T<!>()
+    val typeParameter_as_fun = <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>()
 
     baz(<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>)
     baz("$<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>")
 
-    1 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>
+    1 + <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>
 
     B::class.equals(<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>)
 
@@ -28,3 +29,6 @@ fun <T> bar() {
 }
 
 fun baz(a: Any) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, classReference, functionDeclaration,
+interfaceDeclaration, localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: foo.kt
 package foo
@@ -17,3 +18,5 @@ import bar.*
 fun <T> test(l: List<T>) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>(l)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

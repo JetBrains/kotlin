@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: MyFuture.java
 
@@ -27,3 +28,7 @@ class ListenerImpl<T, F : MyFuture<T>> : MyListener<F>, Handler {
     override fun invoke(cause: Throwable?) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+inProjection, javaType, lambdaLiteral, nullableType, operator, outProjection, override, samConversion,
+typeAliasDeclaration, typeConstraint, typeParameter */

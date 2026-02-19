@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Stack<T> : IPushPop<T> {
   private val data = ArrayList<T>();
 

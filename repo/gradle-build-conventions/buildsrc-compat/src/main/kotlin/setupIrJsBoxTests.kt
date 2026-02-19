@@ -2,24 +2,53 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.build.d8.D8Extension
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 fun Test.useJsIrBoxTests(
-    version: Any,
-    buildDir: String = "",
-    fullStdLib: String = "libraries/stdlib/build/classes/kotlin/js/main",
-    reducedStdlibPath: String = "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main",
-    kotlinJsTestPath: String = "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"
+    buildDir: Provider<Directory>,
 ) {
-    setupV8()
-    dependsOn(":kotlin-stdlib:jsJar")
-    dependsOn(":kotlin-stdlib:jsJarForTests") // TODO: think how to remove dependency on the artifact in this place
-    dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
-    dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
+    with(project.the<D8Extension>()) {
+        setupV8()
+    }
 
-    systemProperty("kotlin.js.test.root.out.dir", buildDir)
-    systemProperty("kotlin.js.full.stdlib.path", fullStdLib)
-    systemProperty("kotlin.js.reduced.stdlib.path", reducedStdlibPath)
-    systemProperty("kotlin.js.kotlin.test.path", kotlinJsTestPath)
-    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
+    val stdLibJsClasses = project.configurations.maybeCreate("stdLibJsClasses").apply {
+        isTransitive = false
+        attributes {
+            attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
+        }
+    }
+    val jsDomApiCompatClasses = project.configurations.maybeCreate("jsDomApiCompatClasses").apply {
+        isTransitive = false
+        attributes {
+            attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
+        }
+    }
+    val stdlibJsIrMinimalForTestClasses = project.configurations.maybeCreate("stdlibJsIrMinimalForTestClasses").apply {
+        isTransitive = false
+        attributes {
+            attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
+        }
+    }
+    project.dependencies {
+        add(stdLibJsClasses.name, project(":kotlin-stdlib", "jsRuntimeElements"))
+        add(jsDomApiCompatClasses.name, project(":kotlin-dom-api-compat", "jsRuntimeElements"))
+        add(stdlibJsIrMinimalForTestClasses.name, project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements"))
+    }
+    addClasspathProperty(stdLibJsClasses, "kotlin.js.full.stdlib.path")
+    addClasspathProperty(jsDomApiCompatClasses, "kotlin.js.dom.api.compat")
+    addClasspathProperty(stdlibJsIrMinimalForTestClasses, "kotlin.js.reduced.stdlib.path")
+
+    systemProperty("kotlin.js.test.root.out.dir", "${buildDir.get().asFile.relativeTo(project.projectDir)}/")
+
+    jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(project.rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
+        property.set("javascript.engine.path.repl")
+    }
 }

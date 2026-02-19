@@ -1,7 +1,7 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
 // WITH_STDLIB
 
 enum class E {
@@ -18,7 +18,7 @@ class C(val nums: Map<E, Int>) {
         val max = vals.maxOrNull()!!
         val rangeDiff = (max - min).toFloat()
         val normalizedNums = nums.map { kvp ->
-            val (e, num) = kvp
+            val [e, num] = kvp
             //val e = kvp.key
             //val num = kvp.value
             val normalized = (num - min) / rangeDiff

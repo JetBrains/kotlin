@@ -10,16 +10,19 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
+import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
@@ -51,17 +54,9 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     }
 
     /**
-     * Setup plugin to generate synthetic xcodeproj compatible with static libraries
-     */
-    @Deprecated("'useLibraries' mode is removed", level = DeprecationLevel.ERROR)
-    fun useLibraries() {
-        project.kotlinToolingDiagnosticsCollector.report(project, CocoapodsPluginDiagnostics.UseLibrariesUsed())
-    }
-
-    /**
      * Configure name of the pod built from this project.
      */
-    var name: String = project.name.asValidFrameworkName()
+    var name: String = project.name.asValidFrameworkName
 
     /**
      * Configure license of the pod built from this project.
@@ -111,7 +106,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     val watchos: PodspecPlatformSettings = PodspecPlatformSettings("watchos")
 
     private val anyPodFramework = project.provider {
-        val anyTarget = project.multiplatformExtension.supportedTargets().first()
+        val anyTarget = project.multiplatformExtension.supportedAppleTargets().first()
         val anyFramework = anyTarget.binaries
             .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
             .withType(Framework::class.java)
@@ -119,7 +114,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         anyFramework
     }
 
-    internal val podFrameworkName: Provider<String> = anyPodFramework.map { it.baseName.asValidFrameworkName() }
+    internal val podFrameworkName: Provider<String> = anyPodFramework.map { it.baseName.asValidFrameworkName }
     internal val podFrameworkIsStatic: Provider<Boolean> = anyPodFramework.map { it.isStatic }
 
     /**
@@ -137,7 +132,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     internal val specRepos = SpecRepos()
 
-    private val _pods = project.container(CocoapodsDependency::class.java)
+    private val _pods = project.objects.domainObjectContainer(CocoapodsDependency::class.java)
 
     val podsAsTaskInput: List<CocoapodsDependency>
         get() = _pods.toList()
@@ -225,7 +220,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     }
 
     private fun forAllPodFrameworks(action: Action<in Framework>) {
-        project.multiplatformExtension.supportedTargets().all { target ->
+        project.multiplatformExtension.supportedAppleTargets().all { target ->
             target.binaries
                 .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
                 .withType(Framework::class.java) { action.execute(it) }
@@ -233,10 +228,16 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     }
 
     abstract class CocoapodsDependency @Inject constructor(
+        objectFactory: ObjectFactory,
         private val name: String,
         @get:Input var moduleName: String
     ) : Named {
 
+        /**
+         * Header files to include in the interop.
+         * Note: Setting headers causes the `useClangModules` option to be ignored, as cinterop doesn't
+         * support having headers in -fmodules mode.
+         */
         @get:Optional
         @get:Input
         var headers: String? = null
@@ -264,6 +265,16 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
          */
         @get:Input
         var linkOnly: Boolean = false
+
+        /**
+         * Enables the use of Clang modules (`-fmodules`) during cinterop with CocoaPods.
+         * Some pods expect this flag to be set and may fail to compile without it.
+         * Default is true.
+         * Note: The value of `useClangModules` is ignored when any `headers` are set,
+         * as cinterop doesn't support having headers in -fmodules mode.
+         */
+        @get:Input
+        val useClangModules: Property<Boolean> = objectFactory.propertyWithConvention(true)
 
         /**
          * Contains a list of dependencies to other pods. This list will be used while building an interop Kotlin-binding for the pod.

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.java
 public class A {
     public String x = "";
@@ -13,3 +14,5 @@ public class B extends A {
 fun main(b: B) {
     b.x + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, javaProperty, javaType */

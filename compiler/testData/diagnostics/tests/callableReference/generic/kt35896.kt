@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35896
 
 interface B<E, SC>
@@ -13,3 +14,6 @@ fun <T1, T2, S> bar(list: T2, fn: (S) -> B<T1, T2>) {}
 fun <K> foo(list: Inv<K>) {
     bar(list, ::Foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+nullableType, primaryConstructor, typeParameter */

@@ -1,8 +1,10 @@
+// FILE: lib.kt
 package foo
-
-import kotlin.reflect.KProperty
-
 inline fun <T> run(f: () -> T) = f()
+
+// FILE: main.kt
+package foo
+import kotlin.reflect.KProperty
 
 class Delegate {
     var inner = 1

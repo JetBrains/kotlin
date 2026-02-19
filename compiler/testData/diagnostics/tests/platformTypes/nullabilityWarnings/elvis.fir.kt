@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -SENSELESS_COMPARISON, -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -SENSELESS_COMPARISON, -UNUSED_PARAMETER
 
 // FILE: J.java
 
@@ -65,3 +66,6 @@ fun test() {
 }
 
 fun takeNotNull(s: J) {}
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaFunction, javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-25527
 
 import kotlin.reflect.KProperty
@@ -38,3 +39,6 @@ class Delegate {
         prop = value
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, nullableType, operator, propertyDeclaration, propertyDelegate, setter, starProjection */

@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: main.kt
 class Inv<T>(val x: T)
 
@@ -25,3 +26,7 @@ public class JavaClass<T extends JavaClass<? super T>> {
     public void bar(T... x) {}
     public T foo() {}
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, inProjection, infix, integerLiteral, javaType, lambdaLiteral, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter, typeWithExtension */

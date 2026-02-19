@@ -1,1 +1,4 @@
-
+FILE: main.kt
+    public final fun test(some: R|Some|): R|kotlin/Unit| {
+        R|<local>/some|.R|/Some.toByte|()
+    }

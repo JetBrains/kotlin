@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
-import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
-import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
@@ -17,22 +16,24 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
+import org.jetbrains.kotlin.gradle.targets.native.internal.fakeCommonizedNativeDistributionKlibs
+import org.jetbrains.kotlin.gradle.utils.loadSingleKlib
 import org.jetbrains.kotlin.library.*
 import java.io.File
 
-internal fun Project.resolveNativeDistributionLibraryForIde(
+internal fun resolveNativeDistributionLibraryForIde(
     library: File,
     target: CommonizerTarget,
-    logger: Logger? = null
+    kotlinNativeVersion: String,
+    logger: Logger
 ): IdeaKotlinResolvedBinaryDependency? {
-    val resolvedLibrary = try {
-        resolveSingleFileKlib(
-            libraryFile = org.jetbrains.kotlin.konan.file.File(library.absolutePath),
-            strategy = ToolingSingleFileKlibResolveStrategy
-        )
-    } catch (error: Throwable) {
-        logger?.error("Failed to resolve library ${library.path}", error)
-        return null
+    val resolvedLibrary = loadSingleKlib(library, logger) ?: return null
+
+    val isFakeNativeDistributionDependency = library.name == fakeCommonizedNativeDistributionKlibs
+    val module = if (!isFakeNativeDistributionDependency) {
+        resolvedLibrary.shortName ?: resolvedLibrary.uniqueName.split(".").last()
+    } else {
+        fakeCommonizedNativeDistributionKlibs
     }
 
     return IdeaKotlinResolvedBinaryDependency(
@@ -40,13 +41,27 @@ internal fun Project.resolveNativeDistributionLibraryForIde(
         classpath = IdeaKotlinClasspath(library),
         coordinates = IdeaKotlinBinaryCoordinates(
             group = "org.jetbrains.kotlin.native",
-            module = resolvedLibrary.shortName ?: resolvedLibrary.uniqueName.split(".").last(),
-            version = project.konanVersion,
+            module = module,
+            version = kotlinNativeVersion,
             sourceSetName = target.identityString
         ),
     ).apply {
         isNativeDistribution = true
-        klibExtra = KlibExtra(resolvedLibrary)
+        klibExtra = if (isFakeNativeDistributionDependency) {
+            // fake data for tests
+            org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra(
+                builtInsPlatform = "Native",
+                uniqueName = "org.jetbrains.kotlin.native.stdlib",
+                shortName = "stdlib",
+                packageFqName = "kotlin",
+                nativeTargets = target.konanTargets.map { it.name },
+                commonizerNativeTargets = target.konanTargets.map { it.name },
+                commonizerTarget = target.identityString,
+                isInterop = true
+            )
+        } else {
+            KlibExtra(resolvedLibrary)
+        }
     }
 }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 data class SomeObject(val n: SomeObject?) {
     fun doSomething(): Boolean = true
@@ -20,3 +21,6 @@ fun list(start: SomeObject) {
     // e can be null because of next()
     e<!UNSAFE_CALL!>.<!>doSomething()
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, classDeclaration, data, doWhileLoop, equalityExpression, functionDeclaration,
+ifExpression, localProperty, nullableType, primaryConstructor, propertyDeclaration */

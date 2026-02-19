@@ -132,28 +132,32 @@ class ExceptionTest {
         // e1
         //    -- suppressed: e0 (same stack as e1)
         //    -- suppressed: e3
-        //       -- suppressed: e1
-        // Caused by: e2
-        //    -- suppressed: e1
-        // Caused by: e3
+        //       -- suppressed: e1 (should be printed as circular reference)
+        //    -- suppressed: e2
+        //       -- suppressed: e1 (should be printed as circular reference)
+        //       Caused by: e3 (should be printed as circular reference)
+        // Caused by: e2 (should be printed as circular reference)
+        // Caused by: e3 (should be omitted)
 
         val e3 = Exception("e3")
         val e2 = Error("e2", e3)
         val (e1, e0) = listOf("e1", "e0").map { msg -> RuntimeException(msg, e2.takeIf { msg == "e1" }) }
         e1.addSuppressed(e0)
         e1.addSuppressed(e3)
+        e1.addSuppressed(e2)
         e3.addSuppressed(e1)
         e2.addSuppressed(e1)
 
         val topLevelTrace = e1.stackTraceToString()
         fun assertAppearsInTrace(value: Any, count: Int) {
-            if (Regex.fromLiteral(value.toString()).findAll(topLevelTrace).count() != count) {
-                fail("Expected to find $value $count times in $topLevelTrace")
+            val actualCount = Regex.fromLiteral(value.toString()).findAll(topLevelTrace).count()
+            if (actualCount != count) {
+                fail("Expected to find $value $count times, but found $actualCount times in $topLevelTrace")
             }
         }
         assertAppearsInTrace(e1, 3)
         assertAppearsInTrace(e0, 1)
-        assertAppearsInTrace(e2, 1)
+        assertAppearsInTrace(e2, 2)
         assertAppearsInTrace(e3, 2)
 //        fail(topLevelTrace) // to dump the entire trace
     }

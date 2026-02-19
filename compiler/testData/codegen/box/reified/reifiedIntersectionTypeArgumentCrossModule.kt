@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitIntersectionReifiedTypeParameter
 // WITH_STDLIB
 
 // See KT-37163

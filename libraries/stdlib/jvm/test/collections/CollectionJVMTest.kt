@@ -252,7 +252,6 @@ class CollectionJVMTest {
     private fun testCollectionBuilderSerialization(value: Any) {
         val result = serializeAndDeserialize(value)
         assertEquals(value, result)
-        assertEquals(value.javaClass, result.javaClass)
         assertReadOnly(result)
     }
 

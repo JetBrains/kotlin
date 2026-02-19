@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: j/OnSubscribe.java
 package j;
@@ -22,3 +23,5 @@ import j.*
 class K : Observable<String>({})
 
 class J : Observable<String>(null)
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, javaType, lambdaLiteral, samConversion */

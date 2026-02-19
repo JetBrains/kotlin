@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1290
 // FILE: a.kt
 
 inline fun foo(x: String): I = object : I {

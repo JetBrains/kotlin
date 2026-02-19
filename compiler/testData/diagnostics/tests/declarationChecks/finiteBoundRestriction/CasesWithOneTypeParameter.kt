@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface A0<T : A0<T>>
 interface A1<<!FINITE_BOUNDS_VIOLATION!>T : A1<*><!>>
@@ -15,3 +16,6 @@ interface A<T: List<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><T, T, T><!>>
 
 class X<Y>
 class D<T : X<in X<out X<T>>>>
+
+/* GENERATED_FIR_TAGS: classDeclaration, inProjection, interfaceDeclaration, nullableType, outProjection, starProjection,
+typeConstraint, typeParameter */

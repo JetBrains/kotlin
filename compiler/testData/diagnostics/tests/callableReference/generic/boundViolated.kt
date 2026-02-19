@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-56187
@@ -11,3 +12,6 @@ fun main() {
     val a = Foo<<!UPPER_BOUND_VIOLATED!>String<!>>::value
     val b = Foo<<!UPPER_BOUND_VIOLATED!>String<!>>::genericValue
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, functionDeclaration, localProperty,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

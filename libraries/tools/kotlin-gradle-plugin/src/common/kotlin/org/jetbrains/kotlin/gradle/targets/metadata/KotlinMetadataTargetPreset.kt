@@ -7,27 +7,26 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 
-@DeprecatedTargetPresetApi
-class KotlinMetadataTargetPreset(
+internal class KotlinMetadataTargetPreset(
     project: Project
-) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<*>>(project) {
-    override fun getName(): String = PRESET_NAME
+) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<Any>>(project) {
+    override val name: String = PRESET_NAME
 
     override fun createCompilationFactory(
         forTarget: KotlinMetadataTarget
-    ): KotlinCompilationFactory<KotlinCompilation<*>> =
-        object : KotlinCompilationFactory<KotlinCompilation<*>> {
+    ): KotlinCompilationFactory<KotlinCompilation<Any>> =
+        object : KotlinCompilationFactory<KotlinCompilation<Any>> {
             override val target: KotlinTarget = forTarget
 
-            override val itemClass: Class<KotlinCompilation<*>>
-                get() = KotlinCompilation::class.java
+            @Suppress("UNCHECKED_CAST")
+            override val itemClass: Class<KotlinCompilation<Any>>
+                get() = KotlinCompilation::class.java as Class<KotlinCompilation<Any>>
 
-            override fun create(name: String): InternalKotlinCompilation<*> = when (name) {
+            override fun create(name: String): InternalKotlinCompilation<Any> = when (name) {
                 KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinCommonCompilationFactory(
                     forTarget, getOrCreateDefaultSourceSet(name)
                 ).create(name)
@@ -55,7 +54,7 @@ class KotlinMetadataTargetPreset(
             val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             val commonMainSourceSet = project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
 
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             mainCompilation.addSourceSet(commonMainSourceSet)
         }
 }

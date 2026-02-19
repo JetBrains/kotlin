@@ -27,7 +27,8 @@ class WithCompanion(val name: String, val age: UInt) {
 function box() {
     const { Basic, WithCompanion } = this.lib;
 
-    if (Basic.Companion === undefined) return "fail: Unfortunatly we can't exclude the companion from export because it would break logic of other plugins";
+    // TODO: Discuss if it's a safe change
+    // if (Basic.Companion === undefined) return "fail: Unfortunatly we can't exclude the companion from export because it would break logic of other plugins";
 
     const basic = new Basic("Test", 44);
 

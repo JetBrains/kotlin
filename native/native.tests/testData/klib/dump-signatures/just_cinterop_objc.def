@@ -1,0 +1,24 @@
+## FIR_IDENTICAL
+language = Objective-C
+package = just_cinterop_c
+---
+@protocol Foo
+- (void) publicFunction;
+@property int publicProperty;
+@end
+
+@interface Bar {
+    @public
+    int publicProperty;
+
+    @protected
+    int protectedProperty;
+
+    @private
+    int privateProperty;
+}
+- (void) publicFunction;
+@property int publicProperty;
+@property int protectedProperty;
+@property int privateProperty;
+@end

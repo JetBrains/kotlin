@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun inlineCallExplicitError(): String {
     inlineFun lamba@ {
@@ -40,3 +41,6 @@ fun noInlineCall(): String {
 fun noInline(s: () -> Int) {
     s()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral,
+stringLiteral */

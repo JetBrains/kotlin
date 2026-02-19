@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: bar/JavaClass.java
 
 package bar;
@@ -35,7 +36,7 @@ class KotlinClass : JavaClass() {
 class KotlinClass2 : JavaClass() {
     override fun foo() {}
 
-    val field: String = "abc"
+    val <!PROPERTY_HIDES_JAVA_FIELD!>field<!>: String = "abc"
 }
 
 fun test(a: KotlinClass, b: KotlinClass2) {
@@ -56,3 +57,6 @@ fun test(a: KotlinClass, b: KotlinClass2) {
     JavaClassSamePackage.<!INVISIBLE_REFERENCE!>CONST1<!>
     JavaClassSamePackage.CONST2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+override, propertyDeclaration, stringLiteral */

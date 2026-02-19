@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ParseLambdaWithSuspendModifier
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!>
@@ -23,3 +25,6 @@ fun test() {
     val d = suspend <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> {}
     val e = <!WRONG_ANNOTATION_TARGET!>@Synchronized<!> suspend {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, getter, lambdaLiteral, localFunction, localProperty,
+propertyDeclaration, suspend */

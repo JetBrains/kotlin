@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FULL_JDK
 // SCOPE_DUMP: SomeMap:containsKey;containsValue;get;remove, MyMap:containsKey;containsValue;get
 
 // FILE: MyBaseMap.java
@@ -40,3 +42,5 @@ fun test(map: SomeMap<Int, String>) {
     map.remove(1) // ok
     map.remove(<!ARGUMENT_TYPE_MISMATCH!>""<!>) // error
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaType, nullableType, stringLiteral */

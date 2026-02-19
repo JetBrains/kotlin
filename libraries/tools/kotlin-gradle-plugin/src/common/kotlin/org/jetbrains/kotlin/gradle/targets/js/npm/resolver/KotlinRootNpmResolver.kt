@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -19,12 +18,12 @@ import java.io.File
 import java.io.Serializable
 
 class KotlinRootNpmResolver internal constructor(
-    val rootProjectName: String,
-    val rootProjectVersion: String,
-    val tasksRequirements: TasksRequirements,
-    val versions: NpmVersions,
-    val projectPackagesDir: File,
-    val rootProjectDir: File,
+    private val rootProjectName: String,
+    private val rootProjectVersion: String,
+    internal val tasksRequirements: TasksRequirements,
+    internal val versions: NpmVersions,
+    internal val rootProjectDir: File,
+    internal val platform: KotlinPlatformType,
 ) : Serializable {
 
     internal var resolution: KotlinRootNpmResolution? = null
@@ -44,7 +43,7 @@ class KotlinRootNpmResolver internal constructor(
     internal operator fun get(projectPath: String) =
         projectResolvers[projectPath] ?: error("$projectPath is not configured for JS usage")
 
-    val compilations: Collection<KotlinJsCompilation>
+    val compilations: Collection<KotlinJsIrCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
 
     internal fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
@@ -58,7 +57,6 @@ class KotlinRootNpmResolver internal constructor(
         var containsWasmJs = false
         var containsWasmWasi = false
         var containsIrJs = false
-        var containsLegacyJs = false
         val errorMessage = "Cannot resolve project dependency $src -> $target." +
                 "Dependency to project with multiple js/wasm compilations is not supported yet."
 
@@ -67,31 +65,23 @@ class KotlinRootNpmResolver internal constructor(
 
         check(mainCompilations.size <= maxMainCompilationsCount) { errorMessage }
         for (npmResolver in mainCompilations) {
-            when (val compilation = npmResolver.compilation) {
-                is KotlinJsIrCompilation -> {
-                    if (compilation.platformType == KotlinPlatformType.wasm) {
-                        val jsTarget = compilation.target as KotlinJsIrTarget
-                        if (jsTarget.wasmTargetType == KotlinWasmTargetType.JS) {
-                            check(!containsWasmJs) { errorMessage }
-                            containsWasmJs = true
-                        }
-                        if (jsTarget.wasmTargetType == KotlinWasmTargetType.WASI) {
-                            check(!containsWasmWasi) { errorMessage }
-                            containsWasmWasi = true
-                        }
-                    } else {
-                        check(!containsIrJs) { errorMessage }
-                        containsIrJs = true
-                    }
+            val compilation = npmResolver.compilation
+            if (compilation.platformType == KotlinPlatformType.wasm) {
+                val jsTarget = compilation.target
+                if (jsTarget.wasmTargetType == KotlinWasmTargetType.JS) {
+                    check(!containsWasmJs) { errorMessage }
+                    containsWasmJs = true
                 }
-
-                else -> {
-                    check(!containsLegacyJs) { errorMessage }
-                    containsLegacyJs = true
+                if (jsTarget.wasmTargetType == KotlinWasmTargetType.WASI) {
+                    check(!containsWasmWasi) { errorMessage }
+                    containsWasmWasi = true
                 }
+            } else {
+                check(!containsIrJs) { errorMessage }
+                containsIrJs = true
             }
         }
-        check(containsWasmJs || containsWasmWasi || containsIrJs || containsLegacyJs) { errorMessage }
+        check(containsWasmJs || containsWasmWasi || containsIrJs) { errorMessage }
 
         return mainCompilations
     }

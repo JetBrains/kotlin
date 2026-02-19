@@ -18,6 +18,7 @@ internal fun SlfLogger.processLogMessage(
         type = type,
         error = ::error,
         warn = ::warn,
+        lifecycle = ::info,
         info = ::info,
         debug = ::debug
     )
@@ -33,6 +34,7 @@ internal fun GradleLogger.processLogMessage(
         type = type,
         error = ::error,
         warn = ::warn,
+        lifecycle = ::lifecycle,
         info = ::info,
         debug = ::debug
     )
@@ -43,6 +45,7 @@ private fun processLogMessageInternal(
     type: LogType,
     error: (text: String) -> Unit,
     warn: (text: String) -> Unit,
+    lifecycle: (text: String) -> Unit,
     info: (text: String) -> Unit,
     debug: (text: String) -> Unit
 ) {
@@ -54,6 +57,7 @@ private fun processLogMessageInternal(
         LogType.ERROR -> {
             error(nonColoredMessage)
         }
+        LogType.LIFECYCLE -> lifecycle(nonColoredMessage)
         LogType.INFO, LogType.LOG -> info(nonColoredMessage)
         LogType.DEBUG -> debug(nonColoredMessage)
     }
@@ -62,6 +66,7 @@ private fun processLogMessageInternal(
 enum class LogType(val value: String) {
     ERROR("error"),
     WARN("warn"),
+    LIFECYCLE("lifecycle"),
     INFO("info"),
     DEBUG("debug"),
     LOG("log");

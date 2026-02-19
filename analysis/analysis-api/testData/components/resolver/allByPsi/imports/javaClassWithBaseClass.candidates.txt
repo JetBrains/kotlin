@@ -1,0 +1,239 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(38,50): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(46,50): 'main'
+  NO_CANDIDATES
+
+KtImportList(52,362): 'import one.two.BaseClass.baseFoo'
+  NO_CANDIDATES
+
+KtImportDirective(52,84): 'import one.two.BaseClass.baseFoo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(59,84): 'one.two.BaseClass.baseFoo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(59,76): 'one.two.BaseClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(59,66): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(59,62): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(63,66): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(67,76): 'BaseClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(77,84): 'baseFoo'
+  NO_CANDIDATES
+
+KtImportDirective(85,117): 'import one.two.BaseClass.baseBar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(92,117): 'one.two.BaseClass.baseBar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(92,109): 'one.two.BaseClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(92,99): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(92,95): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(96,99): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(100,109): 'BaseClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(110,117): 'baseBar'
+  NO_CANDIDATES
+
+KtImportDirective(119,155): 'import one.two.BaseClass.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(126,155): 'one.two.BaseClass.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(126,143): 'one.two.BaseClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(126,133): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(126,129): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(130,133): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(134,143): 'BaseClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(144,155): 'NestedClass'
+  NO_CANDIDATES
+
+KtImportDirective(156,196): 'import one.two.BaseClass.NestedClass.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(163,196): 'one.two.BaseClass.NestedClass.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(163,192): 'one.two.BaseClass.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(163,180): 'one.two.BaseClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(163,170): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(163,166): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(167,170): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(171,180): 'BaseClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(181,192): 'NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(193,196): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(197,237): 'import one.two.BaseClass.NestedClass.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(204,237): 'one.two.BaseClass.NestedClass.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(204,233): 'one.two.BaseClass.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(204,221): 'one.two.BaseClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(204,211): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(204,207): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(208,211): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(212,221): 'BaseClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(222,233): 'NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(234,237): 'bar'
+  NO_CANDIDATES
+
+KtImportDirective(239,271): 'import one.two.JavaClass.baseFoo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(246,271): 'one.two.JavaClass.baseFoo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(246,263): 'one.two.JavaClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(246,253): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(246,249): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(250,253): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(254,263): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(264,271): 'baseFoo'
+  NO_CANDIDATES
+
+KtImportDirective(272,304): 'import one.two.JavaClass.baseBar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(279,304): 'one.two.JavaClass.baseBar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(279,296): 'one.two.JavaClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(279,286): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(279,282): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(283,286): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(287,296): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(297,304): 'baseBar'
+  NO_CANDIDATES
+
+KtImportDirective(305,333): 'import one.two.JavaClass.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(312,333): 'one.two.JavaClass.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(312,329): 'one.two.JavaClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(312,319): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(312,315): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(316,319): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(320,329): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(330,333): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(334,362): 'import one.two.JavaClass.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(341,362): 'one.two.JavaClass.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(341,358): 'one.two.JavaClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(341,348): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(341,344): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(345,348): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(349,358): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(359,362): 'bar'
+  NO_CANDIDATES

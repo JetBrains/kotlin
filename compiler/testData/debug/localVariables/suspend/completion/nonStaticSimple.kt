@@ -1,5 +1,5 @@
-// Code generation problem with JVM backend.
-// IGNORE_BACKEND: JVM
+
+
 // FILE: test.kt
 class A {
     suspend fun foo() {}
@@ -9,7 +9,7 @@ suspend fun box() {
     A().foo()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:9 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:4 <init>:
 // test.kt:9 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1

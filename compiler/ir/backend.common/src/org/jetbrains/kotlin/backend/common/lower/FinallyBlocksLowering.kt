@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -23,9 +23,12 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.setDeclarationsParent
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+
+val FINALLY_EXPRESSION by IrStatementOriginImpl
+val SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION by IrStatementOriginImpl
 
 class FinallyBlocksLowering(val context: CommonBackendContext, private val throwableType: IrType): FileLoweringPass, IrElementTransformerVoidWithContext() {
 
@@ -185,8 +188,8 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                             tryScopes   = tryScopes,
                             index       = index + 1,
                             jump        = jump,
-                            startOffset = startOffset,
-                            endOffset   = endOffset,
+                            startOffset = UNDEFINED_OFFSET,
+                            endOffset   = UNDEFINED_OFFSET,
                             value       = inlinedFinally)
                 }
             }
@@ -208,7 +211,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
 
         val startOffset = aTry.startOffset
         val endOffset = aTry.endOffset
-        val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+        val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol)
         val transformer = this
         irBuilder.run {
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)
@@ -220,14 +223,15 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
             val syntheticTry = IrTryImpl(
                 startOffset = startOffset,
                 endOffset = endOffset,
-                type = context.irBuiltIns.nothingType
+                type = context.irBuiltIns.nothingType,
             ).apply {
                 this.catches += irCatch(
                     catchParameter,
                     irComposite {
                         +copy(finallyExpression)
                         +irThrow(irGet(catchParameter))
-                    }
+                    },
+                    SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
                 )
 
                 this.finallyExpression = null
@@ -267,24 +271,28 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                                                                                     finallyExpression: IrExpression
     ): IrExpression {
         return when {
-            type.isUnit() || type.isNothing() -> irBlock(value, null, type) {
+            type.isUnit() || type.isNothing() -> irBlock(value, null, type, UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 +irReturnableBlock(symbol, type) {
                     +value
                 }
-                +copy(finallyExpression)
+                +irComposite(resultType = context.irBuiltIns.unitType, origin = FINALLY_EXPRESSION) {
+                    +copy(finallyExpression)
+                }
             }
-            else -> irBlock(value, null, type) {
+            else -> irBlock(value, null, type, UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 val tmp = createTmpVariable(irReturnableBlock(symbol, type) {
                     +irReturn(symbol, value)
                 })
-                +copy(finallyExpression)
+                +irComposite(resultType = context.irBuiltIns.unitType, origin = FINALLY_EXPRESSION) {
+                    +copy(finallyExpression)
+                }
                 +irGet(tmp)
             }
         }
     }
 
     private inline fun <reified T : IrElement> IrBuilderWithScope.copy(element: T) =
-        element.deepCopyWithVariables().setDeclarationsParent(parent)
+        element.deepCopyWithSymbols(parent)
 
     fun IrBuilderWithScope.irReturn(target: IrReturnTargetSymbol, value: IrExpression) =
         IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)

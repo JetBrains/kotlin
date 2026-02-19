@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-306 Ambiguity when different this's have same-looking functions
 
@@ -22,3 +23,5 @@ class Foo {
 class Barr {
     fun bar() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, thisExpression */

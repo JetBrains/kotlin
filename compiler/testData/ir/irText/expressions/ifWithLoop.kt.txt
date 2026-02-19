@@ -1,0 +1,173 @@
+fun topLevelMethod() {
+  var z: Int = 1
+  when {
+    true -> { // BLOCK
+      { // BLOCK
+        val tmp_0: IntIterator = 0.rangeTo(other = 2).iterator()
+        while (tmp_0.hasNext()) { // BLOCK
+          val i: Int = tmp_0.next()
+          z = z.plus(other = i)
+        }
+      }
+    }
+    else -> { // BLOCK
+      { // BLOCK
+        val tmp_1: IntIterator = 0.rangeTo(other = 3).iterator()
+        while (tmp_1.hasNext()) { // BLOCK
+          val i: Int = tmp_1.next()
+          z = z.plus(other = i)
+        }
+      }
+    }
+  }
+  when {
+    true -> { // BLOCK
+      val tmp_2: IntIterator = 0.rangeTo(other = 4).iterator()
+      while (tmp_2.hasNext()) { // BLOCK
+        val i: Int = tmp_2.next()
+        z = z.plus(other = i)
+      }
+    }
+    else -> { // BLOCK
+      val tmp_3: IntIterator = 0.rangeTo(other = 5).iterator()
+      while (tmp_3.hasNext()) { // BLOCK
+        val i: Int = tmp_3.next()
+        z = z.plus(other = i)
+      }
+    }
+  }
+  when {
+    true -> { // BLOCK
+      while (false) z = z.plus(other = 6)
+    }
+    else -> { // BLOCK
+      while (false) z = z.plus(other = 7)
+    }
+  }
+  when {
+    true -> while (false) z = z.plus(other = 8)
+    else -> while (false) z = z.plus(other = 9)
+  }
+  when {
+    true -> { // BLOCK
+      { // BLOCK
+        do// COMPOSITE {
+        z = z.plus(other = 10)
+        // }        while (false)
+      }
+    }
+    else -> { // BLOCK
+      { // BLOCK
+        do// COMPOSITE {
+        z = z.plus(other = 11)
+        // }        while (false)
+      }
+    }
+  }
+  when {
+    true -> { // BLOCK
+      do// COMPOSITE {
+      z = z.plus(other = 12)
+      // }      while (false)
+    }
+    else -> { // BLOCK
+      do// COMPOSITE {
+      z = z.plus(other = 13)
+      // }      while (false)
+    }
+  }
+  { // BLOCK
+    val tmp_4: Int = z
+    when {
+      EQEQ(arg0 = tmp_4, arg1 = 1) -> { // BLOCK
+        { // BLOCK
+          val tmp_5: IntIterator = 0.rangeTo(other = 14).iterator()
+          while (tmp_5.hasNext()) { // BLOCK
+            val i: Int = tmp_5.next()
+            z = z.plus(other = i)
+          }
+        }
+      }
+      else -> { // BLOCK
+        { // BLOCK
+          val tmp_6: IntIterator = 0.rangeTo(other = 15).iterator()
+          while (tmp_6.hasNext()) { // BLOCK
+            val i: Int = tmp_6.next()
+            z = z.plus(other = i)
+          }
+        }
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_7: Int = z
+    when {
+      EQEQ(arg0 = tmp_7, arg1 = 1) -> { // BLOCK
+        val tmp_8: IntIterator = 0.rangeTo(other = 16).iterator()
+        while (tmp_8.hasNext()) { // BLOCK
+          val i: Int = tmp_8.next()
+          z = z.plus(other = i)
+        }
+      }
+      else -> { // BLOCK
+        val tmp_9: IntIterator = 0.rangeTo(other = 17).iterator()
+        while (tmp_9.hasNext()) { // BLOCK
+          val i: Int = tmp_9.next()
+          z = z.plus(other = i)
+        }
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_10: Int = z
+    when {
+      EQEQ(arg0 = tmp_10, arg1 = 1) -> { // BLOCK
+        while (false) z = z.plus(other = 18)
+      }
+      else -> { // BLOCK
+        while (false) z = z.plus(other = 19)
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_11: Int = z
+    when {
+      EQEQ(arg0 = tmp_11, arg1 = 1) -> while (false) z = z.plus(other = 20)
+      else -> while (false) z = z.plus(other = 21)
+    }
+  }
+  { // BLOCK
+    val tmp_12: Int = z
+    when {
+      EQEQ(arg0 = tmp_12, arg1 = 1) -> { // BLOCK
+        { // BLOCK
+          do// COMPOSITE {
+          z = z.plus(other = 22)
+          // }          while (false)
+        }
+      }
+      else -> { // BLOCK
+        { // BLOCK
+          do// COMPOSITE {
+          z = z.plus(other = 23)
+          // }          while (false)
+        }
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_13: Int = z
+    when {
+      EQEQ(arg0 = tmp_13, arg1 = 1) -> { // BLOCK
+        do// COMPOSITE {
+        z = z.plus(other = 24)
+        // }        while (false)
+      }
+      else -> { // BLOCK
+        do// COMPOSITE {
+        z = z.plus(other = 25)
+        // }        while (false)
+      }
+    }
+  }
+}

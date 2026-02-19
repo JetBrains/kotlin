@@ -1,0 +1,28 @@
+KClass: abstract class C : Java1, KotlinInterface
+  members:
+    public open fun C<R>.bar(): java.util.ArrayList<kotlin.Int>
+    public open operator fun C<R>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C<R>.foo(): R
+    public open fun C<R>.hashCode(): kotlin.Int
+    public open fun C<R>.toString(): kotlin.String
+  declaredMembers:
+KClass: class Java1 : Any
+  members:
+    public open fun Java1<T>.bar(): java.util.ArrayList<kotlin.Int!>!
+    public open operator fun Java1<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java1<T>.foo(): T!
+    public open fun Java1<T>.hashCode(): kotlin.Int
+    public open fun Java1<T>.toString(): kotlin.String
+  declaredMembers:
+    public open fun Java1<T>.bar(): java.util.ArrayList<kotlin.Int!>!
+    public open fun Java1<T>.foo(): T!
+KClass: abstract interface KotlinInterface : Any
+  members:
+    public abstract fun KotlinInterface<T>.bar(): kotlin.collections.ArrayList<kotlin.Int> /* = java.util.ArrayList<kotlin.Int> */
+    public open operator fun KotlinInterface<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun KotlinInterface<T>.foo(): T
+    public open fun KotlinInterface<T>.hashCode(): kotlin.Int
+    public open fun KotlinInterface<T>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun KotlinInterface<T>.bar(): kotlin.collections.ArrayList<kotlin.Int> /* = java.util.ArrayList<kotlin.Int> */
+    public abstract fun KotlinInterface<T>.foo(): T

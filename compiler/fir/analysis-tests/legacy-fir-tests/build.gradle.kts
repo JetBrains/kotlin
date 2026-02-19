@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -7,50 +5,54 @@ import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
-    compileOnly(intellijCore())
+    testFixturesApi(libs.junit4)
+    testFixturesCompileOnly(kotlinTest("junit"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:frontend"))
 
-    testApi(commonDependency("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(project(":compiler:fir:checkers:checkers.js"))
-    testApi(project(":compiler:fir:checkers:checkers.native"))
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:frontend"))
+    testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-
-    testCompileOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
+optInToK1Deprecation()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
+    "testFixtures" { projectDefault() }
 }
 
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
+projectTests {
+    testTask(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":dist")
     }
-}
 
-projectTest(parallel = true, maxHeapSizeMb = 3072) {
-    dependsOn(":dist")
-    workingDir = rootDir
+    testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt", generateTestsInBuildDirectory = true)
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+
+    testData(project(":compiler").isolated, "testData/loadJava/compiledJava")
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData/enhancement")
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData/lightClasses")
 }
 
 testsJar()

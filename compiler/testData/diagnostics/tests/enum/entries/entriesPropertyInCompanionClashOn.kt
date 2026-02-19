@@ -1,4 +1,5 @@
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -11,7 +12,7 @@ enum class A {
 }
 
 fun test() {
-    A.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable"), DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
+    val i: Int = A.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable"), DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
     A.Companion.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
 
     with(A) {
@@ -27,3 +28,6 @@ fun test() {
     val aCompanion = A.Companion
     aCompanion.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, objectDeclaration, propertyDeclaration, thisExpression */

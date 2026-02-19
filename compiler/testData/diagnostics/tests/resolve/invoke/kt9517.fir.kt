@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-9517 Wrong resolve for invoke convention after smart cast
 open class A {
     open val foo: () -> Number = null!!
@@ -13,3 +14,6 @@ fun test(a: A) {
         val foo: Int = a.foo() // B::foo + invoke()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, getter, ifExpression,
+isExpression, localProperty, override, propertyDeclaration, smartcast */

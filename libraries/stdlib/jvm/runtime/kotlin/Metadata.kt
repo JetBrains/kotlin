@@ -14,13 +14,15 @@ package kotlin
 @SinceKotlin("1.3")
 public annotation class Metadata(
     /**
-     * A kind of the metadata this annotation encodes. Kotlin compiler recognizes the following kinds (see KotlinClassHeader.Kind):
+     * A kind of the metadata this annotation encodes. Kotlin compiler recognizes the following kinds:
      *
-     * 1 Class
-     * 2 File
-     * 3 Synthetic class
-     * 4 Multi-file class facade
-     * 5 Multi-file class part
+     * | Value | Class kind              |
+     * |-------|-------------------------|
+     * | 1     | Class                   |
+     * | 2     | File                    |
+     * | 3     | Synthetic class         |
+     * | 4     | Multi-file class facade |
+     * | 5     | Multi-file class part   |
      *
      * The class file with a kind not listed here is treated as a non-Kotlin file.
      */
@@ -75,7 +77,8 @@ public annotation class Metadata(
      * * 4 - this class file is compiled with the new Kotlin compiler backend (JVM IR) introduced in Kotlin 1.4.
      * * 5 - this class file has stable metadata and ABI. This is used only for class files compiled with JVM IR (see flag #4) or FIR (#6),
      *   and prevents metadata incompatibility diagnostics from being reported where the class is used.
-     * * 6 - this class file is compiled with the new Kotlin compiler frontend (FIR).
+     * * 6 - this class file is compiled with the K2 compiler frontend (FIR). Only valid before metadata version 2.0.0.
+     *   Starting from metadata version 2.0.0, this flag is not set anymore, even though FIR is always used.
      * * 7 - this class is used in the scope of an inline function and implicitly part of the public ABI. Only valid from
      *   metadata version 1.6.0.
      */

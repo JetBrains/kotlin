@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
@@ -43,7 +46,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
         MAP.put(
             SerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS,
-            "This class is a Companion object for @Serializable class ''{0}'', but itself is an external serializer for another class ''{1}''. " +
+            "This class is a companion object for @Serializable class ''{0}'', but itself is an external serializer for another class ''{1}''. " +
                     "Such declarations are potentially problematic and user-confusing and therefore are deprecated. " +
                     "Please define external serializers as non-companion, preferably top-level objects. " +
                     "For more details, refer to this YouTrack ticket: https://youtrack.jetbrains.com/issue/KT-54441",
@@ -52,12 +55,20 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
         MAP.put(
             SerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS,
-            "This class is a Companion object for non-serializable class ''{0}'', but itself is an external serializer for another class ''{1}''. " +
+            "This class is a companion object for non-serializable class ''{0}'', but itself is an external serializer for another class ''{1}''. " +
                     "Such declarations are potentially problematic and user-confusing and therefore are deprecated. " +
                     "Please define external serializers as non-companion, preferably top-level objects. " +
                     "For more details, refer to this YouTrack ticket: https://youtrack.jetbrains.com/issue/KT-54441",
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
+        )
+        MAP.put(
+            SerializationErrors.COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS,
+            "This class is a companion object for a @Serializable class {0}. Companion objects of serializable classes can't be serializable with other serializers," +
+                    "because this may lead to runtime errors and incorrect results. The only case where this is allowed is when both class {0} and its companion" +
+                    "have the same serializer specified in @Serializable(with = ...) annotation. " +
+                    "See https://youtrack.jetbrains.com/issue/KT-70110 for details.",
+            Renderers.NAME
         )
         MAP.put(
             SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
@@ -119,8 +130,28 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE
         )
         MAP.put(
+            SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT,
+            "Custom serializer ''{0}'' can not be used for ''{1}'' since it has an invalid number of parameters in primary constructor: {2}",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
+        )
+        MAP.put(
+            SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE,
+            "Custom serializer ''{0}'' can not be used for ''{1}'', type of parameter ''{2}'' in serializer's primary constructor should be ''KSerializer''",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
+        )
+        MAP.put(
             SerializationErrors.TRANSIENT_MISSING_INITIALIZER,
             "This property is marked as @Transient and therefore must have an initializing expression"
+        )
+        MAP.put(
+            SerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
+            "Custom serializer ''{0}'' is private, while the type ''{1}'' is not. This can cause ''serializer not found'' errors on use sites. Consider aligning the visibilities.",
+            Renderers.NAME,
+            Renderers.NAME
         )
         MAP.put(
             SerializationErrors.TRANSIENT_IS_REDUNDANT,
@@ -193,6 +224,31 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Cannot generate external serializer ''{0}'': class ''{1}'' is defined in another module",
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
+        )
+
+        MAP.put(
+            SerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR,
+            "Cannot generate external serializer ''{0}'': it must have a constructor with {2} value parameters, because class ''{1}'' has type parameters",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
+        )
+
+        MAP.put(
+            SerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS,
+            "@KeepGeneratedSerializer annotation is useless here, it is acceptable to use it only on classes marked with @Serializable(CustomSerializer::class)"
+        )
+
+        MAP.put(
+            SerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
+            "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
+        )
+
+        MAP.put(
+            SerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED,
+            "Value specified in annotation @ProtoNumber on the field ''{0}'' duplicates field numbers of fields: {1}",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
         )
     }
 }

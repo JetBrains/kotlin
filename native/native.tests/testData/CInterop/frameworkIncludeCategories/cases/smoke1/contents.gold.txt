@@ -1,40 +1,105 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @ExternalObjCClass open class MyClass : ObjCObjectBase {
-        protected constructor()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") open external fun categoryInstanceMethod()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod2") open external fun categoryInstanceMethod2()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
-        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    // class name: dependency/MyClass
+    // class name: dependency/MyClass.Companion
+    // class name: dependency/MyClassMeta
+    // class name: dependency/SkipClass
+    // class name: dependency/SkipClass.Companion
+    // class name: dependency/SkipClassMeta
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryInstanceMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun categoryInstanceMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryInstanceMethod2", encoding = "v16@0:8", isStret = false)
+      public open external fun categoryInstanceMethod2(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "instanceMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun instanceMethod(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-    @ExternalObjCClass open class MyClassMeta : ObjCObjectBaseMeta {
-        protected constructor()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") open external fun categoryClassMethod()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod2") open external fun categoryClassMethod2()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
+    public final companion object dependency/MyClass.Companion : dependency/MyClassMeta, kotlinx/cinterop/ObjCClassOf<dependency/MyClass> {
+
+      private constructor()
     }
 
-    @ExternalObjCClass open class SkipClass : ObjCObjectBase {
-        protected constructor()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
-        companion object : SkipClassMeta, ObjCClassOf<SkipClass>
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/MyClassMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryClassMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun categoryClassMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryClassMethod2", encoding = "v16@0:8", isStret = false)
+      public open external fun categoryClassMethod2(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "classMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun classMethod(): kotlin/Unit
     }
 
-    @ExternalObjCClass open class SkipClassMeta : ObjCObjectBaseMeta {
-        protected constructor()
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/SkipClass : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "instanceMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun instanceMethod(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
+    public final companion object dependency/SkipClass.Companion : dependency/SkipClassMeta, kotlinx/cinterop/ObjCClassOf<dependency/SkipClass> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/SkipClassMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "classMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun classMethod(): kotlin/Unit
+    }
+
+    package {
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryClassMethod", encoding = "v16@0:8", isStret = false)
+      @kotlin/Deprecated(message = "Use class method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final external fun dependency/MyClassMeta.categoryClassMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryClassMethod", encoding = "v16@0:8", isStret = false)
+      public final external fun dependency/SkipClassMeta.categoryClassMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryClassMethod2", encoding = "v16@0:8", isStret = false)
+      @kotlin/Deprecated(message = "Use class method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final external fun dependency/MyClassMeta.categoryClassMethod2(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryInstanceMethod", encoding = "v16@0:8", isStret = false)
+      @kotlin/Deprecated(message = "Use instance method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final external fun dependency/MyClass.categoryInstanceMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryInstanceMethod", encoding = "v16@0:8", isStret = false)
+      public final external fun dependency/SkipClass.categoryInstanceMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryInstanceMethod2", encoding = "v16@0:8", isStret = false)
+      @kotlin/Deprecated(message = "Use instance method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final external fun dependency/MyClass.categoryInstanceMethod2(): kotlin/Unit
+    }
+  }
 }
-
-package dependency {
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClassMeta.categoryClassMethod()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") external fun SkipClassMeta.categoryClassMethod()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod2") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClassMeta.categoryClassMethod2()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClass.categoryInstanceMethod()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") external fun SkipClass.categoryInstanceMethod()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod2") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClass.categoryInstanceMethod2()
-}
-

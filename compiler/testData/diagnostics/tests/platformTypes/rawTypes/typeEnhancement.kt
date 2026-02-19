@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -26,3 +27,6 @@ fun main() {
     Test.rawField.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, doubleList)
     Test.DerivedRawA().foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, doubleList)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+nullableType, propertyDeclaration, stringLiteral */

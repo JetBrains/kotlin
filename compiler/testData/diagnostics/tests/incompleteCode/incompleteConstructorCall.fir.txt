@@ -1,0 +1,65 @@
+FILE: incompleteConstructorCall.fir.kt
+    public final class Outer<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Outer<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Outer.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class Nested<S> : R|kotlin/Any| {
+            public constructor<S>(): R|Outer.Nested<S>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.Nested.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+        public final inner class Inner<R, Outer(T)> : R|kotlin/Any| {
+            public Outer<T>.constructor<R>(): R|Outer.Inner<R, T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.Inner.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+        public final object Obj : R|kotlin/Any| {
+            private constructor(): R|Outer.Obj| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final val test: R|Outer.Companion| = Q|Outer|<R|kotlin/String|>
+        public get(): R|Outer.Companion|
+    public final val test2: R|Outer.Nested.Companion| = Q|Outer.Nested|<R|kotlin/String|>
+        public get(): R|Outer.Nested.Companion|
+    public final val test3: R|Outer.Inner.Companion| = Q|Outer.Inner|<R|kotlin/Double|>
+        public get(): R|Outer.Inner.Companion|
+    public final val test4: R|Outer.Obj| = Q|Outer.Obj|
+        public get(): R|Outer.Obj|
+    public final val test5: R|Outer.Companion| = Q|Outer|
+        public get(): R|Outer.Companion|
+    public final val test6: R|Outer.Nested.Companion| = Q|Outer.Nested|
+        public get(): R|Outer.Nested.Companion|
+    public final val test7: R|Outer.Inner.Companion| = Q|Outer.Inner|
+        public get(): R|Outer.Inner.Companion|
+    public final val test8: R|Outer.Obj| = Q|Outer.Obj|
+        public get(): R|Outer.Obj|

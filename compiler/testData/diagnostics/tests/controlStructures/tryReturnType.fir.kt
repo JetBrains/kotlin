@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 fun foo() : Int {
@@ -25,3 +26,5 @@ fun bar() : Int =
 
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, stringLiteral, tryExpression */

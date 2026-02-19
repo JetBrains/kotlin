@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -35,3 +37,6 @@ actual class Bar : Foo {
 
     actual override fun failY(x: Int, <!ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS!>y: String = <!DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE!>""<!><!>) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+override, stringLiteral */

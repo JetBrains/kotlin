@@ -8,12 +8,14 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <CoreFoundation/CFString.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSString.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <Foundation/Foundation.h>
+#import "CompilerConstants.hpp"
 #import "Memory.h"
+#import "KString.h"
 #import "ObjCInteropUtils.h"
 #import "ObjCInteropUtilsPrivate.h"
+#import "ObjCInterop.h"
 
 namespace {
   Class nsStringClass = nullptr;
@@ -59,18 +61,30 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
     RETURN_OBJ(nullptr);
   }
 
-  CFStringRef immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
-
+  KRef result;
+  auto immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
   auto length = CFStringGetLength(immutableCopyOrSameStr);
-  CFRange range = {0, length};
-  ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, length, OBJ_RESULT)->array();
-  KChar* rawResult = CharArrayAddressOfElementAt(result, 0);
+  if (length == 0) RETURN_RESULT_OF0(TheEmptyString);
 
-  CFStringGetCharacters(immutableCopyOrSameStr, range, rawResult);
-
-  result->obj()->SetAssociatedObject((void*)immutableCopyOrSameStr);
-
-  RETURN_OBJ(result->obj());
+  auto encoding = CFStringGetFastestEncoding(immutableCopyOrSameStr);
+  switch (encoding) {
+    case kCFStringEncodingASCII:
+    case kCFStringEncodingNonLossyASCII:
+    case kCFStringEncodingISOLatin1:
+      if (kotlin::compiler::latin1Strings()) {
+        result = CreateUninitializedString(StringEncoding::kLatin1, length, OBJ_RESULT);
+        CFStringGetBytes(immutableCopyOrSameStr, {0, length}, encoding, '?', false,
+          reinterpret_cast<UInt8*>(StringHeader::of(result)->data()), length, nullptr);
+        break;
+      }
+    default:
+      result = CreateUninitializedString(StringEncoding::kUTF16, length, OBJ_RESULT);
+      CFStringGetCharacters(immutableCopyOrSameStr, {0, length},
+        reinterpret_cast<UniChar*>(StringHeader::of(result)->data()));
+      break;
+  }
+  result->SetAssociatedObject((void*)immutableCopyOrSameStr);
+  RETURN_OBJ(result);
 }
 
 // Note: this body is used for init methods with signatures differing from this;
@@ -107,6 +121,51 @@ KBoolean Kotlin_Interop_DoesObjectConformToProtocol(id obj, void* prot, KBoolean
   BOOL objectIsClass = class_isMetaClass(object_getClass(obj));
   if ((isMeta && !objectIsClass) || (!isMeta && objectIsClass)) return false;
   // TODO: handle root classes properly.
+
+  return [((id<NSObject>)obj) conformsToProtocol:(Protocol*)prot];
+}
+
+// This basically returns `objc_getProtocol(protName)`, but caches the result using `protCache`.
+static Protocol* getProtocolByName(const char* protName, Protocol** protCache) {
+    // This value stored into the `*protCache` indicates that `objc_getProtocol(protName) == nullptr`.
+    static Protocol* const notFoundMarker = reinterpret_cast<Protocol*>(1);
+
+    Protocol* cachedValue = *protCache;
+    if (cachedValue != nullptr) return cachedValue == notFoundMarker ? nullptr : cachedValue;
+
+    Protocol* result = objc_getProtocol(protName);
+    *protCache = result == nullptr ? notFoundMarker : result;
+
+    RuntimeAssert(result != notFoundMarker, "protocol pointer equals %p", notFoundMarker);
+
+    return result;
+}
+
+KBoolean Kotlin_Interop_DoesObjectConformToProtocolByName(
+    ObjHeader* kotlinObj,
+    id obj,
+    const char* protName,
+    Protocol** protCache,
+    KBoolean isMeta
+) {
+  BOOL objectIsClass = class_isMetaClass(object_getClass(obj));
+  if ((isMeta && !objectIsClass) || (!isMeta && objectIsClass)) return false;
+  // TODO: handle root classes properly.
+
+  Protocol* prot = getProtocolByName(protName, protCache);
+  if (prot == nullptr) {
+    /*
+    This doesn't mean that the object doesn't conform to the protocol.
+    If `IsKotlinObjCClass` is true for the class, it can still conform to the protocol even if `prot == nullptr`.
+    See the comment in `IsInstanceOfKotlinClassImplementingObjCProtocol` for the details.
+
+    On the other hand, since `prot == nullptr`, if the object conforms to the protocol,
+    this can't be a regular Objective-C conformance, since the latter makes the protocol runtime
+    info exist. So it is safe to assume that checking the Kotlin case is enough.
+    */
+
+    return IsInstanceOfKotlinClassImplementingObjCProtocol(kotlinObj, obj, protName);
+  }
 
   return [((id<NSObject>)obj) conformsToProtocol:(Protocol*)prot];
 }

@@ -1,3 +1,5 @@
+// JVM_DEFAULT_MODE: disable
+
 interface A {
     fun foo() = 42
 }

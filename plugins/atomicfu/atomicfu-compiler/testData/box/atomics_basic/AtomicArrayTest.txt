@@ -24,15 +24,14 @@ final class AtomicArrayClass {
     private synthetic final field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void
     public method <init>(): void
-    public synthetic final static method access$getA$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getA$volatile(): java.lang.Object
+    public synthetic final static method getA$volatile$FU$main(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public synthetic final method getA$volatile$main(): java.lang.Object
     public synthetic final method getAnyArr(): java.util.concurrent.atomic.AtomicReferenceArray
     public synthetic final method getBooleanArr(): java.util.concurrent.atomic.AtomicIntegerArray
     public synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
     public synthetic final method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
     public synthetic final method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    private synthetic final method setA$volatile(p0: java.lang.Object): void
+    public synthetic final method setA$volatile$main(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata

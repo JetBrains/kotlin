@@ -1,0 +1,9 @@
+FILE: receiverPresenceErrorForInvoke.fir.kt
+    public final fun test1(f: R|kotlin/String.() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function1.invoke>#|()
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function1.invoke>#|()
+    }
+    public final fun test2(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Unit| {
+        IntegerLiteral(1).<Unresolved name: f>#(Int(2))
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function1.invoke>#|(Int(2), Int(2))
+    }

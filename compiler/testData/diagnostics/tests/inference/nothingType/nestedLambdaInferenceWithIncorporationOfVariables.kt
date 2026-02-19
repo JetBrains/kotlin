@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 fun <K> id1(k: K): K = k
@@ -10,3 +11,5 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, nullableType, typeParameter */

@@ -27,16 +27,17 @@ import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.classpathAsList
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import javax.inject.Inject
@@ -47,9 +48,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory,
 ) : KotlinCompile(
-    objectFactory
-        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        .configureExperimentalTryK2(project),
+    objectFactory.KotlinJvmCompilerOptionsDefault(project),
     workerExecutor,
     objectFactory
 ), KaptGenerateStubs {
@@ -59,15 +58,19 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Internal
     abstract override val libraries: ConfigurableFileCollection
 
+    /**
+     * [K2MultiplatformStructure] is not required for Kapt stubs
+     */
+    @InternalKotlinGradlePluginApi
+    @get:Internal
+    override val multiplatformStructure: K2MultiplatformStructure get() = super.multiplatformStructure
+
     /* Used as input as empty kapt classpath should not trigger stub generation, but a non-empty one should. */
     @Input
     fun getIfKaptClasspathIsPresent() = !kaptClasspath.isEmpty
 
     @get:Input
     abstract val verbose: Property<Boolean>
-
-    @get:Input
-    abstract val useK2Kapt: Property<Boolean>
 
     /**
      * Changes in this additional sources will trigger stubs regeneration,
@@ -104,7 +107,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             sources,
             javaSources,
             commonSourceSet,
-            classpathSnapshotProperties.classpath,
             classpathSnapshotProperties.classpathSnapshot
         )
 
@@ -129,10 +131,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
             args.verbose = verbose.get()
             args.destinationAsFile = destinationDirectory.get().asFile
-
-            if (useK2Kapt.get()) {
-                args.freeArgs += "-Xuse-kapt4"
-            }
         }
 
         pluginClasspath { args ->

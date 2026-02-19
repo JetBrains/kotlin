@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A() {
     override fun equals(other : Any?) : Boolean = false
 }
@@ -8,7 +9,7 @@ fun f(): Unit {
     x + 1
     x <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
     x <!UNSAFE_OPERATOR_CALL!><<!> 1
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1
 
     x == 1
     x != 1
@@ -29,3 +30,7 @@ fun f(): Unit {
     <!CONDITION_TYPE_MISMATCH!>y<!> && true
     <!CONDITION_TYPE_MISMATCH!>y<!> && <!CONDITION_TYPE_MISMATCH!>1<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, classDeclaration, comparisonExpression,
+disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral, intersectionType, localProperty,
+nullableType, operator, override, primaryConstructor, propertyDeclaration, rangeExpression, smartcast, stringLiteral */

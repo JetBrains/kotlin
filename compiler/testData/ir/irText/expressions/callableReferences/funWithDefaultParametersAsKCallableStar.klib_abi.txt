@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final val x // /C.x|{}x[0]
+        final fun <get-x>(): kotlin/String // /C.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/String = ...) // /C.<init>|<init>(kotlin.String){}[0]
+}
+final fun /defaultsOnly(kotlin/String = ...): kotlin/Int // /defaultsOnly|defaultsOnly(kotlin.String){}[0]
+final fun /regularAndDefaults(kotlin/String, kotlin/String = ...): kotlin/Int // /regularAndDefaults|regularAndDefaults(kotlin.String;kotlin.String){}[0]
+final fun /testCtorStar() // /testCtorStar|testCtorStar(){}[0]
+final fun /testDefaultsOnlyStar() // /testDefaultsOnlyStar|testDefaultsOnlyStar(){}[0]
+final fun /testRegularAndDefaultsStar() // /testRegularAndDefaultsStar|testRegularAndDefaultsStar(){}[0]
+final fun /testVarargsStar() // /testVarargsStar|testVarargsStar(){}[0]
+final fun /useKCallableStar(kotlin.reflect/KCallable<*>) // /useKCallableStar|useKCallableStar(kotlin.reflect.KCallable<*>){}[0]
+final fun /varargs(kotlin/Array<out kotlin/String>...): kotlin/Int // /varargs|varargs(kotlin.Array<out|kotlin.String>...){}[0]

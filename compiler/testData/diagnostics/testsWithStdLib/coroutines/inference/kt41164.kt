@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -OPT_IN_IS_NOT_ENABLED
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -OPT_IN_IS_NOT_ENABLED
 // ISSUE: KT-41164
 
 import kotlin.experimental.ExperimentalTypeInference
@@ -22,3 +24,6 @@ fun test(): MyFlow<Int> {
         myEmptyFlow()
     )
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+in, interfaceDeclaration, lambdaLiteral, nullableType, out, starProjection, typeParameter, typeWithExtension */

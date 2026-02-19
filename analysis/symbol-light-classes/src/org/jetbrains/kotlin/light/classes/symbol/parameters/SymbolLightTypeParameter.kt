@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,19 +9,19 @@ import com.intellij.lang.Language
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
-import org.jetbrains.kotlin.analysis.api.types.KtErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -29,35 +29,36 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import javax.swing.Icon
 
 internal class SymbolLightTypeParameter private constructor(
     private val parent: SymbolLightTypeParameterList,
     private val index: Int,
-    private val typeParameterSymbolPointer: KtSymbolPointer<KtTypeParameterSymbol>,
-    private val typeParameterDeclaration: KtTypeParameter?,
+    private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>,
     override val kotlinOrigin: KtTypeParameter?,
 ) : LightElement(parent.manager, KotlinLanguage.INSTANCE), PsiTypeParameter,
     KtLightDeclaration<KtTypeParameter, PsiTypeParameter> {
 
     constructor(
-        ktAnalysisSession: KtAnalysisSession,
         parent: SymbolLightTypeParameterList,
         index: Int,
-        typeParameterSymbol: KtTypeParameterSymbol,
+        typeParameterSymbol: KaTypeParameterSymbol,
     ) : this(
         parent = parent,
         index = index,
-        typeParameterSymbolPointer = with(ktAnalysisSession) { typeParameterSymbol.createPointer() },
-        typeParameterDeclaration = typeParameterSymbol.sourcePsiSafe(),
-        kotlinOrigin = typeParameterSymbol.psiSafe(),
+        typeParameterSymbolPointer = typeParameterSymbol.createPointer(),
+        kotlinOrigin = typeParameterSymbol.sourcePsiSafe(),
     )
 
-    private val ktModule: KtModule get() = parent.ktModule
+    private val ktModule: KaModule get() = parent.ktModule
 
-    private inline fun <T> withTypeParameterSymbol(crossinline action: KtAnalysisSession.(KtTypeParameterSymbol) -> T): T =
+    private inline fun <T> withTypeParameterSymbol(crossinline action: KaSession.(KaTypeParameterSymbol) -> T): T =
         typeParameterSymbolPointer.withSymbol(ktModule, action)
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
@@ -68,7 +69,6 @@ internal class SymbolLightTypeParameter private constructor(
         parent,
         index,
         typeParameterSymbolPointer,
-        typeParameterDeclaration,
         kotlinOrigin,
     )
 
@@ -93,13 +93,13 @@ internal class SymbolLightTypeParameter private constructor(
             typeParameterSymbol.upperBounds
                 .filter { type ->
                     when (type) {
-                        is KtNonErrorClassType -> type.classId != StandardClassIds.Any
-                        is KtErrorType -> false
+                        is KaClassType -> type.classId != StandardClassIds.Any
+                        is KaErrorType -> false
                         else -> true
                     }
                 }
                 .mapNotNull {
-                    mapType(it, this@SymbolLightTypeParameter, KtTypeMappingMode.GENERIC_ARGUMENT)
+                    mapType(it, this@SymbolLightTypeParameter, KaTypeMappingMode.GENERIC_ARGUMENT)
                 }
                 .forEach { listBuilder.addReference(it) }
         }
@@ -123,9 +123,9 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getAllMethods(): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
     override fun findFieldByName(name: String?, checkBases: Boolean): PsiField? = null
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? = null
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
-    override fun findMethodsAndTheirSubstitutorsByName(name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? = null
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
+    override fun findMethodsAndTheirSubstitutorsByName(name: String, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
         emptyList()
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod, PsiSubstitutor>> = emptyList()
@@ -133,8 +133,15 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getLBrace(): PsiElement? = null
     override fun getRBrace(): PsiElement? = null
     override fun getScope(): PsiElement = parent
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        return InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
+    }
+
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean {
+        return InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
+    }
+
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = mutableListOf()
     override fun setName(name: String): PsiElement = cannotModify()
     override fun getNameIdentifier(): PsiIdentifier? = null
@@ -142,7 +149,6 @@ internal class SymbolLightTypeParameter private constructor(
     override fun hasModifierProperty(name: String): Boolean = false
     override fun getOwner(): PsiTypeParameterListOwner = parent.owner
     override fun getParent(): PsiElement = parent
-    override fun getAnnotations(): Array<PsiAnnotation> = PsiAnnotation.EMPTY_ARRAY
     override fun getContainingClass(): PsiClass? = null
     override fun getDocComment(): PsiDocComment? = null
     override fun isDeprecated(): Boolean = false
@@ -157,19 +163,28 @@ internal class SymbolLightTypeParameter private constructor(
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
     override fun isEnum(): Boolean = false
-    override fun findAnnotation(qualifiedName: String): PsiAnnotation? = null
     override fun addAnnotation(qualifiedName: String): PsiAnnotation = cannotModify()
     //End of PsiClass simple implementation
 
     private val _name: String by lazyPub {
-        typeParameterDeclaration?.name ?: withTypeParameterSymbol { it.name.asString() }
+        withTypeParameterSymbol { it.name.asString() }
     }
 
     override fun getName(): String = _name
 
     override fun getIndex(): Int = index
-    override fun getApplicableAnnotations(): Array<PsiAnnotation> = PsiAnnotation.EMPTY_ARRAY //TODO
-    override fun toString(): String = "SymbolLightTypeParameter:$name"
+
+    private val annotationsBox: AnnotationsBox = GranularAnnotationsBox(
+        annotationsProvider = SymbolAnnotationsProvider(ktModule, typeParameterSymbolPointer)
+    )
+
+    override fun getAnnotations(): Array<PsiAnnotation> = annotationsBox.annotationsArray(this)
+    override fun findAnnotation(qualifiedName: String): PsiAnnotation? = annotationsBox.findAnnotation(this, qualifiedName)
+    override fun getAnnotation(fqn: String): PsiAnnotation? = findAnnotation(fqn)
+    override fun hasAnnotation(fqn: String): Boolean = annotationsBox.hasAnnotation(this, fqn)
+    override fun getApplicableAnnotations(): Array<PsiAnnotation> = annotations
+
+    override fun toString(): String = this::class.simpleName.orEmpty()
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: parent.navigationElement
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
@@ -179,25 +194,26 @@ internal class SymbolLightTypeParameter private constructor(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SymbolLightTypeParameter || other.ktModule != ktModule || other.index != index) return false
-        if (typeParameterDeclaration != null || other.typeParameterDeclaration != null) {
-            return other.typeParameterDeclaration == typeParameterDeclaration
+        if (kotlinOrigin != null || other.kotlinOrigin != null) {
+            return other.kotlinOrigin == kotlinOrigin
         }
 
-        return other.kotlinOrigin == kotlinOrigin &&
-                compareSymbolPointers(typeParameterSymbolPointer, other.typeParameterSymbolPointer) &&
+        return compareSymbolPointers(typeParameterSymbolPointer, other.typeParameterSymbolPointer) &&
                 other.parent == parent
     }
 
-    override fun hashCode(): Int = typeParameterDeclaration?.hashCode() ?: name.hashCode()
+    override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: name.hashCode()
     override fun isEquivalentTo(another: PsiElement): Boolean {
         return basicIsEquivalentTo(this, another) || isOriginEquivalentTo(another)
     }
 
-    override fun getText(): String? = typeParameterDeclaration?.text
-    override fun getTextRange(): TextRange? = typeParameterDeclaration?.textRange
-    override fun getContainingFile(): PsiFile = parent.containingFile
-    override fun getTextOffset(): Int = typeParameterDeclaration?.startOffset ?: -1
-    override fun getStartOffsetInParent(): Int = typeParameterDeclaration?.startOffsetInParent ?: -1
+    override fun getElementIcon(flags: Int): Icon? = null
 
-    override fun isValid(): Boolean = super.isValid() && typeParameterDeclaration?.isValid ?: typeParameterSymbolPointer.isValid(ktModule)
+    override fun getText(): String? = kotlinOrigin?.text
+    override fun getTextRange(): TextRange? = kotlinOrigin?.textRange
+    override fun getContainingFile(): PsiFile = parent.containingFile
+    override fun getTextOffset(): Int = kotlinOrigin?.startOffset ?: -1
+    override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: -1
+
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: typeParameterSymbolPointer.isValid(ktModule)
 }

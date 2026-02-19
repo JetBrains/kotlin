@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
-@Suppress(<!ERROR_SUPPRESSION!>"OPT_IN_USAGE_ERROR"<!>, "OPT_IN_USAGE_FUTURE_ERROR")
+@Suppress("OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR")
 inline fun atLeastOnce(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.AT_LEAST_ONCE)
@@ -8,7 +9,7 @@ inline fun atLeastOnce(block: () -> Unit) {
     block()
 }
 
-@Suppress(<!ERROR_SUPPRESSION!>"OPT_IN_USAGE_ERROR"<!>, "OPT_IN_USAGE_FUTURE_ERROR")
+@Suppress("OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR")
 inline fun atMostOnce(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
@@ -16,7 +17,7 @@ inline fun atMostOnce(block: () -> Unit) {
     block()
 }
 
-@Suppress(<!ERROR_SUPPRESSION!>"OPT_IN_USAGE_ERROR"<!>, "OPT_IN_USAGE_FUTURE_ERROR")
+@Suppress("OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR")
 inline fun exactlyOnce(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -54,3 +55,6 @@ fun test() {
         s2 = null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -21,8 +22,14 @@ import org.jetbrains.kotlin.psi.KtParameter
 internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration: SymbolLightMethodBase) :
     SymbolLightParameterBase(containingDeclaration) {
     private val _type by lazyPub {
-        (method.containingClass.containingClass as SymbolLightClassForInterface).withClassOrObjectSymbol {
-            it.buildSelfClassType().asPsiType(containingDeclaration, allowErrorTypes = true) ?: nonExistentType()
+        (method.containingClass.containingClass as SymbolLightClassForInterface).withClassSymbol {
+            val ktType = it.defaultType
+            ktType.asPsiType(
+                containingDeclaration,
+                allowErrorTypes = true,
+                getTypeMappingMode(ktType),
+                allowNonJvmPlatforms = true,
+            ) ?: nonExistentType()
         }
     }
 
@@ -39,15 +46,13 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
 
     override fun isVarArgs(): Boolean = false
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             this,
             annotationsBox = ComputeAllAtOnceAnnotationsBox { modifierList ->
                 listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
             })
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun hasModifierProperty(name: String): Boolean = false
 

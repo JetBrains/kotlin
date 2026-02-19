@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.inline.MaxStackFrameSizeAndLocalsCalculator
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
@@ -27,14 +28,14 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 val AbstractInsnNode.isMeaningful: Boolean
     get() =
-        when (this.type) {
+        when (this.nodeType) {
             AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME -> false
             else -> true
         }
 
 val AbstractInsnNode.isBranchOrCall: Boolean
     get() =
-        when (this.type) {
+        when (this.nodeType) {
             AbstractInsnNode.JUMP_INSN,
             AbstractInsnNode.TABLESWITCH_INSN,
             AbstractInsnNode.LOOKUPSWITCH_INSN,
@@ -42,24 +43,39 @@ val AbstractInsnNode.isBranchOrCall: Boolean
             else -> false
         }
 
-class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequence<AbstractInsnNode> {
-    constructor(insnList: InsnList) : this(insnList.first, null)
-
-    override fun iterator(): Iterator<AbstractInsnNode> {
-        return object : Iterator<AbstractInsnNode> {
-            var current: AbstractInsnNode? = from
-            override fun next(): AbstractInsnNode {
-                val result = current
-                current = current!!.next
-                return result!!
-            }
-
-            override fun hasNext() = current != to
-        }
+private val opcodeToNodeType = IntArray(IFNONNULL + 1) {
+    when (it) {
+        in NOP..DCONST_1, in IALOAD..SALOAD, in IASTORE..LXOR, in I2L..DCMPG, in IRETURN..RETURN,
+        ARRAYLENGTH, ATHROW, MONITORENTER, MONITOREXIT -> AbstractInsnNode.INSN
+        in BIPUSH..SIPUSH, NEWARRAY -> AbstractInsnNode.INT_INSN
+        in ILOAD..ALOAD, in ISTORE..ASTORE, RET -> AbstractInsnNode.VAR_INSN
+        NEW, ANEWARRAY, CHECKCAST, INSTANCEOF -> AbstractInsnNode.TYPE_INSN
+        in GETSTATIC..PUTFIELD -> AbstractInsnNode.FIELD_INSN
+        in INVOKEVIRTUAL..INVOKEINTERFACE -> AbstractInsnNode.METHOD_INSN
+        INVOKEDYNAMIC -> AbstractInsnNode.INVOKE_DYNAMIC_INSN
+        in IFEQ..JSR, IFNULL, IFNONNULL -> AbstractInsnNode.JUMP_INSN
+        LDC -> AbstractInsnNode.LDC_INSN
+        IINC -> AbstractInsnNode.IINC_INSN
+        TABLESWITCH -> AbstractInsnNode.TABLESWITCH_INSN
+        LOOKUPSWITCH -> AbstractInsnNode.LOOKUPSWITCH_INSN
+        MULTIANEWARRAY -> AbstractInsnNode.MULTIANEWARRAY_INSN
+        else -> -1
     }
 }
 
-fun InsnList.asSequence(): Sequence<AbstractInsnNode> = if (size() == 0) emptySequence() else InsnSequence(this)
+// Faster version of `AbstractInsnNode.getType`
+val AbstractInsnNode.nodeType: Int
+    get() {
+        return when (val opcode = this.opcode) {
+            -1 -> when (this) {
+                is LabelNode -> AbstractInsnNode.LABEL
+                is FrameNode -> AbstractInsnNode.FRAME
+                is LineNumberNode -> AbstractInsnNode.LINE
+                else -> -1
+            }
+            else -> opcodeToNodeType.getOrElse(opcode) { -1 }
+        }
+    }
 
 fun MethodNode.prepareForEmitting() {
     stripOptimizationMarkers()
@@ -77,7 +93,7 @@ fun MethodNode.prepareForEmitting() {
     while (!current.isMeaningful) {
         val prev = current.previous
 
-        if (current.type == AbstractInsnNode.LINE) {
+        if (current.nodeType == AbstractInsnNode.LINE) {
             instructions.remove(current)
         }
 
@@ -175,7 +191,7 @@ private fun VarInsnNode.isSize2LoadStoreOperation() =
     opcode == LLOAD || opcode == DLOAD || opcode == LSTORE || opcode == DSTORE
 
 fun MethodNode.remapLocalVariables(remapping: IntArray) {
-    for (insn in instructions.toArray()) {
+    for (insn in instructions) {
         when (insn) {
             is VarInsnNode ->
                 insn.`var` = remapping[insn.`var`]

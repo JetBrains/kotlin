@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.diagnostics.rendering.renderParameter
 import java.text.MessageFormat
 
-sealed interface KtDiagnosticRenderer {
-    @VisibleForTesting val message: String
-    fun render(diagnostic: KtDiagnostic): String
-    fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?>
+sealed class KtDiagnosticRenderer {
+    abstract val message: String
+    abstract fun render(diagnostic: KtDiagnostic): String
+    abstract fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?>
 }
 
-class SimpleKtDiagnosticRenderer(override val message: String) : KtDiagnosticRenderer {
+class SimpleKtDiagnosticRenderer(override val message: String) : KtDiagnosticRenderer() {
     override fun render(diagnostic: KtDiagnostic): String {
         require(diagnostic is KtSimpleDiagnostic)
         return message
@@ -31,11 +30,18 @@ class SimpleKtDiagnosticRenderer(override val message: String) : KtDiagnosticRen
 
 sealed class AbstractKtDiagnosticWithParametersRenderer(
     final override val message: String
-) : KtDiagnosticRenderer {
+) : KtDiagnosticRenderer() {
     private val messageFormat = MessageFormat(message)
 
     final override fun render(diagnostic: KtDiagnostic): String {
         return messageFormat.format(renderParameters(diagnostic))
+    }
+}
+
+class KtSourcelessDiagnosticRenderer(message: String) : AbstractKtDiagnosticWithParametersRenderer(message) {
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtDiagnosticWithoutSource)
+        return arrayOf(diagnostic.message)
     }
 }
 
@@ -45,7 +51,7 @@ class KtDiagnosticWithParameters1Renderer<A>(
 ) : AbstractKtDiagnosticWithParametersRenderer(message) {
     override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
         require(diagnostic is KtDiagnosticWithParameters1<*>)
-        val context = RenderingContext.of(diagnostic.a)
+        val context = RenderingContext.of(diagnostic.context, diagnostic.a)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(renderParameter(diagnostic.a as A, rendererForA, context))
     }
@@ -58,7 +64,7 @@ class KtDiagnosticWithParameters2Renderer<A, B>(
 ) : AbstractKtDiagnosticWithParametersRenderer(message) {
     override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
         require(diagnostic is KtDiagnosticWithParameters2<*, *>)
-        val context = RenderingContext.of(diagnostic.a, diagnostic.b)
+        val context = RenderingContext.of(diagnostic.context, diagnostic.a, diagnostic.b)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(
             renderParameter(diagnostic.a as A, rendererForA, context),
@@ -75,7 +81,7 @@ class KtDiagnosticWithParameters3Renderer<A, B, C>(
 ) : AbstractKtDiagnosticWithParametersRenderer(message) {
     override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
         require(diagnostic is KtDiagnosticWithParameters3<*, *, *>)
-        val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c)
+        val context = RenderingContext.of(diagnostic.context, diagnostic.a, diagnostic.b, diagnostic.c)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(
             renderParameter(diagnostic.a as A, rendererForA, context),
@@ -94,7 +100,7 @@ class KtDiagnosticWithParameters4Renderer<A, B, C, D>(
 ) : AbstractKtDiagnosticWithParametersRenderer(message) {
     override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
         require(diagnostic is KtDiagnosticWithParameters4<*, *, *, *>)
-        val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c, diagnostic.d)
+        val context = RenderingContext.of(diagnostic.context, diagnostic.a, diagnostic.b, diagnostic.c, diagnostic.d)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(
             renderParameter(diagnostic.a as A, rendererForA, context),

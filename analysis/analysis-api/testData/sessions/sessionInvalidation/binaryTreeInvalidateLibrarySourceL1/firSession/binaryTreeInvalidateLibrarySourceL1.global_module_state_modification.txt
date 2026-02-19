@@ -1,0 +1,11 @@
+Invalidated sessions:
+A
+B
+C
+D
+E
+F
+G
+L1
+L2
+L2 (resolvable session)

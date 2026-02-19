@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A
 open class B
 class C : <!SUPERTYPE_NOT_INITIALIZED!>B<!>
@@ -14,3 +15,5 @@ fun foo() {
     val rb = bar(b)
     val rc = bar(c)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

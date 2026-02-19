@@ -7,9 +7,4 @@ fun test(): java.lang.Integer {
 }
 
 // 2 ASTORE 0
-
-// JVM_TEMPLATES
-// 1 LOCALVARIABLE c Ljava/lang/Integer;
-
-// JVM_IR_TEMPLATES
 // 1 LOCALVARIABLE c Ljava/lang/Object;

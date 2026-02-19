@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
 // FILE: a.kt
 package a
 
@@ -32,3 +33,7 @@ fun baz() {
 
     val x: a.<!INVISIBLE_REFERENCE!>A2<!> = B("") // A2 is unresolved because it's private in file, OK
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration,
+typeParameter, typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // FILE: A.kt
@@ -12,3 +13,5 @@ fun use() {
     A.<!DEPRECATION!>DeprecatedEntry<!>
     A.RegularEntry
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, stringLiteral */

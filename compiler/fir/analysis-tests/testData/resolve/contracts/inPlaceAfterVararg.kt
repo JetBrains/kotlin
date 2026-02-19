@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-30497
 import kotlin.contracts.ExperimentalContracts
@@ -19,3 +20,6 @@ fun test() {
     }
     x.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, propertyDeclaration, stringLiteral, vararg */

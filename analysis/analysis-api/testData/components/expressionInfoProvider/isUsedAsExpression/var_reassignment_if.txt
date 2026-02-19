@@ -5,3 +5,4 @@ text: if (true) {
     a = 8
 }
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

@@ -1,7 +1,10 @@
 element: e
-implicit receivers:
-  type: JavaClass
-  owner symbol: KtFirFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = JavaClass
+    ownerSymbol = KaNamedFunctionSymbol:
+      /test(<extension receiver>: JavaClass): kotlin.Unit
 
 scopes:
   LocalScope, index = 0
@@ -43,7 +46,8 @@ scopes:
       kotlin
       org
       sun
-    classifiers: 0
+    classifiers: 1
+      class JavaClass
     callables: 1
       fun JavaClass.test()
     constructors: 0
@@ -58,7 +62,5 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 8
-
-  DefaultStarImportingScope, index = 9
+  DefaultStarImportingScope, index = 8
 

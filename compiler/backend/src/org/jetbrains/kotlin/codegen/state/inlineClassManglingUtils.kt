@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -92,8 +91,6 @@ fun getManglingSuffixBasedOnKotlinSignature(
     // Some stdlib functions ('Result.success', 'Result.failure') are annotated with '@JvmName' as a workaround for forward compatibility.
     if (DescriptorUtils.hasJvmNameAnnotation(descriptor)) return null
 
-    val unwrappedDescriptor = descriptor.unwrapInitialDescriptorForSuspendFunction()
-
     val resultNew = collectFunctionSignatureForManglingSuffix(
         useOldManglingRules = useOldManglingRules,
         requiresFunctionNameManglingForParameterTypes = requiresFunctionNameManglingForParameterTypes(descriptor),
@@ -101,8 +98,8 @@ fun getManglingSuffixBasedOnKotlinSignature(
         (listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type })
             .map { getInfoForMangling(it) },
         returnTypeInfo =
-        if (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(unwrappedDescriptor))
-            getInfoForMangling(unwrappedDescriptor.returnType!!)
+        if (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(descriptor))
+            getInfoForMangling(descriptor.returnType!!)
         else null
     )
 

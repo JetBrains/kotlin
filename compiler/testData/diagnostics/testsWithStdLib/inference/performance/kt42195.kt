@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 sealed class Tree<TIndex, out TCommon, out TInner, out TLeaf> {
@@ -38,3 +39,6 @@ val tree = Tree.Inner(
         )
     )
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, getter, integerLiteral, nestedClass, nullableType, out, override,
+primaryConstructor, propertyDeclaration, sealed, stringLiteral, typeParameter */

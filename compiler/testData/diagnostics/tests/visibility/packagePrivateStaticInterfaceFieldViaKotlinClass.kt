@@ -1,6 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FIR_DUMP
-// FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
+
+// FILE: javapackage/PackagePrivateGrandparentInterface.java
 
 package javapackage;
 
@@ -32,3 +34,5 @@ class Child : PublicParentClass() {
         val z = KotlinParentClass.<!UNRESOLVED_REFERENCE!>publicStaticField<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, localProperty, propertyDeclaration */

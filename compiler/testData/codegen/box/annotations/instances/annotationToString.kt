@@ -1,14 +1,10 @@
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
-// DONT_TARGET_EXACT_BACKEND: JS
-
 // This test fails on Native with test grouping and package renaming enabled,
 // because the latter doesn't yet handle annotation toString implementations properly.
 // Disable test grouping as a workaround:
 // NATIVE_STANDALONE
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 package test
 
@@ -55,5 +51,15 @@ fun box(): String {
     val targetNative = targetJVM
         .replace(" (Kotlin reflection is not available)", "")
         .replace("interface", "class")
-    return if (s == targetJS || s == targetJVM || s == targetNative) "OK" else "FAILED, got string $s"
+    val targetWasm = "@test.Anno(s=OK, i=42, f=2.718281828, u=43, e=E0, a=@test.A(b=1, s=1, i=1, f=1.0, d=1.0, l=1, c=c, bool=true), " +
+            "k=class test.A, arr=[], intArr=[1, 2], arrOfE=[E0], arrOfA=[@test.Empty()])"
+
+    val okTargets = setOf(
+        targetJVM,
+        targetJS,
+        targetNative,
+        targetWasm
+    )
+
+    return if (s in okTargets) "OK" else "FAILED, got string $s"
 }

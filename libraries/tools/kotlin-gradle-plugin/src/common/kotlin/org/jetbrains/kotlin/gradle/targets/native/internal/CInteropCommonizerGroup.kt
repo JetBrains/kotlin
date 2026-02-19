@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.lazyFuture
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 
 /**
  * Represents a group of cinterops and targets that can be passed to a single invocation to the commonizer.
@@ -46,10 +46,9 @@ internal data class CInteropCommonizerGroup(
 /**
  * Represents all collected [CInteropCommonizerGroup] gruops for the given project
  */
-internal val Project.kotlinCInteropGroups: Future<Set<CInteropCommonizerGroup>>
-    get() = extensions.extraProperties.getOrPut("org.jetbrains.kotlin.gradle.targets.native.internal.kotlinCInteropGroups") {
-        lazyFuture { collectCInteropGroups() }
-    }
+internal val Project.kotlinCInteropGroups: Future<Set<CInteropCommonizerGroup>> by projectStoredProperty {
+    lazyFuture { collectCInteropGroups() }
+}
 
 private suspend fun Project.collectCInteropGroups(): Set<CInteropCommonizerGroup> {
     val dependents = allCinteropCommonizerDependents()

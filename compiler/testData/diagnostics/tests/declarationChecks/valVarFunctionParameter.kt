@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun f(
         <!VAL_OR_VAR_ON_FUN_PARAMETER!>val<!> a: Int,
@@ -11,3 +12,5 @@ fun f(
     
     a + b + c + d[0] + e[0] + f[0] // to avoid 'unused parameter'
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, vararg */

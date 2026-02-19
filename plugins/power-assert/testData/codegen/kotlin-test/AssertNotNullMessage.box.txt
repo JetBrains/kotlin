@@ -1,0 +1,5 @@
+---Message:
+assertNotNull(name, "Message:")
+              |
+              null
+. Expected value to be not null.---

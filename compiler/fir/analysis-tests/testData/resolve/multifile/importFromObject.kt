@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: a.kt
 
 package a
@@ -14,3 +15,5 @@ import a.A.foo
 fun bar() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration */

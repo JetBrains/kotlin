@@ -17,7 +17,7 @@ idePluginDependency {
 
         from {
             val klibTask = project(jsRuntimeProjectName).tasks.getByName(klibTaskName)
-            zipTree(klibTask.singleOutputFile())
+            zipTree(klibTask.singleOutputFile(layout))
         }
     }
 }

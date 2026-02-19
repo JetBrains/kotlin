@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val p1 = 1 - 1
 val p2 = 1 - 1.toLong()
 val p3 = 1 - 1.toByte()
-val p4 = 1 - 1.toInt()
+val p4 = 1 - 1L.toInt()
 val p5 = 1 - 1.toShort()
 
 fun fooInt(p: Int) = p
@@ -34,3 +35,5 @@ fun test() {
     fooByte(<!TYPE_MISMATCH!>p4<!>)
     fooByte(<!TYPE_MISMATCH!>p5<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, propertyDeclaration */

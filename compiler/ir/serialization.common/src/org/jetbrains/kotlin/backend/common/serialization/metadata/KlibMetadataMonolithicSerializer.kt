@@ -27,9 +27,8 @@ class KlibMetadataMonolithicSerializer(
     exportKDoc: Boolean,
     skipExpects: Boolean,
     includeOnlyModuleContent: Boolean = false,
-    allowErrorTypes: Boolean = false,
     produceHeaderKlib: Boolean = false,
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, exportKDoc, skipExpects, includeOnlyModuleContent, allowErrorTypes, produceHeaderKlib) {
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, exportKDoc, skipExpects, includeOnlyModuleContent, produceHeaderKlib) {
 
     private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 
@@ -79,7 +78,7 @@ class KlibMetadataMonolithicSerializer(
         val header = serializeHeader(moduleDescriptor, fragmentNames, emptyPackages)
 
         val libraryAsByteArray = header.toByteArray()
-        return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames)
+        return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames, metadataVersion.toArray())
     }
 
     // For platform libraries we get HUGE files.

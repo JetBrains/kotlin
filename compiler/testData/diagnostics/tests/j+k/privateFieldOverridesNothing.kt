@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: B.java
 
@@ -18,3 +19,6 @@ class C : B() {
 fun foo() {
     C().size 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, javaType,
+override, propertyDeclaration */

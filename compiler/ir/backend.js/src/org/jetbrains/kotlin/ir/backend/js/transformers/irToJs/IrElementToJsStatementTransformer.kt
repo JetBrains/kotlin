@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.util.inlineFunction
-import org.jetbrains.kotlin.ir.util.innerInlinedBlockOrThis
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.backend.common.ir.isTmpForInline
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT
+import org.jetbrains.kotlin.ir.backend.js.lower.EXTERNAL_SUPER_ACCESSORS_ORIGIN
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
 import org.jetbrains.kotlin.ir.backend.js.utils.isUnitInstanceFunction
+import org.jetbrains.kotlin.ir.backend.js.wasMovedFromItsDeclarationPlace
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -22,50 +22,57 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.metadata.wasMovedFromItsDeclarationPlace
 import org.jetbrains.kotlin.utils.toSmartList
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext>() {
 
     override fun visitFunction(declaration: IrFunction, data: JsGenerationContext): JsStatement {
-        error("All functions must be already lowered")
+        irError("All functions must be already lowered") {
+            withIrEntry("declaration", declaration)
+        }
     }
 
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
         return JsBlock(body.statements.map { it.accept(this, context) }.toSmartList()).withSource(body, context, container = context.currentFunction)
     }
 
-    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
-        val newContext = (expression as? IrReturnableBlock)?.inlineFunction?.let {
-            context.newFile(it.file, context.currentFunction, context.localNames)
-        } ?: context
+    override fun visitReturnableBlock(expression: IrReturnableBlock, context: JsGenerationContext): JsStatement {
+        val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
+        val newContext = if (inlinedBlock != null) {
+            context.newInlineFunction(inlinedBlock.inlinedFunctionFileEntry, inlinedBlock.inlinedFunctionSymbol?.owner)
+        } else {
+            context
+        }
 
-        val container = expression.innerInlinedBlockOrThis.statements
+        val container = inlinedBlock?.statements ?: expression.statements
         val statements = container.map { it.accept(this, newContext) }.toSmartList()
 
-        return if (expression is IrReturnableBlock) {
-            val label = context.getNameForReturnableBlock(expression)
-            val wrappedStatements = statements.wrapInCommentsInlineFunctionCall(expression)
+        val label = context.getNameForReturnableBlock(expression)
+        val wrappedStatements = statements.wrapInCommentsInlineFunctionCall(inlinedBlock)
 
-            if (label != null) {
-                JsLabel(label, JsBlock(wrappedStatements))
-            } else {
-                JsCompositeBlock(wrappedStatements)
-            }
+        return if (label != null) {
+            JsLabel(label, JsBlock(wrappedStatements))
         } else {
-            JsBlock(statements)
+            JsCompositeBlock(wrappedStatements)
         }.withSource(expression, context)
     }
 
-    private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
-        val inlineFunction = expression.inlineFunction ?: return this
-        val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
-        val owner = correspondingProperty?.owner ?: inlineFunction
+    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
+        val statements = expression.statements.map { it.accept(this, context) }.toSmartList()
+        return JsBlock(statements).withSource(expression, context)
+    }
+
+    private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(inlinedBlock: IrInlinedFunctionBlock?): List<JsStatement> {
+        val inlinedFunction = inlinedBlock?.inlinedFunctionSymbol?.owner ?: return this
+        val correspondingProperty = (inlinedFunction as? IrSimpleFunction)?.correspondingPropertySymbol
+        val owner = correspondingProperty?.owner ?: inlinedFunction
         val funName = owner.fqNameWhenAvailable ?: owner.name
         return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }
@@ -143,7 +150,9 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
                 }
             }
 
-        return expression.value.maybeOptimizeIntoSwitch(context, lastStatementTransformer).withSource(expression, context)
+        return expression.value
+            .maybeOptimizeIntoSwitch(context, lastStatementTransformer)
+            .withSource(expression, context)
     }
 
     override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {
@@ -162,25 +171,25 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
 
             SwitchOptimizer(context, isExpression = true, transformer).tryOptimize(value)?.let {
-                return JsBlock(JsVars(JsVars.JsVar(varName)), it).withSource(declaration, context)
+                return JsBlock(JsVars(JsVars.Variant.Var, JsVars.JsVar(varName)), it).withSource(declaration, context)
             }
         }
 
         val jsInitializer = value?.accept(IrElementToJsExpressionTransformer(), context)
 
         val syntheticVariable = when (declaration.origin) {
-            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
-            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER -> true
-            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> true
-            is ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT -> true
-            else -> false
+            IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
+            EXTERNAL_SUPER_ACCESSORS_ORIGIN -> true
+            ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT -> true
+            else -> declaration.isTmpForInline
         }
 
         val variable = JsVars.JsVar(varName, jsInitializer).apply {
             withSource(declaration, context, useNameOf = declaration)
             synthetic = syntheticVariable
+            wasMovedFromItsDeclarationPlace = declaration.wasMovedFromItsDeclarationPlace
         }
-        return JsVars(variable).apply { synthetic = syntheticVariable }
+        return JsVars(JsVars.Variant.Var, variable).apply { synthetic = syntheticVariable }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {
@@ -212,7 +221,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsCatch = aTry.catches.singleOrNull()?.let {
             val name = context.getNameForValueDeclaration(it.catchParameter)
             val jsCatchBlock = it.result.accept(this, context)
-            JsCatch(emptyScope, name.ident, jsCatchBlock).withSource(it, context)
+            JsCatch(emptyScope, JsAssignable.Named(name), jsCatchBlock).withSource(it, context)
         }
 
         val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()

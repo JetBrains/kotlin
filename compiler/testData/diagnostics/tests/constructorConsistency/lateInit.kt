@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class WithLateInit {
     lateinit var x: String
@@ -14,3 +15,5 @@ class WithLateInit {
 
     fun use() = x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, lateinit, propertyDeclaration */

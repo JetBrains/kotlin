@@ -49,12 +49,15 @@ private fun Properties.findCandidates(dependencies: List<String>): Map<String, L
         dependency to dependencyProfiles.flatMap { profile ->
             val candidateSpecs = propertyList("$dependency.$profile")
             if (profile == "default" && candidateSpecs.isEmpty()) {
-                listOf(DependencySource.Remote.Public)
+                listOf(DependencySource.Remote.Public())
             } else {
                 candidateSpecs.map { candidateSpec ->
-                    when (candidateSpec) {
-                        "remote:public" -> DependencySource.Remote.Public
-                        "remote:internal" -> DependencySource.Remote.Internal
+                    when {
+                        candidateSpec == REMOTE_PUBLIC -> DependencySource.Remote.Public()
+                        candidateSpec.startsWith(REMOTE_PUBLIC_SUBDIRECTORY) ->
+                            DependencySource.Remote.Public(candidateSpec.removePrefix(REMOTE_PUBLIC_SUBDIRECTORY))
+
+                        candidateSpec == REMOTE_INTERNAL -> DependencySource.Remote.Internal
                         else -> DependencySource.Local(File(candidateSpec))
                     }
                 }
@@ -63,17 +66,17 @@ private fun Properties.findCandidates(dependencies: List<String>): Map<String, L
     }.toMap()
 }
 
+private const val REMOTE_PUBLIC = "remote:public"
+private const val REMOTE_PUBLIC_SUBDIRECTORY = "$REMOTE_PUBLIC:"
+private const val REMOTE_INTERNAL = "remote:internal"
 
 private val KonanPropertiesLoader.dependenciesUrl : String            get() = properties.dependenciesUrl
-private val KonanPropertiesLoader.airplaneMode : Boolean              get() = properties.airplaneMode
-private val KonanPropertiesLoader.downloadingAttempts : Int           get() = properties.downloadingAttempts
-private val KonanPropertiesLoader.downloadingAttemptIntervalMs : Long get() = properties.downloadingAttemptIntervalMs
 
 sealed class DependencySource {
     data class Local(val path: File) : DependencySource()
 
     sealed class Remote : DependencySource() {
-        object Public : Remote()
+        class Public(val subDirectory: String? = null) : Remote()
         object Internal : Remote()
     }
 }
@@ -90,7 +93,7 @@ class DependencyProcessor(
     private val airplaneMode: Boolean = false,
     maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
     attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
-    customProgressCallback: ProgressCallback? = null,
+    customProgressCallback: ProgressCallback,
     private val keepUnstable: Boolean = true,
     private val deleteArchives: Boolean = true,
     private val archiveType: ArchiveType = ArchiveType.systemDefault,
@@ -112,14 +115,13 @@ class DependencyProcessor(
     private var isInfoShown = false
 
     private val downloader = DependencyDownloader(maxAttempts, attemptIntervalMs, customProgressCallback)
-    private val extractor = DependencyExtractor(archiveType)
 
     constructor(dependenciesRoot: File,
                 properties: KonanPropertiesLoader,
                 dependenciesUrl: String = properties.dependenciesUrl,
                 keepUnstable:Boolean = true,
                 archiveType: ArchiveType = ArchiveType.systemDefault,
-                customProgressCallback: ProgressCallback? = null) : this(
+                customProgressCallback: ProgressCallback) : this(
             dependenciesRoot,
             properties.properties,
             properties.dependencies,
@@ -134,7 +136,7 @@ class DependencyProcessor(
                 dependenciesUrl: String = properties.dependenciesUrl,
                 keepUnstable:Boolean = true,
                 archiveType: ArchiveType = ArchiveType.systemDefault,
-                customProgressCallback: ProgressCallback? = null ) : this(
+                customProgressCallback: ProgressCallback) : this(
             dependenciesRoot,
             dependenciesUrl,
             dependencyToCandidates = properties.findCandidates(dependencies),
@@ -175,7 +177,7 @@ class DependencyProcessor(
         }
     }
 
-    private fun downloadDependency(dependency: String, baseUrl: String) {
+    private fun downloadDependency(dependency: String, baseUrl: String, archiveExtractor: ArchiveExtractor) {
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
@@ -214,7 +216,7 @@ class DependencyProcessor(
             downloader.download(url, archive)
         }
         println("Extracting dependency: $archive into $dependenciesDirectory")
-        extractor.extract(archive, dependenciesDirectory)
+        archiveExtractor.extract(archive, dependenciesDirectory, archiveType)
         if (deleteArchives) {
             archive.delete()
         }
@@ -230,7 +232,7 @@ class DependencyProcessor(
         val candidate = candidates.asSequence().mapNotNull { candidate ->
             when (candidate) {
                 is DependencySource.Local -> candidate.takeIf { it.path.exists() }
-                DependencySource.Remote.Public -> candidate
+                is DependencySource.Remote.Public -> candidate
                 DependencySource.Remote.Internal -> candidate.takeIf { InternalServer.isAvailable }
             }
         }.firstOrNull()
@@ -278,7 +280,7 @@ class DependencyProcessor(
         }
     }
 
-    fun run() {
+    fun run(archiveExtractor: ArchiveExtractor = DependencyExtractor()) {
         // We need a lock that can be shared between different classloaders (KT-39781).
         // TODO: Rework dependencies downloading to avoid storing the lock in the system properties.
         val lock = System.getProperties().computeIfAbsent("kotlin.native.dependencies.lock") {
@@ -295,14 +297,20 @@ class DependencyProcessor(
         if (remoteDependencies.isEmpty()) { return }
 
         synchronized(lock) {
-            RandomAccessFile(lockFile, "rw").channel.lock().use {
-                remoteDependencies.forEach { (dependency, candidate) ->
-                    val baseUrl = when (candidate) {
-                        DependencySource.Remote.Public -> dependenciesUrl
-                        DependencySource.Remote.Internal -> InternalServer.url
+            RandomAccessFile(lockFile, "rw").use {
+                it.channel.lock().use {
+                    remoteDependencies.forEach { (dependency, candidate) ->
+                        val baseUrl = when (candidate) {
+                            is DependencySource.Remote.Public -> if (candidate.subDirectory != null) {
+                                "$dependenciesUrl/${candidate.subDirectory}"
+                            } else {
+                                dependenciesUrl
+                            }
+                            DependencySource.Remote.Internal -> InternalServer.url
+                        }
+                        // TODO: consider using different caches for different remotes.
+                        downloadDependency(dependency, baseUrl, archiveExtractor)
                     }
-                    // TODO: consider using different caches for different remotes.
-                    downloadDependency(dependency, baseUrl)
                 }
             }
         }

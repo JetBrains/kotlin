@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50861
 
 // only plusAssign, no set
@@ -114,3 +115,6 @@ fun test_2(x: D) {
 }
 
 fun someCallInsideLambda() {}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+operator, thisExpression */

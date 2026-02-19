@@ -1,3 +1,4 @@
+
 enum class IssueState {
 
     FIXED {

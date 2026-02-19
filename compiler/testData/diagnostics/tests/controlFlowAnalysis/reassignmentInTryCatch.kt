@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_EXTRA_CHECKERS
 // KT-13612 related tests (reassignment in try-catch-finally)
 
 fun f1() {
@@ -100,3 +102,6 @@ fun k2(flag: Boolean) {
     }
     n.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration,
+tryExpression */

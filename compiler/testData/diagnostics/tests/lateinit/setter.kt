@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class My {
 
@@ -21,3 +22,5 @@ class My {
         // Ok, public var / public set
         public set
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, lateinit, propertyDeclaration */

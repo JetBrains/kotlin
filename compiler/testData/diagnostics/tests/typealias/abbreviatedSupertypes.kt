@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !LANGUAGE: -ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes
+// LANGUAGE: -ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes
 
 interface I
 open class TK<T : I, K : I>
@@ -25,3 +26,6 @@ fun main() {
     One<<!UPPER_BOUND_VIOLATED!>Any<!>>()
     Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, objectDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

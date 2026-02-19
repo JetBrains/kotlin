@@ -6,31 +6,30 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
-import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.slf4j.Logger
 
 internal open class JSServiceMessagesTestExecutionSpec(
-    forkOptions: ProcessForkOptions,
-    args: List<String>,
+    processLaunchOpts: ProcessLaunchOptions,
+    processArgs: List<String>,
     checkExitCode: Boolean,
-    clientSettings: TCServiceMessagesClientSettings
+    clientSettings: TCServiceMessagesClientSettings,
 ) : TCServiceMessagesTestExecutionSpec(
-    forkOptions,
-    args,
+    processLaunchOpts,
+    processArgs,
     checkExitCode,
-    clientSettings
+    clientSettings,
 ) {
-    override fun createClient(testResultProcessor: TestResultProcessor, log: Logger, testReporter: MppTestReportHelper): TCServiceMessagesClient {
+
+    override fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient {
         return JSServiceMessagesClient(
             results = testResultProcessor,
             settings = clientSettings,
             log = log,
-            testReporter = testReporter,
         )
     }
 }
@@ -39,8 +38,7 @@ internal open class JSServiceMessagesClient(
     results: TestResultProcessor,
     settings: TCServiceMessagesClientSettings,
     log: Logger,
-    testReporter: MppTestReportHelper,
-) : TCServiceMessagesClient(results, settings, log, testReporter) {
+) : TCServiceMessagesClient(results, settings, log) {
     override fun printNonTestOutput(text: String, type: LogType?) {
         if (log.isDebugEnabled) {
             log.debug(text)

@@ -1,0 +1,2 @@
+error: experimental language features for context receivers and context parameters cannot be enabled at the same time. Remove the '-Xcontext-receivers' compiler argument.
+COMPILATION_ERROR

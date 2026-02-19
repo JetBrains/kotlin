@@ -18,21 +18,20 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
  * (but specific to the frontend)
  */
-abstract class IrBuiltIns {
+@OptIn(InternalSymbolFinderAPI::class)
+abstract class IrBuiltIns : SymbolFinderHolder {
     abstract val languageVersionSettings: LanguageVersionSettings
 
     abstract val irFactory: IrFactory
@@ -54,6 +53,14 @@ abstract class IrBuiltIns {
     abstract val intClass: IrClassSymbol
     abstract val longType: IrType
     abstract val longClass: IrClassSymbol
+    abstract val ubyteClass: IrClassSymbol?
+    abstract val ubyteType: IrType
+    abstract val ushortClass: IrClassSymbol?
+    abstract val ushortType: IrType
+    abstract val uintClass: IrClassSymbol?
+    abstract val uintType: IrType
+    abstract val ulongClass: IrClassSymbol?
+    abstract val ulongType: IrType
     abstract val floatType: IrType
     abstract val floatClass: IrClassSymbol
     abstract val doubleType: IrType
@@ -128,10 +135,18 @@ abstract class IrBuiltIns {
     abstract val doubleArray: IrClassSymbol
     abstract val booleanArray: IrClassSymbol
 
+    abstract val ubyteArray: IrClassSymbol?
+    abstract val ushortArray: IrClassSymbol?
+    abstract val uintArray: IrClassSymbol?
+    abstract val ulongArray: IrClassSymbol?
+
     abstract val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType>
     abstract val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
     abstract val primitiveArrayElementTypes: Map<IrClassSymbol, IrType?>
     abstract val primitiveArrayForType: Map<IrType?, IrClassSymbol>
+
+    val arrays: List<IrClassSymbol>
+        get() = primitiveTypesToPrimitiveArrays.values + unsignedTypesToUnsignedArrays.values + arrayClass
 
     abstract val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol>
     abstract val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?>
@@ -158,44 +173,22 @@ abstract class IrBuiltIns {
     abstract val intPlusSymbol: IrSimpleFunctionSymbol
     abstract val intTimesSymbol: IrSimpleFunctionSymbol
     abstract val intXorSymbol: IrSimpleFunctionSymbol
-
-    abstract val extensionToString: IrSimpleFunctionSymbol
-    abstract val memberToString: IrSimpleFunctionSymbol
-
-    abstract val extensionStringPlus: IrSimpleFunctionSymbol
-    abstract val memberStringPlus: IrSimpleFunctionSymbol
+    abstract val intAndSymbol: IrSimpleFunctionSymbol
 
     abstract val arrayOf: IrSimpleFunctionSymbol
     abstract val arrayOfNulls: IrSimpleFunctionSymbol
 
     abstract val linkageErrorSymbol: IrSimpleFunctionSymbol
 
+    abstract val deprecatedSymbol: IrClassSymbol
+    abstract val deprecationLevelSymbol: IrClassSymbol
+
     abstract fun functionN(arity: Int): IrClass
     abstract fun kFunctionN(arity: Int): IrClass
     abstract fun suspendFunctionN(arity: Int): IrClass
     abstract fun kSuspendFunctionN(arity: Int): IrClass
 
-    // TODO: drop variants from segments, add helper from whole fqn
-    abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol>
-    abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
-    abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
-
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
-
-    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
-
-    abstract fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun getNonBuiltinFunctionsByReturnType(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
-    abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
     abstract val kotlinInternalPackageFragment: IrExternalPackageFragment
@@ -207,7 +200,7 @@ abstract class IrBuiltIns {
             modality = Modality.FINAL
         }.apply {
             parent = kotlinInternalPackageFragment
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             addConstructor { isPrimary = true }
             addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltIns))
         }
@@ -215,7 +208,7 @@ abstract class IrBuiltIns {
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
-        val BUILTIN_OPERATOR = object : IrDeclarationOriginImpl("OPERATOR") {}
+        val BUILTIN_OPERATOR = IrDeclarationOriginImpl("OPERATOR")
     }
 }
 
@@ -224,6 +217,7 @@ object BuiltInOperatorNames {
     const val LESS_OR_EQUAL = "lessOrEqual"
     const val GREATER = "greater"
     const val GREATER_OR_EQUAL = "greaterOrEqual"
+    const val COMPARE_TO = "compareTo"
     const val EQEQ = "EQEQ"
     const val EQEQEQ = "EQEQEQ"
     const val IEEE754_EQUALS = "ieee754equals"

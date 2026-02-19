@@ -1,0 +1,16 @@
+synthetic final class home/MainKt$Greeting$ref$1$1 {
+    // source: 'main.kt'
+    enclosing method home/MainKt.Greeting(Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+    inner (anonymous) class home/MainKt$Greeting$ref$1$1
+    method <init>(p0: java.lang.Object): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.String
+}
+
+public final class home/MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class home/MainKt$Greeting$ref$1$1
+    private final static method Greeting$lambda$1(p0: java.lang.String, p1: androidx.compose.ui.Modifier, p2: int, p3: int, p4: androidx.compose.runtime.Composer, p5: int): kotlin.Unit
+    public final static method Greeting(p0: java.lang.String, p1: androidx.compose.ui.Modifier, p2: androidx.compose.runtime.Composer, p3: int, p4: int): void
+    public final inner class androidx/compose/ui/Modifier$Companion
+}

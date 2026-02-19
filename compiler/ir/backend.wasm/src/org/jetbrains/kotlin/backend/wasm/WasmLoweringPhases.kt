@@ -1,748 +1,268 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.wasm
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
-import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.common.toMultiModuleAction
 import org.jetbrains.kotlin.backend.wasm.lower.*
-import org.jetbrains.kotlin.backend.wasm.lower.WasmArrayConstructorLowering
-import org.jetbrains.kotlin.backend.wasm.lower.WasmArrayConstructorReferenceLowering
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.backend.wasm.lower.generateMainFunctionCalls
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.inline.*
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
-private fun makeWasmModulePhase(
-    lowering: (WasmBackendContext) -> FileLoweringPass,
-    name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<WasmBackendContext, *, *>> = emptySet()
-): SameTypeNamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
-    makeCustomWasmModulePhase(
-        op = { context, modules -> lowering(context).lower(modules) },
-        name = name,
-        description = description,
-        prerequisite = prerequisite
+private fun createValidateIrAfterInliningOnlyPrivateFunctionsPhase(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<*> {
+    return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+        context,
+        checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+            // Call sites of only non-private functions are allowed at this stage.
+            !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
+        }
     )
+}
 
-private fun makeCustomWasmModulePhase(
-    op: (WasmBackendContext, IrModuleFragment) -> Unit,
-    description: String,
-    name: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<WasmBackendContext, *, *>> = emptySet()
-): SameTypeNamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
-    SameTypeNamedCompilerPhase(
-        name = name,
-        description = description,
-        prerequisite = prerequisite,
-        lower = object : SameTypeCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> {
-            override fun invoke(
-                phaseConfig: PhaseConfigurationService,
-                phaserState: PhaserState<Iterable<IrModuleFragment>>,
-                context: WasmBackendContext,
-                input: Iterable<IrModuleFragment>
-            ): Iterable<IrModuleFragment> {
-                input.forEach { module ->
-                    op(context, module)
-                }
-                return input
-            }
-        },
-        actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction())
+private fun createValidateIrAfterInliningAllFunctionsPhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<*> {
+    return IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
+        context,
+        checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
+            // No inline function call sites should remain at this stage.
+            val inlineFunction = inlineFunctionUseSite.symbol.owner
+            // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
+            if (PreSerializationSymbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
+            return@check inlineFunction.body == null
+        }
     )
+}
 
-private val validateIrBeforeLowering = makeCustomWasmModulePhase(
-    { context, module -> validationCallback(context, module) },
-    name = "ValidateIrBeforeLowering",
-    description = "Validate IR before lowering"
-)
+private fun createKotlinNothingValueExceptionPhase(context: CommonBackendContext): KotlinNothingValueExceptionLowering {
+    return KotlinNothingValueExceptionLowering(context)
+}
 
-private val validateIrAfterLowering = makeCustomWasmModulePhase(
-    { context, module -> validationCallback(context, module) },
-    name = "ValidateIrAfterLowering",
-    description = "Validate IR after lowering"
-)
+private fun createSharedVariablesLoweringPhase(context: LoweringContext): SharedVariablesLowering {
+    return SharedVariablesLowering(context)
+}
 
-private val generateTests = makeCustomWasmModulePhase(
-    { context, module -> generateWasmTests(context, module) },
-    name = "GenerateTests",
-    description = "Generates code to execute kotlin.test cases"
-)
+private fun createSpecializeSharedVariableBoxesPhase(context: WasmBackendContext): SharedVariablesPrimitiveBoxSpecializationLowering {
+    return SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols)
+}
 
-private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
-    ::ExpectDeclarationsRemoveLowering,
-    name = "ExpectDeclarationsRemoving",
-    description = "Remove expect declaration from module fragment"
-)
+private fun createSyntheticAccessorGenerationPhase(context: LoweringContext): SyntheticAccessorLowering {
+    return SyntheticAccessorLowering(context)
+}
 
-private val stringConcatenationLowering = makeWasmModulePhase(
-    ::StringConcatenationLowering,
-    name = "StringConcatenation",
-    description = "String concatenation lowering"
-)
-
-private val lateinitNullableFieldsPhase = makeWasmModulePhase(
-    ::NullableFieldsForLateinitCreationLowering,
-    name = "LateinitNullableFields",
-    description = "Create nullable fields for lateinit properties"
-)
-
-private val lateinitDeclarationLoweringPhase = makeWasmModulePhase(
-    ::NullableFieldsDeclarationLowering,
-    name = "LateinitDeclarations",
-    description = "Reference nullable fields from properties and getters + insert checks"
-)
-
-private val lateinitUsageLoweringPhase = makeWasmModulePhase(
-    ::LateinitUsageLowering,
-    name = "LateinitUsage",
-    description = "Insert checks for lateinit field references"
-)
-
-private val arrayConstructorReferencePhase = makeWasmModulePhase(
-    ::WasmArrayConstructorReferenceLowering,
-    name = "ArrayConstructorReference",
-    description = "Transform `::Array` into a ::create#Array"
-)
-
-private val arrayConstructorPhase = makeWasmModulePhase(
-    ::WasmArrayConstructorLowering,
-    name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into create#Array { index -> value } call",
-    prerequisite = setOf(arrayConstructorReferencePhase)
-)
-
-private val sharedVariablesLoweringPhase = makeWasmModulePhase(
-    ::SharedVariablesLowering,
-    name = "SharedVariablesLowering",
-    description = "Box captured mutable variables",
-    prerequisite = setOf(
-        lateinitDeclarationLoweringPhase,
-        lateinitUsageLoweringPhase
+private fun createUpgradeCallableReferences(context: LoweringContext): UpgradeCallableReferences {
+    return UpgradeCallableReferences(
+        context,
+        upgradeFunctionReferencesAndLambdas = true,
+        upgradePropertyReferences = true,
+        upgradeLocalDelegatedPropertyReferences = true,
+        upgradeSamConversions = false,
     )
-)
+}
 
-private val localClassesInInlineLambdasPhase = makeWasmModulePhase(
+@Suppress("unused")
+private fun createInventNamesForLocalFunctionsPhase(context: LoweringContext): KlibInventNamesForLocalFunctions{
+    return KlibInventNamesForLocalFunctions()
+}
+
+private fun createLocalDeclarationsLoweringPhase(context: LoweringContext): LocalDeclarationsLowering {
+    return LocalDeclarationsLowering(context)
+}
+
+private fun createDefaultParameterCleanerPhase(context: CommonBackendContext): DefaultParameterCleaner {
+    return DefaultParameterCleaner(context)
+}
+
+private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): AutoboxingTransformer {
+    return AutoboxingTransformer(context)
+}
+
+//@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
+private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
+    val configuration = IrInterpreterConfiguration(
+        printOnlyExceptionMessage = true,
+        platform = WasmPlatforms.unspecifiedWasmPlatform,
+    )
+    return ConstEvaluationLowering(context, configuration = configuration)
+}
+
+fun wasmLoweringsOfTheFirstPhase(
+    languageVersionSettings: LanguageVersionSettings,
+): List<NamedCompilerPhase<WasmPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
+    val phases = buildList<(WasmPreSerializationLoweringContext) -> ModuleLoweringPass> {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
+            this += ::createUpgradeCallableReferences
+        }
+        this += loweringsOfTheFirstPhase(languageVersionSettings)
+    }
+    return createModulePhases(*phases.toTypedArray())
+}
+
+val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
+    // BEGIN: Common Native/JS/Wasm prefix.
+    ::KlibIrValidationBeforeLoweringPhase,
+    ::InlineCallCycleCheckerLowering,
+    ::createUpgradeCallableReferences,
+    ::LateinitLowering,
+    ::createSharedVariablesLoweringPhase,
     ::LocalClassesInInlineLambdasLowering,
-    name = "LocalClassesInInlineLambdasPhase",
-    description = "Extract local classes from inline lambdas",
-)
+    ::ArrayConstructorLowering,
+    ::WasmPrivateFunctionInlining,
+    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    ::createSyntheticAccessorGenerationPhase,
+    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
+    // just because it goes so in Native.
+    ::createValidateIrAfterInliningOnlyPrivateFunctionsPhase,
+    ::WasmAllFunctionInlining,
+    ::RedundantCastsRemoverLowering,
+    ::createValidateIrAfterInliningAllFunctionsPhase,
+    // END: Common Native/JS/Wasm prefix.
 
-private val localClassesInInlineFunctionsPhase = makeWasmModulePhase(
-    ::LocalClassesInInlineFunctionsLowering,
-    name = "LocalClassesInInlineFunctionsPhase",
-    description = "Extract local classes from inline functions",
-)
+    ::createConstEvaluationPhase,
+    ::createSpecializeSharedVariableBoxesPhase,
+    ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
 
-private val localClassesExtractionFromInlineFunctionsPhase = makeWasmModulePhase(
-    { context -> LocalClassesExtractionFromInlineFunctionsLowering(context) },
-    name = "localClassesExtractionFromInlineFunctionsPhase",
-    description = "Move local classes from inline functions into nearest declaration container",
-    prerequisite = setOf(localClassesInInlineFunctionsPhase)
-)
-
-
-private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeWasmModulePhase(
-    ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    name = "WrapInlineDeclarationsWithReifiedTypeParametersPhase",
-    description = "Wrap inline declarations with reified type parameters"
-)
-
-private val functionInliningPhase = makeCustomWasmModulePhase(
-    { context, module ->
-        FunctionInlining(
-            context = context,
-            innerClassesSupport = context.innerClassesSupport,
-            inlineFunctionResolver = WasmInlineFunctionResolver(context),
-            insertAdditionalImplicitCasts = true,
-        ).inline(module)
-        module.patchDeclarationParents()
-    },
-    name = "FunctionInliningPhase",
-    description = "Perform function inlining",
-    prerequisite = setOf(
-        expectDeclarationsRemovingPhase,
-        wrapInlineDeclarationsWithReifiedTypeParametersPhase,
-        localClassesInInlineLambdasPhase,
-        localClassesInInlineFunctionsPhase,
-    )
-)
-
-private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeWasmModulePhase(
-    { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
-    name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
-    description = "Remove Inline functions with reified parameters from context",
-    prerequisite = setOf(functionInliningPhase)
-)
-
-private val tailrecLoweringPhase = makeWasmModulePhase(
-    ::TailrecLowering,
-    name = "TailrecLowering",
-    description = "Replace `tailrec` call sites with equivalent loop"
-)
-
-private val wasmStringSwitchOptimizerLowering = makeWasmModulePhase(
-    ::WasmStringSwitchOptimizerLowering,
-    name = "WasmStringSwitchOptimizerLowering",
-    description = "Replace when with constant string cases to binary search by string hashcodes"
-)
-
-private val jsCodeCallsLowering = makeWasmModulePhase(
     ::JsCodeCallsLowering,
-    name = "JsCodeCallsLowering",
-    description = "Lower calls to js('code') into @JsFun",
-)
 
-private val complexExternalDeclarationsToTopLevelFunctionsLowering = makeWasmModulePhase(
-    ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
-    name = "ComplexExternalDeclarationsToTopLevelFunctionsLowering",
-    description = "Lower complex external declarations to top-level functions",
-)
+    ::GenerateWasmTests,
 
-private val complexExternalDeclarationsUsagesLowering = makeWasmModulePhase(
-    ::ComplexExternalDeclarationsUsageLowering,
-    name = "ComplexExternalDeclarationsUsageLowering",
-    description = "Lower usages of complex external declarations",
-)
+    ::JsCommonAnnotationImplementationTransformer,
 
-private val jsInteropFunctionsLowering = makeWasmModulePhase(
-    ::JsInteropFunctionsLowering,
-    name = "JsInteropFunctionsLowering",
-    description = "Create delegates for JS interop",
-)
+    ::ExcludeDeclarationsFromCodegen,
+    ::ExpectDeclarationsRemoveLowering,
+    ::RangeContainsLowering,
 
-private val jsInteropFunctionCallsLowering = makeWasmModulePhase(
-    ::JsInteropFunctionCallsLowering,
-    name = "JsInteropFunctionCallsLowering",
-    description = "Replace calls to delegates",
-)
+    ::WasmTailrecLowering,
 
-private val enumClassConstructorLoweringPhase = makeWasmModulePhase(
+    ::EnumWhenLowering,
     ::EnumClassConstructorLowering,
-    name = "EnumClassConstructorLowering",
-    description = "Transform Enum Class into regular Class"
-)
-
-private val enumClassConstructorBodyLoweringPhase = makeWasmModulePhase(
     ::EnumClassConstructorBodyTransformer,
-    name = "EnumClassConstructorBodyLowering",
-    description = "Transform Enum Class into regular Class"
-)
-
-private val enumEntryInstancesLoweringPhase = makeWasmModulePhase(
     ::EnumEntryInstancesLowering,
-    name = "EnumEntryInstancesLowering",
-    description = "Create instance variable for each enum entry initialized with `null`",
-    prerequisite = setOf(enumClassConstructorLoweringPhase)
-)
-
-private val enumEntryInstancesBodyLoweringPhase = makeWasmModulePhase(
     ::EnumEntryInstancesBodyLowering,
-    name = "EnumEntryInstancesBodyLowering",
-    description = "Insert enum entry field initialization into corresponding class constructors",
-    prerequisite = setOf(enumEntryInstancesLoweringPhase)
-)
-
-private val enumClassCreateInitializerLoweringPhase = makeWasmModulePhase(
     ::EnumClassCreateInitializerLowering,
-    name = "EnumClassCreateInitializerLowering",
-    description = "Create initializer for enum entries",
-    prerequisite = setOf(enumClassConstructorLoweringPhase)
-)
-
-private val enumEntryCreateGetInstancesFunsLoweringPhase = makeWasmModulePhase(
     ::EnumEntryCreateGetInstancesFunsLowering,
-    name = "EnumEntryCreateGetInstancesFunsLowering",
-    description = "Create enumEntry_getInstance functions",
-    prerequisite = setOf(enumClassConstructorLoweringPhase)
-)
-
-private val enumSyntheticFunsLoweringPhase = makeWasmModulePhase(
     ::EnumSyntheticFunctionsAndPropertiesLowering,
-    name = "EnumSyntheticFunctionsAndPropertiesLowering",
-    description = "Implement `valueOf`, `values` and `entries`",
-    prerequisite = setOf(
-        enumClassConstructorLoweringPhase,
-        enumClassCreateInitializerLoweringPhase,
-        enumEntryCreateGetInstancesFunsLoweringPhase
-    )
-)
 
-private val enumUsageLoweringPhase = makeWasmModulePhase(
-    ::EnumUsageLowering,
-    name = "EnumUsageLowering",
-    description = "Replace enum access with invocation of corresponding function",
-    prerequisite = setOf(enumEntryCreateGetInstancesFunsLoweringPhase)
-)
-
-private val enumEntryRemovalLoweringPhase = makeWasmModulePhase(
-    ::EnumClassRemoveEntriesLowering,
-    name = "EnumEntryRemovalLowering",
-    description = "Replace enum entry with corresponding class",
-    prerequisite = setOf(enumUsageLoweringPhase)
-)
-
-
-private val propertyReferenceLowering = makeWasmModulePhase(
+    ::DelegatedPropertyOptimizationLowering,
     ::WasmPropertyReferenceLowering,
-    name = "WasmPropertyReferenceLowering",
-    description = "Lower property references"
-)
+    ::WasmCallableReferenceLowering,
 
-private val callableReferencePhase = makeWasmModulePhase(
-    ::CallableReferenceLowering,
-    name = "WasmCallableReferenceLowering",
-    description = "Handle callable references"
-)
-
-private val singleAbstractMethodPhase = makeWasmModulePhase(
     ::JsSingleAbstractMethodLowering,
-    name = "SingleAbstractMethod",
-    description = "Replace SAM conversions with instances of interface-implementing classes"
-)
-
-
-private val localDelegatedPropertiesLoweringPhase = makeWasmModulePhase(
-    { LocalDelegatedPropertiesLowering() },
-    name = "LocalDelegatedPropertiesLowering",
-    description = "Transform Local Delegated properties"
-)
-
-private val localDeclarationsLoweringPhase = makeWasmModulePhase(
-    ::LocalDeclarationsLowering,
-    name = "LocalDeclarationsLowering",
-    description = "Move local declarations into nearest declaration container",
-    prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
-)
-
-private val localClassExtractionPhase = makeWasmModulePhase(
-    ::LocalClassPopupLowering,
-    name = "LocalClassExtractionPhase",
-    description = "Move local declarations into nearest declaration container",
-    prerequisite = setOf(localDeclarationsLoweringPhase)
-)
-
-private val innerClassesLoweringPhase = makeWasmModulePhase(
-    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
-    name = "InnerClassesLowering",
-    description = "Capture outer this reference to inner class"
-)
-
-private val innerClassesMemberBodyLoweringPhase = makeWasmModulePhase(
-    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
-    name = "InnerClassesMemberBody",
-    description = "Replace `this` with 'outer this' field references",
-    prerequisite = setOf(innerClassesLoweringPhase)
-)
-
-private val innerClassConstructorCallsLoweringPhase = makeWasmModulePhase(
-    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
-    name = "InnerClassConstructorCallsLowering",
-    description = "Replace inner class constructor invocation"
-)
-
-private val suspendFunctionsLoweringPhase = makeWasmModulePhase(
-    ::JsSuspendFunctionsLowering,
-    name = "SuspendFunctionsLowering",
-    description = "Transform suspend functions into CoroutineImpl instance and build state machine"
-)
-
-private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeWasmModulePhase(
-    ::AddContinuationToNonLocalSuspendFunctionsLowering,
-    name = "AddContinuationToNonLocalSuspendFunctionsLowering",
-    description = "Add explicit continuation as last parameter of suspend functions"
-)
-
-private val addContinuationToFunctionCallsLoweringPhase = makeWasmModulePhase(
-    ::AddContinuationToFunctionCallsLowering,
-    name = "AddContinuationToFunctionCallsLowering",
-    description = "Replace suspend function calls with calls with continuation",
-    prerequisite = setOf(
-        addContinuationToNonLocalSuspendFunctionsLoweringPhase,
-    )
-)
-
-private val addMainFunctionCallsLowering = makeCustomWasmModulePhase(
-    ::generateMainFunctionCalls,
-    name = "GenerateMainFunctionCalls",
-    description = "Generate main function calls into start function",
-)
-
-private val defaultArgumentStubGeneratorPhase = makeWasmModulePhase(
-    { context -> DefaultArgumentStubGenerator(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) },
-    name = "DefaultArgumentStubGenerator",
-    description = "Generate synthetic stubs for functions with default parameter values"
-)
-
-private val defaultArgumentPatchOverridesPhase = makeWasmModulePhase(
-    ::DefaultParameterPatchOverridenSymbolsLowering,
-    name = "DefaultArgumentsPatchOverrides",
-    description = "Patch overrides for fake override dispatch functions",
-    prerequisite = setOf(defaultArgumentStubGeneratorPhase)
-)
-
-private val defaultParameterInjectorPhase = makeWasmModulePhase(
-    { context -> DefaultParameterInjector(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) },
-    name = "DefaultParameterInjector",
-    description = "Replace call site with default parameters with corresponding stub function",
-    prerequisite = setOf(innerClassesLoweringPhase)
-)
-
-private val defaultParameterCleanerPhase = makeWasmModulePhase(
-    ::DefaultParameterCleaner,
-    name = "DefaultParameterCleaner",
-    description = "Clean default parameters up"
-)
-
-private val propertiesLoweringPhase = makeWasmModulePhase(
-    { PropertiesLowering() },
-    name = "PropertiesLowering",
-    description = "Move fields and accessors out from its property"
-)
-
-private val primaryConstructorLoweringPhase = makeWasmModulePhase(
+    ::LocalDelegatedPropertiesLowering,
+    ::createInventNamesForLocalFunctionsPhase,
+    ::createLocalDeclarationsLoweringPhase,
+    ::LocalDeclarationPopupLowering,
+    ::WasmStaticCallableReferenceLowering,
+    ::InnerClassesLowering,
+    ::InnerClassesMemberBodyLowering,
+    ::InnerClassConstructorCallsLowering,
+    ::PropertiesLowering,
     ::PrimaryConstructorLowering,
-    name = "PrimaryConstructorLowering",
-    description = "Creates primary constructor if it doesn't exist"
-)
-
-private val delegateToPrimaryConstructorLoweringPhase = makeWasmModulePhase(
     ::DelegateToSyntheticPrimaryConstructor,
-    name = "DelegateToSyntheticPrimaryConstructor",
-    description = "Delegates to synthetic primary constructor",
-    prerequisite = setOf(primaryConstructorLoweringPhase)
-)
 
-private val initializersLoweringPhase = makeWasmModulePhase(
-    ::InitializersLowering,
-    name = "InitializersLowering",
-    description = "Merge init block and field initializers into [primary] constructor",
-    prerequisite = setOf(primaryConstructorLoweringPhase, localClassExtractionPhase)
-)
+    ::WasmStringSwitchOptimizerLowering,
 
-private val initializersCleanupLoweringPhase = makeWasmModulePhase(
-    ::InitializersCleanupLowering,
-    name = "InitializersCleanupLowering",
-    description = "Remove non-static anonymous initializers and field init expressions",
-    prerequisite = setOf(initializersLoweringPhase)
-)
-
-private val excludeDeclarationsFromCodegenPhase = makeCustomWasmModulePhase(
-    { context, module ->
-        excludeDeclarationsFromCodegen(context, module)
-    },
-    name = "ExcludeDeclarationsFromCodegen",
-    description = "Move excluded declarations to separate place"
-)
-
-private val tryCatchCanonicalization = makeWasmModulePhase(
-    ::TryCatchCanonicalization,
-    name = "TryCatchCanonicalization",
-    description = "Transforms try/catch statements into canonical form supported by the wasm codegen",
-    prerequisite = setOf(functionInliningPhase)
-)
-
-private val bridgesConstructionPhase = makeWasmModulePhase(
-    ::WasmBridgesConstruction,
-    name = "BridgesConstruction",
-    description = "Generate bridges"
-)
-
-private val inlineClassDeclarationLoweringPhase = makeWasmModulePhase(
-    { InlineClassLowering(it).inlineClassDeclarationLowering },
-    name = "InlineClassDeclarationLowering",
-    description = "Handle inline class declarations"
-)
-
-private val inlineClassUsageLoweringPhase = makeWasmModulePhase(
-    { InlineClassLowering(it).inlineClassUsageLowering },
-    name = "InlineClassUsageLowering",
-    description = "Handle inline class usages"
-)
-
-private val autoboxingTransformerPhase = makeWasmModulePhase(
-    { context -> AutoboxingTransformer(context) },
-    name = "AutoboxingTransformer",
-    description = "Insert box/unbox intrinsics"
-)
-
-private val staticMembersLoweringPhase = makeWasmModulePhase(
-    ::StaticMembersLowering,
-    name = "StaticMembersLowering",
-    description = "Move static member declarations to top-level"
-)
-
-private val classReferenceLoweringPhase = makeWasmModulePhase(
-    ::ClassReferenceLowering,
-    name = "ClassReferenceLowering",
-    description = "Handle class references"
-)
-
-private val wasmVarargExpressionLoweringPhase = makeWasmModulePhase(
-    ::WasmVarargExpressionLowering,
-    name = "WasmVarargExpressionLowering",
-    description = "Lower varargs"
-)
-
-private val fieldInitializersLoweringPhase = makeWasmModulePhase(
-    ::FieldInitializersLowering,
-    name = "FieldInitializersLowering",
-    description = "Move field initializers to start function"
-)
-
-private val builtInsLoweringPhase0 = makeWasmModulePhase(
-    ::BuiltInsLowering,
-    name = "BuiltInsLowering0",
-    description = "Lower IR builtins 0"
-)
-
-
-private val builtInsLoweringPhase = makeWasmModulePhase(
-    ::BuiltInsLowering,
-    name = "BuiltInsLowering",
-    description = "Lower IR builtins"
-)
-
-private val associatedObjectsLowering = makeWasmModulePhase(
     ::AssociatedObjectsLowering,
-    name = "AssociatedObjectsLowering",
-    description = "Load associated object init body",
-    prerequisite = setOf(localClassExtractionPhase)
-)
 
-private val objectDeclarationLoweringPhase = makeWasmModulePhase(
-    ::ObjectDeclarationLowering,
-    name = "ObjectDeclarationLowering",
-    description = "Create lazy object instance generator functions",
-    prerequisite = setOf(enumClassCreateInitializerLoweringPhase)
-)
+    ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
+    ::ComplexExternalDeclarationsUsageLowering,
 
-private val objectUsageLoweringPhase = makeWasmModulePhase(
-    ::ObjectUsageLowering,
-    name = "ObjectUsageLowering",
-    description = "Transform IrGetObjectValue into instance generator call"
-)
+    ::JsInteropFunctionsLowering,
 
-private val explicitlyCastExternalTypesPhase = makeWasmModulePhase(
-    ::ExplicitlyCastExternalTypesLowering,
-    name = "ExplicitlyCastExternalTypesLowering",
-    description = "Add explicit casts when converting between external and non-external types"
-)
+    ::EnumUsageLowering,
+    ::EnumClassRemoveEntriesLowering,
 
-private val typeOperatorLoweringPhase = makeWasmModulePhase(
-    ::WasmTypeOperatorLowering,
-    name = "TypeOperatorLowering",
-    description = "Lower IrTypeOperator with corresponding logic"
-)
+    ::JsSuspendFunctionsLowering,
+    ::WasmInitializersLowering,
+    ::WasmInitializersCleanupLowering,
 
-private val genericReturnTypeLowering = makeWasmModulePhase(
-    ::GenericReturnTypeLowering,
-    name = "GenericReturnTypeLowering",
-    description = "Cast calls to functions with generic return types"
-)
+    ::AddContinuationToNonLocalSuspendFunctionsLowering,
+    ::WasmAddContinuationToFunctionCallsLowering,
+    ::GenerateMainFunctionWrappers,
 
-private val eraseVirtualDispatchReceiverParametersTypes = makeWasmModulePhase(
-    ::EraseVirtualDispatchReceiverParametersTypes,
-    name = "EraseVirtualDispatchReceiverParametersTypes",
-    description = "Erase types of virtual dispatch receivers to Any"
-)
+    // We need to generate nothing value exceptions after suspend
+    // functions have been lowered so that suspend functions
+    // declared to return nothing get a chance to get lowered
+    // without the exception being inserted.
+    ::createKotlinNothingValueExceptionPhase,
 
-private val virtualDispatchReceiverExtractionPhase = makeWasmModulePhase(
-    ::VirtualDispatchReceiverExtraction,
-    name = "VirtualDispatchReceiverExtraction",
-    description = "Eliminate side-effects in dispatch receivers of virtual function calls"
-)
+    ::InvokeOnExportedFunctionExitLowering,
 
-private val forLoopsLoweringPhase = makeWasmModulePhase(
+    ::TryCatchCanonicalization,
+
     ::ForLoopsLowering,
-    name = "ForLoopsLowering",
-    description = "[Optimization] For loops lowering"
-)
-
-private val propertyLazyInitLoweringPhase = makeWasmModulePhase(
     ::PropertyLazyInitLowering,
-    name = "PropertyLazyInitLowering",
-    description = "Make property init as lazy"
-)
-
-private val removeInitializersForLazyProperties = makeWasmModulePhase(
     ::RemoveInitializersForLazyProperties,
-    name = "RemoveInitializersForLazyProperties",
-    description = "Remove property initializers if they was initialized lazily"
-)
 
-private val unhandledExceptionLowering = makeWasmModulePhase(
-    ::UnhandledExceptionLowering,
-    name = "UnhandledExceptionLowering",
-    description = "Wrap JsExport functions with try-catch to convert unhandled Wasm exception into Js exception",
-)
+    // This doesn't work with IC as of now for accessors within inline functions because
+    //  there is no special case for Wasm in the computation of inline function transitive
+    //  hashes the same way it's being done with the calculation of symbol hashes.
+    ::WasmPropertyAccessorInlineLowering,
 
-private val propertyAccessorInlinerLoweringPhase = makeWasmModulePhase(
-    ::PropertyAccessorInlineLowering,
-    name = "PropertyAccessorInlineLowering",
-    description = "[Optimization] Inline property accessors"
-)
+    ::WasmStringConcatenationLowering,
 
-private val expressionBodyTransformer = makeWasmModulePhase(
-    ::ExpressionBodyTransformer,
-    name = "ExpressionBodyTransformer",
-    description = "Replace IrExpressionBody with IrBlockBody"
-)
-
-private val unitToVoidLowering = makeWasmModulePhase(
-    ::UnitToVoidLowering,
-    name = "UnitToVoidLowering",
-    description = "Replace some Unit's with Void's"
-)
-
-private val purifyObjectInstanceGettersLoweringPhase = makeWasmModulePhase(
-    ::PurifyObjectInstanceGettersLowering,
-    name = "PurifyObjectInstanceGettersLowering",
-    description = "[Optimization] Make object instance getter functions pure whenever it's possible",
-    prerequisite = setOf(objectDeclarationLoweringPhase, objectUsageLoweringPhase)
-)
-
-private val inlineObjectsWithPureInitializationLoweringPhase = makeWasmModulePhase(
-    ::InlineObjectsWithPureInitializationLowering,
-    name = "InlineObjectsWithPureInitializationLowering",
-    description = "[Optimization] Inline object instance fields getters whenever it's possible",
-    prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
-)
-
-val wasmPhases = SameTypeNamedCompilerPhase(
-    name = "IrModuleLowering",
-    description = "IR module lowering",
-    lower = validateIrBeforeLowering then
-            jsCodeCallsLowering then
-            generateTests then
-            excludeDeclarationsFromCodegenPhase then
-            expectDeclarationsRemovingPhase then
-
-            lateinitNullableFieldsPhase then
-            lateinitDeclarationLoweringPhase then
-            lateinitUsageLoweringPhase then
-            arrayConstructorReferencePhase then
-            arrayConstructorPhase then
-            sharedVariablesLoweringPhase then
-            localClassesInInlineLambdasPhase then
-            localClassesInInlineFunctionsPhase then
-            localClassesExtractionFromInlineFunctionsPhase then
-
-            wrapInlineDeclarationsWithReifiedTypeParametersPhase then
-
-            functionInliningPhase then
-            removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase then
-
-            tailrecLoweringPhase then
-
-            enumClassConstructorLoweringPhase then
-            enumClassConstructorBodyLoweringPhase then
-            enumEntryInstancesLoweringPhase then
-            enumEntryInstancesBodyLoweringPhase then
-            enumClassCreateInitializerLoweringPhase then
-            enumEntryCreateGetInstancesFunsLoweringPhase then
-            enumSyntheticFunsLoweringPhase then
-
-            propertyReferenceLowering then
-            callableReferencePhase then
-            singleAbstractMethodPhase then
-            localDelegatedPropertiesLoweringPhase then
-            localDeclarationsLoweringPhase then
-            localClassExtractionPhase then
-            innerClassesLoweringPhase then
-            innerClassesMemberBodyLoweringPhase then
-            innerClassConstructorCallsLoweringPhase then
-            propertiesLoweringPhase then
-            primaryConstructorLoweringPhase then
-            delegateToPrimaryConstructorLoweringPhase then
-            // Common prefix ends
-
-            wasmStringSwitchOptimizerLowering then
-
-            complexExternalDeclarationsToTopLevelFunctionsLowering then
-            complexExternalDeclarationsUsagesLowering then
-
-            jsInteropFunctionsLowering then
-            jsInteropFunctionCallsLowering then
-
-            enumUsageLoweringPhase then
-            enumEntryRemovalLoweringPhase then
-
-            suspendFunctionsLoweringPhase then
-            initializersLoweringPhase then
-            initializersCleanupLoweringPhase then
-
-            addContinuationToNonLocalSuspendFunctionsLoweringPhase then
-            addContinuationToFunctionCallsLoweringPhase then
-            addMainFunctionCallsLowering then
-
-            unhandledExceptionLowering then
-
-            tryCatchCanonicalization then
-
-            forLoopsLoweringPhase then
-            propertyLazyInitLoweringPhase then
-            removeInitializersForLazyProperties then
-            propertyAccessorInlinerLoweringPhase then
-            stringConcatenationLowering then
-
-            defaultArgumentStubGeneratorPhase then
-            defaultArgumentPatchOverridesPhase then
-            defaultParameterInjectorPhase then
-            defaultParameterCleanerPhase then
+    ::WasmDefaultArgumentStubGenerator,
+    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
+    ::WasmDefaultParameterInjector,
+    ::createDefaultParameterCleanerPhase,
 
 //            TODO:
-//            multipleCatchesLoweringPhase then
-            classReferenceLoweringPhase then
+//            multipleCatchesLoweringPhase,
+    ::WasmClassReferenceLowering,
 
-            wasmVarargExpressionLoweringPhase then
-            inlineClassDeclarationLoweringPhase then
-            inlineClassUsageLoweringPhase then
+    ::WasmVarargExpressionLowering,
+    ::InlineClassDeclarationLowering,
+    ::InlineClassUsageLowering,
 
-            expressionBodyTransformer then
-            eraseVirtualDispatchReceiverParametersTypes then
-            bridgesConstructionPhase then
+    ::ExpressionBodyTransformer,
+    ::EraseVirtualDispatchReceiverParametersTypes,
+    ::WasmBridgesConstruction,
 
-            associatedObjectsLowering then
+    ::ObjectDeclarationLowering, // Also depends on `WasmStaticCallableReferenceLowering`, but it is hard to represent in the common phase
+    ::GenericReturnTypeLowering,
+    ::UnitToVoidLowering,
 
-            objectDeclarationLoweringPhase then
-            genericReturnTypeLowering then
-            unitToVoidLowering then
+    // Replace builtins before autoboxing
+    ::BuiltInsLowering,
 
-            // Replace builtins before autoboxing
-            builtInsLoweringPhase0 then
+    ::createAutoboxingTransformerPhase,
 
-            autoboxingTransformerPhase then
+    ::ObjectUsageLowering,
+    ::WasmPurifyObjectInstanceGettersLowering,
 
-            objectUsageLoweringPhase then
-            purifyObjectInstanceGettersLoweringPhase then
-            fieldInitializersLoweringPhase then
+    ::FieldInitializersLowering,
 
-            explicitlyCastExternalTypesPhase then
-            typeOperatorLoweringPhase then
+    ::ExplicitlyCastExternalTypesLowering,
+    ::WasmTypeOperatorLowering,
 
-            // Clean up built-ins after type operator lowering
-            builtInsLoweringPhase then
+    // Clean up built-ins after type operator lowering
+    ::BuiltInsLowering,
 
-            virtualDispatchReceiverExtractionPhase then
-            staticMembersLoweringPhase then
-            inlineObjectsWithPureInitializationLoweringPhase then
-            validateIrAfterLowering,
-    actions = setOf(defaultDumper.toMultiModuleAction())
+    ::VirtualDispatchReceiverExtraction,
+    ::InvokeStaticInitializersLowering,
+    ::StaticMembersLowering,
+
+    // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
+    ::WasmInlineObjectsWithPureInitializationLowering,
+
+    ::WhenBranchOptimiserLowering,
+    ::IrValidationAfterLoweringPhase,
 )

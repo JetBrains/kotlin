@@ -5,25 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal interface KotlinAndroidSourceSetConfigurator {
     /**
-     * Called once, when the corresponding KotlinSourceSet is created for a given [AndroidSourceSet].
+     * Called once, when the corresponding KotlinSourceSet is created for a given [DeprecatedAndroidSourceSet].
      * Note, this can also be called in 'afterEvaluate', when Android is finalizing its variants.
      */
     fun configure(
-        target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) = Unit
 
     /**
      * Called every time, when a given [KotlinSourceSet] participates in a given Android variant.
      */
     fun configureWithVariant(
-        target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
     ) = Unit
 }
 
@@ -38,11 +41,19 @@ private class KotlinAndroidSourceSetConfigurationWithCondition(
     private val underlying: KotlinAndroidSourceSetConfigurator,
     private val condition: (KotlinAndroidTarget) -> Boolean
 ) : KotlinAndroidSourceSetConfigurator {
-    override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
+    override fun configure(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
+    ) {
         if (condition(target)) underlying.configure(target, kotlinSourceSet, androidSourceSet)
     }
 
-    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+    override fun configureWithVariant(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ) {
         if (condition(target)) underlying.configureWithVariant(target, kotlinSourceSet, variant)
     }
 }
@@ -62,14 +73,18 @@ private class CompositeKotlinAndroidSourceSetConfigurator(
     override fun configure(
         target: KotlinAndroidTarget,
         kotlinSourceSet: KotlinSourceSet,
-        androidSourceSet: AndroidSourceSet
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
         configurators.forEach { configurator ->
             configurator.configure(target, kotlinSourceSet, androidSourceSet)
         }
     }
 
-    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+    override fun configureWithVariant(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ) {
         configurators.forEach { configurator ->
             configurator.configureWithVariant(target, kotlinSourceSet, variant)
         }

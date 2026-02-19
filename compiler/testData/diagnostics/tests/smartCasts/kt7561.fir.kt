@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Test for a potential byte code mistake for a postfix operation on a smart casted variable
 public fun box() : Int {
     var i : Int? 
@@ -13,3 +14,6 @@ public fun box() : Int {
     val m = ++i
     return j + k + m + i + ii
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

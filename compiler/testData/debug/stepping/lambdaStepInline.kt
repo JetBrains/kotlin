@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 inline fun foo(stringMaker: () -> String): String {
@@ -14,7 +14,7 @@ fun box(): String {
     return "OK"
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:9 box
 // test.kt:5 box
 // test.kt:9 box
@@ -25,5 +25,28 @@ fun box(): String {
 // test.kt:5 box
 // test.kt:14 box
 
+// EXPECTATIONS NATIVE
+// test.kt:9 box
+// test.kt:5 box
+// test.kt:9 box
+// test.kt:5 box
+// test.kt:10 box
+// test.kt:5 box
+// test.kt:11 box
+// test.kt:5 box
+// test.kt:14 box
+// test.kt:15 box
+
 // EXPECTATIONS JS_IR
 // test.kt:14 box
+
+// EXPECTATIONS WASM
+// test.kt:9 $box (4)
+// test.kt:5 $box (11)
+// test.kt:9 $box (10, 15)
+// test.kt:5 $box (4)
+// test.kt:10 $box (4)
+// test.kt:5 $box (11)
+// test.kt:11 $box (8, 12)
+// test.kt:5 $box (4)
+// test.kt:14 $box (11, 4)

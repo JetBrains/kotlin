@@ -1,3 +1,7 @@
+fun box(): String {
+  return run(x = true, y = true)
+}
+
 inline fun foo(): Boolean {
   return false
 }
@@ -21,6 +25,3 @@ fun run(x: Boolean, y: Boolean): String {
   return "OK"
 }
 
-fun box(): String {
-  return run(x = true, y = true)
-}

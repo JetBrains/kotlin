@@ -5,25 +5,55 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.jvm.abi.JvmAbiCommandLineProcessor.Companion.COMPILER_PLUGIN_ID
 import java.io.File
 
-class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
+/**
+ * @param consumeOutput if non-null, jvm-abi-gen does not output any files to the disk, and passes the result to this lambda instead.
+ */
+class JvmAbiComponentRegistrar(
+    private val consumeOutput: ((OutputFileCollection) -> Unit)? = null,
+) : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val outputPath = configuration.getNotNull(JvmAbiConfigurationKeys.OUTPUT_PATH)
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
-        val builderExtension = JvmAbiClassBuilderInterceptor()
-        val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo, messageCollector)
+        val removeDataClassCopy = configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE)
+        val builderExtension = JvmAbiClassBuilderInterceptor(
+            removeDataClassCopy,
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_REMOVE_PRIVATE_CLASSES),
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_TREAT_INTERNAL_AS_PRIVATE),
+        )
+        val outputExtension = JvmAbiOutputExtension(
+            builderExtension::buildAbiClassInfoAndReleaseResources,
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_REMOVE_DEBUG_INFO),
+            removeDataClassCopy,
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_PRESERVE_DECLARATION_ORDER),
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_TREAT_INTERNAL_AS_PRIVATE),
+        ) { outputFiles ->
+            if (consumeOutput != null) {
+                consumeOutput(outputFiles)
+            } else {
+                val outputPath = File(configuration.getNotNull(JvmAbiConfigurationKeys.JVM_ABI_OUTPUT_PATH))
+                if (outputPath.extension == "jar") {
+                    // We don't include the runtime or main class in interface jars and always reset time stamps.
+                    CompileEnvironmentUtil.writeToJar(outputPath, false, true, true, null, outputFiles, configuration.messageCollector)
+                } else {
+                    outputFiles.writeAllTo(outputPath)
+                }
+            }
+        }
+
         ClassGeneratorExtension.registerExtension(builderExtension)
         ClassFileFactoryFinalizerExtension.registerExtension(outputExtension)
     }
+
+    override val pluginId: String get() = COMPILER_PLUGIN_ID
 
     override val supportsK2: Boolean
         get() = true

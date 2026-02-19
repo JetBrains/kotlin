@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 const val intConst = 1
 const val longConst: Long = 1
@@ -16,3 +17,5 @@ const val unresolvedConst1 = <!UNRESOLVED_REFERENCE!>Unresolved<!>
 <!WRONG_MODIFIER_TARGET!>const<!> var unresolvedConst2 = <!UNRESOLVED_REFERENCE!>Unresolved<!>
 const val unresolvedConst3 = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD, UNRESOLVED_REFERENCE!>Unresolved<!>
 <!CONST_VAL_WITH_GETTER!>get() = 10<!>
+
+/* GENERATED_FIR_TAGS: const, enumDeclaration, enumEntry, getter, integerLiteral, propertyDeclaration, stringLiteral */

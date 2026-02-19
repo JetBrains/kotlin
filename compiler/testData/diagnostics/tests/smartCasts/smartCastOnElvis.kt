@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(s: String) = s.length
 
 fun baz(s: String?, r: String?): Int {
@@ -13,3 +14,6 @@ fun bar(s: String?, r: String?): Int {
         else -> ""
     }).length
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, nullableType, smartcast, stringLiteral,
+whenExpression */

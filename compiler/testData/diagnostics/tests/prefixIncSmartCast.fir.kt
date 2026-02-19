@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Changed in K2, see KT-57178
 
 open class I {
@@ -11,3 +12,6 @@ fun main() {
     val x: ST = ++local
     val y: ST = local
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, localProperty,
+operator, propertyDeclaration, smartcast */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Immutable(val x: String?) {
     fun foo(): String {
         if (x != null) return x
@@ -11,3 +12,6 @@ class Mutable(var y: String?) {
         return ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

@@ -1,9 +1,11 @@
-// !LANGUAGE: +EnumEntries
-// DONT_TARGET_EXACT_BACKEND: JS
+// LANGUAGE: +EnumEntries
 // ES_MODULES
 
 // MODULE: export_enum_class
 // FILE: lib.kt
+
+@JsExport
+enum class Uninhabited
 
 @JsExport
 enum class Foo(val constructorParameter: String) {
@@ -50,7 +52,7 @@ class OuterClass {
 
 // FILE: main.mjs
 // ENTRY_ES_MODULE
-import { Foo, Bar, OuterClass } from "./exportEnumClass-export_enum_class_v5.mjs"
+import { Uninhabited, Foo, Bar, OuterClass } from "./exportEnumClass-export_enum_class_v5.mjs"
 
 export function box() {
     if (Foo.A !== Foo.A) return "fail1"
@@ -101,6 +103,8 @@ export function box() {
     if (OuterClass.NestedEnum.B.ordinal !== 1) return "fail30"
 
     if (Foo.entries !== undefined) return "fail31"
+
+    if (Uninhabited.values().length !== 0) return "Uninhabited.values"
 
     return "OK"
 }

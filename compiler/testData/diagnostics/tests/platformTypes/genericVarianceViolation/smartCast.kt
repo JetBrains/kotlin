@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -14,3 +15,5 @@ fun main(a: A, ml: Any) {
         a.foo(ml <!UNCHECKED_CAST!>as List<Any><!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, isExpression, javaFunction, javaType, smartcast */

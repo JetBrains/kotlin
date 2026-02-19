@@ -10,17 +10,17 @@ FILE: exceptionInRepeatedAnnotation.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final inline operator fun <reified E : R|Event|> invoke(noinline callback: R|EventHandler<E>|): R|EventListener<E>| {
+            public final inline operator fun <reified E : R|Event|> invoke(noinline callback: R|{EventHandler<E>=} (@R|kotlin/ParameterName|(name = String(e))  E) -> kotlin/Unit|): R|EventListener<E>| {
                 ^invoke R|kotlin/TODO|()
             }
 
         }
 
     }
-    public final inline fun <reified E : R|Event|> R|EventHandler<E>|.withPriority(): R|EventListener<@R|kotlin/ParameterName|(name = String(e))  E>| {
+    public final inline fun <reified E : R|Event|> R|{EventHandler<E>=} (@R|kotlin/ParameterName|(name = String(e))  E) -> kotlin/Unit|.withPriority(): R|EventListener<@R|kotlin/ParameterName|(name = String(e))  E>| {
         ^withPriority Q|EventListener|.R|/EventListener.Companion.invoke|<R|@R|kotlin/ParameterName|(name = String(e))  E|>(this@R|/withPriority|)
     }
-    public final inline fun <reified E : R|Event|> R|EventHandler<E>|.withDefaultPriority(): R|EventListener<@R|kotlin/ParameterName|(name = String(e))  E>| {
+    public final inline fun <reified E : R|Event|> R|{EventHandler<E>=} (@R|kotlin/ParameterName|(name = String(e))  E) -> kotlin/Unit|.withDefaultPriority(): R|EventListener<@R|kotlin/ParameterName|(name = String(e))  E>| {
         ^withDefaultPriority this@R|/withDefaultPriority|.R|/withPriority|<R|@R|kotlin/ParameterName|(name = String(e))  E|>()
     }
     public abstract class Event : R|kotlin/Any| {

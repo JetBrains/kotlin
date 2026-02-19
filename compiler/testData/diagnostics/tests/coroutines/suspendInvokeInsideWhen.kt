@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 internal class Demo() {
     suspend operator fun <T> invoke(name: String, block: suspend () -> T): T {
@@ -14,3 +15,6 @@ suspend fun demo(callback: suspend () -> Unit) = when {
     }
     else -> TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+operator, primaryConstructor, propertyDeclaration, stringLiteral, suspend, typeParameter, whenExpression */

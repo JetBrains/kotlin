@@ -5,62 +5,59 @@
 
 package org.jetbrains.kotlin.compiler.plugin
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 
 @ExperimentalCompilerApi
 abstract class CompilerPluginRegistrar {
     companion object {
         val COMPILER_PLUGIN_REGISTRARS: CompilerConfigurationKey<MutableList<CompilerPluginRegistrar>> =
-            CompilerConfigurationKey.create("Compiler plugin registrars")
+            CompilerConfigurationKey.create("COMPILER_PLUGIN_REGISTRARS")
     }
+
+    /**
+     * Uniquely identifies the Kotlin compiler plugin. Must match the `pluginId` specified in [CommandLineProcessor].
+     * The ID can be used in combination with `-Xcompiler-plugin-order` to control execution order of compiler plugins.
+     */
+    abstract val pluginId: String
 
     abstract fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration)
 
     class ExtensionStorage {
-        private val _registeredExtensions = mutableMapOf<ProjectExtensionDescriptor<*>, MutableList<Any>>()
-        val registeredExtensions: Map<ProjectExtensionDescriptor<*>, List<Any>>
+        private val _registeredExtensions = mutableMapOf<ExtensionPointDescriptor<*>, MutableList<Any>>()
+        val registeredExtensions: Map<ExtensionPointDescriptor<*>, List<Any>>
             get() = _registeredExtensions
 
-        fun <T : Any> ProjectExtensionDescriptor<T>.registerExtension(extension: T) {
+        private val _disposables = mutableListOf<PluginDisposable>()
+        val disposables: List<PluginDisposable>
+            get() = _disposables
+
+        operator fun <T : Any> get(descriptor: ExtensionPointDescriptor<T>): List<T> {
+            @Suppress("UNCHECKED_CAST")
+            return _registeredExtensions[descriptor] as List<T>? ?: emptyList()
+        }
+
+        fun <T : Any> ExtensionPointDescriptor<T>.registerExtension(extension: T) {
             _registeredExtensions.getOrPut(this, ::mutableListOf).add(extension)
         }
+
+        /**
+         * Passed [disposable] will be called when the plugin is no longer needed:
+         *
+         * - In the CLI mode: At the end of the compilation process.
+         * - In the IDE mode: When the whole project is closed, or when the module
+         * with the corresponding compiler plugin enabled is removed from the project.
+         */
+        @Suppress("unused")
+        fun registerDisposable(disposable: PluginDisposable) {
+            _disposables += disposable
+        }
+    }
+
+    fun interface PluginDisposable {
+        fun dispose()
     }
 
     abstract val supportsK2: Boolean
-}
-
-fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
-    project: Project,
-    errorMessage: (Any) -> String = { "Error while registering ${it.javaClass.name} "}
-) {
-    for ((extensionPoint, extensions) in registeredExtensions) {
-        for (extension in extensions) {
-            @Suppress("UNCHECKED_CAST")
-            try {
-                (extensionPoint as ProjectExtensionDescriptor<Any>).registerExtensionUnsafe(project, extension)
-            } catch (e: AbstractMethodError) {
-                throw IllegalStateException(errorMessage(extension), e)
-            }
-        }
-    }
-}
-
-private fun ProjectExtensionDescriptor<Any>.registerExtensionUnsafe(project: Project, extension: Any) {
-    this.registerExtension(project, extension)
-}
-
-@TestOnly
-fun registerExtensionsForTest(
-    project: Project,
-    configuration: CompilerConfiguration,
-    register: CompilerPluginRegistrar.ExtensionStorage.(CompilerConfiguration) -> Unit
-) {
-    val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
-        register(configuration)
-    }
-    extensionStorage.registerInProject(project)
 }

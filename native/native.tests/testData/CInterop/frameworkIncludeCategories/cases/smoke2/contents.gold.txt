@@ -1,32 +1,76 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @ExternalObjCClass open class MyClass : ObjCObjectBase {
-        protected constructor()
-        var categoryProperty: Float
-            @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") get
-            @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") set
-        var instanceProperty: Float
-            @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "instanceProperty") get
-            @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setInstanceProperty:") set
-        @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") open external fun categoryProperty(): Float
-        @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "instanceProperty") open external fun instanceProperty(): Float
-        @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") open external fun setCategoryProperty(categoryProperty: Float)
-        @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setInstanceProperty:") open external fun setInstanceProperty(instanceProperty: Float)
-        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    // class name: dependency/MyClass
+    // class name: dependency/MyClass.Companion
+    // class name: dependency/MyClassMeta
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryProperty", encoding = "f16@0:8", isStret = false)
+      public open external fun categoryProperty(): kotlin/Float
+
+      @kotlinx/cinterop/ObjCMethod(selector = "instanceProperty", encoding = "f16@0:8", isStret = false)
+      public open external fun instanceProperty(): kotlin/Float
+
+      @kotlinx/cinterop/ObjCMethod(selector = "setCategoryProperty:", encoding = "v20@0:8f16", isStret = false)
+      public open external fun setCategoryProperty(categoryProperty: kotlin/Float): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "setInstanceProperty:", encoding = "v20@0:8f16", isStret = false)
+      public open external fun setInstanceProperty(instanceProperty: kotlin/Float): kotlin/Unit
+
+      public final var categoryProperty: kotlin/Float
+        @kotlinx/cinterop/ObjCMethod(selector = "categoryProperty", encoding = "f16@0:8", isStret = false)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/ObjCMethod(selector = "setCategoryProperty:", encoding = "v20@0:8f16", isStret = false)
+        public final /* non-default */ external set(value: kotlin/Float)
+
+      public final var instanceProperty: kotlin/Float
+        @kotlinx/cinterop/ObjCMethod(selector = "instanceProperty", encoding = "f16@0:8", isStret = false)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/ObjCMethod(selector = "setInstanceProperty:", encoding = "v20@0:8f16", isStret = false)
+        public final /* non-default */ external set(value: kotlin/Float)
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-    @ExternalObjCClass open class MyClassMeta : ObjCObjectBaseMeta {
-        protected constructor()
+    public final companion object dependency/MyClass.Companion : dependency/MyClassMeta, kotlinx/cinterop/ObjCClassOf<dependency/MyClass> {
+
+      private constructor()
     }
 
-}
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/MyClassMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
 
-package dependency {
-    @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance property instead", replaceWith = ReplaceWith(expression = "", imports = {})) var MyClass.categoryProperty: Float
-        @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) get
-        @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) set
-    @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClass.categoryProperty(): Float
-    @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClass.setCategoryProperty(categoryProperty: Float)
-}
+      protected /* secondary */ constructor()
+    }
 
+    package {
+
+      @kotlinx/cinterop/ObjCMethod(selector = "categoryProperty", encoding = "f16@0:8", isStret = false)
+      @kotlin/Deprecated(message = "Use instance method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final external fun dependency/MyClass.categoryProperty(): kotlin/Float
+
+      @kotlinx/cinterop/ObjCMethod(selector = "setCategoryProperty:", encoding = "v20@0:8f16", isStret = false)
+      @kotlin/Deprecated(message = "Use instance method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final external fun dependency/MyClass.setCategoryProperty(categoryProperty: kotlin/Float): kotlin/Unit
+
+      @kotlin/Deprecated(message = "Use instance property instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final var dependency/MyClass.categoryProperty: kotlin/Float
+        @kotlinx/cinterop/ObjCMethod(selector = "categoryProperty", encoding = "f16@0:8", isStret = false)
+        @kotlin/Deprecated(message = "Use instance method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/ObjCMethod(selector = "setCategoryProperty:", encoding = "v20@0:8f16", isStret = false)
+        @kotlin/Deprecated(message = "Use instance method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+        public final /* non-default */ external set(value: kotlin/Float)
+    }
+  }
+}

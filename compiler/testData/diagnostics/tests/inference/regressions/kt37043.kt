@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS -UNUSED_VARIABLE
 // FILE: Test.java
 
 class Test {
@@ -17,3 +18,6 @@ inline fun <reified T> materializeArray(): Array<T> = null as Array<T>
 fun main()  {
     val y = foo(Test.flexibleNumbers() ?: materializeArray()) // Any? in NI, Number! in OI (T of `materializeArray` is inferred to Any?)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, elvisExpression, flexibleType, functionDeclaration, inline,
+integerLiteral, javaFunction, localProperty, nullableType, outProjection, propertyDeclaration, reified, typeParameter */

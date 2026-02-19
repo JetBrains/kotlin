@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 data class A1(val x: String) {
     constructor(): this("")
 }
@@ -12,3 +14,6 @@ data class <!DATA_CLASS_WITHOUT_PARAMETERS, PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DAT
 }
 
 data class A4 internal constructor<!DATA_CLASS_WITHOUT_PARAMETERS!>()<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

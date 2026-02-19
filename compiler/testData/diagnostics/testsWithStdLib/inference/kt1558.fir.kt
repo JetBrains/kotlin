@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 //KT-1558 Exception while analyzing
 package j
@@ -26,3 +27,7 @@ fun testArrays(ci: List<Int?>, cii: List<Int?>?) {
     checkSubtype<Array<Int?>>(c4)
     checkSubtype<Array<Int?>>(c5)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, localProperty, nullableType, propertyDeclaration, starProjection, thisExpression, typeConstraint, typeParameter,
+typeWithExtension */

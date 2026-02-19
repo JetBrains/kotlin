@@ -7,23 +7,49 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
+import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
 import org.jetbrains.kotlin.commonizer.cli.Task.Category
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    val tasks = parseTasksFromCommandLineArguments(args)
+    executeTasks(tasks)
+}
+
+internal fun parseTasksFromCommandLineArguments(args: Array<String>): MutableList<Task> {
     if (args.isEmpty()) printUsageAndExit()
 
-    val tokens = args.iterator()
+    val argumentsWithArgfilesExpanded = preprocessCommandLineArguments(args)
+
+    val tokens: Iterator<String> = argumentsWithArgfilesExpanded.iterator()
     val tasks = mutableListOf<Task>()
 
     var taskAlias: String? = tokens.next()
     while (taskAlias != null) {
         taskAlias = parseTask(taskAlias, tokens, tasks)
     }
+    return tasks
+}
 
-    // execute tasks in a specific order:
-    // - first, execute all informational tasks
-    // - then, all commonization tasks
+/**
+ * Returns an original [args] with @argfile-arguments inlined.
+ */
+private fun preprocessCommandLineArguments(args: Array<String>): List<String> {
+    val errors = lazy { ArgumentParseErrors() }
+    val argumentsWithArgfilesExpanded = preprocessCommandLineArguments(args.asList(), errors)
+    // We're using kotlinc infra for argfiles parsing, so general API of ArgumentParseErrors is a bit wider than what we need
+    // In fact, 'errors' will contain only 'argfileErrors'
+    if (errors.value.argfileErrors.isNotEmpty()) {
+        printUsageAndExit("Errors while using @argfiles\n" + errors.value.argfileErrors.joinToString("\n"))
+    }
+    return argumentsWithArgfilesExpanded
+}
+
+// execute tasks in a specific order:
+// - first, execute all informational tasks
+// - then, all commonization tasks
+private fun executeTasks(tasks: MutableList<Task>) {
     Category.values().forEach { category ->
         val sortedTasks = tasks.filter { it.category == category }.sorted()
         if (sortedTasks.isNotEmpty()) {

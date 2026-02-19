@@ -1,0 +1,16 @@
+KtNameReferenceExpression(79,85): 'action'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = action
+        receiverType = null
+        returnType = kotlin.Function1<test.Foo, kotlin.Unit>
+        symbol = action: kotlin.Function1<test.Foo, kotlin.Unit>
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}

@@ -1,12 +1,52 @@
-    @PrimitiveArrays(booleanArray = {true, false, true}, byteArray = {-7.toByte(), 7.toByte()}, charArray = {\u0025 ('%'), \u007A ('z')}, doubleArray = {-3.14.toDouble()}, floatArray = {2.72.toFloat(), 0.0.toFloat()}, intArray = {239017, -1}, longArray = {123456789123456789.toLong()}, shortArray = {239.toShort()}) class C1 constructor()
-    @PrimitiveArrays(booleanArray = {}, byteArray = {}, charArray = {}, doubleArray = {}, floatArray = {}, intArray = {}, longArray = {}, shortArray = {}) class C2 constructor()
-    annotation class PrimitiveArrays constructor(byteArray: ByteArray, charArray: CharArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray, booleanArray: BooleanArray) : Annotation {
-        val booleanArray: BooleanArray
-        val byteArray: ByteArray
-        val charArray: CharArray
-        val doubleArray: DoubleArray
-        val floatArray: FloatArray
-        val intArray: IntArray
-        val longArray: LongArray
-        val shortArray: ShortArray
+library {
+  // module name: <primitiveArrays.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/PrimitiveArrays
+
+    @test/PrimitiveArrays(byteArray = [-7.toByte(), 7.toByte()], charArray = ['%', 'z'], shortArray = [239.toShort()], intArray = [239017, -1], longArray = [123456789123456789L], floatArray = [2.72f, 0.0f], doubleArray = [-3.14], booleanArray = [true, false, true])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
     }
+
+    @test/PrimitiveArrays(byteArray = [], charArray = [], shortArray = [], intArray = [], longArray = [], floatArray = [], doubleArray = [], booleanArray = [])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final annotation class test/PrimitiveArrays : kotlin/Annotation {
+
+      public constructor(byteArray: kotlin/ByteArray, charArray: kotlin/CharArray, shortArray: kotlin/ShortArray, intArray: kotlin/IntArray, longArray: kotlin/LongArray, floatArray: kotlin/FloatArray, doubleArray: kotlin/DoubleArray, booleanArray: kotlin/BooleanArray)
+
+      public final val booleanArray: kotlin/BooleanArray
+        public final get
+
+      public final val byteArray: kotlin/ByteArray
+        public final get
+
+      public final val charArray: kotlin/CharArray
+        public final get
+
+      public final val doubleArray: kotlin/DoubleArray
+        public final get
+
+      public final val floatArray: kotlin/FloatArray
+        public final get
+
+      public final val intArray: kotlin/IntArray
+        public final get
+
+      public final val longArray: kotlin/LongArray
+        public final get
+
+      public final val shortArray: kotlin/ShortArray
+        public final get
+    }
+  }
+}

@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.flatMapToNullableSet
 
 /**
  * [FirSymbolNamesProvider] provides information about which symbols may be provided by a [FirSymbolProvider] given the symbol's name. This
  * is usually checked before the symbol is requested with functions such as [FirSymbolProvider.getClassLikeSymbolByClassId].
  *
  * All `get*` functions in this interface have the following common contract:
+ *
  *  - They return `null` in case a name set is too hard, expensive, or even impossible to compute.
  *  - They might return a strict superset of the name set, i.e. the resulting set might contain some names that do not exist in the symbol
  *    provider. In other words, these sets allow false positives, but not false negatives.
@@ -26,18 +28,49 @@ import org.jetbrains.kotlin.name.Name
  */
 abstract class FirSymbolNamesProvider {
     /**
+     * Returns the set of fully qualified package names which contain any top-level declaration within the provider's scope.
+     *
+     * [getPackageNames] is used as the default implementation for [getPackageNamesWithTopLevelClassifiers] and
+     * [getPackageNamesWithTopLevelCallables]. It depends on the symbol names provider whether it's worth computing separate package sets
+     * for classifiers and callables, or just one set containing all package names.
+     */
+    open fun getPackageNames(): Set<String>? = null
+
+    /**
+     * Whether the symbol names provider has a specific computation for [getPackageNamesWithTopLevelClassifiers], instead of just falling
+     * back to [getPackageNames]. It *does not mean* that [getPackageNamesWithTopLevelClassifiers] returns a non-null result. Rather, it
+     * means that the symbol provider makes an effort to compute specific classifier package names before falling back to [getPackageNames].
+     *
+     * [FirCachedSymbolNamesProvider]s rely on this property to decide whether they should compute and cache classifier package names
+     * separately or fall back to the cached general package names (saving time and memory).
+     *
+     * The value should be constant, because it allows composite symbol providers to cache their own value.
+     */
+    abstract val hasSpecificClassifierPackageNamesComputation: Boolean
+
+    /**
+     * Returns the set of fully qualified package names which contain a top-level classifier declaration within the provider's scope.
+     */
+    open fun getPackageNamesWithTopLevelClassifiers(): Set<String>? = getPackageNames()
+
+    /**
      * Returns the set of top-level classifier names (classes, interfaces, objects, and type aliases) inside the [packageFqName] package
      * within the provider's scope.
      *
      * All usages must take into account that the result might not include `kotlin.FunctionN` (and others for which a [FunctionTypeKind]
      * exists).
      */
-    abstract fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>?
+    abstract fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>?
+
+    /**
+     * @see hasSpecificClassifierPackageNamesComputation
+     */
+    abstract val hasSpecificCallablePackageNamesComputation: Boolean
 
     /**
      * Returns the set of fully qualified package names which contain a top-level callable declaration within the provider's scope.
      */
-    abstract fun getPackageNamesWithTopLevelCallables(): Set<String>?
+    open fun getPackageNamesWithTopLevelCallables(): Set<String>? = getPackageNames()
 
     /**
      * Returns the set of top-level callable names (functions and properties) inside the [packageFqName] package within the provider's
@@ -57,13 +90,12 @@ abstract class FirSymbolNamesProvider {
      * [FirSymbolProvider] can provide generated function types. The value should be constant, which allows composite symbol providers to
      * cache the result and achieve acceptable performance.
      */
-    open val mayHaveSyntheticFunctionTypes: Boolean = false
+    open val mayHaveSyntheticFunctionTypes: Boolean get() = false
 
     /**
      * Whether [classId] is considered a generated function type within the provider's scope and session.
      */
-    open fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean =
-        error("`mayHaveSyntheticFunctionType` needs to be implemented when `mayHaveSyntheticFunctionTypes` is true.")
+    open fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = mayHaveSyntheticFunctionTypes
 
     /**
      * Checks if the provider's scope may contain a top-level classifier (class, interface, object, or type alias) with the given [classId].
@@ -71,6 +103,9 @@ abstract class FirSymbolNamesProvider {
     open fun mayHaveTopLevelClassifier(classId: ClassId): Boolean {
         if (mayHaveSyntheticFunctionTypes && mayHaveSyntheticFunctionType(classId)) return true
 
+        // `packageNamesWithTopLevelClassifiers` is checked in `FirCachedSymbolNamesProvider.getTopLevelClassifierNamesInPackage`. It is not
+        // worth checking it in uncached situations, since building the package set is as or more expensive as just building the "names in
+        // package" set.
         val names = getTopLevelClassifierNamesInPackage(classId.packageFqName) ?: return true
         if (classId.outerClassId == null) {
             if (!names.mayContainTopLevelClassifier(classId.shortClassName)) return false
@@ -88,26 +123,32 @@ abstract class FirSymbolNamesProvider {
         // Symbol providers can potentially provide symbols for special names. Hence, special names have to be allowed.
         if (name.isSpecial) return true
 
-        // The `packageNamesWithTopLevelCallables` check is implemented in `FirCachedSymbolNamesProvider` via
-        // `getTopLevelCallableNamesInPackage`. It is probably not worth checking it in uncached situations, since building the set of
-        // package names with top-level callables is likely as expensive as just calling an uncached `getTopLevelCallableNamesInPackage`.
+        // `packageNamesWithTopLevelCallables` is checked in `FirCachedSymbolNamesProvider.getTopLevelCallableNamesInPackage`. It is not
+        // worth checking it in uncached situations, since building the package set is as or more expensive as just building the "names in
+        // package" set.
         val names = getTopLevelCallableNamesInPackage(packageFqName) ?: return true
         return name in names
     }
 }
 
-private fun Set<String>.mayContainTopLevelClassifier(shortClassName: Name): Boolean {
+private fun Set<Name>.mayContainTopLevelClassifier(shortClassName: Name): Boolean {
     // Symbol providers can potentially provide symbols for special names. Hence, special names have to be allowed.
-    return shortClassName.isSpecial || shortClassName.asString() in this
+    return shortClassName.isSpecial || shortClassName in this
 }
 
 /**
  * A [FirSymbolNamesProvider] for symbol providers which can't provide any symbol name sets.
  */
 object FirNullSymbolNamesProvider : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = null
+    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? = null
+
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
-    override fun getPackageNamesWithTopLevelCallables(): Set<String>? = null
+
+    override val mayHaveSyntheticFunctionTypes: Boolean get() = true
+    override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = true
+
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = true
 }
@@ -116,23 +157,41 @@ object FirNullSymbolNamesProvider : FirSymbolNamesProvider() {
  * A [FirSymbolNamesProvider] for symbol providers which don't contain *any* symbols.
  */
 object FirEmptySymbolNamesProvider : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> = emptySet()
+    override fun getPackageNames(): Set<String> = emptySet()
+
+    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
-    override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
+
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = false
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
 }
 
 abstract class FirSymbolNamesProviderWithoutCallables : FirSymbolNamesProvider() {
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
     override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = emptySet()
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
 }
 
 open class FirCompositeSymbolNamesProvider(val providers: List<FirSymbolNamesProvider>) : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? {
+    override fun getPackageNames(): Set<String>? {
+        return providers.flatMapToNullableSet { it.getPackageNames() }
+    }
+
+    override val hasSpecificClassifierPackageNamesComputation: Boolean = providers.any { it.hasSpecificClassifierPackageNamesComputation }
+
+    override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? {
+        return providers.flatMapToNullableSet { it.getPackageNamesWithTopLevelClassifiers() }
+    }
+
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? {
         return providers.flatMapToNullableSet { it.getTopLevelClassifierNamesInPackage(packageFqName) }
     }
+
+    override val hasSpecificCallablePackageNamesComputation: Boolean = providers.any { it.hasSpecificCallablePackageNamesComputation }
 
     override fun getPackageNamesWithTopLevelCallables(): Set<String>? {
         return providers.flatMapToNullableSet { it.getPackageNamesWithTopLevelCallables() }

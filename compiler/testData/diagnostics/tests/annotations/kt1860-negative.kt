@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // COMPARE_WITH_LIGHT_TREE
 fun foo(@<!UNRESOLVED_REFERENCE!>varargs<!> f : Int) {}
 
@@ -8,3 +9,6 @@ val x : (Int) -> Int = {@<!UNRESOLVED_REFERENCE!>varargs<!> <!TYPE_MISMATCH, UNI
 
 class Hello(@<!UNRESOLVED_REFERENCE!>varargs<!> args: Any) {
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+primaryConstructor, propertyDeclaration, setter */

@@ -48,7 +48,11 @@ sealed class NativeLibraryHeaderFilter {
             val excludeDepdendentModules: Boolean
     ) : NativeLibraryHeaderFilter()
 
-    class Predefined(val headers: Set<String>, val modules: List<String>) : NativeLibraryHeaderFilter()
+    class Predefined(
+            val headers: Set<String>,
+            // In "skipNonImportableModules" mode the modules that were skipped (failed to import) are not excluded in this field
+            val modules: List<String>
+    ) : NativeLibraryHeaderFilter()
 }
 
 interface Compilation {
@@ -116,14 +120,19 @@ data class NativeLibrary(
         val headerExclusionPolicy: HeaderExclusionPolicy,
         val headerFilter: NativeLibraryHeaderFilter,
         val objCClassesIncludingCategories: Set<String>,
+        val allowIncludingObjCCategoriesFromDefFile: Boolean,
 ) : Compilation
 
-data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)
+data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult = buildNativeIndexImpl(library, verbose)
+fun buildNativeIndex(
+        library: NativeLibrary,
+        verbose: Boolean,
+        allowPrecompiledHeaders: Boolean = true,
+): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
 
 /**
  * This class describes the IR of definitions from C header file(s).
@@ -187,6 +196,7 @@ class AnonymousInnerRecord(val def: StructDef) : StructMember("") {
 abstract class StructDecl(val spelling: String) : TypeDeclaration {
 
     abstract val def: StructDef?
+    abstract val isAnonymous: Boolean
 }
 
 /**
@@ -242,6 +252,7 @@ class EnumConstant(val name: String, val value: Long, val isExplicitlyDefined: B
 abstract class EnumDef(val spelling: String, val baseType: Type) : TypeDeclaration {
 
     abstract val constants: List<EnumConstant>
+    abstract val isAnonymous: Boolean
 }
 
 sealed class ObjCContainer {
@@ -252,37 +263,68 @@ sealed class ObjCContainer {
 
 sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclaration {
     abstract val isForwardDeclaration: Boolean
+    abstract val binaryName: String?
+    open val swiftName: String? get() = null
 }
 
 data class ObjCMethod(
         val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
         val isVariadic: Boolean, val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
-        val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean, val isDirect: Boolean
+        val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean, val isDirect: Boolean,
+        val swiftName: String?
 ) {
 
-    fun returnsInstancetype(): Boolean = returnType is ObjCInstanceType
+    fun containsInstancetype(): Boolean = returnType.containsInstancetype() // Clang doesn't allow parameter types to use instancetype.
 
-    fun getReturnType(container: ObjCClassOrProtocol): Type = if (returnType is ObjCInstanceType) {
-        when (container) {
-            is ObjCClass -> ObjCObjectPointer(container, returnType.nullability, protocols = emptyList())
-            is ObjCProtocol -> ObjCIdType(returnType.nullability, protocols = listOf(container))
-        }
+    fun getReturnType(container: ObjCClassOrProtocol): Type = if (returnType.containsInstancetype()) {
+        returnType.substituteInstancetype(container)
     } else {
+        // Fast path, avoid allocating copies.
         returnType
     }
 }
 
-data class ObjCProperty(val name: String, val getter: ObjCMethod, val setter: ObjCMethod?) {
+// Clang seems to allow using instancetype only inside certain kinds of types.
+// The implementation below therefore covers only particular cases, based on the experiments with Clang and common sense.
+private fun Type.containsInstancetype(): Boolean = when (this) {
+    is ObjCInstanceType -> true
+
+    is ObjCBlockPointer -> this.returnType.containsInstancetype()
+    is FunctionType -> this.returnType.containsInstancetype()
+    is PointerType -> this.pointeeType.containsInstancetype()
+
+    else -> false
+}
+
+private fun Type.substituteInstancetype(container: ObjCClassOrProtocol): Type = when (this) {
+    is ObjCInstanceType -> when (container) {
+        is ObjCClass -> ObjCObjectPointer(container, this.nullability, protocols = emptyList())
+        is ObjCProtocol -> ObjCIdType(this.nullability, protocols = listOf(container))
+    }
+
+    is ObjCBlockPointer -> this.copy(returnType = this.returnType.substituteInstancetype(container))
+    is FunctionType -> this.copy(returnType = this.returnType.substituteInstancetype(container))
+    is PointerType -> this.copy(pointeeType = this.pointeeType.substituteInstancetype(container))
+
+    else -> this
+}
+
+data class ObjCProperty(
+        val name: String,
+        val getter: ObjCMethod, val setter: ObjCMethod?,
+        val swiftName: String?
+) {
     fun getType(container: ObjCClassOrProtocol): Type = getter.getReturnType(container)
 }
 
 abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
-    abstract val binaryName: String?
     abstract val baseClass: ObjCClass?
     /**
      * Categories whose methods and properties should be generated as members of Kotlin class.
      */
     abstract val includedCategories: List<ObjCCategory>
+
+    open val typeParameters: List<String> get() = emptyList()
 }
 abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
 
@@ -293,47 +335,48 @@ abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContai
  */
 data class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
 
-
-enum class CxxMethodKind {
-    None, // not supported yet?
-    Constructor,
-    Destructor,
-    StaticMethod,
-    InstanceMethod  // virtual or non-virtual instance member method (non-static)
-                    // do we need operators here?
-                    // do we need to distinguish virtual and non-virtual? Static? Final?
-}
-
 /**
- * C++ class method, constructor or destructor details
+ * Describes how a declaration is accessible directly (in the `-Xccall-mode direct` mode), or why it is not.
  */
-class CxxMethodInfo(val receiverType: PointerType, val kind: CxxMethodKind = CxxMethodKind.InstanceMethod)
+sealed class DirectAccess {
+    /**
+     * The declaration is accessible directly using the specified symbol name.
+     *
+     * @property name
+     * The name of the declaration in the binary code (i.e. the symbol name as seen by the linker).
+     * It usually equals to `"_$name"` on Apple platforms and `name` on other platforms,
+     * but can be different if some modifiers like `__asm("foo")` are at play.
+     */
+    class Symbol(val name: String) : DirectAccess()
 
-fun CxxMethodInfo.isConst() : Boolean = receiverType.pointeeIsConst
-
+    /**
+     * The declaration is not accessible directly or not supported in the `-Xccall-mode direct` mode.
+     *
+     * @property reason
+     * Briefly describes why the declaration is not accessible.
+     */
+    class Unavailable(val reason: String) : DirectAccess()
+}
 
 /**
  * C function declaration.
  */
-class FunctionDecl(val name: String, val parameters: List<Parameter>, val returnType: Type, val binaryName: String,
-                   val isDefined: Boolean, val isVararg: Boolean,
-                   val parentName: String? = null, val cxxMethod: CxxMethodInfo? = null) {
+class FunctionDecl(
+        /**
+         * The name of the function in the source code.
+         */
+        val name: String,
+
+        val parameters: List<Parameter>,
+        val returnType: Type,
+        val isVararg: Boolean,
+
+        val directAccess: DirectAccess,
+
+        val parentName: String? = null
+) {
 
     val fullName: String = parentName?.let { "$parentName::$name" } ?: name
-
-    // C++ virtual or non-virtual instance member, i.e. has "this" receiver
-    val isCxxInstanceMethod: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.InstanceMethod
-
-    /**
-     * C++ class or instance member function, i.e. any function in the scope of class/struct: method, static, ctor, dtor, cast operator, etc
-     */
-    val isCxxMethod: Boolean get() = this.cxxMethod != null && this.cxxMethod.kind != CxxMethodKind.None
-
-    val isCxxConstructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Constructor
-    val isCxxDestructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Destructor
-    val cxxReceiverType: PointerType? get() = cxxMethod?.receiverType
-    val cxxReceiverClass: StructDecl?
-        get() = cxxMethod?. let { (this.cxxMethod.receiverType.pointeeType as RecordType).decl }
 }
 
 /**
@@ -354,7 +397,7 @@ class StringConstantDef(name: String, type: Type, val value: String) : ConstantD
 
 class WrappedMacroDef(name: String, val type: Type) : MacroDef(name)
 
-class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val parentName: String? = null) {
+class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val directAccess: DirectAccess, val parentName: String? = null) {
     val fullName: String get() = parentName?.let { "$it::$name" } ?: name
 }
 
@@ -367,7 +410,7 @@ interface PrimitiveType : Type
 
 object CharType : PrimitiveType
 
-open class BoolType: PrimitiveType
+open class BoolType : PrimitiveType
 
 object CBoolType : BoolType()
 
@@ -384,8 +427,6 @@ data class VectorType(val elementType: Type, val elementCount: Int, val spelling
 object VoidType : Type
 
 data class RecordType(val decl: StructDecl) : Type
-
-data class ManagedType(val decl: StructDecl) : Type
 
 data class EnumType(val def: EnumDef) : Type
 

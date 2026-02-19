@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -102,3 +103,7 @@ class DefiniteInitializationAfterThrow {
     }
     fun bar() = false
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, functionDeclaration, functionalType,
+ifExpression, init, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

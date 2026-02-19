@@ -1,19 +1,19 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
@@ -24,17 +24,86 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
-    put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
-    put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
+    put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
+    put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
+
+    // Important! Uncomment the reading from the environment below only for non-public builds, the environment reading should not be part of any public release.
+    val modelDumpDirString = arguments.dumpArgumentsDir // ?: System.getenv("KOTLIN_DUMP_MODEL")
+    val modelDumpDir = modelDumpDirString?.takeIf { it.isNotEmpty() && File(it).let { it.isDirectory && it.canWrite() } }
+
+    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, modelDumpDir)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
     put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
+    put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
 
+    val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
+        IrVerificationMode.resolveMode(verifyIrString).also {
+            if (it == null) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+            }
+        }
+    } ?: IrVerificationMode.NONE
+    put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
+
+    if (arguments.verifyIrVisibility) {
+        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
+        if (irVerificationMode == IrVerificationMode.NONE) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+            )
+        }
+    }
+
+    if (arguments.verifyIrNestedOffsets) {
+        put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
+        if (irVerificationMode == IrVerificationMode.NONE) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+            )
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    if (arguments.useFirExperimentalCheckers) {
+        put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
+        messageCollector.report(
+            CompilerMessageSeverity.WARNING,
+            "'-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release"
+        )
+    }
+
+    setupMetadataVersion(arguments, createMetadataVersion)
+
+    setupLanguageVersionSettings(arguments)
+
+    // It should be called after the language version is initialized because the reporting depends on the current language version
+    checkRedundantArguments(arguments)
+
+    val usesK2 = languageVersionSettings.languageVersion.usesK2
+    put(CommonConfigurationKeys.USE_FIR, usesK2)
+    put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
+    buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
+
+    if (arguments.debugLevelCompilerChecks) {
+        FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
+    }
+
+    put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, arguments.dontSortSourceFiles)
+}
+
+fun CompilerConfiguration.setupMetadataVersion(
+    arguments: CommonCompilerArguments,
+    createMetadataVersion: ((IntArray) -> BinaryVersion)?,
+) {
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
@@ -46,46 +115,44 @@ fun CompilerConfiguration.setupCommonArguments(
             else -> put(CommonConfigurationKeys.METADATA_VERSION, createMetadataVersion(versionArray))
         }
     }
-
-    switchToFallbackModeIfNecessary(arguments, messageCollector)
-    setupLanguageVersionSettings(arguments)
-
-    val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
-    put(CommonConfigurationKeys.USE_FIR, usesK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
-    buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
-}
-
-private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageCollector: MessageCollector) {
-    fun warn(message: String) {
-        if (!arguments.suppressVersionWarnings) messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-    }
-
-    if (arguments !is K2JVMCompilerArguments) return
-    val isK2 =
-        arguments.useK2 || (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
-    val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
-    when {
-        isK2 && isKaptUsed && !arguments.useKapt4 -> {
-            warn("Kapt currently doesn't support language version 2.0+. Falling back to 1.9.")
-            arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
-            if (arguments.apiVersion?.startsWith("2") == true) {
-                arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
-            }
-            arguments.useK2 = false
-            arguments.skipMetadataVersionCheck = true
-            arguments.skipPrereleaseCheck = true
-            arguments.allowUnstableDependencies = true
-        }
-        arguments.useKapt4 -> warn(
-            if (isK2) "Kapt 4 is an experimental feature. Use with caution."
-            else "-Xuse-kapt4 flag can be only used with language version 2.0+."
-        )
-    }
 }
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
-    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+}
+
+private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
+    val languageVersion = languageVersionSettings.languageVersion
+
+    propertiesLoop@ for ((explicitArgument, values) in arguments.explicitArguments) {
+        if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
+        val effectivePropertyValue = values.lastOrNull() ?: continue@propertiesLoop
+
+        fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
+            // At first, check if the annotation is relevant. Only Boolean and String types are allowed
+            when {
+                // Language features can't be disabled, so it's expected if the value is changed, it's always `true`
+                ifValueIs.isEmpty() -> require(effectivePropertyValue as Boolean)
+                else -> if (effectivePropertyValue as String != ifValueIs) return false
+            }
+
+            // At second check the necessity
+            return (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
+        }
+
+        explicitArgument.enablesAnnotations.forEach {
+            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
+        }
+        explicitArgument.disablesAnnotations.forEach {
+            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
+        }
+
+        val argValue = if (effectivePropertyValue is String) "=$effectivePropertyValue" else ""
+        reportDiagnostic(
+            CliDiagnostics.REDUNDANT_CLI_ARG,
+            "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
+        )
+    }
 }
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
@@ -111,6 +178,15 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
 }
 
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
+    for ((key, values) in arguments.explicitArguments) {
+        if (values.size <= 1 || values.distinct().size == 1) continue
+
+        val argName = key.argument.value
+        val valuesString = values.joinToString("', '")
+        val message = "Argument '$argName' is passed multiple times: '$valuesString'. The last value will be used."
+        report(CompilerMessageSeverity.STRONG_WARNING, message)
+    }
+
     val errors = arguments.errors ?: return
     for (flag in errors.unknownExtraFlags) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
@@ -121,9 +197,6 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
             "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
         )
     }
-    for ((key, value) in errors.duplicateArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
-    }
     for ((deprecatedName, newName) in errors.deprecatedArguments) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
     }
@@ -133,15 +206,15 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
 
     reportUnsafeInternalArgumentsIfAny(arguments)
 
-    for (internalArgumentsError in errors.internalArgumentsParsingProblems) {
-        report(CompilerMessageSeverity.STRONG_WARNING, internalArgumentsError)
+    for ((severity, internalArgumentsProblem) in errors.internalArgumentsParsingProblems) {
+        report(severity, internalArgumentsProblem)
     }
 }
 
 private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
     val unsafeArguments = arguments.internalArguments.filterNot {
         // -XXLanguage which turns on BUG_FIX considered safe
-        it is ManualLanguageFeatureSetting && it.languageFeature.kind == LanguageFeature.Kind.BUG_FIX && it.state == LanguageFeature.State.ENABLED
+        it.languageFeature.actuallyEnabledInProgressiveMode && it.state == LanguageFeature.State.ENABLED
     }
 
     if (unsafeArguments.isNotEmpty()) {
@@ -161,12 +234,18 @@ private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: Commo
     }
 }
 
+private val FRAGMENTS_ARG_NAME = CommonCompilerArguments::fragments.cliArgument
+private val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines.cliArgument
+private val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
+private val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
+private val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
+
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
     val rawFragments = arguments.fragments
     val rawFragmentSources = arguments.fragmentSources
     val rawFragmentRefines = arguments.fragmentRefines
 
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     fun reportError(message: String) {
         messageCollector.report(CompilerMessageSeverity.ERROR, message)
@@ -178,13 +257,13 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     if (rawFragments == null) {
         if (rawFragmentRefines != null) {
-            reportError("-Xfragment-refines flag can not be used without -Xfragments")
+            reportError("$FRAGMENT_REFINES_ARG_NAME flag can not be used without $FRAGMENTS_ARG_NAME")
         }
         return null
     }
 
     if (!languageVersionSettings.languageVersion.usesK2) {
-        reportWarning("-Xfragments flag is not supported for language version < 2.0")
+        reportWarning("$FRAGMENTS_ARG_NAME flag is not supported for language version < 2.0")
         return null
     }
 
@@ -194,7 +273,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             val split = rawFragmentSourceArg.split(":", limit = 2)
             if (split.size < 2) {
                 reportError(
-                    "Incorrect syntax for -Xfragment-sources argument. " +
+                    "Incorrect syntax for $FRAGMENT_SOURCES_ARG_NAME argument. " +
                             "`<module name>:<source file>` expected but got `$rawFragmentSourceArg`"
                 )
                 return@forEach
@@ -205,7 +284,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             getOrElse(fragmentName) {
                 reportError(
                     "Passed $rawFragmentSourceArg, " +
-                            "but fragment `$fragmentName` of source file $fragmentSource is not specified in -Xfragments"
+                            "but fragment `$fragmentName` of source file $fragmentSource is not specified in $FRAGMENTS_ARG_NAME"
                 )
                 return@forEach
             }.add(fragmentSource)
@@ -231,7 +310,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                     }
                     append(
                         " can be a part of only one module, but is listed as a source for both `${m1.name}` and `${m2.name}`, " +
-                                "please check you -Xfragment-sources options."
+                                "please check you $FRAGMENT_SOURCES_ARG_NAME options."
                     )
                 }
                 reportError(message)
@@ -254,9 +333,9 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     if (modules.size == 1) {
         if (rawFragmentRefines?.isNotEmpty() == true) {
-            reportError("-Xfragment-refines flag is specified but there is only one module declared")
+            reportError("$FRAGMENT_REFINES_ARG_NAME flag is specified but there is only one module declared")
         }
-        return HmppCliModuleStructure(modules, emptyMap())
+        return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap(), friendDependencies = emptyMap())
     }
 
     val duplicatedModules = modules.filter { module -> modules.count { it.name == module.name } > 1 }
@@ -268,11 +347,11 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleByName = modules.associateBy { it.name }
 
-    val dependenciesMap = rawFragmentRefines.orEmpty().mapNotNull { rawFragmentRefinesEdge ->
+    val sourceDependencies: Map<HmppCliModule, List<HmppCliModule>> = rawFragmentRefines.orEmpty().mapNotNull { rawFragmentRefinesEdge ->
         val split = rawFragmentRefinesEdge.split(":")
         if (split.size != 2) {
             reportError(
-                "Incorrect syntax for -Xfragment-refines argument. " +
+                "Incorrect syntax for $FRAGMENT_REFINES_ARG_NAME argument. " +
                         "Expected <fromModuleName>:<onModuleName> but got `$rawFragmentRefines`"
             )
             return@mapNotNull null
@@ -283,7 +362,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         fun findModule(name: String): HmppCliModule? {
             return moduleByName[name].also { module ->
                 if (module == null) {
-                    reportError("`-Xfragment-refines=$rawFragmentRefinesEdge` Fragment `$name` not found in -Xfragments arguments")
+                    reportError("`$FRAGMENT_REFINES_ARG_NAME=$rawFragmentRefinesEdge` Fragment `$name` not found in $FRAGMENTS_ARG_NAME arguments")
                 }
             }
         }
@@ -297,15 +376,47 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         valueTransform = { it.second }
     )
 
-    modules = DFS.topologicalOrder(modules) { dependenciesMap[it].orEmpty() }.asReversed()
+    modules = DFS.topologicalOrder(modules) { sourceDependencies[it].orEmpty() }.asReversed()
 
     modules.forEachIndexed { i, module ->
-        val dependencies = dependenciesMap[module].orEmpty()
+        val dependencies = sourceDependencies[module].orEmpty()
         val previousModules = modules.subList(0, i)
         if (dependencies.any { it !in previousModules }) {
             reportError("There is a cycle in dependencies of module `${module.name}`")
         }
     }
 
-    return HmppCliModuleStructure(modules, dependenciesMap)
+    if (arguments.fragmentDependencies != null && !arguments.separateKmpCompilationScheme) {
+        reportError("$FRAGMENT_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
+    }
+    if (arguments.fragmentFriendDependencies != null && !arguments.separateKmpCompilationScheme) {
+        reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
+    }
+
+    fun buildFragmentDependencyMap(arguments: Array<String>?, argumentName: String): Map<HmppCliModule, MutableList<String>> {
+        return buildMap {
+            for (argument in arguments.orEmpty()) {
+                val splitArg = argument.split(":", limit = 2)
+                if (splitArg.size != 2) {
+                    reportError(
+                        "Incorrect syntax for $argumentName argument. " +
+                                "Expected <moduleName>:<path> but got `$argument`"
+                    )
+                    continue
+                }
+                val (moduleName, dependency) = splitArg
+                val module = moduleByName[moduleName] ?: run {
+                    reportError("Module `$moduleName` not found in $FRAGMENTS_ARG_NAME arguments")
+                    continue
+                }
+                val dependencies = getOrPut(module) { mutableListOf() }
+                dependencies += dependency
+            }
+        }
+    }
+
+    val moduleDependencies = buildFragmentDependencyMap(arguments.fragmentDependencies, FRAGMENT_DEPENDENCIES_ARG_NAME)
+    val friendDependencies = buildFragmentDependencyMap(arguments.fragmentFriendDependencies, FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME)
+
+    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies)
 }

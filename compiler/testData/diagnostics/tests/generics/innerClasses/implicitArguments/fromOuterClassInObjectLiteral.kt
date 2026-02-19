@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class A<T> {
     fun foo() {
@@ -14,3 +15,6 @@ class A<T> {
         q.y
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass,
+localProperty, nullableType, propertyDeclaration, typeParameter */

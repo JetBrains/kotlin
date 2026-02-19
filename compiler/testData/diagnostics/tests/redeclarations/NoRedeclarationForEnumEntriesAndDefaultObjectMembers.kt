@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 enum class E {
     FIRST,
 
@@ -9,3 +10,6 @@ enum class E {
         val SECOND = <!DEBUG_INFO_LEAKING_THIS!>this<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, nestedClass, objectDeclaration,
+propertyDeclaration, thisExpression */

@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.staticDefaultStub
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -31,15 +32,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.util.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal val staticDefaultFunctionPhase = makeIrFilePhase(
-    ::StaticDefaultFunctionLowering,
-    name = "StaticDefaultFunction",
-    description = "Make function adapters for default arguments static",
-    prerequisite = setOf(jvmStaticInObjectPhase),
-)
-
-private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+/**
+ * Makes function adapters for default arguments static.
+ */
+@PhasePrerequisites(JvmStaticInObjectLowering::class)
+internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
@@ -54,7 +53,7 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
     )
 
     override fun visitReturn(expression: IrReturn): IrExpression {
-        val irFunction = context.staticDefaultStubs[expression.returnTargetSymbol]
+        val irFunction = (expression.returnTargetSymbol.owner as? IrSimpleFunction)?.staticDefaultStub
         return super.visitReturn(
             if (irFunction != null) {
                 with(expression) {
@@ -73,13 +72,13 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
         }
 
         val newCallee = getStaticFunctionWithReceivers(callee)
-        val newCall = irCall(expression, newCallee, receiversAsArguments = true)
+        val newCall = irCall(expression, newCallee)
 
         return super.visitCall(newCall)
     }
 
     private fun getStaticFunctionWithReceivers(function: IrSimpleFunction): IrSimpleFunction =
-        context.staticDefaultStubs.getOrPut(function.symbol) {
+        function::staticDefaultStub.getOrSetIfNull {
             context.irFactory.createStaticFunctionWithReceivers(
                 function.parent,
                 function.name,

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface Base {
     fun baseFun()
@@ -82,3 +83,7 @@ abstract class A<T : Base> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, nestedClass, propertyDeclaration, smartcast, starProjection, typeConstraint,
+typeParameter */

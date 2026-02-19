@@ -12,15 +12,16 @@ package kotlin.test
  * Sample test layout:
  *
  * ```
- * suite('a suite', false, function() {
- *   suite('a subsuite', false, function() {
- *     test('a test', false, function() {...});
- *     test('an ignored/pending test', true, function() {...});
- *   });
- *   suite('an ignored/pending test', true, function() {...});
- * });
+ * suite("top-level-package1", ignored = false) {
+ *     suite("TestClass1", ignored = false) {
+ *         suite("a subsuite", ignored = false) {
+ *             test("a test", ignored = false) {...}
+ *             test("an ignored/pending test", ignored = true) {...}
+ *         }
+ *         suite("an ignored/pending test", ignored = true) {...}
+ *     }
+ * }
  * ```
- *
  */
 public interface FrameworkAdapter {
 
@@ -31,7 +32,7 @@ public interface FrameworkAdapter {
      * @param ignored whether the test suite is ignored, e.g. marked with [Ignore] annotation
      * @param suiteFn defines nested suites by calling [kotlin.test.suite] and tests by calling [kotlin.test.test]
      */
-    fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
+    public fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
     /**
      * Declares a test.
@@ -40,5 +41,5 @@ public interface FrameworkAdapter {
      * @param ignored whether the test is ignored
      * @param testFn contains test body invocation
      */
-    fun test(name: String, ignored: Boolean, testFn: () -> Any?)
+    public fun test(name: String, ignored: Boolean, testFn: () -> Any?)
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A {
   operator fun plusAssign(x: Int) {}
@@ -39,3 +40,6 @@ fun testWrong() {
   <!VARIABLE_EXPECTED!>B()<!> /= 1
   <!VARIABLE_EXPECTED!>B()<!> %= 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+localProperty, multiplicativeExpression, operator, propertyDeclaration */

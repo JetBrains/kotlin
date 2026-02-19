@@ -1,2 +1,0 @@
-expected symbols:
-Common.kt : object Platform

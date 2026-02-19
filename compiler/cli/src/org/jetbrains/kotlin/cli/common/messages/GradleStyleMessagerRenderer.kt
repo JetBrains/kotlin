@@ -11,7 +11,7 @@ class GradleStyleMessageRenderer : MessageRenderer {
 
     override fun render(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?): String {
         val prefix = when (severity) {
-            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> "w"
+            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.FIXED_WARNING -> "w"
             CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION -> "e"
             CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT -> "v"
             CompilerMessageSeverity.INFO -> "i"
@@ -24,8 +24,9 @@ class GradleStyleMessageRenderer : MessageRenderer {
                 val fileUri = File(path).toPath().toUri()
                 append("$fileUri")
                 if (line > 0 && column > 0) {
-                    append(":$line:$column ")
+                    append(":$line:$column")
                 }
+                append(' ')
             }
 
             append(message)

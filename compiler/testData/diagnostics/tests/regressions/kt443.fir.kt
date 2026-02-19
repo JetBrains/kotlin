@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-443 Write allowed to super.val
 
 open class M() {
@@ -12,3 +13,6 @@ class N() : M() {
         }
     override val b: Int = a + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, getter, integerLiteral, override,
+primaryConstructor, propertyDeclaration, superExpression */

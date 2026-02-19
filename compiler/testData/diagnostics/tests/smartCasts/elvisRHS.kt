@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // KT-5335
 
@@ -8,3 +9,6 @@ fun foo(p1: String?, p2: String?) {
         val size = v.length
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast */

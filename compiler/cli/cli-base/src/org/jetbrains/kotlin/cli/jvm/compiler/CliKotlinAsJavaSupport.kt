@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,6 +43,8 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
     override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
         error("Should not be called")
     }
+
+    override fun projectWideOutOfBlockModificationTracker(): ModificationTracker = ModificationTracker.NEVER_CHANGED
 
     override fun librariesTracker(element: PsiElement): ModificationTracker {
         error("Should not be called")

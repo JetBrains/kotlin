@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Bound1>")!>testInv()<!>
@@ -41,3 +42,7 @@ fun testErrorType() = BiParam(
     intersect(First, Second),
     <!UNRESOLVED_REFERENCE!>unresolved<!>
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, interfaceDeclaration, intersectionType,
+nullableType, objectDeclaration, out, outProjection, primaryConstructor, propertyDeclaration, starProjection,
+typeConstraint, typeParameter, vararg */

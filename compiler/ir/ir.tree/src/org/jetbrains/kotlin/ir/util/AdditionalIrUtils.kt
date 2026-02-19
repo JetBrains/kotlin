@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
-import java.io.File
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
 
@@ -23,8 +28,8 @@ fun IrClassifierSymbol?.isArrayOrPrimitiveArray(builtins: IrBuiltIns): Boolean =
     this == builtins.arrayClass || this in builtins.primitiveArraysToPrimitiveTypes
 
 // Constructors can't be marked as inline in metadata, hence this check.
-fun IrFunction.isInlineArrayConstructor(builtIns: IrBuiltIns): Boolean =
-    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.isArrayOrPrimitiveArray(builtIns)
+fun IrFunction.isInlineArrayConstructor(): Boolean =
+    this is IrConstructor && hasShape(regularParameters = 2) && constructedClass.defaultType.let { it.isArray() || it.isPrimitiveArray() }
 
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
@@ -60,6 +65,12 @@ private val IrDeclarationWithName.classIdImpl: ClassId?
     get() = when (val parent = this.parent) {
         is IrClass -> parent.classId?.createNestedClassId(this.name)
         is IrPackageFragment -> ClassId.topLevel(parent.packageFqName.child(this.name))
+        is IrScript -> {
+            // if the script is already lowered, use the target class as parent, otherwise use the package as parent, assuming that
+            // the script to class lowering will rewrite it correctly
+            parent.targetClass?.owner?.classId?.createNestedClassId(this.name)
+                ?: (parent.parent as? IrFile)?.packageFqName?.child(this.name)?.let { ClassId.topLevel(it) }
+        }
         else -> null
     }
 
@@ -94,20 +105,6 @@ private val IrDeclarationWithName.callableIdImpl: CallableId
         } ?: error("$this has no callableId")
     }
 
-@Suppress("unused")
-@Deprecated(
-    "This function is deprecated because it has confusing name and behavior. " +
-            "Please use IrDeclarationWithName.name or IrDeclaration.getNameWithAssert",
-    ReplaceWith("(this as? IrDeclarationWithName)?.name", "org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName"),
-    DeprecationLevel.ERROR
-)
-val IrDeclaration.nameForIrSerialization: Name
-    get() = when (this) {
-        is IrDeclarationWithName -> this.name
-        is IrConstructor -> SpecialNames.INIT
-        else -> error(this)
-    }
-
 fun IrDeclaration.getNameWithAssert(): Name =
     if (this is IrDeclarationWithName) name else error(this)
 
@@ -130,17 +127,21 @@ fun <S : IrSymbol> IrOverridableDeclaration<S>.overrides(other: IrOverridableDec
     return false
 }
 
-private val IrConstructorCall.annotationClass
+private val IrAnnotation.annotationClass
     get() = this.symbol.owner.constructedClass
 
-fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
-    annotationClass.hasEqualFqName(fqName)
+fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
+    if (symbol.isBound) {
+        annotationClass.hasEqualFqName(fqName)
+    } else {
+        symbol.hasEqualFqName(fqName.child(SpecialNames.INIT))
+    }
 
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
 fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
-    symbol.hasEqualFqName(fqName) || name == fqName.shortName() && when (val parent = parent) {
+    name == fqName.shortName() && when (val parent = parent) {
         is IrPackageFragment -> parent.packageFqName == fqName.parent()
         is IrDeclarationWithName -> parent.hasEqualFqName(fqName.parent())
         else -> false
@@ -153,7 +154,7 @@ fun IrDeclarationWithName.hasTopLevelEqualFqName(packageName: String, declaratio
     }
 
 fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
-    return this is IrClassPublicSymbolImpl && with(signature as? IdSignature.CommonSignature ?: return false) {
+    return with(signature as? IdSignature.CommonSignature ?: return false) {
         // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
         val fqNameAsString = fqName.asString()
         fqNameAsString.length == packageFqName.length + 1 + declarationFqName.length &&
@@ -163,18 +164,20 @@ fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
     }
 }
 
-private fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
-    return this is IrClassPublicSymbolImpl && with(signature as? IdSignature.CommonSignature ?: return false) {
+fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
+    return with(signature as? IdSignature.CommonSignature ?: return false) {
         // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
         packageFqName == packageName && declarationFqName == declarationName
     }
 }
 
-fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
-    any { it.annotationClass.hasEqualFqName(fqName) }
+fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
 
-fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
-    firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
+fun List<IrAnnotation>.hasAnnotation(fqName: FqName): Boolean =
+    any { it.isAnnotationWithEqualFqName(fqName) }
+
+fun List<IrAnnotation>.findAnnotation(fqName: FqName): IrAnnotation? =
+    firstOrNull { it.isAnnotationWithEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
@@ -186,6 +189,8 @@ val IrDeclaration.fileEntry: IrFileEntry
         }
     }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 fun IrClass.companionObject(): IrClass? =
     this.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?
 
@@ -204,110 +209,73 @@ val IrDeclaration.isPropertyField get() =
 val IrDeclaration.isJvmInlineClassConstructor get() =
     this is IrSimpleFunction && name.asString() == "constructor-impl"
 
-val IrDeclaration.isTopLevelDeclaration get() =
-    parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
-
 val IrDeclaration.isAnonymousObject get() = this is IrClass && name == SpecialNames.NO_NAME_PROVIDED
 
 val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name == SpecialNames.NO_NAME_PROVIDED
 
-val IrDeclaration.isLocal: Boolean
-    get() {
-        var current: IrElement = this
-        while (current !is IrPackageFragment) {
-            require(current is IrDeclaration)
+/**
+ * Used to mark local declarations that have been lifted out of their local scope and changed their visibility to a non-local one.
+ *
+ * Sometimes it is useful to be able to distinguish such declarations even after they were lifted.
+ */
+var IrDeclaration.isOriginallyLocalDeclaration: Boolean by irFlag(copyByDefault = true)
 
-            if (current is IrDeclarationWithVisibility) {
-                if (current.visibility == DescriptorVisibilities.LOCAL) return true
-            }
+private inline fun IrDeclaration.isLocalImpl(isLocal: (IrDeclarationWithVisibility) -> Boolean): Boolean {
+    var current: IrElement = this
+    while (current !is IrPackageFragment) {
+        require(current is IrDeclaration)
 
-            if (current.isAnonymousObject) return true
-            if (current is IrScript || (current is IrClass && current.origin == IrDeclarationOrigin.SCRIPT_CLASS)) return true
-
-            current = current.parent
+        if (current is IrDeclarationWithVisibility) {
+            if (isLocal(current)) return true
         }
 
-        return false
+        if (current.isAnonymousObject) return true
+        if (current is IrScript || (current is IrClass && current.origin == IrDeclarationOrigin.SCRIPT_CLASS)) return true
+
+        current = current.parent
     }
+
+    return false
+}
+
+val IrDeclaration.isLocal: Boolean
+    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL }
+
+val IrDeclaration.isOriginallyLocal: Boolean
+    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it.isOriginallyLocalDeclaration }
 
 @ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.descriptor.module
 
 const val SYNTHETIC_OFFSET = -2
 
-val File.lineStartOffsets: IntArray
-    get() {
-        // TODO: could be incorrect, if file is not in system's line terminator format.
-        // Maybe use (0..document.lineCount - 1)
-        //                .map { document.getLineStartOffset(it) }
-        //                .toIntArray()
-        // as in PSI.
-        val separatorLength = System.lineSeparator().length
-        val buffer = mutableListOf<Int>()
-        var currentOffset = 0
-        this.forEachLine { line ->
-            buffer.add(currentOffset)
-            currentOffset += line.length + separatorLength
-        }
-        buffer.add(currentOffset)
-        return buffer.toIntArray()
-    }
-
-val IrFileEntry.lineStartOffsets: IntArray
-    get() = when (this) {
-        is PsiIrFileEntry -> this.getLineOffsets()
-        else -> File(name).let { if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0) }
-    }
-
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
-    private val lineStartOffsets: IntArray = intArrayOf(),
-    override val maxOffset: Int = UNDEFINED_OFFSET
-) : IrFileEntry {
+    override val lineStartOffsets: IntArray = intArrayOf(),
+    override val maxOffset: Int = UNDEFINED_OFFSET,
+    override val firstRelevantLineIndex: Int = 0,
+) : AbstractIrFileEntry() {
     val lineStartOffsetsAreEmpty: Boolean
         get() = lineStartOffsets.isEmpty()
 
-    private val MAX_SAVED_LINE_NUMBERS = 50
-
-    // Map with several last calculated line numbers.
-    // Calculating for same offset is made many times during code and debug info generation.
-    // In the worst case at least getting column recalculates line because it is usually called after getting line.
-    private val calculatedBeforeLineNumbers = object : SLRUCache<Int, Int>(
-        MAX_SAVED_LINE_NUMBERS / 2, MAX_SAVED_LINE_NUMBERS / 2
-    ) {
-        override fun createValue(key: Int): Int {
-            val index = lineStartOffsets.binarySearch(key)
-            return if (index >= 0) index else -index - 2
-        }
-    }
-
-    private val lineNumberLock = Any()
-
     override fun getLineNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return UNDEFINED_LINE_NUMBER
-        return synchronized(lineNumberLock) { calculatedBeforeLineNumbers.get(offset) }
+        return super.getLineNumber(offset)
     }
 
     override fun getColumnNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return UNDEFINED_COLUMN_NUMBER
-        val lineNumber = getLineNumber(offset)
-        return if (lineNumber < 0) UNDEFINED_COLUMN_NUMBER else offset - lineStartOffsets[lineNumber]
+        return super.getColumnNumber(offset)
     }
 
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
-        SourceRangeInfo(
-            filePath = name,
-            startOffset = beginOffset,
-            startLineNumber = getLineNumber(beginOffset),
-            startColumnNumber = getColumnNumber(beginOffset),
-            endOffset = endOffset,
-            endLineNumber = getLineNumber(endOffset),
-            endColumnNumber = getColumnNumber(endOffset)
-        )
+    override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
+        if (offset == SYNTHETIC_OFFSET) return LineAndColumn(0, 0)
+        return super.getLineAndColumnNumbers(offset)
+    }
 }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
     val properties = declarations.filterIsInstanceAnd<IrProperty> { it.name.asString() == name }
     if (properties.size > 1) {
@@ -322,23 +290,76 @@ private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
 fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.getter?.symbol
         ?: getSimpleFunction("<get-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 fun IrClass.getPropertySetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.setter?.symbol
         ?: getSimpleFunction("<set-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getSimpleFunction(name: String): IrSimpleFunctionSymbol? = owner.getSimpleFunction(name)
 
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertyGetter(name)
 
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
-fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
-    return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
+fun filterOutAnnotations(fqName: FqName, annotations: List<IrAnnotation>): List<IrAnnotation> {
+    return annotations.filterNot { it.isAnnotationWithEqualFqName(fqName) }
 }
+
+fun IrFunction.isBuiltInSuspendCoroutine(): Boolean =
+    isTopLevelInPackage("suspendCoroutine", StandardNames.COROUTINES_PACKAGE_FQ_NAME)
+
+fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
+    isTopLevelInPackage(
+        "suspendCoroutineUninterceptedOrReturn",
+        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
+    )
+
+/**
+ * @return null - if [this] class is not an annotation class ([isAnnotationClass])
+ * set of [KotlinTarget] representing the annotation targets of the annotation
+ * ```
+ * @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
+ * annotation class Foo
+ * ```
+ *
+ * shall return Class, Function, Property & Constructor
+ */
+fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
+    if (!this.isAnnotationClass) return null
+
+    val valueArgument = getAnnotation(StandardNames.FqNames.target)
+        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
+        ?: return KotlinTarget.DEFAULT_TARGET_SET
+    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
+        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
+    }.toSet()
+}
+
+val IrFunctionSymbol.isFunctionalTypeInvoke: Boolean
+    get() = owner.name == OperatorNameConventions.INVOKE && owner.parentClassOrNull?.symbol?.isFunctional() == true
+
+fun IrClass.selectSAMOverriddenFunctionOrNull(): IrSimpleFunction? {
+    return when {
+        // Function classes on jvm have some extra methods, which would be in fact implemented by super type,
+        // e.g., callBy and other reflection related callables. So we need to filter them out.
+        symbol.isFunctional() ->
+            functions.singleOrNull { it.name == OperatorNameConventions.INVOKE }
+        symbol.defaultType.isKProperty() ->
+            functions.singleOrNull { it.name == OperatorNameConventions.GET }
+        else ->
+            functions.singleOrNull { it.modality == Modality.ABSTRACT }
+    }
+}
+
+fun IrClass.selectSAMOverriddenFunction(): IrSimpleFunction = selectSAMOverriddenFunctionOrNull()
+    ?: error("${render()} should have a single abstract method to be a type of function reference")

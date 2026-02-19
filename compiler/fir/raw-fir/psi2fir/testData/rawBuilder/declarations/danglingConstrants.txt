@@ -1,0 +1,24 @@
+FILE: danglingConstrants.kt
+    public? final? fun function(): Int {
+    }
+    public? final? val property: String = String(0)
+        public? get(): String
+    public final? class TopLevelClass : R|kotlin/Any| {
+        public? [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? fun memberFunction(): Int {
+        }
+
+        public? final? val memberProperty: String = String(0)
+            public? [ContainingClassKey=TopLevelClass] get(): String
+
+        public final? class NestedClass : R|kotlin/Any| {
+            public? [ContainingClassKey=NestedClass] constructor(): R|TopLevelClass.NestedClass| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

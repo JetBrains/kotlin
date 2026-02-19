@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun baz(s: String?): Int {
     return if (s == null) {
         ""
@@ -8,3 +9,6 @@ fun baz(s: String?): Int {
         <!DEBUG_INFO_SMARTCAST!>u<!>
     }.length
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

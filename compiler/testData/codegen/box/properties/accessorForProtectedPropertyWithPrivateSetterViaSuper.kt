@@ -1,3 +1,4 @@
+
 // FILE: accessorForProtectedPropertyWithPrivateSetterViaSuper.kt
 import a.A
 

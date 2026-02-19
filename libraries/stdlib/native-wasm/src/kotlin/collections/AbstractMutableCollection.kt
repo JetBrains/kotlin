@@ -10,7 +10,6 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the collection. The collection is invariant in its element type.
  */
-@AllowDifferentMembersInActual // New 'AbstractCollection` supertype is added compared to the expect declaration
 public actual abstract class AbstractMutableCollection<E> protected actual constructor(): MutableCollection<E>, AbstractCollection<E>() {
 
     // Bulk Modification Operations
@@ -19,6 +18,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      *
      * @return `true` if any of the specified elements was added to the collection, `false` if the collection was not modified.
      */
+    @IgnorableReturnValue
     actual override public fun addAll(elements: Collection<E>): Boolean {
         var changed = false
         for (v in elements) {
@@ -33,6 +33,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      *
      * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
      */
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean {
         val it = iterator()
         while (it.hasNext()) {
@@ -49,6 +50,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      *
      * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
      */
+    @IgnorableReturnValue
     actual override public fun removeAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).removeAll { it in elements }
 
     /**
@@ -56,6 +58,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      *
      * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
      */
+    @IgnorableReturnValue
     actual override public fun retainAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).retainAll { it in elements }
 
     /**
@@ -64,7 +67,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
     actual override fun clear(): Unit {
         val it = iterator()
         while (it.hasNext()) {
-            it.next()
+            val _ = it.next()
             it.remove()
         }
     }

@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -91,6 +95,11 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
             processor(constructorSymbol)
         }
     }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirGeneratedClassDeclaredMemberScope? {
+        return null
+    }
 }
 
 class FirGeneratedClassNestedClassifierScope private constructor(
@@ -116,7 +125,7 @@ class FirGeneratedClassNestedClassifierScope private constructor(
                 .getClassifierStorage(classSymbol, regularNestedClassifierScope)
                 ?: return null
 
-            return FirGeneratedClassNestedClassifierScope(useSiteSession, classSymbol.fir, storage,)
+            return FirGeneratedClassNestedClassifierScope(useSiteSession, classSymbol.fir, storage)
         }
     }
 
@@ -130,6 +139,11 @@ class FirGeneratedClassNestedClassifierScope private constructor(
 
     override fun getClassifierNames(): Set<Name> {
         return storage.allClassifierNames
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirGeneratedClassNestedClassifierScope? {
+        return null
     }
 }
 
@@ -238,6 +252,9 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             val generatedClasses = extensions.mapNotNull { extension ->
                 extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext)?.also { symbol ->
                     symbol.fir.ownerGenerator = extension
+                    if (classSymbol.isLocal) {
+                        symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
+                    }
                 }
             }
 
@@ -268,7 +285,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
-        return if (classSymbol.origin.generated) {
+        return if (classSymbol.origin.generated && !classSymbol.isLocal) {
             listOf(classSymbol.fir.ownerGenerator!!)
         } else {
             session.extensionService.declarationGenerators

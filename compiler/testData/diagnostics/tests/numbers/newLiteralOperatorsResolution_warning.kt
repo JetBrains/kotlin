@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-38895
 
@@ -113,3 +114,5 @@ fun testNoOperators() {
     takeInt(1)
     takeLong(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, multiplicativeExpression */

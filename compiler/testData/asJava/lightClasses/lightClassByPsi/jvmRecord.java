@@ -1,23 +1,16 @@
 @kotlin.jvm.JvmRecord()
 public final class MyRec /* pkg.MyRec*/ {
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String name;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String name;
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String component1();//  component1()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String component1();//  component1()
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String name();//  name()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String name();//  name()
 
   @org.jetbrains.annotations.NotNull()
-  public final pkg.MyRec copy(@org.jetbrains.annotations.NotNull() java.lang.String);//  copy(java.lang.String)
+  public final @org.jetbrains.annotations.NotNull() pkg.MyRec copy(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  copy(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @org.jetbrains.annotations.NotNull()
-  public java.lang.String toString();//  toString()
-
-  public  MyRec(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
-
-  public int hashCode();//  hashCode()
+  public  MyRec(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

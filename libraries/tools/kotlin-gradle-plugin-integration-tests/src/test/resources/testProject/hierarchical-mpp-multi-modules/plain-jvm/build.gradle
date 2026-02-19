@@ -1,5 +1,5 @@
-group 'org.jetbrains.qa.combompp'
-version publishing_version
+group = 'org.jetbrains.qa.combompp'
+version = publishing_version
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -12,6 +12,8 @@ dependencies {
     api project(":bottom-mpp")
 }
 
+kotlin.jvmToolchain(8)
+
 [compileKotlin, compileTestKotlin]*.configure {
     kotlinOptions {
         kotlinOptions.jvmTarget = "1.8"
@@ -22,9 +24,9 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId 'org.jetbrains.qa.combompp'
-            artifactId 'plain-jvm'
-            version publishing_version
+            groupId = 'org.jetbrains.qa.combompp'
+            artifactId = 'plain-jvm'
+            version = publishing_version
             from components.java
         }
     }
@@ -34,5 +36,7 @@ publishing {
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 configurations.all {
-    attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+    if (isCanBeResolved()) {
+        attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+    }
 }

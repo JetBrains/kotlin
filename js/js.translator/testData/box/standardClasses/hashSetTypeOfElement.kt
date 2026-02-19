@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1300
 package foo
 
 
@@ -7,6 +6,8 @@ fun box(): String {
 
     val x = true
     val y = false
+
+    val longUnderlyingType = jsTypeOf(0L)
 
     val intSet = HashSet<Int>()
     intSet.add(1)
@@ -58,7 +59,7 @@ fun box(): String {
 
     val longSet = HashSet<Long>()
     longSet.add(1L)
-    assertEquals("object", jsTypeOf (longSet.iterator().next()), "longSet")
+    assertEquals(longUnderlyingType, jsTypeOf (longSet.iterator().next()), "longSet")
 
     val booleanSet = HashSet<Boolean>()
     booleanSet.add(true)
@@ -70,4 +71,3 @@ fun box(): String {
 
     return "OK"
 }
-

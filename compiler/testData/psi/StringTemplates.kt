@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun demo() {
   val abc = 1
   val a = ""

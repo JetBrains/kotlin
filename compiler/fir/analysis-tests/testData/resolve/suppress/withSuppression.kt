@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 const val x = "123"
     @Suppress(<!ERROR_SUPPRESSION!>"CONST_VAL_WITH_GETTER"<!>)
     get() = field
 
 val y = "789"
 
-const val z = @Suppress(<!ERROR_SUPPRESSION!>"CONST_VAL_WITH_NON_CONST_INITIALIZER"<!>) y
+const val z = @Suppress(<!ERROR_SUPPRESSION!>"NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"<!>) y
 
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
@@ -18,3 +19,7 @@ interface A
 interface B : @Suppress(<!ERROR_SUPPRESSION!>"SUPERTYPE_INITIALIZED_IN_INTERFACE"<!>) A<!NO_CONSTRUCTOR!>()<!>
 
 data class D @Suppress(<!ERROR_SUPPRESSION!>"DATA_CLASS_VARARG_PARAMETER"<!>) constructor(vararg val x: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, data, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, nullableType, outProjection, primaryConstructor, propertyDeclaration, stringLiteral,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, vararg */

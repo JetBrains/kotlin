@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Node.java
 
 public interface Node<R> {
@@ -21,3 +22,6 @@ fun foo(): Boolean {
     val some = true
     return !some
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, javaType, localProperty, override,
+propertyDeclaration */

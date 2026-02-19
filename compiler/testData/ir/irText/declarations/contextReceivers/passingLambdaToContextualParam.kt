@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
+// LANGUAGE: +ContextReceivers
 
 class C {
     val result = "OK"

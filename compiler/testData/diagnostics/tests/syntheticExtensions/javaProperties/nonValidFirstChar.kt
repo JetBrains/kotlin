@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: A.java
@@ -12,3 +13,5 @@ fun foo(a: A) {
     a.<!UNRESOLVED_REFERENCE!>`1`<!>
     a.get1()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

@@ -7,14 +7,14 @@ public final class ListSet {
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public @org.jetbrains.annotations.NotNull method get(p0: int): java.lang.Object
     public method getSize(): int
-    public method indexOf(@org.jetbrains.annotations.NotNull p0: java.lang.Object): int
+    public method indexOf(@org.jetbrains.annotations.Nullable p0: java.lang.Object): int
     public method isEmpty(): boolean
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
-    public method lastIndexOf(@org.jetbrains.annotations.NotNull p0: java.lang.Object): int
+    public method lastIndexOf(@org.jetbrains.annotations.Nullable p0: java.lang.Object): int
     public @org.jetbrains.annotations.NotNull method listIterator(): java.util.ListIterator
     public @org.jetbrains.annotations.NotNull method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): java.lang.Object

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A {
     fun f() {}
 }
@@ -8,3 +9,5 @@ class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
         super<A>.f()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, superExpression */

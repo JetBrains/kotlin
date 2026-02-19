@@ -72,7 +72,7 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
                 }
             }
 
-            methodNode.instructions.toArray().filter { localVarLables.contains(it) || it is LineNumberNode }
+            methodNode.instructions.filter { localVarLables.contains(it) || it is LineNumberNode }
         }
 
         for (i in 0..specialLabels.size - 2) {

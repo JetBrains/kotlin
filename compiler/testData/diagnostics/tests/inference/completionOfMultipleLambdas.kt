@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER
 
 fun <K> select(x: K, y: K): K = x
 fun <K> select3(x: K, y: K, z: K): K = x
@@ -29,3 +30,6 @@ fun test_2(x: Int) {
     val f1: () -> Int = select({ bar() }, ::bar) // TYPE_MISMATCH on lambda
     val f2 = select({ bar() }, ::bar) // Same
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

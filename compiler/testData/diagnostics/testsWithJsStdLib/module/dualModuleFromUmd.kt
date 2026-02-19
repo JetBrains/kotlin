@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1
 // FILE: a.kt
 package foo
@@ -18,7 +18,7 @@ external open class B {
 }
 
 // MODULE: m2(m1)
-// MODULE_KIND: UMD
+// JS_MODULE_KIND: UMD
 // FILE: c.kt
 package bar
 

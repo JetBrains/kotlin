@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,13 +9,12 @@ import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.LanguageFeature
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.HashSet
 
 class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
+        private val KOTLIN_FILE_PATTERN = Pattern.compile(".+\\.kt")
         private val SOURCES_FILE_PATTERN = Pattern.compile(".+\\.(java|kt|js)")
 
         @Suppress("SpellCheckingInspection")
@@ -37,7 +36,6 @@ class CodeConformanceTest : TestCase() {
                 "intellij",
                 "js/js.tests/.gradle",
                 "js/js.tests/build",
-                "js/js.translator/qunit/qunit.js",
                 "js/js.translator/testData/node_modules",
                 "local",
                 "libraries/kotlin.test/js/it/.gradle",
@@ -59,9 +57,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "libraries/tools/kotlin-source-map-loader/.gradle",
-                "libraries/tools/kotlin-test-js-runner/.gradle",
-                "libraries/tools/kotlin-test-js-runner/lib",
-                "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlinp/src",
@@ -70,7 +65,9 @@ class CodeConformanceTest : TestCase() {
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "kotlin-native/build",
                 "kotlin-native/performance",
-                "kotlin-native/samples"
+                "kotlin-native/samples",
+                "wasm/wasm.debug.browsers/node_modules",
+                "wasm/wasm.debug.browsers/.gradle",
             )
         )
 
@@ -80,7 +77,7 @@ class CodeConformanceTest : TestCase() {
             listOf(
                 "build",
                 "compiler/ir/serialization.js/build/fullRuntime",
-                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
+                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "dependencies",
                 "dependencies/android-sdk/build",
                 "dependencies/protobuf/protobuf-relocated/build",
@@ -104,7 +101,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-ir/.gradle",
                 "libraries/stdlib/js-ir/build",
                 "libraries/stdlib/js-ir/build/",
-                "libraries/stdlib/js-ir/runtime/longjs.kt",
+                "libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "libraries/stdlib/js-ir-minimal-for-test/.gradle",
                 "libraries/stdlib/js-ir-minimal-for-test/build",
                 "libraries/stdlib/js-v1/.gradle",
@@ -117,6 +114,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/gradle/android-test-fixes/build",
                 "libraries/tools/gradle/gradle-warnings-detector/build",
                 "libraries/tools/gradle/kotlin-compiler-args-properties/build",
+                "libraries/tools/gradle/documentation/build",
                 "libraries/tools/kotlin-allopen/build",
                 "libraries/tools/kotlin-assignment/build",
                 "libraries/tools/kotlin-gradle-build-metrics/build",
@@ -125,14 +123,10 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/.testKitDir",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
-                "libraries/tools/kotlin-gradle-plugin-model/build",
                 "libraries/tools/kotlin-gradle-statistics/build",
                 "libraries/tools/kotlin-lombok/build",
                 "libraries/tools/kotlin-maven-plugin-test/target",
                 "libraries/tools/kotlin-noarg/build",
-                "libraries/tools/kotlin-test-js-runner/.gradle",
-                "libraries/tools/kotlin-test-js-runner/lib",
-                "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlin-sam-with-receiver/build",
@@ -141,14 +135,87 @@ class CodeConformanceTest : TestCase() {
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-                "repo/gradle-settings-conventions/build-cache/build/generated-sources",
+                "repo/gradle-settings-conventions/kotlin-bootstrap/build/generated-sources",
+                "repo/gradle-settings-conventions/cache-redirector/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
-                "repo/gradle-settings-conventions/gradle-enterprise/build/generated-sources",
+                "repo/gradle-settings-conventions/develocity/build/generated-sources",
                 "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
                 "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
+                "repo/gradle-build-conventions/generators/build/generated-sources",
+                "repo/gradle-build-conventions/project-tests-convention/build/generated-sources",
+                "repo/gradle-build-conventions/test-data-manager-convention/build/generated-sources",
+                "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
+                "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
+                "repo/gradle-build-conventions/binaryen-configuration/build/generated-sources",
+                "repo/gradle-build-conventions/d8-configuration/build/generated-sources",
+                "repo/gradle-build-conventions/nodejs-configuration/build/generated-sources",
+                "repo/gradle-build-conventions/gradle-plugins-common/build/generated-sources",
+                "repo/gradle-build-conventions/gradle-plugins-documentation/build/generated-sources",
+                "wasm/wasm.debug.browsers/node_modules",
+                "wasm/wasm.debug.browsers/.gradle",
                 ".gradle/expanded",
             )
         )
+    }
+
+    fun testNotUsingCanonicalFileApi() {
+        val canonicalPattern = Pattern.compile("\\.canonical(Path|File)", Pattern.MULTILINE)
+
+        // find KGP modules except the modules of internal test infrastructure
+        val kgpDirs = File("libraries/tools").walkTopDown()
+            .maxDepth(2)
+            .filter { it.isDirectory && it.name.startsWith("kotlin-gradle-") && "test" !in it.name }
+            // Check only `src` directory
+            .flatMap { it.walkTopDown().maxDepth(1).filter { file -> file.isDirectory && file.name == "src" } }
+            .map { it.path }
+            .toList()
+
+        val targetDirs = kgpDirs + listOf(
+            "build-common/src",
+            "compiler/build-tools/kotlin-build-statistics/src",
+            "compiler/build-tools/kotlin-build-tools-api/src",
+            "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-compat/src",
+            "compiler/build-tools/kotlin-build-tools-jdk-utils/src",
+            "compiler/daemon/daemon-client/src",
+            "compiler/daemon/daemon-common/src",
+            "compiler/daemon/src",
+            "compiler/incremental-compilation-impl/src",
+            "jps/jps-common/src",
+            "jps/jps-plugin/src",
+        )
+
+        targetDirs.map {
+            FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
+        }.flatten().forEach { sourceFile ->
+            val matcher = canonicalPattern.matcher(sourceFile.readText())
+            if (matcher.find()) {
+                fail("KT-69613 canonicalPath and canonicalFile apis should not be used: ${matcher.group()}\nin file: $sourceFile")
+            }
+        }
+    }
+
+    fun testNoDirectPathToStringConversion() {
+        val absolutePathStringPattern = Pattern.compile("\\.absolutePathString\\(\\)", Pattern.MULTILINE)
+
+        val targetDirs = listOf(
+            "compiler/build-tools/kotlin-build-tools-api/src",
+            "compiler/build-tools/kotlin-build-tools-api/gen",
+            "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-impl/gen",
+            "compiler/build-tools/kotlin-build-tools-compat/src",
+            "compiler/build-tools/kotlin-build-tools-compat/gen",
+            "compiler/build-tools/kotlin-build-tools-cri-impl/src",
+        )
+
+        targetDirs.map {
+            FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
+        }.flatten().forEach { sourceFile ->
+            val matcher = absolutePathStringPattern.matcher(sourceFile.readText())
+            if (matcher.find()) {
+                fail("KT-83715 absolutePathString should not be used as it loses information about FileSystem: ${matcher.group()}\nin file: $sourceFile")
+            }
+        }
     }
 
     fun testParserCode() {
@@ -209,7 +276,10 @@ class CodeConformanceTest : TestCase() {
             FileTestCase(
                 "%d source files contain references to package org.objectweb.asm.\n" +
                         "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
-                        "Please consider changing the package in these files:\n%s"
+                        "Please consider changing the package in these files:\n%s",
+                allowedFiles = listOf(
+                    "plugins/compose/group-mapping/"
+                )
             ) { _, source ->
                 " org.objectweb.asm" in source
             },
@@ -217,46 +287,9 @@ class CodeConformanceTest : TestCase() {
                 message = "%d source files contain references to package gnu.trove.\n" +
                         "Please avoid using trove library in new use cases. " +
                         "These files are affected:\n%s",
-                allowedFiles = listOf(
-                    "analysis/light-classes-base/src/org/jetbrains/kotlin/asJava/classes/KotlinClassInnerStuffCache.kt",
-                    "build-common/src/org/jetbrains/kotlin/incremental/IncrementalJvmCache.kt",
-                    "compiler/backend/src/org/jetbrains/kotlin/codegen/FrameMap.kt",
-                    "compiler/backend/src/org/jetbrains/kotlin/codegen/inline/SMAP.kt",
-                    "compiler/backend/src/org/jetbrains/kotlin/codegen/optimization/common/ControlFlowGraph.kt",
-                    "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/compiler/CliVirtualFileFinder.kt",
-                    "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/compiler/KotlinCliJavaFileManagerImpl.kt",
-                    "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/index/JvmDependenciesIndexImpl.kt",
-                    "compiler/daemon/src/org/jetbrains/kotlin/daemon/RemoteLookupTrackerClient.kt",
-                    "compiler/frontend/src/org/jetbrains/kotlin/resolve/lazy/FileScopeFactory.kt",
-                    "compiler/frontend/src/org/jetbrains/kotlin/resolve/lazy/LazyImportScope.kt",
-                    "compiler/frontend/src/org/jetbrains/kotlin/types/expressions/PreliminaryLoopVisitor.kt",
-                    "compiler/ir/backend.jvm/lower/src/org/jetbrains/kotlin/backend/jvm/lower/EnumClassLowering.kt",
-                    "compiler/psi/src/org/jetbrains/kotlin/psi/KotlinStringLiteralTextEscaper.kt",
-                    "compiler/resolution.common.jvm/src/org/jetbrains/kotlin/load/java/structure/impl/classFiles/BinaryJavaClass.kt",
-                    "compiler/resolution/src/org/jetbrains/kotlin/resolve/calls/results/OverloadingConflictResolver.kt",
-                    "compiler/tests-common/tests/org/jetbrains/kotlin/test/testFramework/KtUsefulTestCase.java",
-                    "js/js.ast/src/org/jetbrains/kotlin/js/backend/JsReservedIdentifiers.java",
-                    "js/js.ast/src/org/jetbrains/kotlin/js/backend/JsToStringGenerationVisitor.java",
-                    "js/js.sourcemap/src/org/jetbrains/kotlin/js/sourceMap/SourceMap3Builder.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/TargetDependent.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/konan/NativeLibrary.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/AssociatedClassifierIdsResolver.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirClassNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirClassifierIndex.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirFictitiousFunctionClassifiers.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirKnownClassifiers.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirModuleNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirPackageNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirProvidedClassifiersByModules.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirRootNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirTypeSignature.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/CirDeserializers.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/CirTypeResolver.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/utils/misc.kt"
-                )
             ) { _, source ->
                 "gnu.trove" in source
-            }
+            },
         )
 
         val testCaseToMatchedFiles: Map<FileTestCase, MutableList<File>> = mutableMapOf<FileTestCase, MutableList<File>>()
@@ -276,7 +309,7 @@ class CodeConformanceTest : TestCase() {
         val failureStr = buildString {
             for (test in tests) {
                 val (allowed, notAllowed) = (testCaseToMatchedFiles[test] ?: error("Should be added during initialization")).partition {
-                    test.allowedMatcher.matchExact(it)
+                    test.allowedMatcher.matchWithContains(it)
                 }
 
                 if (notAllowed.isNotEmpty()) {
@@ -285,7 +318,7 @@ class CodeConformanceTest : TestCase() {
                     appendLine()
                 }
 
-                val unmatched = test.allowedMatcher.unmatchedExact(allowed)
+                val unmatched = test.allowedMatcher.unmatched(allowed)
                 if (unmatched.isNotEmpty()) {
                     val testMessage = test.message.format(unmatched.size, "NONE")
                     append(
@@ -351,8 +384,10 @@ class CodeConformanceTest : TestCase() {
             return relativePaths.any { relativePath.startsWith(it) }
         }
 
-        fun unmatchedExact(files: List<File>): Set<String> {
-            return paths - files.map { it.invariantRelativePath() }.toSet()
+        fun unmatched(files: List<File>): Set<String> {
+            val filePaths = files.map { it.invariantRelativePath() }.toSet()
+            val relativePaths = paths.filter { p -> filePaths.any { it.startsWith(p) } }.toSet()
+            return paths - filePaths - relativePaths
         }
     }
 
@@ -375,30 +410,17 @@ class CodeConformanceTest : TestCase() {
 
         val repoCheckers = listOf(
             RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
+                // Please use redirector for importing in tests
+                "https://redirector.kotlinlang.org/maven/dev", root,
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "kotlin/ktor", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "bintray.com", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts"),
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts"),
                 exclude = "jcenter.bintray.com"
             )
         )

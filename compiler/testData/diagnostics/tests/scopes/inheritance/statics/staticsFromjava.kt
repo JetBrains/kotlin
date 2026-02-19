@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 public class A {
@@ -50,3 +51,5 @@ class YN: Y() {
         YN.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaFunction, javaType */

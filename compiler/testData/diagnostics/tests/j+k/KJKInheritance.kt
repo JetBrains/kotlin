@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: K1.kt
 open class KFirst() {
@@ -17,3 +18,5 @@ class K2: J1() {
         baz()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, primaryConstructor */

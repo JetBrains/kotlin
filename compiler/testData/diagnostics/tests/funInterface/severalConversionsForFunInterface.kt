@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
 
 interface J {
     fun foo1(r: KRunnable)
@@ -32,3 +33,5 @@ fun test(j: J, r: KRunnable) {
     j.foo3({}, {}, r)
     j.foo3({}, {}, {})
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, samConversion */

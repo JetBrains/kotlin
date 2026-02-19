@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class X(val s: String)
 
 fun f(a: String?) {
@@ -6,3 +7,6 @@ fun f(a: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, nullableType, primaryConstructor, propertyDeclaration, smartcast */

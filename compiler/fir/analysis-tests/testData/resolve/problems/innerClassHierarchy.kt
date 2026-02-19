@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Base {
     open inner class Inner
 }
@@ -23,3 +24,6 @@ open class A(val s: String) {
 }
 
 fun box(): String = A("Fail").F().s
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

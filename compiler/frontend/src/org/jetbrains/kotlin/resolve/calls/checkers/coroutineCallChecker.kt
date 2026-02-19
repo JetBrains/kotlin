@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.isCallableReference
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.isCallableReference
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
@@ -86,12 +86,6 @@ object CoroutineSuspendCallChecker : CallChecker {
                     context.trace.report(Errors.UNSUPPORTED.on(reportOn, "suspend function calls in a context of default parameter value"))
                 }
 
-                context.trace.record(
-                    BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL,
-                    resolvedCall.call,
-                    enclosingSuspendFunction
-                )
-
                 checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
             }
             resolvedCall.call.isCallableReference() -> {
@@ -143,6 +137,9 @@ fun KotlinType.isRestrictsSuspensionReceiver() = (listOf(this) + this.supertypes
         StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("RestrictsSuspension"))
     ) == true
 }
+
+fun FunctionDescriptor.isRestrictedSuspendFunction(): Boolean =
+    extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver() == true
 
 private fun checkRestrictsSuspension(
     enclosingSuspendCallableDescriptor: CallableDescriptor,

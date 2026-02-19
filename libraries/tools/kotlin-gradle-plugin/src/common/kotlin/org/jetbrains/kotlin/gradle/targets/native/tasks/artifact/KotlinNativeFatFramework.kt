@@ -2,15 +2,16 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
@@ -29,7 +30,6 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
         this.targets = targets.toSet()
     }
 
-    override var embedBitcode: BitcodeEmbeddingMode? = null
 
     override fun validate() {
         super.validate()
@@ -55,23 +55,27 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
             toolOptionsConfigure = toolOptionsConfigure,
             binaryOptions = binaryOptions,
             targets = targets,
-            embedBitcode = embedBitcode,
             extensions = extensions
         )
     }
 }
 
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 class KotlinNativeFatFrameworkImpl(
     override val artifactName: String,
     override val modules: Set<Any>,
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = "Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln",
+        level = DeprecationLevel.ERROR,
+    )
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
-    override val embedBitcode: BitcodeEmbeddingMode?,
     extensions: ExtensionAware
 ) : KotlinNativeFatFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "FatFramework")
@@ -84,19 +88,19 @@ class KotlinNativeFatFrameworkImpl(
             it.group = "build"
             it.description = "Assemble all types of registered '$artifactName' FatFramework"
         }
-        project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(parentTask)
+        project.addToAssemble(parentTask)
 
         modes.forEach { buildType ->
             val fatTask = project.registerTask<FatFrameworkTask>(
                 lowerCamelCaseName("assemble", artifactName, buildType.visibleName, "FatFramework")
             ) {
                 it.baseName = artifactName
-                it.destinationDir = project.buildDir.resolve("$outDir/${buildType.getName()}")
+                it.destinationDirProperty.set(project.layout.buildDirectory.dir("$outDir/${buildType.getName()}"))
             }
             parentTask.dependsOn(fatTask)
 
             val nameSuffix = "ForFat"
-            val frameworkDescriptors: List<FrameworkDescriptor> = targets.map { target ->
+            val frameworkDescriptors: List<Provider<FrameworkDescriptor>> = targets.map { target ->
                 val librariesConfigurationName = project.registerLibsDependencies(target, artifactName + nameSuffix, modules)
                 val exportConfigurationName = project.registerExportDependencies(target, artifactName + nameSuffix, modules)
                 val targetTask = registerLinkFrameworkTask(
@@ -106,15 +110,14 @@ class KotlinNativeFatFrameworkImpl(
                     buildType = buildType,
                     librariesConfigurationName = librariesConfigurationName,
                     exportConfigurationName = exportConfigurationName,
-                    embedBitcode = embedBitcode,
                     outDirName = "${artifactName}FatFrameworkTemp",
                     taskNameSuffix = nameSuffix
                 )
-                fatTask.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.flatMap { it.outputFile }
-                FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
+                targetTask.map {
+                    FrameworkDescriptor(it.outputFile.get(), isStatic, target)
+                }
             }
-            fatTask.configure { it.fromFrameworkDescriptors(frameworkDescriptors) }
+            fatTask.configure { it.fromFrameworkDescriptorProviders(frameworkDescriptors) }
         }
     }
 }

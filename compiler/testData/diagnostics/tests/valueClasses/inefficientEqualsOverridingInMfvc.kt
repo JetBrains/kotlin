@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
-// LANGUAGE: +CustomEqualsInValueClasses +ValueClasses
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// LANGUAGE: +CustomEqualsInValueClasses +JvmInlineMultiFieldValueClasses
 
 @JvmInline
 value class MFVC1(val x: Int, val y: Int) {
@@ -26,3 +27,6 @@ value class MFVC3(val x: Int, val y: Int) {
 
     override fun hashCode() = 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+isExpression, nullableType, operator, override, primaryConstructor, propertyDeclaration, smartcast, value */

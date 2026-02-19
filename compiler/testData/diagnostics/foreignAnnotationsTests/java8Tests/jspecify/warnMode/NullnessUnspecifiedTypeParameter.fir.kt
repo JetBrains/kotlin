@@ -13,18 +13,18 @@ public class NullnessUnspecifiedTypeParameter<T> {
 public class Test {}
 
 // FILE: main.kt
-fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeParameter<Any?>, x: Test): Unit {
-    a1.foo(null)
+fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeParameter<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>Any?<!>>, x: Test): Unit {
+    a1.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a1.foo(1)
 
-    a2.foo(null)
+    a2.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a2.foo(1)
 
-    a1.bar(null, null)
-    a1.bar(x, null)
+    a1.bar(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a1.bar(x, <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a1.bar(x, 1)
 
-    a2.bar(null, null)
-    a2.bar(x, null)
+    a2.bar(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a2.bar(x, <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a2.bar(x, 1)
 }

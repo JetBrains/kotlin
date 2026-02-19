@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1289
 // MODULE: lib
 // FILE: lib.kt
 public interface I {

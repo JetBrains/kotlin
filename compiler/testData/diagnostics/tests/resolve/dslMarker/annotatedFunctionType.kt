@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: -DslMarkerOnFunctionTypeReceiver
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Target(AnnotationTarget.TYPE)
 @DslMarker
@@ -21,7 +22,7 @@ fun baz4(x: @MyDsl B.() -> Unit) {}
 fun @MyDsl A.baz5() {
     baz4 {
         bar()
-        <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+        <!DSL_SCOPE_VIOLATION!>foo<!>()
     }
 }
 
@@ -36,22 +37,25 @@ fun main() {
     baz3 {
         baz2 {
             bar()
-            <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+            <!DSL_SCOPE_VIOLATION!>foo<!>()
         }
     }
 
     baz1 {
         baz4 {
             bar()
-            <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+            <!DSL_SCOPE_VIOLATION!>foo<!>()
         }
     }
 
     baz3 {
         baz4 {
             bar()
-            <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+            <!DSL_SCOPE_VIOLATION!>foo<!>()
         }
     }
 
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, typeWithExtension */

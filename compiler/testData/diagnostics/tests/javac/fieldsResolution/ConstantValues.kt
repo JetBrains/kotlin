@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/x.java
 package a;
@@ -44,3 +45,5 @@ val v5 = x.I2
 val v6 = x.D
 val v7 = x.NULL
 val v8 = x.VAL
+
+/* GENERATED_FIR_TAGS: flexibleType, javaProperty, propertyDeclaration */

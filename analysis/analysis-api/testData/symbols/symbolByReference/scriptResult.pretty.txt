@@ -1,0 +1,1 @@
+val `$$result`: kotlin.Int

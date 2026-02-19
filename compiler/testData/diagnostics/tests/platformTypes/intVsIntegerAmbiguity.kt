@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: p/J.java
 
 package p;
@@ -36,3 +37,5 @@ fun test(i: Int, ni: Int?) {
     J.foo(J.getInteger())
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, javaFunction, javaType, nullableType, typeParameter, typeWithExtension */

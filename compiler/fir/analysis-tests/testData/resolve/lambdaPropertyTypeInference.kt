@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // UNEXPECTED BEHAVIOUR
 // ISSUES: KT-37066
 
@@ -44,8 +45,8 @@ class BooCase1() {
 // TESTCASE NUMBER: 2
 
 class KotlinClass(private val name: String) : Comparable<KotlinClass> {
-    override operator fun compareTo(that: KotlinClass): Int {
-        return name.compareTo(that.name)
+    override operator fun compareTo(other: KotlinClass): Int {
+        return name.compareTo(other.name)
     }
 }
 
@@ -69,3 +70,8 @@ class BooCase2() {
         val FILTER: (KotlinClass) -> Boolean = { true }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, javaType, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, operator, override, primaryConstructor, propertyDeclaration, smartcast, typeParameter,
+typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-3038 Wrong type inference for enum entry
 package a
 
@@ -20,3 +21,6 @@ fun hello() {
 
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, functionDeclaration, localProperty, nullableType,
+outProjection, propertyDeclaration, typeParameter, vararg */

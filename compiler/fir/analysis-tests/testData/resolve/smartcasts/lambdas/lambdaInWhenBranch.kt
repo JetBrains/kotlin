@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-39080
-// !DUMP_CFG
+// DUMP_CFG
 
 private sealed class Sealed
 
 private data class SubClass1(val t: String) : Sealed()
-private data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class SubClass2<!> : Sealed()
+private data <!DATA_CLASS_WITHOUT_PARAMETERS!>class SubClass2<!> : Sealed()
 
 private fun foo(p: Sealed) {
     when (p) {
@@ -21,3 +22,6 @@ private fun foo(p: Sealed) {
         is SubClass2 -> "2"
     }.length // should be resolved, but when is not considered as sealed because type of p is not a sealed class
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, isExpression, lambdaLiteral, primaryConstructor,
+propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

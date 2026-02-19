@@ -8,64 +8,14 @@
 #include "Common.h"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
-#include "ObjectOps.hpp"
-#include "ThreadData.hpp"
-#include "std_support/Memory.hpp"
+#include "KAssert.h"
+#include "Logging.hpp"
 
 using namespace kotlin;
 
-gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : impl_(std_support::make_unique<Impl>(gc, threadData)) {}
+gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept {}
 
 gc::GC::ThreadData::~ThreadData() = default;
-
-void gc::GC::ThreadData::PublishObjectFactory() noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    impl_->allocator().extraObjectDataFactoryThreadQueue().Publish();
-    impl_->allocator().objectFactoryThreadQueue().Publish();
-#endif
-}
-
-void gc::GC::ThreadData::ClearForTests() noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    impl_->allocator().extraObjectDataFactoryThreadQueue().ClearForTests();
-    impl_->allocator().objectFactoryThreadQueue().ClearForTests();
-#else
-    impl_->allocator().alloc().PrepareForGC();
-#endif
-}
-
-ALWAYS_INLINE ObjHeader* gc::GC::ThreadData::CreateObject(const TypeInfo* typeInfo) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return impl_->allocator().objectFactoryThreadQueue().CreateObject(typeInfo);
-#else
-    return impl_->allocator().alloc().CreateObject(typeInfo);
-#endif
-}
-
-ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return impl_->allocator().objectFactoryThreadQueue().CreateArray(typeInfo, elements);
-#else
-    return impl_->allocator().alloc().CreateArray(typeInfo, elements);
-#endif
-}
-
-ALWAYS_INLINE mm::ExtraObjectData& gc::GC::ThreadData::CreateExtraObjectDataForObject(
-        ObjHeader* object, const TypeInfo* typeInfo) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return impl_->allocator().extraObjectDataFactoryThreadQueue().CreateExtraObjectDataForObject(object, typeInfo);
-#else
-    return impl_->allocator().alloc().CreateExtraObjectDataForObject(object, typeInfo);
-#endif
-}
-
-ALWAYS_INLINE void gc::GC::ThreadData::DestroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    impl_->allocator().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
-#else
-    extraObject.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
-#endif
-}
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
 
@@ -73,26 +23,16 @@ void gc::GC::ThreadData::safePoint() noexcept {}
 
 void gc::GC::ThreadData::onThreadRegistration() noexcept {}
 
-gc::GC::GC(gcScheduler::GCScheduler&) noexcept : impl_(std_support::make_unique<Impl>()) {}
+ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {}
+
+gc::GC::GC(alloc::Allocator&, gcScheduler::GCScheduler&) noexcept {
+    RuntimeLogInfo({kTagGC}, "No-op GC initialized");
+}
 
 gc::GC::~GC() = default;
 
 void gc::GC::ClearForTests() noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    impl_->allocator().extraObjectDataFactory().ClearForTests();
-    impl_->allocator().objectFactory().ClearForTests();
-#else
-    impl_->allocator().heap().ClearForTests();
-#endif
     GCHandle::ClearForTests();
-}
-
-void gc::GC::StartFinalizerThreadIfNeeded() noexcept {}
-
-void gc::GC::StopFinalizerThreadIfRunning() noexcept {}
-
-bool gc::GC::FinalizersThreadIsRunning() noexcept {
-    return false;
 }
 
 // static
@@ -100,9 +40,6 @@ ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) n
 
 // static
 ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {}
-
-// static
-ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {}
 
 int64_t gc::GC::Schedule() noexcept {
     return 0;
@@ -112,13 +49,15 @@ void gc::GC::WaitFinished(int64_t epoch) noexcept {}
 
 void gc::GC::WaitFinalizers(int64_t epoch) noexcept {}
 
+ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
+
+ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
+    RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));
+}
+
 bool gc::isMarked(ObjHeader* object) noexcept {
     RuntimeAssert(false, "Should not reach here");
     return true;
-}
-
-ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
-    RETURN_OBJ(object.load(std::memory_order_relaxed));
 }
 
 ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
@@ -126,17 +65,14 @@ ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
     return true;
 }
 
-// static
-ALWAYS_INLINE void gc::GC::DestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    extraObject.Uninstall();
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    threadData->gc().impl().allocator().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
-#else
-    extraObject.ReleaseAssociatedObject();
-    extraObject.setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
-#endif
+ALWAYS_INLINE bool gc::barriers::ExternalRCRefReleaseGuard::isNoop() {
+    return true;
 }
+ALWAYS_INLINE gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard(mm::DirectRefAccessor) noexcept {}
+ALWAYS_INLINE gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard(ExternalRCRefReleaseGuard&&) noexcept = default;
+ALWAYS_INLINE gc::barriers::ExternalRCRefReleaseGuard::~ExternalRCRefReleaseGuard() noexcept = default;
+ALWAYS_INLINE gc::barriers::ExternalRCRefReleaseGuard& gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard::operator=(
+        ExternalRCRefReleaseGuard&&) noexcept = default;
 
 // static
 ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {
@@ -152,3 +88,5 @@ ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignmen
 ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
     return reinterpret_cast<gc::GC::ObjectData*>(ptr);
 }
+
+void gc::GC::onEpochFinalized(int64_t epoch) noexcept {}

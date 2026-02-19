@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-51228
 
 interface A {
@@ -29,3 +30,7 @@ fun Any.test_3() {
         val f = ::foo // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, lambdaLiteral, localProperty, propertyDeclaration, smartcast, thisExpression,
+whenExpression, whenWithSubject */

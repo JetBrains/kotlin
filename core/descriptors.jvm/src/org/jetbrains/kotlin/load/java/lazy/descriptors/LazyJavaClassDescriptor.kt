@@ -197,7 +197,7 @@ class LazyJavaClassDescriptor(
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = if (modality == Modality.SEALED) {
         val attributes = TypeUsage.COMMON.toAttributes()
-        jClass.permittedTypes.mapNotNull {
+        jClass.permittedTypes.mapNotNullTo(mutableListOf()) {
             c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
         }.sortedBy { it.fqNameSafe.asString() }
     } else {

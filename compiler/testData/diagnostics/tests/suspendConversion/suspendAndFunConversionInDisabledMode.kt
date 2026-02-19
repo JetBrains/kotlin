@@ -1,5 +1,6 @@
-// !LANGUAGE: -SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface SuspendRunnable {
     suspend fun run()
@@ -29,3 +30,5 @@ object Test2 {
     }
 }
 
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, nestedClass,
+objectDeclaration, samConversion, suspend */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package kt402
 
@@ -7,3 +8,5 @@ fun getTypeChecker() : (Any)->Boolean {
 fun f() : (Any) -> Boolean {
   return { a : Any -> a is String }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, isExpression, lambdaLiteral */

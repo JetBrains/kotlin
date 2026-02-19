@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 sealed class Sealed {
 
 }
@@ -9,3 +10,4 @@ fun foo(s: Sealed): Int {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, sealed, whenExpression, whenWithSubject */

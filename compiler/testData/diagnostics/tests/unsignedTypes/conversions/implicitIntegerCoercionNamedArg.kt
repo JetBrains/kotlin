@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57655
-// !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: annotation.kt
@@ -19,3 +20,5 @@ fun main() {
     println(test(x = 5))
     println(test(5))
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral */

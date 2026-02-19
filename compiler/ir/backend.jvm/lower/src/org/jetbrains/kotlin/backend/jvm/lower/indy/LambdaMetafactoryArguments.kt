@@ -5,36 +5,31 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.indy
 
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
-import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
+import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
-import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addIfNotNull
+import java.lang.annotation.RetentionPolicy
 
 internal sealed class MetafactoryArgumentsResult {
     abstract val isSuccess: Boolean
@@ -71,28 +66,27 @@ internal sealed class MetafactoryArgumentsResult {
 internal class LambdaMetafactoryArguments(
     val samMethod: IrSimpleFunction,
     val fakeInstanceMethod: IrSimpleFunction,
-    val implMethodReference: IrFunctionReference,
     val extraOverriddenMethods: List<IrSimpleFunction>,
-    val shouldBeSerializable: Boolean
+    val shouldBeSerializable: Boolean,
 ) : MetafactoryArgumentsResult.Success()
 
 
 internal class LambdaMetafactoryArgumentsBuilder(
     private val context: JvmBackendContext,
-    private val crossinlineLambdas: Set<IrSimpleFunction>
+    private val crossinlineLambdas: Set<IrSimpleFunction>,
 ) {
-
     private val isJavaSamConversionWithEqualsHashCode =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     /**
      * @see java.lang.invoke.LambdaMetafactory
      */
     fun getLambdaMetafactoryArguments(
-        reference: IrFunctionReference,
-        samType: IrType,
-        plainLambda: Boolean
+        reference: IrRichFunctionReference,
+        plainLambda: Boolean,
+        forceSerializability: Boolean,
     ): MetafactoryArgumentsResult {
+        val samType = reference.type
         val samClass = samType.getClass()
             ?: throw AssertionError("SAM type is not a class: ${samType.render()}")
 
@@ -100,7 +94,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
         var abiHazard = false
         var inliningHazard = false
         var shouldBeSerializable = false
-        var functionHazard = false
 
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
@@ -108,12 +101,11 @@ internal class LambdaMetafactoryArgumentsBuilder(
             semanticsHazard = true
         }
 
-        if (samClass.isInheritedFromSerializable()) {
+        if (forceSerializability || samClass.isInheritedFromSerializable()) {
             shouldBeSerializable = true
         }
 
-        val samMethod = samClass.getSingleAbstractMethod()
-            ?: throw AssertionError("SAM class has no single abstract method: ${samClass.render()}")
+        val samMethod = reference.overriddenFunctionSymbol.owner
 
         // Can't use JDK LambdaMetafactory for fun interface with suspend fun.
         if (samMethod.isSuspend) {
@@ -125,63 +117,27 @@ internal class LambdaMetafactoryArgumentsBuilder(
             abiHazard = true
         }
 
-        val implFun = reference.symbol.owner
+        val implFun = reference.invokeFunction
 
-        if (implFun.typeParameters.any { it.isReified }) {
-            functionHazard = true
-        }
-
-        // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
-        if (context.getIntrinsic(implFun.symbol) != null) {
-            functionHazard = true
-        }
-
-        // Can't use invokedynamic if the referenced function has to be inlined for correct semantics.
-        // Also in some cases like `private inline fun` we'd need accessors, which `SyntheticAccessorLowering`
-        // won't generate under the assumption that the inline function will be inlined. Plus if the function
-        // is in a different module we should probably copy it anyway (and regenerate all objects in it).
-        if (implFun.isInline) {
-            functionHazard = true
-        }
-
-        if (isConstructorRequiringAccessor(implFun)) {
-            // Kotlin generates constructor accessors differently from Java.
-            functionHazard = true
-        }
-
-        // It's possible to reference through a child class a method declared in a package-private base Java class.
-        // In this case the corresponding method might be inaccessible in the context where it's referenced (see KT-48954).
-        // For now, just prohibit referencing methods from package-private Java classes through indy (without precise accessibility check).
-        if (implFun is IrSimpleFunction) {
-            val baseFun = findSuperDeclaration(implFun, false, context.config.jvmDefaultMode)
-            val baseFunClass = baseFun.parent as? IrClass
-            if (baseFunClass != null && baseFunClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
-                functionHazard = true
-            }
-        }
-
-        val implFunParent = implFun.parent
-        if (implFunParent is IrClass && implFunParent.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS) {
-            // LambdaMetafactory treats multifile class part members as non-accessible,
-            // even if the member is referenced via facade,
-            // because corresponding part class is non-accessible
-            functionHazard = true
-        }
-
+        // Previously instances of lambdas retained annotations:
         // Can't use JDK LambdaMetafactory for annotated lambdas.
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
         // corresponding synthetic class, which doesn't look like a binary compatible change.
-        // TODO relaxed mode?
-        if (reference.origin.isLambda && implFun.annotations.isNotEmpty()) {
+        // If 'indyAllowAnnotatedLambdas' is set to true, we can lift this restriction and use indy
+        if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.any { annotation ->
+                annotation.symbol.owner.constructedClass.getJvmAnnotationRetention() == RetentionPolicy.RUNTIME
+            }) {
             abiHazard = true
         }
 
+        if (implFun.annotations.hasAnnotation(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)) {
+            // Lambdas annotated with @kotlin.jvm.JvmSerializableLambda are expected to generate their own class
+            semanticsHazard = true
+        }
+
         // Don't use JDK LambdaMetafactory for big arity lambdas.
-        if (plainLambda) {
-            var parametersCount = implFun.valueParameters.size
-            if (implFun.extensionReceiverParameter != null) ++parametersCount
-            if (parametersCount >= BuiltInFunctionArity.BIG_ARITY)
-                abiHazard = true
+        if (plainLambda && implFun.parameters.size - reference.boundValues.size >= BuiltInFunctionArity.BIG_ARITY) {
+            abiHazard = true
         }
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
@@ -202,23 +158,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
             semanticsHazard -> return MetafactoryArgumentsResult.Failure.LambdaMetafactorySemanticsHazard
             abiHazard -> return MetafactoryArgumentsResult.Failure.LambdaMetafactoryAbiHazard
             inliningHazard -> return MetafactoryArgumentsResult.Failure.InliningHazard
-            functionHazard -> return MetafactoryArgumentsResult.Failure.FunctionHazard
         }
 
         // Do the hard work of matching Kotlin functional interface hierarchy against LambdaMetafactory constraints.
         // Briefly: sometimes we have to force boxing on the primitive and inline class values, sometimes we have to keep them unboxed.
         // If this results in conflicting requirements, we can't use INVOKEDYNAMIC with LambdaMetafactory for creating a closure.
-        return getLambdaMetafactoryArgsOrNullInner(reference, samMethod, samType, implFun, shouldBeSerializable)
+        return getLambdaMetafactoryArgsOrNullInner(reference, shouldBeSerializable)
             ?: MetafactoryArgumentsResult.Failure.FunctionHazard
-    }
-
-    private fun isConstructorRequiringAccessor(implFun: IrFunction): Boolean {
-        if (implFun !is IrConstructor) return false
-        // We don't do exact accessibility check here:
-        // constructor will be called by a class generated by LambdaMetafactory at runtime.
-        val visibility = implFun.visibility
-        return visibility == DescriptorVisibilities.PROTECTED ||
-                DescriptorVisibilities.isPrivate(visibility)
     }
 
     private val javaIoSerializableFqn =
@@ -230,36 +176,31 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private fun IrClass.requiresDelegationToDefaultImpls(): Boolean {
         val functionsAndAccessors = functions + properties.mapNotNull { it.getter } + properties.mapNotNull { it.setter }
         for (irMemberFun in functionsAndAccessors) {
-            if (irMemberFun.modality == Modality.ABSTRACT)
+            if (irMemberFun.modality == Modality.ABSTRACT || irMemberFun.isMethodOfAny())
                 continue
-            val irImplFun =
-                if (irMemberFun.isFakeOverride)
-                    irMemberFun.findInterfaceImplementation(context.config.jvmDefaultMode)
-                        ?: continue
-                else
-                    irMemberFun
+            val irImplFun = irMemberFun.resolveFakeOverride() ?: irMemberFun
             if (irImplFun.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
                 continue
-            if (!irImplFun.isCompiledToJvmDefault(context.config.jvmDefaultMode))
+            if (irImplFun.hasInterfaceParent() && !irImplFun.isCompiledToJvmDefault(context.config.jvmDefaultMode))
                 return true
         }
         return false
     }
 
     private fun getLambdaMetafactoryArgsOrNullInner(
-        reference: IrFunctionReference,
-        samMethod: IrSimpleFunction,
-        samType: IrType,
-        implFun: IrFunction,
-        shouldBeSerializable: Boolean
+        reference: IrRichFunctionReference,
+        shouldBeSerializable: Boolean,
     ): LambdaMetafactoryArguments? {
+        val implFun = reference.invokeFunction
+        val samMethod = reference.overriddenFunctionSymbol.owner
+        val samType = reference.type
         val nonFakeOverriddenFuns = samMethod.allOverridden().filterNot { it.isFakeOverride }
         val relevantOverriddenFuns = if (samMethod.isFakeOverride) nonFakeOverriddenFuns else nonFakeOverriddenFuns + samMethod
 
         // Create a fake instance method as if it was defined in a class implementing SAM interface
         // (such class would be eventually created by LambdaMetafactory at run-time).
         val fakeClass = context.irFactory.buildClass { name = Name.special("<fake>") }
-        fakeClass.parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+        fakeClass.parent = context.symbols.kotlinJvmInternalInvokeDynamicPackage
         val fakeInstanceMethod = buildFakeOverrideMember(samType, samMethod, fakeClass) as IrSimpleFunction
         (fakeInstanceMethod as IrFunctionWithLateBinding).acquireSymbol(IrSimpleFunctionSymbolImpl())
         fakeInstanceMethod.overriddenSymbols = listOf(samMethod.symbol)
@@ -329,46 +270,40 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         adaptFakeInstanceMethodSignature(fakeInstanceMethod, signatureAdaptationConstraints)
         if (implFun.isAdaptable()) {
-            adaptLambdaSignature(implFun as IrSimpleFunction, fakeInstanceMethod, signatureAdaptationConstraints)
+            adaptLambdaSignature(implFun, fakeInstanceMethod, signatureAdaptationConstraints, reference.boundValues.size)
         } else if (
             !checkMethodSignatureCompliance(implFun, fakeInstanceMethod, signatureAdaptationConstraints, reference)
         ) {
             return null
         }
 
-        val newReference =
-            if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction)
-                remapExtensionLambda(implFun as IrSimpleFunction, reference)
-            else
-                reference
+        if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction) {
+            adjustLambdaFunction(implFun)
+        }
 
         if (samMethod.isFakeOverride && nonFakeOverriddenFuns.size == 1) {
             return LambdaMetafactoryArguments(
                 nonFakeOverriddenFuns.single(),
                 fakeInstanceMethod,
-                newReference,
                 listOf(),
                 shouldBeSerializable
             )
         }
-        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, newReference, nonFakeOverriddenFuns, shouldBeSerializable)
+        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, nonFakeOverriddenFuns, shouldBeSerializable)
     }
 
     private fun checkMethodSignatureCompliance(
         implFun: IrFunction,
         fakeInstanceMethod: IrSimpleFunction,
         constraints: SignatureAdaptationConstraints,
-        reference: IrFunctionReference
+        reference: IrRichFunctionReference,
     ): Boolean {
-        val implParameters = collectValueParameters(
-            implFun,
-            withDispatchReceiver = reference.dispatchReceiver == null,
-            withExtensionReceiver = reference.extensionReceiver == null
-        )
-        val methodParameters = collectValueParameters(fakeInstanceMethod)
+        val implParameters = implFun.parameters.drop(reference.boundValues.size)
+
+        val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
         for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
-            val constraint = constraints.valueParameters[methodParameter]
+            val constraint = constraints.parameters[methodParameter]
             if (!checkTypeCompliesWithConstraint(implParameter.type, constraint))
                 return false
         }
@@ -392,7 +327,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         when (origin) {
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
             JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_METAFACTORY,
-            JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY -> true
+            JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY,
+                -> true
             IrDeclarationOrigin.LOCAL_FUNCTION -> isAnonymousFunction
             else -> false
         }
@@ -400,19 +336,20 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private fun adaptLambdaSignature(
         implFun: IrSimpleFunction,
         fakeInstanceMethod: IrSimpleFunction,
-        constraints: SignatureAdaptationConstraints
+        constraints: SignatureAdaptationConstraints,
+        capturedParametersCount: Int,
     ) {
         if (!implFun.isAdaptable()) {
             throw AssertionError("Function origin should be adaptable: ${implFun.dump()}")
         }
 
-        val implParameters = collectValueParameters(implFun)
-        val methodParameters = collectValueParameters(fakeInstanceMethod)
+        val implParameters = implFun.nonDispatchParameters.drop(capturedParametersCount)
+        val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
         for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
-            val parameterConstraint = constraints.valueParameters[methodParameter]
+            val parameterConstraint = constraints.parameters[methodParameter]
             if (parameterConstraint.requiresImplLambdaBoxing()) {
-                implParameter.type = implParameter.type.makeNullable()
+                makeLambdaParameterNullable(implFun, implParameter)
             }
         }
         if (constraints.returnType.requiresImplLambdaBoxing() ||
@@ -422,11 +359,27 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
     }
 
+    private fun makeLambdaParameterNullable(function: IrFunction, parameter: IrValueParameter) {
+        parameter.type = parameter.type.makeNullable()
+        function.body?.accept(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildren(this, null)
+            }
+
+            override fun visitGetValue(expression: IrGetValue) {
+                if (expression.symbol == parameter.symbol) {
+                    expression.type = expression.type.makeNullable()
+                }
+                super.visitGetValue(expression)
+            }
+        }, null)
+    }
+
     private fun validateMethodParameters(
         implParameters: List<IrValueParameter>,
         methodParameters: List<IrValueParameter>,
         implFun: IrFunction,
-        fakeInstanceMethod: IrSimpleFunction
+        fakeInstanceMethod: IrSimpleFunction,
     ) {
         if (implParameters.size != methodParameters.size)
             throw AssertionError(
@@ -438,57 +391,16 @@ internal class LambdaMetafactoryArgumentsBuilder(
             )
     }
 
-    private fun remapExtensionLambda(lambda: IrSimpleFunction, reference: IrFunctionReference): IrFunctionReference {
-        val oldExtensionReceiver = lambda.extensionReceiverParameter
-            ?: return reference
-
-        val newValueParameters = ArrayList<IrValueParameter>()
-        val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
-        var newParameterIndex = 0
-
-        lambda.valueParameters.take(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda, newParameterIndex++).also {
-                oldToNew[oldParameter] = it
+    private fun adjustLambdaFunction(lambda: IrSimpleFunction) {
+        for (parameter in lambda.parameters) {
+            if (parameter.kind != IrParameterKind.DispatchReceiver) {
+                parameter.kind = IrParameterKind.Regular
             }
         }
-
-        newValueParameters.add(
-            oldExtensionReceiver.copy(lambda, newParameterIndex++, oldExtensionReceiver.name).also {
-                oldToNew[oldExtensionReceiver] = it
-            }
-        )
-
-        lambda.valueParameters.drop(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda, newParameterIndex++).also {
-                oldToNew[oldParameter] = it
-            }
-        }
-
-        lambda.body?.transformChildrenVoid(VariableRemapper(oldToNew))
-
-        lambda.extensionReceiverParameter = null
-        lambda.valueParameters = newValueParameters
-
-        return IrFunctionReferenceImpl(
-            reference.startOffset, reference.endOffset, reference.type,
-            lambda.symbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = newValueParameters.size,
-            reflectionTarget = null,
-            origin = reference.origin
-        )
     }
 
-
-    private fun IrValueParameter.copy(parent: IrSimpleFunction, newIndex: Int, newName: Name = this.name): IrValueParameter =
-        buildValueParameter(parent) {
-            updateFrom(this@copy)
-            index = newIndex
-            name = newName
-        }
-
     private fun adaptFakeInstanceMethodSignature(fakeInstanceMethod: IrSimpleFunction, constraints: SignatureAdaptationConstraints) {
-        for ((valueParameter, constraint) in constraints.valueParameters) {
+        for ((valueParameter, constraint) in constraints.parameters) {
             if (valueParameter.parent != fakeInstanceMethod)
                 throw AssertionError(
                     "Unexpected value parameter: ${valueParameter.render()}; fakeInstanceMethod:\n" +
@@ -517,25 +429,25 @@ internal class LambdaMetafactoryArgumentsBuilder(
         this == TypeAdaptationConstraint.FORCE_BOXING
 
     private class SignatureAdaptationConstraints(
-        val valueParameters: Map<IrValueParameter, TypeAdaptationConstraint>,
-        val returnType: TypeAdaptationConstraint?
+        val parameters: Map<IrValueParameter, TypeAdaptationConstraint>,
+        val returnType: TypeAdaptationConstraint?,
     ) {
         fun hasConflicts() =
             returnType == TypeAdaptationConstraint.CONFLICT ||
-                    TypeAdaptationConstraint.CONFLICT in valueParameters.values
+                    TypeAdaptationConstraint.CONFLICT in parameters.values
     }
 
     private fun computeSignatureAdaptationConstraints(
         adapteeFun: IrSimpleFunction,
-        expectedFun: IrSimpleFunction
+        expectedFun: IrSimpleFunction,
     ): SignatureAdaptationConstraints? {
         val returnTypeConstraint = computeReturnTypeAdaptationConstraint(adapteeFun, expectedFun)
         if (returnTypeConstraint == TypeAdaptationConstraint.CONFLICT)
             return null
 
         val valueParameterConstraints = HashMap<IrValueParameter, TypeAdaptationConstraint>()
-        val adapteeParameters = collectValueParameters(adapteeFun)
-        val expectedParameters = collectValueParameters(expectedFun)
+        val adapteeParameters = adapteeFun.nonDispatchParameters
+        val expectedParameters = expectedFun.nonDispatchParameters
         if (adapteeParameters.size != expectedParameters.size)
             throw AssertionError(
                 "Mismatching value parameters:\n" +
@@ -626,7 +538,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun computeReturnTypeAdaptationConstraint(
         adapteeFun: IrSimpleFunction,
-        expectedFun: IrSimpleFunction
+        expectedFun: IrSimpleFunction,
     ): TypeAdaptationConstraint? {
         val adapteeReturnType = adapteeFun.returnType
         if (adapteeReturnType.isUnit()) {
@@ -644,7 +556,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun joinSignatureAdaptationConstraints(
         sig1: SignatureAdaptationConstraints,
-        sig2: SignatureAdaptationConstraints
+        sig2: SignatureAdaptationConstraints,
     ): SignatureAdaptationConstraints? {
         val newReturnTypeConstraint = composeTypeAdaptationConstraints(sig1.returnType, sig2.returnType)
         if (newReturnTypeConstraint == TypeAdaptationConstraint.CONFLICT)
@@ -652,12 +564,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val newValueParameterConstraints =
             when {
-                sig1.valueParameters.isEmpty() -> sig2.valueParameters
-                sig2.valueParameters.isEmpty() -> sig1.valueParameters
+                sig1.parameters.isEmpty() -> sig2.parameters
+                sig2.parameters.isEmpty() -> sig1.parameters
                 else -> {
                     val joined = HashMap<IrValueParameter, TypeAdaptationConstraint>()
-                    joined.putAll(sig1.valueParameters)
-                    for ((vp2, t2) in sig2.valueParameters.entries) {
+                    joined.putAll(sig1.parameters)
+                    for ((vp2, t2) in sig2.parameters.entries) {
                         val tx = composeTypeAdaptationConstraints(joined[vp2], t2) ?: continue
                         if (tx == TypeAdaptationConstraint.CONFLICT)
                             return null
@@ -685,24 +597,4 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun IrDeclarationParent.isCrossinlineLambda(): Boolean =
         this is IrSimpleFunction && this in crossinlineLambdas
-
-    fun collectValueParameters(
-        irFun: IrFunction,
-        withDispatchReceiver: Boolean = false,
-        withExtensionReceiver: Boolean = true
-    ): List<IrValueParameter> {
-        if ((!withDispatchReceiver || irFun.dispatchReceiverParameter == null) &&
-            (!withExtensionReceiver || irFun.extensionReceiverParameter == null)
-        )
-            return irFun.valueParameters
-        return ArrayList<IrValueParameter>().apply {
-            if (withDispatchReceiver) {
-                addIfNotNull(irFun.dispatchReceiverParameter)
-            }
-            if (withExtensionReceiver) {
-                addIfNotNull(irFun.extensionReceiverParameter)
-            }
-            addAll(irFun.valueParameters)
-        }
-    }
 }

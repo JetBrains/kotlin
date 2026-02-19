@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 // WITH_STDLIB
@@ -53,3 +55,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, flexibleType, functionDeclaration, inProjection, javaFunction, javaType,
+lambdaLiteral, samConversion */

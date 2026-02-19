@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -35,8 +37,6 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
-import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.isValueClassThatRequiresMangling
@@ -163,7 +163,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
 
 class SynchronizedAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val synchronizedAnnotation = descriptor.findSynchronizedAnnotation()
+        val synchronizedAnnotation = descriptor.annotations.findAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
         if (synchronizedAnnotation != null && descriptor is FunctionDescriptor) {
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(synchronizedAnnotation) ?: return
             if (isInInterface(descriptor)) {
@@ -188,7 +188,7 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
 
 class OverloadsAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        descriptor.findJvmOverloadsAnnotation()?.let { annotation ->
+        descriptor.annotations.findAnnotation(JVM_OVERLOADS_FQ_NAME)?.let { annotation ->
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation)
             if (annotationEntry != null) {
                 checkDeclaration(annotationEntry, descriptor, context)

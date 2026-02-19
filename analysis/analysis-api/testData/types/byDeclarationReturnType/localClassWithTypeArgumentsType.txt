@@ -1,35 +1,50 @@
-annotationsList: []
-classId: <local>/B
-classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
-nullability: NON_NULLABLE
-ownTypeArguments: [
-  annotationsList: []
-  classId: kotlin/Int
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-  nullability: NON_NULLABLE
-  ownTypeArguments: []
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: <local>/B
   qualifiers: [
-    qualifier:
-      name: Int
-      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: B
+      symbol: KaNamedClassSymbol(<local>/B)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
   ]
-]
-qualifiers: [
-  qualifier:
-    name: B
-    symbol: KtNamedClassOrObjectSymbol(<local>/B)
-    typeArguments: [
-      annotationsList: []
+  symbol: KaNamedClassSymbol(<local>/B)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
       classId: kotlin/Int
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: Int
-          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
       ]
-    ]
-]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+B<kotlin.Int>

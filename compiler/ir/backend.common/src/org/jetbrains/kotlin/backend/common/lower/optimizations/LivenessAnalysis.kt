@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.lower.optimizations
 
-import org.jetbrains.kotlin.backend.common.copy
-import org.jetbrains.kotlin.backend.common.forEachBit
+import org.jetbrains.kotlin.utils.copy
+import org.jetbrains.kotlin.utils.forEachBit
+import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.backend.common.ir.isUnconditional
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 
@@ -27,7 +27,7 @@ object LivenessAnalysis {
 
     private fun IrElement.getImmediateChildren(): List<IrElement> {
         val result = mutableListOf<IrElement>()
-        acceptChildrenVoid(object : IrElementVisitorVoid {
+        acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 result.add(element)
                 // Do not recurse.
@@ -41,7 +41,7 @@ object LivenessAnalysis {
      * this directly translates to the AST traversal from right to left.
      * Each visitXXX takes live variables ~after~ the [element] and returns live variables ~before~ the [element].
      */
-    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrElementVisitor<BitSet, BitSet> {
+    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrVisitor<BitSet, BitSet>() {
         private val variables = mutableListOf<IrVariable>()
         private val variableIds = mutableMapOf<IrVariable, Int>()
         private val filteredElementEndsLV = mutableMapOf<IrElement, BitSet>()
@@ -49,6 +49,7 @@ object LivenessAnalysis {
         private val loopEndsLV = mutableMapOf<IrLoop, BitSet>()
         private val loopStartsLV = mutableMapOf<IrLoop, BitSet>()
         private var catchesLV = BitSet()
+        private val suspensionPointIdParameters = BitSet()
 
         fun run(body: IrBody): Map<IrElement, List<IrVariable>> {
             body.accept(this, BitSet() /* No variable is live at the end */)
@@ -57,14 +58,33 @@ object LivenessAnalysis {
             }
         }
 
+        // May be used for debug purposes.
+        @Suppress("unused")
+        private fun BitSet.format() = buildString {
+            append('[')
+            var first = true
+            forEachBit {
+                if (!first) append(", ")
+                first = false
+                append(variables[it].name)
+            }
+            append(']')
+        }
+
         private fun getVariableId(variable: IrVariable) = variableIds.getOrPut(variable) {
             variables.add(variable)
             variables.lastIndex
         }
 
         private inline fun <T : IrElement> saveAndCompute(element: T, liveVariables: BitSet, compute: () -> BitSet): BitSet {
-            if (filter(element))
-                filteredElementEndsLV[element] = liveVariables.copy().also { it.or(catchesLV) }
+            if (filter(element)) {
+                // Merge with the previous because of the loops (see the comment there).
+                val elementLV = filteredElementEndsLV.getOrPut(element) { BitSet() }
+                elementLV.or(liveVariables)
+                elementLV.or(catchesLV)
+                // Suspension points id parameters are never live since they are provided at codegen.
+                elementLV.andNot(suspensionPointIdParameters)
+            }
             return compute()
         }
 
@@ -162,9 +182,18 @@ object LivenessAnalysis {
             }
             val prevCatchesLV = catchesLV
             catchesLV = currentCatchesLV
-            currentCatchesLV.or(aTry.tryResult.accept(this, data))
+            val lvAfterTry = data.copy().also { it.or(currentCatchesLV) }
+            currentCatchesLV.or(aTry.tryResult.accept(this, lvAfterTry))
             catchesLV = prevCatchesLV
             currentCatchesLV
+        }
+
+        override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: BitSet): BitSet {
+            val variableId = getVariableId(expression.suspensionPointIdParameter)
+            suspensionPointIdParameters.set(variableId)
+            return super.visitSuspensionPoint(expression, data).also {
+                suspensionPointIdParameters.clear(variableId)
+            }
         }
 
         override fun visitBreak(jump: IrBreak, data: BitSet) = saveAndCompute(jump, data) {
@@ -217,13 +246,15 @@ object LivenessAnalysis {
             loopEndsLV[loop] = data
             var bodyEndLV = loop.condition.accept(this, data)
             val body = loop.body ?: return bodyEndLV
-            var bodyStartLV: BitSet
+            val bodyStartLV = BitSet()
             // In practice, only one or two iterations seem to be enough, but the classic algorithm
             // loops until "saturation" (when nothing changes anymore).
             do {
                 loopStartsLV[loop] = bodyEndLV
-                bodyStartLV = body.accept(this, bodyEndLV)
-                val nextBodyEndLV = loop.condition.accept(this, bodyStartLV)
+                val curBodyStartLV = body.accept(this, bodyEndLV)
+                // Since it's unknown how many iterations the loop will execute, merge the live variables at each iteration.
+                bodyStartLV.or(curBodyStartLV)
+                val nextBodyEndLV = loop.condition.accept(this, curBodyStartLV)
                 val lvHaveChanged = nextBodyEndLV != bodyEndLV
                 bodyEndLV = nextBodyEndLV
             } while (lvHaveChanged)

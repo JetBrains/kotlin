@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-2746 Do.smartcasts in inference
 
 class C<T>(t :T)
@@ -16,3 +17,6 @@ fun test2(a: Any) {
         val c1: C<String> = f(a)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val x = object {
     val someString = "123"
 
@@ -29,3 +30,6 @@ fun owner() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, ifExpression, lambdaLiteral,
+localClass, localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral, thisExpression */

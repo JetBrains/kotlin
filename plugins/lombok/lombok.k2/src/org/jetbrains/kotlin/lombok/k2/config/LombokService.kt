@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.NoArgsConstru
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Setter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Singular
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.SuperBuilder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Value
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.With
 import java.io.File
@@ -40,51 +41,55 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     private val cachesFactory = session.firCachesFactory
 
     private val accessorsCache: Cache<Accessors> = cachesFactory.createCache { symbol ->
-        Accessors.get(symbol.fir, config)
+        Accessors.get(symbol.fir, config, session)
     }
 
     private val accessorsIfAnnotatedCache: Cache<Accessors?> = cachesFactory.createCache { symbol ->
-        Accessors.getIfAnnotated(symbol.fir, config)
+        Accessors.getIfAnnotated(symbol.fir, config, session)
     }
 
     private val getterCache: Cache<Getter?> = cachesFactory.createCache { symbol ->
-        Getter.getOrNull(symbol.fir)
+        Getter.getOrNull(symbol.fir, session)
     }
 
     private val setterCache: Cache<Setter?> = cachesFactory.createCache { symbol ->
-        Setter.getOrNull(symbol.fir)
+        Setter.getOrNull(symbol.fir, session)
     }
 
     private val withCache: Cache<With?> = cachesFactory.createCache { symbol ->
-        With.getOrNull(symbol.fir)
+        With.getOrNull(symbol.fir, session)
     }
 
     private val noArgsConstructorCache: Cache<NoArgsConstructor?> = cachesFactory.createCache { symbol ->
-        NoArgsConstructor.getOrNull(symbol.fir)
+        NoArgsConstructor.getOrNull(symbol.fir, session)
     }
 
     private val allArgsConstructorCache: Cache<AllArgsConstructor?> = cachesFactory.createCache { symbol ->
-        AllArgsConstructor.getOrNull(symbol.fir)
+        AllArgsConstructor.getOrNull(symbol.fir, session)
     }
 
     private val requiredArgsConstructorCache: Cache<RequiredArgsConstructor?> = cachesFactory.createCache { symbol ->
-        RequiredArgsConstructor.getOrNull(symbol.fir)
+        RequiredArgsConstructor.getOrNull(symbol.fir, session)
     }
 
     private val dataCache: Cache<Data?> = cachesFactory.createCache { symbol ->
-        Data.getOrNull(symbol.fir)
+        Data.getOrNull(symbol.fir, session)
     }
 
     private val valueCache: Cache<Value?> = cachesFactory.createCache { symbol ->
-        Value.getOrNull(symbol.fir)
+        Value.getOrNull(symbol.fir, session)
     }
 
     private val builderCache: Cache<Builder?> = cachesFactory.createCache { symbol ->
-        Builder.getIfAnnotated(symbol.fir, config)
+        Builder.getIfAnnotated(symbol.fir, config, session)
+    }
+
+    private val superBuilderCache: Cache<SuperBuilder?> = cachesFactory.createCache { symbol ->
+        SuperBuilder.getIfAnnotated(symbol.fir, config, session)
     }
 
     private val singularCache: Cache<Singular?> = cachesFactory.createCache { symbol ->
-        Singular.getOrNull(symbol.fir)
+        Singular.getOrNull(symbol.fir, session)
     }
 
     fun getAccessors(symbol: FirBasedSymbol<*>): Accessors = accessorsCache.getValue(symbol)
@@ -98,6 +103,7 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     fun getData(symbol: FirBasedSymbol<*>): Data? = dataCache.getValue(symbol)
     fun getValue(symbol: FirBasedSymbol<*>): Value? = valueCache.getValue(symbol)
     fun getBuilder(symbol: FirBasedSymbol<*>): Builder? = builderCache.getValue(symbol)
+    fun getSuperBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? = superBuilderCache.getValue(symbol)
     fun getSingular(symbol: FirBasedSymbol<*>): Singular? = singularCache.getValue(symbol)
 }
 

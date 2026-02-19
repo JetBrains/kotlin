@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 var count = 0
 
@@ -17,3 +18,7 @@ fun main() {
 
     1.set(2, <!NO_VALUE_FOR_PARAMETER!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, integerLiteral, localProperty, operator, propertyDeclaration, stringLiteral,
+thisExpression */

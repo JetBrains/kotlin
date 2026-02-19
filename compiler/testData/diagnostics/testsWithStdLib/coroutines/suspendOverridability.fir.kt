@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: main.kt
 interface A {
     suspend fun foo()
@@ -5,11 +6,11 @@ interface A {
 }
 
 interface B : A {
-    override fun foo() {
+    override fun <!SUSPEND_OVERRIDDEN_BY_NON_SUSPEND!>foo<!>() {
 
     }
 
-    override suspend fun bar() {
+    override suspend fun <!NON_SUSPEND_OVERRIDDEN_BY_SUSPEND!>bar<!>() {
 
     }
 }
@@ -35,3 +36,5 @@ interface C : A {
 public interface J extends A {
     Object foo(kotlin.coroutines.Continuation<kotlin.Unit> y);
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, override, suspend */

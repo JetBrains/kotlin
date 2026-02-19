@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: base
 // FILE: Base.kt
@@ -22,3 +23,5 @@ fun foo() {
     Impl().foo()
     Impl().internalFoo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

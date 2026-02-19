@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Runnable {
     abstract fun run()
 }
@@ -8,7 +9,7 @@ fun foo(): Int {
     if (c is Int) {
         val k = object: Runnable() {
             init {
-                a!!.toInt()
+                a!!
             }
             override fun run() = Unit
         }
@@ -19,3 +20,7 @@ fun foo(): Int {
     }
     else return -1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, checkNotNullCall, classDeclaration,
+functionDeclaration, ifExpression, init, integerLiteral, isExpression, localProperty, nullableType, override,
+propertyDeclaration, smartcast */

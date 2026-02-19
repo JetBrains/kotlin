@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 interface Tr<T> {
     var v: T
 }
@@ -8,3 +9,6 @@ fun test(t: Tr<out String>) {
     // so TYPE_MISMATCH: String is not <: of Captured(out String)
     <!SETTER_PROJECTED_OUT!>t.v<!> += null!!
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, capturedType, checkNotNullCall, functionDeclaration,
+interfaceDeclaration, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter */

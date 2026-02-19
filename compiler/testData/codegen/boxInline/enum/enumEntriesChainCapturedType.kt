@@ -1,6 +1,5 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_MULTI_MODULE_OLD_AGAINST_IR
 // WITH_STDLIB
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: 1.kt
 
 package test

@@ -6,20 +6,22 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 
-object FirJvmSyntheticApplicabilityChecker : FirPropertyChecker() {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJvmSyntheticApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val annotation = declaration.backingField?.getAnnotationByClassId(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && annotation.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) {
-            reporter.reportOn(annotation.source, FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE, context)
+            reporter.reportOn(annotation.source, FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE)
         }
     }
 }

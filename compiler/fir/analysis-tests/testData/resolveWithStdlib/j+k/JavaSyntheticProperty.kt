@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaClass.java
 
 class JavaClass {
@@ -7,3 +8,5 @@ class JavaClass {
 // FILE: test.kt
 
 val x = JavaClass().foo
+
+/* GENERATED_FIR_TAGS: flexibleType, javaFunction, javaProperty, javaType, propertyDeclaration */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // KT-10444 Do not ignore smart (unchecked) casts to the same classifier
 
 class Base<in T>
@@ -37,3 +38,7 @@ open class Bar<T: Foo>(open val a: T?, open val b: T?) {
     fun check(a: T?, b: T) {
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, comparisonExpression, dnnType, equalityExpression,
+functionDeclaration, ifExpression, in, integerLiteral, isExpression, javaFunction, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, starProjection, stringLiteral, typeConstraint, typeParameter */

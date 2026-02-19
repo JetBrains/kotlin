@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: C.java
 
@@ -17,3 +18,6 @@ class B : A() {
 }
 
 fun <T> foo(f: () -> T): T = f()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, javaFunction, javaType, lambdaLiteral,
+nullableType, safeCall, samConversion, typeParameter */

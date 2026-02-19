@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// RENDER_DIAGNOSTICS_FULL_TEXT
 interface A {
     fun b(a : Int)
 }
@@ -11,3 +14,5 @@ class C1 : A {
 class C2 : B {
     override fun b(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>b<!> : Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

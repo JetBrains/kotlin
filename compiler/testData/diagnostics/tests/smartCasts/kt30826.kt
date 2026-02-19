@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // Issue: KT-30826
 
@@ -17,3 +18,6 @@ fun foo(x: I1?) {
     y = null
     bar()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, functionDeclaration, interfaceDeclaration,
+intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

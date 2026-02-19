@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun test(boolean: Boolean) {
     val expectedLong: Long = if (boolean) {
@@ -41,3 +42,5 @@ fun test(boolean: Boolean) {
         return
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration */

@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-60850
 // WITH_STDLIB
 

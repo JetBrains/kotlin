@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 var - {}
 var f {}
 var f :

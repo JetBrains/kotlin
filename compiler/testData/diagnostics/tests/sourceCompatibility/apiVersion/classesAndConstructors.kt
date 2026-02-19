@@ -1,4 +1,5 @@
-// !API_VERSION: 1.0
+// RUN_PIPELINE_TILL: FRONTEND
+// API_VERSION: 1.0
 
 @SinceKotlin("1.1")
 open class Foo
@@ -21,3 +22,6 @@ fun t3(): Bar? = <!UNRESOLVED_REFERENCE!>Bar<!>()
 fun t4(): Baz = <!UNRESOLVED_REFERENCE!>Baz<!>()
 
 fun t5(): <!API_NOT_AVAILABLE!>Quux<!> = <!UNRESOLVED_REFERENCE!>Quux<!>()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, nullableType,
+primaryConstructor, stringLiteral */

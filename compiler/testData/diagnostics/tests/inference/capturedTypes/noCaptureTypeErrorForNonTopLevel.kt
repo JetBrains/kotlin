@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A<T>
 class B<T>
 
@@ -16,3 +17,5 @@ fun bar(b: B<in A<out Number>>, bOut: B<out A<out Number>>, bOut2: B<out A<Numbe
     baz(bOut2)
     baz<Number>(bOut2)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, nullableType, outProjection, typeParameter */

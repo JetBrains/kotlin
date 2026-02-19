@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -11,3 +12,6 @@ fun foo() {
     "123"[<!ARGUMENT_TYPE_MISMATCH!>x<!>];
     if (x != null) "123"[x];
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

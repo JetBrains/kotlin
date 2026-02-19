@@ -35,7 +35,6 @@ internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierL
     override fun getParent() = owner
     override fun isEquivalentTo(another: PsiElement?) = another is SymbolLightModifierList<*> && owner == another.owner
     override fun isWritable() = false
-    override fun toString() = "Light modifier list of $owner"
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
 
     override fun equals(other: Any?): Boolean = this === other || other is SymbolLightModifierList<*> && other.kotlinOrigin == kotlinOrigin

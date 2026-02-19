@@ -9,8 +9,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.allSuperclasses
 
 class CheckersConfiguration(
-    val aliases: Map<KClass<*>, String>,
-    val additionalCheckers: MutableMap<String, String>
+    val aliases: Map<KClass<*>, Pair<String, Boolean>>,
+    val additionalCheckers: MutableMap<String, String>,
+    val visitAlso: Map<KClass<*>, String>,
 ) {
     val parentsMap: Map<KClass<*>, List<KClass<*>>>
 

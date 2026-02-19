@@ -1,0 +1,19 @@
+//
+// Source
+// ------------------------------------------
+
+val bar: Int @Composable get() { return 123 }
+
+@Composable fun Example() {
+    bar
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static getBar(Landroidx/compose/runtime/Composer;I)I
+  public final static Example(Landroidx/compose/runtime/Composer;I)V
+  private final static Example%lambda%0(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

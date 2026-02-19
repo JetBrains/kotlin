@@ -22,11 +22,17 @@ val embedded by configurations.getting {
 }
 
 dependencies {
+    api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-idea"))
-    embedded("com.google.protobuf:protobuf-java:3.21.9")
-    embedded("com.google.protobuf:protobuf-kotlin:3.21.9")
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(kotlin("reflect"))
+    embedded(libs.protobuf.java)
+    embedded(libs.protobuf.kotlin)
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    testImplementation(libs.junit4)
+    testRuntimeOnly(kotlin("test-junit", coreDepsVersion))
+    testImplementation(kotlin("test", coreDepsVersion))
+    testImplementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("reflect", coreDepsVersion))
+    testImplementation(project(":kotlin-tooling-core"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }
 
@@ -75,7 +81,7 @@ run {
     }
 
     dependencies {
-        protoc("com.google.protobuf:protoc:3.21.9") {
+        protoc(libs.protoc) {
             artifact {
                 type = "exe"
                 classifier = when (HostManager.host) {
@@ -88,17 +94,20 @@ run {
             }
         }
 
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:linux-x86_64@exe")
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:osx-aarch_64@exe")
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:osx-x86_64@exe")
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:windows-x86_64@exe")
+        val protocVersion = libs.versions.protobuf.get()
+
+        implicitDependencies("com.google.protobuf:protoc:$protocVersion:linux-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:$protocVersion:osx-aarch_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:$protocVersion:osx-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:$protocVersion:windows-x86_64@exe")
     }
 
-    val protocExecutable = buildDir.resolve("protoc/bin")
+    val protocExecutable = layout.buildDirectory.file("protoc/bin")
     val setupProtoc = tasks.register("setupProtoc") {
         doFirst {
-            protoc.files.single().copyTo(protocExecutable, overwrite = true)
-            protocExecutable.setExecutable(true)
+            val protocFile = protocExecutable.get().asFile
+            protoc.files.single().copyTo(protocFile, overwrite = true)
+            protocFile.setExecutable(true)
         }
     }
 
@@ -122,16 +131,16 @@ run {
 
         workingDir(project.projectDir)
 
-        commandLine(
-            *arrayOf(
-                protocExecutable.absolutePath,
+        argumentProviders.add {
+            listOf(
+                protocExecutable.get().asFile.absolutePath,
                 "-I=$protoSources",
                 "--java_out=${javaOutput.absolutePath}",
                 "--kotlin_out=${kotlinOutput.absolutePath}"
             ) + protoSources.listFiles().orEmpty()
                 .filter { it.extension == "proto" }
-                .map { it.path },
-        )
+                .map { it.path }
+        }
     }
 }
 

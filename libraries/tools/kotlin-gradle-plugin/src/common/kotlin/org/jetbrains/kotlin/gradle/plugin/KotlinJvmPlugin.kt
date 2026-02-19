@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.*
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 
 const val KOTLIN_DSL_NAME = "kotlin"
 
@@ -20,9 +17,7 @@ const val KOTLIN_DSL_NAME = "kotlin"
 const val KOTLIN_JS_DSL_NAME = "kotlin2js"
 const val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-internal open class KotlinJvmPlugin(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
+internal open class KotlinJvmPlugin : AbstractKotlinPlugin(KotlinTasksProvider()) {
 
     internal companion object {
         private const val targetName = "" // use empty suffix for the task names
@@ -31,7 +26,6 @@ internal open class KotlinJvmPlugin(
             extensionCompilerOptions: KotlinJvmCompilerOptions,
             targetCompilerOptions: KotlinJvmCompilerOptions
         ) {
-            extensionCompilerOptions.verbose.convention(logger.isDebugEnabled)
             extensionCompilerOptions.moduleName.convention(baseModuleName())
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
                 extensionCompilerOptions,
@@ -48,31 +42,9 @@ internal open class KotlinJvmPlugin(
         Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
 
     override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST")
-        val target = (project.objects.newInstance(
-            KotlinWithJavaTarget::class.java,
-            project,
-            KotlinPlatformType.jvm,
-            targetName,
-            {
-                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
-                    override val options: KotlinJvmCompilerOptions =
-                        project.objects
-                            .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-                            .configureExperimentalTryK2(project)
-                }
-            },
-            { compilerOptions: KotlinJvmCompilerOptions ->
-                object : KotlinJvmOptions {
-                    override val options: KotlinJvmCompilerOptions get() = compilerOptions
-                }
-            }
-        ) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>)
-            .apply {
-                disambiguationClassifier = null // don't add anything to the task names
-            }
+        val target = project.objects.KotlinWithJavaTargetForJvm(project, targetName)
         val kotlinExtension = project.kotlinExtension as KotlinJvmProjectExtension
-        kotlinExtension.target = target
+        kotlinExtension.targetFuture.complete(target)
 
         super.apply(project)
 
@@ -80,14 +52,5 @@ internal open class KotlinJvmPlugin(
             kotlinExtension.compilerOptions,
             target.compilerOptions
         )
-
-        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
-    }
-
-    override fun configureClassInspectionForIC(project: Project) {
-        // For new IC this task is not needed
-        if (!project.kotlinPropertiesProvider.useClasspathSnapshot) {
-            super.configureClassInspectionForIC(project)
-        }
     }
 }

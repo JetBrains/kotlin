@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 fun test(x: Int): String {
     return when {
         x == 1 || x == 3 || x == 5 -> "135"

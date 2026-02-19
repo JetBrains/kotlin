@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
-import org.jetbrains.kotlin.types.error.*
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorTypeConstructor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -118,11 +119,14 @@ internal class DescriptorRendererImpl(
         if (abbreviated != null) {
             if (renderTypeExpansions) {
                 renderNormalizedTypeAsIs(abbreviated.expandedType)
+                if (renderAbbreviatedTypeComments) {
+                    renderAbbreviatedTypeComment(abbreviated)
+                }
             } else {
                 // TODO nullability is lost for abbreviated type?
                 renderNormalizedTypeAsIs(abbreviated.abbreviation)
                 if (renderUnabbreviatedType) {
-                    renderAbbreviatedTypeExpansion(abbreviated)
+                    renderExpandedTypeComment(abbreviated)
                 }
             }
             return
@@ -131,12 +135,26 @@ internal class DescriptorRendererImpl(
         renderNormalizedTypeAsIs(type)
     }
 
-    private fun StringBuilder.renderAbbreviatedTypeExpansion(abbreviated: AbbreviatedType) {
+    private fun StringBuilder.renderAbbreviatedTypeComment(abbreviated: AbbreviatedType) {
+        renderInBlockComment {
+            append("from: ")
+            renderNormalizedTypeAsIs(abbreviated.abbreviation)
+        }
+    }
+
+    private fun StringBuilder.renderExpandedTypeComment(abbreviated: AbbreviatedType) {
+        renderInBlockComment {
+            append("= ")
+            renderNormalizedTypeAsIs(abbreviated.expandedType)
+        }
+    }
+
+    private inline fun StringBuilder.renderInBlockComment(renderBody: () -> Unit) {
         if (textFormat == RenderingFormat.HTML) {
             append("<font color=\"808080\"><i>")
         }
-        append(" /* = ")
-        renderNormalizedTypeAsIs(abbreviated.expandedType)
+        append(" /* ")
+        renderBody()
         append(" */")
         if (textFormat == RenderingFormat.HTML) {
             append("</i></font>")
@@ -192,39 +210,13 @@ internal class DescriptorRendererImpl(
             return "$lowerRendered!"
         }
 
-        val kotlinCollectionsPrefix = classifierNamePolicy.renderClassifier(builtIns.collection, this).substringBefore("Collection")
-        val mutablePrefix = "Mutable"
-        // java.util.List<Foo> -> (Mutable)List<Foo!>!
-        val simpleCollection = replacePrefixesInTypeRepresentations(
+        return renderFlexibleMutabilityOrArrayElementVarianceType(
             lowerRendered,
-            kotlinCollectionsPrefix + mutablePrefix,
             upperRendered,
-            kotlinCollectionsPrefix,
-            "$kotlinCollectionsPrefix($mutablePrefix)"
-        )
-        if (simpleCollection != null) return simpleCollection
-        // java.util.Map.Entry<Foo, Bar> -> (Mutable)Map.(Mutable)Entry<Foo!, Bar!>!
-        val mutableEntry = replacePrefixesInTypeRepresentations(
-            lowerRendered,
-            kotlinCollectionsPrefix + "MutableMap.MutableEntry",
-            upperRendered,
-            kotlinCollectionsPrefix + "Map.Entry",
-            "$kotlinCollectionsPrefix(Mutable)Map.(Mutable)Entry"
-        )
-        if (mutableEntry != null) return mutableEntry
-
-        val kotlinPrefix = classifierNamePolicy.renderClassifier(builtIns.array, this).substringBefore("Array")
-        // Foo[] -> Array<(out) Foo!>!
-        val array = replacePrefixesInTypeRepresentations(
-            lowerRendered,
-            kotlinPrefix + escape("Array<"),
-            upperRendered,
-            kotlinPrefix + escape("Array<out "),
-            kotlinPrefix + escape("Array<(out) ")
-        )
-        if (array != null) return array
-
-        return "($lowerRendered..$upperRendered)"
+            { classifierNamePolicy.renderClassifier(builtIns.collection, this).substringBefore("Collection") },
+            { classifierNamePolicy.renderClassifier(builtIns.array, this).substringBefore("Array") },
+            ::escape,
+        ) ?: "($lowerRendered..$upperRendered)"
     }
 
     override fun renderTypeArguments(typeArguments: List<TypeProjection>): String =
@@ -329,16 +321,6 @@ internal class DescriptorRendererImpl(
 
         val receiverType = type.getReceiverTypeFromFunctionType()
         val contextReceiversTypes = type.getContextReceiverTypesFromFunctionType()
-        if (contextReceiversTypes.isNotEmpty()) {
-            append("context(")
-            val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
-            for (contextReceiverType in withoutLast) {
-                renderNormalizedType(contextReceiverType)
-                append(", ")
-            }
-            renderNormalizedType(contextReceiversTypes.last())
-            append(") ")
-        }
 
         val isSuspend = type.isSuspendFunctionType
         val isNullable = type.isMarkedNullable
@@ -361,6 +343,17 @@ internal class DescriptorRendererImpl(
         }
 
         renderModifier(this, isSuspend, "suspend")
+
+        if (contextReceiversTypes.isNotEmpty()) {
+            append("context(")
+            val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
+            for (contextReceiverType in withoutLast) {
+                renderNormalizedType(contextReceiverType)
+                append(", ")
+            }
+            renderNormalizedType(contextReceiversTypes.last())
+            append(") ")
+        }
 
         if (receiverType != null) {
             val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable ||
@@ -685,8 +678,8 @@ internal class DescriptorRendererImpl(
     private fun renderFunction(function: FunctionDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                builder.renderAnnotations(function)
                 renderContextReceivers(function.contextReceiverParameters, builder)
+                builder.renderAnnotations(function)
                 renderVisibility(function.visibility, builder)
                 renderModalityForCallable(function, builder)
 
@@ -743,9 +736,9 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun KotlinType.renderForReceiver(): String {
+    private fun KotlinType.renderForReceiver(wrapAnnotated: Boolean = false): String {
         var result = renderType(this)
-        if ((shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) || this is DefinitelyNotNullType) {
+        if ((shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) || this is DefinitelyNotNullType || wrapAnnotated && !this.annotations.isEmpty()) {
             result = "($result)"
         }
         return result
@@ -758,8 +751,8 @@ internal class DescriptorRendererImpl(
             return
         }
         for ((i, contextReceiver) in contextReceivers.withIndex()) {
-            builder.renderAnnotations(contextReceiver, AnnotationUseSiteTarget.RECEIVER)
-            val typeString = contextReceiver.type.renderForReceiver()
+            // Context receivers have to wrap type annotation to be parsed correctly
+            val typeString = contextReceiver.type.renderForReceiver(wrapAnnotated = true)
             builder.append(typeString)
             if (i == contextReceivers.lastIndex) {
                 builder.append(") ")
@@ -936,8 +929,8 @@ internal class DescriptorRendererImpl(
     private fun renderProperty(property: PropertyDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                renderPropertyAnnotations(property, builder)
                 renderContextReceivers(property.contextReceiverParameters, builder)
+                renderPropertyAnnotations(property, builder)
                 renderVisibility(property.visibility, builder)
                 renderModifier(builder, DescriptorRendererModifier.CONST in modifiers && property.isConst, "const")
                 renderMemberModifiers(property, builder)
@@ -1022,8 +1015,8 @@ internal class DescriptorRendererImpl(
         val isEnumEntry = klass.kind == ClassKind.ENUM_ENTRY
 
         if (!startFromName) {
-            builder.renderAnnotations(klass)
             renderContextReceivers(klass.contextReceivers, builder)
+            builder.renderAnnotations(klass)
             if (!isEnumEntry) {
                 renderVisibility(klass.visibility, builder)
             }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Query<out T : Any> private constructor(
     private val result: T?,
@@ -19,3 +20,7 @@ fun main() {
     val liveData = MutableLiveData<Query<Int>>()
     liveData.value = Query.inProgress // Type mismatch: inferred type is Query<Any> but Query<Int> was expected
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, companionObject, functionDeclaration,
+localProperty, nullableType, objectDeclaration, out, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

@@ -1,0 +1,14 @@
+KaDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = consume(a - b)
+    type = kotlin.Unit
+  hasEscapingJumps = false
+  hasJumps = true
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = false
+  jumpExpressions = [
+    continue
+  ]
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

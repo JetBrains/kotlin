@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 class ExcA : Exception()
@@ -108,3 +109,6 @@ fun test10() {
     }
     x.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, intersectionType, localProperty,
+nullableType, propertyDeclaration, stringLiteral, tryExpression */

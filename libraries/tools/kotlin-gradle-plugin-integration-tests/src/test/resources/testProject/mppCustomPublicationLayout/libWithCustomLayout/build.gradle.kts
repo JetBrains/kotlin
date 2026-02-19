@@ -28,7 +28,13 @@ afterEvaluate {
             it as ConfigurablePublishArtifact
             it.classifier = targetName
         }
-        customComponent.addVariantsFromConfiguration(configuration) {}
+        customComponent.addVariantsFromConfiguration(configuration) {
+            // workaround for the issue that secondary variant are actually published: https://github.com/gradle/gradle/issues/29295
+            // unless something specific is done
+            if (configurationVariant.name != configuration.name) {
+                skip()
+            }
+        }
     }
 }
 

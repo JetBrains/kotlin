@@ -1,11 +1,18 @@
-KtDestructuringDeclarationSymbol:
-  annotationsList: []
+KaDestructuringDeclarationSymbol:
+  annotations: []
+  compilerVisibility: Local
   entries: [
-    KtLocalVariableSymbol(<local>/a)
-    KtLocalVariableSymbol(<local>/b)
+    KaLocalVariableSymbol(<local>/a)
+    KaLocalVariableSymbol(<local>/b)
   ]
+  isActual: false
+  isExpect: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
   origin: SOURCE
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(destructuringDeclarationInLambda.kt)
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

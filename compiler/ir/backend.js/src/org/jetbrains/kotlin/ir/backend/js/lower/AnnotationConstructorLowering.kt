@@ -32,7 +32,7 @@ class AnnotationConstructorLowering(val context: JsCommonBackendContext) : Decla
         // TODO what about its previous body?
         declaration.body = declaration.factory.createBlockBody(declaration.startOffset, declaration.endOffset) {
             if (context.es6mode) {
-                statements += IrDelegatingConstructorCallImpl(startOffset, endOffset, context.irBuiltIns.anyType, anyConstructor, 0, 0)
+                statements += IrDelegatingConstructorCallImpl(startOffset, endOffset, context.irBuiltIns.anyType, anyConstructor, 0)
             }
             statements += IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, unitType)
         }

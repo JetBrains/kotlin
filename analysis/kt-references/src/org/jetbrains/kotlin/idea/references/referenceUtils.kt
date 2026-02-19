@@ -56,3 +56,12 @@ fun KtFunction.getCalleeByLambdaArgument(): KtSimpleNameExpression? {
     } ?: return null
     return callExpression.calleeExpression as? KtSimpleNameExpression
 }
+
+fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement): Boolean =
+    when {
+        // call to Java constructor
+        this is PsiMethod && isConstructor && containingClass == unwrappedCandidate -> true
+        // call to Kotlin constructor
+        this is KtConstructor<*> && getContainingClassOrObject().isEquivalentTo(unwrappedCandidate) -> true
+        else -> false
+    }

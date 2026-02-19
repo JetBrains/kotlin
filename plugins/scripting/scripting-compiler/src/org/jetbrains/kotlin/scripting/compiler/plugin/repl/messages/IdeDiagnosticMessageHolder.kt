@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl.messages
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.DiagnosticRangeUtils
 import org.w3c.dom.ls.DOMImplementationLS
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -28,7 +28,7 @@ class IdeDiagnosticMessageHolder : DiagnosticMessageHolder {
         errorReport.appendChild(rootElement)
 
         for ((diagnostic, message) in diagnostics) {
-            val errorRange = DiagnosticUtils.firstRange(diagnostic.textRanges)
+            val errorRange = DiagnosticRangeUtils.firstRange(diagnostic.textRanges)
 
             val reportEntry = errorReport.createElement("reportEntry")
             reportEntry.setAttribute("severity", diagnostic.severity.toString())

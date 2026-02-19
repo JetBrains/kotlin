@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 import java.io.Closeable;
@@ -16,3 +17,5 @@ fun main() {
     A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { "Hello!" }
     A.foo(Runnable { "Hello!" })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, lambdaLiteral, stringLiteral */

@@ -1,5 +1,7 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A(
     val l: MutableList<Int>,
@@ -89,3 +91,7 @@ fun foo(a: A?) {
         a<!UNNECESSARY_SAFE_CALL!>?.<!>w.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inProjection, incrementDecrementExpression, integerLiteral, nullableType, operator,
+primaryConstructor, propertyDeclaration, safeCall, smartcast, thisExpression, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(a: Any?) {
     if (a != null) {
         a.foo(11)
@@ -5,3 +6,6 @@ fun test(a: Any?) {
 }
 
 fun <T> Any.foo(t: T) = t
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral,
+nullableType, smartcast, typeParameter */

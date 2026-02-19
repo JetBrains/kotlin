@@ -1,0 +1,1 @@
+fun a<caret>aa() {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun foo(arg: Boolean) {
     val x : Int
@@ -19,3 +20,6 @@ fun foo(arg: Boolean) {
         return x.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, integerLiteral, localClass,
+localFunction, localProperty, propertyDeclaration */

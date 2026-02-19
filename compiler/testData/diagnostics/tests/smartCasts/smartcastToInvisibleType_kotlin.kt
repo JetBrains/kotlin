@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // INFERENCE_HELPERS
-// ISSUE: KT-44802
+// ISSUES: KT-44802, KT-56744
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 // FILE: a.kt
 
 package foo
@@ -41,3 +43,7 @@ fun testInference(a: A, b: B) {
     val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!>select(a, b)<!>
     x.<!INVISIBLE_MEMBER!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, disjunctionExpression, functionDeclaration,
+ifExpression, integerLiteral, interfaceDeclaration, isExpression, localProperty, nullableType, outProjection,
+propertyDeclaration, smartcast, typeParameter, vararg */

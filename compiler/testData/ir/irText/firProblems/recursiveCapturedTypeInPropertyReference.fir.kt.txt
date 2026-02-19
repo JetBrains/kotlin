@@ -1,4 +1,13 @@
-interface Something {
+abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(list: List<Any>) {
+    val result: List<AbstractSymbol<*>> = map<Recursive<*>, AbstractSymbol<*>>(/* <this> = filterIsInstance<Recursive<*>>(/* <this> = list */), */ transform = Recursive::symbol)
+  }
 
 }
 
@@ -8,15 +17,6 @@ interface Recursive<R> where R : Recursive<R>, R : Something {
 
 }
 
-abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun foo(list: List<Any>) {
-    val result: List<AbstractSymbol<*>> = list.filterIsInstance<Recursive<*>>().map<Recursive<*>, AbstractSymbol<*>>(transform = Recursive::symbol)
-  }
-
+interface Something {
 }
+

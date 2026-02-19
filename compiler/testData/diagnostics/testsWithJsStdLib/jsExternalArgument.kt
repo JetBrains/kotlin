@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 
 @OptIn(ExperimentalStdlibApi::class)
 fun anyExample(@JsExternalArgument x : Any) = x

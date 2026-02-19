@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsNativeGetter
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsNativeSetter
@@ -30,8 +31,8 @@ open class NativeGetterSetterTransformer(val context: JsIrBackendContext) : Call
     }
 
     protected fun IrFunctionAccessExpression.transformToIndexedRead(): IrExpression {
-        val obj = dispatchReceiver ?: extensionReceiver!!
-        val propertyName = getValueArgument(0)!!
+        val obj = arguments.getOrNull(0) ?: compilationException("Native getter call should have a receiver argument", this)
+        val propertyName = arguments.getOrNull(1) ?: compilationException("Native getter call should have the key argument", this)
         return IrDynamicOperatorExpressionImpl(
             startOffset,
             endOffset,
@@ -44,7 +45,7 @@ open class NativeGetterSetterTransformer(val context: JsIrBackendContext) : Call
     }
 
     protected fun IrFunctionAccessExpression.transformToIndexedWrite(): IrExpression {
-        val value = getValueArgument(1)!!
+        val value = arguments.getOrNull(2) ?: compilationException("Native setter call should have a value argument", this)
 
         return IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.EQ).also {
             it.receiver = transformToIndexedRead()

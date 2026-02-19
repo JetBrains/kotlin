@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package conflictingSubstitutions
 //+JDK
@@ -18,3 +19,6 @@ fun <T> list(value: T) : ArrayList<T> {
     list.add(value)
     return list
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral, intersectionType,
+javaFunction, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

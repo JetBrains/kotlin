@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun <T> eval(f: () -> T) = f()
@@ -9,12 +9,25 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:7 box
 // test.kt:4 eval
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:8 invoke
+// EXPECTATIONS FIR JVM_IR
+// test.kt:8 box$lambda$0
+// EXPECTATIONS JVM_IR
 // test.kt:4 eval
 // test.kt:7 box
+// test.kt:10 box
+
+// EXPECTATIONS NATIVE
+// test.kt:7 box
+// test.kt:4 eval
+// test.kt:7 invoke
+// test.kt:8 invoke
+// test.kt:9 invoke
+// test.kt:4 eval
 // test.kt:10 box
 
 // EXPECTATIONS JS_IR
@@ -22,3 +35,11 @@ fun box() {
 // test.kt:4 eval
 // test.kt:8 box$lambda
 // test.kt:10 box
+
+// EXPECTATIONS WASM
+// test.kt:7 $box (4)
+// test.kt:4 $eval (27)
+// test.kt:8 $box$lambda.invoke (8, 12)
+// test.kt:4 $eval (30)
+// test.kt:7 $box (4)
+// test.kt:10 $box (1)

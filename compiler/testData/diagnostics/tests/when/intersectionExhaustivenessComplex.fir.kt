@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 sealed class A {
     class A1 : A()
@@ -11,32 +12,36 @@ sealed class B {
 }
 
 fun foo(a: A) {
-    if (a !is B) return
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>a !is B<!>) return
 
     when (a) {
-        is A.A1 -> ""
-        is A.A2 -> "v"
+        <!USELESS_IS_CHECK!>is A.A1<!> -> ""
+        <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
     }.length
 
     when (a) {
-        is A.A1 -> ""
-        is A.A2 -> "v"
+        <!USELESS_IS_CHECK!>is A.A1<!> -> ""
+        <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
     }.length // OK
 
     when (a) {
-        is A.A1 -> ""
-        is A.A2 -> "v"
-        is B.B1 -> "..." // should be warning: unreachable code
+        <!USELESS_IS_CHECK!>is A.A1<!> -> ""
+        <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..." // should be warning: unreachable code
     }.length // OK
 
     when (a) {
-        is A.A1 -> ""
-        is B.B1 -> "..."
-        is A.A2 -> "v"
+        <!USELESS_IS_CHECK!>is A.A1<!> -> ""
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..."
+        <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
     }.length // OK
 
     <!NO_ELSE_IN_WHEN!>when<!> (a) {
-        is A.A1 -> ""
-        is B.B1 -> "..."
-    }.<!UNRESOLVED_REFERENCE!>length<!>
+        <!USELESS_IS_CHECK!>is A.A1<!> -> ""
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..."
+    }.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, intersectionType, isExpression, nestedClass, nullableType, sealed, smartcast, stringLiteral, typeParameter,
+typeWithExtension, whenExpression, whenWithSubject */

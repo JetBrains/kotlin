@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR", "REDUNDANT_CALL_OF_CONVERSION_METHOD")
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
@@ -28,6 +28,10 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Byte).toString()
             "unaryMinus" -> return (value as Byte).unaryMinus()
             "unaryPlus" -> return (value as Byte).unaryPlus()
+            "toULong" -> return (value as Byte).toULong()
+            "toUInt" -> return (value as Byte).toUInt()
+            "toUShort" -> return (value as Byte).toUShort()
+            "toUByte" -> return (value as Byte).toUByte()
         }
         CHAR -> when (name) {
             "toByte" -> return (value as Char).toByte()
@@ -51,6 +55,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Double).toString()
             "unaryMinus" -> return (value as Double).unaryMinus()
             "unaryPlus" -> return (value as Double).unaryPlus()
+            "toULong" -> return (value as Double).toULong()
+            "toUInt" -> return (value as Double).toUInt()
         }
         FLOAT -> when (name) {
             "toByte" -> return (value as Float).toByte()
@@ -63,6 +69,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Float).toString()
             "unaryMinus" -> return (value as Float).unaryMinus()
             "unaryPlus" -> return (value as Float).unaryPlus()
+            "toULong" -> return (value as Float).toULong()
+            "toUInt" -> return (value as Float).toUInt()
         }
         INT -> when (name) {
             "inv" -> return (value as Int).inv()
@@ -76,6 +84,10 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Int).toString()
             "unaryMinus" -> return (value as Int).unaryMinus()
             "unaryPlus" -> return (value as Int).unaryPlus()
+            "toULong" -> return (value as Int).toULong()
+            "toUInt" -> return (value as Int).toUInt()
+            "toUShort" -> return (value as Int).toUShort()
+            "toUByte" -> return (value as Int).toUByte()
         }
         LONG -> when (name) {
             "inv" -> return (value as Long).inv()
@@ -89,6 +101,10 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Long).toString()
             "unaryMinus" -> return (value as Long).unaryMinus()
             "unaryPlus" -> return (value as Long).unaryPlus()
+            "toULong" -> return (value as Long).toULong()
+            "toUInt" -> return (value as Long).toUInt()
+            "toUShort" -> return (value as Long).toUShort()
+            "toUByte" -> return (value as Long).toUByte()
         }
         SHORT -> when (name) {
             "toByte" -> return (value as Short).toByte()
@@ -101,10 +117,72 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Short).toString()
             "unaryMinus" -> return (value as Short).unaryMinus()
             "unaryPlus" -> return (value as Short).unaryPlus()
+            "toULong" -> return (value as Short).toULong()
+            "toUInt" -> return (value as Short).toUInt()
+            "toUShort" -> return (value as Short).toUShort()
+            "toUByte" -> return (value as Short).toUByte()
         }
         STRING -> when (name) {
             "length" -> return (value as String).length
             "toString" -> return (value as String).toString()
+            "trimIndent" -> return (value as String).trimIndent()
+            "trimMargin" -> return (value as String).trimMargin()
+        }
+        UINT -> when (name) {
+            "inv" -> return (value as UInt).inv()
+            "toByte" -> return (value as UInt).toByte()
+            "toDouble" -> return (value as UInt).toDouble()
+            "toFloat" -> return (value as UInt).toFloat()
+            "toInt" -> return (value as UInt).toInt()
+            "toLong" -> return (value as UInt).toLong()
+            "toShort" -> return (value as UInt).toShort()
+            "toString" -> return (value as UInt).toString()
+            "toUByte" -> return (value as UInt).toUByte()
+            "toUInt" -> return (value as UInt).toUInt()
+            "toULong" -> return (value as UInt).toULong()
+            "toUShort" -> return (value as UInt).toUShort()
+        }
+        ULONG -> when (name) {
+            "inv" -> return (value as ULong).inv()
+            "toByte" -> return (value as ULong).toByte()
+            "toDouble" -> return (value as ULong).toDouble()
+            "toFloat" -> return (value as ULong).toFloat()
+            "toInt" -> return (value as ULong).toInt()
+            "toLong" -> return (value as ULong).toLong()
+            "toShort" -> return (value as ULong).toShort()
+            "toString" -> return (value as ULong).toString()
+            "toUByte" -> return (value as ULong).toUByte()
+            "toUInt" -> return (value as ULong).toUInt()
+            "toULong" -> return (value as ULong).toULong()
+            "toUShort" -> return (value as ULong).toUShort()
+        }
+        UBYTE -> when (name) {
+            "inv" -> return (value as UByte).inv()
+            "toByte" -> return (value as UByte).toByte()
+            "toDouble" -> return (value as UByte).toDouble()
+            "toFloat" -> return (value as UByte).toFloat()
+            "toInt" -> return (value as UByte).toInt()
+            "toLong" -> return (value as UByte).toLong()
+            "toShort" -> return (value as UByte).toShort()
+            "toString" -> return (value as UByte).toString()
+            "toUByte" -> return (value as UByte).toUByte()
+            "toUInt" -> return (value as UByte).toUInt()
+            "toULong" -> return (value as UByte).toULong()
+            "toUShort" -> return (value as UByte).toUShort()
+        }
+        USHORT -> when (name) {
+            "inv" -> return (value as UShort).inv()
+            "toByte" -> return (value as UShort).toByte()
+            "toDouble" -> return (value as UShort).toDouble()
+            "toFloat" -> return (value as UShort).toFloat()
+            "toInt" -> return (value as UShort).toInt()
+            "toLong" -> return (value as UShort).toLong()
+            "toShort" -> return (value as UShort).toShort()
+            "toString" -> return (value as UShort).toString()
+            "toUByte" -> return (value as UShort).toUByte()
+            "toUInt" -> return (value as UShort).toUInt()
+            "toULong" -> return (value as UShort).toULong()
+            "toUShort" -> return (value as UShort).toUShort()
         }
         else -> {}
     }
@@ -136,21 +214,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Byte).mod(right as Byte)
                 "floorDiv" -> return (left as Byte).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Byte).compareTo(right as Double)
-                "div" -> return (left as Byte).div(right as Double)
-                "minus" -> return (left as Byte).minus(right as Double)
-                "plus" -> return (left as Byte).plus(right as Double)
-                "rem" -> return (left as Byte).rem(right as Double)
-                "times" -> return (left as Byte).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Byte).compareTo(right as Float)
-                "div" -> return (left as Byte).div(right as Float)
-                "minus" -> return (left as Byte).minus(right as Float)
-                "plus" -> return (left as Byte).plus(right as Float)
-                "rem" -> return (left as Byte).rem(right as Float)
-                "times" -> return (left as Byte).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Byte).compareTo(right as Short)
+                "div" -> return (left as Byte).div(right as Short)
+                "minus" -> return (left as Byte).minus(right as Short)
+                "plus" -> return (left as Byte).plus(right as Short)
+                "rem" -> return (left as Byte).rem(right as Short)
+                "times" -> return (left as Byte).times(right as Short)
+                "mod" -> return (left as Byte).mod(right as Short)
+                "floorDiv" -> return (left as Byte).floorDiv(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Byte).compareTo(right as Int)
@@ -172,15 +244,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Byte).mod(right as Long)
                 "floorDiv" -> return (left as Byte).floorDiv(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Byte).compareTo(right as Short)
-                "div" -> return (left as Byte).div(right as Short)
-                "minus" -> return (left as Byte).minus(right as Short)
-                "plus" -> return (left as Byte).plus(right as Short)
-                "rem" -> return (left as Byte).rem(right as Short)
-                "times" -> return (left as Byte).times(right as Short)
-                "mod" -> return (left as Byte).mod(right as Short)
-                "floorDiv" -> return (left as Byte).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Byte).compareTo(right as Float)
+                "div" -> return (left as Byte).div(right as Float)
+                "minus" -> return (left as Byte).minus(right as Float)
+                "plus" -> return (left as Byte).plus(right as Float)
+                "rem" -> return (left as Byte).rem(right as Float)
+                "times" -> return (left as Byte).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Byte).compareTo(right as Double)
+                "div" -> return (left as Byte).div(right as Double)
+                "minus" -> return (left as Byte).minus(right as Double)
+                "plus" -> return (left as Byte).plus(right as Double)
+                "rem" -> return (left as Byte).rem(right as Double)
+                "times" -> return (left as Byte).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Byte).equals(right)
@@ -210,23 +288,13 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Double).rem(right as Byte)
                 "times" -> return (left as Double).times(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Double).compareTo(right as Double)
-                "div" -> return (left as Double).div(right as Double)
-                "minus" -> return (left as Double).minus(right as Double)
-                "plus" -> return (left as Double).plus(right as Double)
-                "rem" -> return (left as Double).rem(right as Double)
-                "times" -> return (left as Double).times(right as Double)
-                "mod" -> return (left as Double).mod(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Double).compareTo(right as Float)
-                "div" -> return (left as Double).div(right as Float)
-                "minus" -> return (left as Double).minus(right as Float)
-                "plus" -> return (left as Double).plus(right as Float)
-                "rem" -> return (left as Double).rem(right as Float)
-                "times" -> return (left as Double).times(right as Float)
-                "mod" -> return (left as Double).mod(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Double).compareTo(right as Short)
+                "div" -> return (left as Double).div(right as Short)
+                "minus" -> return (left as Double).minus(right as Short)
+                "plus" -> return (left as Double).plus(right as Short)
+                "rem" -> return (left as Double).rem(right as Short)
+                "times" -> return (left as Double).times(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Double).compareTo(right as Int)
@@ -244,13 +312,23 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Double).rem(right as Long)
                 "times" -> return (left as Double).times(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Double).compareTo(right as Short)
-                "div" -> return (left as Double).div(right as Short)
-                "minus" -> return (left as Double).minus(right as Short)
-                "plus" -> return (left as Double).plus(right as Short)
-                "rem" -> return (left as Double).rem(right as Short)
-                "times" -> return (left as Double).times(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Double).compareTo(right as Float)
+                "div" -> return (left as Double).div(right as Float)
+                "minus" -> return (left as Double).minus(right as Float)
+                "plus" -> return (left as Double).plus(right as Float)
+                "rem" -> return (left as Double).rem(right as Float)
+                "times" -> return (left as Double).times(right as Float)
+                "mod" -> return (left as Double).mod(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Double).compareTo(right as Double)
+                "div" -> return (left as Double).div(right as Double)
+                "minus" -> return (left as Double).minus(right as Double)
+                "plus" -> return (left as Double).plus(right as Double)
+                "rem" -> return (left as Double).rem(right as Double)
+                "times" -> return (left as Double).times(right as Double)
+                "mod" -> return (left as Double).mod(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Double).equals(right)
@@ -266,23 +344,13 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Float).rem(right as Byte)
                 "times" -> return (left as Float).times(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Float).compareTo(right as Double)
-                "div" -> return (left as Float).div(right as Double)
-                "minus" -> return (left as Float).minus(right as Double)
-                "plus" -> return (left as Float).plus(right as Double)
-                "rem" -> return (left as Float).rem(right as Double)
-                "times" -> return (left as Float).times(right as Double)
-                "mod" -> return (left as Float).mod(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Float).compareTo(right as Float)
-                "div" -> return (left as Float).div(right as Float)
-                "minus" -> return (left as Float).minus(right as Float)
-                "plus" -> return (left as Float).plus(right as Float)
-                "rem" -> return (left as Float).rem(right as Float)
-                "times" -> return (left as Float).times(right as Float)
-                "mod" -> return (left as Float).mod(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Float).compareTo(right as Short)
+                "div" -> return (left as Float).div(right as Short)
+                "minus" -> return (left as Float).minus(right as Short)
+                "plus" -> return (left as Float).plus(right as Short)
+                "rem" -> return (left as Float).rem(right as Short)
+                "times" -> return (left as Float).times(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Float).compareTo(right as Int)
@@ -300,13 +368,23 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Float).rem(right as Long)
                 "times" -> return (left as Float).times(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Float).compareTo(right as Short)
-                "div" -> return (left as Float).div(right as Short)
-                "minus" -> return (left as Float).minus(right as Short)
-                "plus" -> return (left as Float).plus(right as Short)
-                "rem" -> return (left as Float).rem(right as Short)
-                "times" -> return (left as Float).times(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Float).compareTo(right as Float)
+                "div" -> return (left as Float).div(right as Float)
+                "minus" -> return (left as Float).minus(right as Float)
+                "plus" -> return (left as Float).plus(right as Float)
+                "rem" -> return (left as Float).rem(right as Float)
+                "times" -> return (left as Float).times(right as Float)
+                "mod" -> return (left as Float).mod(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Float).compareTo(right as Double)
+                "div" -> return (left as Float).div(right as Double)
+                "minus" -> return (left as Float).minus(right as Double)
+                "plus" -> return (left as Float).plus(right as Double)
+                "rem" -> return (left as Float).rem(right as Double)
+                "times" -> return (left as Float).times(right as Double)
+                "mod" -> return (left as Float).mod(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Float).equals(right)
@@ -340,21 +418,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Int).mod(right as Byte)
                 "floorDiv" -> return (left as Int).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Int).compareTo(right as Double)
-                "div" -> return (left as Int).div(right as Double)
-                "minus" -> return (left as Int).minus(right as Double)
-                "plus" -> return (left as Int).plus(right as Double)
-                "rem" -> return (left as Int).rem(right as Double)
-                "times" -> return (left as Int).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Int).compareTo(right as Float)
-                "div" -> return (left as Int).div(right as Float)
-                "minus" -> return (left as Int).minus(right as Float)
-                "plus" -> return (left as Int).plus(right as Float)
-                "rem" -> return (left as Int).rem(right as Float)
-                "times" -> return (left as Int).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Int).compareTo(right as Short)
+                "div" -> return (left as Int).div(right as Short)
+                "minus" -> return (left as Int).minus(right as Short)
+                "plus" -> return (left as Int).plus(right as Short)
+                "rem" -> return (left as Int).rem(right as Short)
+                "times" -> return (left as Int).times(right as Short)
+                "mod" -> return (left as Int).mod(right as Short)
+                "floorDiv" -> return (left as Int).floorDiv(right as Short)
             }
             LONG -> when (name) {
                 "compareTo" -> return (left as Int).compareTo(right as Long)
@@ -366,15 +438,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Int).mod(right as Long)
                 "floorDiv" -> return (left as Int).floorDiv(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Int).compareTo(right as Short)
-                "div" -> return (left as Int).div(right as Short)
-                "minus" -> return (left as Int).minus(right as Short)
-                "plus" -> return (left as Int).plus(right as Short)
-                "rem" -> return (left as Int).rem(right as Short)
-                "times" -> return (left as Int).times(right as Short)
-                "mod" -> return (left as Int).mod(right as Short)
-                "floorDiv" -> return (left as Int).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Int).compareTo(right as Float)
+                "div" -> return (left as Int).div(right as Float)
+                "minus" -> return (left as Int).minus(right as Float)
+                "plus" -> return (left as Int).plus(right as Float)
+                "rem" -> return (left as Int).rem(right as Float)
+                "times" -> return (left as Int).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Int).compareTo(right as Double)
+                "div" -> return (left as Int).div(right as Double)
+                "minus" -> return (left as Int).minus(right as Double)
+                "plus" -> return (left as Int).plus(right as Double)
+                "rem" -> return (left as Int).rem(right as Double)
+                "times" -> return (left as Int).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Int).equals(right)
@@ -405,21 +483,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Long).mod(right as Byte)
                 "floorDiv" -> return (left as Long).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Long).compareTo(right as Double)
-                "div" -> return (left as Long).div(right as Double)
-                "minus" -> return (left as Long).minus(right as Double)
-                "plus" -> return (left as Long).plus(right as Double)
-                "rem" -> return (left as Long).rem(right as Double)
-                "times" -> return (left as Long).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Long).compareTo(right as Float)
-                "div" -> return (left as Long).div(right as Float)
-                "minus" -> return (left as Long).minus(right as Float)
-                "plus" -> return (left as Long).plus(right as Float)
-                "rem" -> return (left as Long).rem(right as Float)
-                "times" -> return (left as Long).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Long).compareTo(right as Short)
+                "div" -> return (left as Long).div(right as Short)
+                "minus" -> return (left as Long).minus(right as Short)
+                "plus" -> return (left as Long).plus(right as Short)
+                "rem" -> return (left as Long).rem(right as Short)
+                "times" -> return (left as Long).times(right as Short)
+                "mod" -> return (left as Long).mod(right as Short)
+                "floorDiv" -> return (left as Long).floorDiv(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Long).compareTo(right as Int)
@@ -434,15 +506,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Long).mod(right as Int)
                 "floorDiv" -> return (left as Long).floorDiv(right as Int)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Long).compareTo(right as Short)
-                "div" -> return (left as Long).div(right as Short)
-                "minus" -> return (left as Long).minus(right as Short)
-                "plus" -> return (left as Long).plus(right as Short)
-                "rem" -> return (left as Long).rem(right as Short)
-                "times" -> return (left as Long).times(right as Short)
-                "mod" -> return (left as Long).mod(right as Short)
-                "floorDiv" -> return (left as Long).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Long).compareTo(right as Float)
+                "div" -> return (left as Long).div(right as Float)
+                "minus" -> return (left as Long).minus(right as Float)
+                "plus" -> return (left as Long).plus(right as Float)
+                "rem" -> return (left as Long).rem(right as Float)
+                "times" -> return (left as Long).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Long).compareTo(right as Double)
+                "div" -> return (left as Long).div(right as Double)
+                "minus" -> return (left as Long).minus(right as Double)
+                "plus" -> return (left as Long).plus(right as Double)
+                "rem" -> return (left as Long).rem(right as Double)
+                "times" -> return (left as Long).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Long).equals(right)
@@ -460,21 +538,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Short).mod(right as Byte)
                 "floorDiv" -> return (left as Short).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Short).compareTo(right as Double)
-                "div" -> return (left as Short).div(right as Double)
-                "minus" -> return (left as Short).minus(right as Double)
-                "plus" -> return (left as Short).plus(right as Double)
-                "rem" -> return (left as Short).rem(right as Double)
-                "times" -> return (left as Short).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Short).compareTo(right as Float)
-                "div" -> return (left as Short).div(right as Float)
-                "minus" -> return (left as Short).minus(right as Float)
-                "plus" -> return (left as Short).plus(right as Float)
-                "rem" -> return (left as Short).rem(right as Float)
-                "times" -> return (left as Short).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Short).compareTo(right as Short)
+                "div" -> return (left as Short).div(right as Short)
+                "minus" -> return (left as Short).minus(right as Short)
+                "plus" -> return (left as Short).plus(right as Short)
+                "rem" -> return (left as Short).rem(right as Short)
+                "times" -> return (left as Short).times(right as Short)
+                "mod" -> return (left as Short).mod(right as Short)
+                "floorDiv" -> return (left as Short).floorDiv(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Short).compareTo(right as Int)
@@ -496,15 +568,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Short).mod(right as Long)
                 "floorDiv" -> return (left as Short).floorDiv(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Short).compareTo(right as Short)
-                "div" -> return (left as Short).div(right as Short)
-                "minus" -> return (left as Short).minus(right as Short)
-                "plus" -> return (left as Short).plus(right as Short)
-                "rem" -> return (left as Short).rem(right as Short)
-                "times" -> return (left as Short).times(right as Short)
-                "mod" -> return (left as Short).mod(right as Short)
-                "floorDiv" -> return (left as Short).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Short).compareTo(right as Float)
+                "div" -> return (left as Short).div(right as Float)
+                "minus" -> return (left as Short).minus(right as Float)
+                "plus" -> return (left as Short).plus(right as Float)
+                "rem" -> return (left as Short).rem(right as Float)
+                "times" -> return (left as Short).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Short).compareTo(right as Double)
+                "div" -> return (left as Short).div(right as Double)
+                "minus" -> return (left as Short).minus(right as Double)
+                "plus" -> return (left as Short).plus(right as Double)
+                "rem" -> return (left as Short).rem(right as Double)
+                "times" -> return (left as Short).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Short).equals(right)
@@ -514,6 +592,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
         STRING -> when (rightType) {
             STRING -> when (name) {
                 "compareTo" -> return (left as String).compareTo(right as String)
+                "trimMargin" -> return (left as String).trimMargin(right as String)
             }
             ANY -> when (name) {
                 "equals" -> return (left as String).equals(right)
@@ -521,6 +600,210 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             }
             INT -> when (name) {
                 "get" -> return (left as String).get(right as Int)
+            }
+            else -> {}
+        }
+        UINT -> when (rightType) {
+            UINT -> when (name) {
+                "and" -> return (left as UInt).and(right as UInt)
+                "compareTo" -> return (left as UInt).compareTo(right as UInt)
+                "div" -> return (left as UInt).div(right as UInt)
+                "floorDiv" -> return (left as UInt).floorDiv(right as UInt)
+                "minus" -> return (left as UInt).minus(right as UInt)
+                "mod" -> return (left as UInt).mod(right as UInt)
+                "or" -> return (left as UInt).or(right as UInt)
+                "plus" -> return (left as UInt).plus(right as UInt)
+                "rem" -> return (left as UInt).rem(right as UInt)
+                "times" -> return (left as UInt).times(right as UInt)
+                "xor" -> return (left as UInt).xor(right as UInt)
+            }
+            UBYTE -> when (name) {
+                "compareTo" -> return (left as UInt).compareTo(right as UByte)
+                "div" -> return (left as UInt).div(right as UByte)
+                "floorDiv" -> return (left as UInt).floorDiv(right as UByte)
+                "minus" -> return (left as UInt).minus(right as UByte)
+                "mod" -> return (left as UInt).mod(right as UByte)
+                "plus" -> return (left as UInt).plus(right as UByte)
+                "rem" -> return (left as UInt).rem(right as UByte)
+                "times" -> return (left as UInt).times(right as UByte)
+            }
+            USHORT -> when (name) {
+                "compareTo" -> return (left as UInt).compareTo(right as UShort)
+                "div" -> return (left as UInt).div(right as UShort)
+                "floorDiv" -> return (left as UInt).floorDiv(right as UShort)
+                "minus" -> return (left as UInt).minus(right as UShort)
+                "mod" -> return (left as UInt).mod(right as UShort)
+                "plus" -> return (left as UInt).plus(right as UShort)
+                "rem" -> return (left as UInt).rem(right as UShort)
+                "times" -> return (left as UInt).times(right as UShort)
+            }
+            ULONG -> when (name) {
+                "compareTo" -> return (left as UInt).compareTo(right as ULong)
+                "div" -> return (left as UInt).div(right as ULong)
+                "floorDiv" -> return (left as UInt).floorDiv(right as ULong)
+                "minus" -> return (left as UInt).minus(right as ULong)
+                "mod" -> return (left as UInt).mod(right as ULong)
+                "plus" -> return (left as UInt).plus(right as ULong)
+                "rem" -> return (left as UInt).rem(right as ULong)
+                "times" -> return (left as UInt).times(right as ULong)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as UInt).equals(right)
+            }
+            INT -> when (name) {
+                "shl" -> return (left as UInt).shl(right as Int)
+                "shr" -> return (left as UInt).shr(right as Int)
+            }
+            else -> {}
+        }
+        ULONG -> when (rightType) {
+            ULONG -> when (name) {
+                "and" -> return (left as ULong).and(right as ULong)
+                "compareTo" -> return (left as ULong).compareTo(right as ULong)
+                "div" -> return (left as ULong).div(right as ULong)
+                "floorDiv" -> return (left as ULong).floorDiv(right as ULong)
+                "minus" -> return (left as ULong).minus(right as ULong)
+                "mod" -> return (left as ULong).mod(right as ULong)
+                "or" -> return (left as ULong).or(right as ULong)
+                "plus" -> return (left as ULong).plus(right as ULong)
+                "rem" -> return (left as ULong).rem(right as ULong)
+                "times" -> return (left as ULong).times(right as ULong)
+                "xor" -> return (left as ULong).xor(right as ULong)
+            }
+            UBYTE -> when (name) {
+                "compareTo" -> return (left as ULong).compareTo(right as UByte)
+                "div" -> return (left as ULong).div(right as UByte)
+                "floorDiv" -> return (left as ULong).floorDiv(right as UByte)
+                "minus" -> return (left as ULong).minus(right as UByte)
+                "mod" -> return (left as ULong).mod(right as UByte)
+                "plus" -> return (left as ULong).plus(right as UByte)
+                "rem" -> return (left as ULong).rem(right as UByte)
+                "times" -> return (left as ULong).times(right as UByte)
+            }
+            USHORT -> when (name) {
+                "compareTo" -> return (left as ULong).compareTo(right as UShort)
+                "div" -> return (left as ULong).div(right as UShort)
+                "floorDiv" -> return (left as ULong).floorDiv(right as UShort)
+                "minus" -> return (left as ULong).minus(right as UShort)
+                "mod" -> return (left as ULong).mod(right as UShort)
+                "plus" -> return (left as ULong).plus(right as UShort)
+                "rem" -> return (left as ULong).rem(right as UShort)
+                "times" -> return (left as ULong).times(right as UShort)
+            }
+            UINT -> when (name) {
+                "compareTo" -> return (left as ULong).compareTo(right as UInt)
+                "div" -> return (left as ULong).div(right as UInt)
+                "floorDiv" -> return (left as ULong).floorDiv(right as UInt)
+                "minus" -> return (left as ULong).minus(right as UInt)
+                "mod" -> return (left as ULong).mod(right as UInt)
+                "plus" -> return (left as ULong).plus(right as UInt)
+                "rem" -> return (left as ULong).rem(right as UInt)
+                "times" -> return (left as ULong).times(right as UInt)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as ULong).equals(right)
+            }
+            INT -> when (name) {
+                "shl" -> return (left as ULong).shl(right as Int)
+                "shr" -> return (left as ULong).shr(right as Int)
+            }
+            else -> {}
+        }
+        UBYTE -> when (rightType) {
+            UBYTE -> when (name) {
+                "and" -> return (left as UByte).and(right as UByte)
+                "compareTo" -> return (left as UByte).compareTo(right as UByte)
+                "div" -> return (left as UByte).div(right as UByte)
+                "floorDiv" -> return (left as UByte).floorDiv(right as UByte)
+                "minus" -> return (left as UByte).minus(right as UByte)
+                "mod" -> return (left as UByte).mod(right as UByte)
+                "or" -> return (left as UByte).or(right as UByte)
+                "plus" -> return (left as UByte).plus(right as UByte)
+                "rem" -> return (left as UByte).rem(right as UByte)
+                "times" -> return (left as UByte).times(right as UByte)
+                "xor" -> return (left as UByte).xor(right as UByte)
+            }
+            USHORT -> when (name) {
+                "compareTo" -> return (left as UByte).compareTo(right as UShort)
+                "div" -> return (left as UByte).div(right as UShort)
+                "floorDiv" -> return (left as UByte).floorDiv(right as UShort)
+                "minus" -> return (left as UByte).minus(right as UShort)
+                "mod" -> return (left as UByte).mod(right as UShort)
+                "plus" -> return (left as UByte).plus(right as UShort)
+                "rem" -> return (left as UByte).rem(right as UShort)
+                "times" -> return (left as UByte).times(right as UShort)
+            }
+            UINT -> when (name) {
+                "compareTo" -> return (left as UByte).compareTo(right as UInt)
+                "div" -> return (left as UByte).div(right as UInt)
+                "floorDiv" -> return (left as UByte).floorDiv(right as UInt)
+                "minus" -> return (left as UByte).minus(right as UInt)
+                "mod" -> return (left as UByte).mod(right as UInt)
+                "plus" -> return (left as UByte).plus(right as UInt)
+                "rem" -> return (left as UByte).rem(right as UInt)
+                "times" -> return (left as UByte).times(right as UInt)
+            }
+            ULONG -> when (name) {
+                "compareTo" -> return (left as UByte).compareTo(right as ULong)
+                "div" -> return (left as UByte).div(right as ULong)
+                "floorDiv" -> return (left as UByte).floorDiv(right as ULong)
+                "minus" -> return (left as UByte).minus(right as ULong)
+                "mod" -> return (left as UByte).mod(right as ULong)
+                "plus" -> return (left as UByte).plus(right as ULong)
+                "rem" -> return (left as UByte).rem(right as ULong)
+                "times" -> return (left as UByte).times(right as ULong)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as UByte).equals(right)
+            }
+            else -> {}
+        }
+        USHORT -> when (rightType) {
+            USHORT -> when (name) {
+                "and" -> return (left as UShort).and(right as UShort)
+                "compareTo" -> return (left as UShort).compareTo(right as UShort)
+                "div" -> return (left as UShort).div(right as UShort)
+                "floorDiv" -> return (left as UShort).floorDiv(right as UShort)
+                "minus" -> return (left as UShort).minus(right as UShort)
+                "mod" -> return (left as UShort).mod(right as UShort)
+                "or" -> return (left as UShort).or(right as UShort)
+                "plus" -> return (left as UShort).plus(right as UShort)
+                "rem" -> return (left as UShort).rem(right as UShort)
+                "times" -> return (left as UShort).times(right as UShort)
+                "xor" -> return (left as UShort).xor(right as UShort)
+            }
+            UBYTE -> when (name) {
+                "compareTo" -> return (left as UShort).compareTo(right as UByte)
+                "div" -> return (left as UShort).div(right as UByte)
+                "floorDiv" -> return (left as UShort).floorDiv(right as UByte)
+                "minus" -> return (left as UShort).minus(right as UByte)
+                "mod" -> return (left as UShort).mod(right as UByte)
+                "plus" -> return (left as UShort).plus(right as UByte)
+                "rem" -> return (left as UShort).rem(right as UByte)
+                "times" -> return (left as UShort).times(right as UByte)
+            }
+            UINT -> when (name) {
+                "compareTo" -> return (left as UShort).compareTo(right as UInt)
+                "div" -> return (left as UShort).div(right as UInt)
+                "floorDiv" -> return (left as UShort).floorDiv(right as UInt)
+                "minus" -> return (left as UShort).minus(right as UInt)
+                "mod" -> return (left as UShort).mod(right as UInt)
+                "plus" -> return (left as UShort).plus(right as UInt)
+                "rem" -> return (left as UShort).rem(right as UInt)
+                "times" -> return (left as UShort).times(right as UInt)
+            }
+            ULONG -> when (name) {
+                "compareTo" -> return (left as UShort).compareTo(right as ULong)
+                "div" -> return (left as UShort).div(right as ULong)
+                "floorDiv" -> return (left as UShort).floorDiv(right as ULong)
+                "minus" -> return (left as UShort).minus(right as ULong)
+                "mod" -> return (left as UShort).mod(right as ULong)
+                "plus" -> return (left as UShort).plus(right as ULong)
+                "rem" -> return (left as UShort).rem(right as ULong)
+                "times" -> return (left as UShort).times(right as ULong)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as UShort).equals(right)
             }
             else -> {}
         }
@@ -541,6 +824,13 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            SHORT -> when (name) {
+                "div" -> return left.divide(right)
+                "minus" -> return left.subtract(right)
+                "plus" -> return left.add(right)
+                "rem" -> return left.rem(right)
+                "times" -> return left.multiply(right)
+            }
             INT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
@@ -549,13 +839,6 @@ fun checkBinaryOp(
                 "times" -> return left.multiply(right)
             }
             LONG -> when (name) {
-                "div" -> return left.divide(right)
-                "minus" -> return left.subtract(right)
-                "plus" -> return left.add(right)
-                "rem" -> return left.rem(right)
-                "times" -> return left.multiply(right)
-            }
-            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
@@ -582,14 +865,14 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            LONG -> when (name) {
+            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            SHORT -> when (name) {
+            LONG -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
@@ -616,14 +899,14 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            INT -> when (name) {
+            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            SHORT -> when (name) {
+            INT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
@@ -640,6 +923,13 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            SHORT -> when (name) {
+                "div" -> return left.divide(right)
+                "minus" -> return left.subtract(right)
+                "plus" -> return left.add(right)
+                "rem" -> return left.rem(right)
+                "times" -> return left.multiply(right)
+            }
             INT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
@@ -648,13 +938,6 @@ fun checkBinaryOp(
                 "times" -> return left.multiply(right)
             }
             LONG -> when (name) {
-                "div" -> return left.divide(right)
-                "minus" -> return left.subtract(right)
-                "plus" -> return left.add(right)
-                "rem" -> return left.rem(right)
-                "times" -> return left.multiply(right)
-            }
-            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)

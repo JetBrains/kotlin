@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// !LANGUAGE: -ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve
+// LANGUAGE: -ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve
 // This test is not K1/K2 identical due to KT-58789 not implemented yet
 
 fun <E> SmartList(x: E) {}
@@ -43,3 +44,6 @@ fun main() {
 
     takes(1..10)    // warning
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, in, integerLiteral, nullableType,
+primaryConstructor, rangeExpression, starProjection, stringLiteral, typeConstraint, typeParameter */

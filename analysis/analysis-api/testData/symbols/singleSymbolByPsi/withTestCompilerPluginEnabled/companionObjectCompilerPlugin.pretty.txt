@@ -1,0 +1,2 @@
+@org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
+class WithGeneratedCompanion

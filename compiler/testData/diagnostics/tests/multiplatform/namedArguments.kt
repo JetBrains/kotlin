@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -34,3 +35,6 @@ fun testPlatform() {
     f.f1(xxx = "")
     f2(xxx = 42)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, equalityExpression, expect, functionDeclaration, integerLiteral,
+localProperty, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

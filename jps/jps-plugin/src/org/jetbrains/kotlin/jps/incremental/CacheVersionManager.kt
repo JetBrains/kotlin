@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -25,7 +25,7 @@ class CacheVersionManager(
 ) : CacheAttributesManager<CacheVersion> {
     override val expected: CacheVersion? =
         if (expectedOwnVersion == null) null
-        else CacheVersion(expectedOwnVersion, JvmBytecodeBinaryVersion.INSTANCE, JvmMetadataVersion.INSTANCE)
+        else CacheVersion(expectedOwnVersion, JvmBytecodeBinaryVersion.INSTANCE, MetadataVersion.INSTANCE)
 
     override fun loadActual(): CacheVersion? =
         if (!versionFile.toFile().exists()) null
@@ -50,7 +50,7 @@ class CacheVersionManager(
         get() = versionFile.toFile()
 }
 
-fun CacheVersion(own: Int, bytecode: JvmBytecodeBinaryVersion, metadata: JvmMetadataVersion): CacheVersion {
+fun CacheVersion(own: Int, bytecode: JvmBytecodeBinaryVersion, metadata: MetadataVersion): CacheVersion {
     require(own in 0 until Int.MAX_VALUE / 1000000)
     require(bytecode.major in 0..9)
     require(bytecode.minor in 0..9)
@@ -74,8 +74,8 @@ data class CacheVersion(val intValue: Int) {
             intValue / 100 % 10
         )
 
-    val metadata: JvmMetadataVersion
-        get() = JvmMetadataVersion(
+    val metadata: MetadataVersion
+        get() = MetadataVersion(
             intValue / 1000 % 10,
             intValue / 1 % 100
         )

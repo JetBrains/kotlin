@@ -1,4 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -10,7 +11,7 @@ expect open class A() {
 
 open class B : A()
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual open class A {
@@ -36,3 +37,6 @@ class D : A() {
         x + x
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.utils.metadataVersion
+import org.jetbrains.kotlin.util.jvmMetadataVersion
 
 class JvmBackendConfig(configuration: CompilerConfiguration) {
     val languageVersionSettings: LanguageVersionSettings = configuration.languageVersionSettings
@@ -37,17 +37,12 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
                 JvmClosureGenerationScheme.INDY
             else JvmClosureGenerationScheme.CLASS
 
-    val useKotlinNothingValueException: Boolean =
-        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
-                !configuration.getBoolean(JVMConfigurationKeys.NO_KOTLIN_NOTHING_VALUE_EXCEPTION)
+    val indyAllowAnnotatedLambdas: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.JvmIndyAllowLambdasWithAnnotations)
 
     // In 1.6, `typeOf` became stable and started to rely on a few internal stdlib functions which were missing before 1.6.
     val stableTypeOf: Boolean =
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_6
-
-    val generateOptimizedCallableReferenceSuperClasses: Boolean =
-        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
-                !configuration.getBoolean(JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES)
 
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
     val isReceiverAssertionsDisabled: Boolean =
@@ -77,7 +72,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val functionsWithInlineClassReturnTypesMangled: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
 
-    val shouldValidateIr: Boolean = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_IR)
     val shouldValidateBytecode: Boolean = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
 
     val classFileVersion: Int = run {
@@ -89,17 +83,39 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val shouldInlineConstVals: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
-    val jvmDefaultMode: JvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+    val jvmDefaultMode: JvmDefaultMode = languageVersionSettings.jvmDefaultMode
 
     val disableOptimization: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_OPTIMIZATION)
 
-    val metadataVersion: BinaryVersion = configuration.metadataVersion()
+    val metadataVersion: BinaryVersion = configuration.jvmMetadataVersion()
 
     val abiStability: JvmAbiStability? = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 
     val noNewJavaAnnotationTargets: Boolean = configuration.getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
 
-    val oldInnerClassesLogic: Boolean = configuration.getBoolean(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
+    val supportJvmInlineMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineMultiFieldValueClasses)
 
-    val supportMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
+    val enableDebugMode: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
+
+    val enhancedCoroutinesDebugging = configuration.getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
+
+    val useFir: Boolean = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
+
+    val emitJvmTypeAnnotations: Boolean = configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
+
+    // Fixed coroutines debugging uses stdlib function to null out spilled locals.
+    // By default the function returns `null`, the debugger replaces it with implementation, that returns its argument.
+    // This way we avoid memory leaks in release builds and do not make coroutines undebuggable.
+    val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.JvmNullOutSpilledCoroutineLocals)
+
+    val wrapContinuationForTailCallFunctions: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.WrapContinuationForTailCallFunctions)
+
+    val whenGenerationScheme: JvmWhenGenerationScheme =
+        if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
+            configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, JvmWhenGenerationScheme.INLINE)
+        else JvmWhenGenerationScheme.INLINE
+
+    val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
 }

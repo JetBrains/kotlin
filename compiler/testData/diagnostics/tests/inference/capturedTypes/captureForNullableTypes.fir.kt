@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// CHECK_TYPE
 
 fun <T: Any> bar(a: Array<T>): Array<T?> =  null!!
 
@@ -16,3 +17,7 @@ fun test2(a: Array<out Int>) {
     val t = foo(a)
     t checkType { _<Array<out Array<out Int?>>>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeConstraint,
+typeParameter, typeWithExtension */

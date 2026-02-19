@@ -17,20 +17,23 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.state.Common
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.keysToMap
 import java.lang.invoke.MethodType
-import kotlin.math.floor
 
 val intrinsicConstEvaluationAnnotation = FqName("kotlin.internal.IntrinsicConstEvaluation")
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
@@ -39,20 +42,19 @@ val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
 internal val IrElement.fqName: String
     get() = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: ""
 
-internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
-
-internal fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? = this.extensionReceiverParameter?.symbol
-
-internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?: this.getExtensionReceiver()
-
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
-@Suppress("UNCHECKED_CAST")
-internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> = when {
-    type.isByte() -> Primitive((value as Number).toByte() as T, type)
-    type.isShort() -> Primitive((value as Number).toShort() as T, type)
+internal fun convertToPrimitive(value: Any?, type: IrType): Primitive = when {
+    type.isByte() -> Primitive(convertTo<Byte>(value!!), type)
+    type.isShort() -> Primitive(convertTo<Short>(value!!), type)
+    type.isUByte() -> Primitive(convertTo<UByte>(value!!), type)
+    type.isUShort() -> Primitive(convertTo<UShort>(value!!), type)
+    type.isUInt() -> Primitive(convertTo<UInt>(value!!), type)
+    type.isULong() -> Primitive(convertTo<ULong>(value!!), type)
     else -> Primitive(value, type)
 }
+
+internal fun IrConst.toPrimitive(): Primitive = convertToPrimitive(value, type)
 
 fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
     this ?: return false
@@ -70,7 +72,7 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
 internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     if (this is IrClass && this.fqName.startsWith("java")) return this.fqName
     if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
-    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
+    return (this.getAnnotation(evaluateIntrinsicAnnotation).arguments[0] as IrConst).value.toString()
 }
 
 internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? =
@@ -107,27 +109,27 @@ fun IrFunction.getLastOverridden(): IrFunction {
     return generateSequence(listOf(this)) { it.firstOrNull()?.overriddenSymbols?.map { it.owner } }.flatten().last()
 }
 
-internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
+internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive {
     return when {
-        type.isByteArray() -> Primitive(ByteArray(size) { i -> (this[i] as Number).toByte() }, type)
-        type.isCharArray() -> Primitive(CharArray(size) { i -> this[i] as Char }, type)
-        type.isShortArray() -> Primitive(ShortArray(size) { i -> (this[i] as Number).toShort() }, type)
-        type.isIntArray() -> Primitive(IntArray(size) { i -> (this[i] as Number).toInt() }, type)
-        type.isLongArray() -> Primitive(LongArray(size) { i -> (this[i] as Number).toLong() }, type)
-        type.isFloatArray() -> Primitive(FloatArray(size) { i -> (this[i] as Number).toFloat() }, type)
-        type.isDoubleArray() -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
+        type.isByteArray() -> Primitive(ByteArray(size) { i -> convertTo<Byte>(this[i]!!) }, type)
+        type.isCharArray() -> Primitive(CharArray(size) { i -> convertTo<Char>(this[i]!!) }, type)
+        type.isShortArray() -> Primitive(ShortArray(size) { i -> convertTo<Short>(this[i]!!) }, type)
+        type.isIntArray() -> Primitive(IntArray(size) { i -> convertTo<Int>(this[i]!!) }, type)
+        type.isLongArray() -> Primitive(LongArray(size) { i -> convertTo<Long>(this[i]!!) }, type)
+        type.isFloatArray() -> Primitive(FloatArray(size) { i -> convertTo<Float>(this[i]!!) }, type)
+        type.isDoubleArray() -> Primitive(DoubleArray(size) { i -> convertTo<Double>(this[i]!!) }, type)
         type.isBooleanArray() -> Primitive(BooleanArray(size) { i -> (this[i] as Boolean) }, type)
-        else -> Primitive<Array<*>>(this.toTypedArray(), type)
+        else -> Primitive(this.toTypedArray(), type)
     }
 }
 
 fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
-    val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
-    varargType.classOrNull?.let { return this.symbol.owner.valueParameters[index].type }
-    val type = this.symbol.owner.valueParameters[index].type as? IrSimpleType ?: return null
+    val varargType = this.symbol.owner.parameters[index].varargElementType ?: return null
+    varargType.classOrNull?.let { return this.symbol.owner.parameters[index].type }
+    val type = this.symbol.owner.parameters[index].type as? IrSimpleType ?: return null
     return type.buildSimpleType {
         val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
-        arguments = listOf(makeTypeProjection(this@getVarargType.getTypeArgument(typeParameter.index)!!, Variance.OUT_VARIANCE))
+        arguments = listOf(makeTypeProjection(typeArguments[typeParameter.index]!!, Variance.OUT_VARIANCE))
     }
 }
 
@@ -177,7 +179,7 @@ internal fun IrFunction?.checkCast(environment: IrInterpreterEnvironment): Boole
     if (expectedType.classifierOrFail is IrTypeParameterSymbol) return true
 
     val actualState = environment.callStack.peekState() ?: return true
-    if (actualState is Primitive<*> && actualState.value == null) return true // this is handled in checkNullability
+    if (actualState is Primitive && actualState.value == null) return true // this is handled in checkNullability
 
     if (!actualState.isSubtypeOf(expectedType)) {
         val convertibleClassName = environment.callStack.popState().irClass.fqName
@@ -195,7 +197,7 @@ internal fun IrFunction.getArgsForMethodInvocation(
 
     // TODO if vararg isn't last parameter
     // must convert vararg array into separated elements for correct invoke
-    if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+    if (this.parameters.lastOrNull()?.varargElementType != null) {
         val varargValue = argsValues.last()
         argsValues.removeAt(argsValues.size - 1)
         argsValues.addAll(varargValue as Array<out Any?>)
@@ -233,32 +235,31 @@ internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
 internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
     val irFunction = this.symbol.owner
     fun IrValueParameter.lookup(): IrFunction? {
-        return defaultValue?.let { this.parent as IrFunction }
-            ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
-                ?.map { it.owner.valueParameters[this.index] }
+        return defaultValue
+            ?.let { this.parent as IrFunction }
+            ?: (this.parent as? IrSimpleFunction)
+                ?.overriddenSymbols
+                ?.map { it.owner.parameters[this.indexInParameters] }
                 ?.firstNotNullOfOrNull { it.lookup() }
     }
 
-    return (0 until this.valueArgumentsCount)
-        .first { this.getValueArgument(it) == null }
-        .let { irFunction.valueParameters[it].lookup() ?: irFunction }
+    return (arguments zip irFunction.parameters)
+        .first { (arg, _) -> arg == null }
+        .let { (_, param) -> param.lookup() ?: irFunction }
 }
 
 internal fun IrValueParameter.getDefaultWithActualParameters(
     newParent: IrFunction, actualParameters: List<IrValueDeclaration?>
 ): IrExpression? {
     val expression = this.defaultValue?.expression
-    if (expression is IrConst<*>) return expression
+    if (expression is IrConst) return expression
 
     val parameterOwner = this.parent as IrFunction
     val transformer = object : IrElementTransformerVoid() {
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
             if (parameter.parent != parameterOwner) return super.visitGetValue(expression)
-            val newParameter = when (parameter.index) {
-                -1 -> newParent.dispatchReceiverParameter ?: newParent.extensionReceiverParameter
-                else -> actualParameters[parameter.index]
-            }
+            val newParameter = actualParameters[parameter.indexInParameters]
             return IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, newParameter!!.symbol)
         }
     }
@@ -291,7 +292,7 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
 
 internal fun IrInterpreterEnvironment.loadReifiedTypeArguments(expression: IrFunctionAccessExpression): Map<IrTypeParameterSymbol, KTypeState> {
     return expression.symbol.owner.typeParameters.filter { it.isReified }.map { it.symbol }.keysToMap {
-        val reifiedType = expression.getTypeArgument(it.owner.index)!!.getTypeIfReified(callStack)
+        val reifiedType = expression.typeArguments[it.owner.index]!!.getTypeIfReified(callStack)
         KTypeState(reifiedType, this.kTypeClass.owner)
     }
 }
@@ -318,23 +319,15 @@ internal fun IrExpression?.isAccessToNotNullableObject(): Boolean {
 }
 
 internal fun IrFunction.isAccessorOfPropertyWithBackingField(): Boolean {
-    return this is IrSimpleFunction && this.correspondingPropertySymbol?.owner?.backingField?.initializer != null
+    return property?.backingField?.initializer != null
 }
 
 internal fun State.unsignedToString(): String {
-    return when (val value = (this.fields.values.single() as Primitive<*>).value) {
+    return when (val value = (this.fields.values.single() as Primitive).value) {
         is Byte -> value.toUByte().toString()
         is Short -> value.toUShort().toString()
         is Int -> value.toUInt().toString()
         else -> (value as Number).toLong().toULong().toString()
-    }
-}
-
-internal fun Any?.specialToStringForJs(): String {
-    return when {
-        this is Float && !this.isInfinite() && floor(this) == this -> this.toInt().toString()
-        this is Double && !this.isInfinite() && floor(this) == this -> this.toLong().toString()
-        else -> this.toString()
     }
 }
 
@@ -359,3 +352,11 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
 internal val IrFunction.property: IrProperty?
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
 
+internal val IrField.property: IrProperty?
+    get() = this.correspondingPropertySymbol?.owner
+
+internal val IrCall.correspondingProperty: IrProperty?
+    get() = this.symbol.owner.correspondingPropertySymbol?.owner
+
+internal val IrProperty?.isConst: Boolean
+    get() = this?.isConst == true

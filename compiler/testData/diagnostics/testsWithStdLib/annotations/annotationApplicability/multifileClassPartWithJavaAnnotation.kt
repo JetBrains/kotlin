@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: test.kt
 @file:JvmName("MultifileClass")
 @file:JvmMultifileClass
@@ -38,3 +39,4 @@ import java.lang.annotation.Target;
 public @interface JavaSourceAnn {
 }
 
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, javaType, stringLiteral */

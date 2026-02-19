@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Fir2IrClassifierStorage : /Fir2IrComponents { // /Fir2IrClassifierStorage|null[0]
+    final val classifierStorage // /Fir2IrClassifierStorage.classifierStorage|{}classifierStorage[0]
+        final fun <get-classifierStorage>(): /Fir2IrClassifierStorage // /Fir2IrClassifierStorage.classifierStorage.<get-classifierStorage>|<get-classifierStorage>(){}[0]
+    final val session // /Fir2IrClassifierStorage.session|{}session[0]
+        final fun <get-session>(): /FirSession // /Fir2IrClassifierStorage.session.<get-session>|<get-session>(){}[0]
+    constructor <init>(/Fir2IrComponents) // /Fir2IrClassifierStorage.<init>|<init>(Fir2IrComponents){}[0]
+}
+abstract interface /Fir2IrComponents { // /Fir2IrComponents|null[0]
+    abstract val classifierStorage // /Fir2IrComponents.classifierStorage|{}classifierStorage[0]
+        abstract fun <get-classifierStorage>(): /Fir2IrClassifierStorage // /Fir2IrComponents.classifierStorage.<get-classifierStorage>|<get-classifierStorage>(){}[0]
+    abstract val session // /Fir2IrComponents.session|{}session[0]
+        abstract fun <get-session>(): /FirSession // /Fir2IrComponents.session.<get-session>|<get-session>(){}[0]
+}
+final class /Fir2IrComponentsStorage : /Fir2IrComponents { // /Fir2IrComponentsStorage|null[0]
+    final var classifierStorage // /Fir2IrComponentsStorage.classifierStorage|{}classifierStorage[0]
+        final fun <get-classifierStorage>(): /Fir2IrClassifierStorage // /Fir2IrComponentsStorage.classifierStorage.<get-classifierStorage>|<get-classifierStorage>(){}[0]
+        final fun <set-classifierStorage>(/Fir2IrClassifierStorage) // /Fir2IrComponentsStorage.classifierStorage.<set-classifierStorage>|<set-classifierStorage>(Fir2IrClassifierStorage){}[0]
+    final val session // /Fir2IrComponentsStorage.session|{}session[0]
+        final fun <get-session>(): /FirSession // /Fir2IrComponentsStorage.session.<get-session>|<get-session>(){}[0]
+    constructor <init>(/FirSession) // /Fir2IrComponentsStorage.<init>|<init>(FirSession){}[0]
+}
+final class /FirSession { // /FirSession|null[0]
+    final val name // /FirSession.name|{}name[0]
+        final fun <get-name>(): kotlin/String // /FirSession.name.<get-name>|<get-name>(){}[0]
+    constructor <init>(kotlin/String) // /FirSession.<init>|<init>(kotlin.String){}[0]
+}

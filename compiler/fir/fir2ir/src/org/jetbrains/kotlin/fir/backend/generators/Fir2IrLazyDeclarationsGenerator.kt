@@ -5,117 +5,220 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.convertWithOffsets
-import org.jetbrains.kotlin.fir.backend.irOrigin
-import org.jetbrains.kotlin.fir.backend.isStubPropertyForPureField
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
+import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
+import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
+import org.jetbrains.kotlin.fir.backend.utils.irOrigin
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyPublicSymbolImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.name.StandardClassIds
 
-class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
+class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     internal fun createIrLazyFunction(
-        fir: FirSimpleFunction,
-        signature: IdSignature,
+        fir: FirNamedFunction,
+        symbol: IrSimpleFunctionSymbol,
         lazyParent: IrDeclarationParent,
-        declarationOrigin: IrDeclarationOrigin
-    ): IrSimpleFunction {
-        val symbol = symbolTable.referenceSimpleFunction(signature)
+        declarationOrigin: IrDeclarationOrigin,
+        isSynthetic: Boolean,
+    ): Fir2IrLazySimpleFunction {
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareSimpleFunction(signature, { symbol }) {
-                val isFakeOverride = fir.isSubstitutionOrIntersectionOverride
-                Fir2IrLazySimpleFunction(
-                    components, startOffset, endOffset, declarationOrigin,
-                    fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
+            val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
+            val isFakeOverride = fir.isFakeOverride(firContainingClass)
+            Fir2IrLazySimpleFunction(
+                c,
+                startOffset = if (isSynthetic) SYNTHETIC_OFFSET else startOffset,
+                endOffset = if (isSynthetic) SYNTHETIC_OFFSET else endOffset,
+                declarationOrigin,
+                fir, firContainingClass, symbol, lazyParent, isFakeOverride
+            )
+        }
+
+        irFunction.prepareTypeParameters()
+
+        declarationStorage.enterScope(symbol)
+
+        irFunction.parameters = buildList {
+            val containingClass = lazyParent as? IrClass
+            if (containingClass != null && irFunction.shouldHaveDispatchReceiver(containingClass)) {
+                val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(irFunction, fir, containingClass)
+                this += irFunction.declareThisReceiverParameter(
+                    thisType = thisType ?: error("No dispatch receiver receiver for function: ${fir.render()}"),
+                    thisOrigin = irFunction.origin,
+                    kind = IrParameterKind.DispatchReceiver,
+                )
+            }
+
+            callablesGenerator.addContextParametersTo(
+                fir.contextParametersForFunctionOrContainingProperty(),
+                irFunction,
+                this@buildList
+            )
+
+            fir.receiverParameter?.let {
+                this += irFunction.declareThisReceiverParameter(
+                    thisType = it.typeRef.toIrType(),
+                    thisOrigin = irFunction.origin,
+                    explicitReceiver = it,
+                    kind = IrParameterKind.ExtensionReceiver,
+                )
+            }
+
+            fir.valueParameters.mapTo(this) { valueParameter ->
+                callablesGenerator.createIrParameter(
+                    valueParameter, skipDefaultParameter = irFunction.isFakeOverride
                 ).apply {
-                    this.parent = lazyParent
+                    this.parent = irFunction
                 }
             }
         }
-        // NB: this is needed to prevent recursions in case of self bounds
-        (irFunction as Fir2IrLazySimpleFunction).prepareTypeParameters()
+
+        declarationStorage.leaveScope(symbol)
         return irFunction
     }
 
-    @OptIn(IrSymbolInternals::class)
     internal fun createIrLazyProperty(
         fir: FirProperty,
-        signature: IdSignature,
         lazyParent: IrDeclarationParent,
+        symbols: PropertySymbols,
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
-        val symbol = IrPropertyPublicSymbolImpl(signature)
-        val firPropertySymbol = fir.symbol
-
-        fun create(startOffset: Int, endOffset: Int): Fir2IrLazyProperty {
-            val isFakeOverride =
-                fir.isSubstitutionOrIntersectionOverride &&
-                        firPropertySymbol.dispatchReceiverClassLookupTagOrNull() !=
-                        firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassLookupTagOrNull()
-            return Fir2IrLazyProperty(
-                components, startOffset, endOffset, declarationOrigin,
-                fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
-            ).apply {
-                this.parent = lazyParent
-            }
+        val isPropertyForField = fir.isStubPropertyForPureField == true
+        val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
+        val isFakeOverride = !isPropertyForField && fir.isFakeOverride(firContainingClass)
+        // It is really required to create those properties with DEFINED origin
+        // Using `declarationOrigin` here (IR_EXTERNAL_JAVA_DECLARATION_STUB in particular) causes some tests to fail, including
+        // FirPsiBlackBoxCodegenTestGenerated.Reflection.Properties.testJavaStaticField
+        val originForProperty = if (isPropertyForField) IrDeclarationOrigin.DEFINED else declarationOrigin
+        return fir.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyProperty(
+                c, startOffset, endOffset, originForProperty, fir, firContainingClass, symbols, lazyParent, isFakeOverride
+            )
         }
-
-        val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
-            if (fir.isStubPropertyForPureField == true) {
-                // Very special case when two similar properties can exist so conflicts in SymbolTable are possible.
-                // See javaCloseFieldAndKotlinProperty.kt in BB tests
-                symbolTable.declarePropertyWithSignature(signature, symbol)
-                create(startOffset, endOffset)
-                symbol.owner
-            } else {
-                symbolTable.declareProperty(signature, { symbol }) {
-                    create(startOffset, endOffset)
-                }
-            }
-        }
-        return irProperty
     }
 
     fun createIrLazyConstructor(
         fir: FirConstructor,
-        signature: IdSignature,
+        symbol: IrConstructorSymbol,
         declarationOrigin: IrDeclarationOrigin,
         lazyParent: IrDeclarationParent,
-    ): IrConstructor = fir.convertWithOffsets { startOffset, endOffset ->
-        symbolTable.declareConstructor(signature, { IrConstructorPublicSymbolImpl(signature) }) { symbol ->
-            Fir2IrLazyConstructor(components, startOffset, endOffset, declarationOrigin, fir, symbol).apply {
-                parent = lazyParent
+    ): Fir2IrLazyConstructor {
+        val irConstructor = fir.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyConstructor(c, startOffset, endOffset, declarationOrigin, fir, symbol, lazyParent)
+        }
+
+        irConstructor.prepareTypeParameters()
+
+        declarationStorage.enterScope(symbol)
+
+        irConstructor.parameters = buildList {
+            val containingClass = lazyParent as? IrClass
+            val outerClass = containingClass?.parentClassOrNull
+            if (containingClass?.isInner == true && outerClass != null) {
+                this += irConstructor.declareThisReceiverParameter(
+                    thisType = outerClass.thisReceiver!!.type,
+                    thisOrigin = irConstructor.origin,
+                    kind = IrParameterKind.DispatchReceiver,
+                )
+            }
+
+            callablesGenerator.addContextParametersTo(
+                fir.contextParameters,
+                irConstructor,
+                this@buildList
+            )
+
+            fir.valueParameters.mapTo(this) { valueParameter ->
+                val parentClass = irConstructor.parent as? IrClass
+                callablesGenerator.createIrParameter(
+                    valueParameter,
+                    useStubForDefaultValueStub = parentClass?.classId != StandardClassIds.Enum,
+                    forcedDefaultValueConversion = parentClass?.isAnnotationClass == true
+                ).apply {
+                    this.parent = irConstructor
+                }
             }
         }
+
+        declarationStorage.leaveScope(symbol)
+        return irConstructor
     }
 
     fun createIrLazyClass(
         firClass: FirRegularClass,
         irParent: IrDeclarationParent,
-    ): IrClass = firClass.convertWithOffsets { startOffset, endOffset ->
-        val firClassOrigin = firClass.irOrigin(session.firProvider)
-        val signature = runIf(configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(firClass)
+        symbol: IrClassSymbol
+    ): Fir2IrLazyClass {
+        val firClassOrigin = firClass.irOrigin()
+        val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyClass(c, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
         }
-        classifiersGenerator.declareIrClass(signature) { symbol ->
-            Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol).apply {
-                parent = irParent
+
+        // NB: this is needed to prevent recursions in case of self bounds
+        irClass.prepareTypeParameters()
+
+        return irClass
+    }
+
+    fun createIrLazyTypeAlias(
+        firTypeAlias: FirTypeAlias,
+        irParent: IrDeclarationParent,
+        symbol: IrTypeAliasSymbol
+    ): Fir2IrLazyTypeAlias {
+        val irTypeAlias = firTypeAlias.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyTypeAlias(
+                c, startOffset, endOffset, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
+            )
+        }
+
+        irTypeAlias.prepareTypeParameters()
+
+        return irTypeAlias
+    }
+
+    // TODO: Should be private
+    fun createIrLazyField(
+        fir: FirField,
+        symbol: IrFieldSymbol,
+        lazyParent: IrDeclarationParent,
+        declarationOrigin: IrDeclarationOrigin,
+        irPropertySymbol: IrPropertySymbol?
+    ): Fir2IrLazyField {
+        return fir.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyField(
+                c, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, irPropertySymbol
+            ).apply {
+                parent = lazyParent
             }
         }
     }
+
+    fun createIrPropertyForPureField(
+        fir: FirField,
+        fieldSymbol: IrFieldSymbol,
+        irPropertySymbol: IrPropertySymbol,
+        lazyParent: IrDeclarationParent,
+        declarationOrigin: IrDeclarationOrigin
+    ): IrProperty {
+        val field = createIrLazyField(fir, fieldSymbol, lazyParent, declarationOrigin, irPropertySymbol)
+        return Fir2IrLazyPropertyForPureField(c, field, irPropertySymbol, lazyParent)
+    }
+}
+
+internal fun FirCallableDeclaration.isFakeOverride(firContainingClass: FirRegularClass?): Boolean {
+    val declaration = unwrapUseSiteSubstitutionOverrides()
+    return declaration.isSubstitutionOrIntersectionOverride ||
+            firContainingClass?.symbol?.toLookupTag() != declaration.containingClassLookupTag()
 }

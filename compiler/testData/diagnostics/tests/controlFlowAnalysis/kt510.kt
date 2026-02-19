@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-510 `this.` allows initialization without backing field
 
@@ -17,3 +18,5 @@ public open class Identifier2() {
         this.field = false;
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, primaryConstructor, propertyDeclaration, thisExpression */

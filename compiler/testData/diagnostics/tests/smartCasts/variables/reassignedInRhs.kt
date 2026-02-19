@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55096
 // SKIP_TXT
 
@@ -49,3 +50,8 @@ fun contractFunction() {
         <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad (#2 == true => x#0 != null; but this is x#1 = null)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, classReference, contractCallsEffect, contractConditionalEffect,
+contracts, disjunctionExpression, equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast,
+stringLiteral */

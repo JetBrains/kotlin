@@ -1,0 +1,53 @@
+{
+  "modules": [
+    {
+      "files": {
+        "swiftApi": "/A/SwiftFile.swift",
+        "kotlinBridges": "/A/KotlinBridge.kt",
+        "cHeaderBridges": "/A/Header.h"
+      },
+      "bridgeName": "Bridge_A",
+      "name": "Module_A",
+      "type": "BRIDGES_TO_KOTLIN",
+      "dependencies": [
+        "Module_B"
+      ]
+    },
+    {
+      "files": {
+        "swiftApi": "/B/SwiftFile.swift",
+        "kotlinBridges": "/B/KotlinBridge.kt",
+        "cHeaderBridges": "/B/Header.h"
+      },
+      "bridgeName": "Bridge_B",
+      "name": "Module_B",
+      "type": "BRIDGES_TO_KOTLIN",
+      "dependencies": [
+        "Module_C"
+      ]
+    },
+    {
+      "swiftApi": "/C/SwiftFile.swift",
+      "name": "Module_C",
+      "type": "SWIFT_ONLY",
+      "dependencies": [
+        "Module_D"
+      ]
+    },
+    {
+      "swiftApi": "/D/SwiftFile.swift",
+      "name": "Module_D",
+      "type": "SWIFT_ONLY",
+      "dependencies": [
+        "Module_E"
+      ]
+    },
+    {
+      "swiftApi": "/E/SwiftFile.swift",
+      "name": "Module_E",
+      "type": "SWIFT_ONLY",
+      "dependencies": []
+    }
+  ],
+  "timestamp": 1721919536167
+}

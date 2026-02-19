@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: kotlin.kt
 fun main(j : C, s : Array<String?>) {
@@ -18,3 +19,5 @@ public class C {
     void from(String... s) {}
     void from(String s1, String... s) {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, nullableType, stringLiteral */

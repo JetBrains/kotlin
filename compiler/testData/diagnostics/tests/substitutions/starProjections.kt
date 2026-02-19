@@ -1,4 +1,6 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-63072
+// CHECK_TYPE
 
 interface A<R, T: A<R, T>> {
     fun r(): R
@@ -21,3 +23,7 @@ fun testB(b: B<*, *>) {
 
     b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>t<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>r<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>size<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, lambdaLiteral, nullableType, outProjection, starProjection, typeConstraint, typeParameter,
+typeWithExtension */

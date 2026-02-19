@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.hierarchy
 import org.gradle.api.InvalidUserCodeException
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 import org.jetbrains.kotlin.konan.target.Family
@@ -148,7 +150,16 @@ private class KotlinHierarchyBuilderImpl(
     // Don't check for instance of [KotlinJsTargetDsl] or [KotlinWasmTargetDsl] because they are implemented by single target [KotlinJsIrTarget]
     override fun withJs() = withTargets { it.platformType == KotlinPlatformType.js }
 
-    override fun withWasm() = withTargets { it.platformType == KotlinPlatformType.wasm }
+    @Deprecated("Renamed to 'withWasmJs''", replaceWith = ReplaceWith("withWasmJs()"))
+    override fun withWasm() = withWasmJs()
+
+    override fun withWasmJs() = withTargets {
+        it.platformType == KotlinPlatformType.wasm && it is KotlinJsIrTarget && it.wasmTargetType == KotlinWasmTargetType.JS
+    }
+
+    override fun withWasmWasi() = withTargets {
+        it.platformType == KotlinPlatformType.wasm && it is KotlinJsIrTarget && it.wasmTargetType == KotlinWasmTargetType.WASI
+    }
 
     override fun withJvm() = withTargets {
         it is KotlinJvmTarget ||
@@ -159,9 +170,6 @@ private class KotlinHierarchyBuilderImpl(
                  */
                 (it is KotlinWithJavaTarget<*, *> && it.platformType == KotlinPlatformType.jvm)
     }
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun withAndroid() = withAndroidTarget()
 
     override fun withAndroidTarget() = withTargets { it is KotlinAndroidTarget }
 
@@ -174,15 +182,11 @@ private class KotlinHierarchyBuilderImpl(
     }
 
     override fun withAndroidNativeArm32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_X86
+        it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_ARM32
     }
 
     override fun withAndroidNativeArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_ARM64
-    }
-
-    override fun withIosArm32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM32
     }
 
     override fun withIosArm64() = withTargets {
@@ -247,36 +251,6 @@ private class KotlinHierarchyBuilderImpl(
 
     override fun withLinuxArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM64
-    }
-
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withWatchosX86() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_X86
-    }
-
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withMingwX86() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.MINGW_X86
-    }
-
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxArm32Hfp() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM32_HFP
-    }
-
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxMips32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPS32
-    }
-
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxMipsel32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPSEL32
-    }
-
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withWasm32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.WASM32
     }
 
     override fun toString(): String {

@@ -10,23 +10,24 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteral
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isArrayType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 /**
- * A transformer that converts resolved arrayOf() call to [FirArrayLiteral].
+ * A transformer that converts resolved arrayOf() call to [FirCollectionLiteral].
  *
  * Note that arrayOf() calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  */
@@ -34,7 +35,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
     private fun toArrayLiteral(functionCall: FirFunctionCall, session: FirSession): FirExpression? {
         if (!functionCall.isArrayOfCall(session)) return null
         if (functionCall.calleeReference !is FirResolvedNamedReference) return null
-        val arrayLiteral = buildArrayLiteral {
+        val arrayLiteral = buildCollectionLiteral {
             source = functionCall.source
             annotations += functionCall.annotations
             // Note that the signature is: arrayOf(vararg element). Hence, unwrapping the original argument list here.
@@ -45,14 +46,14 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
                     }
                 }
             }
-            coneTypeOrNull = functionCall.coneTypeOrNull
+            coneTypeOrNull = functionCall.resolvedType
         }
 
         val calleeReference = functionCall.calleeReference
 
         return if (calleeReference.isError()) {
             buildErrorExpression(
-                functionCall.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef),
+                functionCall.source?.fakeElement(KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf),
                 calleeReference.diagnostic,
                 arrayLiteral
             )
@@ -75,7 +76,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
         fun FirFunctionCall.isArrayOfCall(session: FirSession): Boolean {
             val function: FirCallableDeclaration = getOriginalFunction() ?: return false
             val returnTypeRef = function.returnTypeRef
-            return function is FirSimpleFunction &&
+            return function is FirNamedFunction &&
                     returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.isArrayType == true &&
                     isArrayOf(function, arguments) &&
                     function.receiverParameter == null
@@ -87,7 +88,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
                     "ubyte", "uint", "ulong", "ushort"
                 ).map { "kotlin/" + it + "ArrayOf" }
 
-        private fun isArrayOf(function: FirSimpleFunction, arguments: List<FirExpression>): Boolean =
+        private fun isArrayOf(function: FirNamedFunction, arguments: List<FirExpression>): Boolean =
             when (function.symbol.callableId.toString()) {
                 "kotlin/emptyArray" -> function.valueParameters.isEmpty() && arguments.isEmpty()
                 in arrayOfNames -> function.valueParameters.size == 1 && function.valueParameters[0].isVararg && arguments.size <= 1

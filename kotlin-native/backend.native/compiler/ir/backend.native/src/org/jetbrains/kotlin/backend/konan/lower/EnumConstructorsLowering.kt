@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -92,10 +90,10 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
         private fun transformEnumConstructor(enumConstructor: IrConstructor): IrConstructor {
             val loweredEnumConstructor = lowerEnumConstructor(enumConstructor)
 
-            for (parameter in enumConstructor.valueParameters) {
+            for (parameter in enumConstructor.parameters) {
                 val defaultValue = parameter.defaultValue ?: continue
                 defaultValue.transformChildrenVoid(ParameterMapper(enumConstructor, loweredEnumConstructor, true))
-                loweredEnumConstructor.valueParameters[parameter.loweredIndex].defaultValue = defaultValue
+                loweredEnumConstructor.parameters[parameter.loweredIndex].defaultValue = defaultValue
                 defaultValue.setDeclarationsParent(loweredEnumConstructor)
             }
 
@@ -106,45 +104,46 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
             val startOffset = constructor.startOffset
             val endOffset = constructor.endOffset
             val loweredConstructor =
-                IrConstructorImpl(
-                        startOffset, endOffset,
-                        constructor.origin,
-                        IrConstructorSymbolImpl(),
-                        constructor.name,
-                        DescriptorVisibilities.PROTECTED,
-                        constructor.returnType,
-                        isInline = false,
-                        isExternal = false,
-                        isPrimary = constructor.isPrimary,
-                        isExpect = false
-                ).apply {
-                    parent = constructor.parent
-                    val body = constructor.body!!
-                    this.body = body // Will be transformed later.
-                    body.setDeclarationsParent(this)
-                }
+                    context.irFactory.createConstructor(
+                            startOffset,
+                            endOffset,
+                            constructor.origin,
+                            constructor.name,
+                            DescriptorVisibilities.PROTECTED,
+                            isInline = false,
+                            isExpect = false,
+                            constructor.returnType,
+                            IrConstructorSymbolImpl(),
+                            isPrimary = constructor.isPrimary,
+                    ).apply {
+                        parent = constructor.parent
+                        val body = constructor.body!!
+                        this.body = body // Will be transformed later.
+                        body.setDeclarationsParent(this)
+                    }
 
-            fun createSynthesizedValueParameter(index: Int, name: String, type: IrType): IrValueParameter =
-                    IrValueParameterImpl(
-                            startOffset, endOffset,
-                            DECLARATION_ORIGIN_ENUM,
-                            IrValueParameterSymbolImpl(),
-                            Name.identifier(name),
-                            index,
-                            type,
+            fun createSynthesizedValueParameter(name: String, type: IrType): IrValueParameter =
+                    context.irFactory.createValueParameter(
+                            startOffset = startOffset,
+                            endOffset = endOffset,
+                            origin = DECLARATION_ORIGIN_ENUM,
+                            kind = IrParameterKind.Regular,
+                            name = Name.identifier(name),
+                            type = type,
+                            isAssignable = false,
+                            symbol = IrValueParameterSymbolImpl(),
                             varargElementType = null,
                             isCrossinline = false,
                             isNoinline = false,
                             isHidden = false,
-                            isAssignable = false
                     ).apply {
                         parent = loweredConstructor
                     }
 
-            loweredConstructor.valueParameters += createSynthesizedValueParameter(0, "name", context.irBuiltIns.stringType)
-            loweredConstructor.valueParameters += createSynthesizedValueParameter(1, "ordinal", context.irBuiltIns.intType)
-            loweredConstructor.valueParameters += constructor.valueParameters.map {
-                it.copyTo(loweredConstructor, index = it.loweredIndex).apply {
+            loweredConstructor.parameters += createSynthesizedValueParameter("name", context.irBuiltIns.stringType)
+            loweredConstructor.parameters += createSynthesizedValueParameter("ordinal", context.irBuiltIns.intType)
+            loweredConstructor.parameters += constructor.parameters.map {
+                it.copyTo(loweredConstructor).apply {
                     loweredEnumConstructorParameters[it] = this
                 }
             }
@@ -174,24 +173,20 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         context.irBuiltIns.unitType,
                         enumConstructorCall.symbol
                 )
-                assert(result.symbol.owner.valueParameters.size == 2) {
+                assert(result.symbol.owner.parameters.size == 2) {
                     "Enum(String, Int) constructor call expected:\n${result.dump()}"
                 }
 
-                val nameParameter = enumClassConstructor.valueParameters.getOrElse(0) {
+                val nameParameter = enumClassConstructor.parameters.getOrElse(0) {
                     throw AssertionError("No 'name' parameter in enum constructor: $enumClassConstructor")
                 }
 
-                val ordinalParameter = enumClassConstructor.valueParameters.getOrElse(1) {
+                val ordinalParameter = enumClassConstructor.parameters.getOrElse(1) {
                     throw AssertionError("No 'ordinal' parameter in enum constructor: $enumClassConstructor")
                 }
 
-                result.putValueArgument(0,
-                        IrGetValueImpl(startOffset, endOffset, nameParameter.type, nameParameter.symbol, origin)
-                )
-                result.putValueArgument(1,
-                        IrGetValueImpl(startOffset, endOffset, ordinalParameter.type, ordinalParameter.symbol, origin)
-                )
+                result.arguments[0] = IrGetValueImpl(startOffset, endOffset, nameParameter.type, nameParameter.symbol, origin)
+                result.arguments[1] = IrGetValueImpl(startOffset, endOffset, ordinalParameter.type, ordinalParameter.symbol, origin)
                 return result
             }
 
@@ -209,15 +204,13 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         context.irBuiltIns.unitType,
                         loweredDelegatingConstructor.symbol
                 )
-                val firstParameter = enumClassConstructor.valueParameters[0]
-                result.putValueArgument(0,
-                        IrGetValueImpl(startOffset, endOffset, firstParameter.type, firstParameter.symbol))
-                val secondParameter = enumClassConstructor.valueParameters[1]
-                result.putValueArgument(1,
-                        IrGetValueImpl(startOffset, endOffset, secondParameter.type, secondParameter.symbol))
+                val firstParameter = enumClassConstructor.parameters[0]
+                result.arguments[0] = IrGetValueImpl(startOffset, endOffset, firstParameter.type, firstParameter.symbol)
+                val secondParameter = enumClassConstructor.parameters[1]
+                result.arguments[1] = IrGetValueImpl(startOffset, endOffset, secondParameter.type, secondParameter.symbol)
 
-                delegatingConstructor.valueParameters.forEach {
-                    result.putValueArgument(it.loweredIndex, delegatingConstructorCall.getValueArgument(it.index))
+                delegatingConstructor.parameters.forEach {
+                    result.arguments[it.loweredIndex] = delegatingConstructorCall.arguments[it.indexInParameters]
                 }
 
                 return result
@@ -240,13 +233,11 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
 
                 val result = createConstructorCall(startOffset, endOffset, loweredConstructor.symbol)
 
-                result.putValueArgument(0,
-                        IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, name))
-                result.putValueArgument(1,
-                        IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, ordinal))
+                result.arguments[0] = IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, name)
+                result.arguments[1] = IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, ordinal)
 
-                enumConstructor.valueParameters.forEach {
-                    result.putValueArgument(it.loweredIndex, enumConstructorCall.getValueArgument(it.index))
+                enumConstructor.parameters.forEach {
+                    result.arguments[it.loweredIndex] = enumConstructorCall.arguments[it.indexInParameters]
                 }
 
                 return result
@@ -262,7 +253,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
         private inner class InEnumEntryClassConstructor(enumEntry: IrEnumEntry) : InEnumEntry(enumEntry) {
             override fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: IrConstructorSymbol) =
                     IrDelegatingConstructorCallImpl(startOffset, endOffset, context.irBuiltIns.unitType, loweredConstructor,
-                    loweredConstructor.owner.typeParameters.size, loweredConstructor.owner.valueParameters.size)
+                    loweredConstructor.owner.typeParameters.size)
         }
 
         private inner class InEnumEntryInitializer(enumEntry: IrEnumEntry) : InEnumEntry(enumEntry) {
@@ -357,19 +348,19 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
     }
 }
 
-private val IrValueParameter.loweredIndex: Int get() = index + 2
+private val IrValueParameter.loweredIndex: Int get() = indexInParameters + 2
 
 private class ParameterMapper(superConstructor: IrConstructor,
                               val constructor: IrConstructor,
                               val useLoweredIndex: Boolean) : IrElementTransformerVoid() {
-    private val valueParameters = superConstructor.valueParameters.toSet()
+    private val valueParameters = superConstructor.parameters.toSet()
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
 
         val superParameter = expression.symbol.owner as? IrValueParameter ?: return expression
         if (valueParameters.contains(superParameter)) {
-            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.index
-            val parameter = constructor.valueParameters[index]
+            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.indexInParameters
+            val parameter = constructor.parameters[index]
             return IrGetValueImpl(
                     expression.startOffset, expression.endOffset,
                     parameter.type,
@@ -382,8 +373,8 @@ private class ParameterMapper(superConstructor: IrConstructor,
         expression.transformChildrenVoid()
         val superParameter = expression.symbol.owner as? IrValueParameter ?: return expression
         if (valueParameters.contains(superParameter)) {
-            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.index
-            val parameter = constructor.valueParameters[index]
+            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.indexInParameters
+            val parameter = constructor.parameters[index]
             return IrSetValueImpl(
                     expression.startOffset, expression.endOffset,
                     parameter.type,

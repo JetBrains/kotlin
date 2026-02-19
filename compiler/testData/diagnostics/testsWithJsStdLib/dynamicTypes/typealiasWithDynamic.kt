@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 typealias Test1 = List<dynamic>
 
 typealias Test2 = (dynamic) -> dynamic

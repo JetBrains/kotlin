@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun f() {
     var foo = 1
@@ -35,3 +36,6 @@ fun h() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+tryExpression */

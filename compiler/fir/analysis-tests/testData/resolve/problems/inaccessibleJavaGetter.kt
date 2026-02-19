@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: PropertyDescriptor.java
 
 public interface PropertyDescriptor extends DescriptorWithAccessor {
@@ -24,3 +25,6 @@ fun test() {
     val res3 = descriptor.isDelegated
     val res4 = descriptor.<!FUNCTION_EXPECTED!>isDelegated<!>() // Should be error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, javaType, localProperty,
+override, propertyDeclaration, stringLiteral */

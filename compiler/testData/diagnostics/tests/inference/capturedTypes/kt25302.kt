@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface CollectorMock<A, R>
 
@@ -16,3 +17,6 @@ class KotlinCollectionUser1 {
         accept(ofK("").collect(toSetK<String>()))
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
+starProjection, stringLiteral, typeParameter */

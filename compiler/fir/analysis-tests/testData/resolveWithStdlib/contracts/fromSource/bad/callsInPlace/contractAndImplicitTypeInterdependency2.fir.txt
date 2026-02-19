@@ -1,0 +1,24 @@
+FILE: contractAndImplicitTypeInterdependency2.kt
+    public final object SampleObject : R|kotlin/Any| {
+        private constructor(): R|SampleObject| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val invocationKind: R|kotlin/contracts/InvocationKind| = Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|
+            public get(): R|kotlin/contracts/InvocationKind|
+
+    }
+    public final inline fun case_4(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/block|, Q|SampleObject|.R|/SampleObject.invocationKind|)
+            }
+            )
+        }
+
+        ^case_4 R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }

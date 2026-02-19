@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ConditionEvaluationResult
 import org.junit.jupiter.api.extension.ExecutionCondition
@@ -36,13 +37,17 @@ import java.lang.reflect.AnnotatedElement
 annotation class OsCondition(
     val supportedOn: Array<OS> = [OS.LINUX, OS.MAC, OS.WINDOWS],
     val enabledOnCI: Array<OS> = [OS.LINUX, OS.WINDOWS],
+    /**
+     * This is used in [KGPBaseTest] to allow overriding the default [enabledOnCI] list when [RUN_ALL_INTEGRATION_TESTS_ON_MACOS] is specified
+     */
+    val allowRunningOnMacosOnCI: Boolean = false,
 )
 
 internal class ExecutionOnOsCondition : ExecutionCondition {
 
     private val logger = LoggerFactory.getLogger(ExecutionOnOsCondition::class.java)
 
-    private val isUnderTeamcity = System.getenv("TEAMCITY_VERSION") != null
+    private val isUnderTeamcity = isTeamCityRun
 
     private val enabledOnCurrentOs = "Enabled on operating system: ${System.getProperty("os.name")}"
     private val notSupportedOnCurrentOs = "Test is not supported on operating system: ${System.getProperty("os.name")}"
@@ -52,7 +57,9 @@ internal class ExecutionOnOsCondition : ExecutionCondition {
         val annotation = findAnnotation<OsCondition>(context)
 
         val supportedOn = annotation.supportedOn
-        val enabledOnCI = annotation.enabledOnCI
+        val enabledOnCI = annotation.enabledOnCI + if (
+            annotation.allowRunningOnMacosOnCI && System.getProperty(RUN_ALL_INTEGRATION_TESTS_ON_MACOS).toBoolean()
+        ) arrayOf(OS.MAC) else emptyArray()
 
         return if (supportedOn.none { it.isCurrentOs }) {
             logger.info { createDisabledMessage(context.element.get(), "local", supportedOn) }
@@ -70,5 +77,9 @@ internal class ExecutionOnOsCondition : ExecutionCondition {
                 " was disabled in the $environment environment" +
                 " for the current os=${OS.current()}," +
                 " because allowed environments are: ${allowedOS.joinToString(separator = ", ") { it.name }}"
+    }
+
+    companion object {
+        const val RUN_ALL_INTEGRATION_TESTS_ON_MACOS = "runAllIntegrationTestsOnMacos"
     }
 }

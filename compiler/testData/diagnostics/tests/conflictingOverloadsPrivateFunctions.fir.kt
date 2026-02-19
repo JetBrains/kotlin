@@ -1,0 +1,13 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-62814
+
+class K2DuplicatesOkayBug {
+    private <!CONFLICTING_OVERLOADS!>fun startBackgroundSync()<!> {
+        //todo
+    }
+    private <!CONFLICTING_OVERLOADS!>fun startBackgroundSync()<!> {
+        //todo
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

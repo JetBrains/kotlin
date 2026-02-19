@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My {
 
     val y: Int
@@ -21,3 +22,6 @@ class My {
         x.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, localFunction,
+localProperty, nullableType, propertyDeclaration, smartcast */

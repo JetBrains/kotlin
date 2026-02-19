@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class RedefinePropertyInFor() {
 
@@ -10,3 +11,5 @@ class RedefinePropertyInFor() {
 
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration, rangeExpression */

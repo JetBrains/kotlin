@@ -48,8 +48,4 @@ fun box(): String {
 // 0 PUTFIELD VarValueConflictsWithTableKt\$box\$1.I\$0 : I
 /* 2 loads in cycle */
 // 2 ILOAD 2
-
-// JVM_IR_TEMPLATES
 // 1 LOCALVARIABLE s Ljava/lang/String; L.* 2
-// JVM_TEMPLATES
-// 2 LOCALVARIABLE s Ljava/lang/String; L.* 2

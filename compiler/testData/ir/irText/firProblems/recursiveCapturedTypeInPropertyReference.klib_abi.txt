@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class <#A: /Recursive<#A> & /Something> /AbstractSymbol { // /AbstractSymbol|null[0]
+    constructor <init>() // /AbstractSymbol.<init>|<init>(){}[0]
+    final fun foo(kotlin.collections/List<kotlin/Any>) // /AbstractSymbol.foo|foo(kotlin.collections.List<kotlin.Any>){}[0]
+}
+abstract interface <#A: /Recursive<#A> & /Something> /Recursive { // /Recursive|null[0]
+    abstract val symbol // /Recursive.symbol|{}symbol[0]
+        abstract fun <get-symbol>(): /AbstractSymbol<#A> // /Recursive.symbol.<get-symbol>|<get-symbol>(){}[0]
+}
+abstract interface /Something // /Something|null[0]

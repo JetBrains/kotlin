@@ -24,9 +24,17 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
-fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<EvaluationResult> =
+internal const val SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.base.compiler.arguments"
+internal val isRunningTestOnK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+
+fun evalFile(
+    scriptFile: File,
+    cacheDir: File? = null,
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+): ResultWithDiagnostics<EvaluationResult> =
     withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
-        evalFileWithConfigurations(scriptFile)
+        evalFileWithConfigurations(scriptFile, compilation, evaluation)
     }
 
 fun evalFileWithConfigurations(
@@ -46,9 +54,11 @@ fun evalFileWithConfigurations(
         }
     )
 
-    return BasicJvmScriptingHost().eval(
-        scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
-    )
+    val host =
+        if (isRunningTestOnK2) BasicJvmScriptingHost()
+        else BasicJvmScriptingHost.createLegacy()
+
+    return host.eval(scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration)
 }
 
 
@@ -57,6 +67,12 @@ val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from m
 
 
 class MainKtsTest {
+
+    @Test
+    fun testEmptyFile() {
+        val res = evalFile(File("$TEST_DATA_ROOT/empty.main.kts"))
+        assertSucceeded(res)
+    }
 
     @Test
     fun testResolveJunit() {
@@ -109,7 +125,7 @@ class MainKtsTest {
     @Test
     fun testUnresolvedJunit() {
         val res = evalFile(File("$TEST_DATA_ROOT/hello-unresolved-junit.main.kts"))
-        assertFailed("Unresolved reference: junit", res)
+        assertFailed("Unresolved reference 'junit'.", res)
     }
 
     @Test
@@ -249,11 +265,11 @@ class MainKtsTest {
         // the embeddable plugin is needed for this test, because embeddable compiler is used.
         val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
         val out = captureOut {
-            val res = evalFileWithConfigurations(
+            val res = evalFile(
                 File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts"),
                 compilation = {
                     compilerOptions(
-                        "-Xplugin", serializationPluginClasspath
+                        "-Xplugin=$serializationPluginClasspath"
                     )
                 }
             )
@@ -271,6 +287,18 @@ class MainKtsTest {
         Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
         val res = evalFile(File(scriptPath))
         assertSucceeded(res)
+    }
+
+    @Test
+    fun testUseSlf4j() {
+        val err = captureOutAndErr {
+            val res = evalFile(File("$TEST_DATA_ROOT/use-slf4j.main.kts"))
+            assertSucceeded(res)
+        }.second
+        Assert.assertTrue(
+            "Expect info log line with \"test-slf4j\" text, got:\n$err",
+            err.contains("INFO  - test-slf4j")
+        )
     }
 
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
@@ -402,17 +430,24 @@ class CacheDirectoryDetectorTest {
     private val directories = Directories(systemProperties, environment)
 }
 
-internal fun captureOut(body: () -> Unit): String {
+internal fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
+
+internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     val outStream = ByteArrayOutputStream()
+    val errStream = ByteArrayOutputStream()
     val prevOut = System.out
+    val prevErr = System.err
     System.setOut(PrintStream(outStream))
+    System.setErr(PrintStream(errStream))
     try {
         body()
     } finally {
         System.out.flush()
+        System.err.flush()
         System.setOut(prevOut)
+        System.setErr(prevErr)
     }
-    return outStream.toString().trim()
+    return outStream.toString().trim() to errStream.toString().trim()
 }
 
 internal fun <T> withProperty(name: String, value: String?, body: () -> T): T {

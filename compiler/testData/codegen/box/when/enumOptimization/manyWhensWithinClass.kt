@@ -1,8 +1,5 @@
 // WITH_STDLIB
-// CHECK_CASES_COUNT: function=bar1_u51tkt$ count=3 TARGET_BACKENDS=JS
-// CHECK_IF_COUNT: function=bar1_u51tkt$ count=0 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=A$bar2$lambda count=3 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=A$bar2$lambda count=4 IGNORED_BACKENDS=JS
+// CHECK_CASES_COUNT: function=A$bar2$lambda count=4
 // CHECK_IF_COUNT: function=A$bar2$lambda count=0
 
 import kotlin.test.assertEquals

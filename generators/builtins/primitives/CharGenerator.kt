@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package primitives
+package org.jetbrains.kotlin.generators.builtins.numbers.primitives
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsGenerator
-import org.jetbrains.kotlin.generators.builtins.numbers.primitives.*
 import org.jetbrains.kotlin.generators.builtins.numbers.primitives.NativePrimitivesGenerator.Companion.setAsExternal
 import java.io.PrintWriter
 
@@ -16,13 +15,21 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
         writer.print(generateFile().build())
     }
 
+    protected open val fileAnnotations: List<String> = emptyList()
+
     private fun generateFile(): FileBuilder {
-        return file { generateClass() }.apply { this.modifyGeneratedFile() }
+        return file(this::class) {
+            for (fileAnnotation in fileAnnotations) {
+                annotate(fileAnnotation)
+            }
+            generateClass()
+        }.apply { this.modifyGeneratedFile() }
     }
 
     private fun FileBuilder.generateClass() {
         klass {
             appendDoc("Represents a 16-bit Unicode character.")
+            expectActual = ExpectActualModifier.Actual
             name = PrimitiveType.CHAR.capitalized
             superType("Comparable<$name>")
 
@@ -335,10 +342,28 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
     internal open fun ClassBuilder.generateAdditionalMethods() {}
 }
 
+class CommonCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
+
+    override fun ClassBuilder.modifyGeneratedClass() {
+        expectActual = ExpectActualModifier.Expect
+    }
+
+    override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
+        annotations += """Suppress("EXPECTED_PROPERTY_INITIALIZER")"""
+    }
+}
+
 class JvmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.")
+        expectActual = ExpectActualModifier.Actual
     }
+
+    override val fileAnnotations = listOf(
+        "kotlin.internal.JvmBuiltin",
+        "kotlin.internal.SuppressBytecodeGeneration",
+        "Suppress(\"NON_ABSTRACT_FUNCTION_WITH_NO_BODY\")"
+    )
 }
 
 class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
@@ -360,8 +385,8 @@ class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 
         secondaryConstructor {
             annotations += "SinceKotlin(\"1.5\")"
-            annotations += "WasExperimental(ExperimentalStdlibApi::class)"
             visibility = MethodVisibility.PUBLIC
+            expectActual = ExpectActualModifier.Unspecified
             parameter {
                 name = "code"
                 type = "UShort"
@@ -371,35 +396,35 @@ class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedCompareTo() {
-        "value - other.value".addAsSingleLineBody(bodyOnNewLine = false)
+        "value - other.value".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedPlus() {
-        "(value + other).toChar()".addAsSingleLineBody(bodyOnNewLine = false)
+        "(value + other).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedMinusChar() {
-        "value - other.value".addAsSingleLineBody(bodyOnNewLine = false)
+        "value - other.value".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedMinusInt() {
-        "(value - other).toChar()".addAsSingleLineBody(bodyOnNewLine = false)
+        "(value - other).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedInc() {
-        "(value + 1).toChar()".addAsSingleLineBody(bodyOnNewLine = false)
+        "(value + 1).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedDec() {
-        "(value - 1).toChar()".addAsSingleLineBody(bodyOnNewLine = false)
+        "(value - 1).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedRangeTo() {
-        "CharRange(this, other)".addAsSingleLineBody(bodyOnNewLine = false)
+        "CharRange(this, other)".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedRangeUntil() {
-        "this until other".addAsSingleLineBody(bodyOnNewLine = false)
+        "this until other".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedConversions(otherKind: PrimitiveType) {
@@ -408,25 +433,25 @@ class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             PrimitiveType.INT -> "value"
             else -> "value.$methodName()"
         }
-        body.addAsSingleLineBody(bodyOnNewLine = false)
+        body.setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedEquals() {
         """
             if (other !is Char) return false
             return this.value == other.value
-        """.trimIndent().addAsMultiLineBody()
+        """.trimIndent().setAsBlockBody()
     }
 
     override fun MethodBuilder.modifyGeneratedToString() {
-        additionalDoc = "TODO implicit usages of toString and valueOf must be covered in DCE"
+        additionalComments = "TODO implicit usages of toString and valueOf must be covered in DCE"
         annotations += "Suppress(\"JS_NAME_PROHIBITED_FOR_OVERRIDE\")"
         annotations += "JsName(\"toString\")"
-        "return js(\"String\").fromCharCode(value).unsafeCast<String>()".addAsMultiLineBody()
+        "return js(\"String\").fromCharCode(value).unsafeCast<String>()".setAsBlockBody()
     }
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
-        "value".addAsSingleLineBody(bodyOnNewLine = false)
+        "value".setAsExpressionBody()
     }
 }
 
@@ -447,10 +472,10 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
-        isPublic = true
         property {
             appendDoc("The minimum value of a supplementary code point, `\\u0x10000`.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_SUPPLEMENTARY_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x10000"
@@ -459,6 +484,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The minimum value of a Unicode code point.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x000000"
@@ -467,6 +493,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The maximum value of a Unicode code point.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0X10FFFF"
@@ -475,6 +502,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The minimum radix available for conversion to and from strings.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "2"
@@ -483,6 +511,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The maximum radix available for conversion to and from strings.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "36"
@@ -490,40 +519,40 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedCompareTo() {
-        "wasm_i32_compareTo(this.code, other.code)".addAsSingleLineBody(bodyOnNewLine = true)
+        "wasm_i32_compareTo(this.code, other.code)".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedPlus() {
         modifySignature { isInline = true }
-        "(this.code + other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code + other).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedMinusChar() {
         modifySignature { isInline = true }
-        "(this.code - other.code)".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code - other.code)".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedMinusInt() {
         modifySignature { isInline = true }
-        "(this.code - other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code - other).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedInc() {
         modifySignature { isInline = true }
-        "(this.code + 1).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code + 1).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedDec() {
         modifySignature { isInline = true }
-        "(this.code - 1).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code - 1).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedRangeTo() {
-        "CharRange(this, other)".addAsSingleLineBody(bodyOnNewLine = true)
+        "CharRange(this, other)".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedRangeUntil() {
-        "this until other".addAsSingleLineBody(bodyOnNewLine = true)
+        "this until other".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedConversions(otherKind: PrimitiveType) {
@@ -536,7 +565,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             }
             else -> "this.code.$methodName()"
         }
-        body.addAsSingleLineBody(bodyOnNewLine = true)
+        body.setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedEquals() {
@@ -544,21 +573,19 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             if (other is Char)
                 return wasm_i32_eq(this.code, other.code)
             return false
-        """.trimIndent().addAsMultiLineBody()
+        """.trimIndent().setAsBlockBody()
     }
 
     override fun MethodBuilder.modifyGeneratedToString() {
-        modifySignature { visibility = null }
         """
             val array = WasmCharArray(1)
             array.set(0, this)
             return array.createString()
-        """.trimIndent().addAsMultiLineBody()
+        """.trimIndent().setAsBlockBody()
     }
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
-        modifySignature { visibility = null }
-        "this.code.hashCode()".addAsSingleLineBody(bodyOnNewLine = true)
+        "this.code.hashCode()".setAsExpressionBody()
     }
 }
 
@@ -569,6 +596,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         import("kotlin.native.internal.GCUnsafeCall")
         import("kotlin.native.internal.TypedIntrinsic")
         import("kotlin.native.internal.IntrinsicType")
+        import("kotlin.native.internal.escapeAnalysis.Escapes")
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
@@ -583,6 +611,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 """.trimIndent()
             )
             annotations += "ExperimentalNativeApi"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_SUPPLEMENTARY_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x10000"
@@ -598,6 +627,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 """.trimIndent()
             )
             annotations += "ExperimentalNativeApi"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x000000"
@@ -613,6 +643,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 """.trimIndent()
             )
             annotations += "ExperimentalNativeApi"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0X10FFFF"
@@ -621,7 +652,8 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The minimum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `2`\", ReplaceWith(\"2\"))"
-            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\")"
+            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\", errorSince = \"2.1\")"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "2"
@@ -630,7 +662,8 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The maximum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `36\", ReplaceWith(\"36\"))"
-            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\")"
+            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\", errorSince = \"2.1\")"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "36"
@@ -643,17 +676,17 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 
     override fun MethodBuilder.modifyGeneratedPlus() {
         modifySignature { isInline = true }
-        "(this.code + other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code + other).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedMinusChar() {
         modifySignature { isInline = true }
-        "this.code - other.code".addAsSingleLineBody(bodyOnNewLine = true)
+        "this.code - other.code".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedMinusInt() {
         modifySignature { isInline = true }
-        "(this.code - other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code - other).toChar()".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedInc() {
@@ -665,11 +698,11 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedRangeTo() {
-        "CharRange(this, other)".addAsSingleLineBody(bodyOnNewLine = true)
+        "CharRange(this, other)".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedRangeUntil() {
-        "this until other".addAsSingleLineBody(bodyOnNewLine = true)
+        "this until other".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedConversions(otherKind: PrimitiveType) {
@@ -678,7 +711,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             PrimitiveType.BYTE -> annotations += "TypedIntrinsic(IntrinsicType.INT_TRUNCATE)"
             PrimitiveType.CHAR -> {
                 modifySignature { isInline = true }
-                "this".addAsSingleLineBody(bodyOnNewLine = true)
+                "this".setAsExpressionBody()
             }
             PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.LONG -> annotations += "TypedIntrinsic(IntrinsicType.ZERO_EXTEND)"
             PrimitiveType.FLOAT, PrimitiveType.DOUBLE -> annotations += "TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)"
@@ -687,11 +720,12 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedEquals() {
-        "other is Char && this.code == other.code".addAsSingleLineBody(bodyOnNewLine = true)
+        "other is Char && this.code == other.code".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedToString() {
         annotations += "GCUnsafeCall(\"Kotlin_Char_toString\")"
+        annotations += "Escapes.Nothing"
         modifySignature { isExternal = true }
     }
 
@@ -699,6 +733,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         method {
             annotations += "Deprecated(\"Provided for binary compatibility\", level = DeprecationLevel.HIDDEN)"
             annotations += intrinsicConstEvaluationAnnotation
+            expectActual = ExpectActualModifier.Unspecified
             signature {
                 methodName = "equals"
                 parameter {
@@ -708,12 +743,12 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 returnType = PrimitiveType.BOOLEAN.capitalized
             }
 
-            "this == other".addAsSingleLineBody(bodyOnNewLine = false)
+            "this == other".setAsExpressionBody()
         }
     }
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
-        "return this.code".addAsMultiLineBody()
+        "return this.code".setAsBlockBody()
     }
 
     override fun ClassBuilder.generateAdditionalMethods() {

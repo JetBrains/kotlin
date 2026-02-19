@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-52860
 
 abstract class Child<R : Recursive<R>> : Parent<ChildParameter<*>, R> {
@@ -13,3 +14,6 @@ interface Parameter
 class ChildParameter<R : Recursive<R>> : Parameter
 
 interface Recursive<R : Recursive<R>>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, starProjection,
+typeConstraint, typeParameter */

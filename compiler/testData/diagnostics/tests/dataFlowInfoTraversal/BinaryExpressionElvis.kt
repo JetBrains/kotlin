@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(x: Int?): Int = x!!
 
@@ -14,3 +15,7 @@ fun elvisWithRHSTypeInfo(x: Number?): Any? {
     checkSubtype<Int?>(<!TYPE_MISMATCH!>x<!>)
     return result
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, elvisExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter,
+typeWithExtension */

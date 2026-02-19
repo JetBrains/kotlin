@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class test1/A { // test1/A|null[0]
+    final var p // test1/A.p|{}p[0]
+        final fun <get-p>(): kotlin/String // test1/A.p.<get-p>|<get-p>(){}[0]
+    constructor <init>() // test1/A.<init>|<init>(){}[0]
+}
+final class test2/B : test1/A { // test2/B|null[0]
+    constructor <init>() // test2/B.<init>|<init>(){}[0]
+    final fun test(): kotlin/Function0<kotlin/String> // test2/B.test|test(){}[0]
+}

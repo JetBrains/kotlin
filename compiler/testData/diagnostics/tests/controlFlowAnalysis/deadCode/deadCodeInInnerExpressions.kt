@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testCompound() {
     operator fun Nothing.get(i: Int) {}
@@ -12,3 +13,6 @@ fun testCompound1() {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+multiplicativeExpression, operator, stringLiteral */

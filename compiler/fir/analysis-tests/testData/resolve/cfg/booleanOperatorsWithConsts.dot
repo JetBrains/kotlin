@@ -113,7 +113,6 @@ digraph booleanOperatorsWithConsts_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    28 -> {31} [style=dotted];
     29 -> {30};
     30 -> {31};
     31 -> {32};
@@ -464,7 +463,6 @@ digraph booleanOperatorsWithConsts_kt {
     146 -> {147};
     147 -> {148};
     148 -> {149};
-    148 -> {151} [style=dotted];
     149 -> {150};
     150 -> {151};
     151 -> {152};

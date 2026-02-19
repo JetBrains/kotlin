@@ -1,0 +1,11 @@
+FILE: elvisWithMaterialize.kt
+    public final fun <T> materialize(): R|T| {
+        ^materialize Null(null)!!
+    }
+    public final fun <T> materializeNullable(): R|T| {
+        ^materializeNullable Null(null)!!
+    }
+    public final fun foo(x: R|kotlin/Any?|): R|kotlin/Boolean| {
+        lval z: R|kotlin/Boolean| = ==(R|<local>/x|, R|/materializeNullable|<R|kotlin/Any?|>() ?: R|/materialize|<R|kotlin/Any?|>())
+        ^foo ==(R|<local>/x|, R|/materializeNullable|<R|kotlin/Any?|>() ?: R|/materialize|<R|kotlin/Any?|>())
+    }

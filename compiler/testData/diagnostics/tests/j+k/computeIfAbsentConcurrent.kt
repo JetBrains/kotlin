@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: MyFunc.java
 public interface MyFunc<K, V> {
@@ -21,3 +23,6 @@ public fun concurrentMap() {
     val map = ConcHashMap<String, String>()
     map.computeIfAbsent("") { "" } // here
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, javaFunction, javaType, lambdaLiteral,
+localProperty, outProjection, propertyDeclaration, samConversion, stringLiteral */

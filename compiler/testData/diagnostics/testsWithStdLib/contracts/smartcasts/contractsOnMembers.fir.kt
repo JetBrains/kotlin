@@ -1,6 +1,8 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: BACKEND
+// ISSUE: KT-56744
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -58,3 +60,7 @@ fun test_3(foo: Foo): Int {
     }
     return x + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, contractCallsEffect, contractConditionalEffect,
+contracts, functionDeclaration, functionalType, inline, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, reified, smartcast, typeParameter */

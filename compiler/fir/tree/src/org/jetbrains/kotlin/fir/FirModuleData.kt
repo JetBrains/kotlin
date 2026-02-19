@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * [FirModuleData] is an abstraction over modules module inside FIR compiler.
  *
- * Each FIR declaration holds module data in [FirDeclaration.moduleData], and this module data represents
+ * Each FIR declaration holds module data in [org.jetbrains.kotlin.fir.declarations.FirDeclaration.moduleData], and this module data represents
  *   module which this declaration belongs to
  *
  * Module data contains minimal information about module ([name] and [platform]) and
@@ -47,46 +47,117 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val name: Name
     abstract val dependencies: List<FirModuleData>
     abstract val dependsOnDependencies: List<FirModuleData>
+
+    /** Transitive closure over [dependsOnDependencies] */
+    abstract val allDependsOnDependencies: List<FirModuleData>
+
     abstract val friendDependencies: List<FirModuleData>
     abstract val platform: TargetPlatform
     abstract val isCommon: Boolean
 
-    // TODO: analyzerServices are needed only as default imports providers
-    //   refactor them to make API clearer
-    abstract val analyzerServices: PlatformDependentAnalyzerServices
-
     open val capabilities: FirModuleCapabilities
         get() = FirModuleCapabilities.Empty
 
-    private var _session: FirSession? = null
-    val session: FirSession
-        get() = _session
-            ?: error("module data ${this::class.simpleName}:${name} not bound to session")
+    protected var boundSession: FirSession? = null
+        private set
+
+    abstract val session: FirSession
 
     fun bindSession(session: FirSession) {
-        if (_session != null) {
+        if (boundSession != null) {
             error("module data already bound to $this")
         }
-        _session = session
+        boundSession = session
     }
 
     override fun toString(): String {
         return "Module $name"
     }
+
+    /**
+     * For the Analysis API-originated modules, returns the stable module name of the corresponding KaModule.
+     * See [org.jetbrains.kotlin.analysis.api.projectStructure.KaModule.stableModuleName]
+     *
+     * For others, returns null.
+     */
+    abstract val stableModuleName: String?
+
+    /**
+     * Whether redeclarations in this module are equivalent.
+     *
+     * Declarations from the same source module are never equivalent.
+     * We expect REDECLARATION or CONFLICTING_OVERLOADS to be reported in those cases.
+     */
+    open val areRedeclarationsEquivalent: Boolean
+        get() = session.kind == FirSession.Kind.Library
 }
 
-class FirModuleDataImpl(
+/**
+ * Module data for source module.
+ * Might contain dependencies on other modules (either source or binary).
+ *
+ * Note that [FirSourceModuleData] could be used for IC providers, so declarations with
+ * this module data are not obligated to be source-defined.
+ */
+class FirSourceModuleData(
     override val name: Name,
     override val dependencies: List<FirModuleData>,
     override val dependsOnDependencies: List<FirModuleData>,
     override val friendDependencies: List<FirModuleData>,
     override val platform: TargetPlatform,
-    override val analyzerServices: PlatformDependentAnalyzerServices,
-    override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
     override val isCommon: Boolean = platform.isCommon(),
-) : FirModuleData()
+) : FirModuleData() {
+    override val session: FirSession
+        get() = boundSession ?: sessionNotBoundError()
+
+    override val capabilities: FirModuleCapabilities
+        get() = FirModuleCapabilities.Empty
+
+    override val stableModuleName: String?
+        get() = null
+
+    override val allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
+}
+
+/**
+ * Module data for fake module for binary dependencies.
+ * Cannot depend on anything.
+ */
+class FirBinaryDependenciesModuleData(
+    override val name: Name,
+    override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
+) : FirModuleData() {
+    override val dependencies: List<FirModuleData>
+        get() = emptyList()
+    override val dependsOnDependencies: List<FirModuleData>
+        get() = emptyList()
+    override val allDependsOnDependencies: List<FirModuleData>
+        get() = emptyList()
+    override val friendDependencies: List<FirModuleData>
+        get() = emptyList()
+
+    // target platform is meaningless for dependencies
+    override val platform: TargetPlatform
+        get() = shouldNotBeCalled()
+    override val isCommon: Boolean
+        get() = false
+    override val session: FirSession
+        get() = boundSession ?: sessionNotBoundError()
+    override val stableModuleName: String?
+        get() = null
+}
+
+private fun FirModuleData.sessionNotBoundError(): Nothing {
+    error("module data ${this::class.simpleName}:${name} not bound to session")
+}
 
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()
 val FirSession.moduleData: FirModuleData
     get() = nullableModuleData ?: error("Module data is not registered in $this")
 
+fun FirModuleData.canSeeInternalsOf(otherModule: FirModuleData): Boolean {
+    return this == otherModule ||
+            otherModule in this.friendDependencies ||
+            otherModule in this.allDependsOnDependencies ||
+            this in otherModule.allDependsOnDependencies
+}

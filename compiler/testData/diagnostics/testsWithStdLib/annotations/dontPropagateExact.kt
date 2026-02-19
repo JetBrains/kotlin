@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 // SKIP_TXT
@@ -14,3 +15,6 @@ private fun <T : Annotation> foo(annotationClass: Class<T>) = w1.getAnnotation(a
 fun main() {
     val x: Any = foo(RunsInActiveStoreMode::class.java)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, capturedType, classReference, elvisExpression, flexibleType,
+functionDeclaration, localProperty, outProjection, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

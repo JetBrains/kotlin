@@ -242,4 +242,22 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
             """.trimIndent()
         )
     }
+
+    fun `test property with annotations`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            registerDependency("a", "b", "(a, b)") {
+                source("""
+                    annotation class A1
+                    annotation class A2
+                    annotation class A3
+                """.trimIndent())
+            }
+
+            simpleSingleSourceTarget("a", """@A1 @A2 @A3 val x: Int = 42""")
+            simpleSingleSourceTarget("b", """@A1 @A2 val x: Int = 42""")
+        }
+
+        result.assertCommonized("(a, b)", """@A1 @A2 expect val x: Int""")
+    }
 }

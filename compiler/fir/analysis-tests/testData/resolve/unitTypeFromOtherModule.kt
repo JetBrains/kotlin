@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_JAVAC
 // This directive is needed to skip this test in LazyBodyIsNotTouchedTilContractsPhaseTestGenerated,
 //  because it fails to parse module structure of multimodule test
@@ -25,3 +26,6 @@ fun usage(b : B?) {
 // FILE: C.kt
 package c
 class C
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType, smartcast,
+typeParameter */

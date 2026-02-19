@@ -22,16 +22,19 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.SKIP_BODIES_ERROR_DESCRIPTION
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
+import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
 import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -67,7 +70,7 @@ internal class BodyGenerator(
                     ktBody.startOffsetSkippingComments,
                     ktBody.endOffset,
                     context.irBuiltIns.nothingType,
-                    ktBody::class.java.simpleName
+                    SKIP_BODIES_ERROR_DESCRIPTION,
                 )
             irBlockBody.statements.add(generateReturnExpression(irBody.endOffset, irBody.endOffset, irBody))
             return irBlockBody
@@ -81,6 +84,7 @@ internal class BodyGenerator(
             val irBody = statementGenerator.generateStatement(ktBody)
             irBlockBody.statements.add(
                 if (ktBody.isUsedAsExpression(context.bindingContext) && irBody is IrExpression)
+                    // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
                     generateReturnExpression(irBody.endOffset, irBody.endOffset, irBody)
                 else
                     irBody
@@ -128,7 +132,8 @@ internal class BodyGenerator(
                     irReturnedValue is IrExpression &&
                     irReturnedValue !is IrReturn && irReturnedValue !is IrThrow
                 ) {
-                    generateReturnExpression(irReturnedValue.startOffset, irReturnedValue.endOffset, irReturnedValue)
+                    // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
+                    generateReturnExpression(irReturnedValue.endOffset, irReturnedValue.endOffset, irReturnedValue)
                 } else {
                     irReturnedValue
                 }
@@ -205,7 +210,7 @@ internal class BodyGenerator(
     }
 
     fun generatePrimaryConstructorBody(ktClassOrObject: KtPureClassOrObject, irConstructor: IrConstructor): IrBody {
-        val irBlockBody = context.irFactory.createBlockBody(ktClassOrObject.pureStartOffset, ktClassOrObject.pureEndOffset)
+        val irBlockBody = context.irFactory.createBlockBody(irConstructor.startOffset, irConstructor.endOffset)
 
         generateSuperConstructorCall(irBlockBody, ktClassOrObject)
 
@@ -314,7 +319,7 @@ internal class BodyGenerator(
                 context.symbolTable.descriptorExtension.referenceConstructor(enumConstructor),
                 1 // kotlin.Enum<T> has a single type parameter
             ).apply {
-                putTypeArgument(0, classDescriptor.defaultType.toIrType())
+                typeArguments[0] = classDescriptor.defaultType.toIrType()
             }
         )
     }
@@ -369,8 +374,9 @@ internal class BodyGenerator(
         irBlockBody: IrBlockBody
     ) {
         val thisAsReceiverParameter = classDescriptor.thisAsReceiverParameter
+        val valueParameters = irConstructor.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
         for ((index, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
-            val irValueParameter = irConstructor.valueParameters[index]
+            val irValueParameter = valueParameters[index]
             irBlockBody.statements.add(
                 IrSetFieldImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,

@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
-import org.jetbrains.kotlin.gradle.dsl.targetFromPresetInternal
+import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.junit.Test
+import kotlin.test.Test
 
 class MppDiagnosticsFunctionalTest {
 
@@ -46,8 +46,11 @@ class MppDiagnosticsFunctionalTest {
     fun testDeprecatedJvmWithJavaPreset() {
         checkDiagnosticsWithMppProject("deprecatedJvmWithJavaPreset") {
             kotlin {
-                @Suppress("DEPRECATION")
-                targetFromPresetInternal(presets.getByName(KotlinJvmWithJavaTargetPreset.PRESET_NAME))
+                presetFunctions.configureOrCreate(
+                    KotlinJvmWithJavaTargetPreset.PRESET_NAME,
+                    KotlinJvmWithJavaTargetPreset(project),
+                    project,
+                )
             }
         }
     }
@@ -96,6 +99,7 @@ class MppDiagnosticsFunctionalTest {
             }
 
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
                 linuxX64()
                 applyDefaultHierarchyTemplate()
@@ -113,17 +117,6 @@ class MppDiagnosticsFunctionalTest {
     fun testNoTargetsDeclared() {
         checkDiagnosticsWithMppProject("noTargetsDeclared") {
             kotlin { }
-        }
-    }
-
-    @Test
-    fun testKotlinCompilationSourceDeprecation() {
-        checkDiagnosticsWithMppProject("kotlinCompilationSourceDeprecation") {
-            kotlin {
-                val customMain = sourceSets.create("customMain")
-                @Suppress("DEPRECATION")
-                jvm().compilations.create("custom").source(customMain)
-            }
         }
     }
 }

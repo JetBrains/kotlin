@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: J.java
 
@@ -27,3 +28,5 @@ fun test() {
     for (x in platformJ) {}
 }
 
+/* GENERATED_FIR_TAGS: flexibleType, forLoop, functionDeclaration, javaProperty, localProperty, nullableType,
+propertyDeclaration */

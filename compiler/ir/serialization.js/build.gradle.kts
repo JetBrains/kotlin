@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -11,9 +10,14 @@ dependencies {
 
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":wasm:wasm.config"))
+    implementation(project(":compiler:cli-base"))
+    implementation(project(":core:compiler.common.wasm"))
 
     compileOnly(intellijCore())
 }
+
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

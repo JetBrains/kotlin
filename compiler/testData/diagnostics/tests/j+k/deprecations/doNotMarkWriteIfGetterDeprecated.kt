@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -StopPropagatingDeprecationThroughOverrides
 // FILE: JavaClass.java
 
@@ -49,3 +50,6 @@ fun main(j: JavaClass, k: KotlinClass, ks: KotlinSubClass) {
     ks.foo
     ks.foo = ""
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty,
+javaType, nullableType, override, stringLiteral, superExpression */

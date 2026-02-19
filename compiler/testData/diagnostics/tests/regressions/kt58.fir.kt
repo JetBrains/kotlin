@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-58 Allow finally around definite returns
 
 package kt58
@@ -89,3 +90,6 @@ fun t7() : Int {
 
 fun doSmth(i: Int) {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, javaFunction, localProperty, nullableType,
+propertyDeclaration, tryExpression, typeParameter */

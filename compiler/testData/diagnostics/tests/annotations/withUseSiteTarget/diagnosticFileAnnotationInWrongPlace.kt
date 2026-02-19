@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // COMPARE_WITH_LIGHT_TREE
 package bar
 
@@ -11,11 +12,14 @@ fun func() {}
 class C
 
 <!SYNTAX!>@file:<!>
-interface T
+interface T1
 
 @file:[<!SYNTAX!><!>]
-interface T
+interface T2
 
 annotation class foo
 annotation class bar
 annotation class baz
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, functionDeclaration,
+interfaceDeclaration, propertyDeclaration */

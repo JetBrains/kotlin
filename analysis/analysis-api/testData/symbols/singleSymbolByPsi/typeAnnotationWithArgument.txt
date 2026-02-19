@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,25 +17,31 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: [
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: [
           Anno5(s = "1")
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
-        type: @R|Anno5|(s = String(1))  kotlin/Int
+        typeArguments: []
+        type: @R|Anno5|(s = String(1) [evaluated = String(1)])  kotlin/Int
     ]
-    type: kotlin/collections/List<@R|Anno5|(s = String(1))  kotlin/Int>?
-  symbolKind: TOP_LEVEL
+    type: kotlin/collections/List<@R|Anno5|(s = String(1) [evaluated = String(1)])  kotlin/Int>?
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationWithArgument.kt)
+  getContainingJvmClassName: TypeAnnotationWithArgumentKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: foo

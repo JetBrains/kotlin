@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 // Issue: KT-37497
@@ -16,3 +17,6 @@ object Bug1 {
         println(list)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, inProjection, localProperty, nullableType,
+objectDeclaration, override, propertyDeclaration, stringLiteral, superExpression */

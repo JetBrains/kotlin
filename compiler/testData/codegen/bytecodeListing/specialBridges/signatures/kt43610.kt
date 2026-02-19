@@ -1,4 +1,5 @@
 // WITH_SIGNATURES
+// LANGUAGE: +JvmEnhancedBridges
 
 class B<T>(val a: T)
 

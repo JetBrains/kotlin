@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_STDLIB
@@ -7,7 +6,6 @@
 
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
-// 1 c2/C2\.access\$test\$s[0-9]+\(\)Ljava/lang/String\;
 
 // FILE: test.kt
 import c2.*

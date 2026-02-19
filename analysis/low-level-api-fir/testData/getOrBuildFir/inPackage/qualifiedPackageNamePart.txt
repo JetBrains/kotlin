@@ -1,0 +1,10 @@
+KT element: KtDotQualifiedExpression
+FIR element: FirPackageDirectiveImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+package a.b.c
+
+FIR FILE:
+FILE: [ResolvedTo(RAW_FIR)] qualifiedPackageNamePart.kt
+    package a.b.c

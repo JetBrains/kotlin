@@ -3,6 +3,8 @@ KtFile: ValWithNoNameInBlock.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
@@ -77,7 +79,7 @@ KtFile: ValWithNoNameInBlock.kt
             PsiWhiteSpace('\n\n    ')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      PROPERTY
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiErrorElement:Expecting property name or receiver type
           <empty list>

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-// EXPECTED_REACHABLE_NODES: 1298
 package foo
 
 class MyException(m: String? = null): Exception(m)

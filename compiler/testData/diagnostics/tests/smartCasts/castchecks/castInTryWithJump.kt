@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
 // DUMP_CFG
 
 interface A {
@@ -115,3 +117,6 @@ fun returnInFinally_insideTry_nonLocal() {
     <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>aaa<!>()<!> // should be error
     <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>bbb<!>()<!> // should be error
 }
+
+/* GENERATED_FIR_TAGS: asExpression, break, functionDeclaration, interfaceDeclaration, intersectionType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, tryExpression, whileLoop */

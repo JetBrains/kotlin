@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun go1(f: () -> String) = f()
 inline suspend fun go2(f: () -> String) = f()
@@ -10,7 +11,10 @@ suspend fun String.id(): String = this
 fun box() {
     val x = "f"
     builder {
-        go1(x::<!UNRESOLVED_REFERENCE!>id<!>)
-        go2(x::<!UNRESOLVED_REFERENCE!>id<!>)
+        go1(x::<!INAPPLICABLE_CANDIDATE!>id<!>)
+        go2(x::<!INAPPLICABLE_CANDIDATE!>id<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, suspend, thisExpression */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,23 +9,29 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchEx
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -73,13 +79,16 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWh
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 
 class IrBodyDeserializer(
     private val builtIns: IrBuiltIns,
-    private val allowErrorNodes: Boolean,
     private val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
-    private val declarationDeserializer: IrDeclarationDeserializer
+    private val declarationDeserializer: IrDeclarationDeserializer,
+    private val settings: IrDeserializationSettings,
+    private val irInterner: IrInterningService,
 ) {
 
     private val fileLoops = hashMapOf<Int, IrLoop>()
@@ -144,35 +153,80 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeBlock(proto: ProtoBlock, start: Int, end: Int, type: IrType): IrBlock {
-        val statements = mutableListOf<IrStatement>()
-        val statementProtos = proto.statementList
-        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+        return withDeserializedBlock(proto) { origin, statements ->
+            IrBlockImpl(start, end, type, origin, statements)
+        }
+    }
 
-        statementProtos.forEach {
-            statements.add(deserializeStatement(it) as IrStatement)
+    private fun deserializeReturnableBlock(proto: ProtoReturnableBlock, start: Int, end: Int, type: IrType): IrReturnableBlock {
+        val symbol = deserializeTypedSymbol<IrReturnableBlockSymbol>(proto.symbol, fallbackSymbolKind = null)
+        return withDeserializedBlock(proto.base) { origin, statements ->
+            IrReturnableBlockImpl(start, end, type, symbol, origin, statements)
+        }
+    }
+
+    private fun IrLibraryFile.fileEntry(proto: ProtoInlinedFunctionBlock): FileEntry =
+        if (proto.hasInlinedFunctionFileEntryId()) {
+            fileEntry(proto.inlinedFunctionFileEntryId) ?: error("Invalid KLib: cannot read file entry by its index")
+        } else {
+            require(proto.hasInlinedFunctionFileEntry()) {
+                "Invalid KLib: either fileEntry or fileEntryId must be present in serialized IrInlinedFunctionBlock"
+            }
+            proto.inlinedFunctionFileEntry
         }
 
-        return IrBlockImpl(start, end, type, origin, statements)
+    private fun deserializeInlinedFunctionBlock(
+        proto: ProtoInlinedFunctionBlock,
+        start: Int,
+        end: Int,
+        type: IrType,
+    ): IrInlinedFunctionBlock {
+        val inlinedFunctionSymbol = runIf(proto.hasInlinedFunctionSymbol()) {
+            deserializeTypedSymbol<IrFunctionSymbol>(proto.inlinedFunctionSymbol, FUNCTION_SYMBOL)
+        }
+        val inlinedFunctionFileEntry = libraryFile.deserializeFileEntry(libraryFile.fileEntry(proto), irInterner)
+        return withDeserializedBlock(proto.base) { origin, statements ->
+            IrInlinedFunctionBlockImpl(
+                start, end,
+                type,
+                inlinedFunctionSymbol,
+                proto.inlinedFunctionStartOffset,
+                proto.inlinedFunctionEndOffset,
+                inlinedFunctionFileEntry,
+                origin,
+                statements
+            )
+        }
+    }
+
+    private inline fun <T> withDeserializedBlock(proto: ProtoBlock, block: (IrStatementOrigin?, List<IrStatement>) -> T): T {
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+        val statements = proto.statementList.map { deserializeStatement(it) as IrStatement }
+
+        return block(origin, statements)
     }
 
     private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
-
-        proto.valueArgumentList.forEachIndexed { i, arg ->
-            if (arg.hasExpression()) {
-                val expr = deserializeExpression(arg.expression)
-                access.putValueArgument(i, expr)
+        if (proto.hasDispatchReceiver() || proto.hasExtensionReceiver() || proto.regularArgumentCount > 0) {
+            // Pre 2.2.0 scheme: arguments are separated by their kind.
+            if (proto.hasDispatchReceiver()) {
+                access.arguments += deserializeExpression(proto.dispatchReceiver)
+            }
+            if (proto.hasExtensionReceiver()) {
+                access.arguments += deserializeExpression(proto.extensionReceiver)
+            }
+            for (arg in proto.regularArgumentList) {
+                access.arguments += if (arg.hasExpression()) deserializeExpression(arg.expression) else null
+            }
+        } else {
+            // Post 2.2.0 scheme: all arguments are in a single list.
+            access.arguments.assignFrom(proto.argumentList) {
+                if (it.hasExpression()) deserializeExpression(it.expression) else null
             }
         }
 
-        proto.typeArgumentList.forEachIndexed { i, arg ->
-            access.putTypeArgument(i, declarationDeserializer.deserializeNullableIrType(arg))
-        }
-
-        if (proto.hasDispatchReceiver()) {
-            access.dispatchReceiver = deserializeExpression(proto.dispatchReceiver)
-        }
-        if (proto.hasExtensionReceiver()) {
-            access.extensionReceiver = deserializeExpression(proto.extensionReceiver)
+        access.typeArguments.assignFrom(proto.typeArgumentList) {
+            declarationDeserializer.deserializeNullableIrType(it)
         }
     }
 
@@ -191,10 +245,19 @@ class IrBodyDeserializer(
         return IrClassReferenceImpl(start, end, type, symbol, classType)
     }
 
-    // TODO: probably a bit more abstraction possible here up to `IrMemberAccessExpression`
-    // but at this point further complexization looks overengineered
-    private class IrAnnotationType(private val builtIns: IrBuiltIns) : IrDelegatedSimpleType() {
-
+    /**
+     * This is a special lazy type for annotation. This type is computed using the symbol of
+     * the annotation class that is retrieved through `IrConstructorCall.symbol.owner.parentAsClass`.
+     *
+     * The reason why this [IrAnnotationType] exists is that for some reason [IrConstructorCall]s representing
+     * annotations are serialized just as [IrConstructorCall] and not as a part of [IrExpression]. As far as types for
+     * expressions are always serialized as a part of [IrExpression], there are no serialized types for annotations.
+     * So, the type needs to somehow be restored given only [IrConstructorCall].
+     *
+     * TODO: Probably a bit more abstraction possible here up to [IrMemberAccessExpression] but at this point further complexization
+     *   looks like overengineering.
+     */
+    private class IrAnnotationType : IrDelegatedSimpleType() {
         var irConstructorCall: IrConstructorCall? = null
 
         override val delegate: IrSimpleType by lazy { resolveType() }
@@ -209,44 +272,64 @@ class IrBodyDeserializer(
                 return IrSimpleTypeBuilder().apply { classifier = klass.symbol }.buildSimpleType()
             }
 
-            val typeArguments = ArrayList<IrTypeArgument>(typeParameters.size)
-            val typeParameterSymbols = ArrayList<IrTypeParameterSymbol>(typeParameters.size)
             val rawType = with(IrSimpleTypeBuilder()) {
                 arguments = typeParameters.memoryOptimizedMap {
                     classifier = it.symbol
-                    buildTypeProjection()
+                    buildSimpleType()
                 }
                 classifier = klass.symbol
                 buildSimpleType()
             }
 
+            val typeParametersToArguments = HashMap<IrTypeParameterSymbol, IrTypeArgument>(typeParameters.size)
             for (i in typeParameters.indices) {
                 val typeParameter = typeParameters[i]
-                val callTypeArgument = constructorCall.getTypeArgument(i) ?: error("No type argument for id $i")
+                val callTypeArgument = constructorCall.typeArguments[i] ?: error("No type argument for id $i")
                 val typeArgument = makeTypeProjection(callTypeArgument, typeParameter.variance)
-                typeArguments.add(typeArgument)
-                typeParameterSymbols.add(typeParameter.symbol)
+                typeParametersToArguments[typeParameter.symbol] = typeArgument
             }
 
-            val substitutor = IrTypeSubstitutor(typeParameterSymbols, typeArguments, builtIns)
+            val substitutor = IrTypeSubstitutor(typeParametersToArguments)
             return substitutor.substitute(rawType) as IrSimpleType
         }
     }
 
-    fun deserializeAnnotation(proto: ProtoConstructorCall): IrConstructorCall {
-        val irType = IrAnnotationType(builtIns)
+    fun deserializeAnnotation(proto: ProtoConstructorCall): IrAnnotation {
         // TODO: use real coordinates
-        return deserializeConstructorCall(proto, 0, 0, irType).also { irType.irConstructorCall = it }
+        val startOffset = 0
+        val endOffset = 0
+
+        return if (settings.useNullableAnyAsAnnotationConstructorCallType)
+            deserializeAnnotation(proto, startOffset, endOffset, builtIns.anyNType)
+        else {
+            val irType = IrAnnotationType()
+            deserializeAnnotation(proto, startOffset, endOffset, irType).also { irType.irConstructorCall = it }
+        }
+    }
+
+    private fun deserializeAnnotation(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrAnnotation {
+        val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
+        return IrAnnotationImplRaw(
+            start,
+            end,
+            type,
+            symbol,
+            proto.constructorTypeArgumentsCount,
+            deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
+            SourceElement.NO_SOURCE,
+        ).also {
+            deserializeMemberAccessCommon(it, proto.memberAccess)
+        }
     }
 
     private fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        return IrConstructorCallImpl(
+        return IrConstructorCallImplRaw(
             start, end, type,
-            symbol, typeArgumentsCount = proto.memberAccess.typeArgumentCount,
-            constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount,
-            valueArgumentsCount = proto.memberAccess.valueArgumentCount,
-            origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+            symbol,
+            proto.constructorTypeArgumentsCount,
+            deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
+            SourceElement.NO_SOURCE,
         ).also {
             deserializeMemberAccessCommon(it, proto.memberAccess)
         }
@@ -257,15 +340,12 @@ class IrBodyDeserializer(
         val superSymbol = deserializeTypedSymbolWhen<IrClassSymbol>(proto.hasSuper(), CLASS_SYMBOL) { proto.`super` }
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
-        val call: IrCall =
-            // TODO: implement the last three args here.
-            IrCallImpl(
-                start, end, type,
-                symbol, proto.memberAccess.typeArgumentCount,
-                proto.memberAccess.valueArgumentList.size,
-                origin,
-                superSymbol
-            )
+        val call: IrCall = IrCallImplRaw(
+            start, end, type,
+            symbol,
+            origin,
+            superSymbol
+        )
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }
@@ -287,15 +367,13 @@ class IrBodyDeserializer(
         end: Int
     ): IrDelegatingConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        val call = IrDelegatingConstructorCallImpl(
+        val call = IrDelegatingConstructorCallImplRaw(
             start,
             end,
             builtIns.unitType,
             symbol,
-            proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount
+            null,
         )
-
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }
@@ -307,13 +385,12 @@ class IrBodyDeserializer(
         end: Int,
     ): IrEnumConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        val call = IrEnumConstructorCallImpl(
+        val call = IrEnumConstructorCallImplRaw(
             start,
             end,
             builtIns.unitType,
             symbol,
-            proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount
+            null,
         )
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
@@ -331,11 +408,58 @@ class IrBodyDeserializer(
             deserializeIrStatementOrigin(functionExpression.originName)
         )
 
+    private fun deserializeRichFunctionReference(
+        richFunctionReference: ProtoRichFunctionReference,
+        start: Int,
+        end: Int,
+        type: IrType
+    ) : IrRichFunctionReference {
+        val flags = RichFunctionReferenceFlags.decode(richFunctionReference.flags)
+        return IrRichFunctionReferenceImpl(
+            startOffset = start,
+            endOffset = end,
+            type = type,
+            reflectionTargetSymbol = deserializeTypedSymbolWhen<IrFunctionSymbol>(
+                richFunctionReference.hasReflectionTargetSymbol(),
+                FUNCTION_SYMBOL
+            ) { richFunctionReference.reflectionTargetSymbol },
+            overriddenFunctionSymbol = deserializeTypedSymbol<IrSimpleFunctionSymbol>(
+                richFunctionReference.overriddenFunctionSymbol,
+                FUNCTION_SYMBOL
+            ),
+            invokeFunction = declarationDeserializer.deserializeIrFunction(richFunctionReference.invokeFunction),
+            origin = deserializeIrStatementOrigin(richFunctionReference.hasOriginName()) { richFunctionReference.originName },
+            hasUnitConversion = flags.hasUnitConversion,
+            hasSuspendConversion = flags.hasSuspendConversion,
+            hasVarargConversion = flags.hasVarargConversion,
+            isRestrictedSuspension = flags.isRestrictedSuspension
+        ).apply {
+            boundValues.addAll(richFunctionReference.boundValuesList.map { deserializeExpression(it) })
+        }
+    }
+
+    private fun deserializeRichPropertyReference(
+        richPropertyReference: ProtoRichPropertyReference,
+        start: Int,
+        end: Int,
+        type: IrType
+    ) = IrRichPropertyReferenceImpl(
+        startOffset = start,
+        endOffset = end,
+        type = type,
+        reflectionTargetSymbol = deserializeTypedSymbolWhen<IrDeclarationWithAccessorsSymbol>(richPropertyReference.hasReflectionTargetSymbol(), PROPERTY_SYMBOL) { richPropertyReference.reflectionTargetSymbol },
+        getterFunction = declarationDeserializer.deserializeIrFunction(richPropertyReference.getterFunction),
+        setterFunction = if (richPropertyReference.hasSetterFunction()) declarationDeserializer.deserializeIrFunction(richPropertyReference.setterFunction) else null,
+        origin = deserializeIrStatementOrigin(richPropertyReference.hasOriginName()) { richPropertyReference.originName },
+    ).apply {
+        boundValues.addAll(richPropertyReference.boundValuesList.map { deserializeExpression(it) })
+    }
+
     private fun deserializeErrorExpression(
         proto: ProtoErrorExpression,
         start: Int, end: Int, type: IrType
     ): IrErrorExpression {
-        require(allowErrorNodes) {
+        require(settings.allowErrorNodes) {
             "IrErrorExpression($start, $end, \"${libraryFile.string(proto.description)}\") found but error code is not allowed"
         }
         return IrErrorExpressionImpl(start, end, type, libraryFile.string(proto.description))
@@ -345,7 +469,7 @@ class IrBodyDeserializer(
         proto: ProtoErrorCallExpression,
         start: Int, end: Int, type: IrType
     ): IrErrorCallExpression {
-        require(allowErrorNodes) {
+        require(settings.allowErrorNodes) {
             "IrErrorCallExpressionImpl($start, $end, \"${libraryFile.string(proto.description)}\") found but error code is not allowed"
         }
         return IrErrorCallExpressionImpl(start, end, type, libraryFile.string(proto.description)).apply {
@@ -353,7 +477,7 @@ class IrBodyDeserializer(
                 explicitReceiver = deserializeExpression(proto.receiver)
             }
             proto.valueArgumentList.forEach {
-                addArgument(deserializeExpression(it))
+                arguments.add(deserializeExpression(it))
             }
         }
 
@@ -373,15 +497,13 @@ class IrBodyDeserializer(
             proto.hasReflectionTargetSymbol(),
             fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
         ) { proto.reflectionTargetSymbol }
-        val callable = IrFunctionReferenceImpl(
+        val callable = IrFunctionReferenceImplRaw(
             start,
             end,
             type,
             symbol,
-            proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount,
             reflectionTarget,
-            origin
+            origin,
         )
         deserializeMemberAccessCommon(callable, proto.memberAccess)
 
@@ -406,7 +528,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeGetValue(proto: ProtoGetValue, start: Int, end: Int, type: IrType): IrGetValue {
-        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null, remap = false)
+        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         // TODO: origin!
         return IrGetValueImpl(start, end, type, symbol, origin)
@@ -473,14 +595,13 @@ class IrBodyDeserializer(
 
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
-        val callable = IrPropertyReferenceImpl(
+        val callable = IrPropertyReferenceImplRaw(
             start, end, type,
             symbol,
-            proto.memberAccess.typeArgumentCount,
             field,
             getter,
             setter,
-            origin
+            origin,
         )
         deserializeMemberAccessCommon(callable, proto.memberAccess)
         return callable
@@ -509,7 +630,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
-        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null, remap = false)
+        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null)
         val value = deserializeExpression(proto.value)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
@@ -761,6 +882,8 @@ class IrBodyDeserializer(
     private fun deserializeOperation(proto: ProtoOperation, start: Int, end: Int, type: IrType): IrExpression =
         when (proto.operationCase!!) {
             BLOCK -> deserializeBlock(proto.block, start, end, type)
+            RETURNABLE_BLOCK -> deserializeReturnableBlock(proto.returnableBlock, start, end, type)
+            INLINED_FUNCTION_BLOCK -> deserializeInlinedFunctionBlock(proto.inlinedFunctionBlock, start, end, type)
             BREAK -> deserializeBreak(proto.`break`, start, end, type)
             CLASS_REFERENCE -> deserializeClassReference(proto.classReference, start, end, type)
             CALL -> deserializeCall(proto.call, start, end, type)
@@ -798,6 +921,8 @@ class IrBodyDeserializer(
             DYNAMIC_OPERATOR -> deserializeDynamicOperatorExpression(proto.dynamicOperator, start, end, type)
             CONSTRUCTOR_CALL -> deserializeConstructorCall(proto.constructorCall, start, end, type)
             FUNCTION_EXPRESSION -> deserializeFunctionExpression(proto.functionExpression, start, end, type)
+            RICH_FUNCTION_REFERENCE -> deserializeRichFunctionReference(proto.richFunctionReference, start, end, type)
+            RICH_PROPERTY_REFERENCE -> deserializeRichPropertyReference(proto.richPropertyReference, start, end, type)
             ERROR_EXPRESSION -> deserializeErrorExpression(proto.errorExpression, start, end, type)
             ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.errorCallExpression, start, end, type)
             OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
@@ -821,7 +946,7 @@ class IrBodyDeserializer(
         return if (originName.startsWith(componentPrefix))
             IrStatementOrigin.COMPONENT_N.withIndex(originName.removePrefix(componentPrefix).toInt())
         else
-            statementOriginIndex[originName] ?: error("Unexpected statement origin: $originName")
+            statementOriginIndex[originName] ?: unknownStatementOriginCache.getOrPut(originName) { IrStatementOriginImpl(originName) }
     }
 
     /**
@@ -848,9 +973,8 @@ class IrBodyDeserializer(
     private inline fun <reified S : IrSymbol> deserializeTypedSymbol(
         code: Long,
         fallbackSymbolKind: SymbolKind?,
-        remap: Boolean = true
     ): S = with(declarationDeserializer) {
-        val symbol = if (remap) deserializeIrSymbolAndRemap(code) else deserializeIrSymbol(code)
+        val symbol = deserializeIrSymbol(code)
         symbol.checkSymbolType(fallbackSymbolKind)
     }
 
@@ -858,13 +982,13 @@ class IrBodyDeserializer(
         condition: Boolean,
         fallbackSymbolKind: SymbolKind?,
         code: () -> Long
-    ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind, remap = true) else null
+    ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind) else null
 
-    companion object {
-
-        private val allKnownStatementOrigins = IrStatementOrigin::class.nestedClasses.toList()
-
-        private val statementOriginIndex =
-            allKnownStatementOrigins.mapNotNull { it.objectInstance as? IrStatementOriginImpl }.associateBy { it.debugName }
+    private companion object {
+        private val statementOriginIndex = IrStatementOrigin.Companion::class
+            .declaredMemberProperties
+            .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
+            .associateBy { it.debugName }
+        private val unknownStatementOriginCache = mutableMapOf<String, IrStatementOrigin>()
     }
 }

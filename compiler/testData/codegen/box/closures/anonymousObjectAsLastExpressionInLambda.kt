@@ -1,5 +1,9 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
+inline fun <reified T> Any.isType(): Boolean = this is T
+
+// FILE: main.kt
 object A {
     var result = "not ok"
 }
@@ -19,7 +23,6 @@ operator fun A.invoke(x: () -> Unit) {
 }
 
 operator fun <K, V> Pair<K, V>.invoke(f: (x: K, y: V) -> Boolean): Boolean = f(this.first, this.second)
-inline fun <reified T> Any.isType(): Boolean = this is T
 
 fun test2(): Boolean {
     return (A to B) { k, v -> k.isType<A>() && v.isType<B>() }

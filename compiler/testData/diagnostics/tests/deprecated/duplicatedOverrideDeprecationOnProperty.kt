@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-51893
 
@@ -43,3 +44,6 @@ object B : A {
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, getter, interfaceDeclaration, objectDeclaration, override, propertyDeclaration,
+setter, stringLiteral */

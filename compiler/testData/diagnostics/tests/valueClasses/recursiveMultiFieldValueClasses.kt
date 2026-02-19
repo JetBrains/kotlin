@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 
 @JvmInline
@@ -95,3 +96,6 @@ value class B(val x: UInt, val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>A<B, Nothin
 
 @JvmInline
 value class C(val x: UInt, val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>A<B, Nothing><!>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+typeConstraint, typeParameter, value */

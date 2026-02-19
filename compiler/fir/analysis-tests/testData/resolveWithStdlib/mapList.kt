@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun main() {
     val x = emptyList<Int>()
 
@@ -13,3 +14,6 @@ fun main() {
 inline fun <T> T.applyX(block: @ExtensionFunctionType Function1<T, Unit>): T {
     TODO()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, inline, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, thisExpression, typeParameter */

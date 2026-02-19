@@ -42,8 +42,9 @@ class Scenario {
     }
 }
 
-class ScenarioSuite {
-    private val _scenarios = mutableListOf<Scenario>()
+class ScenarioSuite(
+    private val _scenarios: MutableList<Scenario> = mutableListOf<Scenario>()
+) {
     val scenarios: List<Scenario> get() = _scenarios.toList()
 
     fun scenario(init: Scenario.() -> Unit) {

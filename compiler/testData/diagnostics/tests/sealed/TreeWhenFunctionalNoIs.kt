@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 sealed class Tree {
     object Empty: Tree()
     class Leaf(val x: Int): Tree()
@@ -21,3 +22,7 @@ sealed class Tree {
         else -> -1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, thisExpression,
+whenExpression, whenWithSubject */

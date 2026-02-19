@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -59,6 +59,8 @@ internal class UltraLightMembersCreator(
         usedPropertyNames: HashSet<String>,
         forceStatic: Boolean
     ): KtLightField? {
+        ProgressManager.checkCanceled()
+
         if (variable.nameAsSafeName.isSpecial) return null
         if (!hasBackingField(variable)) return null
 
@@ -118,6 +120,7 @@ internal class UltraLightMembersCreator(
         forceNonFinal: Boolean = false,
         additionalReceiverParameter: ((KtUltraLightMethod) -> KtUltraLightParameter)? = null,
     ): Collection<KtLightMethod> {
+        ProgressManager.checkCanceled()
 
         if (ktFunction.hasExpectModifier()
             || ktFunction.hasReifiedParameters()
@@ -257,11 +260,11 @@ internal class UltraLightMembersCreator(
         if (ktDeclaration is KtNamedFunction &&
             ktDeclaration.hasBlockBody() &&
             !ktDeclaration.hasDeclaredReturnType()
-        ) return PsiType.VOID
+        ) return PsiTypes.voidType()
 
         val desc =
             ktDeclaration.resolve()?.getterIfProperty() as? CallableDescriptor
-                ?: return PsiType.NULL
+                ?: return PsiTypes.nullType()
 
         return support.mapType(desc.returnType, wrapper) { typeMapper, signatureWriter ->
             typeMapper.mapReturnType(desc, signatureWriter)
@@ -384,6 +387,7 @@ internal class UltraLightMembersCreator(
             val resultName = DescriptorUtils.getJvmName(annotated)
             if (resultName !== null || type == MethodType.REGULAR) return resultName
 
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             val propertyAnnotated = when (type) {
                 MethodType.GETTER -> (annotated as? PropertyDescriptor)?.getter
                 MethodType.SETTER -> (annotated as? PropertyDescriptor)?.setter
@@ -436,6 +440,7 @@ internal class UltraLightMembersCreator(
         forceNonFinal: Boolean = false,
         additionalReceiverParameter: ((KtUltraLightMethod) -> KtUltraLightParameter)? = null,
     ): List<KtLightMethod> {
+        ProgressManager.checkCanceled()
 
         val propertyName = declaration.name ?: return emptyList()
         if (declaration.isConstOrJvmField() ||
@@ -531,7 +536,7 @@ internal class UltraLightMembersCreator(
                 auxiliaryOrigin,
                 forceStatic = onlyJvmStatic || forceStatic,
                 forceNonFinal = forceNonFinal,
-            ).setMethodReturnType(PsiType.VOID)
+            ).setMethodReturnType(PsiTypes.voidType())
 
             val setterWrapper = KtUltraLightMethodForSourceDeclaration(
                 setterPrototype,

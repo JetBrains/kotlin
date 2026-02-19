@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
 // FILE: A.java
@@ -22,3 +24,6 @@ fun main(a: A<String>, b: B<String>, c: ArrayList<String>) {
     c.remove("")
     c.removeAt(0)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaType,
+nullableType, override, stringLiteral, typeParameter */

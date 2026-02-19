@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 import A.Base.Companion.FromABaseCompanion
 import B.Base.Companion.FromBBaseCompanion
@@ -72,3 +73,6 @@ object D {
         val a = FromDBaseCompanion::foo
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, objectDeclaration, propertyDeclaration */

@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 // FILE: MultifileFacadeJvmName.kt
 @file:JvmMultifileClass
 @file:JvmName("multifileFacade")

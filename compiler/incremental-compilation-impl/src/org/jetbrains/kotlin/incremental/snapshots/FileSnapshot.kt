@@ -16,39 +16,34 @@
 
 package org.jetbrains.kotlin.incremental.snapshots
 
-import java.io.File
-import java.util.*
-
-class FileSnapshot(
-    val file: File,
+/**
+ * Represents a snapshot of a file, capturing its length and hash.
+ *
+ * Does not take into account the path of the file as its intended usage is within [FileSnapshotMap] which has file path as the key.
+ */
+internal class FileSnapshot(
     val length: Long,
     val hash: ByteArray
 ) {
-    init {
-        assert(!file.isDirectory)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other::class.java != this::class.java) return false
+        if (javaClass != other?.javaClass) return false
 
         other as FileSnapshot
 
-        if (file != other.file) return false
         if (length != other.length) return false
-        if (!Arrays.equals(hash, other.hash)) return false
+        if (!hash.contentEquals(other.hash)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = file.hashCode()
-        result = 31 * result + length.hashCode()
-        result = 31 * result + Arrays.hashCode(hash)
+        var result = length.hashCode()
+        result = 31 * result + hash.contentHashCode()
         return result
     }
 
     override fun toString(): String {
-        return "FileSnapshot(file=$file, length=$length, hash=${Arrays.toString(hash)})"
+        return "FileSnapshot(length=$length, hash=${hash.contentToString()})"
     }
 }

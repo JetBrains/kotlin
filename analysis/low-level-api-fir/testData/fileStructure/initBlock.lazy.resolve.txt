@@ -1,0 +1,18 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] initBlock.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = Int(10)
+            local final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/B| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }

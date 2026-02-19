@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a.kt
 package a
@@ -16,3 +17,5 @@ import a.X
 import b.*
 
 class Y : X()
+
+/* GENERATED_FIR_TAGS: classDeclaration */

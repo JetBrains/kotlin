@@ -1,0 +1,1 @@
+fun makeKlassOther() = Klass()

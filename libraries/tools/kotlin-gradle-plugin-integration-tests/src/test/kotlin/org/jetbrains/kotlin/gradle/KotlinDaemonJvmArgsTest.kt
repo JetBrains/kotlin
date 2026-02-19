@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.writeText
 
 @DisplayName("Kotlin daemon JVM args")
 class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
@@ -18,7 +22,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @GradleTest
     @DisplayName("Kotlin daemon by default should inherit Gradle daemon max jvm heap size")
     internal fun shouldInheritGradleDaemonArgsByDefault(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs = -Xmx758m
@@ -36,7 +45,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Kotlin daemon should allow to define own jvm options via gradle daemon jvm args system property")
     @GradleTest
     internal fun shouldAllowToRedefineViaDGradleOption(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs =-Xmx758m -Dkotlin.daemon.jvm.options=Xmx1g,Xms128m
@@ -54,8 +68,13 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Jvm args defined in gradle.properties should override Gradle daemon jvm arguments inheritance")
     @GradleTest
     internal fun shouldUseArgumentsFromGradleProperties(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            gradleProperties.append(
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
+            gradleProperties.writeText(
                 """
                 org.gradle.jvmargs =-Xmx758m -Xms128m
                 kotlin.daemon.jvmargs = -Xmx486m -Xms256m
@@ -73,7 +92,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Should use arguments from extension DSL")
     @GradleTest
     internal fun shouldUseDslArguments(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs =-Xmx758m -Xms128m
@@ -104,9 +128,11 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     internal fun allowOverrideArgsForSpecificTask(gradleVersion: GradleVersion) {
         project(
             projectName = "simpleProject",
-            gradleVersion = gradleVersion
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
         ) {
-            gradleProperties.append(
+            gradleProperties.writeText(
                 """
                 org.gradle.jvmargs = -Xmx758m -Xms128m
                 kotlin.daemon.jvmargs = -Xmx486m -Xms256m
@@ -143,7 +169,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Should inherit Gradle memory settings if it is not set in Kotlin daemon jvm args")
     @GradleTest
     fun inheritGradleMemorySettingsIfKotlinArgsNotContain(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs =-Xmx758m -Xms128m
@@ -165,6 +196,41 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
                 assertKotlinDaemonJvmOptions(
                     listOf("-Xmx758m", "--Duser.country=US")
                 )
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Ensures that only one Kotlin compiler daemon is started for both JVM and JavaScript compilation")
+    fun ensureOnlyOneDaemonStartedForJvmAndJsWithBta(gradleVersion: GradleVersion) {
+        ensureOnlyOneDaemonStartedForJvmAndJs(gradleVersion, withBta = true)
+    }
+
+    @GradleTest
+    @DisplayName("Ensures that only one Kotlin compiler daemon is started for both JVM and JavaScript compilation when BTA disabled")
+    fun ensureOnlyOneDaemonStartedForJvmAndJsWithoutBta(gradleVersion: GradleVersion) {
+        ensureOnlyOneDaemonStartedForJvmAndJs(gradleVersion, withBta = false)
+    }
+
+    fun ensureOnlyOneDaemonStartedForJvmAndJs(gradleVersion: GradleVersion, withBta: Boolean) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.js()
+                kotlinMultiplatform.sourceSets.getByName("commonMain").compileSource("class Common")
+            }
+            build(
+                "assemble",
+                buildOptions = buildOptions.copy(
+                    configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                    runViaBuildToolsApi = withBta
+                )
+            ) {
+                assertOutputContains(KotlinCompilerExecutionStrategy.DAEMON.asFinishLogMessage)
+                assertOutputContainsExactlyTimes("starting the daemon as", 1)
             }
         }
     }

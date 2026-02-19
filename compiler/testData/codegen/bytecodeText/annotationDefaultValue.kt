@@ -1,3 +1,4 @@
+
 annotation class Ann(val arg: String = "abc")
 
 @Ann class MyClass

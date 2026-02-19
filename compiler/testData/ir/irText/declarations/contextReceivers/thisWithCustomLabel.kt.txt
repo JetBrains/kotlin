@@ -1,50 +1,52 @@
 class A<T : Any?> {
+  val a: T
+    field = a
+    get
+
   constructor(a: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val a: T
-    field = a
-    get
-
 }
 
 class B {
+  val b: Any
+    field = b
+    get
+
   constructor(b: Any) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val b: Any
-    field = b
-    get
-
 }
 
 class C {
+  val c: Any
+    field = c
+    get
+
   constructor(c: Any) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val c: Any
-    field = c
-    get
-
 }
 
-fun f($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B) {
+context($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B)
+fun f() {
   $context_receiver_0.<get-a>().toFloat() /*~> Unit */
   $context_receiver_1.<get-a>().<get-length>() /*~> Unit */
   $context_receiver_2.<get-b>() /*~> Unit */
 }
 
 val C.p: Int
-  get($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Int {
+  context($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B)
+  get(): Int {
     $context_receiver_0.<get-a>().toFloat() /*~> Unit */
     $context_receiver_1.<get-a>().<get-length>() /*~> Unit */
     $context_receiver_2.<get-b>() /*~> Unit */
@@ -53,3 +55,4 @@ val C.p: Int
     <this>.<get-c>() /*~> Unit */
     return 1
   }
+

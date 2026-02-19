@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface ISample
 
@@ -25,3 +26,6 @@ fun test(nullableSample: ISample, any: Any) {
         any
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, nullableType, stringLiteral,
+typeConstraint, typeParameter */

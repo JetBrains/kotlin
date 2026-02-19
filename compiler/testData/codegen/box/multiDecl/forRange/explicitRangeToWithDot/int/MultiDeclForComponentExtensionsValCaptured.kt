@@ -1,9 +1,10 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 operator fun Int.component1() = this + 1
 operator fun Int.component2() = this + 2
 
 fun doTest(): String {
     var s = ""
-    for ((a, b) in 0.rangeTo(2)) {
+    for ([a, b] in 0.rangeTo(2)) {
       s += {"$a:$b;"}.let { it() }
     }
     return s

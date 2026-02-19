@@ -1,0 +1,41 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=NestedCallOfImpliesReturnsContractKt]]
+  facadeFqName: NestedCallOfImpliesReturnsContractKt
+  partSimpleName: "NestedCallOfImpliesReturnsContractKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=impliesReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=impliesReturn]
+    contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
+    origin: Facade(className=NestedCallOfImpliesReturnsContractKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+  FUN[fqName=returnNotNullImplies, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnNotNullImplies]
+    contract: [ effect:Returns(NOT_NULL) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) ]
+    origin: Facade(className=NestedCallOfImpliesReturnsContractKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Any]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]

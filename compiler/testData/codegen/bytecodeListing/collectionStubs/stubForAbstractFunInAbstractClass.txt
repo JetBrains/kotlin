@@ -9,7 +9,7 @@ public abstract class AbstractAdd {
 public abstract class AbstractStringCollection {
     // source: 'stubForAbstractFunInAbstractClass.kt'
     public method <init>(): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void

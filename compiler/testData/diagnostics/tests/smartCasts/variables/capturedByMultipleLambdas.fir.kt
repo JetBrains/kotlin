@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
-@Suppress(<!ERROR_SUPPRESSION!>"OPT_IN_USAGE_ERROR"<!>, "OPT_IN_USAGE_FUTURE_ERROR")
+@Suppress("OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR")
 fun foo(f1: () -> Unit, f2: () -> Unit) {
     contract {
         callsInPlace(f1, InvocationKind.EXACTLY_ONCE)
@@ -29,3 +30,6 @@ fun test() {
     )
     s = null
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

@@ -22,7 +22,29 @@ class Preconditions {
             return List(count) { it + 1 }
         }
 
-        assertFailsWith<IllegalArgumentException> { getIndices(-1) }
+        try {
+            getIndices(-1)
+        } catch (e: IllegalArgumentException) {
+            assertPrints(e.message!!, "Count must be non-negative, was -1")
+        }
+
+        assertPrints(getIndices(3), "[1, 2, 3]")
+    }
+
+    @Sample
+    fun failRequireWithoutLazyMessage() {
+
+        fun getIndices(count: Int): List<Int> {
+            require(count >= 0)
+            // ...
+            return List(count) { it + 1 }
+        }
+
+        try {
+            getIndices(-1)
+        } catch (e: IllegalArgumentException) {
+            assertPrints(e.message!!, "Failed requirement.")
+        }
 
         assertPrints(getIndices(3), "[1, 2, 3]")
     }

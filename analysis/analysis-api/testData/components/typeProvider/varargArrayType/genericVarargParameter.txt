@@ -1,0 +1,8 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    out KaTypeParameterType:
+      annotations: []
+      type: T
+  ]
+  type: kotlin/Array<out T>

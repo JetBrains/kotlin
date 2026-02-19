@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2317 Wrong UNNECESSARY_SAFE_CALL
 
@@ -14,3 +15,5 @@ fun quux(x: Int?): Unit {
 	x?.baz()
 	x?.bar()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType, safeCall */

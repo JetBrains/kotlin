@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A
 class B: A
 
@@ -10,3 +11,6 @@ fun main(a: A) {
         foo(a)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+propertyDeclaration, smartcast */

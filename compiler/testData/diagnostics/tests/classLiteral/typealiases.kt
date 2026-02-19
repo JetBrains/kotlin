@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 typealias TString = String
 fun f1() = TString::class
 
@@ -13,3 +14,6 @@ inline fun <reified T> f4(b: Boolean): Any {
     <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Y = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>T?<!><!>
     return if (b) X::class else Y::class
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, ifExpression, inline, nullableType, reified,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.backend.wasm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -40,7 +42,7 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
     }
 
     private fun IrType.eraseUpperBoundType(): IrType {
-        val type = erasedUpperBound?.defaultType ?: return context.irBuiltIns.anyNType
+        val type = erasedUpperBound.defaultType
         return if (this.isNullable())
             type.makeNullable()
         else
@@ -48,8 +50,7 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
     }
 
     private fun transformGenericCall(call: IrCall, scopeOwnerSymbol: IrSymbol): IrExpression {
-        val function: IrSimpleFunction =
-            call.symbol.owner as? IrSimpleFunction ?: return call
+        val function = call.symbol.owner
 
         val erasedReturnType: IrType =
             function.realOverrideTarget.returnType.eraseUpperBoundType()
@@ -58,7 +59,12 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
 
         if (erasedReturnType != call.type) {
             if (callType.isNothing()) return call
-            if (erasedReturnType.isSubtypeOf(callType, context.typeSystem)) return call
+
+            if (call.type != context.irBuiltIns.anyType || !isExternalType(erasedReturnType)) {
+                if (erasedReturnType.isSubtypeOf(callType, context.typeSystem)) {
+                    return call
+                }
+            }
 
             // Erase type parameter from call return type
             val newCall = irCall(

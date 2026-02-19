@@ -1,87 +1,73 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import kotlin.reflect.KClass
 
-/**
- * @param containerSymbols a list of symbols that should be resolved to make [annotations] are fully resolved.
- * Required only for "lazy" resolve mode in AA FIR to make a type annotation lazily resolved.
- * See KtFirAnnotationListForType for reference.
- * Example:
- * ```kotlin
- * fun foo(): @Anno Type
- * ```
- * This `Anno` annotation will have `foo` function as [containerSymbols].
- * More than one [containerSymbols] possible in case of type aliases:
- * ```kotlin
- * interface BaseInterface
- * typealias FirstTypeAlias = @Anno1 BaseInterface
- * typealias SecondTypeAlias = @Anno2 FirstTypeAlias
- *
- * fun foo(): @Anno3 SecondTypeAlias = TODO()
- * ```
- * here `@Anno3 SecondTypeAlias` will be expanded to ` @Anno1 @Anno2 @Anno3 BaseInterface`
- * and will have all intermediate type-aliases as [containerSymbols].
- */
-class CustomAnnotationTypeAttribute(
-    val annotations: List<FirAnnotation>,
-    val containerSymbols: List<FirBasedSymbol<*>> = emptyList(),
-) : ConeAttribute<CustomAnnotationTypeAttribute>() {
-    constructor(annotations: List<FirAnnotation>, containerSymbol: FirBasedSymbol<*>?) : this(
-        annotations,
-        listOfNotNull(containerSymbol),
-    )
-
+class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
     override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
         if (other == null || other === this) return this
-        return CustomAnnotationTypeAttribute(annotations + other.annotations, containerSymbols + other.containerSymbols)
+        return CustomAnnotationTypeAttribute(annotations + other.annotations)
     }
 
     override fun isSubtypeOf(other: CustomAnnotationTypeAttribute?): Boolean = true
 
     override fun toString(): String = annotations.joinToString(separator = " ") { it.render() }
 
+    override fun renderForReadability(): String =
+        annotations.joinToString(separator = " ") { FirRenderer.forReadability().renderElementAsString(it, trim = true) }
+
     override val key: KClass<out CustomAnnotationTypeAttribute>
         get() = CustomAnnotationTypeAttribute::class
-
-    /**
-     * Return an instance of the attribute that is not linked to any [containerSymbols].
-     * It is required to avoid concurrent modification of those annotations from the linked
-     * declaration and another call site (e.g., if a type was propagated to an anonymous function).
-     *
-     * See KT-60387 as an example of a possible concurrent problem.
-     */
-    fun independentInstance(): CustomAnnotationTypeAttribute = if (containerSymbols.isEmpty()) {
-        this
-    } else {
-        CustomAnnotationTypeAttribute(
-            annotations = annotations.map {
-                if (it is FirAnnotationCall) {
-                    buildAnnotationCallCopy(it) {}
-                } else {
-                    buildAnnotationCopy(it) {}
-                }
-            }
-        )
-    }
+    override val keepInInferredDeclarationType: Boolean
+        get() = true
 }
 
 val ConeAttributes.custom: CustomAnnotationTypeAttribute? by ConeAttributes.attributeAccessor<CustomAnnotationTypeAttribute>()
 
+/**
+ * Returns type [FirAnnotation]s in [this] [ConeAttributes] which are not covered by other cone attributes.
+ *
+ * Use this property only when the annotation is known to be some third-party annotation.
+ * Otherwise, prefer using [typeAnnotations] to get all possible annotations, or when annotations are being
+ * aggregated separately.
+ */
 val ConeAttributes.customAnnotations: List<FirAnnotation> get() = custom?.annotations.orEmpty()
 
+/**
+ * Returns type [FirAnnotation]s on [this] [ConeKotlinType] which are not covered by other cone attributes.
+ *
+ * Use this property only when the annotation is known to be some third-party annotation.
+ * Otherwise, prefer using [typeAnnotations] to get all possible annotations, or when annotations are being
+ * aggregated separately.
+ */
 val ConeKotlinType.customAnnotations: List<FirAnnotation> get() = attributes.customAnnotations
+
+/**
+ * Returns all type [FirAnnotation]s on [this] [ConeKotlinType].
+ *
+ * This property is an aggregate of all attributes which contain [FirAnnotation]s.
+ */
+val ConeKotlinType.typeAnnotations: List<FirAnnotation>
+    get() {
+        val customAnnotations = customAnnotations
+
+        // Lambda parameter names are uncommon, so optimize access to skip if not present.
+        val parameterNameAttribute = attributes.parameterNameAttribute
+        if (parameterNameAttribute == null) return customAnnotations
+
+        return buildList {
+            addAll(parameterNameAttribute.annotations)
+            addAll(customAnnotations)
+        }
+    }

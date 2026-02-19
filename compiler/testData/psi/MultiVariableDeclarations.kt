@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun a() {
     val (a) = 1
     val (b: Int) = 1

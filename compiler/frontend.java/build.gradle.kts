@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -14,8 +13,7 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(libs.intellij.asm)
     compileOnly(libs.guava)
 }
 

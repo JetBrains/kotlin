@@ -1,0 +1,15 @@
+KT element: KtParameter
+FIR element: FirValueParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] resolveMe: R|kotlin/Int| = Int(5)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] resolveMe: R|kotlin/Int| = Int(5)): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

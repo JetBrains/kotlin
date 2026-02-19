@@ -10,17 +10,20 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 object ConeContractConstantValues {
-    val NULL = KtConstantReference<ConeKotlinType, ConeDiagnostic>("NULL")
-    val WILDCARD = KtConstantReference<ConeKotlinType, ConeDiagnostic>("WILDCARD")
-    val NOT_NULL = KtConstantReference<ConeKotlinType, ConeDiagnostic>("NOT_NULL")
-    val TRUE = KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>("TRUE")
-    val FALSE = KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>("FALSE")
+    val NULL: KtConstantReference<ConeKotlinType, ConeDiagnostic> = KtConstantReference("NULL")
+    val WILDCARD: KtConstantReference<ConeKotlinType, ConeDiagnostic> = KtConstantReference("WILDCARD")
+    val NOT_NULL: KtConstantReference<ConeKotlinType, ConeDiagnostic> = KtConstantReference("NOT_NULL")
+    val TRUE: KtConstantReference<ConeKotlinType, ConeDiagnostic> = KtBooleanConstantReference("TRUE")
+    val FALSE: KtConstantReference<ConeKotlinType, ConeDiagnostic> = KtBooleanConstantReference("FALSE")
 }
 
 typealias ConeEffectDeclaration = KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeContractDescriptionElement = KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>
 typealias ConeCallsEffectDeclaration = KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeConditionalEffectDeclaration = KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeConditionalReturnsDeclaration = KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeHoldsInEffectDeclaration = KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeReturnsResultOfDeclaration = KtReturnsResultOfDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeReturnsEffectDeclaration = KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeConstantReference = KtConstantReference<ConeKotlinType, ConeDiagnostic>
 typealias ConeIsNullPredicate = KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>

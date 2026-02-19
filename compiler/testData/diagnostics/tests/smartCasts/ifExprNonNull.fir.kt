@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun baz(s: String?): String {
     // If String type is given explicitly, problem disappears
     val t = if (s == null) {
@@ -17,3 +18,6 @@ fun foo(s: String?): String {
     val t = if (s == "abc") s else "xyz"
     return t
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

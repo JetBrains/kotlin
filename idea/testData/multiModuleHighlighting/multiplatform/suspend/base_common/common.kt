@@ -1,2 +1,2 @@
-// !CHECK_HIGHLIGHTING
+// CHECK_HIGHLIGHTING
 fun some() {}

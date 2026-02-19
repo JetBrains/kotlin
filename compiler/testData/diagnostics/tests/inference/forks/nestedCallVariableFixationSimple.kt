@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 interface Generic<K, V>
 
@@ -15,3 +16,7 @@ fun <E, F> foo(x: Generic<E, F>, e: E, c: Generic<Int, String>): MyPair<F, F> {
 }
 
 fun bar(p: MyPair<String, String>) {}
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression, nullableType,
+primaryConstructor, smartcast, typeParameter */

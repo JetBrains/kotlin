@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: Test.java
@@ -15,8 +16,10 @@ public interface I<K> {}
 // FILE: main.kt
 fun main(z: I<String>) {
     z <!UNCHECKED_CAST!>as Test<Test2<Int, *>><!>
-    z <!UNCHECKED_CAST!>as Test<Test2<Int, <!UNRESOLVED_REFERENCE!>Foo<!>>><!>
+    z as Test<Test2<Int, <!UNRESOLVED_REFERENCE!>Foo<!>>>
     z as Test<<!UNRESOLVED_REFERENCE!>Foo<!>>
     z as <!UNRESOLVED_REFERENCE!>Any2<!>
     println(z)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, intersectionType, javaType, smartcast, starProjection */

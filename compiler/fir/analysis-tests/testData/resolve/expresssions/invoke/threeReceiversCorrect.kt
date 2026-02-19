@@ -1,9 +1,10 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C
 
 class B
 
 class A {
-    val B.foo: C.() -> Unit get() = <!NULL_FOR_NONNULL_TYPE("@ExtensionFunctionType kotlin/Function1<C, kotlin/Unit>")!>null<!>
+    val B.foo: C.() -> Unit get() = <!NULL_FOR_NONNULL_TYPE("C.() -> Unit")!>null<!>
 }
 
 fun <T, R> with(arg: T, f: T.() -> R): R = arg.f()
@@ -24,3 +25,6 @@ fun test(a: A, b: B, c: C) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, typeParameter, typeWithExtension */

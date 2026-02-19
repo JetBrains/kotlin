@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // ISSUE: KT-47772
@@ -17,3 +18,5 @@ fun test_error() {
 fun test_ok() {
     materialize<@Good String>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, nullableType, typeParameter */

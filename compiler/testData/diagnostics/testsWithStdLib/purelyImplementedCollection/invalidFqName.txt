@@ -80,3 +80,4 @@ public val y: B<kotlin.String>
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ r: kotlin.Array<(out) T!>!, /*1*/ it: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ minCapacity: kotlin.Int): kotlin.Int
 }
+

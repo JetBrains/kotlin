@@ -3,6 +3,7 @@
 // WITH_STDLIB
 
 // MODULE: lib
+// LANGUAGE: -EnumEntries
 // FILE: 1.kt
 
 package test
@@ -18,7 +19,7 @@ enum class Y {
 }
 
 // MODULE: caller(lib)
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 
 // FILE: 2.kt
 import test.*

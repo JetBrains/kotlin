@@ -23,7 +23,6 @@ fun test(): Int {
 // 1 IF_ICMP
 // 1 IF
 
-// JVM_IR_TEMPLATES
 // 4 ILOAD
 // 3 ISTORE
 // 1 IADD

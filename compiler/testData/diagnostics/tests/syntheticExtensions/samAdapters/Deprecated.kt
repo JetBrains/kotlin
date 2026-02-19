@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: KotlinFile.kt
 public interface I {
@@ -21,3 +22,5 @@ public class JavaClass {
      */
     public void doSomething2(Runnable runnable) { runnable.run(); }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A<T, U : Any> {
     fun foo() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::<!UNRESOLVED_REFERENCE!>toString<!><!>
 
@@ -15,3 +16,6 @@ fun <T> foo() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::<!UNRESOLVED_REFERENCE!
 fun <U : Any> bar() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>U::<!UNRESOLVED_REFERENCE!>toString<!><!>
 
 fun take(arg: Any) {}
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, typeConstraint,
+typeParameter */

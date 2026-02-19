@@ -1,5 +1,7 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -15,3 +17,5 @@ fun ok(x: Int, y: Long = 1L) {}
 fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>ok<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, stringLiteral */

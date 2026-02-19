@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 package test
 
 import kotlin.reflect.KType
@@ -23,6 +24,9 @@ inline fun <reified A, reified B> equal() {
 inline fun <reified A, reified B> notEqual() {
     assertNotEqual(typeOf<A>(), typeOf<B>())
 }
+
+// FILE: main.kt
+package test
 
 fun box(): String {
     equal<Any, Any>()

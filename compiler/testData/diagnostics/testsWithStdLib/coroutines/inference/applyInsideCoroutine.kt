@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // NI_EXPECTED_FILE
 
 class Controller<T> {
@@ -34,3 +35,7 @@ val test3 = generate {
 interface A
 object B : A
 object C : A
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, objectDeclaration, propertyDeclaration, suspend, thisExpression, typeParameter,
+typeWithExtension */

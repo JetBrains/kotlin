@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: Test.kt
 
@@ -57,3 +58,6 @@ public class JavaCls {
 
 public class JavaInv <T> {
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, in, interfaceDeclaration, javaFunction,
+javaType, nullableType, out, typeParameter */

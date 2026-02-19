@@ -1,0 +1,16 @@
+KtNameReferenceExpression(93,94): 'x'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = A
+        symbol = x: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}

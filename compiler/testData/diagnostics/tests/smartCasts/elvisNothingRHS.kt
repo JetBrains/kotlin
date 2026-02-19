@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C {
     fun foo() {}
 }
@@ -9,3 +10,5 @@ fun test(a: C?, nn: () -> Nothing?) {
     a ?: return
     <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, functionalType, nullableType, smartcast */

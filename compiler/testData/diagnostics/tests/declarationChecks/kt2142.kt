@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2142 function local classes do not work
 
@@ -7,3 +8,5 @@ fun foo() {
     class Foo() {}
     Foo() // Unresolved reference Foo
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, primaryConstructor */

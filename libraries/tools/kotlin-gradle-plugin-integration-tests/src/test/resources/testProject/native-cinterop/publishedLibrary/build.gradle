@@ -26,7 +26,7 @@ kotlin {
 publishing {
     repositories {
         maven {
-            url = '../repo'
+            url = "<localRepo>"
         }
     }
 }

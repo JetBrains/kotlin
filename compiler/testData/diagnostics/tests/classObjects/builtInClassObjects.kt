@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
 fun box(): String {
     try {
@@ -41,4 +42,5 @@ fun box(): String {
 
 fun test(a: Any) {}
 
-
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, localProperty, propertyDeclaration, stringLiteral,
+tryExpression */

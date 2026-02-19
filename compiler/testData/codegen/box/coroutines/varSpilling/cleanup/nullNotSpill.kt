@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // FULL_JDK
 // TARGET_BACKEND: JVM
+// API_VERSION: LATEST
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

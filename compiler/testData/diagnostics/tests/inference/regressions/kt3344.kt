@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-3344 InternalError in compiler when type arguments are not specified
 
@@ -15,3 +16,6 @@ class Bar {
         foos.add(Foo(HashMap(foo.attributes))) // foo.attributes is unresolved but not marked
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, primaryConstructor,
+propertyDeclaration */

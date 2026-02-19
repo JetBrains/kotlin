@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A : <!SUPERTYPE_IS_SUSPEND_EXTENSION_FUNCTION_TYPE!>suspend Double.() -> Unit<!> {
     override suspend fun invoke(p1: Double) {}
 }
@@ -22,3 +23,6 @@ interface E<T> {}
 
 abstract class C0: C(), <!SUPERTYPE_IS_SUSPEND_EXTENSION_FUNCTION_TYPE!>suspend Int.() -> Double<!>
 abstract class C1<T>: C(), E<T>, <!SUPERTYPE_IS_SUSPEND_EXTENSION_FUNCTION_TYPE!>suspend Int.(C) -> Double<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+operator, override, suspend, typeParameter, typeWithExtension */

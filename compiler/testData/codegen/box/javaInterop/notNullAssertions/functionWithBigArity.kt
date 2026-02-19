@@ -1,4 +1,4 @@
-// !LANGUAGE: +FunctionTypesWithBigArity
+// LANGUAGE: +FunctionTypesWithBigArity
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FILE: Test.java

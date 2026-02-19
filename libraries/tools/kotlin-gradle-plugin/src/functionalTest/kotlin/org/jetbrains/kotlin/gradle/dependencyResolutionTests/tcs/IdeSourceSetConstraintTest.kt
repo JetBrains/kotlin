@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.androidExtension
-import org.junit.Test
+import kotlin.test.Test
 import java.util.*
 
 class IdeSourceSetConstraintTest {
@@ -121,6 +122,7 @@ class IdeSourceSetConstraintTest {
         val project = buildMppProjectWithAndroidPlugin()
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -449,7 +451,7 @@ class IdeSourceSetConstraintTest {
         enableDependencyVerification(false)
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
-        androidExtension.compileSdkVersion(33)
+        androidExtension.configureDefaults()
         repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
         repositories.google()

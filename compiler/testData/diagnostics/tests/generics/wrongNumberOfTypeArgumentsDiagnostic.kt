@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun myFun(i : String) {}
 fun myFun(i : Int) {}
@@ -13,3 +14,6 @@ fun test2() {
     val m1 = java.util.HashMap<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String, String><!>()
     val m2 = java.util.HashMap<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration */

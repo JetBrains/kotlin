@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.caches.StubsForCollectionClass
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.overridesWithoutStubs
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -25,16 +26,23 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
-internal val collectionStubMethodLowering = makeIrFilePhase(
-    ::CollectionStubMethodLowering,
-    name = "CollectionStubMethod",
-    description = "Generate Collection stub methods"
-)
-
+/**
+ * Generates exception-throwing stubs for methods from mutable collection classes not implemented in Kotlin classes which inherit only from
+ * Kotlin's read-only collections. This is required on JVM because Kotlin's read-only collections are mapped to mutable JDK collections.
+ *
+ * For example:
+ *
+ *     class C<T> : Collection<String>
+ *
+ * In the bytecode, `C` will have implementations of all mutating methods (`add`, `remove`, `clear`, ...) which throw
+ * `java.lang.UnsupportedOperationException` with the message "Operation is not supported for read-only collection".
+ */
 internal class CollectionStubMethodLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val collectionStubComputer = context.collectionStubComputer
 
@@ -45,7 +53,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     )
 
     private val IrSimpleFunction.nameAndArity
-        get() = NameAndArity(name, typeParameters.size, valueParameters.size)
+        get() = NameAndArity(name, typeParameters.size, nonDispatchParameters.size)
 
     override fun lower(irClass: IrClass) {
         if (irClass.isInterface) {
@@ -75,7 +83,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     // However, we still need to keep track of the original overrides
                     // so that special built-in signature mapping doesn't confuse it with a method
                     // that actually requires signature patching.
-                    context.recordOverridesWithoutStubs(it)
+                    it.overridesWithoutStubs = it.overriddenSymbols.toList()
                     it.overriddenSymbols += stub.overriddenSymbols
                 }
                 // We don't add a throwing stub if it's effectively overridden by an existing function.
@@ -95,13 +103,27 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     //  - 'remove' member functions:
                     //          kotlin.collections.MutableCollection<E>#remove(E): Boolean
                     //          kotlin.collections.MutableMap<K, V>#remove(K): V?
+                    //          kotlin.collections.MutableMap<K, V>#remove(key: K, value: V): Boolean
                     //      We've checked that corresponding 'remove(T)' member function is not present in the class.
                     //      We should add a member function that overrides, respectively:
                     //          java.util.Collection<E>#remove(Object): boolean
                     //          java.util.Map<K, V>#remove(K): V
                     //      This corresponds to replacing value parameter types with 'Any?'.
+
+                    //      Here we manually filter out remove(key: K, value: V) method.
+                    //      We have to reproduce old behavior to avoid introducing breaking changes until it's approved by LC.
+                    //      As soon as changes that fix KT-72496 are approved, this must be dropped.
+                    if (context.config.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
+                        && irClass.classId == StandardClassIds.AbstractMap
+                        && irClass.typeParameters.size == 2
+                        && stub.hasShape(dispatchReceiver = true, regularParameters = 2)
+                        && stub.parameters[1].type.classifierOrNull == irClass.typeParameters[0].symbol
+                        && stub.parameters[2].type.classifierOrNull == irClass.typeParameters[1].symbol
+                    ) {
+                        continue
+                    }
                     irClass.declarations.add(stub.apply {
-                        valueParameters = valueParameters.map {
+                        parameters = parameters.map {
                             it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
                         }
                     })
@@ -144,11 +166,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         }.apply {
             // NB stub method for 'remove(int)' doesn't override any built-in Kotlin declaration
             parent = removeAtStub.parent
-            dispatchReceiverParameter = removeAtStub.dispatchReceiverParameter?.copyWithCustomTypeSubstitution(this) { it }
-            extensionReceiverParameter = null
-            valueParameters = removeAtStub.valueParameters.map { stubParameter ->
-                stubParameter.copyWithCustomTypeSubstitution(this) { it }
-            }
+            parameters = removeAtStub.parameters.map { stubParameter -> stubParameter.copyWithCustomTypeSubstitution(this) { it } }
             body = createThrowingStubBody(context, this)
         }
     }
@@ -172,18 +190,16 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             // Add the abstract function symbol to stub function for bridge lowering
             overriddenSymbols = listOf(function.symbol)
             parent = irClass
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.copyWithSubstitution(this, substitutionMap)
-            extensionReceiverParameter = function.extensionReceiverParameter?.copyWithSubstitution(this, substitutionMap)
-            valueParameters = function.valueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
+            parameters = function.parameters.map { it.copyWithSubstitution(this, substitutionMap) }
             body = createThrowingStubBody(context, this)
         }
     }
 
     private fun liftStubMethodReturnType(function: IrSimpleFunction): IrType {
         val klass = when (function.name.asString()) {
-            "iterator" -> context.ir.symbols.iterator
-            "listIterator" -> context.ir.symbols.listIterator
-            "subList" -> context.ir.symbols.list
+            "iterator" -> context.irBuiltIns.iteratorClass
+            "listIterator" -> context.irBuiltIns.listIteratorClass
+            "subList" -> context.irBuiltIns.listClass
             else -> return function.returnType
         }
         return klass.typeWithArguments((function.returnType as IrSimpleType).arguments)
@@ -201,7 +217,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 
         if (superFun.name != overridingFun.name) return false
         if (superFun.typeParameters.size != overridingFun.typeParameters.size) return false
-        if (superFun.valueParameters.size != overridingFun.valueParameters.size) return false
+        if (superFun.getShapeOfParameters() != overridingFun.getShapeOfParameters()) return false
         if (!superFun.isSuspend && overridingFun.isSuspend) return false
 
         val typeChecker = createTypeCheckerState(superFun, overridingFun)
@@ -211,7 +227,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         // but we keep it here for the sake of consistency.
         if (!areTypeParametersEquivalent(overridingFun, superFun, typeChecker)) return false
 
-        if (!areValueParametersEquivalent(overridingFun, superFun, typeChecker)) return false
+        if (!areParametersEquivalent(overridingFun, superFun, typeChecker)) return false
         if (!isReturnTypeOverrideCompliant(overridingFun, superFun, typeChecker)) return false
 
         return true
@@ -239,12 +255,12 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     }
             }
 
-    private fun areValueParametersEquivalent(
+    private fun areParametersEquivalent(
         overrideFun: IrSimpleFunction,
         parentFun: IrSimpleFunction,
         typeChecker: TypeCheckerState
     ): Boolean =
-        overrideFun.valueParameters.zip(parentFun.valueParameters)
+        overrideFun.nonDispatchParameters.zip(parentFun.nonDispatchParameters)
             .all { (valueParameter1, valueParameter2) ->
                 AbstractTypeChecker.equalTypes(typeChecker, valueParameter1.type, valueParameter2.type)
             }
@@ -269,9 +285,9 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     ): IrValueParameter {
         val parameter = this
         return buildValueParameter(target) {
+            kind = parameter.kind
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = parameter.name
-            index = parameter.index
             type = substituteType(parameter.type)
             varargElementType = parameter.varargElementType?.let { substituteType(it) }
             isCrossInline = parameter.isCrossinline
@@ -384,8 +400,8 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 fun createThrowingStubBody(context: JvmBackendContext, function: IrSimpleFunction) =
     context.createIrBuilder(function.symbol).irBlockBody {
         // Function body consist only of throwing UnsupportedOperationException statement
-        +irCall(context.ir.symbols.throwUnsupportedOperationException)
+        +irCall(context.symbols.throwUnsupportedOperationException)
             .apply {
-                putValueArgument(0, irString("Operation is not supported for read-only collection"))
+                arguments[0] = irString("Operation is not supported for read-only collection")
             }
     }

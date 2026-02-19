@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.named
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ProjectCompilerOptionsTests {
 
@@ -31,6 +34,7 @@ class ProjectCompilerOptionsTests {
                     }
                 }
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     compilerOptions {
                         suppressWarnings.set(true)
@@ -79,6 +83,97 @@ class ProjectCompilerOptionsTests {
     }
 
     @Test
+    fun nativeLanguageSettingsOverridesTargetOptions() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                linuxX64 {
+                    compilerOptions {
+                        progressiveMode.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("linuxX64Main").languageSettings {
+                    progressiveMode = false
+                }
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(false, project.kotlinNativeTask("compileKotlinLinuxX64").compilerOptions.progressiveMode.get())
+    }
+
+    @Test
+    fun jvmTargetCompilerOptionsDSL() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                jvm {
+                    compilerOptions {
+                        noJdk.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(true, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.noJdk.get())
+        assertEquals(true, project.kotlinJvmTask("compileTestKotlinJvm").compilerOptions.noJdk.get())
+    }
+
+    @Test
+    fun jvmTaskOverridesTargetOptions() {
+        val project = buildProjectWithMPP {
+            tasks.withType<KotlinCompilationTask<*>>().configureEach {
+                if (it.name == "compileKotlinJvm") {
+                    it.compilerOptions.progressiveMode.set(false)
+                }
+            }
+
+            with(multiplatformExtension) {
+                jvm {
+                    compilerOptions {
+                        progressiveMode.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(false, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.progressiveMode.get())
+    }
+
+    @Test
+    fun jvmLanguageSettingsOverridesTargetOptions() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                jvm {
+                    compilerOptions {
+                        progressiveMode.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("jvmMain").languageSettings {
+                    progressiveMode = false
+                }
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(false, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.progressiveMode.get())
+    }
+
+    @Test
     fun jsTargetCompilerOptionsDsl() {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
@@ -124,10 +219,34 @@ class ProjectCompilerOptionsTests {
     }
 
     @Test
+    fun jsLanguageSettingsOverridesTargetOptions() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    compilerOptions {
+                        progressiveMode.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("jsMain").languageSettings {
+                    progressiveMode = false
+                }
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(false, project.kotlinJsTask("compileKotlinJs").compilerOptions.progressiveMode.get())
+    }
+
+    @Test
     fun metadataTargetDsl() {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
                 linuxX64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosArm64()
 
@@ -157,6 +276,7 @@ class ProjectCompilerOptionsTests {
 
             with(multiplatformExtension) {
                 linuxX64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosArm64()
 
@@ -250,32 +370,36 @@ class ProjectCompilerOptionsTests {
 
     @Test
     fun testTargetDslOverridesTopLevelDsl() {
+        val compileKotlinVersion = LanguageVersion.FIRST_NON_DEPRECATED.asKotlinVersion()
+        val compileTestKotlinVersion = LanguageVersion.LATEST_STABLE.asKotlinVersion()
         val project = buildProjectWithMPP()
         project.runLifecycleAwareTest {
             with(multiplatformExtension) {
                 jvm {
                     compilerOptions {
-                        languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                        languageVersion.set(compileKotlinVersion)
                     }
                 }
 
                 compilerOptions {
-                    languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                    languageVersion.set(compileTestKotlinVersion)
                 }
             }
         }
 
-        assertEquals(KotlinVersion.KOTLIN_1_8, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.languageVersion.orNull)
-        assertEquals(KotlinVersion.KOTLIN_1_8, project.kotlinJvmTask("compileTestKotlinJvm").compilerOptions.languageVersion.orNull)
+        assertEquals(compileKotlinVersion, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.languageVersion.orNull)
+        assertEquals(compileKotlinVersion, project.kotlinJvmTask("compileTestKotlinJvm").compilerOptions.languageVersion.orNull)
     }
 
     @Test
     fun testTaskDslOverrideTopLevelDsl() {
+        val compileTaskKotlinVersion = LanguageVersion.FIRST_NON_DEPRECATED.asKotlinVersion()
+        val compileTopLevelKotlinVersion = LanguageVersion.LATEST_STABLE.asKotlinVersion()
         val project = buildProjectWithMPP()
         project.runLifecycleAwareTest {
             tasks.withType<KotlinJvmCompileTask>().configureEach {
                 if (it.name == "compileKotlinJvm") {
-                    it.compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                    it.compilerOptions.languageVersion.set(compileTaskKotlinVersion)
                 }
             }
 
@@ -283,16 +407,17 @@ class ProjectCompilerOptionsTests {
                 jvm()
 
                 compilerOptions {
-                    languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                    languageVersion.set(compileTopLevelKotlinVersion)
                 }
             }
         }
 
-        assertEquals(KotlinVersion.KOTLIN_1_8, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.languageVersion.orNull)
+        assertEquals(compileTaskKotlinVersion, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.languageVersion.orNull)
     }
 
     @Test
     fun testTopLevelDslAlsoConfiguresSharedSourceSets() {
+        val version = LanguageVersion.LATEST_STABLE
         val project = buildProjectWithMPP()
         project.runLifecycleAwareTest {
             with(multiplatformExtension) {
@@ -300,12 +425,114 @@ class ProjectCompilerOptionsTests {
                 js()
 
                 compilerOptions {
-                    languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                    languageVersion.set(version.asKotlinVersion())
                 }
             }
         }
 
-        assertEquals("2.0", project.multiplatformExtension.sourceSets.getByName("commonTest").languageSettings.languageVersion)
+        assertEquals(version.versionString, project.multiplatformExtension.sourceSets.getByName("commonTest").languageSettings.languageVersion)
+    }
+
+    @Test
+    fun testJvmModuleNameInMppIsConfigured() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                jvm {
+                    compilerOptions.moduleName.set("my-custom-module-name")
+                }
+            }
+        }
+
+        assertEquals("my-custom-module-name", project.kotlinJvmTask("compileKotlinJvm").compilerOptions.moduleName.orNull)
+    }
+
+    @Test
+    fun testJsOptionsIsConfigured() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                js {
+                    compilerOptions {
+                        moduleName.set("js-module-name")
+                        freeCompilerArgs.add("-Xstrict-implicit-export-types")
+                    }
+                }
+            }
+        }
+
+        val kotlinJsCompileTask = project.kotlinJsTask("compileKotlinJs")
+        assertEquals("js-module-name", kotlinJsCompileTask.compilerOptions.moduleName.orNull)
+        assertTrue(
+            kotlinJsCompileTask
+                .compilerOptions
+                .freeCompilerArgs.get()
+                .contains("-Xstrict-implicit-export-types")
+        )
+    }
+
+    @Test
+    fun testJsBrowserConfigDoesNotOverrideFreeCompilerArgsFromTarget() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                js {
+                    binaries.executable()
+                    browser()
+                    compilerOptions {
+                        freeCompilerArgs.addAll("-Xstrict-implicit-export-types", "-Xexplicit-api=warning")
+                    }
+                }
+            }
+        }
+
+        val kotlinJsCompileTask = project.kotlinJsTask("compileKotlinJs")
+        assertTrue(
+            (kotlinJsCompileTask as Kotlin2JsCompile)
+                .enhancedFreeCompilerArgs.get()
+                .containsAll(listOf("-Xstrict-implicit-export-types", "-Xexplicit-api=warning"))
+        )
+    }
+
+    @Test
+    fun testJsLinkTaskAreAlsoConfiguredWithOptionsFromDSL() {
+        val version = LanguageVersion.LATEST_STABLE.asKotlinVersion()
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                js {
+                    nodejs()
+                    binaries.library()
+                    compilerOptions {
+                        moduleName.set("my-custom-module")
+                        languageVersion.set(version)
+                        apiVersion.set(version)
+                        moduleKind.set(JsModuleKind.MODULE_PLAIN)
+                        freeCompilerArgs.addAll("-Xstrict-implicit-export-types", "-Xexplicit-api=warning")
+                    }
+                }
+            }
+        }
+
+        val jsTasks = listOf(
+            project.kotlinJsTask("compileKotlinJs"),
+            project.kotlinJsTask("compileDevelopmentLibraryKotlinJs"),
+            project.kotlinJsTask("compileProductionLibraryKotlinJs")
+        )
+        jsTasks.forEach { jsTask ->
+            if (jsTask.name == "compileKotlinJs") {
+                // JS IR has different module name from 'compileKotlinJs'
+                assertEquals("my-custom-module", jsTask.compilerOptions.moduleName.orNull)
+            }
+            assertEquals(version, jsTask.compilerOptions.languageVersion.orNull)
+            assertEquals(version, jsTask.compilerOptions.apiVersion.orNull)
+            assertEquals(JsModuleKind.MODULE_PLAIN, jsTask.compilerOptions.moduleKind.orNull)
+            assertTrue(
+                jsTask.compilerOptions.freeCompilerArgs.get().containsAll(
+                    listOf("-Xstrict-implicit-export-types", "-Xexplicit-api=warning")
+                )
+            )
+        }
     }
 
     private fun Project.kotlinNativeTask(name: String): KotlinCompilationTask<KotlinNativeCompilerOptions> = tasks

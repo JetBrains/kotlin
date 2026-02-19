@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
@@ -46,7 +45,7 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
-open class ParcelizeResolveExtension : SyntheticResolveExtension {
+open class ParcelizeResolveExtension(private val parcelizeAnnotations: List<FqName>) : SyntheticResolveExtension {
     companion object {
         fun resolveParcelClassType(module: ModuleDescriptor): SimpleType? {
             return module.findClassAcrossModuleDependencies(PARCEL_ID)?.defaultType
@@ -107,7 +106,7 @@ open class ParcelizeResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? = null
 
     override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> {
-        return if (thisDescriptor.isParcelize) parcelizeMethodNames else emptyList()
+        return if (thisDescriptor.isParcelize(parcelizeAnnotations)) parcelizeMethodNames else emptyList()
     }
 
     override fun generateSyntheticMethods(
@@ -123,7 +122,7 @@ open class ParcelizeResolveExtension : SyntheticResolveExtension {
         }
 
         if (name.asString() == DESCRIBE_CONTENTS.methodName
-            && thisDescriptor.isParcelize
+            && thisDescriptor.isParcelize(parcelizeAnnotations)
             && !thisDescriptor.isSealed()
             && isParcelizePluginEnabled()
             && result.none { it.isDescribeContents() }
@@ -131,7 +130,7 @@ open class ParcelizeResolveExtension : SyntheticResolveExtension {
         ) {
             result += createMethod(thisDescriptor, DESCRIBE_CONTENTS, Modality.OPEN, thisDescriptor.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
-            && thisDescriptor.isParcelize
+            && thisDescriptor.isParcelize(parcelizeAnnotations)
             && !thisDescriptor.isSealed()
             && isParcelizePluginEnabled()
             && result.none { it.isWriteToParcel() }
@@ -173,13 +172,13 @@ interface ParcelizeSyntheticComponent {
     }
 }
 
-val ClassDescriptor.hasParcelizeAnnotation: Boolean
-    get() = PARCELIZE_CLASS_FQ_NAMES.any(annotations::hasAnnotation)
+fun ClassDescriptor.hasParcelizeAnnotation(parcelizeAnnotations: List<FqName>): Boolean =
+    parcelizeAnnotations.any(annotations::hasAnnotation)
 
-val ClassDescriptor.isParcelize: Boolean
-    get() = hasParcelizeAnnotation
-            || getSuperClassNotAny()?.takeIf(DescriptorUtils::isSealedClass)?.hasParcelizeAnnotation == true
-            || getSuperInterfaces().any { DescriptorUtils.isSealedClass(it) && it.hasParcelizeAnnotation }
+fun ClassDescriptor.isParcelize(parcelizeAnnotations: List<FqName>): Boolean =
+    hasParcelizeAnnotation(parcelizeAnnotations)
+            || getSuperClassNotAny()?.takeIf(DescriptorUtils::isSealedClass)?.hasParcelizeAnnotation(parcelizeAnnotations) == true
+            || getSuperInterfaces().any { DescriptorUtils.isSealedClass(it) && it.hasParcelizeAnnotation(parcelizeAnnotations) }
 
 val KotlinType.isParceler: Boolean
     get() = constructor.declarationDescriptor?.fqNameSafe == PARCELER_FQN

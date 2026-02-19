@@ -1,0 +1,5 @@
+---
+Wrapper(2) mustEqual 6
+|
+Wrapper
+---

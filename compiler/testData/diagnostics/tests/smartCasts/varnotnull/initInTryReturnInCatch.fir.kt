@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
 // See also KT-10735
 fun test() {
@@ -77,3 +78,6 @@ fun test6() {
     }
     a<!UNSAFE_CALL!>.<!>hashCode() // a is null here
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, tryExpression */

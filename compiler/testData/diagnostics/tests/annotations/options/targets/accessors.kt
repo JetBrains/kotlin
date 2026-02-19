@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 @Target(AnnotationTarget.PROPERTY_GETTER)
 annotation class smartget
@@ -15,3 +16,6 @@ class My(x: Int) {
 
     @base <!WRONG_ANNOTATION_TARGET!>@smartget<!> <!WRONG_ANNOTATION_TARGET!>@smartset<!> fun foo() = y
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, primaryConstructor,
+propertyDeclaration */

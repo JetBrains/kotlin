@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Bar.java
 public class Bar implements Foo {
@@ -15,3 +16,6 @@ public interface Foo {
 interface Boo
 
 public class Baz : Bar.I
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, interfaceDeclaration, javaType,
+objectDeclaration, propertyDeclaration */

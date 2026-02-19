@@ -1,8 +1,4 @@
-// DUMP_LOCAL_DECLARATION_SIGNATURES
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57430
-
+// FIR_IDENTICAL
 class Wrapper {
     private val dummy = object : Bar {}
     private val bar = object : Bar by dummy {}

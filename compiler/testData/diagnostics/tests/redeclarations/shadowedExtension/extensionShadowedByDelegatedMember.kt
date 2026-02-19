@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface IBase {
     fun foo()
@@ -14,3 +16,6 @@ object Test : IBase by Impl
 
 fun Test.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() {}
 val Test.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>: Int get() = 42
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, objectDeclaration, override, propertyDeclaration, propertyWithExtensionReceiver */

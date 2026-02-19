@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +IntrinsicConstEvaluation
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +IntrinsicConstEvaluation
 
 const val equalsBoolean1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>true.equals(true)<!>
 const val equalsBoolean2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>false != true<!>
@@ -45,3 +45,13 @@ const val equalsString1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"someStr".equa
 const val equalsString2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"someStr" == "otherStr"<!>
 const val equalsString3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"someStr".equals(1)<!>
 const val equalsString4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, EQUALITY_NOT_APPLICABLE!>"someStr" == 1<!>
+
+const val TRUE = true
+const val STR = "str"
+
+const val equalsWithNull1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_COMPARISON!>1 == null<!>
+const val equalsWithNull2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_COMPARISON!>null == null<!>
+const val equalsWithNull3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_COMPARISON!>TRUE == null<!>
+const val equalsWithNull4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_COMPARISON!>STR == null<!>
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, integerLiteral, propertyDeclaration, stringLiteral */

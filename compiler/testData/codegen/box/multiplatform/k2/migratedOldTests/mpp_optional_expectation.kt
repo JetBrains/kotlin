@@ -1,11 +1,6 @@
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: NATIVE
-// TARGET_BACKEND: WASM
-// TARGET_BACKEND: JVM_IR
-
-// Stdlib is needed only for JVM_IR to resolve `kotlin.OptionalExpectation
-// WITH_STDLIB
 // LANGUAGE: +MultiPlatformProjects
+// WITH_STDLIB
+// Stdlib is needed only for JVM_IR to resolve `kotlin.OptionalExpectation`
 
 @file:Suppress("OPT_IN_USAGE_ERROR", "OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 

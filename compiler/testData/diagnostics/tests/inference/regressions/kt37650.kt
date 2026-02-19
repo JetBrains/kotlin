@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class Inv<T>
 
@@ -11,3 +12,6 @@ fun <B> bar(y: Inv<out B>): Inv<Inv<out B>> = materialize()
 fun <K> test(plant: Inv<out K>) {
     val x = foo(bar(plant)) // OK in OI, NI: "Not enough information to infer type variable A"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, outProjection,
+propertyDeclaration, typeParameter */

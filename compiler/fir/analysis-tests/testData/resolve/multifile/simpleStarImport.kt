@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiPlatformProjects
 
 // FILE: B.kt
@@ -21,3 +22,5 @@ import b.d.*
 fun bar() {
     baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, interfaceDeclaration */

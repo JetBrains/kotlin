@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 
 private val COMPILER_CLASS_FQN = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 
-public class CompilerSmokeTest {
+public class CompilerEmbeddableSmokeTests {
 
     public val _workingDir: TemporaryFolder = TemporaryFolder()
 

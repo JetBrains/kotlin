@@ -1,72 +1,75 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
-    require(this !is FirFile)
-
-    val ktDeclaration = (psi as? KtDeclaration) ?: run {
-        (source as? KtFakeSourceElement).psi?.parentOfType()
-    }
-    check(ktDeclaration is KtDeclaration) {
-        "FirDeclaration should have a PSI of type KtDeclaration"
-    }
-
-    val declaration = when (this) {
-        is FirPropertyAccessor, is FirTypeParameter, is FirValueParameter -> {
-            when (ktDeclaration) {
-                is KtPropertyAccessor -> ktDeclaration.property
-                is KtProperty -> ktDeclaration
-                is KtParameter, is KtTypeParameter -> {
-                    val containingDeclaration = ktDeclaration.getParentOfType<KtDeclaration>(true)
-                    if (containingDeclaration !is KtPropertyAccessor) containingDeclaration else containingDeclaration.property
-                }
-                is KtCallExpression -> {
-                    check(this.source?.kind == KtFakeSourceElementKind.DefaultAccessor)
-                    ((ktDeclaration as? KtCallExpression)?.parent as? KtPropertyDelegate)?.parent as? KtProperty
-                }
-                else -> ktDeclaration
-            }
+/**
+ * Note: The `KtCodeFragment` itself is technically lazy-resolvable, but the function doesn't support it yet.
+ */
+internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (element) {
+    null -> false
+    is KtFunctionLiteral -> false
+    is KtTypeParameter -> elementCanBeLazilyResolved(element.parentOfType<KtNamedDeclaration>(withSelf = false))
+    is KtScript -> elementCanBeLazilyResolved(element.parent as? KtFile)
+    is KtFile -> element !is KtCodeFragment
+    is KtDestructuringDeclarationEntry -> elementCanBeLazilyResolved(element.parent as? KtDestructuringDeclaration)
+    is KtParameter -> elementCanBeLazilyResolved(element.ownerDeclaration)
+    is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtAnonymousInitializer -> {
+        val parentToCheck = when (val parent = element.parent) {
+            is KtClassOrObject, is KtFile -> parent
+            is KtClassBody -> parent.parent as? KtClassOrObject
+            is KtBlockExpression -> parent.parent as? KtScript
+            else -> null
         }
-        else -> ktDeclaration
+
+        elementCanBeLazilyResolved(parentToCheck.takeUnless { it is KtEnumEntry })
     }
-    check(declaration is KtDeclaration) {
-        "FirDeclaration should have a PSI of type KtDeclaration"
+
+    is KtPropertyAccessor -> elementCanBeLazilyResolved(element.property)
+    is KtClassOrObject -> element.isTopLevel() || element.getClassId() != null
+    is KtTypeAlias -> element.isTopLevel() || element.getClassId() != null
+    is KtModifierList -> element.isNonLocalDanglingModifierList()
+    !is KtNamedDeclaration -> false
+    else -> errorWithAttachment("Unexpected ${element::class}") {
+        withPsiEntry("declaration", element)
     }
-    return declaration
 }
 
-internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean = when (declaration) {
-    is KtDestructuringDeclarationEntry, is KtFunctionLiteral, is KtTypeParameter -> false
-    is KtPrimaryConstructor -> (declaration.parent as? KtClassOrObject)?.isLocal == false
-    is KtParameter -> declaration.hasValOrVar() && declaration.containingClassOrObject?.isLocal == false
-    is KtCallableDeclaration, is KtEnumEntry, is KtClassInitializer -> {
-        when (val parent = declaration.parent) {
-            is KtFile -> true
-            is KtClassBody -> (parent.parent as? KtClassOrObject)?.isLocal == false
-            is KtBlockExpression -> parent.parent is KtScript
-            else -> false
-        }
+/**
+ * Detects a common pattern of invalid code where a modifier list (e.g., annotation)
+ * is dangling—unattached to a valid declaration—or left unclosed and followed by another declaration.
+ *
+ * ### Examples
+ *
+ * ```kotlin
+ * class C1 {
+ *     @Ann1 @Ann2
+ * }
+ *
+ * class C2 {
+ *     @Ann(
+ *     fun foo() {}
+ * }
+ *
+ * @Ann("argument"
+ * fun foo() {}
+ * ```
+ * @see org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
+ * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.buildErrorNonLocalDeclarationForDanglingModifierList
+ */
+private fun KtModifierList.isNonLocalDanglingModifierList(): Boolean {
+    val parentToCheck = when (val parent = parent) {
+        is KtFile -> parent
+        is KtClassBody -> (parent.parent as? KtClassOrObject).takeUnless { it is KtEnumEntry }
+        else -> null
     }
-    !is KtNamedDeclaration -> false
-    is KtClassOrObject -> !declaration.isLocal
-    is KtTypeAlias -> declaration.isTopLevel() || declaration.getClassId() != null
-    else -> errorWithAttachment("Unexpected ${declaration::class}") {
-        withPsiEntry("declaration", declaration)
-    }
+
+    return elementCanBeLazilyResolved(parentToCheck)
 }

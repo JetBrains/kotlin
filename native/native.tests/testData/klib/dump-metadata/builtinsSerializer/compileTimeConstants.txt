@@ -1,29 +1,97 @@
-    class Class constructor() {
-        val arrayConst: Any = {1.toByte(), 2.toByte()}
-        val booleanConst: Boolean = true
-        val byteConst: Byte = 10.toByte()
-        val charConst: Char = \u0041 ('A')
-        val doubleConst: Double = 3.0.toDouble()
-        val enumConst: Weapon? = Weapon.ROCK
-        val floatConst: Float = 2.0.toFloat()
-        val intConst: Int = 30
-        val longConst: Long = 40.toLong()
-        val shortConst: Short = 20.toShort()
-        val stringConst: String = "abcd"
+library {
+  // module name: <compileTimeConstants.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Class
+    // class name: test/Weapon
+
+    public final class test/Class : kotlin/Any {
+
+      public constructor()
+
+      public final val arrayConst: kotlin/Any
+        public final get
+
+      public final val booleanConst: kotlin/Boolean /* = ... */
+        public final get
+
+      public final val byteConst: kotlin/Byte /* = ... */
+        public final get
+
+      public final val charConst: kotlin/Char /* = ... */
+        public final get
+
+      public final val doubleConst: kotlin/Double /* = ... */
+        public final get
+
+      public final val enumConst: test/Weapon?
+        public final get
+
+      public final val floatConst: kotlin/Float /* = ... */
+        public final get
+
+      public final val intConst: kotlin/Int /* = ... */
+        public final get
+
+      public final val longConst: kotlin/Long /* = ... */
+        public final get
+
+      public final val shortConst: kotlin/Short /* = ... */
+        public final get
+
+      public final val stringConst: kotlin/String /* = ... */
+        public final get
     }
-    enum class Weapon private constructor() : Enum<Weapon> {
-        enum entry ROCK
-        enum entry PAPER
-        enum entry SCISSORS
+
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
+
+      private constructor()
+
+      ROCK,
+
+      PAPER,
+
+      SCISSORS,
+
+      // has Enum.entries
     }
-    val arrayConst: Any = {1.toByte(), 2.toByte()}
-    val booleanConst: Boolean = true
-    val byteConst: Byte = 10.toByte()
-    val charConst: Char = \u0041 ('A')
-    val doubleConst: Double = 3.0.toDouble()
-    val enumConst: Weapon? = Weapon.ROCK
-    val floatConst: Float = 2.0.toFloat()
-    val intConst: Int = 30
-    val longConst: Long = 40.toLong()
-    val shortConst: Short = 20.toShort()
-    val stringConst: String = "abcd"
+
+    package {
+
+      public final val arrayConst: kotlin/Any
+        public final get
+
+      public final val booleanConst: kotlin/Boolean /* = ... */
+        public final get
+
+      public final val byteConst: kotlin/Byte /* = ... */
+        public final get
+
+      public final val charConst: kotlin/Char /* = ... */
+        public final get
+
+      public final val doubleConst: kotlin/Double /* = ... */
+        public final get
+
+      public final val enumConst: test/Weapon?
+        public final get
+
+      public final val floatConst: kotlin/Float /* = ... */
+        public final get
+
+      public final val intConst: kotlin/Int /* = ... */
+        public final get
+
+      public final val longConst: kotlin/Long /* = ... */
+        public final get
+
+      public final val shortConst: kotlin/Short /* = ... */
+        public final get
+
+      public final val stringConst: kotlin/String /* = ... */
+        public final get
+    }
+  }
+}

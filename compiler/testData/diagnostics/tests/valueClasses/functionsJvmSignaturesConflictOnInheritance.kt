@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !SKIP_JAVAC
+// SKIP_JAVAC
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm
@@ -22,3 +23,6 @@ interface PasswordVerifier {
 }
 
 interface NameAndPasswordVerifier : NameVerifier, PasswordVerifier
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration,
+primaryConstructor, propertyDeclaration, value */

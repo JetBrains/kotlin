@@ -38,6 +38,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val arrayFqn = StandardNames.FqNames.array.toSafe()
     private val cloneableFqn = StandardNames.FqNames.cloneable.toSafe()
     private val intFqn = StandardNames.FqNames._int.toSafe()
+    private val longFqn = StandardNames.FqNames._long.toSafe()
+    private val booleanFqn = StandardNames.FqNames._boolean.toSafe()
     private val kClassFqn = StandardNames.FqNames.kClass.toSafe()
     private val stringFqn = StandardNames.FqNames.string.toSafe()
 
@@ -69,7 +71,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
                 irBuiltIns.dataClassArrayMemberHashCodeSymbol.toKey()!! to IrDataClassArrayMemberHashCode,
                 irBuiltIns.dataClassArrayMemberToStringSymbol.toKey()!! to IrDataClassArrayMemberToString,
-                symbols.singleArgumentInlineFunction.toKey()!! to SingleArgumentInlineFunctionIntrinsic,
                 symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
                 symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
                 symbols.throwNullPointerException.toKey()!! to ThrowException(Type.getObjectType("java/lang/NullPointerException")),
@@ -79,6 +80,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 symbols.throwKotlinNothingValueException.toKey()!! to ThrowKotlinNothingValueException,
                 symbols.jvmIndyIntrinsic.toKey()!! to JvmInvokeDynamic,
                 symbols.jvmDebuggerInvokeSpecialIntrinsic.toKey()!! to JvmDebuggerInvokeSpecial,
+                symbols.getClassByDescriptor.toKey()!! to GetClassByDescriptor,
+                symbols.handleResultOfReflectiveAccess.toKey()!! to HandleResultOfReflectiveAccess,
                 symbols.intPostfixIncrDecr.toKey()!! to IntIncr(isPrefix = false),
                 symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true)
             ) +
@@ -118,7 +121,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ) +
 
-                    intrinsicsThatShouldHaveBeenLowered()
+                    intrinsicsThatShouldHaveBeenLowered() +
+                    atomicIntrinsicsForJdk8()
             )
 
     private val intrinsicsMap = hashMapOf<String, MutableMap<FqName?, MutableMap<Key, IntrinsicMethod>>>()
@@ -133,7 +137,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     }
 
     private fun intrinsicsThatShouldHaveBeenLowered() =
-        (symbols.primitiveTypesToPrimitiveArrays.map { (_, primitiveClassSymbol) ->
+        (irBuiltIns.primitiveTypesToPrimitiveArrays.map { (_, primitiveClassSymbol) ->
             val name = primitiveClassSymbol.owner.name.asString()
             // IntArray -> intArrayOf
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
@@ -187,8 +191,20 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         }
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
-                arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+        irBuiltIns.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
+                arrayMethods(irBuiltIns.arrayClass.owner.typeParameters.single().symbol, irBuiltIns.arrayClass)
+
+    private fun atomicIntrinsicsForJdk8(): List<Pair<Key, IntrinsicMethod>> =
+        listOf(
+            Key(StandardNames.FqNames.atomicInt, null, "compareAndExchange", listOf(intFqn, intFqn)) to AtomicCompareAndExchange(Type.INT),
+            Key(StandardNames.FqNames.atomicLong, null, "compareAndExchange", listOf(longFqn, longFqn)) to AtomicCompareAndExchange(Type.LONG),
+            Key(StandardNames.FqNames.atomicBoolean, null, "compareAndExchange", listOf(booleanFqn, booleanFqn)) to AtomicCompareAndExchange(Type.BOOLEAN),
+            Key(StandardNames.FqNames.atomicReference, null, "compareAndExchange", listOf(FqName("T"), FqName("T"))) to AtomicCompareAndExchange(Type.OBJECT),
+
+            Key(StandardNames.FqNames.atomicIntArray, null, "compareAndExchangeAt", listOf(intFqn, intFqn, intFqn)) to AtomicArrayCompareAndExchange(Type.INT),
+            Key(StandardNames.FqNames.atomicLongArray, null, "compareAndExchangeAt", listOf(intFqn, longFqn, longFqn)) to AtomicArrayCompareAndExchange(Type.LONG),
+            Key(StandardNames.FqNames.atomicArray, null, "compareAndExchangeAt", listOf(intFqn, FqName("T"), FqName("T"))) to AtomicArrayCompareAndExchange(Type.OBJECT),
+        )
 
     private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
         listOf(
@@ -241,7 +257,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         }
 
         private fun IrFunction.computeExtensionReceiverFqName(): FqName? =
-            computeParameterFqName(extensionReceiverParameter)
+            computeParameterFqName(parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver })
 
         private fun computeParameterFqName(parameter: IrValueParameter?): FqName? =
             computeParameterFqName(parameter?.type?.classifierOrNull)
@@ -256,7 +272,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
 
         private fun IrFunction.computeValueParameterFqNames(): List<FqName?> =
-            valueParameters.map(::computeParameterFqName)
+            parameters.mapNotNull { if (it.kind == IrParameterKind.Regular) computeParameterFqName(it) else null }
 
         private fun createKeyMapping(
             intrinsic: IntrinsicMethod,

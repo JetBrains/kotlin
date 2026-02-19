@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> myRun(computable: () -> T): T = TODO()
 
 interface Inv<W>
@@ -19,3 +20,6 @@ fun foo(m: MyMap<Int, String>) {}
 fun main() {
     foo(x)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, propertyDeclaration, typeParameter */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitUseSiteGetTargetAnnotations
+// LANGUAGE: -ProhibitUseSiteGetTargetAnnotations
 annotation class Ann
 
 <!REPEATED_ANNOTATION!>@get:Ann<!>
@@ -25,3 +26,6 @@ val immutableProperty: Int = 42
 @Ann
 val immutableProperty_AnnWithoutTarget: Int = 42
     @Ann get
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, integerLiteral, propertyDeclaration */

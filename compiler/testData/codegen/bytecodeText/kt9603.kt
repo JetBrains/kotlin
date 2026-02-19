@@ -1,5 +1,4 @@
 // LAMBDAS: CLASS
-
 class A {
     public var prop = "O"
         private set

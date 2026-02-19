@@ -8,6 +8,7 @@
 
 package kotlin.sequences
 
+import kotlin.internal.InlineOnly
 import kotlin.random.Random
 
 /**
@@ -34,7 +35,39 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constra
  *
  * @sample samples.collections.Sequences.Building.sequenceOfValues
  */
-public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpty()) emptySequence() else elements.asSequence()
+public fun <T> sequenceOf(vararg elements: T): Sequence<T> = elements.asSequence()
+
+/**
+ * Creates a [Sequence] that contains a single given element.
+ *
+ * @param element the single element to be contained in the resulting sequence.
+ * @return a sequence containing only the specified [element].
+ * @sample samples.collections.Sequences.Building.sequenceOfSingleValue
+ */
+@SinceKotlin("2.2")
+public fun <T> sequenceOf(element: T): Sequence<T> = Sequence {
+    object : Iterator<T> {
+        private var _hasNext: Boolean = true
+
+        override fun next(): T {
+            if (!_hasNext) throw NoSuchElementException()
+            _hasNext = false
+            return element
+        }
+
+        override fun hasNext(): Boolean = _hasNext
+    }
+}
+
+/**
+ * Creates an empty [Sequence].
+ *
+ * @return an empty sequence.
+ * @sample samples.collections.Sequences.Building.sequenceOfEmpty
+ */
+@SinceKotlin("2.2")
+@InlineOnly
+public inline fun <T> sequenceOf(): Sequence<T> = emptySequence()
 
 /**
  * Returns an empty sequence.
@@ -289,37 +322,55 @@ constructor(
     private val transformer: (T) -> R,
     private val iterator: (R) -> Iterator<E>
 ) : Sequence<E> {
+    private object State {
+        const val UNDEFINED = 0
+        const val READY = 1
+        const val DONE = 2
+    }
+
     override fun iterator(): Iterator<E> = object : Iterator<E> {
         val iterator = sequence.iterator()
         var itemIterator: Iterator<E>? = null
 
+        // Use state to avoid excessive ensureItemIterator calls.
+        // The state is represented by the integer to avoid an overhead associated with the enum.
+        var state = State.UNDEFINED
+
         override fun next(): E {
-            if (!ensureItemIterator())
+            if (state == State.DONE) throw NoSuchElementException()
+            if (state == State.UNDEFINED && !ensureItemIterator()) {
                 throw NoSuchElementException()
+            }
+            state = State.UNDEFINED
             return itemIterator!!.next()
         }
 
         override fun hasNext(): Boolean {
+            if (state == State.READY) return true
+            if (state == State.DONE) return false
             return ensureItemIterator()
         }
 
         private fun ensureItemIterator(): Boolean {
-            if (itemIterator?.hasNext() == false)
-                itemIterator = null
+            val itemIterator = itemIterator
+            if (itemIterator != null && itemIterator.hasNext()) {
+                state = State.READY
+                return true
+            }
 
-            while (itemIterator == null) {
-                if (!iterator.hasNext()) {
-                    return false
-                } else {
-                    val element = iterator.next()
-                    val nextItemIterator = iterator(transformer(element))
-                    if (nextItemIterator.hasNext()) {
-                        itemIterator = nextItemIterator
-                        return true
-                    }
+            while (iterator.hasNext()) {
+                val element = iterator.next()
+                val nextItemIterator = iterator(transformer(element))
+                if (nextItemIterator.hasNext()) {
+                    this.itemIterator = nextItemIterator
+                    state = State.READY
+                    return true
                 }
             }
-            return true
+
+            state = State.DONE
+            this.itemIterator = null
+            return false
         }
     }
 }
@@ -370,7 +421,7 @@ internal class SubSequence<T>(
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
             while (position < startIndex && iterator.hasNext()) {
-                iterator.next()
+                val _ = iterator.next()
                 position++
             }
         }
@@ -493,7 +544,7 @@ internal class DropSequence<T>(
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
             while (left > 0 && iterator.hasNext()) {
-                iterator.next()
+                val _ = iterator.next()
                 left--
             }
         }
@@ -676,4 +727,3 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
  */
 public fun <T : Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
     GeneratorSequence(seedFunction, nextFunction)
-

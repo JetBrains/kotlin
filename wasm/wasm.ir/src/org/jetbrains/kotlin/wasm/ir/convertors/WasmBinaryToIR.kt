@@ -8,8 +8,36 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
+import java.io.BufferedInputStream
 import java.nio.ByteBuffer
 
+private class FunctionHeapType(val index: Int) : WasmHeapType.Type.FunctionType()
+private class FunctionType(val index: Int) : WasmImmediate.TypeIdx()
+private class Function(val index: Int) : WasmImmediate.FuncIdx()
+private class Global(val index: Int) : WasmImmediate.GlobalIdx()
+private class Type(val index: Int) : WasmImmediate.TypeIdx()
+
+private class BinaryToIrResolver : DeclarationResolver() {
+    val functions: MutableList<WasmFunction> = mutableListOf()
+    val globalFields: MutableList<WasmGlobal> = mutableListOf()
+    val gcTypes: MutableList<WasmTypeDeclaration> = mutableListOf()
+    val functionTypes: MutableList<WasmFunctionType> = mutableListOf()
+
+    override fun resolve(type: WasmHeapType.Type): WasmTypeDeclaration =
+        functionTypes[(type as FunctionHeapType).index]
+
+    override fun resolve(type: WasmImmediate.TypeIdx): WasmTypeDeclaration = when(type) {
+        is FunctionType -> functionTypes[type.index]
+        is Type -> gcTypes[type.index]
+        else -> error("Unknown type:${type::class.simpleName}")
+    }
+
+    override fun resolve(global: WasmImmediate.GlobalIdx): WasmGlobal =
+        globalFields[(global as Global).index]
+
+    override fun resolve(function: WasmImmediate.FuncIdx): WasmFunction =
+        functions[(function as Function).index]
+}
 
 class WasmBinaryToIR(val b: MyByteReader) {
     val validVersion = 1u
@@ -91,13 +119,13 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     // Import section
                     2 -> {
                         forEachVectorElement {
-                            val importPair = WasmImportDescriptor(readString(), readString())
+                            val importPair = WasmImportDescriptor(readString(), WasmSymbol(readString()))
                             when (val kind = b.readByte().toInt()) {
                                 0 -> {
-                                    val type = functionTypes[b.readVarUInt32AsInt()]
+                                    val index = b.readVarUInt32AsInt()
                                     importedFunctions += WasmFunction.Imported(
                                         name = "",
-                                        type = WasmSymbol(type),
+                                        type = FunctionHeapType(index),
                                         importPair = importPair,
                                     ).also { importsInOrder.add(it) }
                                 }
@@ -137,11 +165,12 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     // Function section
                     3 -> {
                         forEachVectorElement {
-                            val functionType = functionTypes[b.readVarUInt32AsInt()]
+                            val index = b.readVarUInt32AsInt()
+                            val functionType = functionTypes[index]
                             definedFunctions.add(
                                 WasmFunction.Defined(
                                     "",
-                                    WasmSymbol(functionType),
+                                    FunctionHeapType(index),
                                     locals = functionType.parameterTypes.mapIndexed { index, wasmType ->
                                         WasmLocal(index, "", wasmType, true)
                                     }.toMutableList()
@@ -327,9 +356,29 @@ class WasmBinaryToIR(val b: MyByteReader) {
             }
         }
 
+        val definedDeclarations = BinaryToIrResolver()
+        functionTypes.forEach { type ->
+            definedDeclarations.functionTypes.add(type)
+        }
+        gcTypes.forEach { type ->
+            definedDeclarations.gcTypes.add(type)
+        }
+        importedFunctions.forEach { function ->
+            definedDeclarations.functions.add(function)
+        }
+        definedFunctions.forEach { function ->
+            definedDeclarations.functions.add(function)
+        }
+        importedGlobals.forEach { global ->
+            definedDeclarations.globalFields.add(global)
+        }
+        globals.forEach { global ->
+            definedDeclarations.globalFields.add(global)
+        }
+
         return WasmModule(
-            functionTypes = functionTypes,
-            recGroupTypes = gcTypes,
+            resolver = definedDeclarations,
+            recGroups = (functionTypes + gcTypes).map { listOf(it) },
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
@@ -362,7 +411,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun readTag(importPair: WasmImportDescriptor? = null): WasmTag {
         val attribute = b.readByte()
         check(attribute.toInt() == 0) { "as per spec" }
-        val type = functionTypes[b.readVarUInt32AsInt()]
+        val type = FunctionHeapType(b.readVarUInt32AsInt())
         return WasmTag(type, importPair)
     }
 
@@ -422,14 +471,14 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     )
                 }
                 WasmImmediateKind.BLOCK_TYPE -> readBlockType()
-                WasmImmediateKind.FUNC_IDX -> WasmImmediate.FuncIdx(funByIdx(b.readVarUInt32AsInt()))
-                WasmImmediateKind.LOCAL_IDX -> WasmImmediate.LocalIdx(locals[b.readVarUInt32AsInt()])
-                WasmImmediateKind.GLOBAL_IDX -> WasmImmediate.GlobalIdx(globalByIdx(b.readVarUInt32AsInt()))
-                WasmImmediateKind.TYPE_IDX -> WasmImmediate.TypeIdx(functionTypes[b.readVarUInt32AsInt()])
+                WasmImmediateKind.FUNC_IDX -> Function(b.readVarUInt32AsInt())
+                WasmImmediateKind.LOCAL_IDX -> WasmImmediate.LocalIdx.get(locals[b.readVarUInt32AsInt()])
+                WasmImmediateKind.GLOBAL_IDX -> Global(b.readVarUInt32AsInt())
+                WasmImmediateKind.TYPE_IDX -> FunctionType(b.readVarUInt32AsInt())
                 WasmImmediateKind.MEMORY_IDX -> WasmImmediate.MemoryIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.DATA_IDX -> WasmImmediate.DataIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.TABLE_IDX -> WasmImmediate.TableIdx(b.readVarUInt32AsInt())
-                WasmImmediateKind.LABEL_IDX -> WasmImmediate.LabelIdx(b.readVarUInt32AsInt())
+                WasmImmediateKind.LABEL_IDX -> WasmImmediate.LabelIdx.get(b.readVarUInt32AsInt())
                 WasmImmediateKind.TAG_IDX -> WasmImmediate.TagIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.LABEL_IDX_VECTOR -> WasmImmediate.LabelIdxVector(mapVector { b.readVarUInt32AsInt() })
                 WasmImmediateKind.ELEM_IDX -> WasmImmediate.ElemIdx(elemByIdx(b.readVarUInt32AsInt()))
@@ -439,11 +488,18 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.TYPE_IMM -> TODO()
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
                 WasmImmediateKind.LOCAL_DEFS -> TODO()
+                WasmImmediateKind.CATCH_VECTOR -> TODO()
             }
         }
 
-        // We don't need location in Binary -> WasmIR, yet.
-        return WasmInstrWithoutLocation(op, immediates)
+        return when (immediates.size) {
+            0 -> wasmInstrWithoutLocation(op)
+            1 -> wasmInstrWithoutLocation(op, immediates[0])
+            2 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1])
+            3 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1], immediates[2])
+            4 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1], immediates[2], immediates[3])
+            else -> error("Immediates count ${immediates.size} instructions not supported")
+        }
     }
 
     private fun readTypeDeclaration(): WasmTypeDeclaration {
@@ -467,9 +523,14 @@ class WasmBinaryToIR(val b: MyByteReader) {
         WasmI8,
         WasmI16,
         WasmFuncRef,
-        WasmAnyRef,
         WasmExternRef,
-        WasmEqRef
+        WasmAnyRef,
+        WasmEqRef,
+        WasmRefNullrefType,
+        WasmRefNullExternrefType,
+        WasmI31Ref,
+        WasmStructRef,
+        WasmArrayRef,
     ).associateBy { it.code }
 
     private fun readValueType(): WasmType {
@@ -480,7 +541,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun readBlockType(): WasmImmediate.BlockType {
         val code = b.readVarInt64()
         return when {
-            code >= 0 -> WasmImmediate.BlockType.Function(functionTypes[code.toInt()])
+            code >= 0 -> WasmImmediate.BlockType.Function(WasmSymbol(functionTypes[code.toInt()]))
             code == -0x40L -> WasmImmediate.BlockType.Value(null)
             else -> WasmImmediate.BlockType.Value(readValueTypeImpl(code.toByte()))
         }
@@ -525,7 +586,9 @@ class WasmBinaryToIR(val b: MyByteReader) {
     }
 }
 
-class MyByteReader(val ins: java.io.InputStream) : ByteReader() {
+class MyByteReader(ins: java.io.InputStream) : ByteReader() {
+    private val ins = BufferedInputStream(ins)
+
     var offset: Long = 0
 
     class SizeLimit(val maxSize: Long, val reason: String)
@@ -540,6 +603,11 @@ class MyByteReader(val ins: java.io.InputStream) : ByteReader() {
 
     override fun read(amount: Int): ByteReader {
         error("Not implemented")
+    }
+
+    fun skip(amount: Int) {
+        offset += amount
+        ins.skip(amount.toLong())
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -561,15 +629,33 @@ class MyByteReader(val ins: java.io.InputStream) : ByteReader() {
             error("UnexpectedEnd")
 
         offset++
+        checkOffset()
+        return b.toByte()
+    }
+
+    private fun checkOffset() {
         if (offset > currentMaxSize) {
             error("Reading bytes past limit $currentMaxSize Reason: ${sizeLimits.last().reason}")
         }
-        return b.toByte()
+    }
+
+    override fun readToArray(array: ByteArray) {
+        var readed = 0
+        val amount = array.size
+        while (readed < amount) {
+            val res = ins.read(array, readed, amount - readed)
+            if (res == -1) error("UnexpectedEnd")
+            readed += res
+        }
+        offset += amount
+        checkOffset()
     }
 
     override fun readBytes(amount: Int?): ByteArray {
         require(amount != null)
-        return ByteArray(amount) { readByte() }
+        return ByteArray(amount).also {
+            readToArray(it)
+        }
     }
 }
 
@@ -585,25 +671,39 @@ abstract class ByteReader {
     abstract fun read(amount: Int): ByteReader
     abstract fun readByte(): Byte
     abstract fun readBytes(amount: Int? = null): ByteArray
+    protected abstract fun readToArray(array: ByteArray)
 
     fun readUByte(): UByte =
         readByte().toUByte()
 
-    fun readUInt32(): UInt =
-        readUByte().toUInt() or
-                (readUByte().toUInt() shl 8) or
-                (readUByte().toUInt() shl 16) or
-                (readUByte().toUInt() shl 24)
+    private val bytes2 = ByteArray(2)
+    fun readUInt16(): UShort {
+        readToArray(bytes2)
+        return (bytes2[0].toUByte().toUInt() or
+                (bytes2[1].toUByte().toUInt() shl 8)).toUShort()
+    }
 
-    fun readUInt64(): ULong =
-        readUByte().toULong() or
-                (readUByte().toULong() shl 8) or
-                (readUByte().toULong() shl 16) or
-                (readUByte().toULong() shl 24) or
-                (readUByte().toULong() shl 32) or
-                (readUByte().toULong() shl 40) or
-                (readUByte().toULong() shl 48) or
-                (readUByte().toULong() shl 56)
+    private val bytes4 = ByteArray(4)
+    fun readUInt32(): UInt {
+        readToArray(bytes4)
+        return bytes4[0].toUByte().toUInt() or
+                (bytes4[1].toUByte().toUInt() shl 8) or
+                (bytes4[2].toUByte().toUInt() shl 16) or
+                (bytes4[3].toUByte().toUInt() shl 24)
+    }
+
+    private val bytes8 = ByteArray(8)
+    fun readUInt64(): ULong {
+        readToArray(bytes8)
+        return bytes8[0].toUByte().toULong() or
+                (bytes8[1].toUByte().toULong() shl 8) or
+                (bytes8[2].toUByte().toULong() shl 16) or
+                (bytes8[3].toUByte().toULong() shl 24) or
+                (bytes8[4].toUByte().toULong() shl 32) or
+                (bytes8[5].toUByte().toULong() shl 40) or
+                (bytes8[6].toUByte().toULong() shl 48) or
+                (bytes8[7].toUByte().toULong() shl 56)
+    }
 
 
     fun readVarInt7() = readSignedLeb128().let {

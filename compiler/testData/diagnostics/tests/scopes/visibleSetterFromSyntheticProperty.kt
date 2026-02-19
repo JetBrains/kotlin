@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // FILE: Java.java
@@ -19,3 +20,6 @@ public abstract class Java {
 fun Java.test(name: String) {
     this.name = name
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, funWithExtensionReceiver, functionDeclaration, javaProperty, javaType,
+thisExpression */

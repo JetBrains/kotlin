@@ -13,6 +13,8 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util.jar.JarInputStream
 import kotlin.reflect.KClass
+import kotlin.script.experimental.api.ScriptDependency
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.toContainingJarOrNull
 import kotlin.script.experimental.jvm.impl.toFileOrNull
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
@@ -25,7 +27,6 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 internal const val KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar"
 internal const val KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar"
 internal const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
-internal const val TROVE4J_JAR = "trove4j.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_JAR = "kotlin-scripting-compiler.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR = "kotlin-scripting-compiler-embeddable.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "kotlin-scripting-compiler-impl.jar"
@@ -368,7 +369,6 @@ object KotlinJars {
             KOTLIN_JAVA_STDLIB_JAR,
             KOTLIN_JAVA_REFLECT_JAR,
             KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-            TROVE4J_JAR
         )
         val kotlinScriptingJars = if (withScripting) listOf(
             KOTLIN_SCRIPTING_COMPILER_JAR,
@@ -468,3 +468,5 @@ object KotlinJars {
             reflectOrNull
         ).filterNotNull()
 }
+
+fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as? JvmDependency)?.classpath ?: emptyList() } ?: emptyList()

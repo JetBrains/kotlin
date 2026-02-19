@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -16,4 +15,10 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
+    }
 }

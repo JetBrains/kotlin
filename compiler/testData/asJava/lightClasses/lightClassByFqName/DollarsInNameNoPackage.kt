@@ -6,5 +6,3 @@ class `A$B` {
         inner class `G$G$`
     }
 }
-
-// FIR_COMPARISON

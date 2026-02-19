@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +OverloadResolutionByLambdaReturnType
+// LANGUAGE: +OverloadResolutionByLambdaReturnType
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
 // FILE: OverloadResolutionByLambdaReturnType.kt
@@ -41,3 +42,6 @@ fun test(a: A) {
         elvis(it.descriptors, sequenceOf())
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

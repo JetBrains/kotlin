@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -30,3 +31,6 @@ fun foo(): Int {
         J.B -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, javaProperty, javaType, smartcast,
+whenExpression, whenWithSubject */

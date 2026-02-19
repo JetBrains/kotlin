@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains1(element: T): Boolean = null!!
@@ -44,3 +45,6 @@ fun test_6(list: List<Inv<Int>>, x: Inv<Int>, y: Inv<Number>, z: Inv<Any>) {
     list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(y)
     list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(z)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, in,
+nullableType, out, outProjection, stringLiteral, typeParameter */

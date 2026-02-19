@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1290
-
 interface A {
     @JsName("js_f") fun f(x: Int): String
 }

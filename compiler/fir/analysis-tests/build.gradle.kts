@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -7,89 +5,92 @@ import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("d8-configuration")
+    id("share-foreign-java-nullability-annotations")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
     compileOnly(intellijCore())
 
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(project(":compiler:fir:checkers:checkers.js"))
-    testApi(project(":compiler:fir:checkers:checkers.native"))
-    testApi(project(":compiler:fir:fir-serialization"))
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:frontend"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
+    testFixturesApi(project(":compiler:fir:fir-serialization"))
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:frontend"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
-    testApiJUnit5()
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
 
-    testImplementation(intellijCore())
+    testFixturesApi(intellijCore())
 
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(libs.intellij.fastutil)
     testRuntimeOnly(commonDependency("one.util:streamex"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
-}
 
-val generationRoot = projectDir.resolve("tests-gen")
+    thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
+}
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
+    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_1_8,
+            JdkMajorVersion.JDK_11_0,
+            JdkMajorVersion.JDK_17_0,
+            JdkMajorVersion.JDK_21_0
+        )
+    ) {
+        useJUnitPlatform()
     }
-}
 
-fun Test.configureTest(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform {
-        configureJUnit()
-    }
-    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
-}
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt", generateTestsInBuildDirectory = true)
 
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
-) {
-    configureTest {
-        excludeTags("Jdk21Test")
-    }
-}
-
-// Separate configuration is only necessary while JDK 21 is not released, so cannot be obtained via toolchain.
-// See KT-58765 for tracking
-projectTest(
-    "jdk21Tests",
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(
-        JdkMajorVersion.JDK_21_0
-    )
-) {
-    configureTest {
-        includeTags("Jdk21Test")
-    }
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJDKModifiedRuntime()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withStdlibWeb()
+    withAnnotations()
+    withThirdPartyJsr305()
+    withThirdPartyAnnotations()
+    withThirdPartyJava8Annotations()
+    withThirdPartyJava9Annotations()
 }
 
 testsJar()

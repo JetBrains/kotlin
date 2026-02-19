@@ -8,17 +8,20 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.provider.SetProperty
-import org.gradle.api.provider.ValueSource
-import org.gradle.api.provider.ValueSourceParameters
+import org.gradle.api.provider.*
 import java.io.File
 import kotlin.reflect.KProperty
+
+// Workaround for https://github.com/gradle/gradle/issues/12388
+// which should be fixed via https://github.com/gradle/gradle/issues/24767
+internal fun <IN : Any?, OUT> Provider<IN>.mapOrNull(
+    providerFactory: ProviderFactory,
+    block: (IN) -> OUT?
+): Provider<OUT> = flatMap { providerFactory.provider { (block(it)) } }
 
 internal operator fun <T> Provider<T>.getValue(thisRef: Any?, property: KProperty<*>) = get()
 
@@ -47,6 +50,10 @@ internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithValue(
     initialValue: Provider<Iterable<T>>
 ) = setProperty<T>().value(initialValue)
 
+internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithValue(
+    initialValue: Iterable<T>
+) = setProperty<T>().value(initialValue)
+
 internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithLazyValue(
     noinline lazyValue: () -> Iterable<T>
 ) = setPropertyWithValue(providerWithLazyConvention(lazyValue))
@@ -65,7 +72,11 @@ internal inline fun <reified T : Any?> ObjectFactory.listPropertyWithConvention(
 
 internal inline fun <reified T : Any?> ObjectFactory.providerWithLazyConvention(
     noinline lazyConventionValue: () -> T
-) = property(lazyConventionValue).map { it.invoke() }
+) = property(lazyConventionValue).map {
+    // Gradle has problems with nullability annotations: https://github.com/gradle/gradle/issues/24767
+    @Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
+    it.invoke()
+}
 
 internal inline fun <reified T : Any> ObjectFactory.newInstance() = newInstance(T::class.java)
 
@@ -96,6 +107,12 @@ internal fun <PropType : Any?, T : Property<PropType>> T.chainedDisallowChanges(
         disallowChanges()
     }
 
+internal fun <PropType : Any?, T : SetProperty<PropType>> T.chainedDisallowChanges(): T =
+    apply {
+        disallowChanges()
+    }
+
+
 // Before 5.0 fileProperty is created via ProjectLayout
 // https://docs.gradle.org/current/javadoc/org/gradle/api/model/ObjectFactory.html#fileProperty--
 internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularFileProperty {
@@ -107,6 +124,12 @@ internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularF
         }
     }
 }
+
+internal fun ObjectFactory.fileProperty(initialValue: File): RegularFileProperty = fileProperty()
+    .apply { set(initialValue) }
+
+internal fun ObjectFactory.directoryProperty(initialValue: File): DirectoryProperty = directoryProperty()
+    .apply { set(initialValue) }
 
 internal fun Project.filesProvider(
     vararg buildDependencies: Any,
@@ -125,6 +148,11 @@ internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () 
 internal inline fun <reified T> Project.setProperty(noinline itemsProvider: () -> Iterable<T>): SetProperty<T> =
     objects.setProperty(T::class.java).apply { set(provider(itemsProvider)) }
 
+internal inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {
+    return project.objects.listProperty<T>().apply {
+        set(project.provider(provider))
+    }
+}
 /**
  * Changing Provider will be evaluated every time it accessed.
  *
@@ -162,3 +190,5 @@ private abstract class AdhocValueSource<T> : ValueSource<T, AdhocValueSource.Par
         return parameters.producingLambda.get().invoke() as T
     }
 }
+
+internal fun Provider<Directory>.dir(path: String): Provider<Directory> = map { it.dir(path) }

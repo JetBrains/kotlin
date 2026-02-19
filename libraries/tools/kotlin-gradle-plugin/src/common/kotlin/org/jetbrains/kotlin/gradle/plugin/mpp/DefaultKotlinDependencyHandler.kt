@@ -8,16 +8,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
-import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
+import javax.inject.Inject
 
-class DefaultKotlinDependencyHandler(
+internal open class DefaultKotlinDependencyHandler @Inject constructor(
     val parent: HasKotlinDependencies,
     override val project: Project
 ) : KotlinDependencyHandler {
@@ -196,3 +198,8 @@ class DefaultKotlinDependencyHandler(
             scope = scope,
         )
 }
+
+internal fun ObjectFactory.DefaultKotlinDependencyHandler(
+    parent: HasKotlinDependencies,
+    project: Project,
+) = newInstance<DefaultKotlinDependencyHandler>(parent, project)

@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.backend.common.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.SuspendableFunctionCallWithoutCoroutineContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.SuspendableFunctionCallWithoutCoroutineContext
-import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 /**
  * Add continuation to suspend function calls.
@@ -29,13 +30,16 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
     protected abstract fun IrSimpleFunction.isContinuationItself(): Boolean
 
+    protected open val IrSimpleFunction.continuationOwner: IrSimpleFunction
+        get() = this
+
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val continuation: IrValueParameter? by lazy {
-            (container as IrSimpleFunction).getContinuationParameter()
+            (container as IrSimpleFunction).continuationOwner.getContinuationParameter()
         }
 
         val builder by lazy { context.createIrBuilder(container.symbol) }
@@ -49,11 +53,21 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 return body
             }
 
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                val oldFun = expression.symbol.owner as? IrSimpleFunction
+
+                if (oldFun?.isSuspend == true) {
+                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub(context).symbol
+                }
+
+                return super.visitRawFunctionReference(expression)
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid()
 
                 if (!expression.isSuspend) {
-                    if (expression.symbol == context.ir.symbols.getContinuation)
+                    if (expression.symbol == context.symbols.getContinuation)
                         return getContinuation() ?: expression.throwLinkageError(plFile)
                     return expression
                 }
@@ -61,13 +75,16 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 val oldFun = expression.symbol.owner
                 val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub(context)
 
-                return irCall(
-                    expression,
+                return IrCallImpl(
+                    expression.startOffset, expression.endOffset,
+                    newFun.returnType,
                     newFun.symbol,
-                    newReturnType = newFun.returnType,
-                    newSuperQualifierSymbol = expression.superQualifierSymbol
+                    origin = expression.origin,
+                    superQualifierSymbol = expression.superQualifierSymbol,
                 ).also {
-                    it.putValueArgument(it.valueArgumentsCount - 1, getContinuation() ?: return expression.throwLinkageError(plFile))
+                    it.copyTypeArgumentsFrom(expression)
+                    it.arguments.assignFrom(expression.arguments)
+                    it.arguments += getContinuation() ?: return expression.throwLinkageError(plFile)
                 }
             }
         })
@@ -86,7 +103,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                     throw IllegalArgumentException("Continuation parameter only exists in lowered suspend functions, but function origin is $origin")
             }
 
-            val continuation = valueParameters.lastOrNull()
+            val continuation = parameters.lastOrNull()
             require(continuation != null && continuation.origin == IrDeclarationOrigin.CONTINUATION) {
                 "Continuation parameter is expected to be the last one"
             }

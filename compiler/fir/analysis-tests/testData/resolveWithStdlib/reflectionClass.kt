@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KClass
 
 val javaClass: Class<String> = String::class.java
@@ -8,3 +9,4 @@ fun foo() {
     val arrayStringClass = Array<String>::class.java
 }
 
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, localProperty, propertyDeclaration */

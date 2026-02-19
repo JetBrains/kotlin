@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 @DslMarker
 annotation class Foo
@@ -24,3 +25,7 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+integerLiteral, interfaceDeclaration, lambdaLiteral, noinline, nullableType, reified, starProjection, stringLiteral,
+typeParameter, typeWithExtension */

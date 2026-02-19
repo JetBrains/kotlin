@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 package test
 
 object ClassMemberMarker
@@ -19,9 +20,9 @@ class Test {
 
     fun <T> List<T>.testCallable1(): () -> Unit = a::foo
     fun <T> List<T>.testCallable1a(): () -> Unit = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>a<!><T>::foo
-    fun <T> List<T>.testCallable2(): () -> Unit = b?::<!UNRESOLVED_REFERENCE!>foo<!>
-    fun <T> List<T>.testCallable3(): () -> Unit = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T, Any>::<!UNRESOLVED_REFERENCE!>foo<!>
-    fun <T> List<T>.testCallable4(): () -> Unit = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T>?::<!UNRESOLVED_REFERENCE!>foo<!>
+    fun <T> List<T>.testCallable2(): () -> Unit = <!SAFE_CALLABLE_REFERENCE_CALL!>b?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!><!>
+    fun <T> List<T>.testCallable3(): () -> Unit = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T, Any>::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
+    fun <T> List<T>.testCallable4(): () -> Unit = <!SAFE_CALLABLE_REFERENCE_CALL!><!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T>?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!><!>
 
     fun <T> List<T>.testClassLiteral1() = a::class
     fun <T> List<T>.testClassLiteral1a() = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>a<!><T>::class
@@ -31,5 +32,9 @@ class Test {
     fun <T> List<T>.testUnresolved1() = <!UNRESOLVED_REFERENCE!>unresolved<!><T>::foo
     fun <T> List<T>.testUnresolved2() = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>a<!><<!UNRESOLVED_REFERENCE!>unresolved<!>>::foo
     fun <T> List<T>.testUnresolved3() = a<<!SYNTAX!><!>>::foo
-    fun <T> List<T>.testUnresolved4() = <!UNRESOLVED_REFERENCE!>unresolved<!>?::foo
+    fun <T> List<T>.testUnresolved4() = <!SAFE_CALLABLE_REFERENCE_CALL!><!UNRESOLVED_REFERENCE!>unresolved<!>?::foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, nullableType, objectDeclaration, outProjection, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

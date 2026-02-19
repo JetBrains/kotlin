@@ -4,7 +4,6 @@
 // FULL_JDK
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 4 java/lang/invoke/LambdaMetafactory
 
 // FILE: sameInterfaceDifferentCapturedValueTypes.kt

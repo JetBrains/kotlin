@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 // LANGUAGE:-ProhibitOpenValDeferredInitialization
 open class Foo {
@@ -46,3 +46,5 @@ open class Foo {
         <!VAL_REASSIGNMENT!>open_notInitializedInPlace_deferredinit3<!> = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, propertyDeclaration */

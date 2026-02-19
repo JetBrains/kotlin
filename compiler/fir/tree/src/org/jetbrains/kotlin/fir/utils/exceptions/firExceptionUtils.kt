@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,27 +10,29 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.renderer.*
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 
-fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
-    withEntry(name, fir) {
+fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement?) {
+    withEntry(name, fir) { fir ->
         FirRenderer(
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
             declarationRenderer = FirDeclarationRendererWithAttributes(),
-            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
-        ).renderElementAsString(it)
+        ).renderElementAsString(fir)
     }
-    withEntry("${name}ElementKind", fir.source?.kind?.let { it::class.simpleName })
-    if (fir is FirElementWithResolveState) {
-        withModuleDataEntry("${name}ModuleData", fir.moduleData)
+
+    if (fir != null) {
+        withEntry("${name}ElementKind", fir.source?.kind?.let { it::class.simpleName })
+        if (fir is FirElementWithResolveState) {
+            withModuleDataEntry("${name}ModuleData", fir.moduleData)
+        }
+        withSourceEntry("${name}Source", fir.source)
     }
-    withSourceEntry("${name}Source", fir.source)
 }
 
 fun ExceptionAttachmentBuilder.withFirSymbolIdEntry(name: String, symbol: FirBasedSymbol<*>?) {

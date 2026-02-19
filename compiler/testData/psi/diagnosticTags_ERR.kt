@@ -1,4 +1,6 @@
-// !LANGUAGE: -SuspendFunctionAsSupertype
+// COMPILATION_ERRORS
+
+// LANGUAGE: -SuspendFunctionAsSupertype
 typealias Action = () -> Unit
 
 interface SAM {

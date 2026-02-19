@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: main.kt
@@ -11,3 +12,5 @@ class B : A() {
         super.x(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, override, propertyDeclaration, superExpression */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: EventListener.java
 public interface EventListener<E> {
     void handle(E e);
@@ -31,3 +32,7 @@ fun main() {
         x -> x checkType { _<CharSequence?>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, outProjection, samConversion, starProjection, typeParameter,
+typeWithExtension */

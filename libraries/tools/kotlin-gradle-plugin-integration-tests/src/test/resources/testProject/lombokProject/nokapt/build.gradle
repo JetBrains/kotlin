@@ -2,7 +2,7 @@ plugins {
     id "java"
     id "org.jetbrains.kotlin.jvm"
     id "org.jetbrains.kotlin.plugin.lombok"
-    id "io.freefair.lombok" version "5.3.0"
+    id "io.freefair.lombok" version "<freefair_lombok_version>"
 }
 
 dependencies {

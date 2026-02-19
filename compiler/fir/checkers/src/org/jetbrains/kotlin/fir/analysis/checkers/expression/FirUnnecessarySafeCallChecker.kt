@@ -6,31 +6,42 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
-    override fun check(expression: FirSafeCallExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val receiverType = expression.receiver.resolvedType.fullyExpandedType(context.session)
+abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    protected fun checkSafeCallReceiverType(
+        receiverType: ConeKotlinType,
+        source: KtSourceElement?,
+    ) {
+        if (!receiverType.canBeNull(context.session)) {
+            if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+                reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType)
+            }
+        }
+    }
+}
+
+object FirUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker() {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirSafeCallExpression) {
+        val receiverType = expression.receiver.resolvedType.fullyExpandedType()
         if (expression.receiver.source?.elementType == KtNodeTypes.SUPER_EXPRESSION) {
-            reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL, context)
+            reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL)
             return
         }
-        if (!receiverType.canBeNull) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                reporter.reportOn(expression.source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
-            }
-            if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
-                reporter.reportOn(expression.source, FirErrors.SAFE_CALL_WILL_CHANGE_NULLABILITY, context)
-            }
-        }
+        checkSafeCallReceiverType(receiverType, expression.source)
     }
 }

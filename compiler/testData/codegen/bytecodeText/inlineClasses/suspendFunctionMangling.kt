@@ -1,5 +1,5 @@
 // KT-41374
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // FILE: test.kt
 
 package a

@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 inline class Test1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Test1<!>)
 
@@ -20,3 +22,6 @@ inline class TestRecursionInUpperBounds<T : TestRecursionInUpperBounds<T>>(val x
 
 inline class Id<T>(val x: T)
 inline class TestRecursionThroughId(val x: Id<TestRecursionThroughId>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

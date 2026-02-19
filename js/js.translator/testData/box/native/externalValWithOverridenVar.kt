@@ -1,5 +1,5 @@
 // KT-46643
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS
 // WITH_STDLIB
 
 import kotlin.reflect.KProperty

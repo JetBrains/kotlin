@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(<!UNUSED_PARAMETER!>a<!>: Any) {}
 fun bar(<!UNUSED_PARAMETER!>a<!>: Any, <!UNUSED_PARAMETER!>b<!>: Any) {}
 
@@ -53,3 +54,6 @@ fun test(arr: Array<Int>) {
         break <!UNREACHABLE_CODE, USELESS_ELVIS!>?: null<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, break, comparisonExpression, disjunctionExpression, elvisExpression,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, whileLoop */

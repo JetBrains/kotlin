@@ -113,8 +113,8 @@
                 <version>3.5.1</version>
                 <configuration>
                     <proc>none</proc>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "<pluginMarkerVersion>"
+    kotlin("multiplatform")
     `maven-publish`
 }
 
@@ -12,8 +12,8 @@ repositories {
 }
 
 kotlin {
+    jvmToolchain(8)
     jvm {
-        jvmToolchain(8)
         withJava()
     }
     js(IR) {
@@ -30,6 +30,6 @@ publishing {
         }
     }
     repositories {
-        maven { setUrl("${rootProject.buildDir}/repo") }
+        maven("<localRepo>")
     }
 }

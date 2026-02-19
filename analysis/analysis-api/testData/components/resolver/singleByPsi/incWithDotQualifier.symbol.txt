@@ -1,0 +1,5 @@
+KtCallExpression(93,99): 'peek()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /F.peek(<dispatch receiver>: F): F
+    ]

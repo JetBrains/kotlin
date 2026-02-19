@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
 import kotlin.coroutines.*
 
 suspend fun notMember(q: Double) = 1
@@ -26,3 +27,6 @@ class Controller {
 
     suspend fun String.memberExtension() = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inline, integerLiteral,
+stringLiteral, suspend, vararg */

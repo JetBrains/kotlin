@@ -1,3 +1,5 @@
+// JVM_DEFAULT_MODE: enable
+
 @Deprecated("")
 val testVal = 1
 

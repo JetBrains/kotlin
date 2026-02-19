@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 @DslMarker
 annotation class MyDsl
@@ -26,3 +27,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+propertyDeclaration, typeAliasDeclaration, typeWithExtension */

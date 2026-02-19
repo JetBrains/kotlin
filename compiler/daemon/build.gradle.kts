@@ -2,14 +2,13 @@ description = "Kotlin Daemon"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(libs.intellij.fastutil)
 
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
@@ -28,3 +27,5 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+optInToK1Deprecation()

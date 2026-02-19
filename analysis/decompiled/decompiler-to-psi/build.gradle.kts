@@ -1,32 +1,28 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:light-classes-base"))
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:decompiled:decompiler-to-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":kotlin-util-klib-metadata"))
-    implementation(project(":js:js.serializer"))
-    implementation(project(":kotlin-util-klib-metadata"))
     implementation(intellijCore())
 
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
+    testFixturesApi(libs.junit.jupiter.api)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
-
-projectTest {
-    workingDir = rootDir
-}
-
-testsJar()

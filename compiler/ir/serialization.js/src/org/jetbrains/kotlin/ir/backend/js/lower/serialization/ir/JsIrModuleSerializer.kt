@@ -5,37 +5,21 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.IdSignatureClashTracker
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 
 class JsIrModuleSerializer(
-    messageLogger: IrMessageLogger,
+    settings: IrSerializationSettings,
+    diagnosticReporter: IrDiagnosticReporter,
     irBuiltIns: IrBuiltIns,
-    compatibilityMode: CompatibilityMode,
-    normalizeAbsolutePaths: Boolean,
-    sourceBaseDirs: Collection<String>,
-    private val languageVersionSettings: LanguageVersionSettings,
-    shouldCheckSignaturesOnUniqueness: Boolean = true
-) : IrModuleSerializer<JsIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
+    private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory,
+) : IrModuleSerializer<JsIrFileSerializer>(settings, diagnosticReporter) {
 
-    private val globalDeclarationTable = JsGlobalDeclarationTable(
-        irBuiltIns,
-        if (shouldCheckSignaturesOnUniqueness) JsUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER
-    )
+    override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
 
-    override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
-        JsIrFileSerializer(
-            messageLogger,
-            DeclarationTable(globalDeclarationTable),
-            compatibilityMode = compatibilityMode,
-            normalizeAbsolutePaths = normalizeAbsolutePaths,
-            sourceBaseDirs = sourceBaseDirs,
-            languageVersionSettings = languageVersionSettings,
-        )
+    override fun createFileSerializer(settings: IrSerializationSettings): JsIrFileSerializer =
+        JsIrFileSerializer(settings, DeclarationTable.Default(globalDeclarationTable), jsIrFileMetadataFactory)
 }

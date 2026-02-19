@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun f1() {
     val a = 12 if (a == 12) {
     }

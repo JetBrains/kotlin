@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.MissingXcodeException
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
+import java.util.Locale
 
 data class XcodeVersion(val major: Int, val minor: Int) : Comparable<XcodeVersion> {
     override fun compareTo(other: XcodeVersion): Int {
@@ -41,6 +42,8 @@ data class XcodeVersion(val major: Int, val minor: Int) : Comparable<XcodeVersio
                 minor = split.getOrNull(1)?.toIntOrNull() ?: return null,
             )
         }
+
+        val maxTested = XcodeVersion(26, 0)
     }
 }
 
@@ -58,14 +61,7 @@ interface Xcode {
     val additionalTools: String
     val simulatorRuntimes: String
 
-    /**
-     * TODO: `toLowerCase` is deprecated and should be replaced with `lowercase`, but
-     * this code used in buildSrc which depends on bootstrap version of stdlib, so right version
-     * of this function isn't available, please replace warning suppression with right function
-     * when compatible version of bootstrap will be available.
-     */
-    @Suppress("DEPRECATION")
-    fun pathToPlatformSdk(platformName: String): String = when (platformName.toLowerCase()) {
+    fun pathToPlatformSdk(platformName: String): String = when (platformName.lowercase(Locale.getDefault())) {
         "macosx" -> macosxSdk
         "iphoneos" -> iphoneosSdk
         "iphonesimulator" -> iphonesimulatorSdk
@@ -83,7 +79,11 @@ interface Xcode {
         val current: Xcode
             get() = findCurrent()
 
-        fun findCurrent(): Xcode = CurrentXcode()
+        var xcodeOverride: Xcode? = null
+
+        fun findCurrent(): Xcode = xcodeOverride ?: defaultCurrent()
+
+        fun defaultCurrent(): Xcode = CurrentXcode()
     }
 }
 
@@ -91,7 +91,7 @@ internal class CurrentXcode : Xcode {
 
     override val toolchain by lazy {
         val ldPath = xcrun("-f", "ld") // = $toolchain/usr/bin/ld
-        File(ldPath).parentFile.parentFile.parentFile.absolutePath
+        File(ldPath).parentFile.parentFile.absolutePath
     }
 
     override val additionalTools: String by lazy {

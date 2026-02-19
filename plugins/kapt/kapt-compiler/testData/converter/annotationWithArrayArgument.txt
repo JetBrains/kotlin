@@ -1,0 +1,40 @@
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
+/**
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(values: kotlin/Array<kotlin/String> (* = ... *))
+ *
+ *   // getter: values()[Ljava/lang/String;
+ *   public final val values: kotlin/Array<kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+
+    public abstract java.lang.String[] values() default {"1", "2", "3"};
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   // signature: f()V
+ *   public final fun f(): @A kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class AnnotationWithArrayArgumentKt {
+
+    public static final void f() {
+    }
+}

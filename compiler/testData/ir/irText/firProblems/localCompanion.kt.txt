@@ -1,11 +1,5 @@
-fun main() {
+fun runMe() {
   local class Foo {
-    constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
     @Suppress(names = ["WRONG_MODIFIER_CONTAINING_DECLARATION"])
     local companion object Companion {
       private constructor() /* primary */ {
@@ -19,7 +13,14 @@ fun main() {
 
     }
 
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
   }
 
   Companion.bar()
 }
+

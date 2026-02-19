@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 import kotlin.reflect.*
 
@@ -55,3 +56,7 @@ fun main() {
 
     val x2: (Int) -> Unit = selectNumber(id(::foo6), id { x -> <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>x<!> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>it<!> })
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+typeConstraint, typeParameter, vararg */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!NOT_A_MULTIPLATFORM_COMPILATION!>expect<!> fun foo1()
 <!NOT_A_MULTIPLATFORM_COMPILATION!>expect<!> val bar1 = <!EXPECTED_PROPERTY_INITIALIZER!>42<!>
 <!NOT_A_MULTIPLATFORM_COMPILATION!>expect<!> class ImplicitExpect {
@@ -22,3 +23,6 @@
     <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> val x: Int = 0
     <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> class Inner
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+nestedClass, propertyDeclaration */

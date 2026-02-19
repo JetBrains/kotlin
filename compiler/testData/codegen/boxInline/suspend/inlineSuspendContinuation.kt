@@ -1,8 +1,8 @@
+// TARGET_BACKEND: JVM
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 // WITH_STDLIB
 // FILE: test.kt
-// TARGET_BACKEND: JVM
 
 suspend inline fun test1(c: () -> Unit) {
     c()

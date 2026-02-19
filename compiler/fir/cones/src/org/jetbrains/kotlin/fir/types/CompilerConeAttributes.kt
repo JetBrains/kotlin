@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 
 object CompilerConeAttributes {
     object Exact : ConeAttribute<Exact>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal"), Name.identifier("Exact"))
+        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin.internal"), Name.identifier("Exact"))
 
         override fun union(other: Exact?): Exact? = null
         override fun intersect(other: Exact?): Exact? = null
@@ -23,12 +23,13 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: Exact?): Boolean = true
 
         override val key: KClass<out Exact> = Exact::class
+        override val keepInInferredDeclarationType: Boolean get() = false
 
         override fun toString(): String = "@Exact"
     }
 
     object NoInfer : ConeAttribute<NoInfer>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal"), Name.identifier("NoInfer"))
+        val ANNOTATION_CLASS_ID: ClassId = StandardClassIds.Annotations.NoInfer
 
         override fun union(other: NoInfer?): NoInfer? = null
         override fun intersect(other: NoInfer?): NoInfer? = null
@@ -36,12 +37,13 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: NoInfer?): Boolean = true
 
         override val key: KClass<out NoInfer> = NoInfer::class
+        override val keepInInferredDeclarationType: Boolean get() = false
 
         override fun toString(): String = "@NoInfer"
     }
 
     object EnhancedNullability : ConeAttribute<EnhancedNullability>() {
-        val ANNOTATION_CLASS_ID = StandardClassIds.Annotations.EnhancedNullability
+        val ANNOTATION_CLASS_ID: ClassId = StandardClassIds.Annotations.EnhancedNullability
 
         override fun union(other: EnhancedNullability?): EnhancedNullability? = other
         override fun intersect(other: EnhancedNullability?): EnhancedNullability = this
@@ -50,12 +52,16 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: EnhancedNullability?): Boolean = true
 
         override val key: KClass<out EnhancedNullability> = EnhancedNullability::class
+        override val keepInInferredDeclarationType: Boolean get() = true
+
+        override val implementsEquality: Boolean
+            get() = true
 
         override fun toString(): String = "@EnhancedNullability"
     }
 
     object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
+        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
 
         override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = other
         override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType = this
@@ -64,6 +70,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: ExtensionFunctionType?): Boolean = true
 
         override val key: KClass<out ExtensionFunctionType> = ExtensionFunctionType::class
+        override val keepInInferredDeclarationType: Boolean get() = true
 
         override fun toString(): String = "@ExtensionFunctionType"
     }
@@ -75,10 +82,12 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: RawType?): Boolean = true
 
         override val key: KClass<out RawType> = RawType::class
+        override val keepInInferredDeclarationType: Boolean get() = true
+
         override fun toString(): String = "Raw type"
     }
 
-    class ContextFunctionTypeParams(val contextReceiverNumber: Int) : ConeAttribute<ContextFunctionTypeParams>() {
+    class ContextFunctionTypeParams(val contextParameterNumber: Int) : ConeAttribute<ContextFunctionTypeParams>() {
         override fun union(other: ContextFunctionTypeParams?): ContextFunctionTypeParams? = other
         override fun intersect(other: ContextFunctionTypeParams?): ContextFunctionTypeParams = this
         override fun add(other: ContextFunctionTypeParams?): ContextFunctionTypeParams = this
@@ -86,16 +95,19 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: ContextFunctionTypeParams?): Boolean = true
 
         override val key: KClass<out ContextFunctionTypeParams> = ContextFunctionTypeParams::class
+        override val keepInInferredDeclarationType: Boolean get() = true
 
-        override fun toString(): String = "@${StandardNames.FqNames.contextFunctionTypeParams.shortName().asString()}"
+        override fun toString(): String {
+            return "@${StandardNames.FqNames.contextFunctionTypeParams.shortName().asString()}($contextParameterNumber)"
+        }
 
         companion object {
-            val ANNOTATION_CLASS_ID = ClassId.topLevel(StandardNames.FqNames.contextFunctionTypeParams)
+            val ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(StandardNames.FqNames.contextFunctionTypeParams)
         }
     }
 
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
+        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
 
         override fun union(other: UnsafeVariance?): UnsafeVariance? = null
         override fun intersect(other: UnsafeVariance?): UnsafeVariance? = null
@@ -104,6 +116,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: UnsafeVariance?): Boolean = true
 
         override val key: KClass<out UnsafeVariance> = UnsafeVariance::class
+        override val keepInInferredDeclarationType: Boolean get() = false
 
         override fun toString(): String = "@UnsafeVariance"
     }
@@ -139,10 +152,13 @@ val ConeKotlinType.hasEnhancedNullability: Boolean
 val ConeKotlinType.isExtensionFunctionType: Boolean
     get() = attributes.extensionFunctionType != null
 
-val ConeKotlinType.hasContextReceivers: Boolean
-    get() = attributes.contextReceiversNumberForFunctionType > 0
+val ConeKotlinType.hasNoInfer: Boolean
+    get() = attributes.noInfer != null
 
-val ConeKotlinType.contextReceiversNumberForFunctionType: Int
-    get() = attributes.contextReceiversNumberForFunctionType
+val ConeKotlinType.hasContextParameters: Boolean
+    get() = attributes.contextParameterNumberForFunctionType > 0
 
-val ConeAttributes.contextReceiversNumberForFunctionType: Int get() = contextFunctionTypeParams?.contextReceiverNumber ?: 0
+val ConeKotlinType.contextParameterNumberForFunctionType: Int
+    get() = attributes.contextParameterNumberForFunctionType
+
+val ConeAttributes.contextParameterNumberForFunctionType: Int get() = contextFunctionTypeParams?.contextParameterNumber ?: 0

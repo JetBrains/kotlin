@@ -11,7 +11,6 @@ inline fun inlineEnumWhen(someEnum: SomeEnum) = when(someEnum) {
     else -> "not A"
 }
 
-// JVM_IR_TEMPLATES
 // 2 INNERCLASS
 
 // MODULE: caller(lib)
@@ -23,5 +22,4 @@ fun box(): String {
     return if (mappings.enclosingClass == null) "OK" else "FAIL"
 }
 
-// JVM_IR_TEMPLATES
 // 0 INNERCLASS

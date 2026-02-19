@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1293 Compiler doesn't show error when element of Array<Int?> is assigned to Int
 
 package kt1293
@@ -9,3 +10,5 @@ fun main() {
 }
 
 fun requiresInt(i: Int) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration */

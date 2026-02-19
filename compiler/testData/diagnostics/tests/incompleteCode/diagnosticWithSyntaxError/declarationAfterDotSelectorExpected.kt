@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun foo(x: Any) {
     x.<!SYNTAX!><!>
@@ -28,3 +29,6 @@ class A {
     var a = 24.<!SYNTAX!><!>
     var b = 42.0
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, integerLiteral, localFunction,
+localProperty, propertyDeclaration, stringLiteral */

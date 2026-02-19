@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // see https://youtrack.jetbrains.com/issue/KT-21515
 
 interface SomeIrrelevantInterface
@@ -18,3 +19,6 @@ public class C {
 
     companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, interfaceDeclaration, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration */

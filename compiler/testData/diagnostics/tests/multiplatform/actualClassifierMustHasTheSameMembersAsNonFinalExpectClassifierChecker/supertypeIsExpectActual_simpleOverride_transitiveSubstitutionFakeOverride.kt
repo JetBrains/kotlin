@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
@@ -27,3 +28,6 @@ actual open class Foo : Transitive() {
 
     override fun existingMethodInBase(param: String) {} // override from super
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nullableType, override,
+primaryConstructor, propertyDeclaration, typeParameter */

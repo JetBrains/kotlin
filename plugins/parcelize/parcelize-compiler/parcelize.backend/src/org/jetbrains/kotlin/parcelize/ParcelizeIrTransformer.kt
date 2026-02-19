@@ -10,34 +10,35 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.FLAGS_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.MARKER_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
+import org.jetbrains.kotlin.parcelize.fir.ParcelizePluginKey
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class ParcelizeIrTransformer(
     context: IrPluginContext,
-    androidSymbols: AndroidSymbols
-) : ParcelizeIrTransformerBase(context, androidSymbols) {
+    androidSymbols: AndroidSymbols,
+    parcelizeAnnotations: List<FqName>,
+    experimentalCodeGeneration: Boolean,
+) : ParcelizeIrTransformerBase(context, androidSymbols, parcelizeAnnotations, experimentalCodeGeneration) {
     private val symbolMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
 
     fun transform(moduleFragment: IrModuleFragment) {
@@ -50,7 +51,7 @@ class ParcelizeIrTransformer(
             override fun visitCall(expression: IrCall): IrExpression {
                 val callee = expression.symbol.owner
                 if (callee.isParcelableCreatorIntrinsic()) {
-                    expression.getTypeArgument(0)?.getClass()?.let { parcelableClass ->
+                    expression.typeArguments[0]?.getClass()?.let { parcelableClass ->
                         androidSymbols.createBuilder(expression.symbol).apply {
                             return getParcelableCreator(parcelableClass)
                         }
@@ -62,16 +63,6 @@ class ParcelizeIrTransformer(
                 expression.symbol = symbolMap[expression.symbol] ?: return expression
                 return expression
             }
-
-            private fun IrSimpleFunction.isParcelableCreatorIntrinsic(): Boolean =
-                dispatchReceiverParameter == null
-                        && extensionReceiverParameter == null
-                        && valueParameters.isEmpty()
-                        && isInline
-                        && fqNameWhenAvailable?.asString() == "kotlinx.parcelize.ParcelableCreatorKt.parcelableCreator"
-                        && typeParameters.singleOrNull()?.let {
-                    it.isReified && it.superTypes.singleOrNull()?.classFqName == PARCELABLE_FQN
-                } == true
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildren(this, null)
@@ -101,7 +92,7 @@ class ParcelizeIrTransformer(
 
         // Sealed classes can be annotated with `@Parcelize`, but that only implies that we
         // should process their immediate subclasses.
-        if (!declaration.isParcelize || declaration.modality == Modality.SEALED)
+        if (!declaration.isParcelize(parcelizeAnnotations))
             return
 
         val parcelableProperties = declaration.parcelableProperties
@@ -110,6 +101,26 @@ class ParcelizeIrTransformer(
         val parcelerObject = declaration.companionObject()?.takeIf {
             it.isSubclassOfFqName(PARCELER_FQN.asString())
         }
+        val generateInheritanceConstructor = declaration.canGenerateInheritanceConstructor()
+        if (generateInheritanceConstructor) {
+            declaration.addConstructor {}.apply {
+                origin = IrDeclarationOrigin.GeneratedByPlugin(ParcelizePluginKey)
+                val constructorArguments = declaration.inheritanceConstructorArguments()
+                constructorArguments.forEach {
+                    addValueParameter(it.field.name, it.field.type)
+                }
+                addValueParameter(MARKER_NAME, androidSymbols.directInitializerMarker.defaultType)
+                // Might reference constructors from super classes and those might not be generated yet.
+                // This is why defer here is needed. We will have signature but not body.
+                defer {
+                    generateInheritanceConstructor(declaration, parcelableProperties, constructorArguments)
+                }
+            }
+        }
+        // Only constructor has to be generated for sealed classes
+        if (declaration.modality == Modality.SEALED)
+            return
+
 
         if (declaration.descriptor.hasSyntheticDescribeContents()) {
             val describeContents = declaration.addOverride(
@@ -147,14 +158,24 @@ class ParcelizeIrTransformer(
                 // We need to defer the construction of the writer, since it may refer to the [writeToParcel] methods in other
                 // @Parcelize classes in the current module, which might not be constructed yet at this point.
                 defer {
-                    generateWriteToParcelBody(
-                        declaration,
-                        parcelerObject,
-                        parcelableProperties,
-                        receiverParameter,
-                        parcelParameter,
-                        flagsParameter
-                    )
+                    if (generateInheritanceConstructor) {
+                        generateWriteToParcelBodyForInheritanceConstructor(
+                            declaration,
+                            parcelableProperties,
+                            receiverParameter,
+                            parcelParameter,
+                            flagsParameter
+                        )
+                    } else {
+                        generateWriteToParcelBody(
+                            declaration,
+                            parcelerObject,
+                            parcelableProperties,
+                            receiverParameter,
+                            parcelParameter,
+                            flagsParameter
+                        )
+                    }
                 }
 
                 metadata = DescriptorMetadataSource.Function(

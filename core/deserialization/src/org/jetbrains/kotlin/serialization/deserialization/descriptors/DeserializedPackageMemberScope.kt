@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 
 open class DeserializedPackageMemberScope(
     private val packageDescriptor: PackageFragmentDescriptor,
-    proto: ProtoBuf.Package,
+    val proto: ProtoBuf.Package,
     nameResolver: NameResolver,
     metadataVersion: BinaryVersion,
     containerSource: DeserializedContainerSource?,

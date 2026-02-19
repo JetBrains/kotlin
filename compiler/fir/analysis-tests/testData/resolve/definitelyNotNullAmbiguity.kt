@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KtVisitor.java
 
 public class KtVisitor<R, D> {}
@@ -5,7 +6,7 @@ public class KtVisitor<R, D> {}
 // FILE: A.java
 
 public interface A {
-    public <R, D> R accept(@org.jetbrains.annotations.NotNull KtVisitor<R, D> visitor, D data)
+    public <R, D> R accept(@org.jetbrains.annotations.NotNull KtVisitor<R, D> visitor, D data);
 }
 
 // FILE: B.kt
@@ -19,3 +20,5 @@ interface B : A {
 fun test(visitor: KtVisitor<String, Unit>, element: B) {
     element.accept(visitor, Unit)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType, override, typeParameter */

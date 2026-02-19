@@ -143,6 +143,12 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
             }
         }
 
+        fun <T> Key<T>.replaceOnlyDefault(create: () -> T?) {
+            if (!data.containsKey(this) || data[this] == this.getDefaultValue(PropertiesCollection(data))) {
+                data[this] = create()
+            }
+        }
+
         fun <T> Key<T>.update(body: (T?) -> T?) {
             putIfNotNull(body(data[this]?.let {
                 @Suppress("UNCHECKED_CAST")
@@ -274,6 +280,11 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
         @JvmName("appendToMap")
         fun <K, V> Key<in Map<K, V>>.append(values: Iterable<Pair<K, V>>) {
             val newValues = get(this)?.let { it + values } ?: values.toMap()
+            data[this] = newValues
+        }
+
+        fun <V> Key<in List<V>>.transform(action: (V) -> V) {
+            val newValues = get(this)?.map(action) ?: emptyList()
             data[this] = newValues
         }
 

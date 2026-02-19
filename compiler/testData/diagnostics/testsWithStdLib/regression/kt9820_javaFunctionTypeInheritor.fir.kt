@@ -1,4 +1,4 @@
-
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 
 import kotlin.jvm.functions.Function1;
@@ -15,3 +15,5 @@ fun useJ(j: J) {
 fun jj() {
     useJ(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral, samConversion */

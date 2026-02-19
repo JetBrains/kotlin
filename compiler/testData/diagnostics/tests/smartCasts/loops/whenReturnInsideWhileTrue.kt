@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public fun foo(x: String?): Int {
     loop@ while (true) {
         when (x) {
@@ -11,3 +12,6 @@ public fun foo(x: String?): Int {
     // but we are not able to detect it
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, equalityExpression, functionDeclaration, integerLiteral, nullableType, smartcast,
+stringLiteral, whenExpression, whenWithSubject, whileLoop */

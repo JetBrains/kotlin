@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun takeUByte(u: UByte) {}
 fun takeUShort(u: UShort) {}
@@ -59,6 +60,9 @@ const val constVal = 10
 
 val globalVariableWithGetter: Int get() = 0
 
-val prop: UByte = <!INITIALIZER_TYPE_MISMATCH!>255<!>
+val prop: UByte <!INITIALIZER_TYPE_MISMATCH!>=<!> 255
 
 fun Int.myPlus(other: Int): Int = this + other
+
+/* GENERATED_FIR_TAGS: additiveExpression, const, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+localProperty, multiplicativeExpression, nullableType, propertyDeclaration, thisExpression, unsignedLiteral, vararg */

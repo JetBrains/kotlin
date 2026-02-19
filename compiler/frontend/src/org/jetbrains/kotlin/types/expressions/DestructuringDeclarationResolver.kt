@@ -60,6 +60,10 @@ class DestructuringDeclarationResolver(
 
         TrailingCommaChecker.check(destructuringDeclaration.trailingComma, context.trace, context.languageVersionSettings)
 
+        if (destructuringDeclaration.hasSquareBrackets() || destructuringDeclaration.isFullForm) {
+            context.trace.report(Errors.UNSUPPORTED.on(destructuringDeclaration, "This destructuring syntax is not supported in K1."))
+        }
+
         return result
     }
 

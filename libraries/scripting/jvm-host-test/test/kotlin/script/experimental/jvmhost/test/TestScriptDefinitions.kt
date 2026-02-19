@@ -31,6 +31,12 @@ abstract class ScriptWithProvidedProperties
 @KotlinScript(fileExtension = "withreceiver.kts", compilationConfiguration = ImplicitReceiverConfiguration::class)
 abstract class ScriptWithImplicitReceiver
 
+@KotlinScript(
+    fileExtension = "withconflictingparameter.kts",
+    compilationConfiguration = ConflictingPropertiesConfiguration::class,
+)
+abstract class ScriptWithConflictingConstructorParameter(val conflictingVariable1: String, val conflictingVariable2: Int)
+
 object ReceiverAndPropertiesConfiguration : ScriptCompilationConfiguration(
     {
         updateClasspath(classpathFromClass<ScriptWithBoth>())
@@ -57,14 +63,23 @@ object ImplicitReceiverConfiguration : ScriptCompilationConfiguration(
     }
 )
 
+object ConflictingPropertiesConfiguration : ScriptCompilationConfiguration(
+    {
+        updateClasspath(classpathFromClass<ScriptWithConflictingConstructorParameter>())
+        defaultImports("kotlin.script.experimental.jvmhost.test.forScript.conflicts.*")
+    }
+)
+
 class ImplicitReceiverClass(val receiverString: String)
 
-inline fun <reified T : Any> evalString(
+internal inline fun <reified T : Any> evalString(
     source: String,
     noinline configure: ScriptEvaluationConfiguration.Builder.() -> Unit
 ): ResultWithDiagnostics<EvaluationResult> {
     val actualConfiguration = createJvmCompilationConfigurationFromTemplate<T>()
-    return BasicJvmScriptingHost()
-        .eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
+    val host =
+        if (isRunningTestOnK2) BasicJvmScriptingHost()
+        else BasicJvmScriptingHost.createLegacy()
+    return host.eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -31,7 +32,7 @@ private fun IrType.withNullability(newNullability: Boolean): IrType =
         else -> this
     }
 
-private fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
+fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
     val requiredNullability = if (newNullability) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.DEFINITELY_NOT_NULL
     return if (nullability == requiredNullability)
         this
@@ -48,7 +49,7 @@ private fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType 
         }
 }
 
-fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
+fun IrType.addAnnotations(newAnnotations: List<IrAnnotation>): IrType =
     if (newAnnotations.isEmpty())
         this
     else when (this) {
@@ -57,7 +58,7 @@ fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
                 annotations = annotations memoryOptimizedPlus newAnnotations
             }.buildSimpleType()
         is IrDynamicType ->
-            IrDynamicTypeImpl(null, annotations memoryOptimizedPlus newAnnotations, Variance.INVARIANT)
+            IrDynamicTypeImpl(annotations memoryOptimizedPlus newAnnotations, Variance.INVARIANT)
         else ->
             this
     }
@@ -69,7 +70,7 @@ fun IrType.removeAnnotations(predicate: (IrConstructorCall) -> Boolean): IrType 
                 annotations = annotations.memoryOptimizedFilterNot(predicate)
             }.buildSimpleType()
         is IrDynamicType ->
-            IrDynamicTypeImpl(null, annotations.memoryOptimizedFilterNot(predicate), Variance.INVARIANT)
+            IrDynamicTypeImpl(annotations.memoryOptimizedFilterNot(predicate), Variance.INVARIANT)
         else ->
             this
     }
@@ -81,7 +82,7 @@ fun IrType.removeAnnotations(): IrType =
                 annotations = emptyList()
             }.buildSimpleType()
         is IrDynamicType ->
-            IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+            IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
         else ->
             this
     }
@@ -168,20 +169,23 @@ private fun makeKotlinType(
     return classifier.descriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
 }
 
-val IrClassifierSymbol.defaultType: IrType
+val IrClassifierSymbol.defaultType: IrSimpleType
     get() = when (this) {
         is IrClassSymbol -> owner.defaultType
-        is IrTypeParameterSymbol -> owner.defaultType
+        is IrTypeParameterSymbol -> defaultType
         is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
-val IrTypeParameter.defaultType: IrSimpleType
+val IrTypeParameterSymbol.defaultType: IrSimpleType
     get() = IrSimpleTypeImpl(
-        symbol,
-        SimpleTypeNullability.NOT_SPECIFIED,
+        classifier = this,
+        nullability = SimpleTypeNullability.NOT_SPECIFIED,
         arguments = emptyList(),
         annotations = emptyList()
     )
+
+val IrTypeParameter.defaultType: IrSimpleType
+    get() = symbol.defaultType
 
 val IrClassSymbol.starProjectedType: IrSimpleType
     get() = IrSimpleTypeImpl(

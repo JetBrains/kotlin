@@ -6,17 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGetClassCallChecker
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 
 
-object FirJsModuleGetClassCallChecker : FirGetClassCallChecker() {
-    override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val callee = expression.argument.coneTypeOrNull?.toSymbol(context.session) ?: return
-        checkJsModuleUsage(callee, context, reporter, expression.source)
+object FirJsModuleGetClassCallChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirGetClassCall) {
+        val callee = expression.argument.resolvedType.toSymbol() ?: return
+        checkJsModuleUsage(callee, expression.source)
     }
 }

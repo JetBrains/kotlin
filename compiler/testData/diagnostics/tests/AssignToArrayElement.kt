@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 
 fun getArray(): Array<Int> = throw Exception()
 fun getList(): MutableList<Int> = throw Exception()
@@ -17,3 +18,6 @@ fun fn() {
         nullable[1] += 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

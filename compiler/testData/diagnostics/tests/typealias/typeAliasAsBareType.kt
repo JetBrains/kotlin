@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +LocalTypeAliases
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 typealias L<T> = List<T>
 typealias NL<T> = List<T>?
@@ -33,3 +35,7 @@ fun <T> testLocal(x: Any) {
     if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {}
     if (x is <!CANNOT_CHECK_FOR_ERASED!>CA<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, ifExpression, inProjection, isExpression,
+localClass, nullableType, outProjection, starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter */

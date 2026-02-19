@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: Int) {}
 
 interface A
@@ -17,3 +18,5 @@ fun test(c: C) {
     // Unresolved reference
     <!UNRESOLVED_REFERENCE!>baz<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, stringLiteral */

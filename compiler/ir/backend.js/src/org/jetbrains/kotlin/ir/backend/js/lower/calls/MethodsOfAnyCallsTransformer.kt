@@ -16,33 +16,34 @@ import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 import org.jetbrains.kotlin.name.Name
-
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
-    private val intrinsics = context.intrinsics
+    private val irBuiltIns = context.irBuiltIns
+    private val symbols = context.symbols
     private val nameToTransformer: Map<Name, (IrFunctionAccessExpression) -> IrExpression>
 
     init {
         nameToTransformer = hashMapOf()
         nameToTransformer.run {
-            put(Name.identifier("toString")) { call ->
+            put(OperatorNameConventions.TO_STRING) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsAnyToString, receiversAsArguments = true)
+                        irCall(call, symbols.jsAnyToString)
                     } else {
-                        irCall(call, intrinsics.jsToString, receiversAsArguments = true)
+                        irCall(call, symbols.jsToString)
                     }
                 } else {
                     call
                 }
             }
 
-            put(Name.identifier("hashCode")) { call ->
+            put(OperatorNameConventions.HASH_CODE) { call ->
                 if (call.symbol.owner.isFakeOverriddenFromAny()) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsGetObjectHashCode, receiversAsArguments = true)
+                        irCall(call, symbols.jsGetObjectHashCode)
                     } else {
-                        irCall(call, intrinsics.jsHashCode, receiversAsArguments = true)
+                        irCall(call, symbols.jsHashCode)
                     }
                 } else {
                     call
@@ -63,17 +64,14 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
 
     private fun shouldReplaceToStringWithRuntimeCall(call: IrFunctionAccessExpression): Boolean {
         val function = call.symbol.owner
-        if (function.valueParameters.isNotEmpty() && function.name.asString() != "toString" )
-            return false
-
-        if (function.extensionReceiverParameter != null)
+        if (function.name != OperatorNameConventions.TO_STRING || !function.hasShape(dispatchReceiver = true, regularParameters = 0))
             return false
 
         if (call is IrCall) {
             val superQualifierSymbol = call.superQualifierSymbol
             if (superQualifierSymbol != null &&
                 !superQualifierSymbol.owner.isInterface &&
-                superQualifierSymbol != intrinsics.anyClassSymbol) {
+                superQualifierSymbol != irBuiltIns.anyClass) {
                 return false
             }
         }

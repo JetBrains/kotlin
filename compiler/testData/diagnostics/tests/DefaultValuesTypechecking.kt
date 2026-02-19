@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val x = ""
 
 fun bar(x : Int = <!TYPE_MISMATCH!>""<!>, y : Int = x, z : String = <!TYPE_MISMATCH!>y<!>) {
@@ -36,3 +37,6 @@ fun boo(
     y: Int
 ) {
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localFunction, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

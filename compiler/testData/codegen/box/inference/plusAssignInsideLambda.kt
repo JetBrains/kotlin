@@ -1,5 +1,7 @@
+// NO_CHECK_LAMBDA_INLINING
 // WITH_STDLIB
 
+// FILE: lib.kt
 import kotlin.experimental.ExperimentalTypeInference
 
 interface SendChannel<in T> {
@@ -11,6 +13,7 @@ public fun <T> flux(block: suspend SendChannel<T>.() -> Unit) {}
 
 suspend inline fun <T> T.collect(action: (T) -> Unit) { action(this) }
 
+// FILE: main.kt
 fun test() {
     flux {
         var result = ""

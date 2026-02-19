@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun <R> myRun(b: () -> R): R = b()
 
@@ -12,3 +13,6 @@ fun foo(x: String?) {
 
     r.minus(1)
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

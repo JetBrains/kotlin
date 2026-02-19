@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop
 
@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -65,7 +62,7 @@ internal interface DescriptorToIrTranslationMixin {
                         it.toIrType()
                     }
                     irClass.generateAnnotations()
-                    irClass.createParameterDeclarations()
+                    irClass.createThisReceiverParameter()
                     builder(irClass)
                     createFakeOverrides(descriptor).forEach(irClass::addMember)
                 }
@@ -88,21 +85,30 @@ internal interface DescriptorToIrTranslationMixin {
     fun createConstructor(constructorDescriptor: ClassConstructorDescriptor): IrConstructor {
         val irConstructor = symbolTable.descriptorExtension.declareConstructor(constructorDescriptor) {
             with(constructorDescriptor) {
-                IrConstructorImpl(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, name, visibility,
-                    IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                symbolTable.irFactory.createConstructor(
+                        SYNTHETIC_OFFSET,
+                        SYNTHETIC_OFFSET,
+                        IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                        name,
+                        visibility,
+                        isInline,
+                        isExpect,
+                        constructorDescriptor.returnType.toIrType(),
+                        it,
+                        isPrimary,
+                        isEffectivelyExternal(),
                 )
             }
         }
-        irConstructor.valueParameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
+        irConstructor.parameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
             symbolTable.descriptorExtension.declareValueParameter(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED,
-                    valueParameterDescriptor,
+                    valueParameterDescriptor, IrParameterKind.Regular,
                     valueParameterDescriptor.type.toIrType()).also {
                 it.parent = irConstructor
+                it.kind = IrParameterKind.Regular
             }
         }
-        irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         irConstructor.generateAnnotations()
         return irConstructor
     }
@@ -127,11 +133,20 @@ internal interface DescriptorToIrTranslationMixin {
         val irFunction = symbolTable.declareSimpleFunctionWithOverrides(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, functionDescriptor)
         symbolTable.withScope(irFunction) {
             irFunction.returnType = functionDescriptor.returnType!!.toIrType()
-            irFunction.valueParameters +=  functionDescriptor.valueParameters.map {
-                symbolTable.descriptorExtension.declareValueParameter(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED, it, it.type.toIrType())
-            }
-            irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-                symbolTable.descriptorExtension.declareValueParameter(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED, it, it.type.toIrType())
+            val descriptorParameters =
+                    listOfNotNull(functionDescriptor.dispatchReceiverParameter).associateWith { IrParameterKind.DispatchReceiver } +
+                            functionDescriptor.contextReceiverParameters.associateWith { IrParameterKind.Context } +
+                            listOfNotNull(functionDescriptor.extensionReceiverParameter).associateWith { IrParameterKind.ExtensionReceiver } +
+                            functionDescriptor.valueParameters.associateWith { IrParameterKind.Regular }
+            irFunction.parameters += descriptorParameters.map { (descriptor, kind) ->
+                symbolTable.descriptorExtension.declareValueParameter(
+                        SYNTHETIC_OFFSET,
+                        SYNTHETIC_OFFSET,
+                        IrDeclarationOrigin.DEFINED,
+                        descriptor,
+                        kind,
+                        descriptor.type.toIrType()
+                )
             }
             irFunction.generateAnnotations()
         }
@@ -140,8 +155,8 @@ internal interface DescriptorToIrTranslationMixin {
 
     private fun IrDeclaration.generateAnnotations() {
         annotations += descriptor.annotations.map {
-            typeTranslator.constantValueGenerator.generateAnnotationConstructorCall(it)
-                ?: error("Could not generate annotations for $it")
+            typeTranslator.constantValueGenerator.generateAnnotationCall(it)
+                    ?: error("Could not generate annotations for $it")
         }
     }
 }
@@ -182,5 +197,5 @@ internal fun IrSymbol.findCStructDescriptor(): ClassDescriptor? =
 
 internal fun DeclarationDescriptor.findCStructDescriptor(): ClassDescriptor? =
         parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull {
-            it.inheritsFromCStructVar() || it.annotations.hasAnnotation(RuntimeNames.managedType)
+            it.inheritsFromCStructVar()
         }

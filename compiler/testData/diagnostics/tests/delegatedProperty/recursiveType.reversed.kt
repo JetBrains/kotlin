@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 
 import kotlin.reflect.KProperty
@@ -15,3 +16,6 @@ class Delegate(i: Int) {
     return 1
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, starProjection */

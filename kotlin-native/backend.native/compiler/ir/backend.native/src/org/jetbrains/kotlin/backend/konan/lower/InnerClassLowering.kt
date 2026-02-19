@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.ConstructorDelegationKind
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.delegationKind
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,19 +22,22 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal class InnerClassesSupport(mapping: NativeMapping, private val irFactory: IrFactory) {
-    private val outerThisFields = mapping.outerThisFields
+private var IrClass.outerThisField: IrField? by irAttribute(copyByDefault = false)
 
-    fun getOuterThisField(innerClass: IrClass): IrField {
+internal class NativeInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
+    override fun getOuterThisField(innerClass: IrClass): IrField {
         require(innerClass.isInner) { "Expected an inner class: ${innerClass.render()}" }
-        return outerThisFields.getOrPut(innerClass) {
+        return innerClass::outerThisField.getOrSetIfNull {
             val outerClass = innerClass.parentClassOrNull ?: error("No containing class for inner class ${innerClass.render()}")
 
             irFactory.buildField {
@@ -53,6 +55,10 @@ internal class InnerClassesSupport(mapping: NativeMapping, private val irFactory
             }
         }
     }
+
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor = shouldNotBeCalled()
+
+    override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor = shouldNotBeCalled()
 }
 
 internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
@@ -176,7 +182,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
-            if (irConstructor.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER) {
+            if (irConstructor.delegationKind(context) == ConstructorDelegationKind.CALLS_SUPER) {
                 // Initializing constructor: initialize 'this.this$0' with '$outer'.
                 val blockBody = irConstructor.body as? IrBlockBody
                         ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")

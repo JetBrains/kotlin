@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 
 interface FirBase
 interface FirFunctionCall : FirBase
@@ -18,3 +19,6 @@ fun foo(statements: List<FirBase>, arguments: List<FirBase>, explicitReceiver: F
 
     return firstCalls
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, interfaceDeclaration, lambdaLiteral, localProperty,
+propertyDeclaration, thisExpression */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a.b
 
 class X {
@@ -17,3 +18,5 @@ class X {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localClass, nestedClass */

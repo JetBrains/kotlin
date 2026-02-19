@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See also KT-4285
 open class A {
     open fun foo(x: Int = 0) {}
@@ -30,3 +31,6 @@ class C: A() {
         bar(z)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral,
+multiplicativeExpression, override, tailrec */

@@ -7,25 +7,28 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
+import org.jetbrains.kotlin.utils.Printer
 
 internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
     val SYMBOL_RENDERER = Renderer<FirBasedSymbol<*>> {
+        val idRendererCreator = { ConeIdShortRenderer() }
         FirRenderer(
-            typeRenderer = ConeTypeRenderer(),
-            idRenderer = ConeIdShortRenderer(),
+            typeRenderer = ConeTypeRendererForReadability(preRenderedConstructors = null, idRendererCreator),
+            idRenderer = idRendererCreator(),
             classMemberRenderer = null,
             bodyRenderer = null,
             annotationRenderer = null,
             modifierRenderer = null,
             contractRenderer = null,
+            callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
         ).renderElementAsString(it.fir, trim = true)
+            // Write property accessors on the same line as the property
+            .run { replace(Printer.LINE_SEPARATOR, "") }
     }
 
     val INCOMPATIBILITY = Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<FirAnnotation> ->
@@ -49,6 +52,10 @@ internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
         return FirRenderer(
             typeRenderer = ConeTypeRenderer(),
             idRenderer = ConeIdShortRenderer(),
+            referencedSymbolRenderer = FirIdRendererBasedSymbolRenderer(),
+            resolvedNamedReferenceRenderer = FirResolvedNamedReferenceRenderer(),
+            resolvedQualifierRenderer = FirResolvedQualifierRenderer(),
+            getClassCallRenderer = FirGetClassCallRendererForReadability(),
         ).renderElementAsString(ann, trim = true)
     }
 }

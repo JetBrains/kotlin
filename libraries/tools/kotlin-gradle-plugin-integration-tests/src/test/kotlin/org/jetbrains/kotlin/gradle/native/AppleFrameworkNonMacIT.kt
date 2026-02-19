@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.junit.jupiter.api.DisplayName
@@ -47,6 +48,8 @@ class AppleFrameworkNonMacIT : KGPBaseTest() {
                 assertTasksSkipped(":shared:linkDebugFrameworkWatchosX64")
                 assertTasksSkipped(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
                 assertTasksSkipped(":shared:assembleSharedDebugXCFramework")
+
+                assertNoDiagnostic(KotlinToolingDiagnostics.XcodeVersionTooHighWarning)
             }
         }
     }

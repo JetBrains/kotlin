@@ -1,7 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: ANY
-//   IGNORE_REASON: new rules for supertypes matching are implemented only in K2
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM_IR
 // ISSUE: KT-59356
 
 // MODULE: common
@@ -16,11 +14,8 @@ fun commonBox(): String {
 }
 
 // MODULE: platform-jvm()()(common)
-// FILE: A_J.java
-public class A_J {}
-
 // FILE: B_J.java
-public class B_J extends A_J {
+public class B_J extends A {
     public String foo() { return "O"; }
 }
 
@@ -30,7 +25,6 @@ public class C2_J extends B_J {
 }
 
 // FILE: main.kt
-actual typealias A = A_J
 actual class C1 : B_J()
 actual typealias C2 = C2_J
 

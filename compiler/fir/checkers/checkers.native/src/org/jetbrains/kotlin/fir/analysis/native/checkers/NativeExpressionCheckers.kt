@@ -5,19 +5,24 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
-import FirNativeForwardDeclarationGetClassCallChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGetClassCallChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 
 object NativeExpressionCheckers : ExpressionCheckers() {
-    override val typeOperatorCallCheckers = setOf(
+    override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = setOf(
         FirNativeForwardDeclarationTypeOperatorChecker,
     )
-    override val getClassCallCheckers = setOf(
+    override val getClassCallCheckers: Set<FirGetClassCallChecker> = setOf(
         FirNativeForwardDeclarationGetClassCallChecker
     )
-    override val qualifiedAccessExpressionCheckers = setOf(
+    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
         FirNativeForwardDeclarationReifiedChecker
     )
+
+    override val functionCallCheckers: Set<FirFunctionCallChecker>
+        get() = setOf(
+            FirSuperCallWithDefaultsChecker,
+            FirNativeAtomicReferenceToPrimitiveCallChecker,
+            FirNativeAtomicArrayToPrimitiveCallChecker,
+            FirNativeIdentityHashCodeCallOnValueTypeObjectChecker,
+        )
 }

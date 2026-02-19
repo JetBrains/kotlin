@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A
 interface B
@@ -23,3 +24,6 @@ val l1: (A) -> Unit
         false -> { ::foo }
         else -> ::bar
     }
+
+/* GENERATED_FIR_TAGS: callableReference, comparisonExpression, functionDeclaration, functionalType, getter,
+ifExpression, integerLiteral, interfaceDeclaration, propertyDeclaration, whenExpression */

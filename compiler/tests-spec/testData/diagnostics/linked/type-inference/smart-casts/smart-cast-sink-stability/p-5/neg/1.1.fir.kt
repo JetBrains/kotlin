@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -25,7 +25,7 @@ class Case1() {
     fun foo(e: E) {
 
         if (e.plus != null) {
-            run { e <!PROPERTY_AS_OPERATOR!>+<!> 1 }
+            run { e <!NOT_FUNCTION_AS_OPERATOR!>+<!> 1 }
 
             /*
              [PROPERTY_AS_OPERATOR]  (ok)
@@ -33,7 +33,7 @@ class Case1() {
              [UNSAFE_OPERATOR_CALL]  (nok)
              Operator call corresponds to a dot-qualified call 'e.plus(1)' which is not allowed on a nullable receiver 'e'.
             */
-            e <!PROPERTY_AS_OPERATOR!>+<!> 1
+            e <!NOT_FUNCTION_AS_OPERATOR!>+<!> 1
 
             e.plus.invoke(1) //ok
         }

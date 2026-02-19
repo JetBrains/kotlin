@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
 
-import kotlin.wasm.internal.ExternalInterfaceType
-import kotlin.wasm.internal.getSimpleName
 import kotlin.wasm.internal.jsToKotlinStringAdapter
+import kotlin.wasm.internal.wasmGetObjectRtti
+import kotlin.wasm.internal.getQualifiedName
+import kotlin.wasm.internal.getSimpleName
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
@@ -15,21 +16,35 @@ import kotlin.wasm.internal.jsToKotlinStringAdapter
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
-public open class Throwable(open val message: String?, open val cause: kotlin.Throwable?) {
-    constructor(message: String?) : this(message, null)
+@OptIn(ExperimentalWasmJsInterop::class)
+public actual open class Throwable internal constructor(
+    public actual open val message: String?,
+    public actual open val cause: kotlin.Throwable?,
+    internal val jsError: JsError?
+) {
+    init {
+        if (jsError != null) {
+            jsError.name = getSimpleName(wasmGetObjectRtti(this))
+            jsError.kotlinException = toJsReference()
+        }
+    }
 
-    constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    public actual constructor(message: String?, cause: Throwable?) : this(message, cause, createJsError(message, cause?.jsError))
 
-    constructor() : this(null, null)
+    public actual constructor(message: String?) : this(message, null)
 
-    internal val jsStack: ExternalInterfaceType = captureStackTrace()
+    public actual constructor(cause: Throwable?) : this(cause?.toString(), cause)
+
+    public actual constructor() : this(null, null)
+
+    internal open val jsStack get() = jsError!!.stack
 
     private var _stack: String? = null
     internal val stack: String
         get() {
             var value = _stack
             if (value == null) {
-                value = jsToKotlinStringAdapter(jsStack).removePrefix("Error\n")
+                value = jsToKotlinStringAdapter(jsStack)
                 _stack = value
             }
 
@@ -43,10 +58,17 @@ public open class Throwable(open val message: String?, open val cause: kotlin.Th
      * followed by the exception message if it is not null.
      */
     public override fun toString(): String {
-        val s = getSimpleName(this.typeInfo)
-        return if (message != null) s + ": " + message.toString() else s
+        val s = getQualifiedName(wasmGetObjectRtti(this))
+        return if (message != null) "$s: $message" else s
     }
 }
 
-private fun captureStackTrace(): ExternalInterfaceType =
-    js("new Error().stack")
+internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
+    get() = this.suppressedExceptionsList
+    set(value) { this.suppressedExceptionsList = value }
+
+internal actual val Throwable.stack: String get() = this.stack
+
+@OptIn(ExperimentalWasmJsInterop::class)
+internal fun createJsError(message: String?, cause: JsError?): JsError =
+    js("new Error(message, { cause })")

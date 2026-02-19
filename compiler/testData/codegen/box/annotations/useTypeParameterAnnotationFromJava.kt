@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // FULL_JDK
 // JVM_TARGET: 1.8
+
 // FILE: A.java
 import java.util.List;
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JA.java
 public interface JA<E> {
     public E getFoo();
@@ -36,3 +37,6 @@ fun main(
     e2.foo
     e2.<!UNRESOLVED_REFERENCE!>bar<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaProperty, javaType, nullableType, override,
+typeParameter */

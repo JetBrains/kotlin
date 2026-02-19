@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package a
 
@@ -15,3 +16,5 @@ import a.*
 import b.*
 
 class Y : <!UNRESOLVED_REFERENCE!>X<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

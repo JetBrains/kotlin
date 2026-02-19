@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -27,12 +27,12 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
-    contract(contractBuilder(block))
+    <!CONTRACT_NOT_ALLOWED!>contract<!>(contractBuilder(block))
     return block()
 }
 
 // TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
-    contract(builder = contractBuilder(block))
+    <!CONTRACT_NOT_ALLOWED!>contract<!>(builder = contractBuilder(block))
     return block()
 }

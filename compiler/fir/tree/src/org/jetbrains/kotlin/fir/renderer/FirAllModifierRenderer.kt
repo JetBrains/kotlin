@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 
 class FirAllModifierRenderer : FirModifierRenderer() {
     override fun renderModifiers(memberDeclaration: FirMemberDeclaration) {
-        if (memberDeclaration !is FirProperty || !memberDeclaration.isLocal) {
+        if (memberDeclaration !is FirProperty ||
+            memberDeclaration.symbol !is FirLocalPropertySymbol && memberDeclaration.visibility != Visibilities.Local
+        ) {
             renderModifier(memberDeclaration.visibility.asString())
             renderModifier(memberDeclaration.modalityAsString())
         }
@@ -52,6 +56,10 @@ class FirAllModifierRenderer : FirModifierRenderer() {
 
         if (memberDeclaration.isInline) {
             renderModifier("inline")
+        }
+        @OptIn(SuspiciousValueClassCheck::class)
+        if (memberDeclaration is FirClass && memberDeclaration.isValue) {
+            renderModifier("value")
         }
         if (memberDeclaration.isOperator) {
             renderModifier("operator")

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 interface Either<out A, out B>
 interface Left<out A>: Either<A, Nothing>
@@ -17,3 +18,7 @@ fun _as_right(e: Either<C1, C2>): Any? {
     val v = e as? Right
     return checkSubtype<Right<C2>?>(v)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, localProperty, nullableType, out, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

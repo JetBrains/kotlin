@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 class A {
@@ -49,3 +50,6 @@ fun f() {
     O.O
     O.A()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, nestedClass,
+objectDeclaration, propertyDeclaration */

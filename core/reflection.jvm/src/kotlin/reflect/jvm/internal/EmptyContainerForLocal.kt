@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
+import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmFunction
+import kotlin.metadata.KmProperty
 import kotlin.reflect.KCallable
 
 internal object EmptyContainerForLocal : KDeclarationContainerImpl() {
@@ -29,6 +32,15 @@ internal object EmptyContainerForLocal : KDeclarationContainerImpl() {
     override val members: Collection<KCallable<*>>
         get() = fail()
 
+    override val functionsMetadata: Collection<KmFunction>
+        get() = fail()
+
+    override val propertiesMetadata: Collection<KmProperty>
+        get() = fail()
+
+    override val constructorsMetadata: Collection<KmConstructor>
+        get() = fail()
+
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = fail()
 
@@ -36,7 +48,9 @@ internal object EmptyContainerForLocal : KDeclarationContainerImpl() {
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> = fail()
 
-    override fun getLocalProperty(index: Int): PropertyDescriptor? = null
+    override fun getLocalPropertyDescriptor(index: Int): PropertyDescriptor? = null
+
+    override fun getLocalPropertyMetadata(index: Int): KmProperty? = null
 
     private fun fail(): Nothing = throw KotlinReflectionInternalError(
         "Introspecting local functions, lambdas, anonymous functions, local variables and typealiases is not yet fully supported in Kotlin reflection"

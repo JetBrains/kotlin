@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 annotation class B
 
@@ -14,3 +15,6 @@ class A {
 <!WRONG_MODIFIER_TARGET!>annotation<!> val x = 0
 
 <!WRONG_MODIFIER_TARGET!>annotation<!> var y = 0
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+interfaceDeclaration, objectDeclaration, propertyDeclaration */

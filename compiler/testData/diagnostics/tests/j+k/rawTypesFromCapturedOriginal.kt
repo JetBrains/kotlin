@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-56616
@@ -35,3 +37,6 @@ fun StubBasedPsiElement<*>.foo(): KtStringTemplateExpression? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, javaProperty,
+javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, starProjection, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // ALLOW_KOTLIN_PACKAGE
@@ -21,3 +22,5 @@ class C: MutableIterator<Int> {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, operator, override */

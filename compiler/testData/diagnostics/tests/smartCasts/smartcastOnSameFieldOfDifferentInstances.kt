@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // See KT-27260
 
 class A(val x: String?) {
@@ -10,3 +11,6 @@ class A(val x: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, comparisonExpression, equalityExpression, functionDeclaration,
+integerLiteral, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, whenExpression */

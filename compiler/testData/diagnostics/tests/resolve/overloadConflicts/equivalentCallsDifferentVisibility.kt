@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: lib
 // FILE: lib.kt
@@ -12,3 +13,5 @@ private val lock = "2"
 fun test() {
     lock
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration, stringLiteral */

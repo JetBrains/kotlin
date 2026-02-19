@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See also KT-7186 and forEachSafe.kt
 // Custom `forEach` has no contract but the lambda is inline (not crossinline) so smart cast is safe
 
@@ -14,3 +15,7 @@ fun max(a: IntArray): Int? {
     }
     return maxI
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, equalityExpression, forLoop,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, rangeExpression, smartcast, thisExpression */

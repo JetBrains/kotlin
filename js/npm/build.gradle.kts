@@ -1,7 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
-  id("com.github.node-gradle.node") version "5.0.0"
+  alias(libs.plugins.gradle.node)
   base
 }
 
@@ -31,19 +31,6 @@ fun Project.createCopyTemplateTask(templateName: String): Copy {
   }
 }
 
-fun Project.createCopyLibraryFilesTask(libraryName: String, fromJar: String): Copy {
-  return task<Copy>("copy-$libraryName-library") {
-    from(zipTree(fromJar).matching {
-      include("$libraryName.js")
-      include("$libraryName.meta.js")
-      include("$libraryName.js.map")
-      include("$libraryName/**")
-    })
-
-    into("$deployDir/$libraryName")
-  }
-}
-
 fun Project.createPublishToNpmTask(templateName: String): NpmTask {
   return task<NpmTask>("publish-$templateName-to-npm") {
     val deployDir = File("$deployDir/$templateName")
@@ -67,12 +54,6 @@ fun sequential(first: Task, vararg tasks: Task): Task {
   return tasks.last()
 }
 
-val publishKotlinJs = sequential(
-        createCopyTemplateTask("kotlin"),
-        createCopyLibraryFilesTask("kotlin", "$kotlincDir/lib/kotlin-stdlib-js.jar"),
-        createPublishToNpmTask("kotlin")
-)
-
 val publishKotlinCompiler = sequential(
   createCopyTemplateTask("kotlin-compiler"),
   task<Copy>("copy-kotlin-compiler") {
@@ -85,12 +66,6 @@ val publishKotlinCompiler = sequential(
   createPublishToNpmTask("kotlin-compiler")
 )
 
-val publishKotlinTest = sequential(
-        createCopyTemplateTask("kotlin-test"),
-        createCopyLibraryFilesTask("kotlin-test", "$kotlincDir/lib/kotlin-test-js.jar"),
-        createPublishToNpmTask("kotlin-test")
-)
-
 task("publishAll") {
-    dependsOn(publishKotlinJs, publishKotlinTest, publishKotlinCompiler)
+    dependsOn(publishKotlinCompiler)
 }

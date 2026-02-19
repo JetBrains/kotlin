@@ -6,21 +6,28 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmNamesChecker
 import org.jetbrains.kotlin.fir.declarations.*
 
-object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val source = declaration.source
         when (declaration) {
-            is FirRegularClass -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirSimpleFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirValueParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirRegularClass -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirNamedFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirTypeParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirValueParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirFile -> {
+                declaration.packageDirective.packageFqName.pathSegments().forEach {
+                    FirJvmNamesChecker.checkNameAndReport(it, declaration.packageDirective.source)
+                }
+            }
             else -> return
         }
     }

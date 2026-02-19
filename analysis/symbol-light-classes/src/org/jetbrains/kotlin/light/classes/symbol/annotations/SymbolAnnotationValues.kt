@@ -42,7 +42,7 @@ internal class SymbolPsiArrayInitializerMemberValue(
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ SymbolPsiArrayInitializerMemberValue::class.java,
             /* vclass = */ List::class.java,
-            /* fieldName = */ "cachedArguments",
+            /* fieldName = */ SymbolPsiArrayInitializerMemberValue::cachedArguments.name,
         )
     }
 }
@@ -71,11 +71,20 @@ internal class SymbolPsiClassObjectAccessExpression(
 ) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
     override fun getType(): PsiType = psiType
     override fun getOperand(): PsiTypeElement = LightTypeElementWithParent(this, type)
-    override fun getText(): String = type.getCanonicalText(false) + ".class"
+    override fun getText(): String = kotlinOrigin?.text ?: (type.getCanonicalText(false) + ".class")
 }
 
-private class LightTypeElementWithParent(private val lightParent: PsiElement, type: PsiType) : LightTypeElement(lightParent.manager, type) {
+internal class LightTypeElementWithParent(
+    private val lightParent: PsiElement,
+    type: PsiType,
+) : LightTypeElement(lightParent.manager, type) {
     override fun getParent(): PsiElement = lightParent
+
+    /**
+     * Avoids delegating to [LightTypeElement.isValid][com.intellij.psi.impl.light.LightTypeElement.isValid]
+     * to prevent infinite recursion between the type element and the validity check of its annotations.
+     */
+    override fun isValid(): Boolean = lightParent.isValid
 }
 
 internal class SymbolPsiReference(
@@ -109,8 +118,11 @@ internal class SymbolPsiReference(
 internal class SymbolPsiLiteral(
     override val kotlinOrigin: KtElement?,
     lightParent: PsiElement,
-    private val psiLiteral: PsiLiteral,
-) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteral {
+    private val psiLiteral: PsiLiteralExpression,
+) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteralExpression {
     override fun getValue(): Any? = psiLiteral.value
-    override fun getText(): String = psiLiteral.text
+    override fun getText(): String = kotlinOrigin?.text ?: psiLiteral.text
+    override fun getType(): PsiType? = psiLiteral.type
+    override fun getReference(): PsiReference? = references.firstOrNull()
+    override fun getReferences(): Array<out PsiReference> = kotlinOrigin?.references ?: PsiReference.EMPTY_ARRAY
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-389 Wrong type inference for varargs etc.
 
@@ -25,3 +26,5 @@ fun test() {
     food(1.0, 2.0, 3.0)
     foof(1.0.toFloat(), 2.0.toFloat(), 3.0.toFloat())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, outProjection, vararg */

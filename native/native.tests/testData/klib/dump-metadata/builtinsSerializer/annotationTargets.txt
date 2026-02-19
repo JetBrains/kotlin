@@ -1,15 +1,76 @@
-    @anno(x = "top level class") class C1 @anno(x = "constructor") constructor() {
-        @anno(x = "member property") val p3: Nothing?
-        @anno(x = "member extension property") val Int.v4: Int
-        @anno(x = "member function") fun f3(@anno(x = "member function parameter") p: Int)
-        @anno(x = "member extension function") fun String.f4()
-        @anno(x = "nested class") class C2 constructor()
-        @anno(x = "companion object") companion object
+library {
+  // module name: <annotationTargets.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C1.C2
+    // class name: test/C1.Companion
+    // class name: test/anno
+
+    @test/anno(x = "top level class")
+    public final class test/C1 : kotlin/Any {
+
+      @test/anno(x = "constructor")
+      public constructor()
+
+      @test/anno(x = "member function")
+      public final fun f3(@test/anno(x = "member function parameter") p: kotlin/Int): kotlin/Unit
+
+      @test/anno(x = "member extension function")
+      public final fun kotlin/String.f4(): kotlin/Unit
+
+      @test/anno(x = "member property")
+      public final val p3: kotlin/Nothing?
+        public final get
+
+      @test/anno(x = "member extension property")
+      public final val kotlin/Int.v4: kotlin/Int
+        public final /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: C2
+
+      // nested class: Companion
     }
-    annotation class anno constructor(x: String) : Annotation {
-        val x: String
+
+    @test/anno(x = "nested class")
+    public final class test/C1.C2 : kotlin/Any {
+
+      public constructor()
     }
-    @anno(x = "top level function") fun f1(@anno(x = "top level function parameter") p: Int)
-    @anno(x = "extension function") fun Long.f2(@anno(x = "extension function parameter") p: Int)
-    @anno(x = "top level property") val p1: Nothing?
-    @anno(x = "extension property") val Double.p2: Double
+
+    @test/anno(x = "companion object")
+    public final companion object test/C1.Companion : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final annotation class test/anno : kotlin/Annotation {
+
+      public constructor(x: kotlin/String)
+
+      public final val x: kotlin/String
+        public final get
+    }
+
+    package {
+
+      @test/anno(x = "top level function")
+      public final fun f1(@test/anno(x = "top level function parameter") p: kotlin/Int): kotlin/Unit
+
+      @test/anno(x = "extension function")
+      public final fun kotlin/Long.f2(@test/anno(x = "extension function parameter") p: kotlin/Int): kotlin/Unit
+
+      @test/anno(x = "top level property")
+      public final val p1: kotlin/Nothing?
+        public final get
+
+      @test/anno(x = "extension property")
+      public final val kotlin/Double.p2: kotlin/Double
+        public final /* non-default */ get
+    }
+  }
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class AnyVisitor {
     abstract fun visit(arg: Wrapper)
 }
@@ -22,3 +23,5 @@ fun foo(wrapper: Wrapper) = buildSet {
     }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+lambdaLiteral, override, primaryConstructor, propertyDeclaration, thisExpression */

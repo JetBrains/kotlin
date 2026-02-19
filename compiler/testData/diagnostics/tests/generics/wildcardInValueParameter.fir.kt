@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
 // FILE: JavaClass.java
 public class JavaClass {
@@ -12,3 +13,5 @@ fun foo() {
     JavaClass().bar(<!ARGUMENT_TYPE_MISMATCH!>Any()<!>)
     JavaClass().bar("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

@@ -1,13 +1,17 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-55286
 
 annotation class Deprecated<T>
 
 open class Base(
-    @Deprecated<Nested> val a: String,
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Deprecated<Nested><!> val a: String,
 ) {
     class Nested
 }
 
 class Derived(
-    @Deprecated<Nested> val b: String,
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Deprecated<Nested><!> val b: String,
 ) : Base("")
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nestedClass, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter */

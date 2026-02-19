@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
@@ -36,3 +37,5 @@ public class JavaClass {
         return true;
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, javaProperty, javaType */

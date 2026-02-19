@@ -1,4 +1,3 @@
-
 class SimpleClass(val s: String) {
     fun foo() = s
 }

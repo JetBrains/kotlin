@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: J.java
 
@@ -24,3 +25,5 @@ fun test1() {
 fun test2() {
     throw J.staticJ
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, nullableType */

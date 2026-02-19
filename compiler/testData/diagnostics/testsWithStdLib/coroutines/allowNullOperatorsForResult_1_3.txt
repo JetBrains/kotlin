@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ r: kotlin.Result<kotlin.Int>?): kotlin.Unit

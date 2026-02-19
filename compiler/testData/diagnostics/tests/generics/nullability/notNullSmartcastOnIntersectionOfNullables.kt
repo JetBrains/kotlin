@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A
 interface B {
@@ -15,3 +16,6 @@ fun test(a: A?, b: B?) {
         <!DEBUG_INFO_SMARTCAST!>c<!>.test()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+intersectionType, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

@@ -1,0 +1,2 @@
+KtTypeReference: I
+KaType: I: Unresolved type for I

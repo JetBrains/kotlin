@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // ISSUE: KT-55691
 
@@ -11,3 +12,5 @@ fun main() {
     // materialize's type argument is inferred to `Nothing?` both in K1 and K2
     select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>materialize()<!>, null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, typeParameter */

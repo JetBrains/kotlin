@@ -39,7 +39,7 @@ interface CompileService : Remote {
     }
 
     companion object {
-        val NO_SESSION: Int = 0
+        const val NO_SESSION: Int = 0
     }
 
     sealed class CallResult<out R> : Serializable {
@@ -124,6 +124,19 @@ interface CompileService : Remote {
             servicesFacade: CompilerServicesFacadeBase,
             compilationResults: CompilationResults?
     ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun compile(
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        compilationResults: CompilationResults?,
+        compilationId: Int?,
+    ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun cancelCompilation(sessionId: Int, compilationId: Int): CallResult<Nothing>
 
     @Throws(RemoteException::class)
     fun classesFqNamesByFiles(

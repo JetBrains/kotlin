@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See also KT-10992: we should have no errors for all unsafe hashCode() calls
 
 fun foo(arg: Any?) {
@@ -15,3 +16,5 @@ fun gav(arg: Any?) {
     arg as? String ?: return
     arg.length
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Tests for KT-13597 (val assignment inside local object in constructor)
 
 class Test {
@@ -65,3 +66,7 @@ class Test5 {
         this.y = y
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+init, lambdaLiteral, localProperty, nullableType, propertyDeclaration, secondaryConstructor, stringLiteral,
+thisExpression, typeParameter */

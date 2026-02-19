@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 object A
 
 object B {
@@ -6,5 +7,5 @@ object B {
 }
 
 fun B.test() {
-    val (x, y) = A
+    val [x, y] = A
 }

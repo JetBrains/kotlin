@@ -31,3 +31,8 @@ val IdeScriptCompilationConfigurationKeys.dependenciesSources by PropertiesColle
 
 val IdeScriptCompilationConfigurationKeys.acceptedLocations
         by PropertiesCollection.key(listOf(ScriptAcceptedLocation.Everywhere))
+
+/**
+ * The name of the generated field, that will contain intermediate evaluation results, provided by power-assert
+ */
+val ScriptCompilationConfigurationKeys.explainField by PropertiesCollection.key<String?>(defaultValue = null)

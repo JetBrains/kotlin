@@ -1,5 +1,6 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseReturnsEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ReadDeserializedContracts +UseReturnsEffect
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 fun testCheckSmartcast(x: Any?) {
     check(x is String)
@@ -31,3 +32,5 @@ fun testCheckNotNull(x: Int?) {
     checkNotNull(x)
     <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, stringLiteral */

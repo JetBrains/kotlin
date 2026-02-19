@@ -1,0 +1,202 @@
+FILE: localAnnotations.kt
+    public? final? fun foo(): R|kotlin/Unit| {
+        @Anno1() lval a: <implicit> = @Anno2() IntegerLiteral(1)
+        lval b: <implicit> = @AnonymousFunction() fun <anonymous>(@AnonymousParameter() a: @AnonymousParameterType() Int): R|kotlin/Unit| <inline=Unknown>  {
+            @Anno() foo#()
+        }
+
+        @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+            @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                }
+
+            }
+
+        }
+
+        @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+            public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
+                super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+            }
+
+            private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+            @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
+                    super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                }
+
+                private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                @Anno1() public? final? val a: <implicit> = @Anno2() IntegerLiteral(1)
+                    public? [ContainingClassKey=LocalNested] get(): <implicit>
+
+                public? final? val b: <implicit> = @AnonymousFunction() fun <anonymous>(@AnonymousParameter() a: @AnonymousParameterType() Int): R|kotlin/Unit| <inline=Unknown>  {
+                    @Anno() foo#()
+                }
+
+                    public? [ContainingClassKey=LocalNested] get(): <implicit>
+
+                @Anno() public? final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                    @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                        @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                        }
+
+                    }
+
+                }
+
+                @Anno() local final? [ContainingClassKey=LocalNested, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                    public? [ContainingClassKey=Local] constructor(): R|<local>/Local.LocalNested.Local| {
+                        super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                    }
+
+                    private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                    @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                        public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested.Local.LocalNested| {
+                            super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                        }
+
+                        private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                    }
+
+                    @Fun() public? final? fun localMember(): @FunType() Int {
+                        @Anno1() lval a: <implicit> = @Anno2() IntegerLiteral(1)
+                        lval b: <implicit> = @AnonymousFunction() fun <anonymous>(@AnonymousParameter() a: @AnonymousParameterType() Int): R|kotlin/Unit| <inline=Unknown>  {
+                            @Anno() foo#()
+                        }
+
+                        @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                            @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                                @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                                }
+
+                            }
+
+                        }
+
+                        @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                            public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
+                                super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                            }
+
+                            private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                            @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                                public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
+                                    super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                                }
+
+                                private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                            }
+
+                            @Fun() public? final? fun localMember(): @FunType() Int {
+                            }
+
+                            @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
+                                @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
+                                @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+
+                        }
+
+                    }
+
+                    @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
+                        @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
+                        @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+
+                }
+
+            }
+
+            @Fun() public? final? fun localMember(): @FunType() Int {
+                @Anno1() lval a: <implicit> = @Anno2() IntegerLiteral(1)
+                lval b: <implicit> = @AnonymousFunction() fun <anonymous>(@AnonymousParameter() a: @AnonymousParameterType() Int): R|kotlin/Unit| <inline=Unknown>  {
+                    @Anno() foo#()
+                }
+
+                @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                    @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                        @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                        }
+
+                    }
+
+                }
+
+                @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                    public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
+                        super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                    }
+
+                    private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                    @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                        public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
+                            super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                        }
+
+                        private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                    }
+
+                    @Fun() public? final? fun localMember(): @FunType() Int {
+                    }
+
+                    public? final? val localProperty: @PropType() String
+                        public? [ContainingClassKey=Local] get(): @PropType() String {
+                            @Anno1() lval a: <implicit> = @Anno2() IntegerLiteral(1)
+                            lval b: <implicit> = @AnonymousFunction() fun <anonymous>(@AnonymousParameter() a: @AnonymousParameterType() Int): R|kotlin/Unit| <inline=Unknown>  {
+                                @Anno() foo#()
+                            }
+
+                            @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                                @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                                    @Anno() local final? fun boo(@Anno() a: @Anno() Int): @Anno() Int {
+                                    }
+
+                                }
+
+                            }
+
+                            @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                                public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
+                                    super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                                }
+
+                                private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                                @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                                    public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
+                                        super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
+                                    }
+
+                                    private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
+
+                                }
+
+                                @Fun() public? final? fun localMember(): @FunType() Int {
+                                }
+
+                                @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
+                                    @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
+                                    @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+
+                            }
+
+                        }
+
+                }
+
+            }
+
+            @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
+                @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
+                @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+
+        }
+
+    }

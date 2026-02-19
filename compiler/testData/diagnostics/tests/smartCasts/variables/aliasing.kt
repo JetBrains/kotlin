@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
 // SKIP_TXT
 
 fun test() {
@@ -82,3 +84,6 @@ fun test3() {
         c.<!UNRESOLVED_REFERENCE!>length<!> // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

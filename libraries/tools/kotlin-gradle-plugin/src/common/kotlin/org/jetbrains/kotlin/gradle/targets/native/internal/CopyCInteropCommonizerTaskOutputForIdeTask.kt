@@ -11,17 +11,19 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.utils.kotlinMetadataDir
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
 internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
-    private val commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
+    commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
 ) : AbstractCInteropCommonizerTask() {
 
     @get:IgnoreEmptyDirectories
@@ -32,20 +34,33 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
         commonizeCInteropTask.map { it.allOutputDirectories }
 
     @get:OutputDirectory
-    override val outputDirectory: File = project.rootDir.resolve(".gradle/kotlin/commonizer")
+    override val outputDirectory: File = project.kotlinMetadataDir()
+        .resolve("commonizer")
         .resolve(project.path.removePrefix(":").replace(":", "/"))
 
     @get:Internal
-    val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+    val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
+
+    private val allInteropGroups: MutableList<Pair<CInteropCommonizerGroup, File>> = mutableListOf()
+
+    init {
+        val commonizerTask = commonizeCInteropTask.get()
+        project.launch {
+            commonizerTask.allInteropGroups
+                .await()
+                .forEach { group ->
+                    allInteropGroups += group to commonizerTask.outputDirectory(group)
+                }
+        }
+    }
 
     @TaskAction
     protected fun copy() {
         val metricReporter = metrics.get()
         addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
             outputDirectory.mkdirs()
-            for (group in commonizeCInteropTask.get().allInteropGroups.getOrThrow()) {
-                val source = commonizeCInteropTask.get().outputDirectory(group)
+            for ((group, source) in allInteropGroups) {
                 if (!source.exists()) continue
                 val target = outputDirectory(group)
                 if (target.exists()) target.deleteRecursively()

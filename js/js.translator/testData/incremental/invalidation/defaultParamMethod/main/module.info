@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : m.0.kt -> m.kt
+    added file: m.kt, A.kt, B.kt, crossUsage2.kt, usage.kt, usage2.kt
+STEP 1:
+    modifications:
+        U : m.1.kt -> m.kt
+    updated exports: usage.kt
+    modified ir: m.kt
+STEP 2:
+    modifications:
+        U : A.kt -> C.kt

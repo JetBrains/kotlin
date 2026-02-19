@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Incubating
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.FileTreeElement
-import org.gradle.api.file.RegularFile
+import org.gradle.api.file.*
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -19,53 +17,89 @@ import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
-import org.gradle.process.internal.ExecHandle
-import org.gradle.process.internal.ExecHandleFactory
+import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BUNDLE_SIZE
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
-import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.utils.injected
-import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Generates webpack configuration, then runs webpack.
+ *
+ * The configuration is created from the options set in
+ * [org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig].
+ *
+ * The task either bundles the browser application
+ * or hosts the browser application using the webpack dev server.
+ *
+ * For more information about how Kotlin JS and Wasm use Webpack, see
+ * https://kotl.in/js-project-setup/webpack-bundling
+ *
+ * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+ */
 @CacheableTask
 abstract class KotlinWebpack
 @Inject
-constructor(
+internal constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsCompilation,
-    private val objects: ObjectFactory
+    final override val compilation: KotlinJsIrCompilation,
+    private val objects: ObjectFactory,
+    private val execOps: ExecOperations,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
-    @Transient
-    private val nodeJs = project.rootProject.kotlinNodeJsExtension
-    private val versions = nodeJs.versions
-    private val rootPackageDir by lazy { nodeJs.rootPackageDir }
+
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
+    constructor(
+        compilation: KotlinJsIrCompilation,
+    ) : this(
+        compilation = throw UnsupportedOperationException(),
+        objects = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
+    )
+
+    @get:Internal
+    internal abstract val versions: Property<NpmVersions>
+
+    @get:Internal
+    internal val rootPackageDir: Property<Directory> = project.objects.directoryProperty()
 
     private val npmProject = compilation.npmProject
 
     override val rules: KotlinWebpackRulesContainer =
         project.objects.webpackRulesContainer()
 
-    @get:Inject
-    open val execHandleFactory: ExecHandleFactory
+    @get:Internal
+    @Deprecated(
+        "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property. Scheduled for removal in Kotlin 2.4.",
+        ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("unused")
+    open val execHandleFactory: Nothing
         get() = injected
 
-    private val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+    private val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(BuildMetricsReporterImpl())
 
     @Suppress("unused")
@@ -73,12 +107,18 @@ constructor(
     val compilationId: String by lazy {
         compilation.let {
             val target = it.target
-            target.project.path + "@" + target.name + ":" + it.compilationPurpose
+            target.project.path + "@" + target.name + ":" + it.compilationName
         }
     }
 
     @Input
     var mode: Mode = Mode.DEVELOPMENT
+
+    @get:Internal
+    internal abstract val getIsWasm: Property<Boolean>
+
+    @get:Internal
+    internal abstract val npmToolingEnvDir: DirectoryProperty
 
     @get:Internal
     abstract val inputFilesDirectory: DirectoryProperty
@@ -95,18 +135,18 @@ constructor(
     @get:NormalizeLineEndings
     val inputFiles: FileTree
         get() = objects.fileTree()
-            // in webpack.config.js there is path relative to npmProjectDir (kotlin/<module>.js).
-            // And we need have relative path in build cache
-            // That's why we use npmProjectDir with filter instead of just inputFilesDirectory,
-            // if we would use inputFilesDirectory, we will get in cache just file names,
-            // and if directory is changed to kotlin2, webpack config will be invalid.
-            .from(npmProjectDir)
-            .matching {
-                it.include { element: FileTreeElement ->
-                    val inputFilesDirectory = inputFilesDirectory.get().asFile
-                    element.file == inputFilesDirectory ||
-                            element.file.parentFile == inputFilesDirectory
-                }
+            .let { fileTree ->
+                // in webpack.config.js there is path relative to npmProjectDir (kotlin/<module>.js).
+                // And we need have relative path in build cache
+                // That's why we use npmProjectDir with filter instead of just inputFilesDirectory,
+                // if we would use inputFilesDirectory, we will get in cache just file names,
+                // and if directory is changed to kotlin2, webpack config will be invalid.
+                fileTree.from(npmProjectDir)
+                    .matching {
+                        it.include { element: FileTreeElement ->
+                            this.inputFilesDirectory.get().asFile.isParentOf(element.file)
+                        }
+                    }
             }
 
     @get:Input
@@ -119,7 +159,7 @@ constructor(
         }
 
     init {
-        onlyIf {
+        this.onlyIf {
             entry.get().asFile.exists()
         }
     }
@@ -135,11 +175,15 @@ constructor(
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = project.archivesName.orNull,
         libraryTarget = KotlinWebpackOutput.Target.UMD,
-        globalObject = "this"
+        clean = true,
     )
 
     @get:Internal
-    @Deprecated("Use `outputDirectory` instead", ReplaceWith("outputDirectory"))
+    @Deprecated(
+        "Use `outputDirectory` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("outputDirectory"),
+        level = DeprecationLevel.ERROR
+    )
     var destinationDirectory: File
         get() = outputDirectory.asFile.get()
         set(value) {
@@ -151,7 +195,11 @@ constructor(
     abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
-    @Deprecated("Use `mainOutputFileName` instead", ReplaceWith("mainOutputFileName"))
+    @Deprecated(
+        "Use `mainOutputFileName` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("mainOutputFileName"),
+        level = DeprecationLevel.ERROR
+    )
     var outputFileName: String
         get() = mainOutputFileName.get()
         set(value) {
@@ -162,12 +210,17 @@ constructor(
     abstract val mainOutputFileName: Property<String>
 
     @get:Internal
-    @Deprecated("Use `mainOutputFile` instead", ReplaceWith("mainOutputFile"))
+    @Deprecated(
+        "Use `mainOutputFile` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("mainOutputFile"),
+        level = DeprecationLevel.ERROR
+    )
     open val outputFile: File
         get() = mainOutputFile.get().asFile
 
     @get:Internal
-    val mainOutputFile: Provider<RegularFile> = objects.providerWithLazyConvention { outputDirectory.file(mainOutputFileName) }.flatMap { it }
+    val mainOutputFile: Provider<RegularFile> =
+        objects.providerWithLazyConvention { outputDirectory.file(mainOutputFileName) }.flatMap { it }
 
     private val projectDir = project.projectDir
 
@@ -178,6 +231,9 @@ constructor(
     @get:InputDirectory
     open val configDirectory: File?
         get() = projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
+
+    @Input
+    var debug: Boolean = false
 
     @Input
     var bin: String = "webpack/bin/webpack.js"
@@ -193,7 +249,17 @@ constructor(
 
     @Input
     @Optional
-    var devServer: KotlinWebpackConfig.DevServer? = null
+    val devServerProperty: Property<KotlinWebpackConfig.DevServer> = project.objects.property(KotlinWebpackConfig.DevServer::class.java)
+
+    @get:Internal
+    @Deprecated(
+        "Use devServerProperty instead. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("devServerProperty"),
+        level = DeprecationLevel.ERROR,
+    )
+    var devServer: KotlinWebpackConfig.DevServer
+        get() = devServerProperty.get()
+        set(value) = devServerProperty.set(value)
 
     @Input
     @Optional
@@ -206,7 +272,26 @@ constructor(
     @Internal
     var generateConfigOnly: Boolean = false
 
+    /**
+     * Temporary value holder used to capture specific information
+     * set by users in
+     * [org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl.commonWebpackConfig].
+     *
+     * Specifically created to handle changes to
+     * [org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.outputFileName]
+     * to support a request from Compose (KT-79921).
+     *
+     * KT-77145 Workaround because [KotlinWebpackConfig] doesn't use Provider API.
+     */
+    private val fakeWebpackConfig: KotlinWebpackConfig = KotlinWebpackConfig(
+        rules = project.objects.webpackRulesContainer()
+    )
+
     fun webpackConfigApplier(body: Action<KotlinWebpackConfig>) {
+        body.execute(fakeWebpackConfig)
+        fakeWebpackConfig.let {
+            it.outputFileName?.let { mainOutputFileName.set(it) }
+        }
         webpackConfigAppliers.add(body)
     }
 
@@ -231,10 +316,12 @@ constructor(
         outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
-        devServer = devServer,
+        watchOptions = watchOptions,
+        devServer = devServerProperty.orNull,
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
+        resolveLoadersFromKotlinToolingDir = getIsWasm.get()
     )
 
     private fun createRunner(): KotlinWebpackRunner {
@@ -250,20 +337,29 @@ constructor(
         webpackConfigAppliers
             .forEach { it.execute(config) }
 
+        val webpackArgs = args.run {
+            val port = devServerProperty.orNull?.port
+            if (debug && port != null) plus(listOf("--port", port.toString()))
+            else this
+        }
+
         return KotlinWebpackRunner(
-            npmProject,
-            logger,
-            configFile.get(),
-            execHandleFactory,
-            bin,
-            args,
-            nodeArgs,
-            config
+            npmProject = npmProject,
+            logger = logger,
+            configFile = configFile.get(),
+            tool = bin,
+            args = webpackArgs,
+            nodeArgs = nodeArgs,
+            config = config,
+            objects = objects,
+            execOps = execOps,
+            npmToolingEnvDir = npmToolingEnvDir.getFile(),
+            resolveModulesFromKotlinToolingDir = getIsWasm.get(),
         )
     }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        @Internal get() = createWebpackConfig(true).getRequiredDependencies(versions)
+        @Internal get() = createWebpackConfig(true).getRequiredDependencies(versions.get())
 
     private val isContinuous = project.gradle.startParameter.isContinuous
 
@@ -280,15 +376,14 @@ constructor(
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
             val deploymentHandle = deploymentRegistry.get("webpack", Handle::class.java)
             if (deploymentHandle == null) {
-                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner)
+                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner, path)
             }
         } else {
             runner.copy(
                 config = runner.config.copy(
                     progressReporter = true,
-                    progressReporterPathFilter = rootPackageDir
                 )
-            ).execute(services)
+            ).execute()
 
             val buildMetrics = metrics.get()
             outputDirectory.get().asFile.walkTopDown()
@@ -297,25 +392,33 @@ constructor(
                 .map { it.length() }
                 .sum()
                 .let {
-                    buildMetrics.addMetric(GradleBuildPerformanceMetric.BUNDLE_SIZE, it)
+                    buildMetrics.addMetric(BUNDLE_SIZE, it)
                 }
 
             buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
         }
     }
 
-    internal open class Handle @Inject constructor(val runner: KotlinWebpackRunner) : DeploymentHandle {
-        var process: ExecHandle? = null
+    internal abstract class Handle @Inject constructor(
+        private val runner: KotlinWebpackRunner,
+        /** [KotlinWebpack.getPath], used for logging. */
+        private val taskPath: String,
+    ) : DeploymentHandle {
+        private var process: ExecAsyncHandle? = null
 
-        override fun isRunning() = process != null
+        private val logger = Logging.getLogger(Handle::class.java)
+
+        override fun isRunning(): Boolean =
+            process?.isAlive() == true
 
         override fun start(deployment: Deployment) {
             process = runner.start()
+            logger.info("[$taskPath] webpack-dev-server started ${process?.displayName}")
         }
 
         override fun stop() {
             process?.abort()
+            logger.info("[$taskPath] webpack-dev-server stopped ${process?.displayName}")
         }
     }
-
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -13,14 +14,18 @@ import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 class ProvisionalFunctionExpressionLoweringContext(
     val startOffset: Int? = null,
     val endOffset: Int? = null
 )
-class ProvisionalFunctionExpressionLowering :
-    IrElementTransformer<ProvisionalFunctionExpressionLoweringContext>,
+
+/**
+ * Transforms [IrFunctionExpression] to a block with a local function and a reference to it.
+ */
+class ProvisionalFunctionExpressionLowering(@Suppress("UNUSED_PARAMETER", "unused") context: CommonBackendContext) :
+    IrTransformer<ProvisionalFunctionExpressionLoweringContext>(),
     BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -65,10 +70,11 @@ class ProvisionalFunctionExpressionLowering :
                     startOffset, endOffset, type,
                     function.symbol,
                     typeArgumentsCount = 0,
-                    valueArgumentsCount = function.valueParameters.size,
                     reflectionTarget = null,
                     origin = origin
-                ).copyAttributes(expression)
+                ).apply {
+                    copyAttributes(expression)
+                }
             )
         )
     }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-14469: SOE during effective visibility evaluation
 
 abstract class Base(private val v: String)
@@ -10,3 +11,6 @@ class Derived : Base("123") {
         bar(<!INVISIBLE_REFERENCE!>v<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, primaryConstructor, propertyDeclaration,
+stringLiteral */

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 class Something {
     public val publicVal1 = object { override fun toString() = "!" }
     protected val protectedVal1 = object { override fun toString() = "!" }
@@ -20,3 +20,6 @@ class Something {
     internal fun <!EXPOSED_FUNCTION_RETURN_TYPE!>internalFun2<!>() = run { class A; A() }
     private fun privateFun2() = run { class A; A() }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, lambdaLiteral, localClass,
+override, propertyDeclaration, stringLiteral */

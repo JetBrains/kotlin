@@ -7,27 +7,42 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkForLocalRedeclarations
 import org.jetbrains.kotlin.fir.analysis.checkers.collectConflictingLocalFunctionsFrom
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.utils.isDestructuredParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 
-object FirConflictsExpressionChecker : FirBlockChecker() {
-    override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkForLocalRedeclarations(expression.statements, context, reporter)
-        checkForLocalConflictingFunctions(expression, context, reporter)
+object FirConflictsExpressionChecker : FirBlockChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirBlock) {
+        val elements =
+            if (expression.statements.none { it.isDestructuredParameter() }) expression.statements // optimization
+            else expression.statements.filterNot { it.isDestructuredParameter() }
+        checkForLocalRedeclarations(elements)
+        checkForLocalConflictingFunctions(expression)
     }
 
-    private fun checkForLocalConflictingFunctions(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
-        val conflictingFunctions = collectConflictingLocalFunctionsFrom(expression, context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkForLocalConflictingFunctions(
+        expression: FirBlock,
+    ) {
+        val inspector = collectConflictingLocalFunctionsFrom(expression) ?: return
 
-        for ((function, otherFunctionsThatConflictWithIt) in conflictingFunctions) {
+        for ((function, otherFunctionsThatConflictWithIt) in inspector.declarationConflictingSymbols) {
             if (otherFunctionsThatConflictWithIt.isEmpty()) {
                 continue
             }
 
-            reporter.reportOn(function.source, FirErrors.CONFLICTING_OVERLOADS, otherFunctionsThatConflictWithIt, context)
+            reporter.reportOn(function.source, FirErrors.CONFLICTING_OVERLOADS, otherFunctionsThatConflictWithIt)
+        }
+
+        for ((conflictingDeclaration, symbols) in inspector.declarationShadowedViaContextParameters) {
+            if (symbols.isNotEmpty()) {
+                reporter.reportOn(conflictingDeclaration.source, FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED, symbols)
+            }
         }
     }
 }

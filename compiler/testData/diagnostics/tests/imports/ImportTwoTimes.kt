@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a.kt
 
@@ -13,3 +14,5 @@ import weatherForecast.weatherToday
 import weatherForecast.weatherToday
 
 fun needUmbrella() = weatherToday() == "rain"
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, stringLiteral */

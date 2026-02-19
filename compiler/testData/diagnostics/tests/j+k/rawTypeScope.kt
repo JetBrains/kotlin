@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: A.java
@@ -16,3 +17,5 @@ public class B<E> {
 fun main(x: Map<Any, Any>) {
     A.getB().foo(x)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

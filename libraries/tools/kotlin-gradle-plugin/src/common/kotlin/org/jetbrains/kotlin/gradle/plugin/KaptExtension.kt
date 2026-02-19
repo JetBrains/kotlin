@@ -16,17 +16,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import groovy.lang.Closure
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KaptArguments
 import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.KaptJavacOption
 import java.util.*
 
-open class KaptExtension: KaptExtensionConfig {
+open class KaptExtension : KaptExtensionConfig {
     open var generateStubs: Boolean = false
-
-    open var inheritedAnnotations: Boolean = true
 
     override var useLightAnalysis: Boolean = true
 
@@ -39,14 +35,17 @@ open class KaptExtension: KaptExtensionConfig {
     override var strictMode: Boolean = false
 
     override var stripMetadata: Boolean = false
-    
+
     override var showProcessorStats: Boolean = false
 
     override var detectMemoryLeaks: String = "default"
 
     override var includeCompileClasspath: Boolean? = null
 
-    @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
+    @Deprecated(
+        "Use `annotationProcessor()` and `annotationProcessors()` instead. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     open var processors: String = ""
 
     override var keepJavacAnnotationProcessors: Boolean = false
@@ -59,7 +58,7 @@ open class KaptExtension: KaptExtensionConfig {
     private val javacOptionsActions =
         mutableListOf<(KaptJavacOption) -> Unit>()
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     override fun annotationProcessor(fqName: String) {
         val oldProcessors = this.processors
         this.processors = if (oldProcessors.isEmpty()) fqName else "$oldProcessors,$fqName"
@@ -69,20 +68,8 @@ open class KaptExtension: KaptExtensionConfig {
         fqName.forEach(this::annotationProcessor)
     }
 
-    fun arguments(closure: Closure<*>) {
-        apOptionsActions += { apOptions ->
-            apOptions.executeClosure(closure)
-        }
-    }
-
     override fun arguments(action: KaptArguments.() -> Unit) {
         apOptionsActions += action
-    }
-
-    open fun javacOptions(closure: Closure<*>) {
-        javacOptionsActions += { javacOptions ->
-            javacOptions.executeClosure(closure)
-        }
     }
 
     override fun javacOptions(action: KaptJavacOption.() -> Unit) {
@@ -95,55 +82,29 @@ open class KaptExtension: KaptExtensionConfig {
         return result.options
     }
 
-    fun getAdditionalArguments(project: Project, variantData: Any?, androidExtension: Any?): Map<String, String> {
-        val result = KaptAnnotationProcessorOptions(project, variantData, androidExtension)
+    internal fun getAdditionalArguments(): Map<String, String> {
+        val result = KaptAnnotationProcessorOptions()
         apOptionsActions.forEach { it(result) }
         return result.options
     }
+}
 
-    fun getAdditionalArgumentsForJavac(project: Project, variantData: Any?, androidExtension: Any?): List<String> {
-        val javacArgs = mutableListOf<String>()
-        for ((key, value) in getAdditionalArguments(project, variantData, androidExtension)) {
-            javacArgs += "-A" + key + (if (value.isNotEmpty()) "=$value" else "")
-        }
-        return javacArgs
+private class KaptAnnotationProcessorOptions : KaptArguments {
+    val options = LinkedHashMap<String, String>()
+
+    override fun arg(name: String, vararg values: String) {
+        options[name] = values.joinToString(" ")
     }
 }
 
-/**
- * [project], [variant] and [android] properties are intended to be used inside the closure.
- */
-open class KaptAnnotationProcessorOptions(
-    @Suppress("unused") open val project: Project,
-    @Suppress("unused") open val variant: Any?,
-    @Suppress("unused") open val android: Any?
-): KaptArguments {
-    internal val options = LinkedHashMap<String, String>()
+private class KaptJavacOptionsDelegate : KaptJavacOption {
+    val options = LinkedHashMap<String, String>()
 
-    @Suppress("unused")
-    override fun arg(name: Any, vararg values: Any) {
-        options.put(name.toString(), values.joinToString(" "))
+    override fun option(name: String, value: String) {
+        options[name] = value
     }
 
-    fun execute(closure: Closure<*>) = executeClosure(closure)
-}
-
-open class KaptJavacOptionsDelegate: KaptJavacOption {
-    internal val options = LinkedHashMap<String, String>()
-
-    override fun option(name: Any, value: Any) {
-        options.put(name.toString(), value.toString())
+    override fun option(name: String) {
+        options[name] = ""
     }
-
-    override fun option(name: Any) {
-        options.put(name.toString(), "")
-    }
-
-    fun execute(closure: Closure<*>) = executeClosure(closure)
-}
-
-private fun Any?.executeClosure(closure: Closure<*>) {
-    closure.resolveStrategy = Closure.DELEGATE_FIRST
-    closure.delegate = this
-    closure.call()
 }

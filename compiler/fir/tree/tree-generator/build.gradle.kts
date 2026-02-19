@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     application
 }
 
@@ -10,14 +9,14 @@ runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
     implementation(project(":generators"))
+    implementation(project(":generators:tree-generator-common"))
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:cones"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
-    runtimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    runtimeOnly(intellijJDom())
 }
 
 application {

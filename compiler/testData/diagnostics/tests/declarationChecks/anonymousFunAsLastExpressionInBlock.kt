@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
@@ -42,3 +43,7 @@ fun test() {
 
     { y: Int -> fun(): Int {return 1} }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

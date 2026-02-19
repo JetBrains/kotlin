@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: api.kt
 
@@ -23,3 +24,5 @@ fun use2() {
 fun use3() {
     f()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration */

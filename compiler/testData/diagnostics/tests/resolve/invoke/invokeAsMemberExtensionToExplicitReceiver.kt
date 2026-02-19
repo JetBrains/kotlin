@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface A
 interface Foo {
@@ -11,3 +12,6 @@ fun test(a: A, foo: Foo) {
 fun test(a: Int, foo: Int.()->Unit) {
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration, operator,
+typeWithExtension */

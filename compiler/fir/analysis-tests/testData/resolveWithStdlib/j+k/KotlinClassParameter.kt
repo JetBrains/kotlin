@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: K1.kt
 class KotlinClass
 
@@ -11,3 +12,5 @@ fun main() {
     JavaClass.baz(KotlinClass())
     JavaClass.baz(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Smart casts on complex expressions
 fun baz(s: String?): Int {
     if (s == null) return 0
@@ -18,3 +19,5 @@ fun bar(): Int {
     }<!UNSAFE_CALL!>.<!>length
 }
 
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

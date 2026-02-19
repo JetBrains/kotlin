@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -34,3 +35,6 @@ private class PrivateImpl: I4 {
     override fun i() = 10
     override val v = 10
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, override,
+propertyDeclaration */

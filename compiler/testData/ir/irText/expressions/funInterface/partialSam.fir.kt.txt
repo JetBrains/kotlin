@@ -1,21 +1,3 @@
-fun interface Fn<T : Any?, R : Any?> {
-  abstract fun run(s: String, i: Int, t: T): R
-
-}
-
-class J {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun runConversion(f1: Fn<String, Int>, f2: Fn<Int, String>): Int {
-    return f1.run(s = "Bar", i = 1, t = f2.run(s = "Foo", i = 42, t = 239))
-  }
-
-}
-
 val fsi: Fn<String, Int>
   field = { // BLOCK
     local class <no name provided> : Fn<String, Int> {
@@ -54,6 +36,24 @@ val fis: Fn<Int, String>
   }
   get
 
+class J {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun runConversion(f1: Fn<String, Int>, f2: Fn<Int, String>): Int {
+    return f1.run(s = "Bar", i = 1, t = f2.run(s = "Foo", i = 42, t = 239))
+  }
+
+}
+
+fun interface Fn<T : Any?, R : Any?> {
+  abstract fun run(s: String, i: Int, t: T): R
+
+}
+
 fun test(j: J) {
   j.runConversion(f1 = <get-fsi>(), f2 = local fun <anonymous>(s: String, i: Int, ti: Int): String {
     return ""
@@ -64,3 +64,4 @@ fun test(j: J) {
   }
  /*-> Fn<String, Int> */, f2 = <get-fis>()) /*~> Unit */
 }
+

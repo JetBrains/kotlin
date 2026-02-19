@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -23,3 +24,6 @@ fun main() {
 }
 
 class Foo(val notNullProp: String)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter, typeWithExtension */

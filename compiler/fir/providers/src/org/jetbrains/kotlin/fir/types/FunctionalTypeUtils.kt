@@ -5,26 +5,33 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.getStringArgument
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -32,14 +39,24 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 // ---------------------------------------------- is type is a function type ----------------------------------------------
 
-fun ConeKotlinType.functionTypeKind(session: FirSession): FunctionTypeKind? {
-    if (this !is ConeClassLikeType) return null
-    return fullyExpandedType(session).lookupTag.functionTypeKind(session)
+fun ConeKotlinType.functionTypeKind(session: FirSession, expandTypeAliases: Boolean = true): FunctionTypeKind? {
+    return lowerBoundIfFlexible().functionTypeKind(session, expandTypeAliases)
 }
 
-private fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {
+fun ConeRigidType.functionTypeKind(session: FirSession, expandTypeAliases: Boolean = true): FunctionTypeKind? {
+    if (this !is ConeClassLikeType) return null
+
+    val targetType = if (expandTypeAliases) fullyExpandedType(session) else this
+    return targetType.lookupTag.functionTypeKind(session)
+}
+
+fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {
     val classId = classId
-    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString())
+    return classId.functionTypeKind(session)
+}
+
+fun ClassId.functionTypeKind(session: FirSession): FunctionTypeKind? {
+    return session.functionTypeService.getKindByClassNamePrefix(packageFqName, shortClassName.asString())
 }
 
 private inline fun ConeKotlinType.isFunctionTypeWithPredicate(
@@ -57,6 +74,21 @@ private inline fun ConeKotlinType.isFunctionTypeWithPredicate(
 // Function
 fun ConeKotlinType.isBasicFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) { it == FunctionTypeKind.Function }
+}
+
+// SuspendFunction
+fun ConeKotlinType.isBasicSuspendFunctionType(session: FirSession): Boolean {
+    return isFunctionTypeWithPredicate(session) { it == FunctionTypeKind.SuspendFunction }
+}
+
+// Function, KFunction
+fun ConeKotlinType.isBasicFunctionOrKFunctionType(session: FirSession): Boolean {
+    return isFunctionTypeWithPredicate(session) { it.isBasicFunctionOrKFunction }
+}
+
+// Function, SuspendFunction, KSuspendFunction, [Custom]Function, K[Custom]Function
+fun ConeKotlinType.isNonKFunctionType(session: FirSession): Boolean {
+    return isFunctionTypeWithPredicate(session) { it != FunctionTypeKind.KFunction }
 }
 
 // SuspendFunction, KSuspendFunction
@@ -105,16 +137,35 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
     } else {
         FunctionTypeKind.Function
     }
-    return createFunctionTypeWithNewKind(session, newKind)
+    return createFunctionTypeWithNewKind(
+        session = session,
+        kind = newKind,
+        additionalAnnotations = kind.annotationOnInvokeClassId
+            ?.takeUnless { classId -> attributes.customAnnotations.hasAnnotation(classId, session) }
+            ?.let { annotationClassId ->
+                listOf(buildAnnotation {
+                    argumentMapping = FirEmptyAnnotationArgumentMapping
+                    annotationTypeRef = buildResolvedTypeRef {
+                        coneType = annotationClassId.defaultType(emptyList())
+                    }
+                })
+            } ?: emptyList()
+    )
 }
 
-private fun ConeKotlinType.createFunctionTypeWithNewKind(session: FirSession, kind: FunctionTypeKind): ConeClassLikeType {
+fun ConeKotlinType.createFunctionTypeWithNewKind(
+    session: FirSession,
+    kind: FunctionTypeKind,
+    additionalAnnotations: List<FirAnnotation> = emptyList(),
+    updateTypeArguments: (Array<out ConeTypeProjection>.() -> Array<out ConeTypeProjection>)? = null,
+): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
     val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArguments.size - 1))
+    val typeArguments = expandedType.typeArguments
     return functionTypeId.toLookupTag().constructClassType(
-        expandedType.typeArguments,
-        isNullable = false,
-        attributes = expandedType.attributes
+        updateTypeArguments?.let { typeArguments.updateTypeArguments() } ?: typeArguments,
+        isMarkedNullable = expandedType.isMarkedOrFlexiblyNullable,
+        attributes = expandedType.attributes.add(additionalAnnotations.computeTypeAttributes(session, shouldExpandTypeAliases = false)),
     )
 }
 
@@ -167,13 +218,12 @@ private fun ConeKotlinType.isSubtypeOfFunctionType(session: FirSession, expected
 
 // ---------------------------------------------- function type scope utils ----------------------------------------------
 
-fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirNamedFunctionSymbol? {
-    require(this.isSomeFunctionType(session))
-    val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass) ?: return null
+context(c: SessionAndScopeSessionHolder)
+fun ConeClassLikeType.findBaseInvokeSymbol(): FirNamedFunctionSymbol? {
+    require(this.isSomeFunctionType(c.session))
+    val functionN = lookupTag.toClassSymbol()?.fir ?: return null
     var baseInvokeSymbol: FirNamedFunctionSymbol? = null
     functionN.unsubstitutedScope(
-        session,
-        scopeSession,
         withForcedTypeCalculator = false,
         memberRequiredPhase = null,
     ).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
@@ -183,24 +233,21 @@ fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: Sc
     return baseInvokeSymbol
 }
 
+context(c: SessionAndScopeSessionHolder)
 fun ConeKotlinType.findContributedInvokeSymbol(
-    session: FirSession,
-    scopeSession: ScopeSession,
     expectedFunctionType: ConeClassLikeType,
     shouldCalculateReturnTypesOfFakeOverrides: Boolean
 ): FirFunctionSymbol<*>? {
-    val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol(session, scopeSession) ?: return null
+    val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol() ?: return null
 
-    val fakeOverrideTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
-        FakeOverrideTypeCalculator.Forced
+    val callableCopyTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
+        CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution
     } else {
-        FakeOverrideTypeCalculator.DoNothing
+        CallableCopyTypeCalculator.DoNothing
     }
 
     val scope = scope(
-        useSiteSession = session,
-        scopeSession = scopeSession,
-        fakeOverrideTypeCalculator = fakeOverrideTypeCalculator,
+        callableCopyTypeCalculator = callableCopyTypeCalculator,
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return null
 
@@ -215,12 +262,25 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     var overriddenInvoke: FirFunctionSymbol<*>? = null
     if (declaredInvoke != null) {
         // Make sure the user-contributed or type-substituted invoke we just found above is an override of base invoke.
-        scope.processOverriddenFunctions(declaredInvoke!!) { functionSymbol ->
+        @OptIn(ScopeFunctionRequiresPrewarm::class) // processFunctionsByName is called above
+        scope.processOverriddenFunctions(declaredInvoke) { functionSymbol ->
             if (functionSymbol == baseInvokeSymbol || functionSymbol.originalForSubstitutionOverride == baseInvokeSymbol) {
                 overriddenInvoke = functionSymbol
                 ProcessorAction.STOP
             } else {
-                ProcessorAction.NEXT
+                val dispatchReceiverType = functionSymbol.originalOrSelf().dispatchReceiverType
+                val dispatchReceiverFunctionKind = (dispatchReceiverType as? ConeClassLikeType)?.functionTypeKind(c.session)
+                val expectedFunctionKind = expectedFunctionType.functionTypeKind(c.session)
+                if (dispatchReceiverFunctionKind == null || !dispatchReceiverFunctionKind.isBasicFunctionOrKFunction ||
+                    expectedFunctionKind?.isBasicFunctionOrKFunction == true ||
+                    expectedFunctionKind?.isReflectType != dispatchReceiverFunctionKind.isReflectType
+                ) {
+                    ProcessorAction.NEXT
+                } else {
+                    // Suspend (or other) conversion should be applied
+                    overriddenInvoke = functionSymbol
+                    ProcessorAction.STOP
+                }
             }
         }
     }
@@ -230,42 +290,39 @@ fun ConeKotlinType.findContributedInvokeSymbol(
 
 // ---------------------------------------------- function type type argument extraction ----------------------------------------------
 
-fun ConeKotlinType.contextReceiversTypes(session: FirSession): List<ConeKotlinType> {
+fun ConeKotlinType.contextParameterTypes(session: FirSession): List<ConeKotlinType> {
     if (!isSomeFunctionType(session)) return emptyList()
     return fullyExpandedType(session).let { expanded ->
-        val contextReceivers = expanded.typeArguments.take(expanded.contextReceiversNumberForFunctionType)
-        contextReceivers.map { it.typeOrDefault(session.builtinTypes.nothingType.type) }
+        val contextParameter = expanded.typeArguments.take(expanded.contextParameterNumberForFunctionType)
+        contextParameter.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
     }
 }
 
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
     if (!isSomeFunctionType(session) || !isExtensionFunctionType(session)) return null
     return fullyExpandedType(session).let { expanded ->
-        expanded.typeArguments[expanded.contextReceiversNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.type)
+        expanded.typeArguments[expanded.contextParameterNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.coneType)
     }
 }
 
-fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType {
-    require(this is ConeClassLikeType)
+fun ConeClassLikeType.returnType(session: FirSession): ConeKotlinType {
     // TODO: add requirement
-    return fullyExpandedType(session).typeArguments.last().typeOrDefault(session.builtinTypes.nullableAnyType.type)
+    return fullyExpandedType(session).typeArguments.last().typeOrDefault(session.builtinTypes.nullableAnyType.coneType)
 }
 
-fun ConeKotlinType.valueParameterTypesWithoutReceivers(session: FirSession): List<ConeKotlinType> {
-    require(this is ConeClassLikeType)
+fun ConeClassLikeType.valueParameterTypesWithoutReceivers(session: FirSession): List<ConeKotlinType> {
     // TODO: add requirement
     val expandedType = fullyExpandedType(session)
 
-    val receiversNumber = expandedType.contextReceiversNumberForFunctionType + if (expandedType.isExtensionFunctionType) 1 else 0
+    val receiversNumber = expandedType.contextParameterNumberForFunctionType + if (expandedType.isExtensionFunctionType) 1 else 0
     val valueParameters = expandedType.typeArguments.drop(receiversNumber).dropLast(1)
 
-    return valueParameters.map { it.typeOrDefault(session.builtinTypes.nothingType.type) }
+    return valueParameters.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
 }
 
-fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType> {
-    require(this is ConeClassLikeType)
+fun ConeClassLikeType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType> {
     // TODO: add requirement
-    return fullyExpandedType(session).typeArguments.dropLast(1).map { it.typeOrDefault(session.builtinTypes.nothingType.type) }
+    return fullyExpandedType(session).typeArguments.dropLast(1).map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
 }
 
 private fun ConeTypeProjection.typeOrDefault(default: ConeKotlinType): ConeKotlinType = when (this) {
@@ -279,4 +336,17 @@ fun FirFunction.specialFunctionTypeKind(session: FirSession): FunctionTypeKind? 
     return (symbol as? FirNamedFunctionSymbol)?.let {
         session.functionTypeService.extractSingleSpecialKindForFunction(it)
     }
+}
+
+/**
+ * Access the [ParameterName] of the [ConeKotlinType].
+ * This can be the name via lambda syntax or by explicit annotation.
+ */
+fun ConeKotlinType.valueParameterName(session: FirSession): Name? {
+    val attribute = attributes.parameterNameAttribute ?: return null
+    if (attribute.name != null) return attribute.name
+
+    val annotation = attribute.annotations.first() // Attribute precondition.
+    val name = annotation.getStringArgument(StandardNames.NAME) ?: return null
+    return Name.identifier(name)
 }

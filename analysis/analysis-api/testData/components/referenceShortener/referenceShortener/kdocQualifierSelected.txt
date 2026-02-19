@@ -1,8 +1,0 @@
-Before shortening: dependency.Foo
-with DO_NOT_SHORTEN:
-with SHORTEN_IF_ALREADY_IMPORTED:
-[kdoc] dependency.Foo
-with SHORTEN_AND_IMPORT:
-[kdoc] dependency.Foo
-with SHORTEN_AND_STAR_IMPORT:
-[kdoc] dependency.Foo

@@ -1,33 +1,37 @@
+import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-	id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
-	id("maven-publish")
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
 }
 
 group = "com.example"
 version = "1.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
+val shouldBeJs = true
 
 kotlin {
-	val jvm6 = jvm("jvm6") {
+    if (shouldBeJs) {
+        js("nodeJs") {
+            nodejs()
+        }
+        wasmJs()
+    }
+
+    jvm("jvm6") {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
     }
-	val jvm8 = jvm("jvm8") {
+    jvm("jvm8") {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
-		compilations["main"].kotlinOptions.jvmTarget = "1.8"
-	}
-	val nodeJs = js("nodeJs") {
-        nodejs()
-    }
-	val linux64 = linuxX64("linux64")
-
-    wasmJs {
+        compilations["main"].compileTaskProvider.configure {
+            compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
 
-    configure(listOf(linux64)) {
+
+    linuxX64("linux64") {
         binaries.executable("main", listOf(DEBUG)) {
             entryPoint = "com.example.app.native.main"
         }
@@ -50,27 +54,43 @@ kotlin {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib")
             }
         }
-        jvm6.compilations["main"].defaultSourceSet {
+        val jvm6Main by getting {
             dependsOn(allJvm)
         }
-        jvm8.compilations["main"].defaultSourceSet {
+        val jvm8Main by getting {
             dependsOn(allJvm)
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
             }
         }
-        nodeJs.compilations["main"].defaultSourceSet {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-            }
+    }
+}
+
+tasks.register("resolveRuntimeDependencies") {
+    val configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
+    val runtimeDependencies = configurations[configName].incoming.files
+    inputs.files(runtimeDependencies).withPropertyName("runtimeDependencies")
+    doFirst {
+        // KT-26301
+        runtimeDependencies.files
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
         }
     }
 }
 
-tasks.create("resolveRuntimeDependencies", DefaultTask::class.java) {
-    doFirst { 
-        // KT-26301
-        val configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
-        configurations[configName].resolve()
-    }
+tasks.withType<KotlinCompile>().configureEach {
+    /** Add a changing input, to enforce re-running KotlinCompile tasks in specific tests, without needing to re-run _all_ tasks. */
+    val kotlinCompileCacheBuster = 0
+    inputs.property("kotlinCompileCacheBuster", kotlinCompileCacheBuster)
+
+    val kotlinCompileLogLevel = LogLevel.LIFECYCLE
+    inputs.property("kotlinCompileLogLevel", kotlinCompileLogLevel)
+    logging.captureStandardOutput(kotlinCompileLogLevel)
 }

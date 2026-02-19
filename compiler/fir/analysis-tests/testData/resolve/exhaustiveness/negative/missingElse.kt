@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(a: Any) {
     val x = <!NO_ELSE_IN_WHEN!>when<!> (a) {
         is Int -> 1
@@ -21,3 +22,6 @@ fun test_2(a: Any) {
         is Int -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, isExpression, localProperty, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

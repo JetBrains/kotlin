@@ -1,5 +1,0 @@
-package async
-
----
-
-int test_ConcurrentTerminate();

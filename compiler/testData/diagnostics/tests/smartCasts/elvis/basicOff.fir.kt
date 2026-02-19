@@ -1,5 +1,4 @@
-// !LANGUAGE: -BooleanElvisBoundSmartCasts
-
+// RUN_PIPELINE_TILL: BACKEND
 interface Order {
     val expired: Boolean?
 
@@ -48,3 +47,6 @@ fun baz(o: Boolean?) {
         o.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

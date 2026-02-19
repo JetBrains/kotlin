@@ -136,7 +136,15 @@ object JvmBuiltInsSignatures {
         signatures {
             inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
 
-                    inJavaUtil("List", "replaceAll(Ljava/util/function/UnaryOperator;)V", "sort(Ljava/util/Comparator;)V") +
+                    inJavaUtil(
+                        "List",
+                        "replaceAll(Ljava/util/function/UnaryOperator;)V",
+                        "sort(Ljava/util/Comparator;)V",
+                        "addFirst(Ljava/lang/Object;)V",
+                        "addLast(Ljava/lang/Object;)V",
+                        "removeFirst()Ljava/lang/Object;",
+                        "removeLast()Ljava/lang/Object;",
+                    ) +
 
                     inJavaUtil(
                         "Map",

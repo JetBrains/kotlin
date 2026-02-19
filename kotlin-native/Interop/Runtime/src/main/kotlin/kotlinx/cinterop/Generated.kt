@@ -9,312 +9,312 @@ package kotlinx.cinterop
 
 @ExperimentalForeignApi
 @JvmName("plus\$Byte")
-inline operator fun <T : ByteVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : ByteVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 1)
 
 @ExperimentalForeignApi
 @JvmName("plus\$Byte")
-inline operator fun <T : ByteVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : ByteVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$Byte")
-inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Byte")
-inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$Byte")
-inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Byte")
-inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$Short")
-inline operator fun <T : ShortVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : ShortVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 2)
 
 @ExperimentalForeignApi
 @JvmName("plus\$Short")
-inline operator fun <T : ShortVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : ShortVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$Short")
-inline operator fun <T : Short> CPointer<ShortVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : Short> CPointer<ShortVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Short")
-inline operator fun <T : Short> CPointer<ShortVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : Short> CPointer<ShortVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$Short")
-inline operator fun <T : Short> CPointer<ShortVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : Short> CPointer<ShortVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Short")
-inline operator fun <T : Short> CPointer<ShortVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : Short> CPointer<ShortVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$Int")
-inline operator fun <T : IntVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : IntVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 4)
 
 @ExperimentalForeignApi
 @JvmName("plus\$Int")
-inline operator fun <T : IntVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : IntVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$Int")
-inline operator fun <T : Int> CPointer<IntVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : Int> CPointer<IntVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Int")
-inline operator fun <T : Int> CPointer<IntVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : Int> CPointer<IntVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$Int")
-inline operator fun <T : Int> CPointer<IntVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : Int> CPointer<IntVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Int")
-inline operator fun <T : Int> CPointer<IntVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : Int> CPointer<IntVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$Long")
-inline operator fun <T : LongVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : LongVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 8)
 
 @ExperimentalForeignApi
 @JvmName("plus\$Long")
-inline operator fun <T : LongVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : LongVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$Long")
-inline operator fun <T : Long> CPointer<LongVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : Long> CPointer<LongVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Long")
-inline operator fun <T : Long> CPointer<LongVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : Long> CPointer<LongVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$Long")
-inline operator fun <T : Long> CPointer<LongVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : Long> CPointer<LongVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Long")
-inline operator fun <T : Long> CPointer<LongVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : Long> CPointer<LongVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$UByte")
-inline operator fun <T : UByteVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : UByteVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 1)
 
 @ExperimentalForeignApi
 @JvmName("plus\$UByte")
-inline operator fun <T : UByteVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : UByteVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$UByte")
-inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
-inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$UShort")
-inline operator fun <T : UShortVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : UShortVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 2)
 
 @ExperimentalForeignApi
 @JvmName("plus\$UShort")
-inline operator fun <T : UShortVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : UShortVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$UShort")
-inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$UShort")
-inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$UInt")
-inline operator fun <T : UIntVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : UIntVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 4)
 
 @ExperimentalForeignApi
 @JvmName("plus\$UInt")
-inline operator fun <T : UIntVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : UIntVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$UInt")
-inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$UInt")
-inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$ULong")
-inline operator fun <T : ULongVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : ULongVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 8)
 
 @ExperimentalForeignApi
 @JvmName("plus\$ULong")
-inline operator fun <T : ULongVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : ULongVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$ULong")
-inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$ULong")
-inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
-inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$Float")
-inline operator fun <T : FloatVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : FloatVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 4)
 
 @ExperimentalForeignApi
 @JvmName("plus\$Float")
-inline operator fun <T : FloatVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : FloatVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$Float")
-inline operator fun <T : Float> CPointer<FloatVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : Float> CPointer<FloatVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Float")
-inline operator fun <T : Float> CPointer<FloatVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : Float> CPointer<FloatVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$Float")
-inline operator fun <T : Float> CPointer<FloatVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : Float> CPointer<FloatVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Float")
-inline operator fun <T : Float> CPointer<FloatVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : Float> CPointer<FloatVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("plus\$Double")
-inline operator fun <T : DoubleVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : DoubleVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * 8)
 
 @ExperimentalForeignApi
 @JvmName("plus\$Double")
-inline operator fun <T : DoubleVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : DoubleVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @ExperimentalForeignApi
 @JvmName("get\$Double")
-inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.get(index: Int): T =
+public inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Double")
-inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.set(index: Int, value: T) {
+public inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
 @ExperimentalForeignApi
 @JvmName("get\$Double")
-inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.get(index: Long): T =
+public inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
 @ExperimentalForeignApi
 @JvmName("set\$Double")
-inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.set(index: Long, value: T) {
+public inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
 
@@ -326,28 +326,28 @@ Seva: It probably means the reasoning of this API and is general applicability s
 
 function gen {
 echo "@JvmName(\"plus\\\$$1\")"
-echo "inline operator fun <T : ${1}VarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? ="
+echo "public inline operator fun <T : ${1}VarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? ="
 echo "        interpretCPointer(this.rawValue + index * ${2})"
 echo
 echo "@JvmName(\"plus\\\$$1\")"
-echo "inline operator fun <T : ${1}VarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? ="
+echo "public inline operator fun <T : ${1}VarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? ="
 echo "        this + index.toLong()"
 echo
 echo "@JvmName(\"get\\\$$1\")"
-echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.get(index: Int): T ="
+echo "public inline operator fun <T : $1> CPointer<${1}VarOf<T>>.get(index: Int): T ="
 echo "        (this + index)!!.pointed.value"
 echo
 echo "@JvmName(\"set\\\$$1\")"
-echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.set(index: Int, value: T) {"
+echo "public inline operator fun <T : $1> CPointer<${1}VarOf<T>>.set(index: Int, value: T) {"
 echo "    (this + index)!!.pointed.value = value"
 echo '}'
 echo
 echo "@JvmName(\"get\\\$$1\")"
-echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.get(index: Long): T ="
+echo "public inline operator fun <T : $1> CPointer<${1}VarOf<T>>.get(index: Long): T ="
 echo "        (this + index)!!.pointed.value"
 echo
 echo "@JvmName(\"set\\\$$1\")"
-echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.set(index: Long, value: T) {"
+echo "public inline operator fun <T : $1> CPointer<${1}VarOf<T>>.set(index: Long, value: T) {"
 echo "    (this + index)!!.pointed.value = value"
 echo '}'
 echo

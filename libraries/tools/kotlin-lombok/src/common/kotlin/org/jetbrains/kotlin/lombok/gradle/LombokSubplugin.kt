@@ -9,17 +9,15 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.lombok.gradle.model.builder.LombokModelBuilder
 import javax.inject.Inject
 
-class LombokSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : KotlinCompilerPluginSupportPlugin {
+class LombokSubplugin @Inject internal constructor() : KotlinCompilerPluginSupportPlugin {
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
         (kotlinCompilation.platformType == KotlinPlatformType.jvm || kotlinCompilation.platformType == KotlinPlatformType.androidJvm)
 
     override fun apply(target: Project) {
         target.extensions.create("kotlinLombok", LombokExtension::class.java)
-        registry.register(LombokModelBuilder())
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {

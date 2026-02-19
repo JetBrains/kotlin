@@ -70,6 +70,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
 
     private val enabledLanguageFeaturesField = mutableSetOf<String>()
 
+    @Deprecated("Configures internal Kotlin compiler argument and should not be used in the projects")
     override val enabledLanguageFeatures: Set<String>
         get() = if (compilationCompilerOptions.isCompleted) {
             compilationCompilerOptions.getOrThrow()
@@ -82,6 +83,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
             enabledLanguageFeaturesField.toSet()
         }
 
+    @Deprecated("Configures internal Kotlin compiler argument and should not be used in the projects")
     override fun enableLanguageFeature(name: String) {
         enabledLanguageFeaturesField.add(name)
         project.launch {
@@ -112,6 +114,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
     @Transient // not needed during Gradle Instant Execution
     var compilerPluginOptionsTask: Lazy<AbstractKotlinCompileTool<*>?> = lazyOf(null)
 
+    @Suppress("unused") // Used during IDE import
     val compilerPluginArguments: List<String>?
         get() {
             val pluginOptionsTask = compilerPluginOptionsTask.value ?: return null
@@ -122,6 +125,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
             }.arguments
         }
 
+    @Suppress("unused") // Used during IDE import
     val compilerPluginClasspath: FileCollection?
         get() {
             val pluginClasspathTask = compilerPluginOptionsTask.value ?: return null

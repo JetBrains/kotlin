@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //  Base  Interface
 //     \  /
 //      \/
@@ -55,3 +56,6 @@ class Derived : Base(), Interface {
         <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration, superExpression */

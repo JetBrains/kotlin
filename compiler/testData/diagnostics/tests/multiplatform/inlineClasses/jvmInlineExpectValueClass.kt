@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // ALLOW_KOTLIN_PACKAGE
@@ -18,3 +19,6 @@ package kotlin.jvm
 
 @JvmInline
 actual value class VC(val a: Any)
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, primaryConstructor, propertyDeclaration,
+value */

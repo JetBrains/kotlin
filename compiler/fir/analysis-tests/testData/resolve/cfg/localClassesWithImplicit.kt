@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 inline fun <T> myRun(block: () -> T) = block()
 
 fun test(a: Any, b: Any) {
@@ -44,3 +45,7 @@ fun test(a: Any, b: Any) {
         fun baz() = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType, ifExpression,
+inline, integerLiteral, isExpression, lambdaLiteral, localClass, localProperty, nullableType, propertyDeclaration,
+smartcast, typeParameter */

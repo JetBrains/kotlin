@@ -6,24 +6,29 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import org.gradle.api.artifacts.transform.TransformOutputs
+import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
+import org.jetbrains.kotlin.gradle.testing.newTempDirectory
+import org.jetbrains.kotlin.gradle.testing.newTempFile
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert.*
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class ClasspathAnalyzerTest {
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
+class ClasspathAnalyzerTest : WithTemporaryFolder {
+    @field:TempDir
+    override lateinit var temporaryFolder: Path
+
 
     @Test
     fun testDirectory() {
-        val classesDir = tmp.newFolder().also { dir ->
+        val classesDir = newTempDirectory().toFile().also { dir ->
             dir.resolve("test").mkdirs()
             dir.resolve("test/A.class").writeBytes(emptyClass("test/A"))
             dir.resolve("test/B.class").writeBytes(emptyClass("test/B"))
@@ -34,7 +39,7 @@ class ClasspathAnalyzerTest {
                 it.writeBytes(emptyClass("A"))
             }
         }
-        val outputs = TransformOutputsMock(tmp.newFolder())
+        val outputs = TransformOutputsMock(newTempDirectory().toFile())
         transform(classesDir, outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
@@ -49,7 +54,7 @@ class ClasspathAnalyzerTest {
 
     @Test
     fun testJar() {
-        val inputJar = tmp.newFile("input.jar").also { jar ->
+        val inputJar = newTempFile("input.jar").toFile().also { jar ->
             ZipOutputStream(jar.outputStream()).use {
                 it.putNextEntry(ZipEntry("test/A.class"))
                 it.write(emptyClass("test/A"))
@@ -70,7 +75,7 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val outputs = TransformOutputsMock(tmp.newFolder())
+        val outputs = TransformOutputsMock(newTempDirectory().toFile())
         transform(inputJar, outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
@@ -85,7 +90,7 @@ class ClasspathAnalyzerTest {
 
     @Test
     fun testJarWithEntriesShuffled() {
-        val jarA = tmp.newFile("inputA.jar").also { jar ->
+        val jarA = newTempFile("inputA.jar").toFile().also { jar ->
             ZipOutputStream(jar.outputStream()).use {
                 it.putNextEntry(ZipEntry("test/A.class"))
                 it.write(emptyClass("test/A"))
@@ -96,10 +101,10 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val outputsA = TransformOutputsMock(tmp.newFolder())
+        val outputsA = TransformOutputsMock(newTempDirectory().toFile())
         transform(jarA, outputsA)
 
-        val jarB = tmp.newFile("inputB.jar").also { jar ->
+        val jarB = newTempFile("inputB.jar").toFile().also { jar ->
             ZipOutputStream(jar.outputStream()).use {
                 it.putNextEntry(ZipEntry("test/B.class"))
                 it.write(emptyClass("test/B"))
@@ -110,16 +115,16 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val outputsB = TransformOutputsMock(tmp.newFolder())
+        val outputsB = TransformOutputsMock(newTempDirectory().toFile())
         transform(jarB, outputsB)
 
-        assertArrayEquals(outputsA.createdOutputs.single().readBytes(), outputsB.createdOutputs.single().readBytes())
+        assertContentEquals(outputsA.createdOutputs.single().readBytes(), outputsB.createdOutputs.single().readBytes())
     }
 
     @Test
     fun emptyInput() {
-        val outputs = TransformOutputsMock(tmp.newFolder())
-        transform(tmp.newFolder("input"), outputs)
+        val outputs = TransformOutputsMock(newTempDirectory().toFile())
+        transform(newTempDirectory("input").toFile(), outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertTrue(data.classAbiHash.isEmpty())
@@ -128,7 +133,7 @@ class ClasspathAnalyzerTest {
 
     @Test
     fun testJarsWithDependenciesWithinClasses() {
-        val inputJar = tmp.newFile("input.jar").also { jar ->
+        val inputJar = newTempFile("input.jar").toFile().also { jar ->
             ZipOutputStream(jar.outputStream()).use {
                 it.putNextEntry(ZipEntry("test/A.class"))
                 it.write(emptyClass("test/A", "test/B"))
@@ -143,7 +148,7 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val outputs = TransformOutputsMock(tmp.newFolder())
+        val outputs = TransformOutputsMock(newTempDirectory().toFile())
         transform(inputJar, outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())

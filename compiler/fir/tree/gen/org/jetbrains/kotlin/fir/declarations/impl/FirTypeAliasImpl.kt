@@ -1,79 +1,79 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode", "unused")
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.asResolveState
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
+import org.jetbrains.kotlin.name.Name
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
-
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 internal class FirTypeAliasImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
     override var deprecationsProvider: DeprecationsProvider,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val scopeProvider: FirScopeProvider,
     override val name: Name,
     override val symbol: FirTypeAliasSymbol,
     override var expandedTypeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeAlias() {
+    override val isLocal: Boolean
+        get() = status.visibility == Visibilities.Local
+
     init {
         symbol.bind(this)
-        @OptIn(ResolveStateAccess::class)
         resolveState = resolvePhase.asResolveState()
+        @Suppress("SENSELESS_COMPARISON")
+        require(source != null || origin != FirDeclarationOrigin.Source) { "${this::class.simpleName} with Source origin was instantiated without a source element." }
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        status.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        status.accept(visitor, data)
         expandedTypeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
-        transformStatus(transformer, data)
         transformTypeParameters(transformer, data)
+        transformStatus(transformer, data)
         transformExpandedTypeRef(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
-        typeParameters.transformInplace(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
+        status = status.transform(transformer, data)
         return this
     }
 

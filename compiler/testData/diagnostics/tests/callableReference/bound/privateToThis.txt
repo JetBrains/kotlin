@@ -5,6 +5,7 @@ public final class Foo</*0*/ out T> {
     private/*private to this*/ final var prop: T
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     private/*private to this*/ final fun func(/*0*/ t: T): T
+    private final fun func2(): T
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun testFunc(): kotlin.Unit
     public final fun testProp(): kotlin.Unit

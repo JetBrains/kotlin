@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlin.jvm.JvmInline
 

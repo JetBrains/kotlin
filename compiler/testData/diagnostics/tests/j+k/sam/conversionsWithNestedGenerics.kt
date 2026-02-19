@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // FILE: Listener.java
@@ -20,3 +21,5 @@ fun test(w: Derived) {
 }
 
 fun call() {}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral, samConversion */

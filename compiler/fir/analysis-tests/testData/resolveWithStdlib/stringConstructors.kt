@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 
 fun consumeString(s: String) {}
@@ -20,3 +21,5 @@ fun foo(
     consumeString(String(stringBuffer))
     consumeString(String(stringBuilder))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

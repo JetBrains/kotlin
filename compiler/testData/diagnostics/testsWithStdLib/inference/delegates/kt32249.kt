@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-32249
 
 import kotlin.properties.ReadOnlyProperty
@@ -15,3 +16,7 @@ object Foo {
     val x by wrapper(true)
     val y: Wrapper<Boolean> by wrapper(true)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration, nullableType,
+objectDeclaration, operator, override, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection,
+typeParameter */

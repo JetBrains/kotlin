@@ -1,8 +1,9 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // WITH_STDLIB
-// !OPT_IN: kotlin.ExperimentalMultiplatform
+// OPT_IN: kotlin.ExperimentalMultiplatform
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 @OptionalExpectation
@@ -10,8 +11,8 @@ expect annotation class A()
 
 fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>) = a.toString()
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!><!WRONG_ANNOTATION_TARGET!>@OptionalExpectation<!>
-expect class NotAnAnnotationClass<!>
+<!WRONG_ANNOTATION_TARGET!>@OptionalExpectation<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class NotAnAnnotationClass
 
 <!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED!>@OptionalExpectation<!>
 annotation class NotAnExpectedClass
@@ -42,3 +43,6 @@ fun useInAnotherAnnotation() {}
 actual class C {
     actual annotation class Nested
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass,
+nullableType, primaryConstructor, propertyDeclaration */

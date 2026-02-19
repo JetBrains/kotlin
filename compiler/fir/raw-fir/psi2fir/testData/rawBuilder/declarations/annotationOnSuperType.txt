@@ -1,0 +1,26 @@
+FILE: annotationOnSuperType.kt
+    @Target(AnnotationTarget#.TYPE#) public final? annotation class Anno : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Anno] constructor([CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const val prop: <implicit> = String(str)
+        public? get(): <implicit>
+    public final? interface I : R|kotlin/Any| {
+    }
+    public final? class MyClassWithoutConstructor : @Anno(<strcat>(String(MyClassWithoutConstructor super type ref ), prop#)) List<@Anno(<strcat>(String(MyClassWithoutConstructor nested super type ref ), prop#)) List<@Anno(<strcat>(String(MyClassWithoutConstructor nested nested super type ref ), prop#)) I>> {
+        public? [ContainingClassKey=MyClassWithoutConstructor] constructor(): R|util/MyClassWithoutConstructor| {
+            super<<implicit>>()
+        }
+
+    }
+    public final? class MyClassWithConstructor : @Anno(<strcat>(String(MyClassWithConstructor super type ref ), prop#)) List<@Anno(<strcat>(String(MyClassWithConstructor nested super type ref ), prop#)) List<@Anno(<strcat>(String(MyClassWithConstructor nested nested super type ref ), prop#)) I>> {
+        public? [ContainingClassKey=MyClassWithConstructor] constructor(): R|util/MyClassWithConstructor| {
+            super<<implicit>>()
+        }
+
+    }

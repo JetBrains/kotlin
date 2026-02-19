@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.name.Name
  *   All types in the same family have corresponding shape of classId: [packageFqName].[classNamePrefix]N,
  *   where `N` is an arity of function
  *
+ * It is suggested to keep the maximum arity under 255 (accounting for implicit parameters the custom
+ *   function kind may include). Large values will take longer for the compiler to analyze (potentially freezing the IDE)
+ *   or may not even be properly compilable due to platform limitations
+ *
  * Functional type kind may be either reflect type or non-reflect type
  *   Each non-reflect kind should have corresponding reflect kind and vice-versa (like `kotlin.FunctionN` and `kotlin.reflection.KFunctionN`)
  *
@@ -35,6 +39,9 @@ import org.jetbrains.kotlin.name.Name
  *       override operator fun invoke(p1: P1, p2: P2, ..., pN: PN): R
  *   }
  *
+ * [isInlineable] parameter determines if the specific functional type kind is inlineable or not, which allows the compiler to
+ *   properly (not) report diagnostic about inlineability like `DECLARATION_CANT_BE_INLINED`
+ *
  * Note that if you provide some new functional type kind it's your responsibility to handle all references to it in backend
  *   with [IrGenerationExtension] implementation
  */
@@ -42,7 +49,9 @@ abstract class FunctionTypeKind internal constructor(
     val packageFqName: FqName,
     val classNamePrefix: String,
     val isReflectType: Boolean,
-    val annotationOnInvokeClassId: ClassId?
+    val annotationOnInvokeClassId: ClassId?,
+    val isInlineable: Boolean,
+    val maxArity: Int = DEFAULT_MAX_ARITY,
 ) {
     /*
      * This constructor is needed to enforce not nullable [annotationOnInvokeClassId] for
@@ -52,8 +61,10 @@ abstract class FunctionTypeKind internal constructor(
         packageFqName: FqName,
         classNamePrefix: String,
         annotationOnInvokeClassId: ClassId,
-        isReflectType: Boolean
-    ) : this(packageFqName, classNamePrefix, isReflectType, annotationOnInvokeClassId)
+        isReflectType: Boolean,
+        isInlineable: Boolean,
+        maxArity: Int = DEFAULT_MAX_ARITY,
+    ) : this(packageFqName, classNamePrefix, isReflectType, annotationOnInvokeClassId, isInlineable, maxArity)
 
     /*
      * Specifies how corresponding type will be rendered
@@ -78,6 +89,15 @@ abstract class FunctionTypeKind internal constructor(
      */
     open val serializeAsFunctionWithAnnotationUntil: String?
         get() = null
+
+    /**
+     * Specifies whether the function type kind supports conversion for function references.
+     *
+     * Type resolution will allow function references with a simple function type (e.g. Function0
+     * or KFunction0) to be converted to this function kind if this property is true.
+     */
+    open val supportsConversionFromSimpleFunctionType: Boolean
+        get() = true
 
     /**
      * @return corresponding non-reflect kind for reflect kind
@@ -113,7 +133,8 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
         "Function",
         isReflectType = false,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = true,
     ) {
         override fun reflectKind(): FunctionTypeKind = KFunction
     }
@@ -122,7 +143,13 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.COROUTINES_PACKAGE_FQ_NAME,
         "SuspendFunction",
         isReflectType = false,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = true,
+        // JVM only allows functions with at most 255 parameters, and suspend functions
+        // contain an additional implicit `Continuation` parameter.
+        // To avoid `ClassFormatError: Too many arguments in method signature`, we must
+        // account for it in `maxArity`.
+        maxArity = Function.maxArity - 1,
     ) {
         override val prefixForTypeRender: String
             get() = "suspend"
@@ -134,7 +161,9 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KFunction",
         isReflectType = true,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = false,
+        maxArity = Function.maxArity,
     ) {
         override fun nonReflectKind(): FunctionTypeKind = Function
     }
@@ -143,9 +172,33 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KSuspendFunction",
         isReflectType = true,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = false,
+        // See `SAFEST_MAX_ARITY`.
+        maxArity = SuspendFunction.maxArity,
     ) {
         override fun nonReflectKind(): FunctionTypeKind = SuspendFunction
+
+        /**
+         * When supplying a `KSuspendFunctionN` for a `SuspendFunctionN`,
+         * values larger than 21 throw at runtime:
+         * > Receiver class ... does not define or inherit an implementation of the resolved method 'abstract java.lang.Object invoke(java.lang.Object[])' of interface kotlin.jvm.functions.FunctionN
+         * However, instantiating such interfaces has been allowed for a while
+         * now and they may not necessarily trigger the exception in all scenarios.
+         * For that reason, the `maxArity` is actually capped at 253, not 21.
+         * See: KT-81936.
+         */
+        const val SAFEST_MAX_ARITY: Int = 21
+    }
+
+    companion object {
+        /**
+         * JVM only allows functions with at most 255 parameters.
+         * Taking a callable reference to a function with 255 parameters then results in:
+         *
+         * > java.lang.ClassFormatError: Too many arguments in method signature in class file ...
+         */
+        const val DEFAULT_MAX_ARITY: Int = 254
     }
 }
 

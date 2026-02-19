@@ -16,25 +16,38 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.phaser.Action
+import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.util.transformSubsetFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-interface FileLoweringPass {
+interface ModuleLoweringPass {
+    fun lower(irModule: IrModuleFragment)
+}
+
+interface FileLoweringPass : ModuleLoweringPass {
     fun lower(irFile: IrFile)
 
-    object Empty : FileLoweringPass {
-        override fun lower(irFile: IrFile) {
-            // Do nothing
+    override fun lower(irModule: IrModuleFragment) {
+        for (file in irModule.files) {
+            try {
+                lower(file)
+            } catch (e: CompilationException) {
+                e.initializeFileDetails(file)
+                throw e
+            } catch (e: KotlinExceptionWithAttachments) {
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException("Internal error in file lowering", file, null)
+            }
         }
     }
 }
@@ -69,32 +82,13 @@ interface BodyAndScriptBodyLoweringPass : BodyLoweringPass {
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-fun FileLoweringPass.lower(
-    moduleFragment: IrModuleFragment
-) = moduleFragment.files.forEach {
-    try {
-        lower(it)
-    } catch (e: CompilationException) {
-        e.file = it
-        throw e
-    } catch (e: KotlinExceptionWithAttachments) {
-        throw e
-    } catch (e: Throwable) {
-        throw e.wrapWithCompilationException(
-            "Internal error in file lowering",
-            it,
-            null
-        )
-    }
-}
-
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(ClassLoweringVisitor(this))
 }
 
 private class ClassLoweringVisitor(
     private val loweringPass: ClassLoweringPass
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -111,7 +105,7 @@ fun ScriptLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ScriptLoweringVisitor(
     private val loweringPass: ScriptLoweringPass
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -129,7 +123,7 @@ fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class DeclarationContainerLoweringVisitor(
     private val loweringPass: DeclarationContainerLoweringPass
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -149,7 +143,7 @@ fun BodyLoweringPass.runOnFilePostfix(
         try {
             declaration.accept(visitor, null)
         } catch (e: CompilationException) {
-            e.file = irFile
+            e.initializeFileDetails(irFile)
             throw e
         } catch (e: Throwable) {
             throw e.wrapWithCompilationException(
@@ -171,7 +165,7 @@ fun BodyAndScriptBodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
 private open class BodyLoweringVisitor(
     private val loweringPass: BodyLoweringPass,
     private val withLocalDeclarations: Boolean,
-) : IrElementVisitor<Unit, IrDeclaration?> {
+) : IrVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         element.acceptChildren(this, data)
     }
@@ -227,7 +221,7 @@ interface DeclarationTransformer : FileLoweringPass {
                 declaration.acceptVoid(visitor)
                 transformFlatRestricted(declaration)
             } catch (e: CompilationException) {
-                e.file = irFile
+                e.initializeFileDetails(irFile)
                 throw e
             } catch (e: Throwable) {
                 throw e.wrapWithCompilationException(
@@ -245,7 +239,7 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
+    private class Visitor(private val transformer: DeclarationTransformer) : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -253,7 +247,7 @@ interface DeclarationTransformer : FileLoweringPass {
         override fun visitFunction(declaration: IrFunction) {
             declaration.acceptChildrenVoid(this)
 
-            for (v in declaration.valueParameters) {
+            for (v in declaration.parameters) {
                 val result = transformer.transformFlatRestricted(v)
                 if (result != null) error("Don't know how to add value parameters")
             }

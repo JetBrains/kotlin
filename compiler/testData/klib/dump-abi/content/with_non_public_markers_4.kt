@@ -1,4 +1,4 @@
-// NON_PUBLIC_MARKERS: one.two/Three.Four five.six/Seven.Eight non_public_markers.test/Foo nine.ten/Eleven.Twelve
+// KLIB_ABI_DUMP_NON_PUBLIC_MARKERS: one.two/Three.Four five.six/Seven.Eight non_public_markers.test/Foo nine.ten/Eleven.Twelve
 // MODULE: with_non_public_markers_library
 
 package non_public_markers.test
@@ -117,3 +117,8 @@ var propertySetterMarkedWithBar: String get() = ""
     @Bar set(_) = Unit
 var propertySetterMarkedWithAnotherBar: String get() = ""
     @Another.Bar set(_) = Unit
+
+@field:Foo var propertyFieldMarkedWithFoo: String = ""
+@field:Another.Foo var propertyFieldMarkedWithAnotherFoo: String = ""
+@field:Bar var propertyFieldMarkedWithBar: String = ""
+@field:Another.Bar var propertyFieldMarkedWithAnotherBar: String = ""

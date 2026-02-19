@@ -1,4 +1,5 @@
-//!DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 //FILE:Foo.java
 
@@ -17,3 +18,5 @@ fun test() {
     assertEquals1(null, Foo.foo())
     assertEquals1("", Foo.foo())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, nullableType, stringLiteral, typeParameter */

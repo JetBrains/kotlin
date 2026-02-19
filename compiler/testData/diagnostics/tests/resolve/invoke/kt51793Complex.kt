@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-51793
 
@@ -28,3 +29,7 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+integerLiteral, interfaceDeclaration, lambdaLiteral, operator, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral, typeWithExtension */

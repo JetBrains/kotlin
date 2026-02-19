@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A<T: B<out Number>>(val x: T) {
     fun test() {
@@ -11,3 +12,6 @@ class B<T1> {
 }
 
 class C<T>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

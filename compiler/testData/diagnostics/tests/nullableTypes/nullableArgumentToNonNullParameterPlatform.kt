@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -15,3 +16,5 @@ fun test(j: J, nullStr: String?, nullByte: Byte?, nullDouble: Double?) {
     j.foo(<!TYPE_MISMATCH!>nullDouble<!>)
     j.foo(nullByte)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, nullableType */

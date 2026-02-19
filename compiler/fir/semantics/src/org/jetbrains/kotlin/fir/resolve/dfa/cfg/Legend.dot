@@ -1,0 +1,41 @@
+digraph {
+  rankdir=LR
+
+  subgraph cluster_01 {
+    label = "Nodes";
+    node [shape=box penwidth=2]
+
+    "Dead" [style=filled, fillcolor="gray"] ;
+    "Enter / Exit" [style=filled, fillcolor="red"] ;
+    "Union" [style=filled, fillcolor="yellow"] ;
+  }
+
+  subgraph cluster_02 {
+    label = "Edges";
+    node [shape=plaintext]
+    edge [penwidth=2]
+
+    edges_start [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+      <tr><td align="right" port="e1">Normal</td></tr>
+      <tr><td align="right" port="e2">CFG only</td></tr>
+      <tr><td align="right" port="e3">DFA only</td></tr>
+      <tr><td align="right" port="e4">Backwards</td></tr>
+      <tr><td align="right" port="e5">Dead</td></tr>
+      <tr><td align="right" port="e6">Subgraph</td></tr>
+      </table>>]
+    edges_end [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+      <tr><td port="e1">&nbsp;</td></tr>
+      <tr><td port="e2">&nbsp;</td></tr>
+      <tr><td port="e3">&nbsp;</td></tr>
+      <tr><td port="e4">&nbsp;</td></tr>
+      <tr><td port="e5">&nbsp;</td></tr>
+      <tr><td port="e6">&nbsp;</td></tr>
+      </table>>]
+    edges_start:e1:e -> edges_end:e1:w
+    edges_start:e2:e -> edges_end:e2:w [color=green]
+    edges_start:e3:e -> edges_end:e3:w [color=red]
+    edges_start:e4:e -> edges_end:e4:w [style=dashed]
+    edges_start:e5:e -> edges_end:e5:w [style=dotted]
+    edges_start:e6:e -> edges_end:e6:w [style=dotted color=gray]
+  }
+}

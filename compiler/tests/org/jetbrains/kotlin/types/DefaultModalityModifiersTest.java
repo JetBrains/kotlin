@@ -95,6 +95,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtFile file = new KtPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
             KtDeclaration aClass = file.getDeclarations().get(0);
             assert aClass instanceof KtClass;
+            @SuppressWarnings("deprecation")
             AnalysisResult bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(file, getEnvironment());
             DeclarationDescriptor classDescriptor =
                     bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
@@ -115,7 +116,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             StorageComponentContainer container = createContainerForLazyResolve(
                     moduleContext,
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files),
-                    new BindingTraceContext(),
+                    new BindingTraceContext(getProject()),
                     CommonPlatforms.INSTANCE.getDefaultCommonPlatform(),
                     CommonPlatformAnalyzerServices.INSTANCE,
                     CompilerEnvironment.INSTANCE,
@@ -165,7 +166,12 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
         }
 
 
-        private void testPropertyAccessorModality(String classWithPropertyWithAccessor, ClassKind kind, Modality expectedPropertyAccessorModality, boolean isGetter) {
+        private void testPropertyAccessorModality(
+                String classWithPropertyWithAccessor,
+                ClassKind kind,
+                Modality expectedPropertyAccessorModality,
+                boolean isGetter
+        ) {
             KtClass aClass = new KtPsiFactory(getProject()).createClass(classWithPropertyWithAccessor);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 

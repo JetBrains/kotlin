@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun text() {
     "direct:a" to "mock:a"
     "direct:a" on {it.body == "<hello/>"} to "mock:a"
@@ -30,3 +31,7 @@ infix fun String.on(predicate :  (s : URI) -> Boolean) : URI {
 class URI(val body : Any) {
     infix fun to(dest : String) {}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression */

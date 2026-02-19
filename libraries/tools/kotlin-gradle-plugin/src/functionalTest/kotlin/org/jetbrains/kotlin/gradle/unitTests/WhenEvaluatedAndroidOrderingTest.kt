@@ -11,9 +11,10 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
-import org.junit.Test
+import org.jetbrains.kotlin.gradle.util.configureDefaults
+import kotlin.test.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -49,6 +50,7 @@ class WhenEvaluatedAndroidOrderingTest {
         }
 
         project.applyAndroidLibraryPlugin()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         project.evaluate()
@@ -67,6 +69,6 @@ class WhenEvaluatedAndroidOrderingTest {
     private fun Project.applyAndroidLibraryPlugin() {
         project.plugins.apply("android-library")
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
+        android.configureDefaults()
     }
 }

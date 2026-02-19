@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
-import org.gradle.internal.jvm.JavaInfo
-import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
@@ -108,7 +106,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @DisplayName("Should ignore if verification mode is 'ignore' and kotlin and java targets are different")
     @GradleTest
     internal fun shouldNotPrintAnythingIfJavaAndKotlinJvmTargetsAreDifferent(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
@@ -156,7 +154,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @DisplayName("Should produce Java-Kotlin jvm target incompatibility warning only for related tasks")
     @GradleTest
     internal fun shouldProduceJavaKotlinJvmTargetDifferenceWarningOnlyForRelatedTasks(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
@@ -357,12 +355,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
             projectName = "kapt2/simple",
             gradleVersion = gradleVersion,
         ) {
-            val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) 11 else 16
+            val toolchainJavaVersion = 17
 
             gradleProperties.append(
                 """
                 kotlin.jvm.target.validation.mode = error
-                org.gradle.java.installations.paths=${getJdk16().javaHome},${getJdk11().javaHome}
+                org.gradle.java.installations.paths=${jdk17Info.javaHome},${jdk11Info.javaHome}
                 """.trimIndent()
             )
 
@@ -421,17 +419,26 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
+            if (!isWithJavaSupported) {
+                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
+                    subProject(it).buildGradleKts.replaceText("withJava()", "")
+                }
+            }
+
             subProject("lib").buildGradleKts.appendText(
                 """
                 |
                 |java {
-                |    targetCompatibility = JavaVersion.VERSION_17
-                |    sourceCompatibility = JavaVersion.VERSION_17
+                |    targetCompatibility = JavaVersion.VERSION_11
+                |    sourceCompatibility = JavaVersion.VERSION_11
                 |}
                 """.trimMargin()
             )
 
-            buildAndFail(":lib:compileKotlinJvmWithJava") {
+            buildAndFail(
+                ":lib:compileKotlinJvmWithJava",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError"
+            ) {
                 assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
@@ -448,6 +455,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
+            if (!isWithJavaSupported) {
+                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
+                    subProject(it).buildGradleKts.replaceText("withJava()", "")
+                }
+            }
+
             subProject("lib").buildGradleKts.appendText(
                 """
                 |
@@ -458,12 +471,37 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build(":lib:compileKotlinPlainJvm")
+            build(
+                ":lib:compileKotlinPlainJvm",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError"
+            )
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("Validation should not run in MPP on empty Java sources")
+    @GradleTest
+    internal fun testMppJvmNoValidationOnEmptyJavaSources(gradleVersion: GradleVersion) {
+        project("mpp-single-jvm-target", gradleVersion) {
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            buildScriptInjection {
+                java.targetCompatibility = JavaVersion.VERSION_11
+                java.sourceCompatibility = JavaVersion.VERSION_11
+            }
+
+            build(":compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+            }
         }
     }
 
     private fun TestProject.setJavaCompilationCompatibility(
-        target: JavaVersion
+        target: JavaVersion,
     ) {
         //language=Groovy
         buildGradle.append(
@@ -479,7 +517,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     private fun TestProject.useToolchainToCompile(
-        jdkVersion: Int
+        jdkVersion: Int,
     ) {
         //language=Groovy
         buildGradle.append(
@@ -502,10 +540,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
             """.trimIndent()
         )
     }
-
-    private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
-
-    private fun getJdk16(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk16Home")))
 
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 }

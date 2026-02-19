@@ -5,7 +5,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSException.h>
+#import <Foundation/Foundation.h>
 #import <objc/objc-exception.h>
 
 #include <objc/objc.h>
@@ -14,18 +14,19 @@
 #include <cstdio>
 #include <cstdint>
 #include <mutex>
+#include <string>
 
 #include "Memory.h"
-#include "MemorySharedRefs.hpp"
 
+#include "ManuallyScoped.hpp"
 #include "Natives.h"
+#include "ObjCBackRef.hpp"
 #include "ObjCInterop.h"
 #include "ObjCExportPrivate.h"
 #include "ObjCMMAPI.h"
 #include "StackTrace.hpp"
 #include "Types.h"
-#include "Mutex.hpp"
-#include "std_support/String.hpp"
+#include "concurrent/Mutex.hpp"
 
 using namespace kotlin;
 
@@ -51,21 +52,28 @@ static inline struct KotlinObjCClassData* GetKotlinClassData(id objOrClass) {
   return static_cast<struct KotlinObjCClassData*>(ptr);
 }
 
-namespace {
-
-BackRefFromAssociatedObject* getBackRef(id obj, KotlinObjCClassData* classData) {
-  void* body = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(obj) + classData->bodyOffset);
-  return reinterpret_cast<BackRefFromAssociatedObject*>(body);
+RUNTIME_NOTHROW bool IsKotlinObjCClass(Class cls) {
+  // `CreateKotlinObjCClass` adds this selector to both class and meta-class using `AddKotlinClassData`.
+  return [cls instancesRespondToSelector:@selector(_kotlinObjCClassData)];
 }
 
-BackRefFromAssociatedObject* getBackRef(id obj) {
+namespace {
+
+using BackRef = ManuallyScoped<mm::ObjCBackRef>;
+
+BackRef& getBackRef(id obj, KotlinObjCClassData* classData) {
+  void* body = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(obj) + classData->bodyOffset);
+  return *reinterpret_cast<ManuallyScoped<mm::ObjCBackRef>*>(body);
+}
+
+BackRef& getBackRef(id obj) {
   // TODO: suboptimal; consider specializing methods for each class.
   auto* classData = GetKotlinClassData(obj);
   return getBackRef(obj, classData);
 }
 
 OBJ_GETTER(toKotlinImp, id self, SEL _cmd) {
-  RETURN_OBJ(getBackRef(self)->ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(getBackRef(self)->ref());
 }
 
 id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
@@ -81,89 +89,43 @@ id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
   ObjHolder holder;
   auto kotlinObj = AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
 
-  getBackRef(result, classData)->initAndAddRef(kotlinObj);
+  getBackRef(result, classData).construct(kotlinObj);
 
   return result;
 }
 
 id retainImp(id self, SEL _cmd) {
-  getBackRef(self)->addRef<ErrorPolicy::kTerminate>();
+  getBackRef(self)->retain();
   return self;
 }
 
 BOOL _tryRetainImp(id self, SEL _cmd) {
-  // TODO: [tryAddRef] currently works only on the owner thread for non-shared objects;
-  // this is a regression for instances of Kotlin subclasses of Obj-C classes:
-  // loading a reference to such an object from Obj-C weak reference now fails on "wrong" thread
-  // unless the object is frozen.
-  try {
-    return getBackRef(self)->tryAddRef<ErrorPolicy::kThrow>();
-  } catch (ExceptionObjHolder& e) {
-    // TODO: check for IncorrectDereferenceException and possible weak property access
-    // Cannot use SourceInfo here, because CoreSymbolication framework (CSSymbolOwnerGetSymbolWithAddress)
-    // fails at recursive retain lock. Similarly, cannot use objc exception here, because its unhandled
-    // exception handler might fail at recursive retain lock too.
-    // TODO: Refactor to be more explicit. Instead of relying on an unhandled exception termination
-    // (and effectively setting a global to alter its behavior), just call an appropriate termination
-    // function by hand.
-    kotlin::DisallowSourceInfo();
-    std::terminate();
-  }
+    return getBackRef(self)->tryRetain();
 }
 
 void releaseImp(id self, SEL _cmd) {
-  getBackRef(self)->releaseRef();
+  getBackRef(self)->release();
 }
 
 void releaseAsAssociatedObjectImp(id self, SEL _cmd) {
-  auto* classData = GetKotlinClassData(self);
-  if (CurrentMemoryModel == MemoryModel::kExperimental) {
-    // No need for any special handling. Weak reference handling machinery
-    // has already cleaned up the reference to Kotlin object.
-    // [super release]
-    Class clazz = classData->objcClass;
-    struct objc_super s = {self, clazz};
-    auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-    messenger(&s, @selector(release));
-    return;
-  }
+  // No need for any special handling. Weak reference handling machinery
+  // has already cleaned up the reference to Kotlin object.
 
-  // This function is called by the GC. It made a decision to reclaim Kotlin object, and runs
-  // deallocation hooks at the moment, including deallocation of the "associated object" ([self])
-  // using the [super release] call below.
-
-  auto* backRef = getBackRef(self, classData);
-
-  // The deallocation involves running [self dealloc] which can contain arbitrary code.
-  // In particular, this code can retain and release [self]. Obj-C and Swift runtimes handle this
-  // gracefully (unless the object gets accessed after the deallocation of course), but Kotlin doesn't.
-  // For example, this happens in https://youtrack.jetbrains.com/issue/KT-41811, provoked by
-  // UIViewController.dealloc (which retains-releases self._view._viewDelegate == self) and UIView.dealloc.
-  // Generally retaining and releasing Kotlin object that is being deallocated would lead to
-  // use-after-dispose and double-dispose problems (with unpredictable consequences) or to an assertion failure.
-  // To workaround this, detach the back ref from the Kotlin object:
-  backRef->detach();
-
-  // So retain/release/etc. on [self] won't affect the Kotlin object, and an attempt to get
-  // the reference to it (e.g. when calling Kotlin method on [self]) would crash.
-  // The latter is generally ok, because by the time superclass dealloc gets launched, subclass state
-  // should already be deinitialized, and Kotlin methods operate on the subclass.
   // [super release]
+  auto* classData = GetKotlinClassData(self);
   Class clazz = classData->objcClass;
   struct objc_super s = {self, clazz};
-  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-  messenger(&s, @selector(release));
+  objc_msgSendSuper2(&s, @selector(release)); // FIXME is this correct?
 }
 
 void deallocImp(id self, SEL _cmd) {
-  getBackRef(self)->dealloc();
+  getBackRef(self).destroy();
 
   // [super dealloc]
   auto* classData = GetKotlinClassData(self);
   Class clazz = classData->objcClass;
   struct objc_super s = {self, clazz};
-  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-  messenger(&s, @selector(dealloc));
+  objc_msgSendSuper2(&s, @selector(dealloc)); // FIXME is this correct?
 }
 
 }
@@ -182,6 +144,41 @@ RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) {
     return GetKotlinClassData(reinterpret_cast<id>(objcPtr))->typeInfo;
 }
 
+RUNTIME_NOTHROW bool IsInstanceOfKotlinClassImplementingObjCProtocol(ObjHeader* kotlinObj, id obj, const char* protocolName) {
+    // Same as `IsKotlinObjCClass`, but more efficient:
+    if ((kotlinObj->type_info()->flags_ & TF_KOTLIN_OBJC_CLASS) == 0) {
+        // Not an instance of an `IsKotlinObjCClass`-class. The contract requires returning false.
+        return false;
+    }
+
+    /*
+    The implementation below intentionally avoids getting a `Protocol*` by name with `objc_getProtocol`
+    and compares the names instead.
+
+    The reason: `CreateKotlinObjCClass`, when creating the obj's class,
+    looks up protocols by name and doesn't mark the class as adopting the protocol when can't find it.
+    But this can legitimately happen when the protocol has neither properly adopting Objective-C classes
+    nor @protocol references, because the Objective-C compiler creates `__OBJC_PROTOCOL` data on demand.
+    No data => no protocol by name at runtime => no adoption.
+    But this function makes the best effort to keep the type checking behaviour working properly:
+    if the Kotlin class is defined as implementing the protocol, the type check should return `true`.
+
+    So, the implementation below checks `KotlinObjCClassInfo.protocolNames` which contains all the implemented protocols
+    as defined in the source code, regardless of whether they can be found with `objc_getProtocol` at runtime or not.
+
+    Reminder: a Kotlin class can't implement an Objective-C protocol unless it subclasses an Objective-C class.
+    Also, Kotlin subclasses of Objective-C classes (= `IsKotlinObjCClass`) must be final.
+    */
+    auto* classData = GetKotlinClassData(obj);
+    auto* info = classData->classInfo;
+    for (size_t i = 0;; ++i) {
+        const char* name = info->protocolNames[i];
+        if (name == nullptr) break;
+        // Note: the check below might wrongly fail if the protocol has the `objc_runtime_name` attribute. See KT-82296.
+        if (strcmp(protocolName, name) == 0) return true;
+    }
+    return false;
+}
 
 static void AddNSObjectOverride(bool isClassMethod, Class clazz, SEL selector, void* imp) {
   Class nsObjectClass = Kotlin_Interop_getObjCClass("NSObject");
@@ -226,7 +223,7 @@ static void AddMethods(Class clazz, const struct ObjCMethodDescription* methods,
   }
 }
 
-static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> classCreationMutex;
+static kotlin::ThreadStateAware<kotlin::SpinLock> classCreationMutex;
 static int anonymousClassNextId = 0;
 
 NO_EXTERNAL_CALLS_CHECK static Class allocateClass(const KotlinObjCClassInfo* info) {
@@ -240,7 +237,7 @@ NO_EXTERNAL_CALLS_CHECK static Class allocateClass(const KotlinObjCClassInfo* in
     fprintf(stderr, "Class %s has multiple implementations. Which one will be used is undefined.\n", info->name);
   }
 
-  std_support::string className = Kotlin_ObjCInterop_getUniquePrefix();
+  std::string className = Kotlin_ObjCInterop_getUniquePrefix();
 
   if (info->name != nullptr) {
     className += info->name;
@@ -291,9 +288,7 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   AddNSObjectOverride(false, newClass, @selector(release), (void*)&releaseImp);
   AddNSObjectOverride(false, newClass, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector,
       (void*)&releaseAsAssociatedObjectImp);
-  if (CurrentMemoryModel == MemoryModel::kExperimental) {
-    AddNSObjectOverride(false, newClass, @selector(dealloc), (void*)&deallocImp);
-  }
+  AddNSObjectOverride(false, newClass, @selector(dealloc), (void*)&deallocImp);
 
   AddMethods(newClass, info->instanceMethods, info->instanceMethodsNum);
   AddMethods(newMetaclass, info->classMethods, info->classMethodsNum);
@@ -303,9 +298,7 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   AddKotlinClassData(false, newClass, (void*)info->classDataImp);
   AddKotlinClassData(true, newClass, (void*)info->classDataImp);
 
-  const TypeInfo* actualTypeInfo = Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo);
-
-  int bodySize = sizeof(BackRefFromAssociatedObject);
+  int bodySize = sizeof(BackRef);
   char bodyTypeEncoding[16];
   snprintf(bodyTypeEncoding, sizeof(bodyTypeEncoding), "[%dc]", bodySize);
   BOOL added = class_addIvar(newClass, "kotlinBody", bodySize, /* log2(align) = */ 3, bodyTypeEncoding);
@@ -318,9 +311,18 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   int32_t offset = (int32_t)ivar_getOffset(body);
   *info->bodyOffset = offset;
 
-  // Doing this after objc_registerClassPair because it is not clear whether calling class methods
-  // is safe before that.
+  // `GetKotlinClassData` below calls an Objective-C method on the generated class -- `_kotlinObjCClassData`.
+  //
+  // `Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom` calls a method as well -- `instancesRespondToSelector:`,
+  // as part of `IsKotlinObjCClass`. It also queries a lot of details from the class using Objective-C runtime APIs.
+  //
+  // Doing this to a dynamically created Objective-C class is not safe until it is registered with
+  // `objc_registerClassPair`. See e.g. KT-82669.
+  //
+  // That's why it is important to keep those two calls after `objc_registerClassPair`.
   auto* classData = GetKotlinClassData(newClass);
+  const TypeInfo* actualTypeInfo = Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo);
+
   classData->typeInfo = actualTypeInfo;
   classData->objcClass = newClass;
   classData->bodyOffset = offset;
@@ -334,14 +336,6 @@ void objc_autoreleasePoolPop(void* ptr);
 id objc_allocWithZone(Class clazz);
 id objc_retain(id ptr);
 void objc_release(id ptr);
-
-konan::AutoreleasePool::AutoreleasePool()
-  : handle(objc_autoreleasePoolPush()) {}
-
-konan::AutoreleasePool::~AutoreleasePool() {
-  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative, true);
-  objc_autoreleasePoolPop(handle);
-}
 
 void* Kotlin_objc_autoreleasePoolPush() {
   return objc_autoreleasePoolPush();
@@ -364,6 +358,10 @@ id Kotlin_objc_retain(id ptr) {
 void Kotlin_objc_release(id ptr) {
   kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   objc_release(ptr);
+}
+
+void* Kotlin_Block_copy(void* blockPtr) {
+    return _Block_copy(blockPtr);
 }
 
 void Kotlin_objc_detachObjCObject(KRef ref) {
@@ -408,6 +406,11 @@ void* Kotlin_objc_retain(void* ptr) {
 
 void Kotlin_objc_release(void* ptr) {
   RuntimeAssert(false, "Objective-C interop is disabled");
+}
+
+void* Kotlin_Block_copy(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
 }
 
 void Kotlin_objc_detachObjCObject(void* ref) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-42995
 
 fun test() {
@@ -13,3 +14,6 @@ fun test() {
         a.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, tryExpression */

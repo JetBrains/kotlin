@@ -1,0 +1,85 @@
+package deprecated;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * @kotlin/Deprecated(message = "Deprecated annotation")
+ * public final annotation class deprecated/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.Deprecated()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package deprecated;
+
+@Anno()
+/**
+ * @kotlin/Deprecated(message = "Deprecated class")
+ * @deprecated/Anno
+ * public final class deprecated/Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: foo(I)V
+ *   @kotlin/Deprecated(message = "Deprecated function")
+ *   public final fun foo(a: kotlin/Int): kotlin/Unit
+ *
+ *   // getter: getFoo()I
+ *   // setter: setFoo(I)V
+ *   public final var foo: kotlin/Int
+ *     @kotlin/Deprecated(message = "Deprecated getter")
+ *     public final (* non-default *) get
+ *     @kotlin/Deprecated(message = "Deprecated setter")
+ *     public final (* non-default *) set(value: kotlin/Int)
+ *
+ *   // field: prop:I
+ *   // getter: getProp()I
+ *   // synthetic method for annotations: getProp$annotations()V
+ *   @kotlin/Deprecated(message = "Deprecated property")
+ *   public final val prop: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.Deprecated()
+public final class Foo {
+    @java.lang.Deprecated()
+    private final int prop = 0;
+
+    public Foo() {
+        super();
+    }
+
+    @java.lang.Deprecated()
+    public final void foo(int a) {
+    }
+
+    @java.lang.Deprecated()
+    public final int getProp() {
+        return 0;
+    }
+
+    @java.lang.Deprecated()
+    public static void getProp$annotations() {
+    }
+
+    @java.lang.Deprecated()
+    public final int getFoo() {
+        return 0;
+    }
+
+    @java.lang.Deprecated()
+    public final void setFoo(int value) {
+    }
+}

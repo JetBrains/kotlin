@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // FIR_DUMP
 // ISSUE: KT-38895, KT-50996, KT-51000
@@ -63,3 +64,6 @@ fun testLocalProperties() {
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>localIntProperty<!>)
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>localImplicitIntProperty<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, functionDeclaration, integerLiteral, interfaceDeclaration,
+localProperty, multiplicativeExpression, propertyDeclaration */

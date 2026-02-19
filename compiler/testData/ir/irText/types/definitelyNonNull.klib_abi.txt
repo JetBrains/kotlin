@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun <#A: kotlin/Any?> /elvisLike(#A, #A!!): #A!! // /elvisLike|elvisLike(0:0;0:0){0§<kotlin.Any?>}[0]
+final fun /runMe() // /runMe|runMe(){}[0]

@@ -1,0 +1,20 @@
+STEP 0:
+    dependencies: lib1
+    added file: m.kt
+STEP 1:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 2:
+    dependencies: lib1
+    updated imports <wasm>: m.kt
+STEP 3:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 4:
+    dependencies: lib1
+    updated imports <wasm>: m.kt
+STEP 5:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 6:
+    dependencies: lib1

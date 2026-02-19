@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo2
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo2
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,26 +17,44 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo2
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/foo2)
-    type: KtTypeParameterType:
-      annotationsList: []
+    owningCallableSymbol: KaNamedFunctionSymbol(/foo2)
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
       type: T
-    getContainingModule: KtSourceModule "Sources of main"
+    visibility: LOCAL
+    getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+    getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtTypeParameterType:
-            annotationsList: [
+    importableFqName: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: [
               BaseAnnotation()
                 psi: KtAnnotationEntry
             ]
@@ -43,11 +63,32 @@ KtFunctionSymbol:
         type: kotlin/collections/List<@R|BaseAnnotation|()  T>
     ]
     type: kotlin/collections/List<kotlin/collections/List<@R|BaseAnnotation|()  T>>?
-  symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+  getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: foo2

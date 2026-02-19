@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class StringPair(val first: String, val second: String)
 
 infix fun String.to(second: String) = StringPair(this, second)
@@ -11,3 +12,7 @@ fun F() : MutableMap<String, String> {
     // Smart cast should be here
     return hashMapOf("sss" to value)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, infix, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral,
+thisExpression */

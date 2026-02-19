@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun err0() {
     a::b()
 }

@@ -161,6 +161,8 @@ private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
     if (get(fileExtension) in arrayOf("gradle.kts", "init.gradle.kts", "settings.gradle.kts")) {
         isStandalone(false)
     }
+    @Suppress("DEPRECATION_ERROR")
+    fileNamePattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
     filePathPattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
     displayName.replaceOnlyDefault(mainAnnotation.displayName)
 }
@@ -174,7 +176,7 @@ private val KClass<*>.kotlinScriptAnnotation: KotlinScript
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.SimpleScriptTemplate",
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithArgs",
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithBindings",
-            -> DummyScriptTemplate::class.findAnnotation()
+                -> DummyScriptTemplate::class.findAnnotation()
             else -> null
         }
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $this")
@@ -186,7 +188,7 @@ private fun KotlinType.getTemplateClass(hostConfiguration: ScriptingHostConfigur
     return try {
         getScriptingClass(this, contextClass, hostConfiguration)
     } catch (e: Throwable) {
-        throw IllegalArgumentException("${ERROR_MSG_PREFIX}Unable to load base class $this", e)
+        throw IllegalArgumentException("${ERROR_MSG_PREFIX}Unable to load base class ${this.typeName}", e)
     }
 }
 
@@ -197,6 +199,12 @@ private inline fun <reified T : Annotation> KClass<*>.findAnnotation(): T? =
 private inline fun <reified T : PropertiesCollection> scriptConfigInstance(kclass: KClass<out T>): T? =
     kclass.objectInstance ?: run {
         val noArgsConstructor = kclass.java.constructors.singleOrNull { it.parameters.isEmpty() }
-        noArgsConstructor?.let { it.newInstance() as T }
+        noArgsConstructor?.let {
+            try {
+                it.isAccessible = true
+            } catch (_: RuntimeException) {
+            }
+            it.newInstance() as T
+        }
     }
 

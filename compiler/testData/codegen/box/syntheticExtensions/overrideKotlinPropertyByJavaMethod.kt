@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// !LANGUAGE: +ReferencesToSyntheticJavaProperties
+// LANGUAGE: +ReferencesToSyntheticJavaProperties
 
 // WITH_STDLIB
 // FILE: J.java

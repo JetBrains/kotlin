@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun test1(ns: String?, vararg nullableStrs: String?) {
     nullableStrs.contains("x")
@@ -25,3 +26,5 @@ fun test3(ns: String?, nullableStrs: Array<out String?>, nonNullableStrs: Array<
     ns in nullableStrs
     ns in nonNullableStrs
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, outProjection, stringLiteral, vararg */

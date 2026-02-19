@@ -1,25 +1,31 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 description = "Kotlin/Native utils"
 
 dependencies {
-    compileOnly(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly(kotlin("stdlib", coreDepsVersion))
     api(project(":kotlin-util-io"))
     api(project(":kotlin-util-klib"))
     api(platform(project(":kotlin-gradle-plugins-bom")))
 
-    testImplementation(commonDependency("junit:junit"))
-    testImplementation(kotlinStdlib())
+    testImplementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testApiJUnit5()
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
+    testFixturesApi(testFixtures(project(":kotlin-util-klib")))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 configureKotlinCompileTasksGradleCompatibility()
@@ -32,4 +38,11 @@ tasks {
 
 publish()
 
-standardPublicJars()
+runtimeJar {
+    // JPMS can't handle the jar file name. Fix that by specifying a valid module name in the manifest:
+    manifest.attributes["Automatic-Module-Name"] = "kotlin.native_utils"
+    // See https://youtrack.jetbrains.com/issue/KT-72063.
+}
+
+sourcesJar()
+javadocJar()

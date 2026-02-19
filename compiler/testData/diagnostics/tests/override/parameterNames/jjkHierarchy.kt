@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Super.java
 
@@ -15,3 +16,5 @@ interface Sub extends Super {
 class SubSub : Sub {
     override fun foo(subName: Long) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override */

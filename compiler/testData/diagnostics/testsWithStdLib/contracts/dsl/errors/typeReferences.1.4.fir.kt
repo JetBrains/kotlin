@@ -1,6 +1,8 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
+// LANGUAGE: -AllowCheckForErasedTypesInContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -13,14 +15,14 @@ inline fun <reified T> referToReifiedGeneric(x: Any?) {
 class Generic<T> {
     fun referToCaptured(x: Any?) {
         contract {
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x is T)<!>
+            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x is <!CANNOT_CHECK_FOR_ERASED!>T<!>)<!>
         }
     }
 }
 
 fun referToSubstituted(x: Any?) {
     contract {
-        returns() implies (x is Generic<String>)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x is <!CANNOT_CHECK_FOR_ERASED!>Generic<String><!>)<!>
     }
 }
 
@@ -36,13 +38,13 @@ typealias SimpleType = Int
 
 fun referToAliasedGeneric(x: Any?) {
     contract {
-        returns() implies (x is GenericString)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x is <!CANNOT_CHECK_FOR_ERASED!>GenericString<!>)<!>
     }
 }
 
 fun referToAliasedFunctionType(x: Any?) {
     contract {
-        returns() implies (x is FunctionalType)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x is <!CANNOT_CHECK_FOR_ERASED!>FunctionalType<!>)<!>
     }
 }
 
@@ -51,3 +53,6 @@ fun referToAliasedSimpleType(x: Any?) {
         returns() implies (x is SimpleType)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, functionDeclaration, functionalType,
+inline, isExpression, lambdaLiteral, nullableType, reified, starProjection, typeAliasDeclaration, typeParameter */

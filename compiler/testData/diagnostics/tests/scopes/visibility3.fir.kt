@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 //FILE:file1.kt
 package a
@@ -24,14 +26,14 @@ private object PO {}
 package a
 
 fun test() {
-    val y = makeA()
+    val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!>
     y.<!INVISIBLE_REFERENCE!>bar<!>()
     <!INVISIBLE_REFERENCE!>foo<!>()
 
     val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
 
     val z = <!INVISIBLE_REFERENCE!>x<!>
-    <!INVISIBLE_REFERENCE, INVISIBLE_SETTER!>x<!> = 30
+    <!INVISIBLE_REFERENCE!>x<!> = 30
 
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 }
@@ -41,7 +43,10 @@ class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>(
 class Q {
     class W {
         fun foo() {
-            val y = makeA() //assure that 'makeA' is visible
+            val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!> //assure that 'makeA' is visible
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

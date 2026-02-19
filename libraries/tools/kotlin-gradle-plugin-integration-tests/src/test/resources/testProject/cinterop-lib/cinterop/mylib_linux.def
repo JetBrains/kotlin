@@ -1,0 +1,4 @@
+headers = mylib.h
+headerFilter = mylib.h
+libraryPaths = ../../../libs/linux
+linkerOpts = -L../../../libs/linux -lmylib

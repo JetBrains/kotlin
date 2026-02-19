@@ -9,6 +9,6 @@ class C {
     fun p(i: Int, vararg s: String) {
 
     }
-}
 
-// FIR_COMPARISON
+    fun d(vararg first: Int, flag: Boolean): Int = 0
+}

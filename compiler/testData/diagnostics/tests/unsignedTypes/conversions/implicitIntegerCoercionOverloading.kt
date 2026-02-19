@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-57655
-// !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: annotation.kt
@@ -23,3 +24,6 @@ fun box(): String = when {
     testLong(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>5L<!>) != 5L.toULong() -> "Fail: test(5L)"
     else -> "OK"
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, functionDeclaration, integerLiteral, stringLiteral,
+whenExpression */

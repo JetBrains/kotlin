@@ -1,0 +1,18 @@
+public final class cases/localClasses/A {
+	public fun <init> ()V
+	public final fun a ()Ljava/lang/String;
+}
+
+public final class cases/localClasses/B {
+	public fun <init> ()V
+	public final fun a (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class cases/localClasses/L {
+	public fun <init> ()V
+}
+
+public final class cases/localClasses/LambdasKt {
+	public static final fun box ()V
+}
+

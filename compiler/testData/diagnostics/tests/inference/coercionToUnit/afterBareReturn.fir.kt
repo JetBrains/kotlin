@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface I
 open class C
 
@@ -29,7 +30,7 @@ fun test3() = run {
 
 fun test4() = run {
     if (p) return@run
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>incompatibleC<!>() // ? either uninferred T or error (Unit </: C)
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>incompatibleC<!>() // ? either uninferred T or error (Unit </: C)
 }
 
 fun main() {
@@ -39,3 +40,6 @@ fun main() {
     expectUnit(test3())
     expectUnit(test4())
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration,
+intersectionType, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

@@ -6,4 +6,4 @@ fun foo(x: String, ys: List<String>) =
 var flag = true
 
 fun box(): String =
-        foo("O", if (flag) listOf("k").map { it.toUpperCase() } else listOf())
+        foo("O", if (flag) listOf("k").map { it.uppercase() } else listOf())

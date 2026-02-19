@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(a: Any?) {
     if (a == null) return
     <!DEBUG_INFO_SMARTCAST!>a<!>.hashCode()
@@ -8,3 +9,6 @@ fun test(a: Any?) {
     val c: Any? = a
     c<!UNSAFE_CALL!>.<!>hashCode()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

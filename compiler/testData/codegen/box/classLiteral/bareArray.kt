@@ -1,4 +1,4 @@
-// !LANGUAGE: +BareArrayClassLiteral
+// LANGUAGE: +BareArrayClassLiteral
 
 fun box(): String {
     val x = Array(1) { Any() }

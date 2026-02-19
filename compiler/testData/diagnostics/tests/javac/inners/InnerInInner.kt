@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/x.java
 package a;
@@ -26,3 +28,5 @@ package a
 fun test() = x().getB()
 fun test2() = test().getB()
 fun test3() = test2().getB()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

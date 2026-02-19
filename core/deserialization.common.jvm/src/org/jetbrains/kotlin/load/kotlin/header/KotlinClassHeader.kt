@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.load.kotlin.header
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 class KotlinClassHeader(
     val kind: Kind,
-    val metadataVersion: JvmMetadataVersion,
+    val metadataVersion: MetadataVersion,
     val data: Array<String>?,
     val incompatibleData: Array<String>?,
     val strings: Array<String>?,
@@ -61,9 +61,6 @@ class KotlinClassHeader(
 
     val isUnstableJvmIrBinary: Boolean
         get() = extraInt.has(METADATA_JVM_IR_FLAG) && !extraInt.has(METADATA_JVM_IR_STABLE_ABI_FLAG)
-
-    val isUnstableFirBinary: Boolean
-        get() = extraInt.has(METADATA_FIR_FLAG) && !extraInt.has(METADATA_JVM_IR_STABLE_ABI_FLAG)
 
     val isPreRelease: Boolean
         get() = extraInt.has(METADATA_PRE_RELEASE_FLAG)

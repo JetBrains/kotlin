@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 package kotlin
 
@@ -26,3 +27,6 @@ object Scope {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

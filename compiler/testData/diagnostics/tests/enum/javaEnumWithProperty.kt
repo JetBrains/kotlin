@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 public enum A {
@@ -18,3 +19,5 @@ fun main() {
     c.s
     A.ANOTHER.s
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, localProperty, propertyDeclaration */

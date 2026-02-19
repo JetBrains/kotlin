@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See KT-11007: Wrong smart cast to not-null type after safe calls in if / when expression
 
@@ -42,3 +43,6 @@ class My {
         sss<!UNSAFE_CALL!>.<!>length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, ifExpression, localProperty, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, safeCall, thisExpression */

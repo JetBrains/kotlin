@@ -27,10 +27,10 @@ public class MyNumber extends Number {
 // FILE: box.kt
 
 fun box(): String {
-    val x = MyNumber('*'.code).toChar()
+    val x = MyNumber('*'.code).toInt().toChar()
     if (x != '*') return "Fail 1: $x"
 
-    val y = java.lang.Integer('+'.code).toChar()
+    val y = java.lang.Integer('+'.code).toInt().toChar()
     if (y != '+') return "Fail 2: $y"
 
     return "OK"

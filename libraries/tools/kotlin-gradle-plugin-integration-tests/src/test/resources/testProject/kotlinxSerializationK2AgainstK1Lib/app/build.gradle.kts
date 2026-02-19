@@ -8,12 +8,6 @@ plugins {
     application
 }
 
-repositories {
-    mavenLocal()
-    maven("<localRepo>")
-    mavenCentral()
-}
-
 group = "com.example.serialization_app"
 version = "1.0"
 

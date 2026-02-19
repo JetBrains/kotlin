@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertNull
 
@@ -17,18 +16,11 @@ class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
 
     @GradleAndroidTest
     @DisplayName("test Android project with flavors")
-    @AndroidTestVersions(minVersion = "7.0.4")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0) // due AGP version limit ^
     fun testProjectWithFlavors(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
         project(
             "multiplatformAndroidSourceSetLayout2",
             gradleVersion,
-            defaultBuildOptions.copy(androidVersion = agpVersion)
-                .suppressDeprecationWarningsOn(
-                    "AGP relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty which has been deprecated."
-                ) { options ->
-                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_4) && AGPVersion.fromString(options.safeAndroidVersion) < AGPVersion.v7_1_0
-                },
+            defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("test") {

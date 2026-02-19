@@ -1,31 +1,42 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.utils.classId
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
@@ -60,7 +71,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
                                 return@findSourceNonLocalFirDeclarationByProvider firScript?.takeIf { it.psi == declaration }
                             }
 
-                            firScript?.statements?.filterIsInstance<FirDeclaration>()
+                            firScript?.declarations
                         } else {
                             firFile.declarations
                         }
@@ -89,12 +100,12 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
     )
 }
 
-@KtAnalysisApiInternals
-fun PsiElement.collectContainingDeclarationsIfNonLocal(session: LLFirResolveSession): List<FirDeclaration>? {
-    val ktFile = containingFile as? KtFile ?: return null
-    val ktDeclaration = getNonLocalContainingOrThisDeclaration { !it.canBePartOfParentDeclaration } ?: return null
-    val firFile = session.getOrBuildFirFile(ktFile)
-    return FirElementFinder.findPathToDeclarationWithTarget(firFile, ktDeclaration)
+@KaImplementationDetail
+fun collectUseSiteContainers(element: PsiElement, resolutionFacade: LLResolutionFacade): List<FirDeclaration>? {
+    val containingDeclaration = element.getNonLocalContainingOrThisDeclaration { it.isAutonomousElement } ?: return null
+    val containingFile = containingDeclaration.containingKtFile
+    val firFile = resolutionFacade.getOrBuildFirFile(containingFile)
+    return FirElementFinder.findPathToDeclarationWithTarget(firFile, containingDeclaration)
 }
 
 internal fun KtElement.findSourceByTraversingWholeTree(
@@ -121,11 +132,12 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         is KtProperty,
         is KtNamedFunction,
         is KtConstructor<*>,
-        is KtClassInitializer,
+        is KtAnonymousInitializer,
         is KtTypeAlias,
         is KtDestructuringDeclaration,
+        is KtDestructuringDeclarationEntry,
         is KtScript,
-        -> firDeclarationProvider(this)
+            -> firDeclarationProvider(this)
 
         is KtPropertyAccessor -> {
             val firPropertyDeclaration = property.findSourceNonLocalFirDeclarationByProvider(
@@ -140,16 +152,26 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         }
 
         is KtParameter -> {
-            val ownerFunction = ownerFunction ?: errorWithFirSpecificEntries(
-                "Containing function should be not null for KtParameter",
+            val ownerDeclaration = ownerDeclaration ?: errorWithFirSpecificEntries(
+                "Containing declaration should be not null for ${KtParameter::class.simpleName}",
                 psi = this,
             )
 
-            val firFunctionDeclaration = ownerFunction.findSourceNonLocalFirDeclarationByProvider(
+            val firDeclaration = ownerDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 firDeclarationProvider,
-            ) as? FirFunction ?: return null
+            ) ?: return null
 
-            firFunctionDeclaration.valueParameters[parameterIndex()]
+            val parameters = if (isContextParameter) {
+                when (firDeclaration) {
+                    is FirRegularClass -> firDeclaration.contextParameters
+                    is FirCallableDeclaration -> firDeclaration.contextParameters
+                    else -> null
+                }
+            } else {
+                (firDeclaration as? FirFunction)?.valueParameters
+            }
+
+            parameters?.firstOrNull { it.psi == this }
         }
 
         is KtTypeParameter -> {
@@ -172,15 +194,8 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
     return candidate?.takeIf { it.psi == this }
 }
 
-fun FirAnonymousInitializer.containingClass(): FirRegularClass {
-    val dispatchReceiverType = this.dispatchReceiverType as? ConeLookupTagBasedType
-        ?: error("dispatchReceiverType for FirAnonymousInitializer modifier cannot be null")
-
-    val dispatchReceiverSymbol = dispatchReceiverType.lookupTag.toSymbol(llFirSession)
-        ?: error("symbol for FirAnonymousInitializer cannot be null")
-
-    return dispatchReceiverSymbol.fir as FirRegularClass
-}
+fun FirAnonymousInitializer.containingClassIdOrNull(): ClassId? =
+    (containingDeclarationSymbol as? FirClassSymbol<*>)?.classId
 
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")
 var KtDeclaration.originalDeclaration by UserDataProperty(ORIGINAL_DECLARATION_KEY)
@@ -190,9 +205,6 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
-    // TODO, KTIJ-26848: this is a workaround for IDE index inconsistency for unnamed classes
-    if (name == null) return null
-
     return if (provider is LLFirProvider) {
         provider.getFirClassifierByDeclaration(this)
     } else {
@@ -212,9 +224,12 @@ val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
 
 internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
-    for (statement in statements) {
-        if (statement.isScriptStatement) continue
-        action(statement as FirDeclaration)
+    for (property in parameters) {
+        action(property)
+    }
+
+    for (statement in declarations) {
+        action(statement)
     }
 }
 
@@ -222,27 +237,64 @@ internal inline fun FirRegularClass.forEachDeclaration(action: (FirDeclaration) 
     declarations.forEach(action)
 }
 
-internal val FirDeclaration.isDeclarationContainer: Boolean get() = this is FirRegularClass || this is FirScript
+internal inline fun FirFile.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+    declarations.forEach(action)
+}
+
+internal val FirDeclaration.isDeclarationContainer: Boolean get() = this is FirRegularClass || this is FirScript || this is FirFile
 
 internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     when (this) {
         is FirRegularClass -> forEachDeclaration(action)
         is FirScript -> forEachDeclaration(action)
+        is FirFile -> forEachDeclaration(action)
         else -> errorWithFirSpecificEntries("Unsupported declarations container", fir = this)
     }
 }
 
-internal val FirStatement.isScriptStatement: Boolean get() = this !is FirDeclaration || isScriptDependentDeclaration
-
-internal val FirStatement.isScriptDependentDeclaration: Boolean
-    get() = this is FirDeclaration && origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
-
-internal inline fun FirScript.forEachDependentDeclaration(action: (FirDeclaration) -> Unit) {
-    for (statement in statements) {
-        if (statement !is FirDeclaration || !statement.isScriptDependentDeclaration) continue
-        action(statement)
+/**
+ * Whether a non-local declaration of the given type supports partial body analysis.
+ *
+ * The function only checks the declaration type.
+ * It does not perform other important checks such as a number of body statements, or even whether the body is present at all.
+ */
+internal val FirElementWithResolveState.isPartialBodyResolvable: Boolean
+    get() = when (this) {
+        is FirConstructor -> !isPrimary
+        is FirNamedFunction, is FirAnonymousInitializer -> true
+        else -> false
     }
-}
+
+/**
+ * Whether a declaration body block supports partial body analysis.
+ * For empty blocks and blocks with a single statement, partial analysis is unavailable.
+ */
+internal val FirBlock.isPartialAnalyzable: Boolean
+    get() = statements.size > 1
+
+/**
+ * A declaration body (a block with statements).
+ */
+internal val FirElementWithResolveState.body: FirBlock?
+    get() = when (this) {
+        is FirFunction -> body
+        is FirAnonymousInitializer -> body
+        else -> null
+    }
+
+/**
+ * Some "local" declarations are not local from the lazy resolution perspective.
+ */
+internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
+    get() = when (fir.origin) {
+        // Destructuring declaration container should be treated as a non-local as it is a top-level script declaration
+        FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> false
+
+        // Script parameters should be treated as non-locals as they are visible from FirScript
+        FirDeclarationOrigin.ScriptCustomization.Parameter, FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
+
+        else -> isLocal
+    }
 
 val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
     get() = generateSequence(this) { element ->
@@ -255,3 +307,34 @@ val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
 
 val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>
     get() = parentsWithSelfCodeFragmentAware.drop(1)
+
+internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.containingFile): T? {
+    val originalFile = containingFile.copyOrigin
+        ?: (containingFile as? KtFile)?.analysisContext?.containingFile
+        ?: return null
+
+    return try {
+        PsiTreeUtil.findSameElementInCopy(this, originalFile)
+    } catch (_: IllegalStateException) {
+        // File copy has a different file structure
+        null
+    }
+}
+
+fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
+    val stringClassSymbol = session.builtinTypes.stringType.toRegularClassSymbol(session)
+    return stringClassSymbol?.fir?.declarations?.singleOrNull {
+        it is FirNamedFunction && it.name == OperatorNameConventions.PLUS
+    }?.symbol as? FirNamedFunctionSymbol
+}
+
+internal fun PsiClass.classIdOrError(): ClassId =
+    classId
+        ?: errorWithAttachment("No classId for non-local class") {
+            withPsiEntry(
+                "psiClass",
+                this@classIdOrError,
+                KotlinProjectStructureProvider.getModule(project, this@classIdOrError, useSiteModule = null)
+            )
+            withEntry("qualifiedName", qualifiedName)
+        }

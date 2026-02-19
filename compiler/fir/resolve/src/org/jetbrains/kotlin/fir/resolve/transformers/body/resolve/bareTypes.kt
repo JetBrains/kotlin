@@ -5,22 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLikeType, originalType: ConeKotlinType): ConeKotlinType? {
-    originalType.lowerBoundIfFlexible().fullyExpandedType(session).let {
+    originalType.lowerBoundIfFlexible().fullyExpandedType().let {
         if (it !== originalType) return computeRepresentativeTypeForBareType(type, it)
     }
 
@@ -30,13 +27,20 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
         return candidatesFromIntersectedTypes.firstOrNull()
     }
 
-    val originalClassLookupTag = (originalType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag ?: return null
+    session.typeApproximator.approximateToSuperType(
+        originalType,
+        TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+    )?.let {
+        return computeRepresentativeTypeForBareType(type, it)
+    }
 
-    val castTypeAlias = type.lookupTag.toSymbol(session)?.fir as? FirTypeAlias
+    val originalClassLookupTag = originalType.fullyExpandedType().classLikeLookupTagIfAny ?: return null
+
+    val castTypeAlias = type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toTypeAliasSymbol()?.fir
     if (castTypeAlias != null && !canBeUsedAsBareType(castTypeAlias)) return null
 
-    val expandedCastType = type.fullyExpandedType(session)
-    val castClass = expandedCastType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
+    val expandedCastType = type.fullyExpandedType()
+    val castClass = expandedCastType.lookupTag.toRegularClassSymbol()?.fir ?: return null
 
     val superTypeWithParameters = with(session.typeContext) {
         val correspondingSupertype = AbstractTypeChecker.findCorrespondingSupertypes(
@@ -44,7 +48,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
             castClass.defaultType(), originalClassLookupTag,
         ).firstOrNull() as? ConeClassLikeType ?: return null
 
-        if (originalType.nullability.isNullable)
+        if (originalType.isMarkedNullable)
             correspondingSupertype.withNullability(nullable = true) as ConeClassLikeType
         else
             correspondingSupertype

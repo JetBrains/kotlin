@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-51272
 
@@ -16,3 +17,6 @@ fun testOnClass(rootClass: Class<Any>): Int {
         else -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, equalityExpression, functionDeclaration, integerLiteral, whenExpression,
+whenWithSubject */

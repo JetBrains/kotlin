@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ProhibitNonConstValuesAsVarargsInAnnotations, +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitNonConstValuesAsVarargsInAnnotations, +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 val nonConstArray = longArrayOf(0)
 fun nonConstFun(): LongArray = TODO()
@@ -25,3 +25,6 @@ fun bar1() {}
 
 @Anno(*<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>nonConstArray<!>)
 fun bar2() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, primaryConstructor,
+propertyDeclaration, vararg */

@@ -1,9 +1,10 @@
-// !LANGUAGE: +MultiPlatformProjects
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 // TODO: .fir.kt version is just a stub.
 
-expect interface My {
+expect interface <!NO_ACTUAL_FOR_EXPECT!>My<!> {
     open fun bar()
     <!EXPECTED_DECLARATION_WITH_BODY!>open fun bas()<!> {}
     <!REDUNDANT_MODIFIER!>open<!> abstract fun bat(): Int
@@ -27,7 +28,7 @@ class MyImpl2: My {
     override val e = 1
 }
 
-expect interface Outer {
+expect interface <!NO_ACTUAL_FOR_EXPECT!>Outer<!> {
     interface Inner {
         open fun bar()
         <!EXPECTED_DECLARATION_WITH_BODY!>open fun bas()<!> {}
@@ -35,3 +36,6 @@ expect interface Outer {
         fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+nestedClass, override, propertyDeclaration, stringLiteral */

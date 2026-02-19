@@ -8,12 +8,6 @@ abstract class Base {
 }
 
 object Test : Base {
-  private constructor() /* primary */ {
-    super/*Base*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = 1
     get
@@ -25,4 +19,11 @@ object Test : Base {
     <this>.#y = <this>.<get-x>()
   }
 
+  private constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
 }
+

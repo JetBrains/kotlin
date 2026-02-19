@@ -1,5 +1,6 @@
-// !LANGUAGE: -SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface SuspendRunnable {
     suspend fun run()
@@ -12,7 +13,7 @@ object Test1 {
         fun call(r: SuspendRunnable) {}
 
         fun bar(f: () -> Unit) {
-            <!DEBUG_INFO_CALL("fqName: Test1.call; typeCall: function")!>call(f)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.Scope.call; typeCall: function")!>call(f)<!>
         }
     }
 }
@@ -29,3 +30,5 @@ object Test2 {
     }
 }
 
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, nestedClass,
+objectDeclaration, samConversion, suspend */

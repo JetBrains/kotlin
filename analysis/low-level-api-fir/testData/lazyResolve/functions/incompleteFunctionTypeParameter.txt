@@ -1,0 +1,55 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] incompleteFunctionTypeParameter.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] TYPE> <no name provided>(): R|kotlin/Unit|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] incompleteFunctionTypeParameter.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] TYPE> <no name provided>(): R|kotlin/Unit|

@@ -4,5 +4,3 @@ $TESTDATA_DIR$/k2SimpleMultiplatformGenericClass/jvm.kt
 $TEMP_DIR$
 -Xmulti-platform
 -Xcommon-sources=$TESTDATA_DIR$/k2SimpleMultiplatformGenericClass/common.kt
--language-version
-2.0

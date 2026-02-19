@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,18 +7,19 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.Severity.ERROR
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST]
  */
-
-object FirSyntaxErrors {
+@Suppress("IncorrectFormatting")
+object FirSyntaxErrors : KtDiagnosticsContainer() {
     // Syntax
-    val SYNTAX by error1<PsiElement, String>()
+    val SYNTAX: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SYNTAX", ERROR, SourceElementPositioningStrategies.SYNTAX_ERROR, PsiElement::class, getRendererFactory())
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(FirSyntaxErrorsDefaultMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirSyntaxErrorsDefaultMessages
 }

@@ -3,6 +3,8 @@ KtFile: SameLineStatementRecovery.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
@@ -558,8 +560,9 @@ KtFile: SameLineStatementRecovery.kt
     PsiWhiteSpace(' ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')

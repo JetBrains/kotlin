@@ -6,23 +6,42 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger
+import org.jetbrains.kotlin.resolve.calls.inference.components.withOrigins
+import org.jetbrains.kotlin.resolve.calls.inference.extractAllContainingTypeVariables
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
+import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
+import java.util.*
 
-private typealias Context = TypeSystemInferenceExtensionContext
+private typealias Context = ConstraintSystemMarker
 
 class MutableVariableWithConstraints private constructor(
     private val context: Context,
     override val typeVariable: TypeVariableMarker,
-    constraints: List<Constraint>? // assume simplified and deduplicated
+    constraints: List<Constraint>?, // assume simplified and deduplicated
 ) : VariableWithConstraints {
 
-    constructor(context: Context, typeVariable: TypeVariableMarker) : this(context, typeVariable, null)
+    constructor(context: Context, typeVariable: TypeVariableMarker)
+            : this(context, typeVariable, null)
 
-    constructor(context: Context, other: VariableWithConstraints) : this(context, other.typeVariable, other.constraints)
+    constructor(context: Context, other: VariableWithConstraints)
+            : this(context, other.typeVariable, other.constraints)
+
+    @UnstableSystemMergeMode
+    constructor(context: Context, first: VariableWithConstraints, second: VariableWithConstraints) : this(
+        context,
+        first.typeVariable.also { require(it == second.typeVariable) },
+        identityHashSetFromSum(first.constraints, second.constraints).toList(),
+    )
 
     override val constraints: List<Constraint>
         get() {
@@ -46,33 +65,77 @@ class MutableVariableWithConstraints private constructor(
 
     private val mutableConstraints = if (constraints == null) SmartList() else SmartList(constraints)
 
+    /**
+     * The contract for mutating this list is that the only allowed mutation is appending items.
+     * In any other case, it must be set to `null`, so that it will be recomputed when [constraints] is called.
+     *
+     * The reason is that the list might be mutated while it's being iterated.
+     * For this reason, we use an index loop in
+     * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator.forEachConstraint].
+     */
     private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
+
+    /**
+     * A map that for a specified key (type constructor of a type variable) returns a collection of constraints that contains
+     * the type variable.
+     *
+     * The property is necessary for the sake of optimizations only and expected to be nullified after any modifications [constraints]
+     */
+    private var constraintsGroupedByContainedTypeVariables: Map<TypeConstructorMarker, Collection<Constraint>>? = null
+
+    /**
+     * The property is necessary for the sake of optimizations only and expected to be nullified after any modifications [constraints]
+     */
+    private var constraintsGroupedByTypeHashCode: MutableMap<Int, MutableList<Constraint>>? = null
+
+    /**
+     * Every part that modifies [constraints] should either maintain the consistences of the grouped caches above
+     * or call this function.
+     */
+    private fun clearGroupedConstraintCaches() {
+        constraintsGroupedByContainedTypeVariables = null
+        constraintsGroupedByTypeHashCode = null
+    }
+
+    override fun getConstraintsContainedSpecifiedTypeVariable(typeVariableConstructor: TypeConstructorMarker): Collection<Constraint> {
+        if (constraintsGroupedByContainedTypeVariables == null) {
+            constraintsGroupedByContainedTypeVariables = computeConstraintsGroupedByContainedTypeVariables()
+        }
+
+        return constraintsGroupedByContainedTypeVariables!![typeVariableConstructor] ?: emptyList()
+    }
+
+    private fun computeConstraintsGroupedByContainedTypeVariables(): Map<TypeConstructorMarker, Collection<Constraint>> = with(context) {
+        buildMap<TypeConstructorMarker, MutableCollection<Constraint>> {
+            for (constraint in constraints) {
+                for (otherTypeVariable in constraint.type.extractAllContainingTypeVariables()) {
+                    this.getOrPut(otherTypeVariable) { SmartList() }.add(constraint)
+                }
+            }
+        }
+    }
+
+    private fun getConstraintsWithSameTypeHashCode(c: Constraint): List<Constraint> {
+        if (constraintsGroupedByTypeHashCode == null) {
+            constraintsGroupedByTypeHashCode = constraints.groupByTo(mutableMapOf(), Constraint::typeHashCode)
+        }
+
+        return constraintsGroupedByTypeHashCode!![c.typeHashCode].orEmpty()
+    }
 
     val rawConstraintsCount get() = mutableConstraints.size
 
     // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
     // the second element of pair is a flag whether a constraint was added in fact
-    fun addConstraint(constraint: Constraint): Pair<Constraint, Boolean> {
+    fun addConstraint(constraint: Constraint, inferenceLogger: InferenceLogger?): Pair<Constraint, Boolean> {
         val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
-        for (previousConstraint in constraints) {
-            if (previousConstraint.typeHashCode == constraint.typeHashCode
-                && previousConstraint.type == constraint.type
+        for (previousConstraint in getConstraintsWithSameTypeHashCode(constraint)) {
+            if (previousConstraint.type == constraint.type
                 && previousConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
             ) {
-                val noNewCustomAttributes = with(context) {
-                    val previousType = previousConstraint.type
-                    val type = constraint.type
-                    (!previousType.hasCustomAttributes() && !type.hasCustomAttributes()) ||
-                            (previousType.getCustomAttributes() == type.getCustomAttributes())
-                }
-
                 if (newConstraintIsUseless(previousConstraint, constraint)) {
-                    // Preserve constraints with different custom type attributes.
-                    // This allows us to union type attributes in NewCommonSuperTypeCalculator.kt
-                    if (noNewCustomAttributes) {
-                        return previousConstraint to false
-                    }
+                    return previousConstraint to false
                 }
 
                 val isMatchingForSimplification = when (previousConstraint.kind) {
@@ -80,7 +143,7 @@ class MutableVariableWithConstraints private constructor(
                     ConstraintKind.UPPER -> constraint.kind.isLower()
                     ConstraintKind.EQUALITY -> true
                 }
-                if (isMatchingForSimplification && noNewCustomAttributes) {
+                if (isMatchingForSimplification) {
                     val actualConstraint = if (constraint.kind != ConstraintKind.EQUALITY) {
                         Constraint(
                             ConstraintKind.EQUALITY,
@@ -89,10 +152,19 @@ class MutableVariableWithConstraints private constructor(
                                 ?: previousConstraint.position,
                             constraint.typeHashCode,
                             derivedFrom = constraint.derivedFrom,
-                            isNullabilityConstraint = false
-                        )
+                            isNullabilityConstraint = false,
+                            isNoInfer = constraint.isNoInfer && previousConstraint.isNoInfer,
+                        ).also {
+                            inferenceLogger.withOrigins(
+                                typeVariable, previousConstraint,
+                                typeVariable, constraint,
+                            ) {
+                                inferenceLogger?.log(typeVariable, it, context)
+                            }
+                        }
                     } else constraint
                     mutableConstraints.add(actualConstraint)
+                    clearGroupedConstraintCaches()
                     simplifiedConstraints = null
                     return actualConstraint to true
                 }
@@ -111,10 +183,17 @@ class MutableVariableWithConstraints private constructor(
         }
 
         if (simplifiedConstraints != null && isLowerAndFlexibleTypeWithDefNotNullLowerBound) {
-            simplifiedConstraints = null
+            clearGroupedConstraintCaches()
+        } else {
+            addConstraintToCacheByTypeHashCode(constraint)
+            constraintsGroupedByContainedTypeVariables = null
         }
 
         return constraint to true
+    }
+
+    private fun addConstraintToCacheByTypeHashCode(constraint: Constraint) {
+        constraintsGroupedByTypeHashCode?.getOrPut(constraint.typeHashCode) { mutableListOf() }?.add(constraint)
     }
 
     // This method should be used only for transaction in constraint system
@@ -124,14 +203,18 @@ class MutableVariableWithConstraints private constructor(
         if (simplifiedConstraints !== mutableConstraints) {
             simplifiedConstraints = null
         }
+
+        clearGroupedConstraintCaches()
     }
 
     // This method should be used only when constraint system has state COMPLETION
-    internal fun removeConstrains(shouldRemove: (Constraint) -> Boolean) {
+    internal fun removeConstraints(shouldRemove: (Constraint) -> Boolean) {
         mutableConstraints.removeAll(shouldRemove)
         if (simplifiedConstraints !== mutableConstraints) {
             simplifiedConstraints = null
         }
+
+        clearGroupedConstraintCaches()
     }
 
     private fun newConstraintIsUseless(old: Constraint, new: Constraint): Boolean {
@@ -149,6 +232,10 @@ class MutableVariableWithConstraints private constructor(
          */
         if (old.position.from is ExpectedTypeConstraintPosition<*> && new.position.from !is ExpectedTypeConstraintPosition<*> && old.kind.isUpper() && new.kind.isUpper())
             return false
+
+        if (old.isNoInfer && !new.isNoInfer) {
+            return false
+        }
 
         return when (old.kind) {
             ConstraintKind.EQUALITY -> true
@@ -227,12 +314,15 @@ class MutableVariableWithConstraints private constructor(
 internal class MutableConstraintStorage : ConstraintStorage {
     override val allTypeVariables: MutableMap<TypeConstructorMarker, TypeVariableMarker> = LinkedHashMap()
     override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
-    override val missedConstraints: MutableList<Pair<IncorporationConstraintPosition, MutableList<Pair<TypeVariableMarker, Constraint>>>> =
-        SmartList()
+    override val typeVariableDependencies: MutableMap<TypeConstructorMarker, MutableSet<TypeConstructorMarker>> =
+        LinkedHashMap()
     override val initialConstraints: MutableList<InitialConstraint> = SmartList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<ConstraintSystemError> = SmartList()
+
+    @OptIn(ApplicabilityDetail::class)
     override val hasContradiction: Boolean get() = errors.any { !it.applicability.isSuccess }
+
     override val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = LinkedHashMap()
     override val postponedTypeVariables: MutableList<TypeVariableMarker> = SmartList()
     override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: MutableMap<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> =
@@ -241,4 +331,41 @@ internal class MutableConstraintStorage : ConstraintStorage {
         LinkedHashMap()
 
     override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>> = SmartList()
+
+    override var outerSystemVariablesPrefixSize: Int = 0
+
+    override var usesOuterCs: Boolean = false
+
+    override val approximatorCaches: TypeApproximatorCachesPerConfiguration = mutableMapOf()
+
+    @AssertionsOnly
+    internal var outerCS: ConstraintStorage? = null
 }
+
+fun <T> identityHashSetFromSum(first: List<T>, second: List<T>): Set<T> =
+    IdentityHashMap<T, Boolean>().apply {
+        for (elem in first) {
+            put(elem, true)
+        }
+        for (elem in second) {
+            put(elem, true)
+        }
+    }.keys
+
+/**
+ * Annotated member is used only for assertion purposes and does not affect semantics
+ */
+@RequiresOptIn
+annotation class AssertionsOnly
+
+/**
+ * Annotated member is used during "constraint system merge"
+ * only for "overload resolution by lambda return type" mode.
+ * Please don't use in other modes
+ */
+@RequiresOptIn(
+    message = "This member is a part of unstable constraint system merge mode and " +
+            "is intended to be used exclusively for OverloadResolutionByLambdaReturnType resolve. " +
+            "Please don't use in other modes."
+)
+annotation class UnstableSystemMergeMode

@@ -1,6 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("jps-compatible")
+    id("gradle-plugin-api-reference") apply false
 }
 
 configureKotlinCompileTasksGradleCompatibility()
@@ -12,5 +12,8 @@ sourceSets {
 }
 
 dependencies {
-    compileOnly(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
 }
+
+exposeSourcesForDocumentationEmbedding(setOf(kotlin.sourceSets.getByName("main")))

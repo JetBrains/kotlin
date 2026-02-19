@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A<D : A<D>> {
     fun foo(): Any
 
@@ -23,3 +24,7 @@ fun test(x: A<*>) {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+nullableType, override, propertyDeclaration, safeCall, smartcast, starProjection, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

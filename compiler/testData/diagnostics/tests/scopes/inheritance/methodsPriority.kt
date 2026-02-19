@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 public class A {
     int foo() {return 1;}
@@ -31,3 +32,6 @@ class E: A() {
         val a: A = foo() // todo: discuss
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, javaFunction, javaType, localClass, localFunction,
+localProperty, override, propertyDeclaration, stringLiteral */

@@ -1,0 +1,2 @@
+KtNameReferenceExpression(31,41): 'emptyArray'
+  null

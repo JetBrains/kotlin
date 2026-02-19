@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
-import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // Generate additional functions for array set and get operators without bounds checking.
 internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendContext) {
-    private val symbols = context.ir.symbols
-
     private fun generateFunction(baseFunction: IrSimpleFunction, delegatingToFunction: IrSimpleFunction?, functionName: Name) =
             context.irFactory.createSimpleFunction(
                     startOffset = baseFunction.startOffset,
@@ -47,15 +45,16 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
                     isExternal = true,
             ).also { function ->
                 function.parent = baseFunction.parent
-                function.createDispatchReceiverParameter()
-                function.valueParameters = baseFunction.valueParameters.map { it.copyTo(function) }
+                function.parameters += function.createDispatchReceiverParameterWithClassParent()
+                for (param in baseFunction.parameters.drop(1)) {
+                    function.parameters += param.copyTo(function)
+                }
                 // Copy annotations.
                 val setWithoutBEAnnotations = (delegatingToFunction ?: baseFunction).annotations.map { annotation ->
                     annotation.deepCopyWithSymbols().also { copy ->
                         if (copy.isAnnotationWithEqualFqName(KonanFqNames.gcUnsafeCall)) {
                             val value = "${annotation.getAnnotationStringValue("callee")}_without_BoundCheck"
-                            copy.putValueArgument(0,
-                                    IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, value))
+                            copy.arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, value)
                         }
                     }
                 }
@@ -63,7 +62,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
             }
 
     fun generate() {
-        symbols.arrays.forEach { classSymbol ->
+        context.irBuiltIns.arrays.forEach { classSymbol ->
             val underlyingClass = (classSymbol.defaultType.computeBinaryType() as BinaryType.Reference)
                     .types.single().takeIf { classSymbol.owner.isSingleFieldValueClass }
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }

@@ -1,14 +1,29 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.irRichFunctionReference
+import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -16,9 +31,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.inlineFunction
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.copyParametersFrom
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.util.isKFunction
+import org.jetbrains.kotlin.ir.util.isKSuspendFunction
+import org.jetbrains.kotlin.ir.util.isSuspendFunction
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.selectSAMOverriddenFunction
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
     when (this) {
@@ -28,38 +51,53 @@ fun IrReturnTarget.returnType(context: CommonBackendContext) =
         else -> error("Unknown ReturnTarget: $this")
     }
 
+@DeprecatedForRemovalCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_1_20,
+    replaceWith = "org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter",
+)
 inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
-        index = -1
         name = "this".synthesizedName
         factory.buildValueParameter(this, this@addDispatchReceiver).also { receiver ->
             dispatchReceiverParameter = receiver
         }
     }
 
+@DeprecatedForRemovalCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_1_20,
+    replaceWith = "org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver",
+)
 fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     IrValueParameterBuilder().run {
         this.type = type
         this.origin = origin
-        this.index = -1
         this.name = "receiver".synthesizedName
         factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
             extensionReceiverParameter = receiver
         }
     }
 
+fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
+    IrValueParameterBuilder().run {
+        this.type = type
+        this.origin = origin
+        this.name = "receiver".synthesizedName
+        this.kind = IrParameterKind.ExtensionReceiver
+        factory.buildValueParameter(this, this@createExtensionReceiver)
+    }
+
 // TODO: support more cases like built-in operator call and so on
 fun IrExpression?.isPure(
     anyVariable: Boolean,
     checkFields: Boolean = true,
-    context: CommonBackendContext? = null
+    symbols: BackendSymbols? = null
 ): Boolean {
     if (this == null) return true
 
     fun IrExpression.isPureImpl(): Boolean {
         return when (this) {
-            is IrConst<*> -> true
+            is IrConst -> true
             is IrGetValue -> {
                 if (anyVariable) return true
                 val valueDeclaration = symbol.owner
@@ -71,16 +109,10 @@ fun IrExpression?.isPure(
                         operator == IrTypeOperator.INSTANCEOF ||
                                 operator == IrTypeOperator.REINTERPRET_CAST ||
                                 operator == IrTypeOperator.NOT_INSTANCEOF
-                        ) && argument.isPure(anyVariable, checkFields, context)
-            is IrCall -> if (context?.isSideEffectFree(this) == true) {
-                for (i in 0 until valueArgumentsCount) {
-                    val valueArgument = getValueArgument(i)
-                    if (!valueArgument.isPure(anyVariable, checkFields, context)) return false
-                }
-                true
-            } else false
+                        ) && argument.isPure(anyVariable, checkFields, symbols)
+            is IrCall -> symbols?.isSideEffectFree(this) == true && arguments.all { it.isPure(anyVariable, checkFields, symbols) }
             is IrGetObjectValue -> type.isUnit()
-            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, context) == true }
+            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, symbols) == true }
             else -> false
         }
     }
@@ -107,43 +139,60 @@ fun CommonBackendContext.createArrayOfExpression(
     arrayElements: List<IrExpression>
 ): IrExpression {
 
-    val arrayType = ir.symbols.array.typeWith(arrayElementType)
+    val arrayType = irBuiltIns.arrayClass.typeWith(arrayElementType)
     val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
 
     return IrCallImpl(
         startOffset,
         endOffset,
         arrayType,
-        ir.symbols.arrayOf,
-        1,
-        1
+        irBuiltIns.arrayOf,
+        typeArgumentsCount = 1,
     ).apply {
-        putTypeArgument(0, arrayElementType)
-        putValueArgument(0, arg0)
+        typeArguments[0] = arrayElementType
+        arguments[0] = arg0
     }
 }
 
 fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }
 
-// This code is partially duplicated in jvm FunctionReferenceLowering::adapteeCall
-// The difference is jvm version doesn't support ReturnableBlock, but returns call node instead of called function.
-fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
-    if (origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) return null
-    // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
-    // applied to a either a call or ReturnableBlock produced from that call inlining.
-    // That call's target is the original function which we need to get.
-    fun unknownStructure(): Nothing = throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${dump()}")
-    val call = when (val statement = body?.statements?.singleOrNull() ?: unknownStructure()) {
-        is IrTypeOperatorCall -> {
-            if (statement.operator != IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) unknownStructure()
-            statement.argument
-        }
-        is IrReturn -> statement.value
-        else -> statement
-    }
-    if (call is IrReturnableBlock) return call.inlineFunction ?: unknownStructure()
-    if (call !is IrFunctionAccessExpression) unknownStructure()
-    return call.symbol.owner
-}
+fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst)?.value == true
 
-fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
+fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
+    compilationException("${IrSyntheticBody::class.java.simpleName} is not supported here", declaration)
+
+val IrFile.isJvmBuiltin: Boolean get() = hasAnnotation(StandardClassIds.Annotations.JvmBuiltin)
+
+val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(StandardClassIds.Annotations.SuppressBytecodeGeneration)
+
+fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: LoweringContext): IrRichFunctionReference {
+    require(this.typeParameters.isEmpty())
+    val wrapper = factory.buildFun {
+        setSourceRange(this@wrapWithLambdaCall)
+        name = this@wrapWithLambdaCall.name
+        visibility = DescriptorVisibilities.LOCAL
+        returnType = this@wrapWithLambdaCall.returnType
+    }.apply {
+        this.parent = parent
+        copyParametersFrom(this@wrapWithLambdaCall)
+        val builder = context.createIrBuilder(this@apply.symbol).at(this@wrapWithLambdaCall)
+        body = builder.irBlockBody {
+            +irReturn(irCall(this@wrapWithLambdaCall).apply {
+                for ((index, param) in parameters.withIndex()) {
+                    arguments[index] = irGet(param)
+                }
+            })
+        }
+    }
+    val builder = context.createIrBuilder(symbol).at(this@wrapWithLambdaCall)
+    val overridenClass = context.irBuiltIns.functionN(parameters.size)
+    val referenceType = overridenClass.typeWith(parameters.map { it.type } + this@wrapWithLambdaCall.returnType)
+    return builder.irRichFunctionReference(
+        superType = referenceType,
+        reflectionTargetSymbol = symbol,
+        overriddenFunctionSymbol = overridenClass.selectSAMOverriddenFunction().symbol,
+        invokeFunction = wrapper,
+        captures = emptyList(),
+        origin = IrStatementOrigin.LAMBDA,
+    )
+}

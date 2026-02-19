@@ -27,7 +27,7 @@ FILE: kt53494.kt
     public final inline fun <reified T> test_1(t: R|T?|): R|C<T>| {
         when () {
             !=(R|<local>/t|, Null(null)) ->  {
-                ^test_1 R|/Wrapped.Wrapped|<R|T? & Any|>(R|<local>/t|)
+                ^test_1 R|/Wrapped.Wrapped|<R|T & Any|>(R|<local>/t|)
             }
         }
 
@@ -44,13 +44,18 @@ FILE: kt53494.kt
     public final inline fun <reified T> test_2(t: R|T?|): R|C<T>| {
         ^test_2 when () {
             !=(R|<local>/t|, Null(null)) ->  {
-                R|/Wrapped.Wrapped|<R|T? & Any|>(R|<local>/t|)
-            }
-            (R|<local>/t| is R|T|) ->  {
-                R|/Wrapped.Wrapped|<R|it(kotlin/Nothing? & T)|>(R|<local>/t|)
+                R|/Wrapped.Wrapped|<R|T & Any|>(R|<local>/t|)
             }
             else ->  {
-                Q|Default|
+                when () {
+                    (R|<local>/t| is R|T|) ->  {
+                        R|/Wrapped.Wrapped|<R|it(kotlin/Nothing? & T)|>(R|<local>/t|)
+                    }
+                    else ->  {
+                        Q|Default|
+                    }
+                }
+
             }
         }
 

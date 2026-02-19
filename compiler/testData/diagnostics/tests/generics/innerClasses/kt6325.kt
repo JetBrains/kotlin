@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class Outer<T> {
     inner class Inner<R> {
@@ -20,3 +21,6 @@ fun test0() {
 fun test1() {
     Outer<Int>().Inner<String>().newOuterInner<Double, Boolean>().foo(1.0, true) // type mismatch on 1.0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

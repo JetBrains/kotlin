@@ -52,9 +52,11 @@ class DeserializedClassDescriptor(
         VersionRequirementTable.create(classProto.versionRequirementTable), metadataVersion
     )
 
+    val hasEnumEntriesMetadataFlag: Boolean = Flags.HAS_ENUM_ENTRIES.get(classProto.flags)
+
     private val staticScope =
         if (kind == ClassKind.ENUM_CLASS) {
-            val enumEntriesCanBeUsed = Flags.HAS_ENUM_ENTRIES.get(classProto.flags) ||
+            val enumEntriesCanBeUsed = hasEnumEntriesMetadataFlag ||
                     c.components.enumEntriesDeserializationSupport.canSynthesizeEnumEntries() == true
             StaticScopeForKotlinEnum(c.storageManager, this, enumEntriesCanBeUsed)
         } else {
@@ -200,9 +202,12 @@ class DeserializedClassDescriptor(
 
     private fun computeValueClassRepresentation(): ValueClassRepresentation<SimpleType>? {
         if (!isInline && !isValue) return null
-        classProto.loadValueClassRepresentation(c.nameResolver, c.typeTable, c.typeDeserializer::simpleType, ::getValueClassPropertyType)
-            ?.let { return it }
-        if (!metadataVersion.isAtLeast(1, 5, 1)) {
+        val hasInlineClassRepresentationInMetadata = metadataVersion.isAtLeast(1, 5, 1)
+        classProto.loadValueClassRepresentation(
+            tryLoadMultiFieldValueClass = hasInlineClassRepresentationInMetadata,
+            c.nameResolver, c.typeTable, c.typeDeserializer::simpleType, ::getValueClassPropertyType,
+        )?.let { return it }
+        if (!hasInlineClassRepresentationInMetadata) {
             // Before 1.5, inline classes did not have underlying property name & type in the metadata.
             // However, they were experimental, so supposedly this logic can be removed at some point in the future.
             val constructor = unsubstitutedPrimaryConstructor ?: error("Inline class has no primary constructor: $this")
@@ -215,7 +220,7 @@ class DeserializedClassDescriptor(
 
     private fun getValueClassPropertyType(propertyName: Name): SimpleType? =
         memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)
-            .singleOrNull { it.extensionReceiverParameter == null }?.type as SimpleType?
+            .singleOrNull { it.extensionReceiverParameter == null && it.contextReceiverParameters.isEmpty() }?.type as SimpleType?
 
     override fun toString() =
         "deserialized ${if (isExpect) "expect " else ""}class $name" // not using descriptor renderer to preserve laziness

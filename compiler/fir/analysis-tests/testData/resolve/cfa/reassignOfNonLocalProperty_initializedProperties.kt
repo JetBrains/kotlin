@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55493, KT-59744
 // WITH_STDLIB
 
@@ -67,3 +68,6 @@ fun test_3(some: Some) {
     some.<!VAL_REASSIGNMENT!>y<!> = "error"
     <!VAL_REASSIGNMENT!>z<!> = "error"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, init,
+lambdaLiteral, propertyDeclaration, propertyWithExtensionReceiver, setter, stringLiteral */

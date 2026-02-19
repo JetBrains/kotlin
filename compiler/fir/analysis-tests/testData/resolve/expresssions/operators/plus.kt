@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo {
     operator fun plus(other: Foo): Foo = this
 }
@@ -12,3 +13,6 @@ fun test_2() {
     var f = Foo()
     f += Foo()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, localProperty, operator,
+propertyDeclaration, thisExpression */

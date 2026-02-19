@@ -4,6 +4,7 @@ description = "Kotlin Compiler (embeddable)"
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 val testCompilationClasspath by configurations.creating
@@ -21,9 +22,9 @@ dependencies {
     runtimeOnly(project(":kotlin-script-runtime"))
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     runtimeOnly(project(":kotlin-daemon-embeddable"))
-    runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    testApi(commonDependency("junit:junit"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    runtimeOnly(libs.kotlinx.coroutines.core) { isTransitive = false }
+    testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit"))
     testCompilationClasspath(kotlinStdlib())
 }
 
@@ -31,12 +32,6 @@ sourceSets {
     "main" {}
     "test" { projectDefault() }
 }
-
-// dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
-compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
-    archiveClassifier.set("dummy")
-})
-
 
 val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("com/sun/jna/**")
@@ -62,14 +57,19 @@ publish {
     setArtifacts(listOf(runtimeJar, sourcesJar, javadocJar))
 }
 
-projectTest {
-    dependsOn(runtimeJar)
-    val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
-    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
-    val runtimeJarPathProvider = project.provider { runtimeJar.get().outputs.files.asPath }
-    doFirst {
-        systemProperty("compilerClasspath", "${runtimeJarPathProvider.get()}${File.pathSeparator}${testCompilerClasspathProvider.get()}")
-        systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(runtimeJar)
+        val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
+        val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+        val runtimeJarPathProvider = project.provider { runtimeJar.get().outputs.files.asPath }
+        doFirst {
+            systemProperty(
+                "compilerClasspath",
+                "${runtimeJarPathProvider.get()}${File.pathSeparator}${testCompilerClasspathProvider.get()}"
+            )
+            systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
+        }
     }
 }
 

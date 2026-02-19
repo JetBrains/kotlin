@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: 1.kt
 package a
@@ -12,3 +13,5 @@ package b
 import a.IEntity
 
 class ObserverSupport<T : IEntity>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, typeConstraint, typeParameter */

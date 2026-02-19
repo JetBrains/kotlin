@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
 
     x2.filter c @ { // should be no space after c

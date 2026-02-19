@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import java.io.File
+import java.nio.file.Path
 
 /**
  * TODO add docs KT-57565
@@ -18,6 +19,13 @@ public interface ClasspathEntrySnapshot {
     public val classSnapshots: Map<String, ClassSnapshot>
 
     public fun saveSnapshot(path: File)
+
+    /**
+     * @since 2.3.0
+     */
+    public fun saveSnapshot(path: Path) {
+        saveSnapshot(path.toFile())
+    }
 }
 
 /**

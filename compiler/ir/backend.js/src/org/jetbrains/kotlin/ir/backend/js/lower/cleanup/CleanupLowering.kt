@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.cleanup
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -13,11 +14,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-class CleanupLowering : BodyLoweringPass {
+class CleanupLowering(@Suppress("unused") context: LoweringContext) : BodyLoweringPass {
 
     private val blockRemover = BlockRemover()
     private val codeCleaner = CodeCleaner()
@@ -29,7 +30,7 @@ class CleanupLowering : BodyLoweringPass {
     }
 }
 
-private class BlockRemover : IrElementVisitorVoid {
+private class BlockRemover : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -58,7 +59,7 @@ private class BlockRemover : IrElementVisitorVoid {
     }
 }
 
-private class CodeCleaner : IrElementVisitorVoid {
+private class CodeCleaner : IrVisitorVoid() {
 
     private fun IrStatementContainer.cleanUpStatements() {
         var unreachable = false
@@ -84,7 +85,7 @@ private class CodeCleaner : IrElementVisitorVoid {
 
         var hasFakeNothingCalls = false
 
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

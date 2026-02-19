@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 public interface A {
     class A_S {
@@ -80,3 +81,5 @@ class Y: F() {
         Y.<!UNRESOLVED_REFERENCE!>E_S<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, interfaceDeclaration, javaFunction, javaType, nestedClass */

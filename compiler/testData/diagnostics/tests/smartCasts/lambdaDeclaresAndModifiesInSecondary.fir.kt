@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class My {
     constructor(arg: Int?) {
         run {
@@ -8,3 +9,6 @@ class My {
         }   
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, secondaryConstructor, smartcast */

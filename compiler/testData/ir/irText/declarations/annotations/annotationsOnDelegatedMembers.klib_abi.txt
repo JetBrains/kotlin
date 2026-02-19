@@ -1,0 +1,26 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /Ann : kotlin/Annotation { // /Ann|null[0]
+    constructor <init>() // /Ann.<init>|<init>(){}[0]
+}
+final class /DFoo : /IFoo { // /DFoo|null[0]
+    final val testExtVal // /DFoo.testExtVal|@kotlin.String{}testExtVal[0]
+        final fun (kotlin/String).<get-testExtVal>(): kotlin/String // /DFoo.testExtVal.<get-testExtVal>|<get-testExtVal>@kotlin.String(){}[0]
+    final val testVal // /DFoo.testVal|{}testVal[0]
+        final fun <get-testVal>(): kotlin/String // /DFoo.testVal.<get-testVal>|<get-testVal>(){}[0]
+    constructor <init>(/IFoo) // /DFoo.<init>|<init>(IFoo){}[0]
+    final fun (kotlin/String).testExtFun() // /DFoo.testExtFun|testExtFun@kotlin.String(){}[0]
+    final fun testFun() // /DFoo.testFun|testFun(){}[0]
+}
+abstract interface /IFoo { // /IFoo|null[0]
+    abstract val testExtVal // /IFoo.testExtVal|@kotlin.String{}testExtVal[0]
+        abstract fun (kotlin/String).<get-testExtVal>(): kotlin/String // /IFoo.testExtVal.<get-testExtVal>|<get-testExtVal>@kotlin.String(){}[0]
+    abstract val testVal // /IFoo.testVal|{}testVal[0]
+        abstract fun <get-testVal>(): kotlin/String // /IFoo.testVal.<get-testVal>|<get-testVal>(){}[0]
+    abstract fun (kotlin/String).testExtFun() // /IFoo.testExtFun|testExtFun@kotlin.String(){}[0]
+    abstract fun testFun() // /IFoo.testFun|testFun(){}[0]
+}

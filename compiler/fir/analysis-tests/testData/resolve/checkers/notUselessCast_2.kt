@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-49045
 
 data class Foo(val foo: String)
@@ -19,5 +20,8 @@ fun test_1(): Wrapper<Foo?> {
 fun test_2(): Wrapper<Foo?> {
     return <!RETURN_TYPE_MISMATCH!>Wrapper(Bar("bar"))
         .map { it.toFoo() }
-        .swapWrappedValue { <!TYPE_MISMATCH, TYPE_MISMATCH!>Wrapper(null)<!> }<!>
+        .swapWrappedValue { <!RETURN_TYPE_MISMATCH!>Wrapper(null)<!> }<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

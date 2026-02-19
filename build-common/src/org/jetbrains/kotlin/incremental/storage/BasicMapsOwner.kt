@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.annotations.TestOnly
+import java.io.Closeable
 import java.io.File
 import java.io.IOException
 
-open class BasicMapsOwner(val cachesDir: File) {
-    private val maps = arrayListOf<BasicMap<*, *, *>>()
+open class BasicMapsOwner(val cachesDir: File) : Closeable {
+    private val maps = arrayListOf<BasicMap<*, *>>()
 
     companion object {
         val CACHE_EXTENSION = "tab"
@@ -31,25 +32,55 @@ open class BasicMapsOwner(val cachesDir: File) {
         get() = File(cachesDir, this + "." + CACHE_EXTENSION)
 
     @Synchronized
-    protected fun <K, V, S, M : BasicMap<K, V, S>> registerMap(map: M): M {
+    protected fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
         maps.add(map)
         return map
     }
 
-    open fun clean() {
-        forEachMapSafe("clean", BasicMap<*, *, *>::clean)
+    fun flush() {
+        forEachMapSafe("flush", BasicMap<*, *>::flush)
     }
 
-    open fun close() {
-        forEachMapSafe("close", BasicMap<*, *, *>::close)
+    open fun deleteStorageFiles() {
+        forEachMapSafe("deleteStorageFiles", BasicMap<*, *>::deleteStorageFiles)
     }
 
-    open fun flush(memoryCachesOnly: Boolean) {
-        forEachMapSafe("flush") { it.flush(memoryCachesOnly) }
+    /**
+     * Please do not remove or modify this function.
+     * It is implementing [org.jetbrains.jps.incremental.storage.StorageOwner] interface and needed for correct JPS compilation.
+     */
+    override fun close() {
+        forEachMapSafe("close", BasicMap<*, *>::close)
+    }
+
+    /**
+     * Please do not remove or modify this function.
+     * It is implementing [org.jetbrains.jps.incremental.storage.StorageOwner] interface and needed for correct JPS compilation.
+     */
+    fun flush(@Suppress("UNUSED_PARAMETER") memoryCachesOnly: Boolean) {
+        flush()
+    }
+
+    /**
+     * Please do not remove or modify this function.
+     * It is implementing [org.jetbrains.jps.incremental.storage.StorageOwner] interface and needed for correct JPS compilation.
+     * Calling [org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.close] here is unnecessary and will produce race conditions
+     * for JPS build because JPS can modify caches of dependant modules.
+     *
+     * More context:
+     * 1) While compiling module Foo, thread A can open caches of dependent module Bar
+     * 2) When we will compile module Bar in thread B we can decide to rebuild the module (e.g. configuration of facet changed)
+     * 3) Thread B will call `clean` action on caches of module Bar
+     * 4) If `clean` action also call `close` action,
+     * it will close opened map and will make it unusable when it tries to add info after recompilation,
+     * which will cause a "Storage already closed" exception.
+     */
+    fun clean() {
+        forEachMapSafe("clean", BasicMap<*, *>::clean)
     }
 
     @Synchronized
-    private fun forEachMapSafe(actionName: String, action: (BasicMap<*, *, *>) -> Unit) {
+    private fun forEachMapSafe(actionName: String, action: (BasicMap<*, *>) -> Unit) {
         val actionExceptions = LinkedHashMap<String, Exception>()
         maps.forEach {
             try {

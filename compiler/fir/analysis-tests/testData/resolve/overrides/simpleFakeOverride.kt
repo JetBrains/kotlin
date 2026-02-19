@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 
 open class A<T> {
     fun foo(t: T): T {
@@ -13,3 +14,4 @@ class B : A<Some>() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeParameter */

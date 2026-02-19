@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /A { // /A|null[0]
+    abstract fun m(/B<out kotlin.collections/List<kotlin/Number>>): kotlin/Int // /A.m|m(B<out|kotlin.collections.List<kotlin.Number>>){}[0]
+}
+abstract interface <#A: kotlin.collections/List<out kotlin/Number>> /B // /B|null[0]
+abstract class /C : /A { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    open fun m(/B<out kotlin.collections/List<kotlin/Number>>): kotlin/Int // /C.m|m(B<out|kotlin.collections.List<kotlin.Number>>){}[0]
+}

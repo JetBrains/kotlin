@@ -1,0 +1,49 @@
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:9:23: error: type mismatch: inferred type is () -> Unit but String was expected
+    var str: String = runLike {
+                      ^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:10:9: error: type mismatch: inferred type is () -> Unit but String was expected
+        { }
+        ^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:12:11: error: type mismatch: inferred type is (String) -> String but String was expected
+    str = runLike {
+          ^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:13:11: error: expected parameter of type (String) -> String
+        { it: String -> it }
+          ^^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:13:25: error: type mismatch: inferred type is (String) -> String but String was expected
+        { it: String -> it }
+                        ^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:16:9: error: type mismatch: inferred type is ([Error type: Cannot infer a lambda parameter type]) -> ??? but String was expected
+        { it -> it }
+        ^^^^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:16:11: error: cannot infer a type for this parameter. Please specify it explicitly.
+        { it -> it }
+          ^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:19:9: error: type mismatch: inferred type is () -> Unit but String was expected
+        { }
+        ^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:22:9: error: type mismatch: inferred type is (String) -> String but String was expected
+        { it: String -> it }
+        ^^^^^^^^^^^^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:22:11: error: expected parameter of type (String) -> String
+        { it: String -> it }
+          ^^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:22:25: error: type mismatch: inferred type is (String) -> String but String was expected
+        { it: String -> it }
+                        ^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:25:9: error: type mismatch: inferred type is ([Error type: Cannot infer a lambda parameter type]) -> ??? but String was expected
+        { it -> it }
+        ^^^^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:25:11: error: cannot infer a type for this parameter. Please specify it explicitly.
+        { it -> it }
+          ^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:27:11: error: type mismatch: inferred type is () -> Unit but String was expected
+    str = runLike {
+          ^^^^^^^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:28:19: error: type mismatch: inferred type is () -> Unit but String was expected
+        runLike { { } }
+                  ^^^
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:31:27: error: type mismatch: inferred type is () -> Unit but String was expected
+        runLike<String> { { } }
+                          ^^^
+

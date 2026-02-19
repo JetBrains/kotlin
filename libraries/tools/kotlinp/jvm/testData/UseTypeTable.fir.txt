@@ -1,0 +1,37 @@
+// Delegate.class
+// ------------------------------------------
+public final class Delegate<T#0 /* T */> : kotlin/Any {
+
+  // signature: <init>(Ljava/lang/Object;)V
+  public constructor(value: T#0? /* = ... */)
+
+  // signature: getValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+  public final operator fun getValue(instance: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+
+  // field: value:Ljava/lang/Object;
+  // getter: getValue()Ljava/lang/Object;
+  public final val value: T#0?
+    public final get
+
+  // module name: test-module
+}
+// UseTypeTableKt.class
+// ------------------------------------------
+package {
+
+  // signature: foo(Ljava/lang/Object;)Ljava/lang/Object;
+  public final fun <T#0 /* T */> foo(x: T#0): T#0
+
+  // local delegated property #0
+  // local final /* delegated */ val y: kotlin/String
+  //   local final get
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    UseTypeTableKt
+  }
+}

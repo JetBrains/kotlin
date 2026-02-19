@@ -1,0 +1,15 @@
+STEP 0:
+    dependencies: lib1
+    added file: m.kt
+STEP 1:
+    dependencies: lib1-new
+    removed direct depends: m.kt
+STEP 2:
+    dependencies: lib1-new
+    modified ir: m.kt
+STEP 3:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 4..5:
+    dependencies: lib1
+    modified ir: m.kt

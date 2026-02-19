@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A() {
     operator infix fun plus(i : Int) {}
@@ -39,3 +40,6 @@ fun test(x : Int?, a : A?) {
     a<!UNSAFE_CALL!>.<!>contains(1)
     a?.contains(1)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, infix,
+integerLiteral, multiplicativeExpression, nullableType, operator, primaryConstructor, safeCall, unaryExpression */

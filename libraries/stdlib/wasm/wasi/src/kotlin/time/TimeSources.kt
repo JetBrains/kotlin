@@ -5,55 +5,72 @@
 
 package kotlin.time
 
-import kotlin.time.Duration.Companion.nanoseconds
+import kotlin.internal.InlineOnly
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 import kotlin.wasm.WasiError
 import kotlin.wasm.WasiErrorCode
 import kotlin.wasm.WasmImport
-import kotlin.wasm.unsafe.Pointer
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
-private const val MONOTONIC = 1
+/**
+ * The clock measuring real time. Time value zero corresponds with 1970-01-01T00:00:00Z.
+ */
+private const val CLOCK_ID_REALTIME = 0
+
+/**
+ * The store-wide monotonic clock, which is defined as a clock measuring real time,
+ * whose value cannot be adjusted and which cannot have negative clock jumps.
+ * The epoch of this clock is undefined. The absolute time value of this clock therefore has no meaning.
+ */
+private const val CLOCK_ID_MONOTONIC = 1
 
 /**
  * Return the time value of a clock. Note: This is similar to `clock_gettime` in POSIX.
  */
+@ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "clock_time_get")
 private external fun wasiRawClockTimeGet(clockId: Int, precision: Long, resultPtr: Int): Int
 
-private fun clockTimeGet(): Long = withScopedMemoryAllocator { allocator ->
+/**
+ * Returns timestamp of the given clock in nanoseconds.
+ */
+@OptIn(ExperimentalWasmInterop::class)
+private fun clockTimeGet(clockId: Int): Long = withScopedMemoryAllocator { allocator ->
     val rp0 = allocator.allocate(8)
     val ret = wasiRawClockTimeGet(
-        clockId = MONOTONIC,
+        clockId = clockId,
         precision = 1,
         resultPtr = rp0.address.toInt()
     )
     if (ret == 0) {
-        (Pointer(rp0.address.toInt().toUInt())).loadLong()
+        rp0.loadLong()
     } else {
-        throw WasiError(WasiErrorCode.values()[ret])
+        throw WasiError(WasiErrorCode.entries[ret])
     }
 }
 
-@SinceKotlin("1.3")
-//TODO: Try use implementation of K/JVM since it uses a Long nanosecond counter similar to System.nanoTime (KT-60963)
-internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
-    actual override fun markNow(): ValueTimeMark =
-        ValueTimeMark(clockTimeGet())
+@InlineOnly
+internal inline fun realtimeClockTimeGet() = clockTimeGet(CLOCK_ID_REALTIME)
 
+@InlineOnly
+private inline fun monotonicClockTimeGet() = clockTimeGet(CLOCK_ID_MONOTONIC)
+
+@SinceKotlin("1.3")
+internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
+    private val zero: Long = monotonicClockTimeGet()
+    private fun read(): Long = monotonicClockTimeGet() - zero
+    override fun toString(): String = "TimeSource(clock_time_get())"
+
+    actual override fun markNow(): ValueTimeMark = ValueTimeMark(read())
     actual fun elapsedFrom(timeMark: ValueTimeMark): Duration =
-        (clockTimeGet() - timeMark.reading).nanoseconds
+        saturatingDiff(read(), timeMark.reading, DurationUnit.NANOSECONDS)
+
+    actual fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration =
+        saturatingOriginsDiff(one.reading, another.reading, DurationUnit.NANOSECONDS)
 
     actual fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
-        ValueTimeMark(timeMark.reading + duration.toLong(DurationUnit.NANOSECONDS))
-
-    actual fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
-        val ms1 = one.reading
-        val ms2 = another.reading
-        return if (ms1 == ms2) Duration.ZERO else (ms1 - ms2).nanoseconds
-    }
-
-    override fun toString(): String = "WASI monotonic time source"
+        ValueTimeMark(saturatingAdd(timeMark.reading, DurationUnit.NANOSECONDS, duration))
 }
 
 @Suppress("ACTUAL_WITHOUT_EXPECT") // visibility

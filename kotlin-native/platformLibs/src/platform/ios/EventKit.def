@@ -1,4 +1,4 @@
-depends = AddressBook CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreLocation Foundation Security darwin posix
+depends = AddressBook CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreLocation Foundation Security _LocationEssentials darwin posix
 language = Objective-C
 package = platform.EventKit
 modules = EventKit

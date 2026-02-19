@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-44474
 
 // MODULE: m1-common
@@ -37,3 +39,7 @@ fun testPlatformBad(base: Base) {
         B -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, equalityExpression, expect, functionDeclaration, integerLiteral,
+isExpression, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast,
+whenExpression, whenWithSubject */

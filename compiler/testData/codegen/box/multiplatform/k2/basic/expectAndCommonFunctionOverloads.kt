@@ -1,14 +1,14 @@
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE, WASM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58896
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect fun f(param: Int): String
 
 fun f(param: Any) = "$param: Any"
+
+expect val p: String
 
 fun commonFun() = "${f(1)}; ${f("s")}"
 
@@ -17,10 +17,13 @@ fun commonFun() = "${f(1)}; ${f("s")}"
 
 actual fun f(param: Int) = "$param: Int"
 
+actual val p = "OK"
+
 fun platformFun() = "${f(1)}; ${f("s")}"
 
 fun box(): String {
     if (commonFun() != "1: Int; s: Any") return "FAIL 1"
     if (platformFun() != "1: Int; s: Any") return "FAIL 2"
+    if (p != "OK") return "FAIL 3" // Expect property is also should be filtered out on the current site
     return "OK"
 }

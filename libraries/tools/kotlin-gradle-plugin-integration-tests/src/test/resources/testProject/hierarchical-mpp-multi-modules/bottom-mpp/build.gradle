@@ -1,5 +1,5 @@
-group 'org.jetbrains.qa.combompp'
-version '1.0'
+group = 'org.jetbrains.qa.combompp'
+version = '1.0'
 
 apply plugin: 'kotlin-multiplatform'
 apply plugin: 'maven-publish'
@@ -7,6 +7,7 @@ apply plugin: 'maven-publish'
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 kotlin {
+    jvmToolchain(8)
     jvm("jvmWithJava") {
         withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }

@@ -7,26 +7,28 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
-import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
+import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.fail
 
 class K2MultiplatformStructureTest {
@@ -43,11 +45,27 @@ class K2MultiplatformStructureTest {
         structure.refinesEdges.set(listOf(RefinesEdge("a", "b"), RefinesEdge("b", "c")))
         structure.fragments.set(
             listOf(
-                Fragment("a", project.files("a.kt")),
-                Fragment("b", project.files("b.kt")),
-                Fragment("c", project.files())
+                Fragment(
+                    "a",
+                    project.files("a.kt"),
+                    project.objects.fileCollection(),
+                    project.objects.fileCollection()
+                ),
+                Fragment(
+                    "b",
+                    project.files("b.kt"),
+                    project.objects.fileCollection(),
+                    project.objects.fileCollection(),
+                ),
+                Fragment(
+                    "c",
+                    project.files(),
+                    project.objects.fileCollection(),
+                    project.objects.fileCollection(),
+                )
             )
         )
+        structure.defaultFragmentName.set("a")
 
         val sourceArguments = K2JVMCompilerArguments()
         sourceArguments.configureK2Multiplatform(structure)
@@ -87,6 +105,66 @@ class K2MultiplatformStructureTest {
         `test compilations multiplatformStructure configuration`(kotlin.js(IR).compilations.main)
     }
 
+    @Test
+    fun `KT-65768 - no fragment sources in pure jvm project`() {
+        val project = buildProject {
+            applyKotlinJvmPlugin()
+        }
+        project.evaluate()
+
+        project.tasks.withType<KotlinCompile>().forEach { task ->
+            val arguments = task.buildCompilerArguments()
+            assertNull(arguments.fragmentSources, "Task $task has -Xframent-sources but it shouldn't.")
+        }
+    }
+
+    @Test
+    fun `test - extra sources that were added to compile task directly is included into default source set fragment`() {
+        val targets = listOf(kotlin.jvm(), kotlin.js(), kotlin.linuxX64())
+        kotlin.writeSource("commonMain")
+        kotlin.writeSource("jvmMain")
+        kotlin.writeSource("linuxX64Main")
+        kotlin.writeSource("jsMain")
+
+        // Add extra source file
+        targets.forEach { target ->
+            val compileTask = target.compilations.get("main").compileTaskProvider.get() as KotlinCompileTool
+            val extraSourceFile = project.file("${target.disambiguateName("generated")}.kt").also {
+                it.parentFile.mkdirs()
+                it.writeText("fun generated() {}")
+            }
+            compileTask.source(extraSourceFile)
+        }
+
+        project.evaluate()
+
+        val actualFragmentSources = targets.associate { target ->
+            val compileTask = target.compilations.get("main").compileTaskProvider.get() as K2MultiplatformCompilationTask
+            val args = compileTask.buildCompilerArguments()
+
+            target.name to args.fragmentSources?.toList().orEmpty().map {
+                val fragment = it.substringBefore(":")
+                val filePath = it.substringAfter(":")
+                "$fragment:${File(filePath).name}"
+            }
+        }
+
+        assertEquals(
+            mapOf(
+                "jvm" to listOf("jvmMain:jvmMain.kt", "commonMain:commonMain.kt", "jvmMain:jvmGenerated.kt"),
+                "js" to listOf("jsMain:jsMain.kt", "commonMain:commonMain.kt", "jsMain:jsGenerated.kt"),
+                "linuxX64" to listOf("linuxX64Main:linuxX64Main.kt", "commonMain:commonMain.kt", "linuxX64Main:linuxX64Generated.kt"),
+            ),
+            actualFragmentSources
+        )
+    }
+
+    private fun KotlinMultiplatformExtension.writeSource(sourceSet: String, fileName: String = "${sourceSet}.kt") {
+        val srcDir = sourceSets.maybeCreate(sourceSet).kotlin.srcDirs.first()
+        srcDir.mkdirs()
+        srcDir.resolve(fileName).writeText("""fun $sourceSet() {}""")
+    }
+
     private fun `test compilations multiplatformStructure configuration`(compilation: KotlinCompilation<*>) {
         val defaultSourceSet = compilation.defaultSourceSet
         /* Create an additional intermediate source set for testing */
@@ -105,6 +183,7 @@ class K2MultiplatformStructureTest {
 
         /* Enable K2 if necessary */
         if (KotlinVersion.DEFAULT < KotlinVersion.KOTLIN_2_0) {
+            @Suppress("Deprecation")
             compilation.compilerOptions.options.languageVersion.set(KotlinVersion.KOTLIN_2_0)
         }
 
@@ -130,6 +209,17 @@ class K2MultiplatformStructureTest {
                 fragment.fragmentName to fragment.sources.files
             }
         )
+
+        // by default the separate KMP compilation is not enabled, thus no fragment dependencies are configured
+        assertEquals(
+            mapOf(
+                "commonMain" to emptySet(),
+                "intermediateMain" to emptySet(),
+                defaultSourceSet.name to emptySet()
+            ),
+            compileTask.multiplatformStructure.fragments.get().associate { fragment ->
+                fragment.fragmentName to fragment.dependencies.files
+            })
 
         val args = compileTask.buildCompilerArguments()
 
@@ -160,6 +250,6 @@ private fun K2MultiplatformCompilationTask.buildCompilerArguments(): CommonCompi
 
 internal fun CommonCompilerArguments.configureK2Multiplatform(multiplatformStructure: K2MultiplatformStructure) {
     fragments = multiplatformStructure.fragmentsCompilerArgs
-    fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs()
+    fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(emptyList())
     fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
 }

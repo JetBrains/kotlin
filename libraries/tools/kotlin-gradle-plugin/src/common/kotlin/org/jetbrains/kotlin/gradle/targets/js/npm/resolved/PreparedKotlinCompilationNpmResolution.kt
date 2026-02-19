@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
-import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import java.io.File
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeclaration
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import java.io.Serializable
 
 /**
  * Resolved [NpmProject]
  */
 class PreparedKotlinCompilationNpmResolution(
-    val npmProjectDir: File,
+    val npmProjectDir: Provider<Directory>,
     val externalGradleDependencies: Collection<GradleNodeModule>,
     val externalNpmDependencies: Collection<NpmDependencyDeclaration>,
 ) : Serializable

@@ -1,5 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 // FULL_JDK
 // FILE: Runtime.java
 
@@ -47,3 +49,5 @@ class UseClazz
 
 @Source @Source
 class UseSource
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

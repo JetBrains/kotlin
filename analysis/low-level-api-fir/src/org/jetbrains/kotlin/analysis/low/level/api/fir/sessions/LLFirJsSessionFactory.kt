@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,36 +7,25 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
-import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
-import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
-import org.jetbrains.kotlin.fir.session.JsCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.session.FirJsSessionFactory.registerJsComponents
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
-    override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
+    override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
-            registerModuleIndependentJsComponents()
+            registerJsComponents(moduleKind = null)
 
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOfNotNull(
                         context.firProvider.symbolProvider,
@@ -49,13 +38,13 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         }
     }
 
-    override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
-            registerModuleIndependentJsComponents()
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
+            registerJsComponents(moduleKind = null)
 
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOf(
                         context.firProvider.symbolProvider,
@@ -66,32 +55,38 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         }
     }
 
-    override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerModuleIndependentJsComponents()
+            registerJsComponents(moduleKind = null)
+        }
+    }
+
+    override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
+        return doCreateDanglingFileSession(module, contextSession) { context ->
+            registerJsComponents(moduleKind = null)
+
+            register(
+                FirSymbolProvider::class,
+                LLModuleWithDependenciesSymbolProvider(
+                    this,
+                    providers = listOfNotNull(
+                        firProvider.symbolProvider,
+                        context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
+                    ),
+                    context.dependencyProvider,
+                )
+            )
         }
     }
 
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
-        builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
-        return emptyList() // TODO(kirpichenkov)
-    }
-
-    private fun LLFirSession.registerModuleIndependentJsComponents() {
-        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-        register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
-        register(
-            FirTypeSpecificityComparatorProvider::class,
-            FirTypeSpecificityComparatorProvider(JsTypeSpecificityComparatorWithoutDelegate(typeContext))
+        return LLLibrarySymbolProviderFactory.fromSettings(project).createJsLibrarySymbolProvider(
+            session,
+            scope,
         )
-        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
-        register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
     }
 }

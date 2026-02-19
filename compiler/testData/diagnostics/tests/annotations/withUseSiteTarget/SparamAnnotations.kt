@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 import kotlin.reflect.KProperty
 
@@ -38,3 +39,7 @@ class SomeClass {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetSetterParameter, classDeclaration,
+functionDeclaration, getter, integerLiteral, localProperty, nullableType, operator, propertyDeclaration,
+propertyDelegate, secondaryConstructor, setter, starProjection, stringLiteral */

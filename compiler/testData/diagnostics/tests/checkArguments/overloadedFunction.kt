@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun foo() {}
 fun foo(s: Int) {}
@@ -14,3 +15,5 @@ fun test() {
     bar(1, <!TOO_MANY_ARGUMENTS!>2<!>)
     <!NONE_APPLICABLE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

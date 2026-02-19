@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(mc: MutableCollection<out CharSequence>) {
     mc.addAll(<!TYPE_MISMATCH!>mc<!>)
 
@@ -11,3 +12,5 @@ fun test(mc: MutableCollection<out CharSequence>) {
     mc.addAll(emptyList())
     mc.addAll(emptyList<Nothing>())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, outProjection, stringLiteral */

@@ -4,31 +4,35 @@
  */
 
 #include "KString.h"
-#include "Natives.h"
+
+#include <cstdlib>
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "std_support/CStdlib.hpp"
+
+#include "Natives.h"
 
 using namespace kotlin;
 
-void checkContentsEquality(ArrayHeader* actual, const char16_t* expected) {
-    EXPECT_THAT(actual->count_, std::char_traits<char16_t>::length(expected));
-    for (size_t i=0; i<actual->count_; i++) {
-        EXPECT_THAT(*CharArrayAddressOfElementAt(actual, i), expected[i]);
+template <typename Unit>
+void checkContentsEquality(const char* ascii, const Unit* expected) {
+    auto actual = CreatePermanentStringFromCString(ascii);
+    auto header = StringHeader::of(actual);
+    EXPECT_THAT(header->encoding(), sizeof(Unit) == 1 ? StringEncoding::kLatin1 : StringEncoding::kUTF16);
+    size_t size = header->size() / sizeof(Unit);
+    EXPECT_THAT(size, std::char_traits<Unit>::length(expected));
+    const Unit* data = reinterpret_cast<const Unit*>(header->data());
+    for (size_t i=0; i<size; i++) {
+        EXPECT_THAT(data[i], expected[i]);
     }
-    EXPECT_THAT(actual->obj()->permanent(), true);
+    EXPECT_THAT(actual->permanent(), true);
+    FreePermanentStringForTests(actual);  // to prevent Address Sanitizer test failures, permanently allocated strings must be deallocated before test end
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_ascii) {
     const char* ascii = "Ascii";
     EXPECT_THAT(strlen(ascii), 5);
-    const char16_t* expected = u"Ascii";
-    EXPECT_THAT(std::char_traits<char16_t>::length(expected), 5);
-
-    auto actual = CreatePermanentStringFromCString(ascii)->array();
-    checkContentsEquality(actual, expected);
-    FreePermanentStringForTests(actual);  // to prevent Address Sanitizer test failures, permanently allocated strings must be deallocated before test end
+    checkContentsEquality(ascii, ascii);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_misc) {
@@ -36,10 +40,7 @@ TEST(KStringTest, CreatePermanentStringFromCString_misc) {
     EXPECT_THAT(strlen(non_ascii), 35);
     const char16_t* expected = u"-£öü²ソニーΣℜ∫♣‰€";
     EXPECT_THAT(std::char_traits<char16_t>::length(expected), 14);
-
-    auto actual = CreatePermanentStringFromCString(non_ascii)->array();
-    checkContentsEquality(actual, expected);
-    FreePermanentStringForTests(actual);  // to prevent Address Sanitizer test failures, permanently allocated strings must be deallocated before test end
+    checkContentsEquality(non_ascii, expected);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_surrogates) {
@@ -47,21 +48,13 @@ TEST(KStringTest, CreatePermanentStringFromCString_surrogates) {
     EXPECT_THAT(strlen(surrogates), 20);
     const char16_t* expected = u"😃𓄀🌀🐀𝜀";
     EXPECT_THAT(std::char_traits<char16_t>::length(expected), 10);
-
-    auto actual = CreatePermanentStringFromCString(surrogates)->array();
-    checkContentsEquality(actual, expected);
-    FreePermanentStringForTests(actual);  // to prevent Address Sanitizer test failures, permanently allocated strings must be deallocated before test end
+    checkContentsEquality(surrogates, expected);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_empty) {
     const char* empty = "";
     EXPECT_THAT(strlen(empty), 0);
-    const char16_t* expected = u"";
-    EXPECT_THAT(std::char_traits<char16_t>::length(expected), 0);
-
-    auto actual = CreatePermanentStringFromCString(empty)->array();
-    checkContentsEquality(actual, expected);
-    FreePermanentStringForTests(actual);  // to prevent Address Sanitizer test failures, permanently allocated strings must be deallocated before test end
+    checkContentsEquality(empty, empty);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_impossible) {
@@ -69,10 +62,7 @@ TEST(KStringTest, CreatePermanentStringFromCString_impossible) {
     EXPECT_THAT(strlen(impossible), 1);
     const char16_t* expected = u"\xfffd";
     EXPECT_THAT(std::char_traits<char16_t>::length(expected), 1);
-
-    auto actual = CreatePermanentStringFromCString(impossible)->array();
-    checkContentsEquality(actual, expected);
-    FreePermanentStringForTests(actual);  // to prevent Address Sanitizer test failures, permanently allocated strings must be deallocated before test end
+    checkContentsEquality(impossible, expected);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_overlong) {
@@ -80,8 +70,5 @@ TEST(KStringTest, CreatePermanentStringFromCString_overlong) {
     EXPECT_THAT(strlen(overlong), 2);
     const char16_t* expected = u"\xfffd\xfffd";
     EXPECT_THAT(std::char_traits<char16_t>::length(expected), 2);
-
-    auto actual = CreatePermanentStringFromCString(overlong)->array();
-    checkContentsEquality(actual, expected);
-    FreePermanentStringForTests(actual);  // to prevent Address Sanitizer test failures, permanently allocated strings must be deallocated before test end
+    checkContentsEquality(overlong, expected);
 }

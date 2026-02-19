@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object <!REDECLARATION!>A<!>
 
 val <!REDECLARATION!>A<!> = 10
@@ -10,3 +11,5 @@ fun bar() {
     val b = A
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, objectDeclaration, propertyDeclaration,
+stringLiteral */

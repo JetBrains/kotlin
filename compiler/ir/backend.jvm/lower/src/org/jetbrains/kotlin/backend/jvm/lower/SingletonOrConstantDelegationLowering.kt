@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.createSyntheticMethodForPropertyDelegate
@@ -23,15 +22,12 @@ import org.jetbrains.kotlin.ir.util.remapReceiver
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
-    ::SingletonOrConstantDelegationLowering,
-    name = "SingletonOrConstantDelegation",
-    description = "Optimize `val x by ConstOrSingleton`: there is no need to store the value in a field"
-)
-
-private class SingletonOrConstantDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
+/**
+ * Optimizes `val x by C` where `C` is either a constant or singleton: instead of storing the value `C` in a field, we access it every time
+ * from the getter and setter of `x`.
+ */
+internal class SingletonOrConstantDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (!context.config.generateOptimizedCallableReferenceSuperClasses) return
         irFile.transform(SingletonOrConstantDelegationTransformer(context), null)
     }
 }
@@ -59,7 +55,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
         backingField = null
 
-        val initializerBlock = if (delegate !is IrConst<*> && delegate !is IrGetValue)
+        val initializerBlock = if (delegate !is IrConst && delegate !is IrGetValue)
             context.irFactory.createAnonymousInitializer(
                 delegate.startOffset,
                 delegate.endOffset,

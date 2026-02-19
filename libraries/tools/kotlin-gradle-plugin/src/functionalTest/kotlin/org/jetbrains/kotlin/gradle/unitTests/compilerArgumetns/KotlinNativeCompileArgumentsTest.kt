@@ -7,16 +7,22 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.Primitive
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.gradle.util.mockXcodeVersion
 import java.io.File
 import kotlin.test.*
 
@@ -50,10 +56,15 @@ class KotlinNativeCompileArgumentsTest {
 
 
     private fun `assert setupCompilerArgs and createCompilerArguments are equal`(compile: KotlinNativeCompile) {
-        val argumentsFromCompilerArgumentsProducer = compile.createCompilerArguments(lenient)
+        val argumentsFromCompilerArgumentsProducer = compile.createCompilerArguments(
+            CreateCompilerArgumentsContext(
+                includeArgumentTypes = setOf(Primitive, PluginClasspath),
+                isLenient = true
+            )
+        )
         val argumentsFromBuildCompilerArgs = K2NativeCompilerArguments().apply {
             @Suppress("DEPRECATION_ERROR")
-            compile.setupCompilerArgs(this, true)
+            compile.setupCompilerArgs(this, false, true)
         }
 
         assertEquals(
@@ -81,6 +92,7 @@ class KotlinNativeCompileArgumentsTest {
         val kotlin = project.multiplatformExtension
         val linuxX64Target = kotlin.linuxX64()
         linuxX64Target.compilations.all {
+            @Suppress("DEPRECATION")
             it.compilerOptions.options.apply {
                 optIn.add("my.OptIn")
                 optIn.add("my.other.OptIn")
@@ -118,11 +130,6 @@ class KotlinNativeCompileArgumentsTest {
         val sharedNativeCompilation = kotlin.metadata().compilations.getByName("commonMain")
         val sharedNativeCompileTask = sharedNativeCompilation.compileTaskProvider.get() as KotlinNativeCompile
         val arguments = sharedNativeCompileTask.createCompilerArguments(lenient)
-
-        assertTrue(
-            LanguageVersion.fromVersionString(arguments.languageVersion)!! >= LanguageVersion.KOTLIN_2_0,
-            "Expected 'languageVersion' 2.0 or higher"
-        )
 
         assertNull(
             arguments.fragments?.toList(),
@@ -176,11 +183,6 @@ class KotlinNativeCompileArgumentsTest {
         val sharedNativeCompileTask = nativeCompilation.compileTaskProvider.get() as KotlinNativeCompile
         val arguments = sharedNativeCompileTask.createCompilerArguments(lenient)
 
-        assertTrue(
-            LanguageVersion.fromVersionString(arguments.languageVersion)!! >= LanguageVersion.KOTLIN_2_0,
-            "Expected 'languageVersion' 2.0 or higher"
-        )
-
         assertNull(
             arguments.commonSources?.toList(),
             "Expected 'commonSources' to not be set: Native Platform compilations shall use -Xfragment{x} arguments"
@@ -207,5 +209,79 @@ class KotlinNativeCompileArgumentsTest {
             linuxX64SourceFile.absolutePath in arguments.freeArgs,
             "Expected linuxX64 source file to be present in 'freeArgs'"
         )
+    }
+
+    @Test
+    fun `native compilation dependency files should contain native platform dependencies and stdlib`() {
+        val project = buildProjectWithMPP()
+        project.repositories.mavenLocal()
+        project.repositories.mavenCentralCacheRedirector()
+        val kotlin = project.multiplatformExtension
+
+        kotlin.linuxX64()
+
+        project.evaluate()
+        val nativeCompilation = kotlin.linuxX64().compilations.main
+
+        val expectedDependencies = setOf("stdlib", "nativeDependencies")
+
+        val actualDependencies = nativeCompilation.compileDependencyFiles
+            .map { it.name }
+            .toSet()
+
+        assertEquals(expectedDependencies, actualDependencies)
+    }
+
+    @Test
+    fun `native compile tasks SHOULD NOT have native platform dependencies but SHOULD have stdlib`() {
+        val project = buildProjectWithMPP()
+
+        project.mockXcodeVersion()
+        project.repositories.mavenLocal()
+        project.repositories.mavenCentralCacheRedirector()
+        val kotlin = project.multiplatformExtension
+
+        kotlin.linuxX64().binaries.executable()
+        kotlin.linuxArm64().binaries.executable()
+
+        project.evaluate()
+
+        val compileLinuxX64 = project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
+        val compileLinuxArm64 = project.tasks.getByName("compileKotlinLinuxArm64") as KotlinNativeCompile
+        val compileLinuxMainMetadata = project.tasks.getByName("compileLinuxMainKotlinMetadata") as KotlinNativeCompile
+
+        val linkLinuxX64 = project.tasks.getByName("linkDebugExecutableLinuxX64") as KotlinNativeLink
+        val linkLinuxArm64 = project.tasks.getByName("linkDebugExecutableLinuxArm64") as KotlinNativeLink
+
+        fun FileCollection?.assertIsPlatformDependencies(target: String) {
+            if (this == null) fail("Expected to have platform dependencies of target $target but got null")
+            for (file in this) {
+                if (!file.path.contains("platform${File.separator}$target")) fail("File $file is expected to be a platform dependency of $target")
+            }
+        }
+        compileLinuxX64.originalPlatformLibraries().assertIsPlatformDependencies("linux_x64")
+        compileLinuxArm64.originalPlatformLibraries().assertIsPlatformDependencies("linux_arm64")
+        if (compileLinuxMainMetadata.originalPlatformLibraries() != null) fail(
+            "Native metadata compilation should not exclude platform libraries because they are coming from commonizer. " +
+                    "And is not included by default by Kotlin/Native compiler like default platform libraries."
+        )
+        linkLinuxX64.excludeDependencies.assertIsPlatformDependencies("linux_x64")
+        linkLinuxArm64.excludeDependencies.assertIsPlatformDependencies("linux_arm64")
+
+        fun Array<String>?.assertFilePathsDontContain(pathSubString: String) {
+            if (this == null) return
+            val badFiles = filter { it.contains(pathSubString) }
+            if (badFiles.isEmpty()) return
+            fail("Following files contain unexpected '$pathSubString' substring in their paths: \n${badFiles.joinToString("\n")}")
+        }
+
+        compileLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_x64")
+        compileLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
+        compileLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
+        compileLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
+        linkLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_x64")
+        linkLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
+        linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
+        linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
     }
 }

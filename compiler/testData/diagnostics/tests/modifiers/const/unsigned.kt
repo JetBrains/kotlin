@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
+// DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 const val byteVal: UByte = 1u
 const val shortVal: UShort = 2u
 const val intVal: UInt = 3u
@@ -70,3 +72,5 @@ const val equals1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.equals(byteV
 const val equals2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.equals(shortVal)<!>
 const val equals3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.equals(intVal)<!>
 const val equals4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.equals(longVal)<!>
+
+/* GENERATED_FIR_TAGS: const, propertyDeclaration, unsignedLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 private typealias MyAlias = CharSequence
 
@@ -10,3 +11,6 @@ class A {
 
     private fun MyAlias.baz() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction,
+nullableType, propertyDeclaration, safeCall, stringLiteral, typeAliasDeclaration */

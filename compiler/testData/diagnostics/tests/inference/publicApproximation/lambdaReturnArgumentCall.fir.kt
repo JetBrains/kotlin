@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface First
 interface Second
@@ -17,3 +18,6 @@ fun runIntersect(arg: A, arg2: A) = run {
 fun test(arg: A) {
     runIntersect(arg, arg)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression,
+lambdaLiteral, nullableType, smartcast, typeParameter, vararg */

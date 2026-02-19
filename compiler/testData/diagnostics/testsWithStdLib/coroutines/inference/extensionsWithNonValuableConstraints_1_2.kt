@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ExperimentalBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ExperimentalBuilderInference
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Base
 
@@ -16,3 +17,6 @@ val test1 = generate {
     yield("foo")
     baseExtension()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter, typeWithExtension */

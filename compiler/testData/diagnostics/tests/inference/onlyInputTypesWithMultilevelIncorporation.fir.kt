@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @file:Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 
@@ -13,3 +14,6 @@ fun main() {
         intArrayOf(1, 2, 3).associateWith { it.toString() }
     )
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, functionDeclaration, integerLiteral, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

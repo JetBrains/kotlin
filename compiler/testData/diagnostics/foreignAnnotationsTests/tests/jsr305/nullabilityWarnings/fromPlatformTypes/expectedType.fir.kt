@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java
@@ -17,7 +17,7 @@ fun test() {
     val platformJ = J.staticJ
 
     checkSubtype<J>(platformNN)
-    checkSubtype<J>(platformN)
+    checkSubtype<J>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
     checkSubtype<J>(platformJ)
 
     checkSubtype<J?>(platformNN)

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object RemAndRemAssign {
     operator fun rem(x: Int) = RemAndRemAssign
@@ -11,3 +12,6 @@ fun test() {
     var c = RemAndRemAssign
     c <!ASSIGN_OPERATOR_AMBIGUITY!>%=<!> 1
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, localProperty, objectDeclaration, operator,
+propertyDeclaration */

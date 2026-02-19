@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 open class Foo
 
@@ -9,9 +10,12 @@ fun <T : Foo> foo(): T? {
 }
 
 fun main() {
-    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo? & Bar?")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>foo<!>()<!>
+    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo? & Bar?")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>foo<!>()<!>
 }
 
 
 fun <T : Appendable> wtf(): T = TODO()
 val bar: Int = <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>wtf<!>() // happily compiles
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, intersectionType, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

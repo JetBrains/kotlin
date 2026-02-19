@@ -1,0 +1,22 @@
+I@(1,1)
+  int@(3,5) : kotlin.Int?
+  string@(4,5) : kotlin.String?
+  boolean@(5,5) : kotlin.Boolean?
+  double@(6,5) : kotlin.Double?
+  float@(7,5) : kotlin.Float?
+  char@(8,5) : kotlin.Char?
+  long@(9,5) : kotlin.Long?
+  uInt@(10,5) : kotlin.UInt?
+  uLong@(11,5) : kotlin.ULong?
+  unit@(12,5) : kotlin.Unit?
+C@(15,1)
+  int@(16,5) : kotlin.Int
+  string@(17,5) : kotlin.String
+  boolean@(18,5) : kotlin.Boolean
+  double@(19,5) : kotlin.Double
+  float@(20,5) : kotlin.Float
+  char@(21,5) : kotlin.Char
+  long@(22,5) : kotlin.Long
+  uInt@(23,5) : kotlin.UInt
+  uLong@(24,5) : kotlin.ULong
+  unit@(25,5) : kotlin.Unit

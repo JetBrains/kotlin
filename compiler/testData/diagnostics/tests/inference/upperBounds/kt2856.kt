@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2856 Fix the getOrElse signature to be able to return any supertype of V
 package d
@@ -19,3 +20,7 @@ fun main() {
 
 //from standard library
 fun println(message : Any?) {}
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+thisExpression, typeConstraint, typeParameter */

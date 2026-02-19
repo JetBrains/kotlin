@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 // FILE: A.java
 public class A<K, V> {
     public void foo(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
@@ -18,3 +19,6 @@ fun main() {
     a.foo(2, BiFunction { k, v -> null })
     a.foo(2) { k, v -> null } // See KT-12144
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, integerLiteral, javaFunction, javaType,
+lambdaLiteral, localProperty, outProjection, propertyDeclaration, samConversion */

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 abstract class A : Function1<Any, Unit>
 
 abstract class B : (Int)->Unit
@@ -7,3 +9,15 @@ abstract class B : (Int)->Unit
 class C : (<!UNSUPPORTED!>x<!>: Int)->Unit {
     override fun invoke(p1: Int): Unit {}
 }
+
+class D : (<!UNSUPPORTED!>Int<!>: Int)->Unit {
+    override fun invoke(p1: Int): Unit {}
+}
+
+
+class E : ((k: String) -> Unit) -> Unit {
+    override fun invoke(p1: (k: String) -> Unit) {
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, operator, override */

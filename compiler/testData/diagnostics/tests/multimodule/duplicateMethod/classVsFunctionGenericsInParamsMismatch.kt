@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1
 // FILE: a.kt
 package p
@@ -34,3 +35,6 @@ fun test(b: B?, c: C) {
         b<!UNNECESSARY_SAFE_CALL!>?.<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1, 1)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, intersectionType,
+isExpression, nullableType, override, safeCall, smartcast, typeParameter */

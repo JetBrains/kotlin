@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun getNothing(): Nothing = throw Exception()
 fun getNullableNothing(): Nothing? = null
 
@@ -32,3 +33,7 @@ fun test_1(a: String?) {
         val b = a.length
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, classDeclaration, forLoop, functionDeclaration, getter,
+ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, safeCall, smartcast, typeParameter */

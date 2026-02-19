@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: D:x;getX;y;getY
 
 // FILE: B.java
@@ -26,3 +27,4 @@ abstract class A {
 
 class DImpl : D()
 
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, javaType, propertyDeclaration */

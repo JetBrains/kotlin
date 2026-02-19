@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object A {
     val x : Int = 0
 }
@@ -19,3 +20,6 @@ fun test() {
 }
 
 val bb = <!UNRESOLVED_REFERENCE!>B<!>.foo()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral, localClass,
+localProperty, objectDeclaration, propertyDeclaration */

@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isInlineMarker
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
@@ -51,7 +51,7 @@ class FixStackMethodTransformer : MethodTransformer() {
     }
 
     private fun analyzeAndTransformBreakContinueGotos(context: FixStackContext, internalClassName: String, methodNode: MethodNode) {
-        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
+        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context, skipBreakContinueGotoEdges = true)
         analyzer.analyze()
 
         methodNode.maxStack = methodNode.maxStack + analyzer.maxExtraStackSize
@@ -129,12 +129,18 @@ class FixStackMethodTransformer : MethodTransformer() {
             when {
                 pseudoInsn == PseudoInsn.SAVE_STACK_BEFORE_TRY ->
                     transformSaveStackMarker(methodNode, actions, analyzer, marker, localVariablesManager)
-                pseudoInsn == PseudoInsn.RESTORE_STACK_IN_TRY_CATCH ->
-                    transformRestoreStackMarker(methodNode, actions, marker, localVariablesManager)
                 isBeforeInlineMarker(marker) ->
                     transformBeforeInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
                 isAfterInlineMarker(marker) ->
                     transformAfterInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
+            }
+        }
+        // the second pass is used for RESTORE_STACK_IN_TRY_CATCH as TCF handlers can be located before try-body in bytecode
+        InsnSequence(methodNode.instructions).forEach { marker ->
+            val pseudoInsn = parsePseudoInsnOrNull(marker)
+            when {
+                pseudoInsn == PseudoInsn.RESTORE_STACK_IN_TRY_CATCH ->
+                    transformRestoreStackMarker(methodNode, actions, marker, localVariablesManager)
             }
         }
     }
@@ -218,6 +224,4 @@ class FixStackMethodTransformer : MethodTransformer() {
             actions.add { methodNode.instructions.remove(inlineMarker) }
         }
     }
-
-
 }

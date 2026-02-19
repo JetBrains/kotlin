@@ -113,10 +113,14 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         this.dependencies = dependencies
     }
 
+    // TODO(KT-62534) these methods set friendModules to an empty set.
+    //  Migrate callers to the overload with friends parameter and get rid of these overloads.
     fun setDependencies(vararg descriptors: ModuleDescriptorImpl) {
         setDependencies(descriptors.toList())
     }
 
+    // TODO(KT-62534) these methods set friendModules to an empty set.
+    //  Migrate callers to the overload with friends parameter and get rid of these overloads.
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>) {
         setDependencies(descriptors, emptySet())
     }

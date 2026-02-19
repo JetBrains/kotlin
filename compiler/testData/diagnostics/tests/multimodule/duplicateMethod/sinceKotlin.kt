@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !API_VERSION: 1.0
+// API_VERSION: 1.0
 // MODULE: m1
 // FILE: a.kt
 
@@ -33,3 +34,5 @@ fun test2(): Int {
     val r = foo(42)
     return r
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, stringLiteral */

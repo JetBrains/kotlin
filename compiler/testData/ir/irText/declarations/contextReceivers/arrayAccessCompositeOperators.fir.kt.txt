@@ -1,14 +1,19 @@
+var operationScore: Int
+  field = 0
+  get
+  set
+
 data class MyContainer {
+  var i: Int
+    field = i
+    get
+    set
+
   constructor(i: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var i: Int
-    field = i
-    get
-    set
 
   operator fun component1(): Int {
     return <this>.#i
@@ -18,14 +23,6 @@ data class MyContainer {
     return MyContainer(i = i)
   }
 
-  override fun toString(): String {
-    return "MyContainer(" + "i=" + <this>.#i + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#i.hashCode()
-  }
-
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -33,46 +30,31 @@ data class MyContainer {
     when {
       other !is MyContainer -> return false
     }
-    val tmp0_other_with_cast: MyContainer = other as MyContainer
+    val tmp_0: MyContainer = other /*as MyContainer */
     when {
-      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+      EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
     return true
   }
 
-}
-
-var operationScore: Int
-  field = 0
-  get
-  set
-
-operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  return when {
-    EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
-    else -> -1
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
   }
-}
 
-operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer) {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  <this>.<set-i>(<set-?> = <this>.<get-i>().plus(other = other.<get-i>()))
-}
+  override fun toString(): String {
+    return "MyContainer(" + "i=" + <this>.#i + ")"
+  }
 
-operator fun MyContainer.inc($context_receiver_0: Int): MyContainer {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  return MyContainer(i = <this>.<get-i>().plus(other = 1))
 }
 
 fun box(): String {
   var myContainer: MyContainer = MyContainer(i = 0)
   with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
-    myContainer.plusAssign($context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
-      val <unary>: MyContainer = myContainer
-      myContainer = <unary>.inc($context_receiver_0 = $this$with)
-      <unary>
-    }.get($context_receiver_0 = $this$with, index = 0)))
+    plusAssign(/* $context_receiver_0 = $this$with, <this> = myContainer, */ other = MyContainer(i = get(/* $context_receiver_0 = $this$with, <this> = { // BLOCK
+      val tmp_1: MyContainer = myContainer
+      myContainer = inc(/* $context_receiver_0 = $this$with, <this> = tmp_1 */)
+      tmp_1
+    }, */ index = 0)))
   }
 )
   return when {
@@ -84,3 +66,23 @@ fun box(): String {
   }
 }
 
+context($context_receiver_0: Int)
+operator fun MyContainer.get(index: Int): Int {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  return when {
+    EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
+    else -> -1
+  }
+}
+
+context($context_receiver_0: Int)
+operator fun MyContainer.inc(): MyContainer {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  return MyContainer(i = <this>.<get-i>().plus(other = 1))
+}
+
+context($context_receiver_0: Int)
+operator fun MyContainer.plusAssign(other: MyContainer) {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  <this>.<set-i>(<set-?> = <this>.<get-i>().plus(other = other.<get-i>()))
+}

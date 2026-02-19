@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: JavaClass.java
@@ -11,3 +12,5 @@ public class JavaClass {
 fun bar() {
     JavaClass.add(ArrayList())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

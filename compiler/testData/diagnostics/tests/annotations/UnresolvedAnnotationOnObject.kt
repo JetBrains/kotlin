@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package test
 
@@ -8,3 +9,5 @@ package test
 object SomeObject
 
 val some = SomeObject
+
+/* GENERATED_FIR_TAGS: objectDeclaration, propertyDeclaration */

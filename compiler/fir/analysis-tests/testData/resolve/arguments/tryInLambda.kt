@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> myRun(block: () -> T): T = block()
 
 fun foo() {}
@@ -11,3 +12,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, tryExpression, typeParameter */

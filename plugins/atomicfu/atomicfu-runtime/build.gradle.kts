@@ -4,8 +4,9 @@ import plugins.configureKotlinPomAttributes
 description = "Runtime library for the Atomicfu compiler plugin"
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
     `maven-publish`
+    id("nodejs-cache-redirector-configuration")
 }
 
 group = "org.jetbrains.kotlin"
@@ -15,28 +16,33 @@ repositories {
 }
 
 kotlin {
-    js() {
+    js {
         browser()
         nodejs()
     }
 
     sourceSets {
-        js().compilations["main"].defaultSourceSet {
+        jsMain {
             dependencies {
-                compileOnly(kotlin("stdlib-js"))
+                compileOnly(project(":kotlin-stdlib"))
             }
         }
     }
 }
 
-val emptyJavadocJar by tasks.creating(Jar::class) {
+dependencies {
+    implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project)
+}
+
+val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            from(components["kotlin"])
+            // FIXME: Remove customized publication in KT-83065
+            from(kotlin.js().components.single())
             configureKotlinPomAttributes(project, "Runtime library for the Atomicfu compiler plugin", packaging = "klib")
         }
         withType<MavenPublication> {
@@ -46,7 +52,3 @@ publishing {
 }
 
 configureDefaultPublishing()
-
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile> {
-    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
-}

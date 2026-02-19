@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -7,6 +8,4 @@ expect var foo: String
 // FILE: jvm.kt
 actual var foo: String = "JVM"
 
-// MODULE: m3-js()()(m1-common)
-// FILE: js.kt
-actual var foo: String = "JS"
+/* GENERATED_FIR_TAGS: actual, expect, propertyDeclaration, stringLiteral */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -26,3 +27,5 @@ fun test() {
     entries.length
     somethingElse.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaProperty, propertyDeclaration */

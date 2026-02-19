@@ -1,4 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // COMPARE_WITH_LIGHT_TREE
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
 
 fun List<String>.modify() {
     <!VARIABLE_EXPECTED!>this<!> += "Alpha"
@@ -6,7 +8,7 @@ fun List<String>.modify() {
 }
 
 fun Any.modify() {
-    (<!VARIABLE_EXPECTED!>this <!UNCHECKED_CAST!>as List<Int><!><!>) += 42
+    <!CANNOT_INFER_PARAMETER_TYPE!>(this <!UNCHECKED_CAST!>as List<Int><!>) <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> 42<!>
 }
 
 operator fun <T> Set<T>.plusAssign(x: T) {}
@@ -19,3 +21,6 @@ fun Set<String>.modify() {
 fun Any.modifySet() {
     (this <!UNCHECKED_CAST!>as Set<Int><!>) += 42
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, nullableType, operator, stringLiteral, thisExpression, typeParameter */

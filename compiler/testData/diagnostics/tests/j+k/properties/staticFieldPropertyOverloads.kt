@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +PreferJavaFieldOverload
+// LANGUAGE: +PreferJavaFieldOverload
 // FILE: a/JClass.java
 package a;
 public class JClass {
@@ -15,3 +16,5 @@ val foo = 42
 import a.JClass.foo
 import b.foo
 fun test() { <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, propertyDeclaration */

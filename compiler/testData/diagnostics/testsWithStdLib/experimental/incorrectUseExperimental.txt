@@ -2,6 +2,7 @@ package
 
 @kotlin.OptIn(markerClass = {}) public fun f1(): kotlin.Unit
 @kotlin.OptIn(markerClass = {NotAMarker::class}) public fun f2(): kotlin.Unit
+@kotlin.OptIn(markerClass = {NotAMarker::class, NotBMarker::class}) public fun f3(): kotlin.Unit
 
 public final annotation class NotAMarker : kotlin.Annotation {
     public constructor NotAMarker()
@@ -9,3 +10,11 @@ public final annotation class NotAMarker : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final annotation class NotBMarker : kotlin.Annotation {
+    public constructor NotBMarker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

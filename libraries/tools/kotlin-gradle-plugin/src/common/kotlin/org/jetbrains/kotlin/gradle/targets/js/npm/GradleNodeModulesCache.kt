@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.Directory
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -39,7 +40,7 @@ abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
     override fun buildImportedPackage(
         name: String,
         version: String,
-        file: File
+        file: File,
     ): File? {
         val module = GradleNodeModuleBuilder(fs, archiveOperations, name, version, listOf(file), parameters.cacheDir.get().asFile)
         module.visitArtifacts()
@@ -52,9 +53,11 @@ abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
 
         private fun registerIfAbsentImpl(
             project: Project,
-            rootProjectDir: File?,
-            cacheDir: File?
+            rootProjectDir: File,
+            cacheDir: Provider<Directory>,
+            nameDisambiguate: (String) -> String,
         ): Provider<GradleNodeModulesCache> {
+            val serviceName = nameDisambiguate(serviceName)
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return it.service as Provider<GradleNodeModulesCache>
@@ -75,9 +78,10 @@ abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
 
         fun registerIfAbsent(
             project: Project,
-            rootProjectDir: File?,
-            cacheDir: File?
-        ) = registerIfAbsentImpl(project, rootProjectDir, cacheDir).also { serviceProvider ->
+            rootProjectDir: File,
+            cacheDir: Provider<Directory>,
+            nameDisambiguate: (String) -> String,
+        ) = registerIfAbsentImpl(project, rootProjectDir, cacheDir, nameDisambiguate).also { serviceProvider ->
             SingleActionPerProject.run(project, UsesGradleNodeModulesCache::class.java.name) {
                 project.tasks.withType<UsesGradleNodeModulesCache>().configureEach { task ->
                     task.usesService(serviceProvider)

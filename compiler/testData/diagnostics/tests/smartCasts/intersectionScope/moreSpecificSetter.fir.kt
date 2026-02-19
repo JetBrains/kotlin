@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class A {
     open var value: Int = 4
         protected set
@@ -13,3 +14,6 @@ fun test(myA: A) {
         myA.value = 5
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression,
+override, propertyDeclaration, smartcast */

@@ -95,11 +95,12 @@ class KotlinResolutionCallbacksImpl(
 
     override fun findResultType(constraintSystem: NewConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType? {
         val variableWithConstraints = constraintSystem.getBuilder().currentStorage().notFixedTypeVariables[typeVariable] ?: return null
-        return resultTypeResolver.findResultType(
-            constraintSystem.asConstraintSystemCompleterContext(),
-            variableWithConstraints,
-            TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-        ) as KotlinType
+        return with(constraintSystem.asConstraintSystemCompleterContext()) {
+            resultTypeResolver.findResultType(
+                variableWithConstraints,
+                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+            )
+        } as KotlinType
     }
 
     override fun createEmptyConstraintSystem(): NewConstraintSystem = NewConstraintSystemImpl(

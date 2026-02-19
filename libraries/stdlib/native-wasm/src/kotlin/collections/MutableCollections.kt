@@ -26,7 +26,7 @@ public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Uni
         val it = listIterator()
         val sortedArray = @Suppress("UNCHECKED_CAST") (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }
         for (v in sortedArray) {
-            it.next()
+            val _ = it.next()
             it.set(v)
         }
     }

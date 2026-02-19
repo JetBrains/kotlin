@@ -1,0 +1,31 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructor_superCallArgument.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] i: Int): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val property: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] class Child : Base {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Child| {
+            super<R|test/Base|>(R|test/property|)
+        }
+
+    }

@@ -8,34 +8,38 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.*
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.existsCompat
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.io.Serializable
 import javax.inject.Inject
 
 @Suppress("unused") // used through .values() call
 internal enum class AppleTarget(
     val targetName: String,
-    val targets: List<KonanTarget>
-) {
+    val targets: List<KonanTarget>,
+) : Serializable {
     MACOS_DEVICE("macos", listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64)),
-    IPHONE_DEVICE("ios", listOf(KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64)),
+    IPHONE_DEVICE("ios", listOf(KonanTarget.IOS_ARM64)),
     IPHONE_SIMULATOR("iosSimulator", listOf(KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64)),
     WATCHOS_DEVICE("watchos", listOf(KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64)),
-    WATCHOS_SIMULATOR("watchosSimulator", listOf(KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64)),
+    WATCHOS_SIMULATOR("watchosSimulator", listOf(KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64)),
     TVOS_DEVICE("tvos", listOf(KonanTarget.TVOS_ARM64)),
     TVOS_SIMULATOR("tvosSimulator", listOf(KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64))
 }
@@ -43,17 +47,23 @@ internal enum class AppleTarget(
 internal class XCFrameworkTaskHolder(
     val buildType: NativeBuildType,
     val task: TaskProvider<XCFrameworkTask>,
-    val fatTasks: Map<AppleTarget, TaskProvider<FatFrameworkTask>>
+    val fatTasks: Map<AppleTarget, TaskProvider<FatFrameworkTask>>,
 ) {
     companion object {
         fun create(project: Project, xcFrameworkName: String, buildType: NativeBuildType): XCFrameworkTaskHolder {
             require(xcFrameworkName.isNotBlank())
             val task = project.registerAssembleXCFrameworkTask(xcFrameworkName, buildType)
 
-            val fatTasks = AppleTarget.values().associate { fatTarget ->
-                val fatTask = project.registerAssembleFatForXCFrameworkTask(xcFrameworkName, buildType, fatTarget)
-                task.dependsOn(fatTask)
-                fatTarget to fatTask
+            val fatTasks = AppleTarget.values().associateWith { fatTarget ->
+                project.registerAssembleFatForXCFrameworkTask(
+                    xcFrameworkName,
+                    buildType,
+                    fatTarget
+                ).also { fatTask ->
+                    task.configure { task ->
+                        task.inputs.files(fatTask.map { it.fatFramework })
+                    }
+                }
             }
 
             return XCFrameworkTaskHolder(buildType, task, fatTasks)
@@ -61,6 +71,7 @@ internal class XCFrameworkTaskHolder(
     }
 }
 
+@KotlinGradlePluginPublicDsl
 class XCFrameworkConfig {
     private val taskHolders: List<XCFrameworkTaskHolder>
 
@@ -73,6 +84,7 @@ class XCFrameworkConfig {
         }
     }
 
+    @Suppress("unused")
     constructor(project: Project) : this(project, project.name)
     constructor(project: Project, xcFrameworkName: String) : this(project, xcFrameworkName, NativeBuildType.values().toSet())
 
@@ -82,7 +94,10 @@ class XCFrameworkConfig {
     fun add(framework: Framework) {
         taskHolders.forEach { holder ->
             if (framework.buildType == holder.buildType) {
-                holder.task.configure { task -> task.from(framework) }
+                holder.task.configure { task ->
+                    task.from(framework)
+                }
+
                 AppleTarget.values()
                     .firstOrNull { it.targets.contains(framework.konanTarget) }
                     ?.also { appleTarget ->
@@ -96,6 +111,13 @@ class XCFrameworkConfig {
     }
 }
 
+internal data class FrameworkSlice(
+    val descriptor: FrameworkDescriptor,
+    val resources: File?,
+) : Serializable
+
+@KotlinGradlePluginPublicDsl
+@Suppress("FunctionName")
 fun Project.XCFramework(xcFrameworkName: String = name) = XCFrameworkConfig(this, xcFrameworkName)
 
 private fun Project.eraseIfDefault(xcFrameworkName: String) =
@@ -109,7 +131,7 @@ private fun Project.parentAssembleXCFrameworkTask(xcFrameworkName: String): Task
 
 private fun Project.registerAssembleXCFrameworkTask(
     xcFrameworkName: String,
-    buildType: NativeBuildType
+    buildType: NativeBuildType,
 ): TaskProvider<XCFrameworkTask> {
     val taskName = lowerCamelCaseName(
         "assemble",
@@ -127,7 +149,7 @@ private fun Project.registerAssembleXCFrameworkTask(
 private fun Project.registerAssembleFatForXCFrameworkTask(
     xcFrameworkName: String,
     buildType: NativeBuildType,
-    appleTarget: AppleTarget
+    appleTarget: AppleTarget,
 ): TaskProvider<FatFrameworkTask> {
     val taskName = lowerCamelCaseName(
         "assemble",
@@ -139,7 +161,7 @@ private fun Project.registerAssembleFatForXCFrameworkTask(
     )
 
     return registerTask(taskName) { task ->
-        task.destinationDir = XCFrameworkTask.fatFrameworkDir(project, xcFrameworkName, buildType, appleTarget)
+        task.destinationDirProperty.set(XCFrameworkTask.fatFrameworkDir(project, xcFrameworkName, buildType, appleTarget))
         task.onlyIf {
             task.frameworks.size > 1
         }
@@ -152,6 +174,8 @@ abstract class XCFrameworkTask
 internal constructor(
     private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout,
+    private val fileOperations: FileSystemOperations,
+    private val objectsFactory: ObjectFactory,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
     init {
         onlyIf { HostManager.hostIsMac }
@@ -167,7 +191,7 @@ internal constructor(
 
     @get:Internal
     internal val xcFrameworkName: Provider<String>
-        get() = baseName.map { it.asValidFrameworkName() }
+        get() = baseName.map { it.asValidFrameworkName }
 
     /**
      * A build type of the XCFramework.
@@ -176,6 +200,12 @@ internal constructor(
     var buildType: NativeBuildType = NativeBuildType.RELEASE
 
     private val groupedFrameworkFiles: MutableMap<AppleTarget, MutableList<FrameworkDescriptor>> = mutableMapOf()
+
+    @get:Internal
+    internal val groupedResourcesFiles: MapProperty<AppleTarget, ConfigurableFileCollection> = objectsFactory.mapProperty(
+        AppleTarget::class.java,
+        ConfigurableFileCollection::class.java
+    )
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
@@ -197,10 +227,10 @@ internal constructor(
      */
     @get:Internal  // We take it into account as an input in the buildType and baseName properties.
     protected val fatFrameworksDir: File
-        get() = fatFrameworkDir(projectBuildDir, xcFrameworkName.get(), buildType)
+        get() = fatFrameworkDir(projectLayout.buildDirectory, xcFrameworkName.get(), buildType).getFile()
 
     @get:OutputDirectory
-    protected val outputXCFrameworkFile: File
+    internal val outputXCFrameworkFile: File
         get() = outputDir.resolve(buildType.getName()).resolve("${xcFrameworkName.get()}.xcframework")
 
     /**
@@ -208,10 +238,7 @@ internal constructor(
      */
     fun from(vararg frameworks: Framework) {
         frameworks.forEach { framework ->
-            require(framework.konanTarget.family.isAppleFamily) {
-                "XCFramework supports Apple frameworks only"
-            }
-            dependsOn(framework.linkTask)
+            processFramework(framework)
         }
         fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
     }
@@ -229,53 +256,124 @@ internal constructor(
                 )
             }
             val group = AppleTarget.values().first { it.targets.contains(framework.target) }
-            groupedFrameworkFiles.getOrPut(group, { mutableListOf() }).add(framework)
+            groupedFrameworkFiles.getOrPut(group) { mutableListOf() }.add(framework)
+        }
+    }
+
+    /**
+     * Adds the specified resource directory to the grouped resources for the given Kotlin/Native target.
+     *
+     * Resources are categorized based on their corresponding Apple platform (macOS, iOS, tvOS, etc.).
+     * This method maps the provided KonanTarget to its associated Apple platform category and adds
+     * the resource directory to that category's collection.
+     *
+     * @param resources a provider supplying the directory to be added as a resource. The directory
+     *                  will be registered as an input file for the task.
+     * @param target the Kotlin/Native target (KonanTarget) that specifies which Apple platform
+     *              category these resources should be included in (e.g., iOS device, iOS simulator).
+     */
+    fun addTargetResources(resources: Provider<File>, target: KonanTarget) {
+        inputs.files(resources)
+        val group = AppleTarget.values().first { it.targets.contains(target) }
+
+        groupedResourcesFiles.get().getOrElse(group) {
+            objectsFactory.fileCollection()
+        }.from(resources).also { files ->
+            groupedResourcesFiles.put(group, files)
         }
     }
 
     @TaskAction
     fun assemble() {
-        val frameworks = groupedFrameworkFiles.values.flatten()
         val xcfName = xcFrameworkName.get()
-        if (frameworks.isNotEmpty()) {
-            val rawXcfName = baseName.get()
-            val name = frameworks.first().name
-            if (frameworks.any { it.name != name }) {
-                error("All inner frameworks in XCFramework '$rawXcfName' should have same names!" +
-                              frameworks.joinToString("\n") { it.file.path })
-            }
-            if (name != xcfName) {
-                toolingDiagnosticsCollector.get().report(this, KotlinToolingDiagnostics.XCFrameworkDifferentInnerFrameworksName(
-                    xcFramework = rawXcfName,
-                    innerFrameworks = name,
-                ))
-            }
-        }
 
-        val frameworksForXCFramework = groupedFrameworkFiles.entries.mapNotNull { (group, files) ->
-            when {
-                files.size == 1 -> files.first()
-                files.size > 1 -> FrameworkDescriptor(
-                    fatFrameworksDir.resolve(group.targetName).resolve("$xcfName.framework"),
-                    files.all { it.isStatic },
-                    group.targets.first() //will be not used
-                )
-                else -> null
-            }
-        }
-        createXCFramework(frameworksForXCFramework, outputXCFrameworkFile, buildType)
+        val frameworksForXCFramework = xcframeworkSlices(
+            frameworkName = singleFrameworkName(xcfName)
+        )
+
+        createXCFramework(
+            frameworksForXCFramework,
+            outputXCFrameworkFile
+        )
     }
 
-    private fun createXCFramework(frameworkFiles: List<FrameworkDescriptor>, output: File, buildType: NativeBuildType) {
-        if (output.exists()) output.deleteRecursively()
+    internal fun singleFrameworkName(xcfName: String): String {
+        val frameworks = groupedFrameworkFiles.values.flatten()
+        if (frameworks.isEmpty()) error("XCFramework $xcfName is empty")
 
+        val rawXcfName = baseName.get()
+        val name = frameworks.first().name
+        if (frameworks.any { it.name != name }) {
+            error(
+                "All inner frameworks in XCFramework '$rawXcfName' should have same names!" +
+                        frameworks.joinToString("\n") { it.file.path })
+        }
+        if (name != xcfName) {
+            toolingDiagnosticsCollector.get().report(
+                this, KotlinToolingDiagnostics.XCFrameworkDifferentInnerFrameworksName(
+                    xcFramework = rawXcfName,
+                    innerFrameworks = name,
+                )
+            )
+        }
+        return name
+    }
+
+    internal fun xcframeworkSlices(frameworkName: String) = groupedFrameworkFiles.entries.mapNotNull { (group, files) ->
+        when {
+            files.size == 1 -> FrameworkSlice(
+                files.first(),
+                xcframeworkResources(group).orNull
+            )
+            files.size > 1 -> FrameworkSlice(
+                FrameworkDescriptor(
+                    fatTargetDir(group).resolve("${frameworkName}.framework"),
+                    files.all { it.isStatic },
+                    group.targets.first() //will be not used
+                ),
+                xcframeworkResources(group).orNull
+            )
+            else -> null
+        }
+    }
+
+    internal fun xcframeworkResources(group: AppleTarget): Provider<File> = groupedResourcesFiles.getting(group).map { fileCollection ->
+        val files = fileCollection.files
+        if (files.size > 1) {
+            fatTargetDir(group).resolve(lowerCamelCaseName(group.targetName, "resources")).also { fatDir ->
+                combineFrameworksResources(files, fatDir)
+            }
+        } else files.first()
+    }
+
+    private fun fatTargetDir(appleTarget: AppleTarget) = fatFrameworksDir.resolve(appleTarget.targetName)
+
+    private fun combineFrameworksResources(resources: Iterable<File>, output: File) {
+        fileOperations.sync {
+            it.from(resources)
+            it.into(output)
+            /**
+             * Exclude duplicates to prevent copying the same file multiple times.
+             * It's required because we are combining frameworks to a single fat-framework.
+             * In case of a resource collision, only the first file will be copied and this is a known limitation.
+             */
+            it.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+    }
+
+    internal fun xcodebuildArguments(
+        frameworkFiles: List<FrameworkSlice>,
+        output: File,
+        mergeWithResources: (FrameworkSlice) -> File = { it.descriptor.file },
+        fileExists: (File) -> Boolean = { it.exists() },
+    ): List<String> {
         val cmdArgs = mutableListOf("xcodebuild", "-create-xcframework")
         frameworkFiles.forEach { frameworkFile ->
             cmdArgs.add("-framework")
-            cmdArgs.add(frameworkFile.file.path)
-            if (!frameworkFile.isStatic) {
-                val dsymFile = File(frameworkFile.file.path + ".dSYM")
-                if (dsymFile.exists()) {
+            cmdArgs.add(mergeWithResources(frameworkFile).path)
+            if (!frameworkFile.descriptor.isStatic) {
+                val dsymFile = File(frameworkFile.descriptor.file.path + ".dSYM")
+                if (fileExists(dsymFile)) {
                     cmdArgs.add("-debug-symbols")
                     cmdArgs.add(dsymFile.path)
                 }
@@ -283,6 +381,38 @@ internal constructor(
         }
         cmdArgs.add("-output")
         cmdArgs.add(output.path)
+        return cmdArgs
+    }
+
+    private fun processFramework(framework: Framework) {
+        require(framework.konanTarget.family.isAppleFamily) {
+            "XCFramework supports Apple frameworks only"
+        }
+
+        inputs.files(framework.linkTaskProvider.map { it.outputFile.get() })
+    }
+
+    private fun createXCFramework(frameworkFiles: List<FrameworkSlice>, output: File) {
+        if (output.exists()) output.deleteRecursively()
+
+        val cmdArgs = xcodebuildArguments(frameworkFiles, output, mergeWithResources = { slice ->
+            if (slice.resources != null) {
+                val frameworkTempDir = temporaryDir
+                    .resolve(buildType.getName())
+                    .resolve(slice.descriptor.target.name)
+                    .resolve(slice.descriptor.file.name)
+
+                frameworkTempDir.also { dir ->
+                    fileOperations.sync {
+                        it.from(slice.descriptor.file)
+                        it.from(slice.resources)
+                        it.into(dir)
+                    }
+                }
+            } else {
+                slice.descriptor.file
+            }
+        })
         execOperations.exec { it.commandLine(cmdArgs) }
     }
 
@@ -291,21 +421,21 @@ internal constructor(
             project: Project,
             xcFrameworkName: String,
             buildType: NativeBuildType,
-            appleTarget: AppleTarget? = null
-        ) = fatFrameworkDir(project.buildDir, xcFrameworkName, buildType, appleTarget)
+            appleTarget: AppleTarget? = null,
+        ): Provider<Directory> = fatFrameworkDir(project.layout.buildDirectory, xcFrameworkName, buildType, appleTarget)
 
         fun fatFrameworkDir(
-            buildDir: File,
+            buildDir: DirectoryProperty,
             xcFrameworkName: String,
             buildType: NativeBuildType,
-            appleTarget: AppleTarget? = null
-        ) = buildDir
-            .resolve(xcFrameworkName.asValidFrameworkName() + "XCFrameworkTemp")
-            .resolve("fatframework")
-            .resolve(buildType.getName())
-            .resolveIfNotNull(appleTarget?.targetName)
+            appleTarget: AppleTarget? = null,
+        ): Provider<Directory> = buildDir.map {
+            it.dir(xcFrameworkName.asValidFrameworkName + "XCFrameworkTemp")
+                .dir("fatframework")
+                .dir(buildType.getName())
+                .dirIfNotNull(appleTarget?.targetName)
+        }
 
-
-        private fun File.resolveIfNotNull(relative: String?): File = if (relative == null) this else this.resolve(relative)
+        private fun Directory.dirIfNotNull(relative: String?): Directory = if (relative == null) this else this.dir(relative)
     }
 }

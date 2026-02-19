@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-580 Type inference failed
 
@@ -21,3 +22,7 @@ fun main() {
 fun <T> Array<T>.lastIndex() = size - 1
 val <T> Array<T>.lastIndex : Int get() = size - 1
 val <T> Array<T>.indices : IntRange get() = IntRange(0, lastIndex)
+
+/* GENERATED_FIR_TAGS: additiveExpression, capturedType, flexibleType, forLoop, funWithExtensionReceiver,
+functionDeclaration, getter, integerLiteral, javaFunction, localProperty, nullableType, outProjection,
+propertyDeclaration, propertyWithExtensionReceiver, rangeExpression, stringLiteral, typeParameter, vararg */

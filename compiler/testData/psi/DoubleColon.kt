@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun simple() {
     A::a
     A::a + 1

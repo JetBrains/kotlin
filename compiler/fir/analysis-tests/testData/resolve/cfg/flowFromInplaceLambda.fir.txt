@@ -76,7 +76,7 @@ FILE: flowFromInplaceLambda.kt
             ^ (R|<local>/x| as R|kotlin/Int|)
         }
         )
-        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
     }
     public final fun completedCallExactlyOnce(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
         R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/exactlyOnce|<R|kotlin/Int|>(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=EXACTLY_ONCE>  {
@@ -89,7 +89,7 @@ FILE: flowFromInplaceLambda.kt
             ^ Int(1)
         }
         ))).R|kotlin/Int.inc|()
-        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
         R|<local>/y|.R|kotlin/Int.inc|()
     }
     public final fun completedCallAtLeastOnce(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
@@ -103,7 +103,7 @@ FILE: flowFromInplaceLambda.kt
             ^ Int(1)
         }
         ))).R|kotlin/Int.inc|()
-        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
         R|<local>/y|.R|kotlin/Int.inc|()
     }
     public final fun completedCallAtMostOnce(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
@@ -162,8 +162,8 @@ FILE: flowFromInplaceLambda.kt
             ^ Int(1)
         }
         ))).R|kotlin/Int.inc|()
-        R|<local>/x|.R|kotlin/Int.inc|()
-        R|<local>/y|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.<Unresolved name: inc>#()
     }
     public final fun incompleteCallAtLeastOnce(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
         R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/atLeastOnce|<R|kotlin/Int|>(<L> = atLeastOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_LEAST_ONCE>  {
@@ -179,8 +179,8 @@ FILE: flowFromInplaceLambda.kt
             ^ Int(1)
         }
         ))).R|kotlin/Int.inc|()
-        R|<local>/x|.R|kotlin/Int.inc|()
-        R|<local>/y|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.<Unresolved name: inc>#()
     }
     public final fun incompleteCallAtMostOnce(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
         R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/atMostOnce|<R|kotlin/Int|>(<L> = atMostOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_MOST_ONCE>  {

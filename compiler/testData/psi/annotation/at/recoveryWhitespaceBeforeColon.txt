@@ -3,6 +3,8 @@ KtFile: recoveryWhitespaceBeforeColon.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   PROPERTY
     PsiComment(EOL_COMMENT)('// These two cases were working before, added them just in case')
     PsiWhiteSpace('\n')

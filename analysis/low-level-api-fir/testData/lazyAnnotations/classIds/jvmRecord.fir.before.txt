@@ -1,0 +1,1 @@
+@JvmRecord[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any|

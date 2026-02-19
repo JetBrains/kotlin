@@ -1,0 +1,61 @@
+library {
+  // module name: <annotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnotationArray
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/Empty
+    // class name: test/JustAnnotation
+
+    // signature: test/AnnotationArray|null[0]
+    public final annotation class test/AnnotationArray : kotlin/Annotation {
+
+      // signature: test/AnnotationArray.<init>|<init>(kotlin.Array<test.JustAnnotation>){}[0]
+      public constructor(annotationArray: kotlin/Array<test/JustAnnotation>)
+
+      // signature: test/AnnotationArray.annotationArray|{}annotationArray[0]
+      public final val annotationArray: kotlin/Array<test/JustAnnotation>
+        // signature: test/AnnotationArray.annotationArray.<get-annotationArray>|<get-annotationArray>(){}[0]
+        public final get
+    }
+
+    // signature: test/C1|null[0]
+    @test/JustAnnotation(annotation = test/Empty())
+    @test/AnnotationArray(annotationArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      // signature: test/C1.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/C2|null[0]
+    @test/AnnotationArray(annotationArray = [test/JustAnnotation(annotation = test/Empty()), test/JustAnnotation(annotation = test/Empty())])
+    public final class test/C2 : kotlin/Any {
+
+      // signature: test/C2.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/Empty|null[0]
+    public final annotation class test/Empty : kotlin/Annotation {
+
+      // signature: test/Empty.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/JustAnnotation|null[0]
+    public final annotation class test/JustAnnotation : kotlin/Annotation {
+
+      // signature: test/JustAnnotation.<init>|<init>(test.Empty){}[0]
+      public constructor(annotation: test/Empty)
+
+      // signature: test/JustAnnotation.annotation|{}annotation[0]
+      public final val annotation: test/Empty
+        // signature: test/JustAnnotation.annotation.<get-annotation>|<get-annotation>(){}[0]
+        public final get
+    }
+  }
+}

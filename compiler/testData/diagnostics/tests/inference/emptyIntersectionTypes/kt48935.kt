@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // RENDER_DIAGNOSTICS_FULL_TEXT
 interface Base
@@ -12,3 +13,6 @@ fun main() {
     val func: (DoesNotImplementBase) -> Unit = { }
     <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>exampleGenericFunction<!>(func) // expected this to be a compilation error as the T: Base constraint should not be satisfied
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, intersectionType,
+lambdaLiteral, localProperty, propertyDeclaration, typeConstraint, typeParameter */

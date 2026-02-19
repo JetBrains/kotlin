@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.copyTo
@@ -42,6 +43,7 @@ internal fun IrFactory.buildClass(builder: IrClassBuilder): IrClass = with(build
         isValue = isValue,
         isExpect = isExpect,
         isFun = isFun,
+        hasEnumEntries = hasEnumEntries,
     )
 }
 
@@ -156,7 +158,7 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
         origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         returnType = field.type
     }.apply {
-        dispatchReceiverParameter = parentClass.thisReceiver!!.copyTo(this)
+        parameters = listOf(parentClass.thisReceiver!!.copyTo(this))
         body = factory.createBlockBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                 IrReturnImpl(
@@ -179,10 +181,41 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
     }
 }
 
+fun IrProperty.addDefaultSetter(parentClass: IrClass, builtIns: IrBuiltIns) {
+    val field = backingField!!
+    addSetter {
+        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        visibility = this@addDefaultSetter.visibility
+        returnType = builtIns.unitType
+    }.also { setter ->
+        val irValueParameter = buildValueParameter(setter) {
+            name = Name.identifier("value")
+            type = field.type
+            kind = IrParameterKind.Regular
+        }
+        setter.parameters = listOf(
+            parentClass.thisReceiver!!.copyTo(setter),
+            irValueParameter,
+        )
+        setter.body = factory.createBlockBody(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                IrSetFieldImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    field.symbol,
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, setter.dispatchReceiverParameter!!.type, setter.dispatchReceiverParameter!!.symbol),
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
+                    builtIns.unitType,
+                )
+            )
+        )
+    }
+}
+
 inline fun IrProperty.addBackingField(builder: IrFieldBuilder.() -> Unit = {}): IrField =
     IrFieldBuilder().run {
         name = this@addBackingField.name
         origin = IrDeclarationOrigin.PROPERTY_BACKING_FIELD
+        visibility = DescriptorVisibilities.PRIVATE
         builder()
         factory.buildField(this).also { field ->
             this@addBackingField.backingField = field
@@ -274,7 +307,7 @@ fun IrClass.addFunction(
     }.apply {
         if (!isStatic) {
             val thisReceiver = parentAsClass.thisReceiver!!
-            dispatchReceiverParameter = thisReceiver.copyTo(this, type = thisReceiver.type)
+            parameters = listOf(thisReceiver.copyTo(this, type = thisReceiver.type))
         }
     }
 
@@ -293,29 +326,15 @@ inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): I
         constructor.parent = this@addConstructor
     }
 
-fun <D> buildReceiverParameter(
-    parent: D,
-    origin: IrDeclarationOrigin,
-    type: IrType,
-    startOffset: Int = parent.startOffset,
-    endOffset: Int = parent.endOffset
-): IrValueParameter
+inline fun <D> D.buildReceiverParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter
         where D : IrDeclaration, D : IrDeclarationParent =
-    parent.factory.createValueParameter(
-        startOffset = startOffset,
-        endOffset = endOffset,
-        origin = origin,
-        name = SpecialNames.THIS,
-        type = type,
-        isAssignable = false,
-        symbol = IrValueParameterSymbolImpl(),
-        index = UNDEFINED_PARAMETER_INDEX,
-        varargElementType = null,
-        isCrossinline = false,
-        isNoinline = false,
-        isHidden = false,
-    ).also {
-        it.parent = parent
+    IrValueParameterBuilder().run {
+        name = SpecialNames.THIS
+        kind = IrParameterKind.DispatchReceiver
+        startOffset = this@buildReceiverParameter.startOffset
+        endOffset = this@buildReceiverParameter.endOffset
+        builder()
+        factory.buildValueParameter(this, this@buildReceiverParameter)
     }
 
 fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
@@ -324,11 +343,11 @@ fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDe
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
+            kind = kind,
             name = name,
             type = type,
             isAssignable = isAssignable,
             symbol = IrValueParameterSymbolImpl(),
-            index = index,
             varargElementType = varargElementType,
             isCrossinline = isCrossInline,
             isNoinline = isNoinline,
@@ -349,11 +368,9 @@ inline fun <D> buildValueParameter(declaration: D, builder: IrValueParameterBuil
 inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
-        if (index == UNDEFINED_PARAMETER_INDEX) {
-            index = valueParameters.size
-        }
+        kind = IrParameterKind.Regular
         factory.buildValueParameter(this, this@addValueParameter).also { valueParameter ->
-            valueParameters = valueParameters + valueParameter
+            parameters += valueParameter
         }
     }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     init {
         <!RETURN_NOT_ALLOWED!>return<!>
@@ -14,3 +15,6 @@ class A {
 
     fun foo(): Int = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, init, integerLiteral,
+secondaryConstructor */

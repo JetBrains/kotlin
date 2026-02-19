@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 // SKIP_TXT
 // FIR_IDENTICAL
 
@@ -20,3 +21,6 @@ object O: SuspendFunction0<Unit> {
     override suspend fun invoke() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, interfaceDeclaration, objectDeclaration,
+operator, override, suspend */

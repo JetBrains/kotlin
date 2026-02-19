@@ -1,14 +1,26 @@
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionHacksComponent
+import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
+import org.jetbrains.kotlin.scripting.compiler.test.dependenciesResolver
+import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.renderError
+import kotlin.test.assertEquals
+import kotlin.test.junit5.JUnit5Asserter.fail
 
 /*
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -16,8 +28,12 @@ import kotlin.script.experimental.jvm.util.renderError
  */
 
 
-class ScriptEvaluationTest : TestCase() {
+class ScriptEvaluationTest {
 
+    private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+
+    @Test
     fun testExceptionWithCause() {
         checkEvaluateAsError(
             """
@@ -37,6 +53,7 @@ class ScriptEvaluationTest : TestCase() {
     }
 
     // KT-19423
+    @Test
     fun testClassCapturingScriptInstance() {
         val res = checkEvaluate(
             """
@@ -51,6 +68,7 @@ class ScriptEvaluationTest : TestCase() {
         assertEquals("abc", (res.returnValue as ResultValue.Value).value)
     }
 
+    @Test
     fun testObjectCapturingScriptInstance() {
         val res = checkCompile(
             """
@@ -80,15 +98,21 @@ class ScriptEvaluationTest : TestCase() {
         return res
     }
 
-    private fun checkCompile(script: SourceCode): ResultWithDiagnostics<CompiledScript> {
-        val compilationConfiguration = ScriptCompilationConfiguration()
-        val compiler = ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
+    private fun checkCompile(
+        script: SourceCode,
+        compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration(),
+        hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
+    ): ResultWithDiagnostics<CompiledScript> {
+        val compiler = if (isK2) ScriptJvmK2CompilerIsolated(hostConfiguration) else ScriptJvmCompilerIsolated(hostConfiguration)
         return compiler.compile(script, compilationConfiguration)
     }
 
-    private fun checkEvaluate(script: SourceCode): EvaluationResult {
-        val compiled = checkCompile(script).valueOrThrow()
-        val evaluationConfiguration = ScriptEvaluationConfiguration()
+    private fun checkEvaluate(
+        script: SourceCode,
+        compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration(),
+        evaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration()
+    ): EvaluationResult {
+        val compiled = checkCompile(script, compilationConfiguration).valueOrThrow()
         val evaluator = BasicJvmScriptEvaluator()
         val res = runBlocking {
             evaluator.invoke(compiled, evaluationConfiguration).valueOrThrow()
@@ -96,3 +120,4 @@ class ScriptEvaluationTest : TestCase() {
         return res
     }
 }
+

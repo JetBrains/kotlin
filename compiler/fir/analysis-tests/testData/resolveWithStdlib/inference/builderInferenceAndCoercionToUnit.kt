@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class DropDownComponent<T : Any>(val initialValues: List<T>)
 
 fun test(strings: List<String>) {
@@ -7,3 +8,6 @@ fun test(strings: List<String>) {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localProperty, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

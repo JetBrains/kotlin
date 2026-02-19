@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 open class Outer<E> {
     inner class Inner<F>
 
@@ -21,3 +22,6 @@ class A {
         val y: Outer<String>.Inner<Char> = Inner<Char>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, typeParameter */

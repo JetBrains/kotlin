@@ -1,6 +1,7 @@
 package
 
 @Anno(x = {{"a", "b"}, {"a", "b"}}, y = "a") public fun foo1(): kotlin.Unit
+@Anno(x = {{{"a"}}}, y = "b") public fun foo11(): kotlin.Unit
 @Anno(x = {"a", "b"}, y = "a") public fun foo2(): kotlin.Unit
 @Anno(x = {{"a"}, {"b"}}, y = "a") public fun foo3(): kotlin.Unit
 @Anno(x = {"a", "b"}, y = "a") public fun foo4(): kotlin.Unit

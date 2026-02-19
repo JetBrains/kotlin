@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -16,3 +17,5 @@ public class Foo5 {
 public class Foo6 {
     public constructor() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, secondaryConstructor */

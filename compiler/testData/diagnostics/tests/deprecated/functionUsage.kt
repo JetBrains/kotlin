@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 import kotlin.reflect.KProperty
 
@@ -50,3 +51,7 @@ class Delegation {
     val x by <!DEPRECATION!>Obsolete<!>()
     var y by <!DEPRECATION!>Obsolete<!>()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDelegate,
+setter, starProjection, stringLiteral, thisExpression */

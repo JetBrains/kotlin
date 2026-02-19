@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    final fun bar(): /C? // /C.bar|bar(){}[0]
+    final fun foo(): /C // /C.foo|foo(){}[0]
+}
+final fun /test(/C?): /C? // /test|test(C?){}[0]

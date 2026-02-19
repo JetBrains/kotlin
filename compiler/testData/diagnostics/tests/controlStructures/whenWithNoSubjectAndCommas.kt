@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun someFun() {
     when {
@@ -9,3 +10,6 @@ fun someFun() {
         x == 1<!COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT!>,<!> x == 2 -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+localProperty, propertyDeclaration, whenExpression */

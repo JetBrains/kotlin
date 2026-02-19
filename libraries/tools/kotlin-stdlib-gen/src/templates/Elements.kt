@@ -22,7 +22,6 @@ object Elements : TemplateGroupBase() {
             specialFor(RangesOfPrimitives) {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
                     sinceAtLeast("1.5")
-                    wasExperimental("ExperimentalUnsignedTypes")
                     sourceFile(SourceFile.URanges)
                 }
             }
@@ -308,6 +307,10 @@ object Elements : TemplateGroupBase() {
             """
         }
 
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.elementAt")
+        }
+
         specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             inlineOnly()
             body { "return get(index)" }
@@ -327,6 +330,18 @@ object Elements : TemplateGroupBase() {
                     """
                 }
             }
+            on(Platform.Native) {
+                on(Backend.Wasm) {
+                    inlineOnly()
+
+                    val size = f.code.size
+                    body {
+                        """
+                        return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, $size: $$size}") }
+                        """
+                    }
+                }
+            }
         }
     }
 
@@ -339,6 +354,9 @@ object Elements : TemplateGroupBase() {
         returns("T")
         body {
             """
+            contract {
+                callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+            }
             if (this is List)
                 return this.getOrElse(index, defaultValue)
             if (index < 0)
@@ -355,6 +373,9 @@ object Elements : TemplateGroupBase() {
         }
         body(Sequences) {
             """
+            contract {
+                callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+            }
             if (index < 0)
                 return defaultValue(index)
             val iterator = iterator()
@@ -369,9 +390,13 @@ object Elements : TemplateGroupBase() {
         }
         specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             inlineOnly()
+            val indices = if (family == Lists) "0..<size" else "indices"
             body {
                 """
-                return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+                contract {
+                    callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+                }
+                return if (index in $indices) get(index) else defaultValue(index)
                 """
             }
         }
@@ -381,11 +406,22 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
+        sample(
+            when (family) {
+                CharSequences, Lists -> "samples.collections.Collections.Elements.getOrElse"
+                ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> "samples.collections.Arrays.Usage.getOrElse"
+                else -> "samples.collections.Collections.Elements.getOrElse"
+            }
+        )
         returns("T")
         inlineOnly()
+        val indices = if (family == Lists) "0..<size" else "indices"
         body {
             """
-            return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+            contract {
+                callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+            }
+            return if (index in $indices) get(index) else defaultValue(index)
             """
         }
     }
@@ -439,9 +475,10 @@ object Elements : TemplateGroupBase() {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
         sample("samples.collections.Collections.Elements.getOrNull")
         returns("T?")
+        val indices = if (family == Lists) "0..<size" else "indices"
         body {
             """
-            return if (index >= 0 && index <= lastIndex) get(index) else null
+            return if (index in $indices) get(index) else null
             """
         }
     }
@@ -814,6 +851,9 @@ object Elements : TemplateGroupBase() {
         inline(Inline.Only)
         doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         sample("samples.collections.Collections.Elements.find")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.findLast")
+        }
         returns("T?")
         body { "return lastOrNull(predicate)"}
     }
@@ -989,7 +1029,6 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inlineOnly()
         returns("T?")
         doc {
@@ -1051,7 +1090,6 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         returns("T?")
         doc {
             """
@@ -1117,7 +1155,9 @@ object Elements : TemplateGroupBase() {
                     Returns ${getOrdinal(n)} *element* from the ${f.collection}.
             
                     If $condition, throws an [IndexOutOfBoundsException] except in Kotlin/JS 
-                    where the behavior is unspecified.
+                    where the behavior is unspecified, and in Kotlin/Wasm where 
+                    a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+                    unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
                     """
                 }
             }

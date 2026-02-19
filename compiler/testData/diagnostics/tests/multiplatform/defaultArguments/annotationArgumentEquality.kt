@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -87,3 +88,6 @@ actual annotation class ClassArrays(
     actual val k: Array<KClass<*>> = [List::class],
     actual vararg val v: Int = [42]
 )
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, collectionLiteral, enumDeclaration, enumEntry,
+expect, integerLiteral, primaryConstructor, propertyDeclaration, starProjection, stringLiteral, vararg */

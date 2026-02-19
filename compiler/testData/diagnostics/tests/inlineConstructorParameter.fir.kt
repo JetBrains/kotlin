@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59664
 // LANGUAGE: -ProhibitInlineModifierOnPrimaryConstructorParameters
 // WITH_STDLIB
@@ -21,3 +22,6 @@ enum class Bar() {
 fun main() {
     println(Foo.A.bar)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, getter, primaryConstructor, propertyDeclaration,
+stringLiteral */

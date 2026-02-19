@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(x: Int, list: List<Int>?) {
     when (x) {
@@ -13,3 +14,6 @@ fun whenWithoutSubject(x: Int, list: List<Int>?) {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, nullableType, smartcast, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

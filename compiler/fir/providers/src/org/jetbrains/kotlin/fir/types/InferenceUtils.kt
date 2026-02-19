@@ -17,7 +17,7 @@ import kotlin.contracts.contract
 @OptIn(ExperimentalContracts::class)
 private fun ConeKotlinType.classId(session: FirSession): ClassId? {
     contract {
-        returns(true) implies (this@classId is ConeClassLikeType)
+        returnsNotNull() implies (this@classId is ConeClassLikeType)
     }
     if (this !is ConeClassLikeType) return null
     return fullyExpandedType(session).lookupTag.classId
@@ -49,6 +49,6 @@ fun ConeTypeContext.isTypeMismatchDueToNullability(
     return actualType.isNullableType() && !expectedType.isNullableType() && AbstractTypeChecker.isSubtypeOf(
         this,
         actualType,
-        expectedType.withNullability(ConeNullability.NULLABLE, this)
+        expectedType.withNullability(nullable = true, this)
     )
 }

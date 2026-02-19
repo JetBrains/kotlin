@@ -18,6 +18,7 @@
 package kotlin.native.internal
 
 import kotlin.comparisons.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * Takes a String and an integer exponent. The String should hold a positive
@@ -32,6 +33,7 @@ import kotlin.comparisons.*
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @GCUnsafeCall("Kotlin_native_FloatingPointParser_parseDoubleImpl")
+@Escapes.Nothing
 private external fun parseDoubleImpl(s: String, e: Int): Double
 
 /**
@@ -47,6 +49,7 @@ private external fun parseDoubleImpl(s: String, e: Int): Double
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @GCUnsafeCall("Kotlin_native_FloatingPointParser_parseFloatImpl")
+@Escapes.Nothing
 private external fun parseFloatImpl(s: String, e: Int): Float
 
 /**
@@ -202,12 +205,13 @@ internal object FloatingPointParser {
 
             var exponentOffset = end + 1
             if (s[exponentOffset] == '+') {
-                if (s[exponentOffset + 1] == '-') {
-                    throw NumberFormatException(s)
-                }
                 exponentOffset++ // skip the plus sign
                 if (exponentOffset == length)
                     throw NumberFormatException(s)
+
+                if (s[exponentOffset] == '-') {
+                    throw NumberFormatException(s)
+                }
             }
             val strExp = s.substring(exponentOffset, length)
             try {
@@ -221,7 +225,9 @@ internal object FloatingPointParser {
                 for (i in strExp.indices) {
                     ch = strExp[i]
                     if (ch < '0' || ch > '9') {
-                        if (i == 0 && ch == '-')
+                        // minus character is only valid
+                        // if it is not the only one in the exponent string
+                        if (i == 0 && ch == '-' && strExp.length > 1)
                             continue
                         // ex contains the exponent substring only so throw
                         // a new exception with the correct string.

@@ -62,101 +62,50 @@ public final class TopLevelPrimitiveTest {
 }
 
 @kotlin.Metadata
-public synthetic final class TopLevelTest$VolatileWrapper$atomicfu$internal {
-    // source: 'TopLevelTest.kt'
-    private synthetic final static field a_internal$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic volatile field a_internal$volatile: int
-    private synthetic final static field abcNode_internal$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic volatile field abcNode_internal$volatile: java.lang.Object
-    private synthetic final static field any_internal$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic volatile field any_internal$volatile: java.lang.Object
-    private synthetic final static field b_internal$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private synthetic volatile field b_internal$volatile: long
-    private synthetic final static field c_internal$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic volatile field c_internal$volatile: int
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method getA_internal$volatile$FU$main(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic final method getA_internal$volatile(): int
-    public synthetic final static method getAbcNode_internal$volatile$FU$main(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getAbcNode_internal$volatile(): java.lang.Object
-    public synthetic final static method getAny_internal$volatile$FU$main(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getAny_internal$volatile(): java.lang.Object
-    public synthetic final static method getB_internal$volatile$FU$main(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private synthetic final method getB_internal$volatile(): long
-    public synthetic final static method getC_internal$volatile$FU$main(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic final method getC_internal$volatile(): int
-    private synthetic final method setA_internal$volatile(p0: int): void
-    private synthetic final method setAbcNode_internal$volatile(p0: java.lang.Object): void
-    private synthetic final method setAny_internal$volatile(p0: java.lang.Object): void
-    private synthetic final method setB_internal$volatile(p0: long): void
-    private synthetic final method setC_internal$volatile(p0: int): void
-}
-
-@kotlin.Metadata
-synthetic final class TopLevelTest$VolatileWrapper$atomicfu$private {
-    // source: 'TopLevelTest.kt'
-    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic volatile field a$volatile: int
-    private synthetic final static field abcNode$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic volatile field abcNode$volatile: java.lang.Object
-    private synthetic final static field any$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic volatile field any$volatile: java.lang.Object
-    private synthetic final static field b$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private synthetic volatile field b$volatile: long
-    private synthetic final static field c$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic volatile field c$volatile: int
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public synthetic final static method access$getAbcNode$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public synthetic final static method access$getAny$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public synthetic final static method access$getB$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public synthetic final static method access$getC$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic final method getA$volatile(): int
-    private synthetic final static method getAbcNode$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getAbcNode$volatile(): java.lang.Object
-    private synthetic final static method getAny$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getAny$volatile(): java.lang.Object
-    private synthetic final static method getB$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private synthetic final method getB$volatile(): long
-    private synthetic final static method getC$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic final method getC$volatile(): int
-    private synthetic final method setA$volatile(p0: int): void
-    private synthetic final method setAbcNode$volatile(p0: java.lang.Object): void
-    private synthetic final method setAny$volatile(p0: java.lang.Object): void
-    private synthetic final method setB$volatile(p0: long): void
-    private synthetic final method setC$volatile(p0: int): void
-}
-
-@kotlin.Metadata
 public final class TopLevelTestKt {
     // source: 'TopLevelTest.kt'
+    private synthetic final static field a: java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static field a_internal: java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static field abcNode: java.util.concurrent.atomic.AtomicReference
+    private synthetic final static field abcNode_internal: java.util.concurrent.atomic.AtomicReference
+    private synthetic final static field any: java.util.concurrent.atomic.AtomicReference
     private synthetic final static field anyRefArr: java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final static field any_internal: java.util.concurrent.atomic.AtomicReference
+    private synthetic final static field b: java.util.concurrent.atomic.AtomicLong
+    private synthetic final static field b_internal: java.util.concurrent.atomic.AtomicLong
     private synthetic final static field booleanArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static field c: java.util.concurrent.atomic.AtomicBoolean
+    private synthetic final static field c_internal: java.util.concurrent.atomic.AtomicBoolean
     private synthetic final static field intArr: java.util.concurrent.atomic.AtomicIntegerArray
     private synthetic final static field longArr: java.util.concurrent.atomic.AtomicLongArray
     private synthetic final static field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     private synthetic final static field stringAtomicNullArr: java.util.concurrent.atomic.AtomicReferenceArray
-    private synthetic final static field topLevelTest$VolatileWrapper$atomicfu$internal: TopLevelTest$VolatileWrapper$atomicfu$internal
-    private synthetic final static field topLevelTest$VolatileWrapper$atomicfu$private: TopLevelTest$VolatileWrapper$atomicfu$private
     static method <clinit>(): void
+    public synthetic final static method access$getA(): java.util.concurrent.atomic.AtomicInteger
+    public synthetic final static method access$getAbcNode(): java.util.concurrent.atomic.AtomicReference
+    public synthetic final static method access$getAny(): java.util.concurrent.atomic.AtomicReference
+    public synthetic final static method access$getB(): java.util.concurrent.atomic.AtomicLong
     public synthetic final static method access$getBooleanArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final static method access$getC(): java.util.concurrent.atomic.AtomicBoolean
     public synthetic final static method access$getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
     public synthetic final static method access$getLongArr(): java.util.concurrent.atomic.AtomicLongArray
     public synthetic final static method access$getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
     public synthetic final static method access$getStringAtomicNullArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    public synthetic final static method access$getTopLevelTest$VolatileWrapper$atomicfu$private(): TopLevelTest$VolatileWrapper$atomicfu$private
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getA(): java.util.concurrent.atomic.AtomicInteger
+    public synthetic final static method getA_internal(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method getAbcNode(): java.util.concurrent.atomic.AtomicReference
+    public synthetic final static method getAbcNode_internal(): java.util.concurrent.atomic.AtomicReference
+    private synthetic final static method getAny(): java.util.concurrent.atomic.AtomicReference
     private synthetic final static method getAnyRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    public synthetic final static method getAny_internal(): java.util.concurrent.atomic.AtomicReference
+    private synthetic final static method getB(): java.util.concurrent.atomic.AtomicLong
+    public synthetic final static method getB_internal(): java.util.concurrent.atomic.AtomicLong
     private synthetic final static method getBooleanArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static method getC(): java.util.concurrent.atomic.AtomicBoolean
+    public synthetic final static method getC_internal(): java.util.concurrent.atomic.AtomicBoolean
     private synthetic final static method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
     private synthetic final static method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
     private synthetic final static method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
     private synthetic final static method getStringAtomicNullArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    public synthetic final static method getTopLevelTest$VolatileWrapper$atomicfu$internal(): TopLevelTest$VolatileWrapper$atomicfu$internal
-    private synthetic final static method getTopLevelTest$VolatileWrapper$atomicfu$private(): TopLevelTest$VolatileWrapper$atomicfu$private
 }

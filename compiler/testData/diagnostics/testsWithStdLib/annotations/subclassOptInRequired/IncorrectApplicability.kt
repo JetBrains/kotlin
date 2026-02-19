@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 
 @RequiresOptIn
@@ -95,5 +96,13 @@ class OuterKlass {
 
     <!SUBCLASS_OPT_IN_INAPPLICABLE!>@SubclassOptInRequired(ApiMarker::class)<!>
     sealed interface NestedSealedInterface
-
 }
+
+interface Interface
+
+<!WRONG_ANNOTATION_TARGET!>@SubclassOptInRequired(ApiMarker::class)<!>
+typealias TypeAlias = Interface
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, classReference,
+companionObject, data, enumDeclaration, enumEntry, funInterface, functionDeclaration, inner, interfaceDeclaration,
+localClass, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, typeAliasDeclaration, value */

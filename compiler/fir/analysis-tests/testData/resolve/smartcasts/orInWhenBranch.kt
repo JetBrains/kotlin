@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-36057
 
 fun String.foo() {}
@@ -25,3 +26,6 @@ fun test_4(a: Any?, b: Boolean) {
         a.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // Should be Bad
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, isExpression, nullableType, smartcast, whenExpression, whenWithSubject */

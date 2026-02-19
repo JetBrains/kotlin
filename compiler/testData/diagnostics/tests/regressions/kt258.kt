@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-258 Support equality constraints in type inference
 
@@ -9,3 +10,6 @@ fun test() {
 }
 
 operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) {}//= this.put(key, value)
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, javaFunction, localProperty,
+nullableType, operator, propertyDeclaration, stringLiteral, typeParameter */

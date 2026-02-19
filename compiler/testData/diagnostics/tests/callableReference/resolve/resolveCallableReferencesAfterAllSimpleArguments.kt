@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A
 interface B
@@ -13,3 +14,5 @@ fun test(a: A, b: B) {
     baz(a, <!TYPE_MISMATCH!>::fooB<!>)
     bar(<!TYPE_MISMATCH!>::fooB<!>, a)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, nullableType, typeParameter */

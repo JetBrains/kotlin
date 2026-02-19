@@ -1,3 +1,7 @@
+// LIBRARY_PLATFORMS: JVM
+// DECLARATIONS_NO_LIGHT_ELEMENTS: multifileFacade.class[privateFoo], multifileFacade__MultifileFacadeKt.class[privateFoo;x1], multifileFacade__SecondMultifileFacadeKt.class[y1]
+// LIGHT_ELEMENTS_NO_DECLARATION: multifileFacade__MultifileFacadeKt.class[privateFoo$multifileFacade__MultifileFacadeKt]
+
 // FILE: MultifileFacade.kt
 @file:JvmMultifileClass
 @file:JvmName("multifileFacade")

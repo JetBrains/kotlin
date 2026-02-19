@@ -11,28 +11,40 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
 import javax.inject.Inject
 
 /* Keep typealias for source compatibility */
 @Suppress("unused")
-@Deprecated("Task was renamed to MetadataDependencyTransformationTask", replaceWith = ReplaceWith("MetadataDependencyTransformationTask"))
+@Deprecated(
+    "Task was renamed to MetadataDependencyTransformationTask. Scheduled for removal in Kotlin 2.3.",
+    replaceWith = ReplaceWith("MetadataDependencyTransformationTask"),
+    level = DeprecationLevel.ERROR
+)
 typealias TransformKotlinGranularMetadata = MetadataDependencyTransformationTask
 
 internal const val TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA = "transformDependenciesMetadata"
-private fun transformGranularMetadataTaskName(sourceSetName: String) =
+internal fun transformGranularMetadataTaskName(sourceSetName: String) =
     lowerCamelCaseName("transform", sourceSetName, "DependenciesMetadata")
 
 internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
@@ -52,15 +64,19 @@ internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
 }
 
 @DisableCachingByDefault(because = "Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load")
-open class MetadataDependencyTransformationTask
+abstract class MetadataDependencyTransformationTask
 @Inject constructor(
     kotlinSourceSet: KotlinSourceSet,
-    private val objectFactory: ObjectFactory,
+    objectFactory: ObjectFactory,
     private val projectLayout: ProjectLayout
-) : DefaultTask() {
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     //region Task Configuration State & Inputs
-    private val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
+    @get:Nested
+    internal val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
+
+    @get:Internal
+    internal val buildIdentifierCompatAccessor: Provider<BuildIdentifierAccessor.Factory> = project.variantImplementationFactoryProvider()
 
     @Suppress("unused") // task inputs for up-to-date checks
     @get:Nested
@@ -71,7 +87,7 @@ open class MetadataDependencyTransformationTask
 
     @Transient // Only needed for configuring task inputs
     private val parentTransformationTasksLazy: Lazy<List<TaskProvider<MetadataDependencyTransformationTask>>>? = lazy {
-        dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).mapNotNull {
+        kotlinSourceSet.internal.dependsOnClosure.mapNotNull {
             project
                 .tasks
                 .locateTask(transformGranularMetadataTaskName(it.name))
@@ -88,43 +104,80 @@ open class MetadataDependencyTransformationTask
     @get:OutputFile
     protected val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
         .fileProperty()
-        .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.libraries")) }
-
-    @get:OutputFile
-    protected val visibleSourceSetsFile: RegularFileProperty = objectFactory
-        .fileProperty()
-        .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.visibleSourceSets")) }
+        .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.json")) }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    protected val parentVisibleSourceSetFiles: FileCollection = project.filesProvider {
-        parentTransformationTasks.map { taskProvider ->
-            taskProvider.flatMap { task ->
-                task.visibleSourceSetsFile.map { it.asFile }
-            }
-        }
-    }
-
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:InputFiles
-    protected val parentTransformedLibraries: FileCollection = project.filesProvider {
-        parentTransformationTasks.map { taskProvider ->
-            taskProvider.map { task -> task.ownTransformedLibraries }
+    protected val parentLibrariesIndexFiles: SetProperty<RegularFile> = objectFactory.setProperty<RegularFile>().apply {
+        parentTransformationTasks.forEach { taskProvider ->
+            add(taskProvider.flatMap { it.transformedLibrariesIndexFile })
         }
     }
 
     //endregion Task Configuration State & Inputs
 
+    private fun Iterable<MetadataDependencyResolution>.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> =
+        flatMap { resolution ->
+            when (resolution) {
+                is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolution.toTransformedLibrariesRecords()
+                is MetadataDependencyResolution.KeepOriginalDependency -> when (transformationParameters.kmpResolutionStrategy) {
+                    /**
+                     * We probably actually want:
+                     * is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
+                     *
+                     * in both cases
+                     *
+                     * This used to resolve pre-HMPP metadata jar, but now it just leaks files to metadata compilation classpath
+                     *
+                     * This is especially problematic for lenient resolution
+                     */
+                    KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> emptyList()
+                    KmpResolutionStrategy.StandardKMPResolution -> resolution.toTransformedLibrariesRecords()
+                }
+                is MetadataDependencyResolution.Exclude -> emptyList()
+            }
+        }
+
+    private fun MetadataDependencyResolution.KeepOriginalDependency.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> {
+        return transformationParameters.resolvedMetadataConfiguration.getArtifacts(dependency).map {
+            TransformedMetadataLibraryRecord(
+                moduleId = dependency.id.serializableUniqueKey(buildIdentifierCompatAccessor),
+                file = it.file.absolutePath,
+                sourceSetName = null
+            )
+        }
+    }
+
+    private fun MetadataDependencyResolution.ChooseVisibleSourceSets.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> {
+        val moduleId = dependency.id.serializableUniqueKey(buildIdentifierCompatAccessor)
+        val transformedLibraries = transformMetadataLibrariesForBuild(this, outputsDir, true)
+        return transformedLibraries.flatMap { (sourceSetName, libraryFiles) ->
+            libraryFiles.map { file ->
+                TransformedMetadataLibraryRecord(
+                    moduleId = moduleId,
+                    file = file.absolutePath,
+                    sourceSetName = sourceSetName
+                )
+            }
+        }
+    }
+
     @TaskAction
     fun transformMetadata() {
+        val parentLibrariesRecords: List<List<TransformedMetadataLibraryRecord>> = parentLibrariesIndexFiles
+            .get()
+            .map { librariesIndexFile -> librariesIndexFile.records() }
+
+        val visibleParentSourceSetsByModuleId = parentLibrariesRecords
+            .flatten()
+            .groupBy(keySelector = { it.moduleId }, valueTransform = { it.sourceSetName })
+
         val transformation = GranularMetadataTransformation(
             params = transformationParameters,
-            parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { identifier: ComponentIdentifier ->
-                val serializableKey = identifier.serializableUniqueKey
-                parentVisibleSourceSetFiles.flatMap { visibleSourceSetsFile ->
-                    readVisibleSourceSetsFile(visibleSourceSetsFile)[serializableKey].orEmpty()
-                }.toSet()
-            }
+            parentSourceSetVisibilityProvider = { identifier: ComponentIdentifier ->
+                val serializableKey = identifier.serializableUniqueKey(buildIdentifierCompatAccessor)
+                visibleParentSourceSetsByModuleId[serializableKey].orEmpty().filterNotNull().toSet()
+            },
         )
 
         if (outputsDir.isDirectory) {
@@ -133,60 +186,43 @@ open class MetadataDependencyTransformationTask
         outputsDir.mkdirs()
 
         val metadataDependencyResolutions = transformation.metadataDependencyResolutions
-
-        val transformedLibraries = metadataDependencyResolutions
-            .flatMap { resolution ->
-                when (resolution) {
-                    is MetadataDependencyResolution.ChooseVisibleSourceSets ->
-                        objectFactory.transformMetadataLibrariesForBuild(resolution, outputsDir, true)
-                    is MetadataDependencyResolution.KeepOriginalDependency ->
-                        transformationParameters.resolvedMetadataConfiguration.getArtifacts(resolution.dependency).map { it.file }
-                    is MetadataDependencyResolution.Exclude -> emptyList()
-                }
-            }
-
-        writeTransformedLibraries(transformedLibraries)
-        writeVisibleSourceSets(transformation.visibleSourceSetsByComponentId)
+        val transformedLibrariesRecords = metadataDependencyResolutions.toTransformedLibrariesRecords()
+        KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile).write(transformedLibrariesRecords)
     }
 
-    private fun writeTransformedLibraries(files: List<File>) {
-        KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile).write(files)
-    }
-
-    private fun writeVisibleSourceSets(visibleSourceSetsByComponentId: Map<ComponentIdentifier, Set<String>>) {
-        val content = visibleSourceSetsByComponentId.entries.joinToString("\n") { (id, visibleSourceSets) ->
-            "${id.serializableUniqueKey} => ${visibleSourceSets.joinToString(",")}"
-        }
-        visibleSourceSetsFile.get().asFile.writeText(content)
-    }
-
-    private fun readVisibleSourceSetsFile(file: File): Map<String, Set<String>> = file
-        .readLines()
-        .associate { string ->
-            val (id, visibleSourceSetsString) = string.split(" => ")
-            id to visibleSourceSetsString.split(",").toSet()
-        }
-
-    @get:Internal // Warning! ownTransformedLibraries is available only after Task Execution
-    internal val ownTransformedLibraries: FileCollection = project.filesProvider {
-        transformedLibrariesIndexFile.map { regularFile ->
-            KotlinMetadataLibrariesIndexFile(regularFile.asFile).read()
+    internal fun ownTransformedLibraries(): Provider<List<File>> {
+        return transformedLibrariesIndexFile.map { file ->
+            transformedLibraries(file.records())
         }
     }
 
-    @get:Internal // Warning! allTransformedLibraries is available only after Task Execution
-    val allTransformedLibraries: FileCollection get() = ownTransformedLibraries + parentTransformedLibraries
+    internal fun allTransformedLibraries(): Provider<List<File>> =
+        parentLibrariesIndexFiles.zip(ownTransformedLibraries()) { parent, own ->
+            own + transformedLibraries(parent.flatMap { it.records() })
+        }
+
+    companion object {
+        @JvmStatic
+        private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile).read()
+
+        private fun transformedLibraries(records: List<TransformedMetadataLibraryRecord>): List<File> {
+            return records.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
+        }
+    }
 }
 
+
 private typealias SerializableComponentIdentifierKey = String
+
 
 /**
  * This unique key can be used to lookup various info for related Resolved Dependency
  * that gets serialized
  */
-private val ComponentIdentifier.serializableUniqueKey
-    get(): SerializableComponentIdentifierKey = when (this) {
-        is ProjectComponentIdentifier -> "project ${build.buildPathCompat}$projectPath"
-        is ModuleComponentIdentifier -> "module $group:$module:$version"
-        else -> error("Unexpected Component Identifier: '$this' of type ${this.javaClass}")
-    }
+private fun ComponentIdentifier.serializableUniqueKey(
+    buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
+): SerializableComponentIdentifierKey = when (this) {
+    is ProjectComponentIdentifier -> "project ${build.compatAccessor(buildIdentifierAccessor).buildPath}$projectPath"
+    is ModuleComponentIdentifier -> "module $group:$module:$version"
+    else -> error("Unexpected Component Identifier: '$this' of type ${this.javaClass}")
+}

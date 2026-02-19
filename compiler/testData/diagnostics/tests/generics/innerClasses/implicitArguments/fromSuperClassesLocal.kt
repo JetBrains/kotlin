@@ -1,5 +1,7 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +NestedTypeAliases +LocalTypeAliases
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
 
 class A<R1, R2, R3, R4>
 
@@ -9,7 +11,7 @@ private fun <E> foobar() = {
             fun a() = A<E, X, Y, Z>()
         }
 
-        typealias LocalAlias<W> = A<E, X, Y, W>
+        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias<W> = A<E, X, Y, W>
     }
 
     class Derived : LocalOuter<Double, Short>() {
@@ -26,7 +28,7 @@ private fun noParameters() = {
             fun a() = A<Any, X, Y, Z>()
         }
 
-        typealias LocalAlias2<W> = A<Any, X, Y, W>
+        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias2<W> = A<Any, X, Y, W>
     }
 
     class Derived2 : LocalOuter2<Double, Short>() {
@@ -52,3 +54,7 @@ fun test() {
     y().foo().a() checkType { _<A<Any, Double, Short, Long>>() }
     y().bar() checkType { _<A<Any, Double, Short, Char>>() }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, lambdaLiteral, localClass, localProperty, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, typeWithExtension */

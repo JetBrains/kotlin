@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: +UNUSED_VARIABLE
+// DIAGNOSTICS: +UNUSED_VARIABLE
 
 import kotlin.reflect.KProperty
 
@@ -25,3 +26,6 @@ class Delegate {
         return Delegate()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, operator, propertyDeclaration,
+propertyDelegate, starProjection, stringLiteral */

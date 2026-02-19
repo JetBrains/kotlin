@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-55379
 
@@ -28,3 +29,6 @@ fun test_2(b: Any?) {
         null -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

@@ -4,8 +4,23 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-scripting-common")
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation(libs.okhttp)
     implementation(libs.jgit)
-    implementation("org.slf4j:slf4j-nop:1.7.32")
-    implementation("org.jetbrains.kotlinx:dataframe:0.8.1")
+    implementation("org.slf4j:slf4j-nop:1.7.36")
+    implementation(libs.dataframeCsv)
+    implementation(libs.dataframeCore)
+    implementation(libs.dataframeJson)
+    implementation(libs.apache.commons.compress)
+    implicitDependencies(libs.dataframeCsv) {
+        because("workaround for KTIJ-30065, remove after its resolution")
+    }
+    implicitDependencies(libs.dataframeCore) {
+        because("workaround for KTIJ-30065, remove after its resolution")
+    }
+    implicitDependencies(libs.dataframeJson) {
+        because("workaround for KTIJ-30065, remove after its resolution")
+    }
+    constraints {
+        api(libs.apache.commons.lang)
+    }
 }

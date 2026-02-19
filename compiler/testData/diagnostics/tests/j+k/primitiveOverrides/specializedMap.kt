@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: AbstractSpecializedMap.java
 public abstract class AbstractSpecializedMap implements java.util.Map<Integer, Double> {
@@ -112,3 +113,5 @@ fun foo(x: SpecializedMap) {
     x.put(4, 5.0)
     x.put(4, null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, nullableType */

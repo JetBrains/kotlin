@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-1078 Problem with visibility in do-while
 
@@ -15,3 +16,6 @@ class B() {
 }
 
 fun foo() = B()
+
+/* GENERATED_FIR_TAGS: classDeclaration, doWhileLoop, functionDeclaration, localProperty, primaryConstructor,
+propertyDeclaration */

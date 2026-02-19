@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class SemVerTest {
     @Test

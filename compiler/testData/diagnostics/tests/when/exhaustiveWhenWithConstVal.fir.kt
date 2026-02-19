@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50385
 
 const val myF = false
@@ -43,3 +44,6 @@ fun test_5(someBoolean: Boolean) {
         false -> 4
     }
 }
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, smartcast, whenExpression, whenWithSubject */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Target(AnnotationTarget.FIELD)
 annotation class Field
 
@@ -42,3 +43,7 @@ interface His {
     val y: Int
         get() = 42
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, functionDeclaration, getter,
+integerLiteral, interfaceDeclaration, lambdaLiteral, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection */

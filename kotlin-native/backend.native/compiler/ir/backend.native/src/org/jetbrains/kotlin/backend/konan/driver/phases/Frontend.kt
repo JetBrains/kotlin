@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -30,18 +31,18 @@ sealed class FrontendPhaseOutput {
     ) : FrontendPhaseOutput()
 }
 
-internal interface FrontendContext : PhaseContext {
+internal interface FrontendContext : NativeBackendPhaseContext {
     var frontendServices: FrontendServices
 }
 
 internal class FrontendContextImpl(
-        config: KonanConfig
-) : BasicPhaseContext(config), FrontendContext {
+        config: NativeSecondStageCompilationConfig
+) : BasicNativeBackendPhaseContext(config), FrontendContext {
     override lateinit var frontendServices: FrontendServices
 }
 
 internal val FrontendPhase = createSimpleNamedCompilerPhase(
-        "Frontend", "Compiler frontend",
+        "Frontend",
         outputIfNotEnabled = { _, _, _, _ -> FrontendPhaseOutput.ShouldNotGenerateCode }
 ) { context: FrontendContext, input: KotlinCoreEnvironment ->
     lateinit var analysisResult: AnalysisResult
@@ -50,7 +51,7 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
                 context.messageCollector,
                 input.configuration.languageVersionSettings,
-                input.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+                input.configuration.renderDiagnosticInternalName,
         )
 
         val sourceFiles = input.getSourceFiles()

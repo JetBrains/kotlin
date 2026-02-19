@@ -5,6 +5,7 @@
 package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 
 /**
@@ -26,6 +27,7 @@ public fun ByteArray.getUByteAt(index: Int): UByte = UByte(get(index))
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getCharAt")
+@Escapes.Nothing
 public external fun ByteArray.getCharAt(index: Int): Char
 
 /**
@@ -34,6 +36,7 @@ public external fun ByteArray.getCharAt(index: Int): Char
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getShortAt")
+@Escapes.Nothing
 public external fun ByteArray.getShortAt(index: Int): Short
 
 /**
@@ -43,6 +46,7 @@ public external fun ByteArray.getShortAt(index: Int): Short
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getShortAt")
 @ExperimentalUnsignedTypes
+@Escapes.Nothing
 public external fun ByteArray.getUShortAt(index: Int): UShort
 
 /**
@@ -51,6 +55,7 @@ public external fun ByteArray.getUShortAt(index: Int): UShort
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getIntAt")
+@Escapes.Nothing
 public external fun ByteArray.getIntAt(index: Int): Int
 
 /**
@@ -60,6 +65,7 @@ public external fun ByteArray.getIntAt(index: Int): Int
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getIntAt")
 @ExperimentalUnsignedTypes
+@Escapes.Nothing
 public external fun ByteArray.getUIntAt(index: Int): UInt
 
 /**
@@ -68,6 +74,7 @@ public external fun ByteArray.getUIntAt(index: Int): UInt
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getLongAt")
+@Escapes.Nothing
 public external fun ByteArray.getLongAt(index: Int): Long
 
 /**
@@ -77,6 +84,7 @@ public external fun ByteArray.getLongAt(index: Int): Long
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getLongAt")
 @ExperimentalUnsignedTypes
+@Escapes.Nothing
 public external fun ByteArray.getULongAt(index: Int): ULong
 
 /**
@@ -85,6 +93,7 @@ public external fun ByteArray.getULongAt(index: Int): ULong
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getFloatAt")
+@Escapes.Nothing
 public external fun ByteArray.getFloatAt(index: Int): Float
 
 /**
@@ -93,6 +102,7 @@ public external fun ByteArray.getFloatAt(index: Int): Float
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_getDoubleAt")
+@Escapes.Nothing
 public external fun ByteArray.getDoubleAt(index: Int): Double
 
 /**
@@ -101,6 +111,7 @@ public external fun ByteArray.getDoubleAt(index: Int): Double
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_set")
+@Escapes.Nothing
 public external fun ByteArray.setUByteAt(index: Int, value: UByte)
 
 /**
@@ -109,6 +120,7 @@ public external fun ByteArray.setUByteAt(index: Int, value: UByte)
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setCharAt")
+@Escapes.Nothing
 public external fun ByteArray.setCharAt(index: Int, value: Char)
 
 /**
@@ -117,6 +129,7 @@ public external fun ByteArray.setCharAt(index: Int, value: Char)
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setShortAt")
+@Escapes.Nothing
 public external fun ByteArray.setShortAt(index: Int, value: Short)
 
 /**
@@ -126,6 +139,7 @@ public external fun ByteArray.setShortAt(index: Int, value: Short)
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setShortAt")
 @ExperimentalUnsignedTypes
+@Escapes.Nothing
 public external fun ByteArray.setUShortAt(index: Int, value: UShort)
 
 /**
@@ -134,6 +148,7 @@ public external fun ByteArray.setUShortAt(index: Int, value: UShort)
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setIntAt")
+@Escapes.Nothing
 public external fun ByteArray.setIntAt(index: Int, value: Int)
 
 /**
@@ -142,6 +157,7 @@ public external fun ByteArray.setIntAt(index: Int, value: Int)
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setIntAt")
+@Escapes.Nothing
 public external fun ByteArray.setUIntAt(index: Int, value: UInt)
 
 /**
@@ -150,6 +166,7 @@ public external fun ByteArray.setUIntAt(index: Int, value: UInt)
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setLongAt")
+@Escapes.Nothing
 public external fun ByteArray.setLongAt(index: Int, value: Long)
 
 /**
@@ -159,6 +176,7 @@ public external fun ByteArray.setLongAt(index: Int, value: Long)
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setLongAt")
 @ExperimentalUnsignedTypes
+@Escapes.Nothing
 public external fun ByteArray.setULongAt(index: Int, value: ULong)
 
 /**
@@ -167,6 +185,7 @@ public external fun ByteArray.setULongAt(index: Int, value: ULong)
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setFloatAt")
+@Escapes.Nothing
 public external fun ByteArray.setFloatAt(index: Int, value: Float)
 
 /**
@@ -175,4 +194,5 @@ public external fun ByteArray.setFloatAt(index: Int, value: Float)
  */
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_ByteArray_setDoubleAt")
+@Escapes.Nothing
 public external fun ByteArray.setDoubleAt(index: Int, value: Double)

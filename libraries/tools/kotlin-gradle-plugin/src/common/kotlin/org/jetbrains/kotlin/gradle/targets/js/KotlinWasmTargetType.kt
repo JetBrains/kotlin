@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+
 enum class KotlinWasmTargetType {
     WASI,
     JS;
@@ -14,5 +16,12 @@ fun KotlinWasmTargetType.toAttribute(): KotlinWasmTargetAttribute {
     return when(this) {
         KotlinWasmTargetType.WASI -> KotlinWasmTargetAttribute.wasi
         KotlinWasmTargetType.JS -> KotlinWasmTargetAttribute.js
+    }
+}
+
+fun KotlinWasmTargetType.toCompilerTarget(): WasmTarget {
+    return when(this) {
+        KotlinWasmTargetType.WASI -> WasmTarget.WASI
+        KotlinWasmTargetType.JS -> WasmTarget.JS
     }
 }

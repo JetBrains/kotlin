@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.build.BuildState
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
+import kotlin.test.fail
 
 fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependencyMatcher> {
     return when (notation) {
@@ -75,6 +78,68 @@ fun anyDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependency
     override fun matches(dependency: IdeaKotlinDependency): Boolean = true
 }
 
+fun anyDependsOnDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependencyMatcher {
+    override val description: String get() = "any dependsOn dependency"
+    override fun matches(dependency: IdeaKotlinDependency): Boolean {
+        if (dependency !is IdeaKotlinSourceDependency) return false
+        return dependency.type == IdeaKotlinSourceDependency.Type.DependsOn
+    }
+}
+
+/**
+ * For example main source sets appears as source friend dependencies for test source sets
+ */
+fun anySourceFriendDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependencyMatcher {
+    override val description: String get() = "any friend dependency"
+    override fun matches(dependency: IdeaKotlinDependency): Boolean {
+        if (dependency !is IdeaKotlinSourceDependency) return false
+        return dependency.type == IdeaKotlinSourceDependency.Type.Friend
+    }
+}
+
+val IdeaKotlinDependencyMatcher.notExpected: IdeaKotlinDependencyMatcher
+    get() = object : IdeaKotlinDependencyMatcher {
+        override val description: String get() = "not ${this@notExpected.description}"
+        override fun matches(dependency: IdeaKotlinDependency): Boolean = !this@notExpected.matches(dependency)
+    }
+
 /* Duplicated: Aks Gradle for public API? */
 private fun Project.currentBuildId(): BuildIdentifier =
     (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier
+
+
+class IdeaKotlinDependencyMatcherWithSourcesFile(
+    private val upstreamMatcher: IdeaKotlinDependencyMatcher,
+    private val filePattern: Regex,
+) : IdeaKotlinDependencyMatcher {
+    override val description: String
+        get() = upstreamMatcher.description + " with resolved sources file '$filePattern'"
+
+    override fun matches(dependency: IdeaKotlinDependency): Boolean {
+        if (!upstreamMatcher.matches(dependency)) return false
+
+        // only binary dependencies can have resolved sources file attached
+        if (dependency !is IdeaKotlinBinaryDependency) return false
+
+        // at the moment we expect only 1 source file be associated with dependency
+        val sourcesFile = dependency.sourcesClasspath.singleOrNull() ?: return false
+
+        // require that *ALL* files in sourcesClasspath matches the file pattern
+        return sourcesFile.toString().matches(filePattern)
+    }
+
+    override fun toString(): String = "$upstreamMatcher with resolved sources file '$filePattern'"
+}
+
+fun IdeaKotlinDependencyMatcher.withResolvedSourcesFile(endsWith: String) =
+    IdeaKotlinDependencyMatcherWithSourcesFile(
+        upstreamMatcher = this,
+        filePattern = Regex(".*$endsWith")
+    )
+
+fun IdeaKotlinDependency.assertNoSourcesResolved(): IdeaKotlinDependency {
+    if (this !is IdeaKotlinBinaryDependency) fail("Dependency $this is not a binary dependency")
+    if (sourcesClasspath.isNotEmpty()) fail("Expected that $this has no resolved sources")
+
+    return this
+}

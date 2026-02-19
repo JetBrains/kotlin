@@ -74,7 +74,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             field = true,
             isConst = Flags.IS_CONST.get(proto.flags),
             isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto),
-            kotlinClassFinder = kotlinClassFinder, jvmMetadataVersion = jvmMetadataVersion
+            kotlinClassFinder = kotlinClassFinder, metadataVersion = metadataVersion
         )
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, specialCase) ?: return null
 

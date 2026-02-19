@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// CHECK_TYPE
 import java.util.ArrayList
 
 class ListOfLists<T>(public val x : ArrayList<ArrayList<T>>)
@@ -12,3 +13,7 @@ fun main() {
 
     c.x checkType { _<ArrayList<out ArrayList<*>>>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, lambdaLiteral, localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+starProjection, typeParameter, typeWithExtension */

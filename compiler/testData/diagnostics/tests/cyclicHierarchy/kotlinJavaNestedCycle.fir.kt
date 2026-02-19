@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: ExceptionTracker.kt
 
 interface ExceptionTracker : <!EXPOSED_SUPER_INTERFACE!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
@@ -19,3 +20,5 @@ class LockBasedStorageManager extends StorageManager {
     @Override
     void foo() {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType */

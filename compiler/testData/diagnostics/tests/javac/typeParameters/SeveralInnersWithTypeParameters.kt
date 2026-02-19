@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/x.java
 package a;
@@ -21,3 +22,5 @@ fun test() = x<String>().y<Int>().z<Double, Double>()
 fun test2() = test().getT()
 fun test3() = test().getZ()
 fun test4() = test().getI()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

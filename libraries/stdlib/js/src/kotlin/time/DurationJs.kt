@@ -27,7 +27,3 @@ internal actual fun formatToExactDecimals(value: Double, decimals: Int): String 
         if (rounded < 0) "-$positiveString" else positiveString
     }
 }
-
-internal actual fun formatUpToDecimals(value: Double, decimals: Int): String {
-    return value.asDynamic().toLocaleString("en-us", json("maximumFractionDigits" to decimals)).unsafeCast<String>()
-}

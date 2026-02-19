@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 
-internal class LLFirDiagnosticReporter : DiagnosticReporter() {
+internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
     private val pendingDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
-    val committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
+    private val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
+
+    val committedDiagnostics get() = _committedDiagnostics.ifEmpty { emptyMap() }
+    override val hasErrors: Boolean
+        get() = committedDiagnostics.any { it.value.any { it.severity == Severity.ERROR } }
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
@@ -32,15 +37,14 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
         pendingDiagnostics.addValueFor(psiDiagnostic.psiElement, psiDiagnostic)
     }
 
-    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
-        val commitEverything = context == null
+    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
         for ((diagnosticElement, pendingList) in pendingDiagnostics) {
-            val committedList = committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
+            val committedList = _committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()
                 when {
-                    context?.isDiagnosticSuppressed(diagnostic as KtDiagnostic) == true -> {
+                    context.isDiagnosticSuppressed(diagnostic as KtDiagnostic) -> {
                         if (diagnostic.element == element ||
                             diagnostic.element.startOffset >= element.startOffset && diagnostic.element.endOffset <= element.endOffset
                         ) {
@@ -57,8 +61,11 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
     }
 }
 
-private fun KtDiagnostic.isAboutImplicitImport() =
-    (element is KtFakeSourceElement && (element as KtFakeSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
+@OptIn(SuspiciousFakeSourceCheck::class)
+private fun KtDiagnostic.isAboutImplicitImport(): Boolean {
+    if (this !is KtPsiDiagnostic) return false
+    return (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
+}
 
 
 private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
@@ -70,7 +77,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             psiSourceElement,
             severity,
             factory,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters1<*> -> KtPsiDiagnosticWithParameters1(
@@ -78,7 +86,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a,
             severity,
             factory as KtDiagnosticFactory1<Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters2<*, *> -> KtPsiDiagnosticWithParameters2(
@@ -86,7 +95,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a, b,
             severity,
             factory as KtDiagnosticFactory2<Any?, Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters3<*, *, *> -> KtPsiDiagnosticWithParameters3(
@@ -94,7 +104,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a, b, c,
             severity,
             factory as KtDiagnosticFactory3<Any?, Any?, Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters4<*, *, *, *> -> KtPsiDiagnosticWithParameters4(
@@ -102,7 +113,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a, b, c, d,
             severity,
             factory as KtDiagnosticFactory4<Any?, Any?, Any?, Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
         else -> error("Unknown diagnostic type ${this::class.simpleName}")
     }

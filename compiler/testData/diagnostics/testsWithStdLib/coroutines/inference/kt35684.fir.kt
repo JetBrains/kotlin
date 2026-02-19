@@ -1,5 +1,6 @@
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684
 
 import kotlin.experimental.ExperimentalTypeInference
@@ -12,15 +13,15 @@ fun test_1() {
 }
 
 fun test_2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
-        yield(materialize())
+    <!CANNOT_INFER_PARAMETER_TYPE!>sequence<!> {
+        yield(<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>())
     }
 }
 
 fun test_3() {
     sequence {
         yield(materialize<Int>())
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
     }
 }
 
@@ -32,3 +33,6 @@ interface Inv<T> {
 }
 
 fun <K> materialize(): Inv<K> = TODO()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classReference, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, suspend, typeParameter, typeWithExtension */

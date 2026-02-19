@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 interface Foo<T> {
@@ -12,3 +13,6 @@ open class Test<K> : Foo<K> {
 open class Rest<R> : Test<R>(), Foo<R>
 
 class Baz : Rest<Int>() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+override, typeParameter */

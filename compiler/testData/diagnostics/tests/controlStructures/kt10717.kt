@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_PARAMETER -RETURN_NOT_ALLOWED
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_PARAMETER -RETURN_NOT_ALLOWED
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>test1<!>() = run {
     return <!TYPE_MISMATCH("String; Nothing")!>"OK"<!>
@@ -45,3 +47,7 @@ val foo: Int
 fun test(): Int = run {
     return <!TYPE_MISMATCH!>""<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, ifExpression, inline, integerLiteral, lambdaLiteral, localFunction,
+nullableType, propertyDeclaration, stringLiteral, typeParameter */

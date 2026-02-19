@@ -1,0 +1,8 @@
+public final fun foo(f: R|suspend test/Context.() -> kotlin/Unit|): R|kotlin/Unit|
+
+public final class Context : R|kotlin/Any| {
+    public constructor(): R|test/Context|
+
+}
+
+public final typealias SuspendWithContext = R|suspend test/Context.() -> kotlin/Unit|

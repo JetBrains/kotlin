@@ -8,15 +8,22 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.utils.MachO
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.incremental.createDirectory
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Creates a dummy framework in the target directory.
@@ -30,7 +37,10 @@ import java.io.File
  * and then replace it with the real one during a real build process.
  */
 @DisableCachingByDefault
-abstract class DummyFrameworkTask : DefaultTask() {
+abstract class DummyFrameworkTask @Inject constructor(
+    objectFactory: ObjectFactory,
+    projectLayout: ProjectLayout
+) : DefaultTask() {
 
     @get:Input
     abstract val frameworkName: Property<String>
@@ -39,7 +49,19 @@ abstract class DummyFrameworkTask : DefaultTask() {
     abstract val useStaticFramework: Property<Boolean>
 
     @get:OutputDirectory
-    abstract val outputFramework: DirectoryProperty
+    val outputFramework: DirectoryProperty = objectFactory.directoryProperty().convention(
+        frameworkName.flatMap { frameworkName ->
+            projectLayout.cocoapodsBuildDirs.framework.map { it.dir("$frameworkName.framework") }
+        }
+    )
+
+    @get:OutputDirectory
+    @get:Optional
+    val outputDsym: DirectoryProperty = objectFactory.directoryProperty().convention(
+        frameworkName.flatMap { frameworkName ->
+            projectLayout.cocoapodsBuildDirs.framework.map { it.dir("$frameworkName.framework.dSYM") }
+        }
+    )
 
     @get:Internal
     @Deprecated("Use outputFramework", replaceWith = ReplaceWith("outputFramework.get().asFile"))
@@ -88,6 +110,17 @@ abstract class DummyFrameworkTask : DefaultTask() {
         transform
     )
 
+    private fun createDummyDsym() {
+        if (useStaticFramework.get()) {
+            return
+        }
+
+        outputDsym.orNull?.asFile?.apply {
+            deleteRecursively()
+            mkdirs()
+        }
+    }
+
     private fun copyFramework() {
         // Reset the destination directory
         with(outputFramework.getFile()) {
@@ -106,6 +139,9 @@ abstract class DummyFrameworkTask : DefaultTask() {
                 it
             }
         }
+
+        // Create dSYM
+        createDummyDsym()
     }
 
 

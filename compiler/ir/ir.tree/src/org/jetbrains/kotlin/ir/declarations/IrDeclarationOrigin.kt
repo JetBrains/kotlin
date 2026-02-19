@@ -6,86 +6,124 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import kotlin.reflect.KProperty
 
 interface IrDeclarationOrigin {
-    object DEFINED : IrDeclarationOriginImpl("DEFINED")
-    object FAKE_OVERRIDE : IrDeclarationOriginImpl("FAKE_OVERRIDE")
-    object FOR_LOOP_ITERATOR : IrDeclarationOriginImpl("FOR_LOOP_ITERATOR")
-    object FOR_LOOP_VARIABLE : IrDeclarationOriginImpl("FOR_LOOP_VARIABLE")
-    object FOR_LOOP_IMPLICIT_VARIABLE : IrDeclarationOriginImpl("FOR_LOOP_IMPLICIT_VARIABLE")
-    object PROPERTY_BACKING_FIELD : IrDeclarationOriginImpl("PROPERTY_BACKING_FIELD")
-    object DEFAULT_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("DEFAULT_PROPERTY_ACCESSOR")
-    object DELEGATE : IrDeclarationOriginImpl("DELEGATE", isSynthetic = true)
-    object PROPERTY_DELEGATE : IrDeclarationOriginImpl("PROPERTY_DELEGATE")
-    object DELEGATED_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("DELEGATED_PROPERTY_ACCESSOR")
-    object DELEGATED_MEMBER : IrDeclarationOriginImpl("DELEGATED_MEMBER")
-    object ENUM_CLASS_SPECIAL_MEMBER : IrDeclarationOriginImpl("ENUM_CLASS_SPECIAL_MEMBER")
-    object FUNCTION_FOR_DEFAULT_PARAMETER : IrDeclarationOriginImpl("FUNCTION_FOR_DEFAULT_PARAMETER", isSynthetic = true)
-    object MASK_FOR_DEFAULT_FUNCTION : IrDeclarationOriginImpl("MASK_FOR_DEFAULT_FUNCTION", isSynthetic = true)
-    object DEFAULT_CONSTRUCTOR_MARKER : IrDeclarationOriginImpl("DEFAULT_CONSTRUCTOR_MARKER", isSynthetic = true)
-    object METHOD_HANDLER_IN_DEFAULT_FUNCTION : IrDeclarationOriginImpl("METHOD_HANDLER_IN_DEFAULT_FUNCTION", isSynthetic = true)
-    object MOVED_DISPATCH_RECEIVER : IrDeclarationOriginImpl("MOVED_DISPATCH_RECEIVER")
-    object MOVED_EXTENSION_RECEIVER : IrDeclarationOriginImpl("MOVED_EXTENSION_RECEIVER")
-    object MOVED_CONTEXT_RECEIVER : IrDeclarationOriginImpl("MOVED_CONTEXT_RECEIVER")
+    val name: String
+    val isSynthetic: Boolean
+        get() = false
 
-    object FILE_CLASS : IrDeclarationOriginImpl("FILE_CLASS")
-    object SYNTHETIC_FILE_CLASS : IrDeclarationOriginImpl("SYNTHETIC_FILE_CLASS", isSynthetic = true)
-    object JVM_MULTIFILE_CLASS : IrDeclarationOriginImpl("JVM_MULTIFILE_CLASS")
-    object ERROR_CLASS : IrDeclarationOriginImpl("ERROR_CLASS")
+    companion object {
+        val DEFINED by IrDeclarationOriginImpl.Regular
+        val FAKE_OVERRIDE by IrDeclarationOriginImpl.Regular
+        val FOR_LOOP_ITERATOR by IrDeclarationOriginImpl.Regular
+        val FOR_LOOP_VARIABLE by IrDeclarationOriginImpl.Regular
+        val FOR_LOOP_IMPLICIT_VARIABLE by IrDeclarationOriginImpl.Regular
+        val PROPERTY_BACKING_FIELD by IrDeclarationOriginImpl.Regular
+        val DEFAULT_PROPERTY_ACCESSOR by IrDeclarationOriginImpl.Regular
+        val DELEGATE by IrDeclarationOriginImpl.Synthetic
+        val PROPERTY_DELEGATE by IrDeclarationOriginImpl.Regular
+        val DELEGATED_PROPERTY_ACCESSOR by IrDeclarationOriginImpl.Regular
+        val DELEGATED_MEMBER by IrDeclarationOriginImpl.Regular
+        val ENUM_CLASS_SPECIAL_MEMBER by IrDeclarationOriginImpl.Regular
+        val FUNCTION_FOR_DEFAULT_PARAMETER by IrDeclarationOriginImpl.Synthetic
+        val MASK_FOR_DEFAULT_FUNCTION by IrDeclarationOriginImpl.Synthetic
+        val DEFAULT_CONSTRUCTOR_MARKER by IrDeclarationOriginImpl.Synthetic
+        val SYNTHETIC_CONSTRUCTOR_MARKER by IrDeclarationOriginImpl.Synthetic
+        val METHOD_HANDLER_IN_DEFAULT_FUNCTION by IrDeclarationOriginImpl.Synthetic
+        val MOVED_DISPATCH_RECEIVER by IrDeclarationOriginImpl.Regular
+        val MOVED_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
+        val MOVED_CONTEXT_RECEIVER by IrDeclarationOriginImpl.Regular
 
-    object SCRIPT_CLASS : IrDeclarationOriginImpl("SCRIPT_CLASS")
-    object SCRIPT_THIS_RECEIVER : IrDeclarationOriginImpl("SCRIPT_THIS_RECEIVER")
-    object SCRIPT_STATEMENT : IrDeclarationOriginImpl("SCRIPT_STATEMENT")
-    object SCRIPT_EARLIER_SCRIPTS : IrDeclarationOriginImpl("SCRIPT_EARLIER_SCRIPTS")
-    object SCRIPT_CALL_PARAMETER : IrDeclarationOriginImpl("SCRIPT_CALL_PARAMETER")
-    object SCRIPT_IMPLICIT_RECEIVER : IrDeclarationOriginImpl("SCRIPT_IMPLICIT_RECEIVER")
-    object SCRIPT_PROVIDED_PROPERTY : IrDeclarationOriginImpl("SCRIPT_PROVIDED_PROPERTY")
-    object SCRIPT_RESULT_PROPERTY : IrDeclarationOriginImpl("SCRIPT_RESULT_PROPERTY")
-    object GENERATED_DATA_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_DATA_CLASS_MEMBER")
-    object GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER")
-    object GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER")
-    object LOCAL_FUNCTION : IrDeclarationOriginImpl("LOCAL_FUNCTION")
-    object LOCAL_FUNCTION_FOR_LAMBDA : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")
-    object CATCH_PARAMETER : IrDeclarationOriginImpl("CATCH_PARAMETER")
-    object UNDERSCORE_PARAMETER : IrDeclarationOriginImpl("UNDERSCORE_PARAMETER")
-    object DESTRUCTURED_OBJECT_PARAMETER : IrDeclarationOriginImpl("DESTRUCTURED_OBJECT_PARAMETER")
-    object INSTANCE_RECEIVER : IrDeclarationOriginImpl("INSTANCE_RECEIVER")
-    object PRIMARY_CONSTRUCTOR_PARAMETER : IrDeclarationOriginImpl("PRIMARY_CONSTRUCTOR_PARAMETER")
-    object IR_TEMPORARY_VARIABLE : IrDeclarationOriginImpl("IR_TEMPORARY_VARIABLE")
-    object IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER : IrDeclarationOriginImpl("IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER")
-    object IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER : IrDeclarationOriginImpl("IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER")
-    object IR_EXTERNAL_DECLARATION_STUB : IrDeclarationOriginImpl("IR_EXTERNAL_DECLARATION_STUB")
-    object IR_EXTERNAL_JAVA_DECLARATION_STUB : IrDeclarationOriginImpl("IR_EXTERNAL_JAVA_DECLARATION_STUB")
-    object IR_BUILTINS_STUB : IrDeclarationOriginImpl("IR_BUILTINS_STUB")
-    object BRIDGE : IrDeclarationOriginImpl("BRIDGE", isSynthetic = true)
-    object BRIDGE_SPECIAL : IrDeclarationOriginImpl("BRIDGE_SPECIAL")
-    object GENERATED_SETTER_GETTER : IrDeclarationOriginImpl("GENERATED_SETTER_GETTER", isSynthetic = true)
+        val FILE_CLASS by IrDeclarationOriginImpl.Regular
+        val SYNTHETIC_FILE_CLASS by IrDeclarationOriginImpl.Synthetic
+        val JVM_MULTIFILE_CLASS by IrDeclarationOriginImpl.Regular
+        val ERROR_CLASS by IrDeclarationOriginImpl.Regular
 
-    object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
-    object SYNTHETIC_HELPER_FOR_ENUM_VALUES : IrDeclarationOriginImpl("SYNTHETIC_HELPER_FOR_ENUM_VALUES", isSynthetic = true)
-    object SYNTHETIC_HELPER_FOR_ENUM_ENTRIES : IrDeclarationOriginImpl("SYNTHETIC_HELPER_FOR_ENUM_ENTRIES", isSynthetic = true)
-    object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES", isSynthetic = true)
-    object FIELD_FOR_ENUM_ENTRIES: IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRIES", isSynthetic = true)
-    object PROPERTY_FOR_ENUM_ENTRIES: IrDeclarationOriginImpl("PROPERTY_FOR_ENUM_ENTRIES", isSynthetic = false)
-    object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
-    object FIELD_FOR_CLASS_CONTEXT_RECEIVER : IrDeclarationOriginImpl("FIELD_FOR_CLASS_CONTEXT_RECEIVER", isSynthetic = true)
+        val SCRIPT_CLASS by IrDeclarationOriginImpl.Regular
+        val SCRIPT_THIS_RECEIVER by IrDeclarationOriginImpl.Regular
+        val SCRIPT_STATEMENT by IrDeclarationOriginImpl.Regular
+        val SCRIPT_EARLIER_SCRIPTS by IrDeclarationOriginImpl.Regular
+        val SCRIPT_CALL_PARAMETER by IrDeclarationOriginImpl.Regular
+        val SCRIPT_IMPLICIT_RECEIVER by IrDeclarationOriginImpl.Regular
+        val SCRIPT_PROVIDED_PROPERTY by IrDeclarationOriginImpl.Regular
+        val SCRIPT_RESULT_PROPERTY by IrDeclarationOriginImpl.Regular
+        val REPL_EVAL_FUNCTION by IrDeclarationOriginImpl.Regular
+        val REPL_FROM_OTHER_SNIPPET by IrDeclarationOriginImpl.Regular
+        val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val LOCAL_FUNCTION by IrDeclarationOriginImpl.Regular
+        val LOCAL_FUNCTION_FOR_LAMBDA by IrDeclarationOriginImpl.Regular
+        val CATCH_PARAMETER by IrDeclarationOriginImpl.Regular
+        val UNDERSCORE_PARAMETER by IrDeclarationOriginImpl.Regular
+        val DESTRUCTURED_OBJECT_PARAMETER by IrDeclarationOriginImpl.Regular
+        val INSTANCE_RECEIVER by IrDeclarationOriginImpl.Regular
+        val PRIMARY_CONSTRUCTOR_PARAMETER by IrDeclarationOriginImpl.Regular
+        val IR_DESTRUCTURED_PARAMETER_VARIABLE by IrDeclarationOriginImpl.Regular
+        val IR_TEMPORARY_VARIABLE by IrDeclarationOriginImpl.Regular
+        val IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER by IrDeclarationOriginImpl.Regular
+        val IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
+        val IR_EXTERNAL_DECLARATION_STUB by IrDeclarationOriginImpl.Regular
+        val IR_EXTERNAL_JAVA_DECLARATION_STUB by IrDeclarationOriginImpl.Regular
+        val IR_BUILTINS_STUB by IrDeclarationOriginImpl.Regular
+        val BRIDGE by IrDeclarationOriginImpl.Synthetic
+        val BRIDGE_SPECIAL by IrDeclarationOriginImpl.Regular
+        val GENERATED_SETTER_GETTER by IrDeclarationOriginImpl.Synthetic
 
-    object ADAPTER_FOR_CALLABLE_REFERENCE : IrDeclarationOriginImpl("ADAPTER_FOR_CALLABLE_REFERENCE", isSynthetic = true)
-    object ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE : IrDeclarationOriginImpl("ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE")
-    object ADAPTER_FOR_SUSPEND_CONVERSION : IrDeclarationOriginImpl("ADAPTER_FOR_SUSPEND_CONVERSION", isSynthetic = true)
-    object ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION : IrDeclarationOriginImpl("ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION")
-    object ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR : IrDeclarationOriginImpl("ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR", isSynthetic = true)
+        val FIELD_FOR_ENUM_ENTRY by IrDeclarationOriginImpl.Regular
+        val SYNTHETIC_HELPER_FOR_ENUM_VALUES by IrDeclarationOriginImpl.Synthetic
+        val SYNTHETIC_HELPER_FOR_ENUM_ENTRIES by IrDeclarationOriginImpl.Synthetic
+        val FIELD_FOR_ENUM_VALUES by IrDeclarationOriginImpl.Synthetic
+        val FIELD_FOR_ENUM_ENTRIES by IrDeclarationOriginImpl.Synthetic
+        val PROPERTY_FOR_ENUM_ENTRIES by IrDeclarationOriginImpl.Regular
+        val FIELD_FOR_OBJECT_INSTANCE by IrDeclarationOriginImpl.Regular
+        val FIELD_FOR_CLASS_CONTEXT_RECEIVER by IrDeclarationOriginImpl.Synthetic
 
-    object GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("GENERATED_SAM_IMPLEMENTATION")
-    object SYNTHETIC_GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("SYNTHETIC_GENERATED_SAM_IMPLEMENTATION", isSynthetic = true)
+        val ADAPTER_FOR_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Synthetic
+        val ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Regular
+        val ADAPTER_FOR_SUSPEND_CONVERSION by IrDeclarationOriginImpl.Synthetic
+        val ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION by IrDeclarationOriginImpl.Regular
+        val ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR by IrDeclarationOriginImpl.Synthetic
 
-    object SYNTHETIC_JAVA_PROPERTY_DELEGATE : IrDeclarationOriginImpl("SYNTHETIC_JAVA_PROPERTY_DELEGATE", isSynthetic = true)
+        val GENERATED_SAM_IMPLEMENTATION by IrDeclarationOriginImpl.Regular
+        val SYNTHETIC_GENERATED_SAM_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
-    object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS", isSynthetic = true)
-    object CONTINUATION : IrDeclarationOriginImpl("CONTINUATION", isSynthetic = true)
-    object LOWERED_SUSPEND_FUNCTION : IrDeclarationOriginImpl("LOWERED_SUSPEND_FUNCTION", isSynthetic = true)
+        val SYNTHETIC_JAVA_PROPERTY_DELEGATE by IrDeclarationOriginImpl.Synthetic
 
-    object SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT : IrDeclarationOriginImpl("SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT", isSynthetic = true)
+        val FIELD_FOR_OUTER_THIS by IrDeclarationOriginImpl.Synthetic
+        val CONTINUATION by IrDeclarationOriginImpl.Synthetic
+        val LOWERED_SUSPEND_FUNCTION by IrDeclarationOriginImpl.Synthetic
+
+        val SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT by IrDeclarationOriginImpl.Synthetic
+
+        /**
+         * Used on synthetic accessor functions generated in place of references to e.g. private symbols in non-private inline functions,
+         * or `super` calls from lambdas and inline functions.
+         */
+        val SYNTHETIC_ACCESSOR by IrDeclarationOriginImpl.Synthetic
+
+        val SYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER by IrDeclarationOriginImpl.Synthetic
+
+        /**
+         * Created by `Fir2IrDeclarationStorage.fillUnboundSymbols()` to handle the code fragment
+         * in the middle of code compile of `KaCompilerFacility`.
+         */
+        val FILLED_FOR_UNBOUND_SYMBOL by IrDeclarationOriginImpl.Regular
+
+        val INLINE_LAMBDA by IrDeclarationOriginImpl.Regular
+
+        /**
+         * Used on synthetic `invoke` methods for `[K][Suspend]FunctionN` interfaces.
+         */
+        val FUNCTION_INTERFACE_MEMBER by IrDeclarationOriginImpl.Regular
+
+        val STUB_FOR_LENIENT by IrDeclarationOriginImpl.Synthetic
+
+        val STUB_FOR_TYPE_SWITCH by IrDeclarationOriginImpl.Synthetic
+
+        val VERSION_OVERLOAD_WRAPPER by IrDeclarationOriginImpl.Regular
+    }
 
     /**
      * [pluginKey] may be null if declaration with this origin was deserialized from klib
@@ -103,9 +141,7 @@ interface IrDeclarationOrigin {
         override val name: String
             get() = "GENERATED[${pluginId}]"
 
-        override fun toString(): String {
-            return name
-        }
+        override fun toString(): String = name
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -113,21 +149,15 @@ interface IrDeclarationOrigin {
             return pluginKey == other.pluginKey
         }
 
-        override fun hashCode(): Int {
-            return pluginKey.hashCode()
-        }
+        override fun hashCode(): Int = pluginKey.hashCode()
     }
-
-    val name: String
-    val isSynthetic: Boolean get() = false
 }
 
-abstract class IrDeclarationOriginImpl(
+class IrDeclarationOriginImpl(
     override val name: String,
     override val isSynthetic: Boolean = false
 ) : IrDeclarationOrigin {
     override fun toString(): String = name
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is IrDeclarationOriginImpl) return false
@@ -137,7 +167,23 @@ abstract class IrDeclarationOriginImpl(
         return true
     }
 
-    override fun hashCode(): Int {
-        return name.hashCode()
+    override fun hashCode(): Int = name.hashCode()
+
+    /**
+     * Lazy is required here to avoid initialization loop between this class and [IrDeclarationOrigin].
+     * Otherwise, if one thread tries to use this (or [Synthetic]) delegate or directly instantiate [IrDeclarationOriginImpl],
+     * while thread would try to access [IrDeclarationOrigin.Companion], it could lead to dead-lock, as one thread would
+     * wait while [IrDeclarationOriginImpl] is initialized to proceed with [IrDeclarationOrigin.Companion] initialization,
+     * and other would wait while [IrDeclarationOrigin] is initialized as it's super-interface of [IrDeclarationOrigin]
+     * which has default methods (and so must be initialized before class).
+     */
+    object Regular {
+        operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): Lazy<IrDeclarationOrigin> =
+            lazy { IrDeclarationOriginImpl(property.name) }
+    }
+
+    object Synthetic {
+        operator fun provideDelegate(thisRef: Any?, property: KProperty<*>) : Lazy<IrDeclarationOrigin> =
+            lazy { IrDeclarationOriginImpl(property.name, isSynthetic = true) }
     }
 }

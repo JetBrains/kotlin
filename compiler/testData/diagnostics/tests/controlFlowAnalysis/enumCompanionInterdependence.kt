@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class B(val x: Int) {
     B1(1),
     B2(2);
@@ -79,3 +80,6 @@ enum class ExtractionTarget(val targetName: String) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+integerLiteral, interfaceDeclaration, lambdaLiteral, objectDeclaration, primaryConstructor, propertyDeclaration */

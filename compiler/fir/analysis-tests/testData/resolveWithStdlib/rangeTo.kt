@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(b: Byte, s: Short, i: Int, l: Long) {
     val x1 = 1.rangeTo(b)
     val x2 = 1.rangeTo(s)
@@ -9,3 +10,5 @@ fun test(b: Byte, s: Short, i: Int, l: Long) {
     val x7 = i.rangeTo(1)
     val x8 = l.rangeTo(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

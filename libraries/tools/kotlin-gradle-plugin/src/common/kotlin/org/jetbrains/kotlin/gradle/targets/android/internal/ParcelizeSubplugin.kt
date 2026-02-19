@@ -6,41 +6,33 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.internal
 
-import com.android.build.gradle.BaseExtension
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
+import org.jetbrains.kotlin.gradle.utils.configureAndroidVariants
 
 // Use apply plugin: 'kotlin-parcelize' to enable Android Extensions in an Android project.
 class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
-
-        target.plugins.withType(AndroidSubplugin::class.java) {
-            throw GradleException("${target.path}: 'kotlin-parcelize' can't be applied together with 'kotlin-android-extensions'")
-        }
-
         val kotlinPluginVersion = target.getKotlinPluginVersion()
         val dependency = target.dependencies.create("org.jetbrains.kotlin:kotlin-parcelize-runtime:$kotlinPluginVersion")
-        target.forAllAndroidVariants {
+        target.configureAndroidVariants {
             it.runtimeConfiguration.dependencies.add(dependency)
             it.compileConfiguration.dependencies.add(dependency)
         }
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
-        if (kotlinCompilation !is KotlinJvmAndroidCompilation) {
-            return false
+        return when {
+            // Legacy Android Target
+            kotlinCompilation.platformType == KotlinPlatformType.androidJvm -> true
+            // Heuristic for new Android KMP Target
+            // Should be safe, since 'android' target name is owned by AGP.
+            // FIXME: KT-81384 Provide integration surface for External targets and Gradle Subplugin API
+            kotlinCompilation.target is DecoratedExternalKotlinTarget && kotlinCompilation.target.name == "android" -> true
+            else -> false
         }
-
-        val project = kotlinCompilation.target.project
-        if (project.extensions.findByName("android") !is BaseExtension) {
-            return false
-        }
-
-        return true
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {

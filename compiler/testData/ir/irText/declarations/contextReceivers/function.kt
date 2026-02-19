@@ -1,9 +1,6 @@
+// IGNORE_BACKEND_K2: ANY
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// DUMP_LOCAL_DECLARATION_SIGNATURES
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57428
+// LANGUAGE: +ContextReceivers
 
 class C {
     val c = 42

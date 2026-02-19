@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun f() {
     foo {
         return@foo 1
@@ -19,3 +20,5 @@ fun f() {
 }
 
 fun foo(a: Any) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

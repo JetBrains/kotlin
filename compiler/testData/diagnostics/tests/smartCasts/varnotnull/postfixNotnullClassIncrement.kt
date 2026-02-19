@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class MyClass
 
 operator fun MyClass.inc(): MyClass { return null!! }
@@ -10,3 +11,6 @@ public fun box() : MyClass? {
     <!DEBUG_INFO_SMARTCAST!>j<!>.hashCode()
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, localProperty, nullableType, operator, propertyDeclaration, smartcast */

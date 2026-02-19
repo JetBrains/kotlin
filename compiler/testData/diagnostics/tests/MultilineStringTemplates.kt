@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun box() : String {
     val s = "abc"
@@ -42,3 +43,6 @@ fun new() : String {
   """
 
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, propertyDeclaration,
+stringLiteral */

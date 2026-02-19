@@ -32,3 +32,4 @@ public final class A</*0*/ T> : java.util.AbstractCollection<T> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

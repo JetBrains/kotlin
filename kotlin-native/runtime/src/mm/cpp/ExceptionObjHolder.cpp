@@ -5,9 +5,7 @@
 
 #include "Memory.h"
 
-#include "StableRef.hpp"
-#include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
+#include "ExternalRCRef.hpp"
 
 using namespace kotlin;
 
@@ -15,14 +13,12 @@ namespace {
 
 class ExceptionObjHolderImpl : public ExceptionObjHolder, private Pinned {
 public:
-    explicit ExceptionObjHolderImpl(ObjHeader* obj) noexcept : stableRef_(mm::StableRef::create(obj)) {}
+    explicit ExceptionObjHolderImpl(ObjHeader* obj) noexcept : ref_(obj) {}
 
-    ~ExceptionObjHolderImpl() override { std::move(stableRef_).dispose(); }
-
-    ObjHeader* obj() noexcept { return *stableRef_; }
+    ObjHeader* obj() noexcept { return *ref_; }
 
 private:
-    mm::StableRef stableRef_;
+    mm::OwningExternalRCRef ref_;
 };
 
 } // namespace

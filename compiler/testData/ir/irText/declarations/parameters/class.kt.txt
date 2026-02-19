@@ -1,14 +1,10 @@
-interface TestInterface<T : Any?> {
-  interface TestNestedInterface<TT : Any?> {
-
-  }
-
-}
-
 class Test<T0 : Any?> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
+  inner class TestInner<T2 : Any?> {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
 
   }
 
@@ -21,13 +17,17 @@ class Test<T0 : Any?> {
 
   }
 
-  inner class TestInner<T2 : Any?> {
-    constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
 }
+
+interface TestInterface<T : Any?> {
+  interface TestNestedInterface<TT : Any?> {
+  }
+
+}
+

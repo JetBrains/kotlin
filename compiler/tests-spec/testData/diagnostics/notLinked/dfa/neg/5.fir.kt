@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -14,8 +14,8 @@
 class Case1<T : Number> {
     inline fun <reified T : CharSequence>case_1(x: Any?) {
         if (x is T) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.<!NONE_APPLICABLE!>toByte<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!NONE_APPLICABLE!>toByte<!>()
         }
     }
 }

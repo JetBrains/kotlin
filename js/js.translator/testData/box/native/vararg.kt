@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
-// EXPECTED_REACHABLE_NODES: 1314
+// IGNORE_BACKEND: WASM_JS
 package foo
 
 external fun paramCount(vararg a: Int): Int = definedExternally

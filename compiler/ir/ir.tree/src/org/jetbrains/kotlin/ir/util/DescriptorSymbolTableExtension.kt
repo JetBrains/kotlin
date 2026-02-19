@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,7 +39,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         get() = table.nameProvider
 
     private val signatureComposer: IdSignatureComposer
-        get() = table.signaturer
+        get() = table.signaturer!!
 
     private val externalPackageFragmentSlice: SymbolTableSlice<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol> = SymbolTableSlice.Flat(lock)
 
@@ -106,7 +107,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicClassSymbol(declaration: ClassDescriptor, signature: IdSignature): IrClassSymbol {
-        return IrClassPublicSymbolImpl(signature, declaration)
+        return IrClassSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateClassSymbol(descriptor: ClassDescriptor): IrClassSymbol {
@@ -131,7 +132,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicConstructorSymbol(declaration: ClassConstructorDescriptor, signature: IdSignature): IrConstructorSymbol {
-        return IrConstructorPublicSymbolImpl(signature, declaration)
+        return IrConstructorSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateConstructorSymbol(declaration: ClassConstructorDescriptor): IrConstructorSymbol {
@@ -156,7 +157,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicEnumEntrySymbol(declaration: ClassDescriptor, signature: IdSignature): IrEnumEntrySymbol {
-        return IrEnumEntryPublicSymbolImpl(signature, declaration)
+        return IrEnumEntrySymbolImpl(declaration, signature)
     }
 
     override fun createPrivateEnumEntrySymbol(declaration: ClassDescriptor): IrEnumEntrySymbol {
@@ -176,7 +177,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     // ------------------------------------ field ------------------------------------
 
     override fun createPublicFieldSymbol(declaration: PropertyDescriptor, signature: IdSignature): IrFieldSymbol {
-        return IrFieldPublicSymbolImpl(signature, declaration)
+        return IrFieldSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateFieldSymbol(declaration: PropertyDescriptor): IrFieldSymbol {
@@ -226,7 +227,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicPropertySymbol(declaration: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
-        return IrPropertyPublicSymbolImpl(signature, declaration)
+        return IrPropertySymbolImpl(declaration, signature)
     }
 
     override fun createPrivatePropertySymbol(declaration: PropertyDescriptor): IrPropertySymbol {
@@ -264,7 +265,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     // ------------------------------------ typealias ------------------------------------
 
     override fun createPublicTypeAliasSymbol(declaration: TypeAliasDescriptor, signature: IdSignature): IrTypeAliasSymbol {
-        return IrTypeAliasPublicSymbolImpl(signature, declaration)
+        return IrTypeAliasSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateTypeAliasSymbol(declaration: TypeAliasDescriptor): IrTypeAliasSymbol {
@@ -289,7 +290,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicFunctionSymbol(declaration: FunctionDescriptor, signature: IdSignature): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionPublicSymbolImpl(signature, declaration)
+        return IrSimpleFunctionSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateFunctionSymbol(declaration: FunctionDescriptor): IrSimpleFunctionSymbol {
@@ -299,7 +300,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     // ------------------------------------ type parameter ------------------------------------
 
     override fun createPublicTypeParameterSymbol(declaration: TypeParameterDescriptor, signature: IdSignature): IrTypeParameterSymbol {
-        return IrTypeParameterPublicSymbolImpl(signature, declaration)
+        return IrTypeParameterSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateTypeParameterSymbol(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {
@@ -366,21 +367,21 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ParameterDescriptor,
+        kind: IrParameterKind,
         type: IrType,
         varargElementType: IrType? = null,
         name: Name? = null,
-        index: Int? = null,
         isAssignable: Boolean = false,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
+                kind = kind,
                 name = name ?: nameProvider.nameForDeclaration(descriptor),
                 type = type,
                 isAssignable = isAssignable,
                 symbol = it,
-                index = index ?: descriptor.indexOrMinusOne,
                 varargElementType = varargElementType,
                 isCrossinline = descriptor.isCrossinline,
                 isNoinline = descriptor.isNoinline,

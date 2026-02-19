@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -24,8 +25,9 @@ import org.jetbrains.kotlin.lexer.KtTokens
 val FirSession.platformDiagnosticSuppressor: FirPlatformDiagnosticSuppressor? by FirSession.nullableSessionComponentAccessor()
 
 // See old FE's [DeclarationsChecker]
-object FirNonMemberFunctionsChecker : FirFunctionChecker() {
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (declaration.containingClassLookupTag() != null || declaration is FirPropertyAccessor) {
             return
         }
@@ -36,9 +38,9 @@ object FirNonMemberFunctionsChecker : FirFunctionChecker() {
         if (declaration.isExternal) return
         if (!declaration.hasBody &&
             !declaration.isExpect &&
-            context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration, context) != false
+            context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration) != false
         ) {
-            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol, context)
+            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol)
         }
     }
 }

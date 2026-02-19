@@ -1,4 +1,4 @@
-// !LANGUAGE: +PolymorphicSignature
+// LANGUAGE: +PolymorphicSignature
 // TARGET_BACKEND: JVM
 // SKIP_JDK6
 // WITH_STDLIB

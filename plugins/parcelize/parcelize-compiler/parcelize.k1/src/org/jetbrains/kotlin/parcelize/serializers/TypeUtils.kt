@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-typealias TypeParcelerMapping = Pair<KotlinType, KotlinType>
+data class TypeParcelerMapping(
+    val mappedType: KotlinType,
+    val parcelerType: KotlinType,
+)
 
 fun KotlinType.isParcelable() = matchesFqNameWithSupertypes(ParcelizeNames.PARCELABLE_FQN.asString())
 

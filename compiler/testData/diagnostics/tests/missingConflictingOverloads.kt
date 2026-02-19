@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-59186
 
@@ -10,3 +11,5 @@ fun main() {
         return 13.0f
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction */

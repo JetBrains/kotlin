@@ -22,18 +22,22 @@ abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask {
     @get:Inject
     abstract val objectFactory: ObjectFactory
 
+    private val rootDir = project.rootDir
+
     @TaskAction
     fun doCopy(inputChanges: InputChanges) {
         val destinationDir = destinationDirectory.get()
         val commonAction: CopySpec.() -> Unit = {
             into(destinationDir)
+            duplicatesStrategy = this@DefaultIncrementalSyncTask.duplicatesStrategy
             // Rewrite relative paths in sourcemaps in the target directory
+            remapJavaScriptSourceMapSourcePaths(destinationDir)
             eachFile {
-                if (it.name.endsWith(".js.map")) {
+                if (it.name.endsWith(".wasm.map")) {
                     it.filter(
                         mapOf(
                             RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.parentFile,
-                            RewriteSourceMapFilterReader::targetSourceRoot.name to destinationDir
+                            RewriteSourceMapFilterReader::targetSourceRoot.name to rootDir
                         ),
                         RewriteSourceMapFilterReader::class.java
                     )

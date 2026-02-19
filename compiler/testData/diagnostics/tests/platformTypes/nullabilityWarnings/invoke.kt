@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: J.java
 
@@ -22,3 +23,5 @@ fun test() {
     J.<!UNSAFE_IMPLICIT_INVOKE_CALL!>staticN<!>()
     J.staticJ()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, nullableType */

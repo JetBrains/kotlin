@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/contextReceivers.kt
+-d
+$TEMP_DIR$
+-Xcontext-receivers
+-Xcontext-parameters

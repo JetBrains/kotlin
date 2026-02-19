@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface Interface {
     fun foo(x: Int): Int
@@ -20,3 +21,6 @@ fun withLocalClasses(param: Int): Interface {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration, getter,
+integerLiteral, interfaceDeclaration, localClass, override, propertyDeclaration, superExpression */

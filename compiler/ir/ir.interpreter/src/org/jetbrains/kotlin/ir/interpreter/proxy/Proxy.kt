@@ -35,7 +35,7 @@ internal fun State.wrap(callInterceptor: CallInterceptor, remainArraysAsIs: Bool
     return when (this) {
         is ExceptionState -> this
         is Wrapper -> this.value
-        is Primitive<*> -> when {
+        is Primitive -> when {
             this.isNull() -> null
             this.type.isArray() || this.type.isPrimitiveArray() -> if (remainArraysAsIs) this else this.value
             else -> this.value
@@ -70,5 +70,5 @@ internal fun List<State>.wrap(callInterceptor: CallInterceptor, irFunction: IrFu
 }
 
 internal fun Class<*>.isObject(): Boolean {
-    return this == java.lang.Object::class.java
+    return this == Any::class.java
 }

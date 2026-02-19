@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
-import org.gradle.internal.jvm.JavaInfo
-import org.gradle.internal.jvm.Jvm
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import kotlin.io.path.appendText
 
 @DisplayName("Kotlin Java Toolchain support")
@@ -29,7 +29,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             build("assemble") {
-                assertJdkHomeIsUsingJdk(getUserJdk().javaHomeRealPath)
+                assertJdkHomeIsUsingJdk(getUserJdk().jdkRealPath)
             }
         }
     }
@@ -42,15 +42,15 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
         ) {
-            setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
+            setJavaCompilationCompatibility(JavaVersion.VERSION_11)
 
             useJdkToCompile(
-                getJdk9Path(),
-                JavaVersion.VERSION_1_9
+                jdk11Info.jdkPath,
+                JavaVersion.VERSION_11
             )
 
             build("assemble") {
-                assertJdkHomeIsUsingJdk(getJdk9().javaHomeRealPath)
+                assertJdkHomeIsUsingJdk(jdk11Info.jdkRealPath)
             }
         }
     }
@@ -67,15 +67,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            if (shouldUseToolchain(gradleVersion)) {
-                useToolchainExtension(11)
-            } else {
-                setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
-                useJdkToCompile(
-                    getJdk9Path(),
-                    JavaVersion.VERSION_1_9
-                )
-            }
+            useToolchainExtension(11)
 
             build("assemble")
         }
@@ -87,15 +79,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            if (shouldUseToolchain(gradleVersion)) {
-                useToolchainExtension(11)
-            } else {
-                setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
-                useJdkToCompile(
-                    getJdk9Path(),
-                    JavaVersion.VERSION_1_9
-                )
-            }
+            useToolchainExtension(11)
 
             build("assemble") {
                 assertTasksFromCache(":compileKotlin")
@@ -113,7 +97,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "1/cache-test",
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
-            buildJdk = getJdk9().javaHome!!
+            buildJdk = jdk17Info.javaHome
         ) {
             enableLocalBuildCache(buildCache)
             useToolchainExtension(11)
@@ -126,7 +110,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "2/cache-test",
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
-            buildJdk = getJdk11().javaHome!!
+            buildJdk = jdk17Info.javaHome
         ) {
             enableLocalBuildCache(buildCache)
             useToolchainExtension(11)
@@ -149,15 +133,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            if (shouldUseToolchain(gradleVersion)) {
-                useToolchainExtension(11)
-            } else {
-                setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
-                useJdkToCompile(
-                    getJdk9Path(),
-                    JavaVersion.VERSION_1_9
-                )
-            }
+            useToolchainExtension(11)
+
             build("assemble")
         }
 
@@ -181,28 +158,15 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simpleWithKapt".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(languageVersion = "1.9"),
         ) {
-            if (shouldUseToolchain(gradleVersion)) {
-                useToolchainExtension(11)
-            } else {
-                useJdkToCompile(
-                    getJdk9Path(),
-                    JavaVersion.VERSION_1_9
-                )
-            }
+            useToolchainExtension(11)
+
             gradleProperties.append(
                 "kapt.workers.isolation = none"
             )
 
             build("assemble") {
-                assertJdkHomeIsUsingJdk(
-                    if (shouldUseToolchain(gradleVersion)) {
-                        getToolchainExecPathFromLogs()
-                    } else {
-                        getJdk9().javaHomeRealPath
-                    }
-                )
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
 
                 assertOutputContains("Using workers PROCESS isolation mode to run kapt")
                 assertOutputContains("Using non-default Kotlin java toolchain - 'kapt.workers.isolation == none' property is ignored!")
@@ -217,7 +181,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simpleWithKapt".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(languageVersion = "1.9"),
         ) {
             build("assemble") {
                 assertOutputContains("Using workers NONE isolation mode to run kapt")
@@ -235,17 +198,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simpleWithKapt".fullProjectName,
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "1/cache-test",
-            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true, languageVersion = "1.9")
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            if (shouldUseToolchain(gradleVersion)) {
-                useToolchainExtension(11)
-            } else {
-                useJdkToCompile(
-                    getJdk9Path(),
-                    JavaVersion.VERSION_1_9
-                )
-            }
+            useToolchainExtension(11)
 
             build("assemble")
         }
@@ -254,17 +210,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simpleWithKapt".fullProjectName,
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "2/cache-test",
-            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true, languageVersion = "1.9"),
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
         ) {
             enableLocalBuildCache(buildCache)
-            if (shouldUseToolchain(gradleVersion)) {
-                useToolchainExtension(11)
-            } else {
-                useJdkToCompile(
-                    getJdk9Path(),
-                    JavaVersion.VERSION_1_9
-                )
-            }
+            useToolchainExtension(11)
 
             build("assemble") {
                 assertTasksFromCache(
@@ -285,7 +234,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simpleWithKapt".fullProjectName,
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "1/cache-test",
-            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true, languageVersion = "1.9")
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
 
@@ -296,7 +245,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simpleWithKapt".fullProjectName,
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "2/cache-test",
-            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true, languageVersion = "1.9"),
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
         ) {
             enableLocalBuildCache(buildCache)
             gradleProperties.append(
@@ -344,13 +293,31 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm targets")
+    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm with 'withJava()' targets")
+    @GradleTest
+    internal fun toolchainCorrectlySupportedInMPPluginWithJava(gradleVersion: GradleVersion) {
+        project(
+            projectName = "mppJvmWithJava".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
+            useToolchainToCompile(11)
+
+            build("assemble") {
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm with 'withJava()' targets")
     @GradleTest
     internal fun toolchainCorrectlySupportedInMPPlugin(gradleVersion: GradleVersion) {
         project(
             projectName = "mppJvmWithJava".fullProjectName,
             gradleVersion = gradleVersion
         ) {
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             useToolchainToCompile(11)
 
             build("assemble") {
@@ -369,7 +336,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             useJdkToCompile(
-                getJdk11Path(),
+                jdk11Info.jdkPath,
                 JavaVersion.VERSION_11
             )
 
@@ -383,7 +350,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build("build") {
                 assertOutputContains("-jvm-target 11")
-                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 17")
             }
         }
     }
@@ -397,15 +364,15 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            setJvmTarget("1.8")
+            setJvmTarget("17")
 
             useJdkToCompile(
-                getJdk11Path(),
+                jdk11Info.jdkPath,
                 JavaVersion.VERSION_11
             )
 
             build("build") {
-                assertOutputContains("-jvm-target 1.8")
+                assertOutputContains("-jvm-target 17")
                 assertOutputDoesNotContain("-jvm-target 11")
             }
         }
@@ -424,7 +391,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build("build") {
                 assertOutputContains("-jvm-target 11")
-                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 17")
             }
         }
     }
@@ -438,7 +405,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            setJvmTarget("1.8")
+            setJvmTarget("17")
             useToolchainToCompile(11)
 
             //language=properties
@@ -450,7 +417,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputContains("-jvm-target 1.8")
+                assertOutputContains("-jvm-target 17")
                 assertOutputDoesNotContain("-jvm-target 11")
             }
         }
@@ -478,7 +445,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: ${getJdk11Path().replace("\\\\", "\\")}")
+                assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: ${jdk11Info.jdkPath.replace("\\\\", "\\")}")
             }
         }
     }
@@ -505,9 +472,9 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG), forwardBuildOutput = true) {
                 val compilerArgs = output.lineSequence()
-                    .filter { it.contains(":compileKotlin Kotlin compiler args:") }
+                    .filter { it.contains("Kotlin compiler args:") }
                     .first()
                 assert(compilerArgs.contains("-jvm-target 11")) {
                     "Kotlin compilation jvm-target argument is ${output.substringAfter("-jvm-target ").substringBefore(" ")}"
@@ -569,13 +536,13 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Toolchain should not make an exception when build is running on JDK 11, but toolchain is set to JDK 1.8")
+    @DisplayName("Toolchain should not make an exception when build is running on JDK 17, but toolchain is set to JDK 1.8")
     @GradleTest
     internal fun shouldNotRaiseErrorOnJDK11withJDK1_8Toolchain(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
+            buildJdk = jdk17Info.javaHome
         ) {
             useToolchainExtension(8)
 
@@ -592,7 +559,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
+            buildJdk = jdk11Info.javaHome
         ) {
             //language=properties
             gradleProperties.append(
@@ -633,7 +600,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            useToolchainExtension(17)
+            useToolchainExtension(11)
 
             build("assemble")
             build("assemble") {
@@ -663,7 +630,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
+            buildJdk = jdk17Info.javaHome
         ) {
             //language=Groovy
             buildGradle.append(
@@ -700,35 +667,21 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            //language=Groovy
-            subProject("lib").buildGradle.appendText(
-                """
-                |
-                |tasks.named("compileJava", JavaCompile) {
-                |    targetCompatibility = JavaVersion.VERSION_11
-                |    sourceCompatibility = JavaVersion.VERSION_11
-                |}
-                """.trimMargin()
-            )
-
-            //language=Groovy
-            buildGradle.appendText(
-                """
-                |
-                |allprojects {
-                |    tasks.withType(org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain.class)
-                |         .configureEach {
-                |              kotlinJavaToolchain.jdk.use(
-                |                  "${getJdk11Path()}",
-                |                  JavaVersion.VERSION_11
-                |              )
-                |         }
-                |}
-                """.trimMargin()
-            )
+            subProject("lib").buildScriptInjection {
+                project.tasks.named("compileJava", JavaCompile::class.java).configure { task ->
+                    task.targetCompatibility = JavaVersion.VERSION_11.toString()
+                    task.sourceCompatibility = JavaVersion.VERSION_11.toString()
+                }
+                project.tasks.withType(UsesKotlinJavaToolchain::class.java).configureEach { task ->
+                    task.kotlinJavaToolchain.jdk.use(
+                        jdk11Info.jdkPath,
+                        JavaVersion.VERSION_11
+                    )
+                }
+            }
 
             build(":lib:compileKotlin") {
-                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 17")
                 assertOutputContains("-jvm-target 11")
             }
         }
@@ -778,7 +731,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             "android".fullProjectName,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
             buildJdk = providedJdk.location
         ) {
             buildGradle.appendText(
@@ -808,19 +762,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
-
-    private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getProperty("java.home")))
-    private fun getJdk9(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk9Home")))
-    private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
-    // replace required for windows paths so Groovy will not complain about unexpected char '\'
-    private fun getJdk9Path(): String = getJdk9().javaHome.absolutePath.replace("\\", "\\\\")
-    private fun getJdk11Path(): String = getJdk11().javaHome.absolutePath.replace("\\", "\\\\")
-    private val JavaInfo.javaHomeRealPath
-        get() = javaHome
-            .toPath()
-            .toRealPath()
-            .toAbsolutePath()
-            .toString()
 
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 
@@ -933,8 +874,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             """.trimIndent()
         )
     }
-
-    private fun shouldUseToolchain(gradleVersion: GradleVersion) = gradleVersion >= GradleVersion.version("6.7")
 
     private fun BuildResult.getToolchainExecPathFromLogs() = output
         .lineSequence()

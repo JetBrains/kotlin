@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty1
 
@@ -16,3 +17,6 @@ fun <K> foo(i: Inv<K>) {}
 fun test(f: Form) {
     foo(f[Sample::str])
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, operator,
+primaryConstructor, propertyDeclaration, starProjection, typeParameter */

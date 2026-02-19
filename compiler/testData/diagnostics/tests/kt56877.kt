@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @file:OptIn(ExperimentalContracts::class)
 
 import kotlin.contracts.*
@@ -39,3 +40,7 @@ fun Result.isSuccess4(): Boolean {
     }
     return this@isSuccess4.someProperty == 10
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, contractConditionalEffect,
+contracts, equalityExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, isExpression,
+lambdaLiteral, propertyDeclaration, thisExpression */

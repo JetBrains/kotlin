@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ReportErrorsForComparisonOperators
 
 fun nullableNothingIdentity(a: Int, b: Nothing?) {
@@ -36,3 +37,6 @@ fun <A> compareTypeParameterWithEnum(a: A) where A: I1, A: I2 {
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a == E1.A<!>
     a == E3.A
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, interfaceDeclaration,
+nullableType, typeConstraint, typeParameter */

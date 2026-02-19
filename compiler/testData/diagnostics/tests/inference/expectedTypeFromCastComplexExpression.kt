@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ExpectedTypeFromCast
+// LANGUAGE: +ExpectedTypeFromCast
 
 package pp
 
@@ -14,3 +15,6 @@ class A {
 val x = A().foo() as String
 val y = A.foo2() as String
 val z = pp.A.foo2() as String
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, nullableType,
+objectDeclaration, propertyDeclaration, typeParameter */

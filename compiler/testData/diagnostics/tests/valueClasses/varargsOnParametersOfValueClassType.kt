@@ -1,7 +1,9 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -UNUSED_ANONYMOUS_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -UNUSED_ANONYMOUS_PARAMETER
 
 package kotlin.jvm
 
@@ -18,6 +20,7 @@ class A {
         fun f4(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> a: Foo) {}
 
         val g = fun (<!USELESS_VARARG_ON_PARAMETER!><!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> v: Foo<!>) {}
+        fun (<!USELESS_VARARG_ON_PARAMETER!><!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> v: Foo<!>) {}
     }
 }
 
@@ -26,3 +29,6 @@ class B(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val s: Foo) {
 }
 
 annotation class Ann(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val f: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Foo<!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, functionDeclaration, localFunction,
+localProperty, outProjection, primaryConstructor, propertyDeclaration, secondaryConstructor, value, vararg */

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-object IntrinsicShouldHaveBeenLowered : IntrinsicMethod() {
+object IntrinsicShouldHaveBeenLowered : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,

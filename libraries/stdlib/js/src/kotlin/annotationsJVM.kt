@@ -10,13 +10,13 @@ package kotlin.jvm
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @Deprecated("This annotation has no effect in Kotlin/JS. Use kotlin.concurrent.Volatile annotation in multiplatform code instead.", ReplaceWith("kotlin.concurrent.Volatile", "kotlin.concurrent.Volatile"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @MustBeDocumented
 public actual annotation class Volatile
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
 @Deprecated("Synchronizing methods on a class instance is not supported on platforms other than JVM. If you need to annotate a common method as JVM-synchronized, introduce your own optional-expectation annotation and actualize it with a typealias to kotlin.jvm.Synchronized.")
-@DeprecatedSinceKotlin(warningSince = "1.8")
+@DeprecatedSinceKotlin(warningSince = "1.8", errorSince = "2.1")
 @MustBeDocumented
 public actual annotation class Synchronized

@@ -1,0 +1,2 @@
+KaType: java.lang.Runnable
+PsiType: @org.jetbrains.annotations.NotNull() java.lang.Runnable

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 public class A {
     public static int foo() {return 1;}
@@ -20,7 +21,10 @@ fun test() {
 
     class B: A() {
         init {
-            val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!> // todo
+            val a: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> foo() // todo
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, javaFunction, javaType, localClass, localFunction,
+localProperty, propertyDeclaration, stringLiteral */

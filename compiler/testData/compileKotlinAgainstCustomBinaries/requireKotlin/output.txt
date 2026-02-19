@@ -9,13 +9,13 @@ fun test(a: A): TA {
             ^
 compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:17: error: 'typealias TA = String' is only available since Kotlin 42.33 and cannot be used in Kotlin 1.9. This declaration is only supported since Kotlin 42.33
 fun test(a: A): TA {
-                ^
+                ^^
 compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:17: error: 'typealias TA = String' is only available since Kotlin 40.34 and cannot be used in Kotlin 1.9
 fun test(a: A): TA {
-                ^
+                ^^
 compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:17: error: 'typealias TA = String' is only available since Kotlin 45.35 and cannot be used in Kotlin 1.9
 fun test(a: A): TA {
-                ^
+                ^^
 compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:4:5: error: 'f(): Unit' is only available since Kotlin 42.33 and cannot be used in Kotlin 1.9. This declaration is only supported since Kotlin 42.33
     f()
     ^

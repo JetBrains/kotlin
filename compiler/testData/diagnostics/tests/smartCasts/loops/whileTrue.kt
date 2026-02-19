@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun x(): Boolean { return true }
 
 public fun foo(p: String?): Int {
@@ -10,3 +11,5 @@ public fun foo(p: String?): Int {
     // so p is not null here
     return <!DEBUG_INFO_SMARTCAST!>p<!>.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, functionDeclaration, ifExpression, nullableType, smartcast, whileLoop */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 class ExcA : Exception()
@@ -32,3 +33,6 @@ fun test2(): Map<Int, Int> = run {
         <!TYPE_MISMATCH!>mapOf(<!TYPE_MISMATCH!>"" to ""<!>)<!>
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localFunction, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral, tryExpression */

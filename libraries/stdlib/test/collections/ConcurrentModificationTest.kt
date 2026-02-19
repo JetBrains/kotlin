@@ -95,7 +95,12 @@ class ConcurrentModificationTest {
     fun mutableList() {
         if (TestPlatform.current == TestPlatform.Js) return
 
-        val operations = listOf<CollectionOperation<MutableList<String>>>(
+        /**
+         * Some operations should register a modification by contract, but java ArrayList,
+         * whose implementation we can't change, do not register.
+         * @param isJavaArrayListBehavior specifies whether to test java ArrayList behavior or the behavior by contract.
+         */
+        fun operations(isJavaArrayListBehavior: Boolean) = listOf<CollectionOperation<MutableList<String>>>(
             CollectionOperation("set()", throwsCME = false) { set(2, "e") },
 
             CollectionOperation("add()") { add("e") },
@@ -106,9 +111,9 @@ class ConcurrentModificationTest {
             CollectionOperation("removeAt()") { removeAt(2) },
 
             CollectionOperation("addAll()") { addAll(listOf("e", "f")) },
-            CollectionOperation("addAll(emptyList())") { addAll(emptyList()) },
+            CollectionOperation("addAll(emptyList())", throwsCME = isJavaArrayListBehavior) { addAll(emptyList()) },
             CollectionOperation("addAll(index)") { addAll(2, listOf("e", "f")) },
-            CollectionOperation("addAll(index, emptyList())") { addAll(2, emptyList()) },
+            CollectionOperation("addAll(index, emptyList())", throwsCME = isJavaArrayListBehavior) { addAll(2, emptyList()) },
 
             CollectionOperation("removeAll(non-existing)", throwsCME = false) { removeAll(listOf("e", "f")) },
             CollectionOperation("removeAll(some exist)") { removeAll(listOf("d", "e")) },
@@ -127,8 +132,8 @@ class ConcurrentModificationTest {
             }
         }
 
-        fun testThrowsCME(withMutableList: WithCollection<MutableList<String>>) {
-            testIteratorThrowsCME(withMutableList, operations)
+        fun testThrowsCME(isJavaArrayListBehavior: Boolean = true, withMutableList: WithCollection<MutableList<String>>) {
+            testIteratorThrowsCME(withMutableList, operations(isJavaArrayListBehavior))
         }
 
         // size == capacity
@@ -146,6 +151,16 @@ class ConcurrentModificationTest {
             }
         }
 
+        testThrowsCME(isJavaArrayListBehavior = false) { action ->
+            ArrayDeque<String>(4).apply {
+                addAll(listOf("a", "b", "c", "d"))
+                action(this)
+            }
+        }
+        testThrowsCME(isJavaArrayListBehavior = false) { action ->
+            ArrayDeque(listOf("a", "b", "c", "d")).also(action)
+        }
+
         // size < capacity
         testThrowsCME { action ->
             ArrayList<String>(10).apply {
@@ -156,6 +171,13 @@ class ConcurrentModificationTest {
 
         testThrowsCME { action ->
             buildList(10) {
+                addAll(listOf("a", "b", "c", "d"))
+                action(this)
+            }
+        }
+
+        testThrowsCME(isJavaArrayListBehavior = false) { action ->
+            ArrayDeque<String>(10).apply {
                 addAll(listOf("a", "b", "c", "d"))
                 action(this)
             }
@@ -189,6 +211,45 @@ class ConcurrentModificationTest {
         // size < capacity
         testThrowsCME { action ->
             ArrayList<String>(10).apply {
+                addAll(listOf("a", "b", "c", "d"))
+                action(this)
+            }
+        }
+    }
+
+    @Test
+    fun arrayDeque() {
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        val operations = listOf<CollectionOperation<ArrayDeque<String>>>(
+            CollectionOperation("addFirst()") { addFirst("e") },
+            CollectionOperation("addLast()") { addLast("e") },
+
+            CollectionOperation("removeFirst()") { removeFirst() },
+            CollectionOperation("removeLast()") { removeLast() },
+
+            CollectionOperation("removeFirstOrNull()") { removeFirstOrNull() },
+            CollectionOperation("removeLastOrNull()") { removeLastOrNull() },
+        )
+
+        fun testThrowsCME(withArrayDeque: WithCollection<ArrayDeque<String>>) {
+            testIteratorThrowsCME(withArrayDeque, operations)
+        }
+
+        // size == capacity
+        testThrowsCME { action ->
+            ArrayDeque<String>(4).apply {
+                addAll(listOf("a", "b", "c", "d"))
+                action(this)
+            }
+        }
+        testThrowsCME { action ->
+            ArrayDeque(listOf("a", "b", "c", "d")).also(action)
+        }
+
+        // size < capacity
+        testThrowsCME { action ->
+            ArrayDeque<String>(10).apply {
                 addAll(listOf("a", "b", "c", "d"))
                 action(this)
             }
@@ -230,8 +291,6 @@ class ConcurrentModificationTest {
             CollectionOperation("clear()") { clear() },
             CollectionOperation("iterator()") { iterator() },
             CollectionOperation("listIterator()") { listIterator() },
-
-            CollectionOperation("subList()", throwsCME = false) { subList(0, 1) },
         )
 
         fun testThrowsCME(withMutableList: WithCollection<MutableList<String>>) {
@@ -244,6 +303,11 @@ class ConcurrentModificationTest {
             arrayList.add("e")
             action(subList)
         }
+        assertFailsWith<ConcurrentModificationException> {
+            val arrayList = arrayListOf("a", "b", "c", "d")
+            for (e in arrayList.subList(1, 3)) arrayList.remove(e)
+        }
+
         testThrowsCME { action ->
             buildList {
                 addAll(listOf("a", "b", "c", "d"))
@@ -251,6 +315,23 @@ class ConcurrentModificationTest {
                 add("e")
                 action(subList)
             }
+        }
+        assertFailsWith<ConcurrentModificationException> {
+            buildList<String> {
+                addAll(listOf("a", "b", "c"))
+                for (e in subList(1, 3)) remove(e)
+            }
+        }
+
+        testThrowsCME { action ->
+            val arrayDeque = ArrayDeque(listOf("a", "b", "c", "d"))
+            val subList = arrayDeque.subList(0, arrayDeque.size)
+            arrayDeque.add("e")
+            action(subList)
+        }
+        assertFailsWith<ConcurrentModificationException> {
+            val arrayDeque = ArrayDeque(listOf("a", "b", "c", "d"))
+            for (e in arrayDeque.subList(1, 3)) arrayDeque.remove(e)
         }
     }
 

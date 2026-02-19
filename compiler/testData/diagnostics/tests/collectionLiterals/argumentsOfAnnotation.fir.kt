@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class Foo(val a: IntArray, val b: Array<String>, val c: FloatArray)
 
 @Foo([1], ["/"], [1f])
@@ -38,3 +39,7 @@ annotation class Test2<T1, T2 : I<T1>>(val x: Test1<I<T2>>)
 @Test3([Test2<Int, C<Int>>(Test1(40))])
 @Test3([Test2(Test1(40))])
 fun test9() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, collectionLiteral, const,
+functionDeclaration, integerLiteral, interfaceDeclaration, multiplicativeExpression, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

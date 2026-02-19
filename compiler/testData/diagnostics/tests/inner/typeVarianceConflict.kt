@@ -1,4 +1,5 @@
-// !LANGUAGE: -ReportTypeVarianceConflictOnQualifierArguments
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ReportTypeVarianceConflictOnQualifierArguments
 
 class Bar<K> {
     inner class Inner {
@@ -21,3 +22,6 @@ abstract class Baz<out T> {
         fn: Bar<<!TYPE_VARIANCE_CONFLICT_WARNING!>T<!>>.Inner.() -> Unit
     ): () -> Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, in, inner, nullableType, out,
+typeParameter, typeWithExtension */

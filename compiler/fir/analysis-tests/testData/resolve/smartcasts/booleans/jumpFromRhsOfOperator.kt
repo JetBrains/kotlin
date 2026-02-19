@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 
 interface A {
     fun foo()
@@ -55,3 +56,6 @@ fun test_8(a: A?) {
     }
     a<!UNSAFE_CALL!>.<!>foo()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, nullableType, smartcast */

@@ -43,8 +43,6 @@ class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagn
         klibFile = prepareKlibWithNonStableParameterNames(tmpDir)
     }
 
-    override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>) = true
-
     override fun getEnvironmentConfigFiles(): EnvironmentConfigFiles = EnvironmentConfigFiles.METADATA_CONFIG_FILES
 
     override fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl =
@@ -129,4 +127,3 @@ class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagn
 
     }
 }
-

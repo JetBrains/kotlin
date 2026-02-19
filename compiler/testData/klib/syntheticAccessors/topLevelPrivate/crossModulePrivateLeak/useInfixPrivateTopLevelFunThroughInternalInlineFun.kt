@@ -1,0 +1,9 @@
+// MODULE: lib
+// FILE: A.kt
+private infix fun String.plus(that: String): String = this + that
+
+internal inline fun internalFun() = "O" plus "K"
+
+// MODULE: main()(lib)
+// FILE: B.kt
+fun box(): String = internalFun()

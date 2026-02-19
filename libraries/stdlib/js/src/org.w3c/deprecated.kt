@@ -6,17 +6,17 @@
 package org.w3c.dom
 
 @Deprecated("Use UnionMessagePortOrWindowProxy instead.", ReplaceWith("UnionMessagePortOrWindowProxy"))
-typealias UnionMessagePortOrWindow = UnionMessagePortOrWindowProxy
+public typealias UnionMessagePortOrWindow = UnionMessagePortOrWindowProxy
 
 @Deprecated("Use `as` instead.", ReplaceWith("`as`"))
-var HTMLLinkElement.as_
+public var HTMLLinkElement.as_: org.w3c.fetch.RequestDestination
     get() = `as`
     set(value) {
         `as` = value
     }
 
 @Deprecated("Use `is` instead.", ReplaceWith("`is`"))
-var ElementCreationOptions.is_
+public var ElementCreationOptions.is_: String?
     get() = `is`
     set(value) {
         `is` = value

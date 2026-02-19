@@ -1,5 +1,7 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +LocalTypeAliases
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
 
 class A<R1, R2, R3, R4, R5, R6>
 
@@ -11,7 +13,7 @@ class Outer<T> {
                     fun a() = A<T, F, E, X, Y, Z>()
                 }
 
-                typealias LocalAlias<W> = A<T, F, E, X, Y, W>
+                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias<W> = A<T, F, E, X, Y, W>
             }
 
             class Derived : LocalOuter<Double, Short>() {
@@ -28,7 +30,7 @@ class Outer<T> {
                     fun a() = A<T, F, Any, X, Y, Z>()
                 }
 
-                typealias LocalAlias2<W> = A<T, F, Any, X, Y, W>
+                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias2<W> = A<T, F, Any, X, Y, W>
             }
 
             class Derived2 : LocalOuter2<Double, Short>() {
@@ -56,3 +58,7 @@ class Outer<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, lambdaLiteral, localClass, localProperty, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, typeWithExtension */

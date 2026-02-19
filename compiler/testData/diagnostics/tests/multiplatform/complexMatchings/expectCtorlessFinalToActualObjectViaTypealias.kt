@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -47,3 +49,6 @@ actual typealias M01 = ActualObject
 actual typealias <!ACTUAL_WITHOUT_EXPECT!>ENUM01<!> = ActualObject
 
 actual typealias <!ACTUAL_WITHOUT_EXPECT!>ANNO01<!> = ActualObject
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, enumDeclaration, expect, functionDeclaration,
+interfaceDeclaration, objectDeclaration, primaryConstructor, secondaryConstructor, typeAliasDeclaration */

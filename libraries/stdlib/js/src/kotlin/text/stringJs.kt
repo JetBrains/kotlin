@@ -44,7 +44,6 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
  * Concatenates characters in this [CharArray] into a String.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun CharArray.concatToString(): String {
     var result = ""
     for (char in this) {
@@ -63,7 +62,6 @@ public actual fun CharArray.concatToString(): String {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
@@ -78,7 +76,6 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
  * Returns a [CharArray] containing characters of this string.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.toCharArray(): CharArray {
     return CharArray(length) { get(it) }
 }
@@ -93,7 +90,6 @@ public actual fun String.toCharArray(): CharArray {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
@@ -112,8 +108,8 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@IgnorableReturnValue
+@SinceKotlin("2.0")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(
     destination: CharArray,
@@ -136,7 +132,6 @@ public actual fun String.toCharArray(
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun ByteArray.decodeToString(): String {
     return decodeUtf8(this, 0, size, false)
 }
@@ -153,7 +148,6 @@ public actual fun ByteArray.decodeToString(): String {
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(
     startIndex: Int = 0,
@@ -168,9 +162,10 @@ public actual fun ByteArray.decodeToString(
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.encodeToByteArray(): ByteArray {
     return encodeUtf8(this, 0, length, false)
 }
@@ -185,9 +180,10 @@ public actual fun String.encodeToByteArray(): ByteArray {
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(
     startIndex: Int = 0,
@@ -202,7 +198,7 @@ public actual fun String.encodeToByteArray(
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase()
 
@@ -215,7 +211,6 @@ public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase(
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun String.uppercase(): String = asDynamic().toUpperCase()
 
@@ -223,7 +218,7 @@ public actual inline fun String.uppercase(): String = asDynamic().toUpperCase()
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = asDynamic().toLowerCase()
 
@@ -236,7 +231,6 @@ public actual inline fun String.toLowerCase(): String = asDynamic().toLowerCase(
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun String.lowercase(): String = asDynamic().toLowerCase()
 
@@ -277,11 +271,9 @@ if (typeof String.prototype.endsWith === "undefined") {
 """)
 internal inline fun String.nativeEndsWith(s: String): Boolean = asDynamic().endsWith(s)
 
-@kotlin.internal.InlineOnly
-public actual inline fun String.substring(startIndex: Int): String = asDynamic().substring(startIndex)
+public actual fun String.substring(startIndex: Int): String = asDynamic().substring(startIndex)
 
-@kotlin.internal.InlineOnly
-public actual inline fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
+public actual fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
 
 @Deprecated("Use String.plus() instead", ReplaceWith("this + str"))
 @DeprecatedSinceKotlin(warningSince = "1.6")

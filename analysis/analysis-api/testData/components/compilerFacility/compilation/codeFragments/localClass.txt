@@ -1,0 +1,6 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    inner (local) class ContextKt$main$Foo Foo
+    public method <init>(): void
+    public final static method run(): ContextKt$main$Foo
+}

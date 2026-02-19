@@ -22,23 +22,23 @@ FILE: classWithGenericParameters.kt
 
         }
 
-        public final class $serializer<T, V> : R|kotlinx/serialization/internal/GeneratedSerializer<GenericBox<T, V>>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|GenericBox<T, V>|): R|kotlin/Unit|
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final class $serializer<T, V> : R|kotlinx/serialization/internal/GeneratedSerializer<GenericBox<T, V>>| {
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|GenericBox<T, V>|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|GenericBox<T, V>|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|GenericBox<T, V>|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            public final fun typeParametersSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun typeParametersSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor<T, V>(): R|GenericBox.$serializer<T, V>| {
                 super<R|kotlin/Any|>()
             }
 
-            private constructor<T, V>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
+            public constructor<T, V>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
 
         }
 

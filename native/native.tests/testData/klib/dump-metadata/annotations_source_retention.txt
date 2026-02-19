@@ -1,22 +1,138 @@
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoBackingField constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoClass constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoConstructor constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoConstructorParameter constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoDelegatedField constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoFunction constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoFunctionExtensionReceiver constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoFunctionParam constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoGetter constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoProperty constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoPropertyExtensionReceiver constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetParam constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetParam2 constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetter constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetter2 constructor() : Annotation
-    class Foo constructor(i: Int) {
-        val immutableProp: Int
-        var mutableProp: Int
-        var prop: Int
+library {
+  // module name: <annotations_source_retention.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnoBackingField
+    // class name: test/AnnoClass
+    // class name: test/AnnoConstructor
+    // class name: test/AnnoConstructorParameter
+    // class name: test/AnnoDelegatedField
+    // class name: test/AnnoFunction
+    // class name: test/AnnoFunctionExtensionReceiver
+    // class name: test/AnnoFunctionParam
+    // class name: test/AnnoGetter
+    // class name: test/AnnoProperty
+    // class name: test/AnnoPropertyExtensionReceiver
+    // class name: test/AnnoSetParam
+    // class name: test/AnnoSetParam2
+    // class name: test/AnnoSetter
+    // class name: test/AnnoSetter2
+    // class name: test/Foo
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoBackingField : kotlin/Annotation {
+
+      public constructor()
     }
-    val Foo.extProp: Int
-    fun Foo.extfun(x: Int)
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoClass : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoConstructor : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoConstructorParameter : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoDelegatedField : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoFunction : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoFunctionExtensionReceiver : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoFunctionParam : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoGetter : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoProperty : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoPropertyExtensionReceiver : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetParam : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetParam2 : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetter : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetter2 : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final class test/Foo : kotlin/Any {
+
+      public constructor(i: kotlin/Int)
+
+      public final /* delegated */ val immutableProp: kotlin/Int
+        public final /* non-default */ get
+
+      public final var mutableProp: kotlin/Int
+        public final get
+        public final /* non-default */ set(x: kotlin/Int)
+
+      public final var prop: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(x: kotlin/Int)
+    }
+
+    package {
+
+      public final fun test/Foo.extfun(x: kotlin/Int): kotlin/Unit
+
+      public final val test/Foo.extProp: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
+}

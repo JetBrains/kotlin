@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -43,14 +44,18 @@ internal inline fun <T> CodedInputStream.ifTrue(then: () -> T): T? {
     return if (readBool()) then() else null
 }
 
-internal fun icError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null): Nothing {
-    val filePath = listOfNotNull(libFile?.path, srcFile?.path).joinToString(":") { File(it).name }
+internal fun icError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null, irFile: IrFile? = null): Nothing {
+    val filePath = listOfNotNull(libFile?.path, (srcFile?.path ?: irFile?.fileEntry?.name)).joinToString(":") { File(it).name }
     val msg = if (filePath.isEmpty()) what else "$what for $filePath"
     error("IC internal error: $msg")
 }
 
 internal fun notFoundIcError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null): Nothing {
     icError("can not find $what", libFile, srcFile)
+}
+
+internal fun notFoundIcError(what: String, libFile: KotlinLibraryFile, irFile: IrFile): Nothing {
+    icError("can not find $what", libFile, irFile = irFile)
 }
 
 internal inline fun <E> buildSetUntil(to: Int, builderAction: MutableSet<E>.(Int) -> Unit): Set<E> {

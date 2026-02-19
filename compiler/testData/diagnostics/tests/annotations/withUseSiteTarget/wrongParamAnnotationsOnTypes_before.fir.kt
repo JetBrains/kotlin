@@ -1,5 +1,6 @@
-// !LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test1(i: <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Suppress<!> Int) {}
 fun test2(i: <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:Suppress<!> Int) {}
@@ -11,3 +12,6 @@ fun test5(i: (<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Suppress
 fun ((<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Suppress<!> Int) -> Unit).test6() {}
 
 fun test7(): ((<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Suppress<!> Int) -> Unit) = TODO()
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetParam, annotationUseSiteTargetReceiver,
+annotationUseSiteTargetSetterParameter, funWithExtensionReceiver, functionDeclaration, functionalType */

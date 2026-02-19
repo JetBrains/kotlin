@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun main(arg: Nothing?) {
     val flag = true
     consumeTicker(
@@ -44,3 +45,7 @@ fun consumeTicker(ticker: Ticker?) {
 fun interface Ticker {
     fun tick(num: Int)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, elvisExpression, funInterface, functionDeclaration, ifExpression,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration, samConversion, tryExpression,
+typeParameter */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // Issue: KT-30734
 
 class Sample {
@@ -12,3 +13,6 @@ fun test(ls: Sample?) {
         { ls.foo() } // OK in OI, error in NI
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

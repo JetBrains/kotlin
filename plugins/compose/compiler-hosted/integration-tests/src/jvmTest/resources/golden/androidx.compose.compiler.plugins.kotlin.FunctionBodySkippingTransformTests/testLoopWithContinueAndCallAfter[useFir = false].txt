@@ -1,0 +1,54 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+@NonRestartableComposable
+fun Example() {
+    Call()
+    for (index in 0..1) {
+        Call()
+        if (condition())
+            continue
+        Call()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@NonRestartableComposable
+fun Example(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<Call()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  Call(%composer, 0)
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "")
+  val <iterator> = 0 .. 1.iterator()
+  while (<iterator>.hasNext()) {
+    val index = <iterator>.next()
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<Call()>,<Call()>")
+    Call(%composer, 0)
+    if (condition()) {
+      %composer.endReplaceGroup()
+      continue
+    }
+    Call(%composer, 0)
+    %composer.endReplaceGroup()
+  }
+  %composer.endReplaceGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

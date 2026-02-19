@@ -1,0 +1,28 @@
+ORIGINAL KDOC:
+@param T a type parameter.
+CONTENT:
+a type parameter.
+
+ORIGINAL KDOC:
+* This is the doc comment for a class.
+ * @param T a type parameter.
+ *
+CONTENT:
+This is the doc comment for a class.
+
+
+ORIGINAL KDOC:
+@constructor This is the doc comment for the primary constructor.
+CONTENT:
+This is the doc comment for the primary constructor.
+
+ORIGINAL KDOC:
+@param a a constructor parameter.
+CONTENT:
+a constructor parameter.
+
+ORIGINAL KDOC:
+@constructor This is the doc comment for the primary constructor.
+ * @param a a constructor parameter.
+CONTENT:
+This is the doc comment for the primary constructor.

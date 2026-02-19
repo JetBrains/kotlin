@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import java.lang.IllegalArgumentException
-import java.lang.StringBuilder
 import java.util.ArrayList
 
 object AnalyzingUtils {

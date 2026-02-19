@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57001
 
@@ -9,3 +10,6 @@ interface ConverterFromString<T> {
         override fun ofS(s: String): T? = if (s == nullText) null else this@ConverterFromString.ofS(s)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, nullableType, override, thisExpression, typeParameter */

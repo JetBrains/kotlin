@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: k.kt
 
@@ -10,3 +11,5 @@ interface K {
 interface J extends K {
     <T> void foo(T t);
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeParameter */

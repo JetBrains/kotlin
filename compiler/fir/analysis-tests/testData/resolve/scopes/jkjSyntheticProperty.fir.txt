@@ -1,0 +1,16 @@
+FILE: B.kt
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun getFoo(): R|kotlin/String| {
+            ^getFoo this@R|/B|.R|/B.foo|
+        }
+
+    }
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval c: R|C!| = Q|C|.R|/C.create*s|()
+        R|<local>/c|.R|/B.foo|
+    }

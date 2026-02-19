@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 enum class ProtocolState {
   WAITING {
@@ -14,3 +15,5 @@ enum class ProtocolState {
 fun box() {
    val x: ProtocolState = ProtocolState.WAITING
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

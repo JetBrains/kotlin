@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -18,6 +18,7 @@ kotlin {
 }
 
 tasks.register("foo") {
+    val projectDir = projectDir
     doLast {
         val dir = projectDir.resolve("webpack.config.d")
         dir.mkdirs()
@@ -27,7 +28,7 @@ tasks.register("foo") {
     }
 }
 
-tasks.named("browserTest") {
+tasks.named("jsBrowserTest") {
     enabled = false
 }
 

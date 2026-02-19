@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class A<F> {
     fun <E : F> foo1(x: E) = x
@@ -46,3 +47,6 @@ class A<F> {
         foo1<<!UPPER_BOUND_VIOLATED!>W<!>>(w)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

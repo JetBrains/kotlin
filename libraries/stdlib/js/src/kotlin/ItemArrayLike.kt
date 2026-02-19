@@ -6,8 +6,8 @@
 package org.w3c.dom
 
 public external interface ItemArrayLike<out T> {
-    val length: Int
-    fun item(index: Int): T?
+    public val length: Int
+    public fun item(index: Int): T?
 }
 
 /**

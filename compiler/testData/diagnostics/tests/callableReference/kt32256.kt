@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // Issue: KT-32256
 
 fun main() {
@@ -24,3 +25,6 @@ fun myMethod(f: suspend () -> String) {}
 fun <I, O> anotherMethod(f: suspend (I) -> O) {}
 
 fun <O> anotherMethod(f: suspend () -> O) {}
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, nullableType, stringLiteral, suspend,
+typeParameter */

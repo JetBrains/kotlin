@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // Issue: KT-25433
 
 import kotlin.reflect.*
@@ -15,3 +16,6 @@ fun test() {
     hidden(App::nullable, "foo")
     hiddenFun(App::nullableFun, "foo")
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter */

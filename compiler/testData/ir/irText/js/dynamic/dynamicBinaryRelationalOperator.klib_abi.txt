@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testGreater(dynamic): kotlin/Boolean // /testGreater|testGreater(<dynamic>){}[0]
+final fun /testGreaterOrEqual(dynamic): kotlin/Boolean // /testGreaterOrEqual|testGreaterOrEqual(<dynamic>){}[0]
+final fun /testLess(dynamic): kotlin/Boolean // /testLess|testLess(<dynamic>){}[0]
+final fun /testLessOrEqual(dynamic): kotlin/Boolean // /testLessOrEqual|testLessOrEqual(<dynamic>){}[0]

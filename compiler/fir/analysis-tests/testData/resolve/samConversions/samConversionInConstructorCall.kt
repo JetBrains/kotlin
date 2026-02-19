@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Condition.java
 
 public interface Condition {
@@ -15,3 +16,5 @@ public class Foo {
 fun test() {
     Foo { it }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: I.java
 
@@ -31,3 +32,5 @@ fun main() {
     K.<!UNRESOLVED_REFERENCE!>foo<!>()
     K.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaProperty, javaType */

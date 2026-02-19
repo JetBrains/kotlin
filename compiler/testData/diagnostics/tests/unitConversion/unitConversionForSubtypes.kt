@@ -1,5 +1,6 @@
-// !LANGUAGE: +UnitConversionsOnArbitraryExpressions
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun foo(f: (Int, String) -> Unit) {}
 
@@ -20,3 +21,6 @@ fun test1(s: SubInt, sWrong: SubIntWrong) {
 fun <T> test2(x: T) where T : (Int, String) -> Int, T : (Double) -> Int {
     foo(x)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, intersectionType,
+localProperty, propertyDeclaration, smartcast, stringLiteral, typeConstraint, typeParameter */

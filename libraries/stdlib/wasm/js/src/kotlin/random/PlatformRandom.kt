@@ -5,6 +5,7 @@
 
 package kotlin.random
 
+@OptIn(ExperimentalWasmJsInterop::class)
 private fun initialSeed(): Int =
     js("((Math.random() * Math.pow(2, 32)) | 0)")
 

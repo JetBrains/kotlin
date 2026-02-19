@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 package test
 
 object ClassMemberMarker
@@ -33,3 +34,7 @@ class Test {
     fun <T> List<T>.testUnresolved3() = a<<!SYNTAX!><!>>::foo
     fun <T> List<T>.testUnresolved4() = <!UNRESOLVED_REFERENCE!>unresolved<!>?::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, nullableType, objectDeclaration, outProjection, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

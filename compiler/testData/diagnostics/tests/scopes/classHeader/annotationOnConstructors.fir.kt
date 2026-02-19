@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.*
 
@@ -23,8 +24,8 @@ class A
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a<!>,
-        b()
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
 )
 constructor() {
 
@@ -36,8 +37,8 @@ constructor() {
             Companion.CONST,
             Nested.CONST,
             Interface.CONST,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a<!>,
-            b()
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
     )
     constructor(dummy: Int) : this()
 
@@ -63,3 +64,7 @@ constructor() {
         fun foo(): Nested = null!!
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, classDeclaration, classReference, companionObject, const,
+functionDeclaration, inner, integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, secondaryConstructor, starProjection */

@@ -1,0 +1,12 @@
+Classifier names:
+  A
+  B
+  Companion
+  InnerClass
+  InnerObject
+  InternalA
+  InternalB
+  PrivateA
+  PrivateB
+
+Callable names:

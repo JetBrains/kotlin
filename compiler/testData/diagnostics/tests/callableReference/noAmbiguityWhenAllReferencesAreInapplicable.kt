@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction2
@@ -18,3 +19,6 @@ fun B.test() = true
 fun main() {
     val x = Foo.bar(B::test) // ambiguity in NI
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

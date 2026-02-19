@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(): Boolean { return true }
 
 public fun foo(x: String?): Int {
@@ -12,3 +13,6 @@ public fun foo(x: String?): Int {
     // x is null because of the break
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

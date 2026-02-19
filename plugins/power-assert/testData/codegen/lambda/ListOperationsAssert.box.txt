@@ -1,0 +1,7 @@
+---
+assert(list.map { "Doe, $it" }.any { it == "Scott, Michael" })
+       |    |                  |
+       |    |                  false
+       |    [Doe, Jane, Doe, John]
+       [Jane, John]
+---

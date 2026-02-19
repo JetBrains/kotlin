@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package a
 
@@ -17,3 +18,6 @@ fun test(array: Array<Int>) {
 
     bar(makeNullable(foo(emptyList())) ?: 0)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, elvisExpression, functionDeclaration, integerLiteral, nullableType,
+typeConstraint, typeParameter */

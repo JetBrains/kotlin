@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNSUPPORTED
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNSUPPORTED
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -26,3 +28,6 @@ actual class Foo {
 
     actual fun <T : Set<Number>> f3(t: T): dynamic = null!!
 }
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, expect, flexibleType, functionDeclaration,
+nullableType, secondaryConstructor, typeConstraint, typeParameter */

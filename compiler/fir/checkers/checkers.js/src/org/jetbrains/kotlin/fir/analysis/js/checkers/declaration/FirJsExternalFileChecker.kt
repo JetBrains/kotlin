@@ -7,36 +7,36 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocalWith
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-object FirJsExternalFileChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val closestNonLocal = context.closestNonLocalWith(declaration)?.symbol ?: return
+object FirJsExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
+        val closestNonLocal = context.closestNonLocalWith(declaration) ?: return
 
-        if (closestNonLocal.isNativeObject(context) || !context.isTopLevel) {
+        if (closestNonLocal.isNativeObject() || closestNonLocal is FirTypeAliasSymbol || !context.isTopLevel) {
             return
         }
 
-        val targetAnnotations = context.containingFile
-            ?.annotations
-            ?.firstOrNull { it.toAnnotationClassId(context.session) in JsStandardClassIds.Annotations.annotationsRequiringExternal }
+        val targetAnnotations = context.containingFileSymbol?.resolvedAnnotationsWithClassIds?.firstOrNull {
+            it.toAnnotationClassId(context.session) in JsStandardClassIds.Annotations.annotationsRequiringExternal
+        } ?: return
 
-        if (targetAnnotations != null) {
-            reporter.reportOn(
-                declaration.source,
-                FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-                targetAnnotations.resolvedType,
-                context
-            )
-        }
+        reporter.reportOn(
+            declaration.source,
+            FirWebCommonErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
+            targetAnnotations.resolvedType
+        )
     }
 }

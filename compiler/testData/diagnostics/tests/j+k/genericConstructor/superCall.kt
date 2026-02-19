@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 // FILE: A.java
 
 public class A<E> {
@@ -15,3 +16,6 @@ class C : A<CharSequence> {
     constructor(x: List<String>) : super("", x)
     constructor(x: List<Int>, y: Int) : super("", x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, javaType,
+nullableType, primaryConstructor, secondaryConstructor, stringLiteral, typeParameter, typeWithExtension */

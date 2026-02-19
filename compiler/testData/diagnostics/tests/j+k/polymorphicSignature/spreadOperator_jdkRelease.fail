@@ -1,0 +1,12 @@
+root
+java.lang.IllegalStateException: root
+	at org.jetbrains.kotlin.name.FqNameUnsafe.shortName(FqNameUnsafe.kt:106)
+	at org.jetbrains.kotlin.name.FqName.shortName(FqName.kt:77)
+	at org.jetbrains.kotlin.descriptors.impl.SubpackagesScope.getContributedDescriptors(SubpackagesScope.kt:52)
+	at org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope.getContributedDescriptors(ChainedMemberScope.kt:45)
+	at org.jetbrains.kotlin.resolve.DescriptorUtils.getAllDescriptors(DescriptorUtils.java:606)
+	at org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.appendSubDescriptors(RecursiveDescriptorComparator.java:276)
+	at org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.appendDeclarationRecursively(RecursiveDescriptorComparator.java:124)
+	at org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.serializeRecursively(RecursiveDescriptorComparator.java:83)
+	at org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler.processModule(DeclarationsDumpHandler.kt:94)
+	at org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler.processModule(DeclarationsDumpHandler.kt:43)

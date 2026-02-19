@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // See also: KT-11998
 data class My(val x: Boolean?)
@@ -29,3 +30,6 @@ fun bar(x: Boolean?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

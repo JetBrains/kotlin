@@ -1,7 +1,8 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 package kotlin.jvm
 
@@ -28,3 +29,6 @@ fun test(f1: Foo, f2: Foo, b1: Bar, fn1: Foo?, fn2: Foo?) {
     val d3 = <!FORBIDDEN_IDENTITY_EQUALS!>any === fn1<!> || <!FORBIDDEN_IDENTITY_EQUALS!>any !== fn1<!>
     val d4 = <!FORBIDDEN_IDENTITY_EQUALS!>fn1 === any<!> || <!FORBIDDEN_IDENTITY_EQUALS!>fn1 !== any<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, disjunctionExpression, equalityExpression,
+functionDeclaration, localProperty, nullableType, primaryConstructor, propertyDeclaration, value */

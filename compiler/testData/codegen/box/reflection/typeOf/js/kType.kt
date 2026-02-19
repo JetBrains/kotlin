@@ -1,13 +1,16 @@
-// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 
-import kotlin.test.*
+// FILE: lib.kt
 import kotlin.reflect.*
 
 inline fun <reified R> kType() = typeOf<R>()
 
 inline fun <reified R> kType(obj: R) = kType<R>()
+
+// FILE: main.kt
+import kotlin.test.*
 
 class C<T>
 class D
@@ -37,20 +40,8 @@ fun testInner() {
     assertEquals(D::class, innerKType.arguments.last().type!!.classifier)
 }
 
-fun testAnonymousObject() {
-    val obj = object {}
-    val objType = kType(obj)
-
-    assertEquals("(non-denotable type)", objType.toString())
-    assertEquals(obj::class, objType.classifier)
-
-    assertTrue(objType.arguments.isEmpty())
-    assertFalse(objType.isMarkedNullable)
-}
-
 fun box(): String {
     testBasics1()
     testInner()
-    testAnonymousObject()
     return "OK"
 }

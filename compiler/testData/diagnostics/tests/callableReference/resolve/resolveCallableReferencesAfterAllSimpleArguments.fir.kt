@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A
 interface B
@@ -10,6 +11,8 @@ fun <T> baz(e: T, f: (T) -> Unit) {}
 
 fun test(a: A, b: B) {
     // Note that diagnostic is always on callable references as they are resolved after simple arguments
-    baz(a, ::<!UNRESOLVED_REFERENCE!>fooB<!>)
-    bar(::<!UNRESOLVED_REFERENCE!>fooB<!>, a)
+    baz(a, ::<!INAPPLICABLE_CANDIDATE!>fooB<!>)
+    bar(::<!INAPPLICABLE_CANDIDATE!>fooB<!>, a)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, nullableType, typeParameter */

@@ -6,65 +6,80 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmNode
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
-abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetBase(target, "node"),
+abstract class KotlinNodeJsIr
+@Inject
+internal constructor(
+    target: KotlinJsIrTarget,
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) :
+    KotlinJsIrNpmBasedSubTarget(target, "node"),
     KotlinJsNodeDsl {
 
-    private val nodeJs = project.rootProject.kotlinNodeJsExtension
-    private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
+    constructor(
+        target: KotlinJsIrTarget,
+    ) : this(
+        target = throw UnsupportedOperationException(),
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
+    )
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
     override fun runTask(body: Action<NodeJsExec>) {
-        project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
+        subTargetConfigurators
+            .withType<NodeJsEnvironmentConfigurator>()
+            .configureEach {
+                it.configureRun(body)
+            }
     }
 
-    override fun configureRun(compilation: KotlinJsIrCompilation) {
-        if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-            super.configureRun(compilation)
+    @ExperimentalMainFunctionArgumentsDsl
+    override fun passProcessArgvToMainFunction() {
+        target.passAsArgumentToMainFunction("process.argv")
+    }
+
+    @ExperimentalMainFunctionArgumentsDsl
+    override fun passCliArgumentsToMainFunction() {
+        target.passAsArgumentToMainFunction("process.argv.slice(2)")
+    }
+
+    override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
+        with(nodeJsEnvSpec) {
+            test.dependsOn(project.nodeJsSetupTaskProvider)
         }
-    }
 
-    override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
-        if (project.locateTask<NodeJsExec>(name) != null) return
-
-        val runTaskHolder = NodeJsExec.create(binary.compilation, name) {
-            group = taskGroupName
-            dependsOn(binary.linkSyncTask)
-            inputFileProperty.fileProvider(
-                binary.linkSyncTask.flatMap { linkSyncTask ->
-                    binary.linkTask.flatMap { linkTask ->
-                        linkTask.outputFileProperty.map { file ->
-                            linkSyncTask.destinationDirectory.get().resolve(file.name)
-                        }
-                    }
-                }
-            )
-        }
-        target.runTask.dependsOn(runTaskHolder)
-    }
-
-    override fun configureTestDependencies(test: KotlinJsTest) {
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
             test.dependsOn(
-                nodeJsTaskProviders.npmInstallTaskProvider,
-                nodeJsTaskProviders.storeYarnLockTaskProvider,
-                nodeJsTaskProviders.nodeJsSetupTaskProvider
+                nodeJsRoot.npmInstallTaskProvider,
             )
+            if (target.webTargetVariant(jsVariant = false, wasmVariant = true)) {
+                test.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+            }
+            test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+            test.dependsOn(binary.linkSyncTask)
         }
+        test.dependsOn(binary.linkTask)
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
@@ -73,10 +88,10 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 test.useMocha { }
             }
             if (test.enabled) {
-                nodeJs.taskRequirements.addTaskRequirements(test)
+                nodeJsRoot.taskRequirements.addTaskRequirements(test)
             }
         } else {
-            test.testFramework = KotlinWasmNode(test)
+            test.testFramework = KotlinWasmNode(test, objects, providers)
         }
     }
 }

@@ -6,28 +6,35 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.backend.js.ir.exportedVisibility
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
+import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
+import org.jetbrains.kotlin.ir.backend.js.utils.couldBeConvertedToExplicitExport
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
+/**
+ * Adds `@JsImplicitExport` annotation to declarations which are not exported but are used inside other exported declarations as a type.
+ */
+@PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class, PrepareCollectionsToExportLowering::class)
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
+    private val jsExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsExportAnnotationSymbol.constructors.single() }
+    private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsImplicitExportAnnotationSymbol.constructors.single() }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (!strictImplicitExport || !declaration.isExported(context)) return null
+        if (!declaration.isExported(context)) return null
 
         val implicitlyExportedDeclarations = when (declaration) {
             is IrFunction -> declaration.collectImplicitlyExportedDeclarations()
@@ -36,7 +43,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             else -> emptySet()
         }
 
-        implicitlyExportedDeclarations.forEach { it.markWithJsImplicitExport() }
+        implicitlyExportedDeclarations.forEach { it.markWithJsImplicitExportOrUpgrade() }
 
         return null
     }
@@ -53,22 +60,25 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     private fun IrFunction.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
         val types = buildSet {
             add(returnType)
-            addAll(valueParameters.map { it.type })
-            addAll(typeParameters.flatMap { it.superTypes })
+            if (this@collectImplicitlyExportedDeclarations !is IrConstructor || exportedVisibility != ExportedVisibility.PRIVATE) {
+                // We don't export parameters of private constructors
+                nonDispatchParameters.mapTo(this) { it.type }
+            }
+            typeParameters.flatMapTo(this) { it.superTypes }
         }
 
-        return types.flatMap { it.collectImplicitlyExportedDeclarations() }.toSet()
+        return types.flatMap { it.collectImplicitlyExportedDeclarations(includeArguments = true) }.toSet()
     }
 
     private fun IrProperty.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
         val getterImplicitlyExportedDeclarations = getter?.collectImplicitlyExportedDeclarations() ?: emptySet()
         val setterImplicitlyExportedDeclarations = setter?.collectImplicitlyExportedDeclarations() ?: emptySet()
-        val fieldImplicitlyExportedDeclarations = backingField?.type?.collectImplicitlyExportedDeclarations() ?: emptySet()
+        val fieldImplicitlyExportedDeclarations = backingField?.type?.collectImplicitlyExportedDeclarations(includeArguments = true) ?: emptySet()
 
         return getterImplicitlyExportedDeclarations + setterImplicitlyExportedDeclarations + fieldImplicitlyExportedDeclarations
     }
 
-    private fun IrType.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
+    private fun IrType.collectImplicitlyExportedDeclarations(includeArguments: Boolean = false): Set<IrDeclaration> {
         if (this is IrDynamicType || this !is IrSimpleType)
             return emptySet()
 
@@ -76,23 +86,64 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
         val classifier = nonNullType.classifier
 
         return when {
-            nonNullType.isPrimitiveType() || nonNullType.isPrimitiveArray() || nonNullType.isAny() || nonNullType.isUnit() -> emptySet()
-            classifier is IrTypeParameterSymbol -> classifier.owner.superTypes.flatMap { it.collectImplicitlyExportedDeclarations() }
+            nonNullType.isPrimitiveType() ||
+                    nonNullType.isPrimitiveArray() ||
+                    nonNullType.isAny() ||
+                    nonNullType.isNothing() ||
+                    nonNullType.isUnit()
+                -> emptySet()
+
+            classifier is IrTypeParameterSymbol -> classifier.owner.superTypes
+                .flatMap { it.collectImplicitlyExportedDeclarations() }
                 .toSet()
 
-            classifier is IrClassSymbol -> setOfNotNull(classifier.owner.takeIf { it.shouldBeMarkedWithImplicitExport() })
+            classifier is IrClassSymbol -> {
+                val klass = classifier.owner
+                val result = mutableSetOf<IrDeclaration>()
+
+                val isSpeciallyExportedType = nonNullType.isSpeciallyExportedType()
+
+                if (!isSpeciallyExportedType && klass.shouldBeMarkedWithImplicitExportOrUpgraded()) {
+                    result.add(klass)
+                }
+
+                if (includeArguments && (isSpeciallyExportedType || klass.isExternal || klass.couldBeConvertedToExplicitExport() == true || klass.isExported(context))) {
+                    arguments.flatMapTo(result) {
+                        when (it) {
+                            is IrStarProjection -> emptySet()
+                            is IrTypeProjection -> it.type.collectImplicitlyExportedDeclarations()
+                        }
+                    }
+                }
+
+                result
+            }
+
             else -> emptySet()
         }
     }
 
-    private fun IrDeclaration.shouldBeMarkedWithImplicitExport(): Boolean {
-        return this is IrClass && !isExternal && !isExported(context) && !isJsImplicitExport()
+    private fun IrSimpleType.isSpeciallyExportedType(): Boolean {
+        return isFunction() || isThrowable() || isArray()
     }
 
-    private fun IrDeclaration.markWithJsImplicitExport() {
-        val jsImplicitExportCtor = context.intrinsics.jsImplicitExportAnnotationSymbol.constructors.single()
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor)
+    private fun IrDeclaration.shouldBeMarkedWithImplicitExportOrUpgraded(): Boolean {
+        return this is IrClass && !isExternal && !isExported(context)
+    }
 
-        parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitExport() }?.markWithJsImplicitExport()
+    private fun IrDeclaration.markWithJsImplicitExportOrUpgrade() {
+        if (couldBeConvertedToExplicitExport() == true) {
+            annotations = annotations.memoryOptimizedMap {
+                if (it.isAnnotation(JsAnnotations.jsImplicitExportFqn)) {
+                    JsIrBuilder.buildAnnotation(jsExportCtor)
+                } else it
+            }
+        } else if (strictImplicitExport) {
+            annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsImplicitExportCtor).apply {
+                arguments[0] = false.toIrConst(context.irBuiltIns.booleanType)
+            }
+
+            parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitExportOrUpgraded() }?.markWithJsImplicitExportOrUpgrade()
+        }
     }
 }

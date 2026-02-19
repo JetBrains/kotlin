@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
-import org.jetbrains.kotlin.fir.resolve.calls.CallKind
-import org.jetbrains.kotlin.fir.resolve.calls.CandidateCollector
-import org.jetbrains.kotlin.fir.resolve.calls.CandidateFactory
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 internal class CandidateFactoriesAndCollectors(
     // Common calls
@@ -32,11 +33,11 @@ internal class TowerLevelHandler {
         info: CallInfo,
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
-        towerLevel: TowerScopeLevel
+        towerLevel: TowerLevel
     ): ProcessResult {
         processResult = ProcessResult.SCOPE_EMPTY
         val processor =
-            TowerScopeLevelProcessor(
+            TowerLevelProcessor(
                 info,
                 explicitReceiverKind,
                 collector,
@@ -52,7 +53,7 @@ internal class TowerLevelHandler {
                 // However, this only applies if the best current candidate applicability has shouldStopResolve == true. Exceptions to this
                 // are candidates from dynamic scopes or properties with @LowPriorityInOverloadResolution (from earlier or the same level),
                 // therefore we check for collector.shouldStopResolve and not collector.isSuccess.
-                if (!collector.shouldStopResolve && towerLevel is ScopeTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
+                if (!collector.shouldStopResolve && towerLevel is ScopeBasedTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
                     processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
@@ -71,29 +72,29 @@ internal class TowerLevelHandler {
     }
 }
 
-private class TowerScopeLevelProcessor(
+class TowerLevelProcessor(
     val callInfo: CallInfo,
     val explicitReceiverKind: ExplicitReceiverKind,
     val resultCollector: CandidateCollector,
     val candidateFactory: CandidateFactory,
     val group: TowerGroup
-) : TowerScopeLevel.TowerScopeLevelProcessor<FirBasedSymbol<*>> {
-    override fun consumeCandidate(
+) {
+    fun consumeCandidate(
         symbol: FirBasedSymbol<*>,
         dispatchReceiver: FirExpression?,
-        givenExtensionReceiverOptions: List<FirExpression>,
+        givenExtensionReceiver: FirExpression?,
         scope: FirScope,
-        objectsByName: Boolean,
-        isFromOriginalTypeInPresenceOfSmartCast: Boolean,
-    ) {
-        resultCollector.consumeCandidate(
+        objectsByName: Boolean = false,
+        isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
+    ): CandidateApplicability {
+        return resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
                 callInfo,
                 symbol,
                 explicitReceiverKind,
                 scope,
                 dispatchReceiver,
-                givenExtensionReceiverOptions,
+                givenExtensionReceiver,
                 objectsByName,
                 isFromOriginalTypeInPresenceOfSmartCast
             ), candidateFactory.context

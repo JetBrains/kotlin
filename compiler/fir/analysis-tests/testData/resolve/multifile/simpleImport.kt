@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: B.kt
 
 package b
@@ -23,3 +24,5 @@ fun bar() {
     foo()
     I()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

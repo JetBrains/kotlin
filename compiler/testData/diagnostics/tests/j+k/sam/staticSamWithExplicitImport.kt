@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/Statics.java
 
@@ -16,3 +17,5 @@ import a.Statics.foo
 fun test() {
     foo {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, lambdaLiteral, samConversion */

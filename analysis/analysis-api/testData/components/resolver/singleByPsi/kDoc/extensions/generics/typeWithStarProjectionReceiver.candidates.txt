@@ -1,0 +1,23 @@
+<caret_1>:
+  KDocName(302,330): 'Container.containerExtension'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(347,376): 'TContainer.containerExtension'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(393,433): 'TNumberBoundContainer.containerExtension'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(450,484): 'NumberContainer.containerExtension'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(501,532): 'IntContainer.containerExtension'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(549,583): 'StringContainer.containerExtension'
+    NO_CANDIDATES

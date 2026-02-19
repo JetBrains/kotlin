@@ -1,4 +1,6 @@
-// ISSUE: KT-57911
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUES: KT-57911, KT-56744
+// LANGUAGE: -AllowCheckForErasedTypesInContracts
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -12,13 +14,13 @@ abstract class Base<T> {
 
     @OptIn(ExperimentalContracts::class)
     fun checkIsT(s: Any?): Boolean {
-        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (s is T)<!> }
+        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (s is <!CANNOT_CHECK_FOR_ERASED!>T<!>)<!> }
         return false
     }
 
     @OptIn(ExperimentalContracts::class)
     fun <R> checkIsOwnerR(s: Any?): Boolean {
-        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (s is R)<!> }
+        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (s is <!CANNOT_CHECK_FOR_ERASED!>R<!>)<!> }
         return false
     }
 
@@ -81,3 +83,7 @@ fun test_4(d: Derived, s: Any?) {
         s.length
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, contractConditionalEffect, contracts,
+equalityExpression, functionDeclaration, ifExpression, inline, isExpression, lambdaLiteral, nullableType, override,
+reified, smartcast, typeParameter */

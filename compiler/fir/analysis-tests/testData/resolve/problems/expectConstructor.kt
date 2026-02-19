@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 
 open class Base(v: String)
@@ -13,3 +14,5 @@ expect open class IOException(message: String, cause: Throwable?) {
 }
 
 expect class EOFException(message: String) : IOException
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, nullableType, primaryConstructor, secondaryConstructor */

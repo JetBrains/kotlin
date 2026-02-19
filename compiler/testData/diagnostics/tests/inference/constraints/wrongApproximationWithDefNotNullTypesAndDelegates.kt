@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
 
@@ -14,3 +15,6 @@ class Foo {
         operator fun setValue(thisRef: Foo, property: KProperty<*>, value: T) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

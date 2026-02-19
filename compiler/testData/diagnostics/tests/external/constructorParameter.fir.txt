@@ -1,0 +1,19 @@
+FILE: constructorParameter.fir.kt
+    public final class NotExternal : R|kotlin/Any| {
+        public constructor(paramProp: R|kotlin/String|, param: R|kotlin/String|): R|NotExternal| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final external val paramProp: R|kotlin/String| = R|<local>/paramProp|
+            public get(): R|kotlin/String|
+
+        public final external val prop: R|kotlin/String|
+            public external get(): R|kotlin/String|
+
+        public final external fun foo(): R|kotlin/Unit|
+
+        public constructor(): R|NotExternal| {
+            this<R|NotExternal|>(String(), String())
+        }
+
+    }

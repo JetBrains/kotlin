@@ -1,4 +1,5 @@
-// !LANGUAGE: -EnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -EnumEntries, -PrioritizedEnumEntries
 // WITH_STDLIB
 
 package pckg
@@ -27,3 +28,6 @@ fun test() {
     val aCompanion = A.Companion
     aCompanion.entries
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, getter, integerLiteral, lambdaLiteral,
+localProperty, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, thisExpression */

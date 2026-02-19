@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
+
 interface C<T> {
     abstract fun foo(x: T): String
 }

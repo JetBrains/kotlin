@@ -1,10 +1,11 @@
-fun useAny(fn: Function0<Any>): Any {
-  return fn.invoke()
-}
-
 fun testNullCheck() {
   useAny(fn = local fun <anonymous>(): Any {
     return string() /*!! String */
   }
 ) /*~> Unit */
 }
+
+fun useAny(fn: Function0<Any>): Any {
+  return fn.invoke()
+}
+

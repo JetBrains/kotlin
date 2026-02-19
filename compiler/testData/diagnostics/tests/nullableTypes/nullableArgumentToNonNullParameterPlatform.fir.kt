@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -12,6 +13,8 @@ public class J {
 
 fun test(j: J, nullStr: String?, nullByte: Byte?, nullDouble: Double?) {
     j.foo(nullStr)
-    j.<!NONE_APPLICABLE!>foo<!>(nullDouble)
+    j.foo(<!ARGUMENT_TYPE_MISMATCH!>nullDouble<!>)
     j.foo(nullByte)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, nullableType */

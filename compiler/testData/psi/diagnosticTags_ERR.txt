@@ -3,8 +3,10 @@ KtFile: diagnosticTags_ERR.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   TYPEALIAS
-    PsiComment(EOL_COMMENT)('// !LANGUAGE: -SuspendFunctionAsSupertype')
+    PsiComment(EOL_COMMENT)('// LANGUAGE: -SuspendFunctionAsSupertype')
     PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
@@ -688,7 +690,7 @@ KtFile: diagnosticTags_ERR.kt
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiErrorElement:Expecting an expression
+                      PsiErrorElement:Expecting an argument
                         <empty list>
                     PsiErrorElement:Expecting ')'
                       PsiElement(LT)('<')
@@ -803,7 +805,7 @@ KtFile: diagnosticTags_ERR.kt
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiErrorElement:Expecting an expression
+                      PsiErrorElement:Expecting an argument
                         <empty list>
                     PsiErrorElement:Expecting ')'
                       PsiElement(LT)('<')

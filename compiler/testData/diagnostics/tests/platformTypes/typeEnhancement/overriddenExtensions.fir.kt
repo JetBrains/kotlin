@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.kt
 open class A {
     open fun String.foo(y: String?): Int = 1
@@ -61,3 +62,6 @@ class D extends B {
     @Override
     int bar(@NotNull String x, @NotNull String y);
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, javaType,
+localProperty, nullableType, override, propertyDeclaration, stringLiteral */

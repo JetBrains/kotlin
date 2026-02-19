@@ -1,4 +1,5 @@
-// !LANGUAGE: +CapturedInClosureSmartCasts
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +CapturedInClosureSmartCasts
 
 fun run(f: () -> Unit) = f()
 
@@ -58,3 +59,6 @@ fun gav(s: String?) {
         x = null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

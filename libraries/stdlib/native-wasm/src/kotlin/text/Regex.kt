@@ -56,7 +56,7 @@ public actual enum class RegexOption(internal val value: Int, internal val mask:
  * @param value The value of captured group.
  * @param range The range of indices in the input string where group was captured.
  */
-public actual data class MatchGroup(actual val value: String, val range: IntRange)
+public actual data class MatchGroup(public actual val value: String, val range: IntRange)
 
 
 /**
@@ -90,42 +90,42 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     }
 
     /** Creates a regular expression from the specified [pattern] string and the default options.  */
-    actual constructor(pattern: String): this(Pattern(pattern))
+    public actual constructor(pattern: String): this(Pattern(pattern))
 
     /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
-    actual constructor(pattern: String, option: RegexOption): this(Pattern(pattern, option.value))
+    public actual constructor(pattern: String, option: RegexOption): this(Pattern(pattern, option.value))
 
     /** Creates a regular expression from the specified [pattern] string and the specified set of [options].  */
-    actual constructor(pattern: String, options: Set<RegexOption>): this(Pattern(pattern, options.toInt()))
+    public actual constructor(pattern: String, options: Set<RegexOption>): this(Pattern(pattern, options.toInt()))
 
 
     /** The pattern string of this regular expression. */
-    actual val pattern: String
+    public actual val pattern: String
         get() = nativePattern.pattern
 
     private val startNode = nativePattern.startNode
 
     /** The set of options that were used to create this regular expression.  */
-    actual val options: Set<RegexOption> = fromInt(nativePattern.flags)
+    public actual val options: Set<RegexOption> = fromInt(nativePattern.flags)
 
-    actual companion object {
+    public actual companion object {
         /**
          * Returns a regular expression that matches the specified [literal] string literally.
          * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
          */
-        actual fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
+        public actual fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
 
         /**
          * Returns a regular expression pattern string that matches the specified [literal] string literally.
          * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
          */
-        actual fun escape(literal: String): String = Pattern.quote(literal)
+        public actual fun escape(literal: String): String = Pattern.quote(literal)
 
         /**
          * Returns a literal replacement expression for the specified [literal] string.
          * No characters of that string will have special meaning when it is used as a replacement string in [Regex.replace] function.
          */
-        actual fun escapeReplacement(literal: String): String {
+        public actual fun escapeReplacement(literal: String): String {
             if (!literal.contains('\\') && !literal.contains('$'))
                 return literal
 
@@ -155,13 +155,12 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     }
 
     /** Indicates whether the regular expression matches the entire [input]. */
-    actual infix fun matches(input: CharSequence): Boolean = doMatch(input, Mode.MATCH) != null
+    public actual infix fun matches(input: CharSequence): Boolean = doMatch(input, Mode.MATCH) != null
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
-    actual fun containsMatchIn(input: CharSequence): Boolean = find(input) != null
+    public actual fun containsMatchIn(input: CharSequence): Boolean = find(input) != null
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchesAt(input: CharSequence, index: Int): Boolean =
         // TODO: expand and simplify
         matchAt(input, index) != null
@@ -175,7 +174,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @sample samples.text.Regexps.find
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? {
+    public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? {
         if (startIndex < 0 || startIndex > input.length) {
             throw IndexOutOfBoundsException("Start index is out of bounds: $startIndex, input length: ${input.length}")
         }
@@ -199,7 +198,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @sample samples.text.Regexps.findAll
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> {
+    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> {
         if (startIndex < 0 || startIndex > input.length) {
             throw IndexOutOfBoundsException("Start index is out of bounds: $startIndex, input length: ${input.length}")
         }
@@ -211,10 +210,9 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      *
      * @return An instance of [MatchResult] if the entire input matches or `null` otherwise.
      */
-    actual fun matchEntire(input: CharSequence): MatchResult?= doMatch(input, Mode.MATCH)
+    public actual fun matchEntire(input: CharSequence): MatchResult?= doMatch(input, Mode.MATCH)
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchAt(input: CharSequence, index: Int): MatchResult? {
         if (index < 0 || index > input.length) {
             throw IndexOutOfBoundsException("index is out of bounds: $index, input length: ${input.length}")
@@ -248,8 +246,10 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @param replacement the expression to replace found matches with
      * @return the result of replacing each occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
      * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     *
+     * @sample samples.text.Regexps.replaceWithExpression
      */
-    actual fun replace(input: CharSequence, replacement: String): String
+    public actual fun replace(input: CharSequence, replacement: String): String
             = replace(input) { match -> substituteGroupRefs(match, replacement) }
 
     /**
@@ -257,7 +257,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * the given function [transform] that takes [MatchResult] and returns a string to be used as a
      * replacement for that match.
      */
-    actual fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
+    public actual fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
         var match: MatchResult? = find(input) ?: return input.toString()
 
         var lastStart = 0
@@ -296,8 +296,10 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @param replacement the expression to replace the found match with
      * @return the result of replacing the first occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
      * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     *
+     * @sample samples.text.Regexps.replaceFirstWithExpression
      */
-    actual fun replaceFirst(input: CharSequence, replacement: String): String {
+    public actual fun replaceFirst(input: CharSequence, replacement: String): String {
         val match = find(input) ?: return input.toString()
         val length = input.length
         val result = StringBuilder(length)
@@ -312,11 +314,21 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
+     * The last element of the resulting list corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting list will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting list will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     *
+     * @sample samples.text.Regexps.split
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    actual fun split(input: CharSequence, limit: Int = 0): List<String> {
+    public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
         requireNonNegativeLimit(limit)
 
         var match: MatchResult? = find(input)
@@ -342,12 +354,19 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     /**
      * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
      *
+     * The last element of the resulting sequence corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting sequence will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting sequence will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
         requireNonNegativeLimit(limit)

@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
+import org.jetbrains.kotlin.ir.declarations.DelicateIrParameterIndexSetter
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
-    @OptIn(ExperimentalStdlibApi::class)
     fun generateScriptDeclaration(ktScript: KtScript): IrDeclaration? {
         val descriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktScript) as ScriptDescriptor
 
@@ -53,24 +53,25 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
 
             val importedScripts = descriptor.implicitReceivers.filterIsInstanceTo(HashSet<ScriptDescriptor>())
 
-            fun makeParameter(descriptor: ParameterDescriptor, origin: IrDeclarationOrigin, index: Int = -1): IrValueParameter {
+            fun makeParameter(descriptor: ParameterDescriptor, origin: IrDeclarationOrigin, kind: IrParameterKind): IrValueParameter {
                 val type = descriptor.type.toIrType()
                 val varargElementType = descriptor.varargElementType?.toIrType()
                 return context.symbolTable.descriptorExtension.declareValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     origin,
                     descriptor,
-                    type
+                    kind,
+                    type,
                 ) { symbol ->
                     context.irFactory.createValueParameter(
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
                         origin = origin,
+                        kind = kind,
                         name = context.symbolTable.nameProvider.nameForDeclaration(descriptor),
                         type = type,
                         isAssignable = false,
                         symbol = symbol,
-                        index = if (index != UNDEFINED_PARAMETER_INDEX) index else descriptor.indexOrMinusOne,
                         varargElementType = varargElementType,
                         isCrossinline = descriptor.isCrossinline,
                         isNoinline = descriptor.isNoinline,
@@ -79,15 +80,11 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 }.also { it.parent = irScript }
             }
 
-            irScript.thisReceiver = makeParameter(descriptor.thisAsReceiverParameter, IrDeclarationOrigin.INSTANCE_RECEIVER)
+            irScript.thisReceiver = makeParameter(
+                descriptor.thisAsReceiverParameter, IrDeclarationOrigin.INSTANCE_RECEIVER, IrParameterKind.DispatchReceiver
+            )
 
             irScript.baseClass = descriptor.typeConstructor.supertypes.single().toIrType()
-
-            // This is part of a hack for implicit receivers that converted to value parameters below
-            // The proper schema would be to get properly indexed parameters from frontend (descriptor.implicitReceiversParameters),
-            // but it seems would require a proper remapping for the script body
-            // TODO: implement implicit receiver parameters handling properly
-            var parametersIndex = 0
 
             irScript.earlierScripts = context.extensions.getPreviousScripts()?.filter {
                 // TODO: probably unnecessary filtering
@@ -102,11 +99,11 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER,
+                    kind = IrParameterKind.Regular,
                     name = valueParameterDescriptor.name,
                     type = valueParameterDescriptor.type.toIrType(),
                     isAssignable = false,
                     symbol = IrValueParameterSymbolImpl(),
-                    index = parametersIndex++,
                     varargElementType = valueParameterDescriptor.varargElementType?.toIrType(),
                     isCrossinline = valueParameterDescriptor.isCrossinline,
                     isNoinline = valueParameterDescriptor.isNoinline,
@@ -131,7 +128,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
             }
 
             irScript.implicitReceiversParameters = descriptor.implicitReceivers.map {
-                makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, parametersIndex++)
+                makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, IrParameterKind.Regular)
             }
 
             descriptor.scriptProvidedProperties.zip(descriptor.scriptProvidedPropertiesParameters) { providedProperty, parameter ->
@@ -140,24 +137,23 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 val type = providedProperty.type.toIrType()
                 val valueParameter = context.symbolTable.descriptorExtension.declareValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
+                    IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, IrParameterKind.Regular, type
                 ) { symbol ->
                     context.irFactory.createValueParameter(
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
                         origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY,
+                        kind = IrParameterKind.Regular,
                         name = descriptor.name,
                         type = type,
                         isAssignable = false,
                         symbol = symbol,
-                        index = parametersIndex,
                         varargElementType = null,
                         isCrossinline = false,
                         isNoinline = false,
                         isHidden = false,
                     ).also { it.parent = irScript }
                 }
-                parametersIndex++
                 val irProperty =
                     PropertyGenerator(declarationGenerator).generateSyntheticProperty(
                         ktScript,
@@ -192,7 +188,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     containerSource = containerSource
                 )
             }.also { irConstructor ->
-                irConstructor.valueParameters = buildList {
+                irConstructor.parameters = buildList {
                     addIfNotNull(irScript.earlierScriptsParameter)
                     addAll(explicitCallParams)
                     addAll(irScript.implicitReceiversParameters)

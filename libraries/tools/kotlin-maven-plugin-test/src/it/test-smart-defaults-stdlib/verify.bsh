@@ -1,0 +1,21 @@
+import java.io.*;
+
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
+
+/**
+ * Verify that smart defaults work correctly:
+ * 1. kotlin-stdlib is automatically added when extensions=true
+ * 2. Source roots are automatically detected
+ * 3. Project compiles successfully
+ */
+
+// Check that smart defaults were enabled
+assertBuildLogHasLineThatContains("Kotlin smart defaults are enabled");
+
+// Check that kotlin-stdlib was added
+assertBuildLogHasLineThatContains("Added kotlin-stdlib dependency");
+
+// Check that MainKt class exists
+assertFileExists("target/classes/test/MainKt.class");
+
+print("Smart defaults stdlib test passed!");

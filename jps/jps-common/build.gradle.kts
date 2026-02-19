@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -28,10 +27,12 @@ dependencies {
     compileOnly(jpsModel())
     compileOnly(jpsModelImpl())
     compileOnly(jpsModelSerialization())
+    compileOnly(intellijJDom())
+    testCompileOnly(intellijJDom())
 
-    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:cli-base"))
     testImplementation(jpsModelSerialization())
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(kotlin("test-junit"))
 }
 
@@ -44,8 +45,3 @@ sourceSets {
 }
 
 runtimeJar()
-
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-}

@@ -1,0 +1,4 @@
+-o
+$TEMP_DIR$/out
+-p
+program

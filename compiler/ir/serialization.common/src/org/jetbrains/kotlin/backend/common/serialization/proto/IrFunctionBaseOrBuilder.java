@@ -49,6 +49,20 @@ public interface IrFunctionBaseOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getDispatchReceiver();
 
   /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> 
+      getContextParameterList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getContextParameter(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  int getContextParameterCount();
+
+  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
    */
   boolean hasExtensionReceiver();
@@ -58,34 +72,33 @@ public interface IrFunctionBaseOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getExtensionReceiver();
 
   /**
-   * <code>optional int32 context_receiver_parameters_count = 8;</code>
-   */
-  boolean hasContextReceiverParametersCount();
-  /**
-   * <code>optional int32 context_receiver_parameters_count = 8;</code>
-   */
-  int getContextReceiverParametersCount();
-
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> 
-      getValueParameterList();
+      getRegularParameterList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getValueParameter(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getRegularParameter(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
-  int getValueParameterCount();
+  int getRegularParameterCount();
 
   /**
    * <code>optional int32 body = 7;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
    */
   boolean hasBody();
   /**
    * <code>optional int32 body = 7;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
    */
   int getBody();
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface Trait {
     fun bar() = 42
@@ -22,3 +23,6 @@ class Outer : Trait {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, interfaceDeclaration, localClass,
+localProperty, propertyDeclaration, superExpression, thisExpression */

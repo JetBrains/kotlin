@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 interface MyInterfaceWithoutBreakpoints {
@@ -34,14 +34,12 @@ fun box() {
 }
 
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:31 box
 // test.kt:16 <init>
 // test.kt:18 <init>
 // test.kt:21 <init>
-// EXPECTATIONS JVM_IR
 // test.kt:16 <init>
-// EXPECTATIONS JVM JVM_IR
 // test.kt:31 box
 // test.kt:32 box
 // test.kt:16 testPropertyInInterface
@@ -67,6 +65,38 @@ fun box() {
 // test.kt:27 testPropertyInInterfaceImpl
 // test.kt:34 box
 
+// EXPECTATIONS NATIVE
+// test.kt:31 box
+// test.kt:16 <init>
+// test.kt:18 <init>
+// test.kt:21 <init>
+// test.kt:28 <init>
+// test.kt:31 box
+// test.kt:32 box
+// test.kt:8 testPropertyInInterface
+// test.kt:9 testPropertyInInterface
+// test.kt:18 <get-propVal2>
+// test.kt:9 testPropertyInInterface
+// test.kt:10 testPropertyInInterface
+// test.kt:21 <get-propVar2>
+// test.kt:10 testPropertyInInterface
+// test.kt:11 testPropertyInInterface
+// test.kt:21 <set-propVar2>
+// test.kt:12 testPropertyInInterface
+// test.kt:32 box
+// test.kt:33 box
+// test.kt:23 testPropertyInInterfaceImpl
+// test.kt:24 testPropertyInInterfaceImpl
+// test.kt:18 <get-propVal2>
+// test.kt:24 testPropertyInInterfaceImpl
+// test.kt:25 testPropertyInInterfaceImpl
+// test.kt:21 <get-propVar2>
+// test.kt:25 testPropertyInInterfaceImpl
+// test.kt:26 testPropertyInInterfaceImpl
+// test.kt:21 <set-propVar2>
+// test.kt:27 testPropertyInInterfaceImpl
+// test.kt:34 box
+
 // EXPECTATIONS JS_IR
 // test.kt:31 box
 // test.kt:18 <init>
@@ -85,3 +115,20 @@ fun box() {
 // test.kt:26 testPropertyInInterfaceImpl
 // test.kt:27 testPropertyInInterfaceImpl
 // test.kt:34 box
+
+// EXPECTATIONS WASM
+// test.kt:31 $box (17)
+// test.kt:18 $MyInterfaceImplWithBreakpoints.<init> (28)
+// test.kt:21 $MyInterfaceImplWithBreakpoints.<init> (28)
+// test.kt:28 $MyInterfaceImplWithBreakpoints.<init> (1)
+// test.kt:32 $box (4, 11)
+// test.kt:9 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (8)
+// test.kt:10 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (8)
+// test.kt:11 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (8, 19, 8)
+// test.kt:12 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (5)
+// test.kt:33 $box (4, 11)
+// test.kt:24 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8)
+// test.kt:25 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8)
+// test.kt:26 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8, 19, 8)
+// test.kt:27 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (5)
+// test.kt:34 $box (1)

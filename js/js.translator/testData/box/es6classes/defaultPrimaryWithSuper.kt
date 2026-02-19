@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1355
-
 var sideEffect = ""
 
 open class Summator(x: Int, y: Int) {

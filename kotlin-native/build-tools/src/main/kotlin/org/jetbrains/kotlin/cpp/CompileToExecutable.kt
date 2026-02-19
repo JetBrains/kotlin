@@ -12,16 +12,16 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
+import org.jetbrains.kotlin.platformManagerProvider
 import java.io.OutputStream
 import javax.inject.Inject
 
@@ -76,22 +76,12 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
 
     private fun compile() {
         with(parameters) {
-            val execClang = ExecClang.create(objects, platformManager.get())
-
             val args = clangFlags.get() + listOf(llvmLinkOutputFile.asFile.get().absolutePath, "-o", compilerOutputFile.asFile.get().absolutePath)
 
             compilerOutputFile.asFile.get().parentFile.mkdirs()
 
-            if (target.family.isAppleFamily) {
-                execClang.execToolchainClang(target) {
-                    executable = "clang++"
-                    this.args = args
-                }
-            } else {
-                execClang.execBareClang {
-                    executable = "clang++"
-                    this.args = args
-                }
+            execOperations.execLlvmUtility(platformManager.get(), "clang++") {
+                this.args = args
             }
         }
     }
@@ -137,35 +127,33 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
  *
  * @see CompileToBitcodePlugin
  */
-abstract class CompileToExecutable : DefaultTask() {
-
-    private val platformManager = project.extensions.getByType<PlatformManager>()
+@CacheableTask
+open class CompileToExecutable @Inject constructor(
+        objectFactory: ObjectFactory,
+        private val workerExecutor: WorkerExecutor,
+) : DefaultTask() {
+    @get:Nested
+    protected val platformManagerProvider = objectFactory.platformManagerProvider(project)
 
     /**
      * Target for which to compile.
      */
     @get:Input
-    abstract val target: Property<KonanTarget>
+    val target: Property<KonanTarget> = objectFactory.property(KonanTarget::class.java)
 
     /**
      * Sanitizer for which to compile.
      */
     @get:Input
     @get:Optional
-    abstract val sanitizer: Property<SanitizerKind>
-
-    // TODO: Should be replaced by a list of libraries to be linked with.
-    /**
-     * Controls whether linker should add library dependencies.
-     */
-    @get:Input
-    abstract val mimallocEnabled: Property<Boolean>
+    val sanitizer: Property<SanitizerKind> = objectFactory.property(SanitizerKind::class.java)
 
     /**
      * Bitcode file with the `main()` entrypoint.
      */
     @get:InputFile
-    abstract val mainFile: RegularFileProperty
+    @get:PathSensitive(PathSensitivity.NONE)
+    val mainFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Bitcode files.
@@ -174,49 +162,59 @@ abstract class CompileToExecutable : DefaultTask() {
      */
     @get:SkipWhenEmpty
     @get:InputFiles
-    abstract val inputFiles: ConfigurableFileCollection
+    @get:PathSensitive(PathSensitivity.NONE)
+    val inputFiles: ConfigurableFileCollection = objectFactory.fileCollection()
 
     /**
      * Internal file with first stage llvm-link result.
      */
-    @get:Internal
-    abstract val llvmLinkFirstStageOutputFile: RegularFileProperty
+    @get:Internal("Intermittent compilation state")
+    val llvmLinkFirstStageOutputFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Internal file with final stage llvm-link result.
      */
-    @get:Internal
-    abstract val llvmLinkOutputFile: RegularFileProperty
+    @get:Internal("Intermittent compilation state")
+    val llvmLinkOutputFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Internal file with compiler result.
      */
-    @get:Internal
-    abstract val compilerOutputFile: RegularFileProperty
+    @get:Internal("Intermittent compilation state")
+    val compilerOutputFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Final executable.
      */
     @get:OutputFile
-    abstract val outputFile: RegularFileProperty
+    val outputFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Extra args to the compiler.
      */
     @get:Input
-    abstract val compilerArgs: ListProperty<String>
+    val compilerArgs: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     /**
      * Extra args to the linker.
      */
     @get:Input
-    abstract val linkerArgs: ListProperty<String>
+    val linkerArgs: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
-    @get:Input
-    protected val linkCommands: Provider<List<List<String>>> = project.provider {
-        // Getting link commands requires presence of a target toolchain.
-        // Thus we cannot get them at the configuration stage because the toolchain may be not downloaded yet.
-        platformManager.platform(target.get()).linker.finalLinkCommands(
+    @TaskAction
+    fun compile() {
+        val workQueue = workerExecutor.noIsolation()
+
+        val platformManager = platformManagerProvider.platformManager.get()
+
+        val defaultClangFlags = buildClangFlags(platformManager.platform(target.get()).configurables)
+        val sanitizerFlags = when (sanitizer.orNull) {
+            null -> listOf()
+            SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
+            SanitizerKind.THREAD -> listOf("-fsanitize=thread")
+        }
+
+        val linkCommands = platformManager.platform(target.get()).linker.finalLinkCommands(
                 listOf(compilerOutputFile.asFile.get().absolutePath),
                 outputFile.asFile.get().absolutePath,
                 listOf(),
@@ -225,25 +223,9 @@ abstract class CompileToExecutable : DefaultTask() {
                 debug = true,
                 kind = LinkerOutputKind.EXECUTABLE,
                 outputDsymBundle = outputFile.asFile.get().absolutePath + ".dSYM",
-                needsProfileLibrary = false,
-                mimallocEnabled = mimallocEnabled.get(),
+                mimallocEnabled = false, // Unused in the linker
                 sanitizer = sanitizer.orNull
         ).map { it.argsWithExecutable }
-    }
-
-    @get:Inject
-    protected abstract val workerExecutor: WorkerExecutor
-
-    @TaskAction
-    fun compile() {
-        val workQueue = workerExecutor.noIsolation()
-
-        val defaultClangFlags = buildClangFlags(platformManager.platform(target.get()).configurables)
-        val sanitizerFlags = when (sanitizer.orNull) {
-            null -> listOf()
-            SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
-            SanitizerKind.THREAD -> listOf("-fsanitize=thread")
-        }
 
         workQueue.submit(CompileToExecutableJob::class.java) {
             mainFile.set(this@CompileToExecutable.mainFile)
@@ -254,8 +236,8 @@ abstract class CompileToExecutable : DefaultTask() {
             outputFile.set(this@CompileToExecutable.outputFile)
             targetName.set(this@CompileToExecutable.target.get().name)
             clangFlags.addAll(defaultClangFlags + compilerArgs.get() + sanitizerFlags)
-            linkCommands.set(this@CompileToExecutable.linkCommands)
-            platformManager.set(this@CompileToExecutable.platformManager)
+            this.linkCommands.set(linkCommands)
+            this.platformManager.set(platformManager)
         }
     }
 }

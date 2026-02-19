@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 // FULL_JDK
 // FILE: JR.java
 
@@ -141,3 +142,6 @@ fun ks4() {}
 @KS
 @KS.Container([KS(), KS()])
 fun ks5() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, collectionLiteral, functionDeclaration, javaFunction,
+javaType, nestedClass, primaryConstructor, propertyDeclaration */

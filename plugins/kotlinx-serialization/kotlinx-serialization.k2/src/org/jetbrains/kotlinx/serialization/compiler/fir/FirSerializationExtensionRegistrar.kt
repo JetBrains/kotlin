@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
+import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationCheckersComponent
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.ContextualSerializersProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.DependencySerializationInfoProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.FirSerializablePropertiesProvider
@@ -17,12 +19,15 @@ class FirSerializationExtensionRegistrar : FirExtensionRegistrar() {
         +::SerializationFirResolveExtension
         +::SerializationFirSupertypesExtension
         +::FirSerializationCheckersComponent
-        +::SerializationFirDeclarationsForMetadataProvider
+        @OptIn(FirExtensionApiInternals::class)
+        +::FirSerializationMetadataSerializerPlugin
 
         // services
         +::DependencySerializationInfoProvider
         +::FirSerializablePropertiesProvider
         +::FirVersionReader
         +::ContextualSerializersProvider
+
+        registerDiagnosticContainers(FirSerializationErrors)
     }
 }

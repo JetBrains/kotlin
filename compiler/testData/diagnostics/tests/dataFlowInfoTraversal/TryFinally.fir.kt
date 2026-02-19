@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun tryFinally(x: Int?) {
     try {
@@ -19,3 +20,6 @@ fun tryCatchFinally(x: Int?) {
     }
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, localProperty, nullableType, propertyDeclaration, smartcast, tryExpression, typeParameter, typeWithExtension */

@@ -2,6 +2,7 @@ description = "Kotlin compiler client embeddable"
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 val testCompilerClasspath by configurations.creating {
@@ -14,18 +15,16 @@ val testCompilerClasspath by configurations.creating {
 val testCompilationClasspath by configurations.creating
 
 dependencies {
-    embedded(project(":compiler:cli-common")) { isTransitive = false }
+    embedded(project(":compiler:cli-base")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":daemon-common"))
-    testApi(project(":kotlin-daemon-client"))
-    testApi(commonDependency("junit:junit"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(project(":daemon-common"))
+    testImplementation(project(":kotlin-daemon-client"))
+    testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit"))
     testCompilerClasspath(project(":kotlin-compiler"))
-    testCompilerClasspath(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testCompilerClasspath(project(":kotlin-scripting-compiler"))
     testCompilerClasspath(project(":kotlin-daemon"))
     testCompilationClasspath(kotlinStdlib())
@@ -37,14 +36,16 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
-    dependsOn(":kotlin-compiler:jar")
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
-    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
-    doFirst {
-        systemProperty("compilerClasspath", testCompilerClasspathProvider.get())
-        systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":kotlin-compiler:jar")
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+        val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
+        val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+        doFirst {
+            systemProperty("compilerClasspath", testCompilerClasspathProvider.get())
+            systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
+        }
     }
 }
 

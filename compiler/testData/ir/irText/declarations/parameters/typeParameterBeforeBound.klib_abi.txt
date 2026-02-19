@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: #B, #B: kotlin/Any?> /Test1 { // /Test1|null[0]
+    constructor <init>() // /Test1.<init>|<init>(){}[0]
+}
+final var /test3 // /test3|@Test1<0:0,0:1>{0§<0:1>;1§<kotlin.Any?>}test3[0]
+    final fun <#A1: #B1, #B1: kotlin/Any?> (/Test1<#A1, #B1>).<get-test3>() // /test3.<get-test3>|<get-test3>@Test1<0:0,0:1>(){0§<0:1>;1§<kotlin.Any?>}[0]
+    final fun <#A1: #B1, #B1: kotlin/Any?> (/Test1<#A1, #B1>).<set-test3>(kotlin/Unit) // /test3.<set-test3>|<set-test3>@Test1<0:0,0:1>(kotlin.Unit){0§<0:1>;1§<kotlin.Any?>}[0]
+final fun <#A: #B, #B: kotlin/Any?> /test2() // /test2|test2(){0§<0:1>;1§<kotlin.Any?>}[0]

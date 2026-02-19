@@ -1,2 +1,0 @@
-Resolved to:
-0: (in JavaTest.SomeJavaClass) open fun setListener(listener: JavaTest.SAMInterface!)

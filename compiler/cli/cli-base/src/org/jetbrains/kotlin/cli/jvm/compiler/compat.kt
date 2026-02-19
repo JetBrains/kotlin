@@ -10,22 +10,46 @@ import com.intellij.openapi.diagnostic.Logger
 
 object IdeaStandaloneExecutionSetup {
     private val LOG: Logger = Logger.getInstance(IdeaStandaloneExecutionSetup::class.java)
+
     // Copy-pasted from com.intellij.openapi.util.BuildNumber#FALLBACK_VERSION
     private const val FALLBACK_IDEA_BUILD_NUMBER = "999.SNAPSHOT"
 
     fun doSetup() {
         checkInHeadlessMode()
 
-        System.getProperties().setProperty("project.structure.add.tools.jar.to.new.jdk", "false")
-        System.getProperties().setProperty("psi.track.invalidation", "true")
-        System.getProperties().setProperty("psi.incremental.reparse.depth.limit", "1000")
-        System.getProperties().setProperty("ide.hide.excluded.files", "false")
-        System.getProperties().setProperty("ast.loading.filter", "false")
-        System.getProperties().setProperty("idea.ignore.disabled.plugins", "true")
+        System.setProperty("project.structure.add.tools.jar.to.new.jdk", "false")
+        System.setProperty("psi.track.invalidation", "true")
+        System.setProperty("psi.incremental.reparse.depth.limit", "1000")
+        System.setProperty("psi.sleep.in.validity.check", "false")
+        System.setProperty("ide.hide.excluded.files", "false")
+        System.setProperty("ast.loading.filter", "false")
+        System.setProperty("idea.ignore.disabled.plugins", "true")
+        System.setProperty("platform.random.idempotence.check.rate", "1000")
+        workaroundEarlyAccessRegistryQueryProblem()
         // Setting the build number explicitly avoids the command-line compiler
         // reading /tmp/build.txt in an attempt to get a build number from there.
         // See intellij platform PluginManagerCore.getBuildNumber.
-        System.getProperties().setProperty("idea.plugins.compatible.build", FALLBACK_IDEA_BUILD_NUMBER)
+        System.setProperty("idea.plugins.compatible.build", FALLBACK_IDEA_BUILD_NUMBER)
+
+        // TODO: Remove it once KT-81457 is fixed
+        System.setProperty("ide.enable.implicit.blocking.context", "false")
+    }
+
+    /**
+     * A workaround for the problem introduced in https://github.com/JetBrains/intellij-community/commit/58409581337c8d0a74a748977843fd1a80adf1c8
+     *
+     * e: java.lang.ExceptionInInitializerError
+     * 	 at org.jetbrains.kotlin.com.intellij.ide.plugins.PluginEnabler.<clinit>(PluginEnabler.java:22)
+     *   ...
+     * Caused by: java.lang.RuntimeException: Could not find installation home path. Please reinstall the software.
+     *   at org.jetbrains.kotlin.com.intellij.openapi.application.PathManager.getHomePath(PathManager.java:98)
+     *   ...
+     */
+    private fun workaroundEarlyAccessRegistryQueryProblem() {
+        val key = "idea.config.path"
+        if (System.getProperty(key) == null) {
+            System.setProperty(key, "some/non/existent/path")
+        }
     }
 
     private fun checkInHeadlessMode() {

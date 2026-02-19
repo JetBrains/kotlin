@@ -8,11 +8,12 @@ dependencies {
     api(project(":kotlin-scripting-jvm-host-unshaded"))
     api(kotlinStdlib())
     compileOnly(project(":compiler:util"))
+    compileOnly(project(":kotlin-scripting-compiler"))
 
-    testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(project(":kotlin-scripting-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler-embeddable"))
+    testRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
 
-    testApi(commonDependency("junit"))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

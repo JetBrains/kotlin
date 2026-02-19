@@ -7,7 +7,7 @@
 
 #include "NSNotificationSubscription.hpp"
 
-#import <Foundation/NSNotification.h>
+#import <Foundation/Foundation.h>
 
 using namespace kotlin;
 

@@ -1,5 +1,6 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 
 fun testJumpOutInElvis(x: Int?) {
@@ -41,3 +42,7 @@ fun testJumpOutInIf(x: Int?) {
 
     x<!UNSAFE_CALL!>.<!>inc() // Actually, safe, but it's OK if it's error
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject, whileLoop */

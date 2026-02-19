@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package kotlin.test
 
-import kotlin.math.abs
 import kotlin.js.*
 
 // Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
@@ -14,7 +15,7 @@ private external fun d8Arguments(): String
 @JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
 private external fun nodeArguments(): String
 
-internal fun getArguments(): List<String> = (d8Arguments().ifEmpty { nodeArguments() }).split(' ')
+internal actual fun getArguments(): List<String> = (d8Arguments().ifEmpty { nodeArguments() }).split(' ')
 
 internal class TeamcityAdapterWithPromiseSupport : TeamcityAdapter() {
     private var scheduleNextTaskAfter: Promise<JsAny?>? = null

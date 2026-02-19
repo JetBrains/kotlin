@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-3563 Compiler requiring java.io.File, and it's unclear why
 
@@ -15,3 +16,6 @@ fun foo(f: File, c: Customer) {
 
 val File.name1: String
     get() = getName()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, getter, javaFunction, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver */

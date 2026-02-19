@@ -1,0 +1,1 @@
+@R|java/lang/Deprecated|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class AAA : R|kotlin/Any|

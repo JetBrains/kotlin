@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // FILE: A.java
 
 public class A<E> {
@@ -14,3 +15,6 @@ fun test(x: List<Int>, y: List<String>) {
     A<CharSequence, String>("", <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
     A<CharSequence, String>("", y)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension */

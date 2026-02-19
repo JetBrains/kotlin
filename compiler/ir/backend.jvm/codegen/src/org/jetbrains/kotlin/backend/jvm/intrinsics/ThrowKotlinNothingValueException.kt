@@ -10,20 +10,16 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 
-object ThrowKotlinNothingValueException : IntrinsicMethod() {
+object ThrowKotlinNothingValueException : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction =
         IntrinsicFunction.create(expression, signature, classCodegen) { mv ->
-            if (classCodegen.context.config.useKotlinNothingValueException) {
-                mv.anew(Type.getObjectType("kotlin/KotlinNothingValueException"))
-                mv.dup()
-                mv.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false)
-            } else {
-                mv.aconst(null)
-            }
+            mv.anew(Type.getObjectType("kotlin/KotlinNothingValueException"))
+            mv.dup()
+            mv.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false)
             mv.athrow()
         }
 }

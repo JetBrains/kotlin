@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.kt
 class A(@Deprecated("") val s: String) {
@@ -16,3 +17,6 @@ fun use() {
 }
 
 data class DC(@Deprecated("") val a: String)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, secondaryConstructor, stringLiteral */

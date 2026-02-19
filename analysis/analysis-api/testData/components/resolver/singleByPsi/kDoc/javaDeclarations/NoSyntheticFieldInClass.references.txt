@@ -1,0 +1,26 @@
+<caret_1>:
+  KDocName(25,38): 'Storage.value'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: null
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(44,60): 'Storage.setValue'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in Storage) open fun setValue(value: kotlin.String!)
+
+<caret_3>:
+  KDocName(66,78): 'Storage.prop'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in Storage) open fun prop()

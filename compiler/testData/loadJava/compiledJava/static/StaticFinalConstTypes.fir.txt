@@ -1,0 +1,64 @@
+public open class StaticFinalConstTypes : R|kotlin/Any| {
+    public final static field stringField: R|kotlin/String| = String(0)
+
+    public final static field stringFieldNull: R|kotlin/String!|
+
+    public final static field booleanField: R|kotlin/Boolean!|
+
+    public final static field booleanFieldNull: R|kotlin/Boolean!|
+
+    public final static field booleanPrimitiveField: R|kotlin/Boolean| = Boolean(false)
+
+    public final static field characterField: R|kotlin/Char!|
+
+    public final static field characterFieldNull: R|kotlin/Char!|
+
+    public final static field characterPrimitiveField: R|kotlin/Char| = Char(0)
+
+    public final static field byteField: R|kotlin/Byte!|
+
+    public final static field byteFieldNull: R|kotlin/Byte!|
+
+    public final static field bytePrimitiveField: R|kotlin/Byte| = Byte(0)
+
+    public final static field shortField: R|kotlin/Short!|
+
+    public final static field shortFieldNull: R|kotlin/Short!|
+
+    public final static field shortPrimitiveField: R|kotlin/Short| = Short(0)
+
+    public final static field integerField: R|kotlin/Int!|
+
+    public final static field integerFieldNull: R|kotlin/Int!|
+
+    public final static field integerPrimitiveField: R|kotlin/Int| = Int(0)
+
+    public final static field longField: R|kotlin/Long!|
+
+    public final static field longFieldNull: R|kotlin/Long!|
+
+    public final static field longPrimitiveField: R|kotlin/Long| = Long(0)
+
+    public final static field floatField: R|kotlin/Float!|
+
+    public final static field floatFieldNull: R|kotlin/Float!|
+
+    public final static field floatPrimitiveField: R|kotlin/Float| = Float(0.0)
+
+    public final static field doubleField: R|kotlin/Double!|
+
+    public final static field doubleFieldNull: R|kotlin/Double!|
+
+    public final static field doublePrimitiveField: R|kotlin/Double| = Double(0.0)
+
+    public final static field uByteField: R|kotlin/UByte!|
+
+    public final static field uShortField: R|kotlin/UShort!|
+
+    public final static field uIntField: R|kotlin/UInt!|
+
+    public final static field uLongField: R|kotlin/ULong!|
+
+    public constructor(): R|test/StaticFinalConstTypes|
+
+}

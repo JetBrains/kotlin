@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     @ann0 var x0 = foo0()
 

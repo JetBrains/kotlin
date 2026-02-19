@@ -1,5 +1,5 @@
 public open class FieldOfArrayType : R|kotlin/Any| {
-    public open field files: R|ft<kotlin/Array<java/io/File!>, kotlin/Array<out java/io/File!>?>|
+    public field files: R|ft<kotlin/Array<java/io/File!>, kotlin/Array<out java/io/File!>?>|
 
     public constructor(): R|test/FieldOfArrayType|
 

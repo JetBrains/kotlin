@@ -1,5 +1,6 @@
-// !LANGUAGE: +ProhibitTypeParametersInAnonymousObjects
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitTypeParametersInAnonymousObjects
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-28999
 
 fun case_1() {
@@ -48,3 +49,7 @@ inline fun <reified T> case_5() {
         <!UNRESOLVED_REFERENCE!>println<!>(a)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, functionDeclaration, ifExpression, inline,
+integerLiteral, intersectionType, isExpression, localProperty, nullableType, propertyDeclaration, reified, smartcast,
+typeParameter */

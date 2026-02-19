@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.types.toConeTypeProjection
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.type
 
-object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionChecker() {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val calleeReference = expression.calleeReference
         val typeArguments = expression.typeArguments
         val typeParameters = calleeReference.toResolvedCallableSymbol()?.typeParameterSymbols ?: return
@@ -30,12 +32,11 @@ object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionC
             val typeArgument = typeArgumentProjection.toConeTypeProjection().type ?: continue
             val typeParameter = typeParameters[index]
 
-            if (typeParameter.isReified && typeArgument.toRegularClassSymbol(context.session)?.forwardDeclarationKindOrNull() != null) {
+            if (typeParameter.isReified && typeArgument.toRegularClassSymbol()?.forwardDeclarationKindOrNull() != null) {
                 reporter.reportOn(
                     source,
                     FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT,
-                    typeArgument,
-                    context,
+                    typeArgument
                 )
             }
         }

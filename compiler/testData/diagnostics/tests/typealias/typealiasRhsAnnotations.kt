@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidExtensionFunctionTypeOnNonFunctionTypes
+// LANGUAGE: -ForbidExtensionFunctionTypeOnNonFunctionTypes
 @Target(AnnotationTarget.TYPE)
 annotation class Ann1
 
@@ -15,3 +16,5 @@ fun test2(a: Alias3) = a
 
 typealias LA1 = List<@Ann2 Alias1>
 fun test3(la1: LA1) = la1
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, typeAliasDeclaration */

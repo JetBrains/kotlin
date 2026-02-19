@@ -1,0 +1,43 @@
+diff --git a/gradle.properties b/gradle.properties
+index a379e11f0..297497a15 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -22,5 +22,7 @@ org.gradle.parallel=true
+ org.gradle.configureondemand=true
+ android.defaults.buildfeatures.buildconfig=true
+ android.nonFinalResIds=false
++kotlin.compiler.runViaBuildToolsApi=true
+
+ kotlinVersion=<kotlin_version>
++com.squareup.anvil.trackSourceFiles=false
+diff --git a/versions.properties b/versions.properties
+index aa37e7e0f..0c8340236 100644
+--- a/versions.properties
++++ b/versions.properties
+@@ -9,7 +9,7 @@
+
+ plugin.android=8.5.1
+
+-plugin.com.squareup.anvil=2.5.0
++plugin.com.squareup.anvil=2.7.0
+
+ plugin.org.jetbrains.dokka=1.8.20
+
+@@ -17,7 +17,7 @@ plugin.com.osacky.fulladle=0.17.4
+
+ plugin.org.jmailen.kotlinter=5.0.0
+
+-plugin.com.google.devtools.ksp=2.1.20-1.0.32
++plugin.com.google.devtools.ksp=2.3.0
+
+ plugin.com.diffplug.spotless=6.1.2
+
+@@ -49,7 +49,7 @@ version.androidx.legacy=1.0.0
+
+ version.androidx.lifecycle=2.8.5
+
+-version.androidx.room=2.6.1
++version.androidx.room=2.8.2
+
+ version.androidx.swiperefreshlayout=1.1.0
+

@@ -41,8 +41,9 @@ data class DiagnosticParameter(
     val type: KType
 )
 
-enum class PositioningStrategy(private val strategy: String? = null) {
+enum class PositioningStrategy {
     DEFAULT,
+    SYNTAX_ERROR,
     VAL_OR_VAR_NODE,
     SECONDARY_CONSTRUCTOR_DELEGATION_CALL,
     DECLARATION_NAME,
@@ -66,6 +67,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     LATEINIT_MODIFIER,
     INLINE_OR_VALUE_MODIFIER,
     INNER_MODIFIER,
+    SUSPEND_MODIFIER,
     SELECTOR_BY_QUALIFIED,
     REFERENCE_BY_QUALIFIED,
     REFERENCED_NAME_BY_QUALIFIED,
@@ -76,34 +78,38 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     SAFE_ACCESS,
     AS_TYPE,
     USELESS_ELVIS,
+    USELESS_ELVIS_LEFT,
     NAME_OF_NAMED_ARGUMENT,
     VALUE_ARGUMENTS,
     VALUE_ARGUMENTS_LIST,
     SUPERTYPES_LIST,
     RETURN_WITH_LABEL,
-    PROPERTY_INITIALIZER,
+    VARIABLE_INITIALIZER,
     WHOLE_ELEMENT,
     LONG_LITERAL_SUFFIX,
     REIFIED_MODIFIER,
     TYPE_PARAMETERS_LIST,
+    FUNCTION_TYPE_RECEIVER,
     FUN_MODIFIER,
     FUN_INTERFACE,
     NAME_IDENTIFIER,
     QUESTION_MARK_BY_TYPE,
     ANNOTATION_USE_SITE,
     IMPORT_LAST_NAME,
+    IMPORT_LAST_BUT_ONE_NAME,
     DATA_MODIFIER,
     SPREAD_OPERATOR,
     DECLARATION_WITH_BODY,
     NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT,
-    INCOMPATIBLE_DECLARATION,
     ACTUAL_DECLARATION_NAME,
     UNREACHABLE_CODE,
+    CONTEXT_KEYWORD,
     INLINE_PARAMETER_MODIFIER,
     ABSTRACT_MODIFIER,
     LABEL,
     COMMAS,
     OPERATOR_MODIFIER,
+    INFIX_MODIFIER,
     NON_FINAL_MODIFIER_OR_NAME,
     ENUM_MODIFIER,
     FIELD_KEYWORD,
@@ -117,15 +123,20 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     CALL_ELEMENT_WITH_DOT,
     EXPECT_ACTUAL_MODIFIER,
     TYPEALIAS_TYPE_REFERENCE,
+    SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
+    TYPE_ARGUMENT_LIST_OR_SELF,
+    TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER,
+    WHEN_GUARD,
+    PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+    CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS,
+    PROPERTY_DELEGATE_BY_KEYWORD,
+    OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
+    DEPRECATION,
     ;
 
-    val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"
+    val expressionToCreate get() = "SourceElementPositioningStrategies.$name"
 
     companion object {
         const val importToAdd = "org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies"
     }
 }
-
-
-fun DiagnosticData.hasDefaultPositioningStrategy(): Boolean =
-    positioningStrategy == PositioningStrategy.DEFAULT

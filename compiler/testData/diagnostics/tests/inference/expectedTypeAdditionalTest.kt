@@ -1,4 +1,5 @@
-// !LANGUAGE: +ExpectedTypeFromCast
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ExpectedTypeFromCast
 
 fun foo() = 1
 
@@ -10,3 +11,6 @@ val test = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo2<!>().<!DEBUG_INFO_
 
 fun <T> T.bar() = this
 val barTest = "".bar() <!CAST_NEVER_SUCCEEDS!>as<!> Number
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter */

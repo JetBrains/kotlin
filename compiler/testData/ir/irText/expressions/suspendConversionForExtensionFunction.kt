@@ -1,10 +1,7 @@
 // SKIP_KT_DUMP
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57755
-
-fun main() {
+fun runMe() {
     val foo: String.(suspend () -> Unit) -> Unit = {}
     val f: () -> Unit = {}
     "".foo(f)

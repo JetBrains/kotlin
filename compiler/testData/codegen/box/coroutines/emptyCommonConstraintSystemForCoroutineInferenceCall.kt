@@ -1,5 +1,17 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+import kotlin.experimental.ExperimentalTypeInference
+
+suspend inline fun hang(onCancellation: () -> Unit) {}
+
+@OptIn(ExperimentalTypeInference::class)
+inline fun <T, R> Flow<T>.flatMapLatest(crossinline transform: suspend (value: T) -> Flow<R>): Flow<R> = TODO()
+
+interface Flow<out T>
+
+// FILE: main.kt
 
 import helpers.*
 import kotlin.coroutines.*
@@ -56,17 +68,10 @@ fun test() {
 fun expectInt(i: Int) {}
 fun <K> expectGeneric(i: K) {}
 
-suspend inline fun hang(onCancellation: () -> Unit) {}
-
 fun <T> Flow<T>.flatMap(mapper: suspend (T) -> Flow<T>): Flow<T> = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
 fun <T> flow(block: suspend FlowCollector<T>.() -> Unit): Flow<T> = TODO()
-
-@OptIn(ExperimentalTypeInference::class)
-inline fun <T, R> Flow<T>.flatMapLatest(crossinline transform: suspend (value: T) -> Flow<R>): Flow<R> = TODO()
-
-interface Flow<out T>
 
 interface FlowCollector<in T> {
     suspend fun emit(value: T)

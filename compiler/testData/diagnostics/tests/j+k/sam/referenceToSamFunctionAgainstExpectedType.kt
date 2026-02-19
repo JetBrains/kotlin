@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 // FILE: JSam.java
 
@@ -22,3 +23,5 @@ fun test(inv: Inv<String>) {
 }
 
 fun take(f: ((String) -> String) -> Inv<String>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, javaType, localProperty, propertyDeclaration */

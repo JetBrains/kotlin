@@ -10,9 +10,9 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.reinterpret
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.konan.config.debugInfoVersion
 import org.jetbrains.kotlin.konan.file.File
 
 internal object DWARF {
@@ -32,7 +34,7 @@ internal object DWARF {
      */
     const val flagsForwardDeclaration = 4
 
-    fun runtimeVersion(config: KonanConfig) = when (config.debugInfoVersion()) {
+    fun runtimeVersion(config: NativeSecondStageCompilationConfig) = when (config.debugInfoVersion()) {
         2 -> 0
         1 -> 2 /* legacy :/ */
         else -> TODO("unsupported debug info format version")
@@ -42,19 +44,19 @@ internal object DWARF {
      * Note: Kotlin language constant appears in DWARF v6, while modern linker fails to links DWARF other then [2;4],
      * that why we emit version 4 actually.
      */
-    fun dwarfVersion(config: KonanConfig) = when (config.debugInfoVersion()) {
+    fun dwarfVersion(config: NativeSecondStageCompilationConfig) = when (config.debugInfoVersion()) {
         1 -> 2
         2 -> 4 /* likely the most of the future kotlin native debug info format versions will emit DWARF v4 */
         else -> TODO("unsupported debug info format version")
     }
 
-    fun language(config: KonanConfig) = when (config.debugInfoVersion()) {
+    fun language(config: NativeSecondStageCompilationConfig) = when (config.debugInfoVersion()) {
         1 -> DwarfLanguage.DW_LANG_C89.value
         else -> DwarfLanguage.DW_LANG_Kotlin.value
     }
 }
 
-fun KonanConfig.debugInfoVersion(): Int = configuration[KonanConfigKeys.DEBUG_INFO_VERSION] ?: 1
+fun NativeSecondStageCompilationConfig.debugInfoVersion(): Int = configuration.debugInfoVersion ?: 1
 
 internal class DebugInfo(override val generationState: NativeGenerationState) : ContextUtils {
     private val config = context.config
@@ -67,16 +69,16 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     init {
         val path = generationState.outputFile.toFileAndFolder(config)
         compilationUnit = DICreateCompilationUnit(
-                builder = builder,
-                lang = DWARF.language(config),
+            builder = builder,
+            lang = DWARF.language(config),
                 // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
                 // clashing, which happens on linking with libraries produced from intercepting sources.
-                File = path.path(),
-                dir = "",
-                producer = DWARF.producer,
-                isOptimized = 0,
-                flags = "",
-                rv = DWARF.runtimeVersion(config)
+            File = path.path(),
+            dir = config.configuration.get(BinaryOptions.debugCompilationDir) ?: "",
+            producer = DWARF.producer,
+            isOptimized = 0,
+            flags = "",
+            rv = DWARF.runtimeVersion(config)
         )!!.reinterpret()
         module = DICreateModule(
                 builder = builder,
@@ -169,40 +171,55 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
             subroutineType(llvmTargetData, this@subroutineType.types)
 
     fun subroutineType(llvmTargetData: LLVMTargetDataRef, types: List<IrType>): DISubroutineTypeRef = memScoped {
-        DICreateSubroutineType(builder, allocArrayOf(types.map { it.diType(llvmTargetData) }), types.size)!!
+        val diTypes = types.withIndex().map { (idx, type) ->
+            if (idx == 0 && type.isVoidAsReturnType()) null
+            else type.diType(llvmTargetData)
+        }
+        DICreateSubroutineType(builder, allocArrayOf(diTypes), types.size)!!
     }
 
-    fun IrFile.diFileScope() = files.getOrPut(this.fileEntry.name) {
-        val path = this.fileEntry.name.toFileAndFolder(context.config)
+    fun IrFileEntry.diFileScope() = files.getOrPut(this.name) {
+        val path = this.name.toFileAndFolder(context.config)
         DICreateFile(builder, path.file, path.folder)!!
     }
 
     fun IrFunction.diFunctionScope(
-            file: IrFile,
+            fileEntry: IrFileEntry,
             linkageName: String,
             startLine: Int,
             nodebug: Boolean,
-    ) = diFunctionScope(file, name.asString(), linkageName, startLine, subroutineType(llvmTargetData), nodebug)
+            isTransparentStepping: Boolean = false,
+    ) = diFunctionScope(
+            fileEntry,
+            name.asString(),
+            linkageName,
+            startLine,
+            subroutineType(llvmTargetData),
+            nodebug,
+            isTransparentStepping = isTransparentStepping,
+    )
 
     fun diFunctionScope(
-            file: IrFile,
+            fileEntry: IrFileEntry,
             name: String,
             linkageName: String,
             startLine: Int,
             subroutineType: DISubroutineTypeRef,
             nodebug: Boolean,
+            isTransparentStepping: Boolean = false,
     ) = DICreateFunction(
             builder = builder,
             scope = compilationUnit,
             name = (if (nodebug) "<NODEBUG>" else "") + name,
             linkageName = linkageName,
-            file = file.diFileScope(),
+            file = fileEntry.diFileScope(),
             lineNo = startLine,
             type = subroutineType,
             //TODO: need more investigations.
             isLocal = 0,
             isDefinition = 1,
-            scopeLine = 0
+            scopeLine = 0,
+            isTransparentStepping = if (isTransparentStepping) 1 else 0,
     )!!
 
     private fun dwarfPointerType(type: DITypeOpaqueRef): DITypeOpaqueRef =
@@ -251,7 +268,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
 
     private val IrFunction.types: List<IrType>
         get() {
-            val parameters = valueParameters.map { it.type }
+            val parameters = parameters.map { it.type }
             return listOf(returnType, *parameters.toTypedArray())
         }
 }
@@ -259,20 +276,21 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
 /**
  * File entry starts offsets from zero while dwarf number lines/column starting from 1.
  */
-private val NO_SOURCE_FILE = "no source file"
+private const val NO_SOURCE_FILE = "no source file"
 private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
     // Part "name.isEmpty() || name == NO_SOURCE_FILE" is an awful hack, @minamoto, please fix properly.
     if (offset == UNDEFINED_OFFSET) return 0
     if (offset == SYNTHETIC_OFFSET || name.isEmpty() || name == NO_SOURCE_FILE) return 1
     // lldb uses 1-based unsigned integers, so 0 is "no-info".
-    val result = offsetToNumber(offset) + 1
-    assert(result != 0)
-    return result
+    return offsetToNumber(offset) + 1
+}
+
+internal fun IrFileEntry.lineAndColumn(offset: Int): Pair<Int, Int> {
+    val (line, column) = this.getLineAndColumnNumbers(offset)
+    return location(offset) { line } to location(offset) { column }
 }
 
 internal fun IrFileEntry.line(offset: Int) = location(offset, this::getLineNumber)
-
-internal fun IrFileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
 
 internal data class FileAndFolder(val file: String, val folder: String) {
     companion object {
@@ -282,11 +300,13 @@ internal data class FileAndFolder(val file: String, val folder: String) {
     fun path() = if (this == NOFILE) file else "$folder/$file"
 }
 
-internal fun String?.toFileAndFolder(config: KonanConfig): FileAndFolder {
+internal fun String?.toFileAndFolder(config: NativeSecondStageCompilationConfig): FileAndFolder {
     this ?: return FileAndFolder.NOFILE
-    val file = File(this).absoluteFile
-    var parent = file.parent
-    config.configuration.get(KonanConfigKeys.DEBUG_PREFIX_MAP)?.let { debugPrefixMap ->
+    val file = File(this)
+    // Note: `parentOrNull` is `null` when the path consists of a single segment, e.g. `foo.kt` and not `bar/foo.kt`.
+    // `.` is a valid DWARF relative path to parent for this case, while an empty string is not.
+    var parent = file.parentOrNull ?: "."
+    config.configuration[NativeConfigurationKeys.DEBUG_PREFIX_MAP]?.let { debugPrefixMap ->
         for ((key, value) in debugPrefixMap) {
             if (parent.startsWith(key)) {
                 parent = value + parent.removePrefix(key)
@@ -315,7 +335,8 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
             type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
-            scopeLine = 0
+            scopeLine = 0,
+            isTransparentStepping = generationState.config.enableDebugTransparentStepping,
     ).reinterpret()
 
     return LocationInfo(scope, 1, 0)

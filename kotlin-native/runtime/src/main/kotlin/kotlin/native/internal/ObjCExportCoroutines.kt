@@ -9,8 +9,8 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import kotlin.coroutines.native.internal.*
-import kotlin.native.concurrent.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
 private fun Kotlin_ObjCExport_createContinuationArgumentImpl(
@@ -44,28 +44,34 @@ private object EmptyCompletion : Continuation<Any?> {
 
 @PublishedApi
 @ExportForCppRuntime("Kotlin_ObjCExport_resumeContinuationSuccess") // Also makes it a data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun resumeContinuation(continuation: Continuation<Any?>, value: Any?) {
     continuation.resume(value)
 }
 
 @PublishedApi
 @ExportForCppRuntime("Kotlin_ObjCExport_resumeContinuationFailure") // Also makes it a data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun resumeContinuationWithException(continuation: Continuation<Any?>, exception: Throwable) {
     continuation.resumeWithException(exception)
 }
 
 @PublishedApi
 @ExportForCompiler // Mark as data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun getCoroutineSuspended(): Any = COROUTINE_SUSPENDED
 
 @PublishedApi
 @ExportForCompiler // Mark as data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun interceptedContinuation(continuation: Continuation<Any?>): Continuation<Any?> = continuation.intercepted()
 
 @FilterExceptions
 @GCUnsafeCall("Kotlin_ObjCExport_runCompletionSuccess")
+@Escapes(0b010) // result escapes into a stable ref.
 private external fun runCompletionSuccess(completionHolder: Any, result: Any?)
 
 @FilterExceptions
 @GCUnsafeCall("Kotlin_ObjCExport_runCompletionFailure")
+@Escapes(0b0010) // exception escapes into a stable ref.
 private external fun runCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr)

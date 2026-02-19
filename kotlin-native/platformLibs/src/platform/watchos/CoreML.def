@@ -5,3 +5,5 @@ modules = CoreML
 
 compilerOpts = -framework CoreML
 linkerOpts = -framework CoreML
+
+excludedFunctions = MLModelCollectionDidChangeNotification

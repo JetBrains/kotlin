@@ -1,4 +1,5 @@
-//!DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 fun <@kotlin.internal.OnlyInputTypes T> assertEquals1(t1: T, t2: T) {}
@@ -22,3 +23,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> expect1(expected: T, block: () ->
 fun test() {
     expect1(2) { byteArrayOf(1, 2, 3).indexOf(3) }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

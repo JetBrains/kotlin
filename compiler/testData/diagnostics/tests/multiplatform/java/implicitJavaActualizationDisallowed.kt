@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -12,3 +13,5 @@ public class Foo {
     public void foo() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor */

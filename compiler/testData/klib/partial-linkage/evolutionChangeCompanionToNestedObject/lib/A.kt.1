@@ -1,0 +1,13 @@
+open class N {
+    fun bar() = "something in N"
+}
+
+class X {
+    fun foo() = "without companion"
+
+    object Companion : N() {
+        val qux = "this is in object"
+    }
+
+}
+

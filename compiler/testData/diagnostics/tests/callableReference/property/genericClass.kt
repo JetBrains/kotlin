@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 import kotlin.reflect.KProperty1
 
@@ -15,3 +16,7 @@ fun bar() {
     val y = A<*>::foo
     checkSubtype<KProperty1<A<*>, Any?>>(y)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter, typeWithExtension */

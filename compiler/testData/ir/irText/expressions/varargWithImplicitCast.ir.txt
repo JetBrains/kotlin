@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/varargWithImplicitCast.kt
-  FUN name:testScalar visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:testScalar visibility:public modality:FINAL returnType:kotlin.IntArray
+    VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -10,11 +10,11 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
             CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='public final fun testScalar (a: kotlin.Any): kotlin.IntArray declared in <root>'
         CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
-          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+          ARG elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
               GET_VAR 'a: kotlin.Any declared in <root>.testScalar' type=kotlin.Any origin=null
-  FUN name:testSpread visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:testSpread visibility:public modality:FINAL returnType:kotlin.IntArray
+    VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
             CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='public final fun testSpread (a: kotlin.Any): kotlin.IntArray declared in <root>'
         CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
-          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+          ARG elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             SPREAD_ELEMENT
               TYPE_OP type=kotlin.IntArray origin=IMPLICIT_CAST typeOperand=kotlin.IntArray
                 GET_VAR 'a: kotlin.Any declared in <root>.testSpread' type=kotlin.Any origin=null

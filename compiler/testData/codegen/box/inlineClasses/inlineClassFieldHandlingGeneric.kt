@@ -1,7 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 var result = "Fail"
 

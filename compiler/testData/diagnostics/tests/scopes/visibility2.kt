@@ -1,6 +1,8 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 //FILE:a.kt
 package a
@@ -49,3 +51,6 @@ class Q {
 class NewClass : java.util.ArrayList<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>() {
     public override fun toString() = "a"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, objectDeclaration, override,
+propertyDeclaration, stringLiteral */

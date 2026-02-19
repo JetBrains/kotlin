@@ -32,6 +32,14 @@ public abstract class A2 : C.(kotlin.Int, kotlin.String) -> kotlin.Int {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public abstract class A4 : Foo /* = C.() -> kotlin.Int */ {
+    public constructor A4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: C): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final class B : kotlin.Int.(kotlin.Double) -> kotlin.Unit {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -94,8 +102,18 @@ public open class D</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public abstract class D0 : context(C) () -> kotlin.Int {
+    public constructor D0()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: C): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface E</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias Foo = C.() -> kotlin.Int
+

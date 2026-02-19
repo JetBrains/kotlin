@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class SomeObject(val n: SomeObject?) {
     fun doSomething() {}
     fun next(): SomeObject? = n    
@@ -15,3 +16,7 @@ fun list(start: SomeObject): SomeObject {
     }
     return <!RETURN_TYPE_MISMATCH!>e<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, continue, data, equalityExpression, forLoop, functionDeclaration,
+ifExpression, integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, rangeExpression,
+smartcast */

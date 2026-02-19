@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 class Some {
     val e: SomeEnum? = null
@@ -15,3 +16,7 @@ fun Some.test() {
         SomeEnum.B -> "B"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

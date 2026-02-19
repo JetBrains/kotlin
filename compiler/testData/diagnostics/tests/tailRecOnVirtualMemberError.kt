@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-//!LANGUAGE: +ProhibitTailrecOnVirtualMember
+// LANGUAGE: +ProhibitTailrecOnVirtualMember
 
 open class A {
     <!TAILREC_ON_VIRTUAL_MEMBER_ERROR!>tailrec<!> open fun foo(x: Int) {
@@ -169,3 +170,6 @@ val z = object : A() {
         baz(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, nestedClass, objectDeclaration, override, propertyDeclaration, sealed, tailrec */

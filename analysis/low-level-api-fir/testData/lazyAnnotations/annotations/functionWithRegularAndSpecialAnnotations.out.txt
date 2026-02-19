@@ -1,0 +1,5 @@
+pack/MyAnno(count = 0)
+  psi: KtAnnotationEntry
+
+kotlin/jvm/JvmName(name = "myName")
+  psi: KtAnnotationEntry

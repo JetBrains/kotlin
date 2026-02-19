@@ -7,24 +7,26 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
+import org.jetbrains.kotlin.fir.types.isLeftValidForDefinitelyNotNullable
+import org.jetbrains.kotlin.fir.types.isRightValidForDefinitelyNotNullable
 
-object FirDefinitelyNotNullableChecker : FirTypeRefChecker() {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        val intersection = (typeRef as? FirResolvedTypeRef)?.delegatedTypeRef as? FirIntersectionTypeRef ?: return
-
-        if (intersection.isMarkedNullable) {
-            reporter.reportOn(intersection.source, FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE, context)
+object FirDefinitelyNotNullableChecker : FirIntersectionTypeRefChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirIntersectionTypeRef) {
+        if (typeRef.isMarkedNullable) {
+            reporter.reportOn(typeRef.source, FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE)
         }
 
-        if (!intersection.isLeftValidForDefinitelyNotNullable) {
-            reporter.reportOn(intersection.leftType.source, FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION, context)
+        if (!typeRef.isLeftValidForDefinitelyNotNullable(context.session)) {
+            reporter.reportOn(typeRef.leftType.source, FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION)
         }
 
-        if (!intersection.isRightValidForDefinitelyNotNullable) {
-            reporter.reportOn(intersection.rightType.source, FirErrors.INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION, context)
+        if (!typeRef.isRightValidForDefinitelyNotNullable) {
+            reporter.reportOn(typeRef.rightType.source, FirErrors.INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION)
         }
     }
 }

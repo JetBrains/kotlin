@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.constant
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 // Note 1: can be combined with org.jetbrains.kotlin.resolve.constants.ConstantValue but where is some questions to `AnnotationValue`.
 // Note 2: if we are not going to implement previous idea, then this class can be moved to `fir` module.
@@ -30,19 +29,17 @@ abstract class IntegerValueConstant<out T> protected constructor(value: T) : Con
 abstract class UnsignedValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
 class AnnotationValue private constructor(value: Value) : ConstantValue<AnnotationValue.Value>(value) {
-    class Value(val type: KotlinTypeMarker, val argumentsMapping: Map<Name, ConstantValue<*>>) {
+    class Value(val classId: ClassId, val argumentsMapping: Map<Name, ConstantValue<*>>) {
         override fun toString(): String {
-            return "Value(type=$type, argumentsMapping=$argumentsMapping)"
+            return "Value(classId=$classId, argumentsMapping=$argumentsMapping)"
         }
     }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitAnnotationValue(this, data)
 
     companion object {
-        fun create(type: KotlinTypeMarker, argumentsMapping: Map<Name, ConstantValue<*>>): AnnotationValue {
-            return AnnotationValue(
-                Value(type, argumentsMapping)
-            )
+        fun create(classId: ClassId, argumentsMapping: Map<Name, ConstantValue<*>>): AnnotationValue {
+            return AnnotationValue(Value(classId, argumentsMapping))
         }
     }
 }
@@ -132,14 +129,18 @@ class IntValue(value: Int) : IntegerValueConstant<Int>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitIntValue(this, data)
 }
 
-class KClassValue private constructor(value: Value) : ConstantValue<KClassValue.Value>(value) {
+class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
     sealed class Value {
         data class NormalClass(val value: ClassLiteralValue) : Value() {
             val classId: ClassId get() = value.classId
             val arrayDimensions: Int get() = value.arrayNestedness
         }
 
-        data class LocalClass(val type: KotlinTypeMarker) : Value()
+        /**
+         * @param firClassSymbol FIR symbol of the local class (both if the value was computed by FIR or IR evaluator).
+         * It is used to extract the proper FQName of the local class on JVM during annotation arguments serialization.
+         */
+        data class LocalClass(val firClassSymbol: Any?) : Value()
     }
 
     constructor(value: ClassLiteralValue) : this(Value.NormalClass(value))

@@ -5,27 +5,32 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
 abstract class MemoizedValueClassAbstractReplacements(
     protected val irFactory: IrFactory,
     protected val context: JvmBackendContext,
     protected val storageManager: LockBasedStorageManager
 ) {
-    private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
-
     /**
      * Get a replacement for a function or a constructor.
      */
@@ -36,25 +41,11 @@ abstract class MemoizedValueClassAbstractReplacements(
     protected fun IrFunction.isRemoveAtSpecialBuiltinStub() =
         origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
                 name.asString() == "remove" &&
-                valueParameters.size == 1 &&
-                valueParameters[0].type.isInt()
+                hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, context.irBuiltIns.intType))
 
-    protected fun IrFunction.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean {
-        if (this !is IrSimpleFunction) return false
-        if (!this.isFakeOverride) return false
-        val parentClass = parentClassOrNull ?: return false
-        require(parentClass.isValue)
-
-        val overridden = resolveFakeOverride() ?: return false
-        if (!overridden.parentAsClass.isJvmInterface) return false
-        if (overridden.modality == Modality.ABSTRACT) return false
-
-        // We have a non-abstract interface member.
-        // It is a JVM default interface method if one of the following conditions are true:
-        // - it is a Java method,
-        // - it is a Kotlin function compiled to JVM default interface method.
-        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.config.jvmDefaultMode)
-    }
+    protected fun IrFunction.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean =
+        this is IrSimpleFunction && isFakeOverride && modality != Modality.ABSTRACT &&
+                context.cachedDeclarations.getClassFakeOverrideReplacement(this) == ClassFakeOverrideReplacement.None
 
     protected abstract fun createStaticReplacement(function: IrFunction): IrSimpleFunction
     protected abstract fun createMethodReplacement(function: IrFunction): IrSimpleFunction
@@ -73,19 +64,21 @@ abstract class MemoizedValueClassAbstractReplacements(
         returnType = function.returnType
     }.apply {
         parent = function.parent
-        annotations = function.annotations
+        // Non-exposed methods and functions should not have @JvmExposeBoxed annotation, since we expect users to be able to
+        // distinguish exposed functions via reflection.
+        annotations = function.annotations.withoutJvmExposeBoxedAnnotation()
         copyTypeParameters(function.allTypeParameters)
         if (function.metadata != null) {
             metadata = function.metadata
             function.metadata = null
         }
-        copyAttributes(function as? IrAttributeContainer)
 
         if (function is IrSimpleFunction) {
+            copyAttributes(function)
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val oldProperty = propertySymbol.owner
-                val property = propertyMap.getOrPut(propertySymbol) {
+                val property = oldProperty::replacementForValueClasses.getOrSetIfNull {
                     irFactory.buildProperty {
                         name = oldProperty.name
                         updateFrom(oldProperty)
@@ -139,4 +132,37 @@ abstract class MemoizedValueClassAbstractReplacements(
         }
 
     protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
+}
+
+fun List<IrAnnotation>.withoutJvmExposeBoxedAnnotation(): List<IrAnnotation> =
+    this.toMutableList().apply {
+        removeAll {
+            it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) == true
+        }
+    }
+
+fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrAnnotation> {
+    if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
+        val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        // If name is not provided, copy the name from @JvmName annotation, if the latter is present
+        if (jvmExposeBoxedAnnotation?.arguments[0] == null) {
+            val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+            if (jvmName != null) {
+                jvmExposeBoxedAnnotation?.arguments[0] = jvmName.deepCopyWithSymbols()
+            }
+        }
+        return this
+    }
+    // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
+    // or -Xjvm-expose-boxed is specified. Add the annotation.
+    val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
+    return this + IrAnnotationImpl.fromSymbolOwner(
+        constructor.owner.returnType,
+        constructor
+    ).apply {
+        // Copy the name from @JvmName if it is present
+        val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+        arguments[0] = jvmName?.deepCopyWithSymbols()
+            ?: IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "")
+    }
 }

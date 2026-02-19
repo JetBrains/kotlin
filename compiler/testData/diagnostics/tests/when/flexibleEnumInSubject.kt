@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-56942
 // FILE: EnumJava.java
@@ -49,3 +50,6 @@ fun test_2(ejp: EnumJava, ekp: EnumKotlin) {
 
     <!NO_ELSE_IN_WHEN!>when<!> (EnumKotlin.provide()) {}
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+javaProperty, javaType, objectDeclaration, whenExpression, whenWithSubject */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 // FILE: Bar.java
@@ -27,3 +28,6 @@ fun main(x: Foo<*>?) {
     // `*` inside `MutableList` and `List` have to become the same captured type
     takeFoo(x)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, equalityExpression, flexibleType, functionDeclaration, ifExpression, isExpression,
+javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, starProjection, typeParameter */

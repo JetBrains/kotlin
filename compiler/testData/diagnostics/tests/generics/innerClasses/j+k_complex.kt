@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: BaseOuter.java
 // See KT-10285
 public class BaseOuter<H> {
@@ -34,3 +35,6 @@ fun foo(x1: Outer<Int>, x2: Outer<Int>.Inner) {
     x2.foo2().checkType { _<Double>() }
     x2.foo3().checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaType, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

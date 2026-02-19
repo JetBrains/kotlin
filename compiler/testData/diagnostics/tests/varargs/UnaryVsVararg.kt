@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun foo1(a : Int) : String = "noarg"
 
@@ -8,3 +9,5 @@ fun test1() {
     val a = IntArray(0)
     foo1(1, *a)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, stringLiteral, vararg */

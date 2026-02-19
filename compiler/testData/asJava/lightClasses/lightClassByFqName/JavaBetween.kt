@@ -1,7 +1,7 @@
 // test.AKotlin
 // SKIP_IDE_TEST
-
 // DISABLE_SEALED_INHERITOR_CALCULATOR
+// LIBRARY_PLATFORMS: JVM
 
 // FILE: AKotlin.kt
 package test

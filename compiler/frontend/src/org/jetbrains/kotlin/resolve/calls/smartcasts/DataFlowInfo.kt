@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableSet
+import org.jetbrains.kotlin.util.vavr.ImmutableMap
+import org.jetbrains.kotlin.util.vavr.ImmutableSet
 
 /**
  * This interface is intended to provide and edit information about value nullabilities and possible types.

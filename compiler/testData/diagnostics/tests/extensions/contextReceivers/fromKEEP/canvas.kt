@@ -1,5 +1,7 @@
-// !LANGUAGE: +ContextReceivers
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface Canvas
 
@@ -16,3 +18,6 @@ class Circle : Shape {
 object MyCanvas : Canvas
 
 fun test() = with(MyCanvas) { Circle().draw() }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+lambdaLiteral, objectDeclaration, override */

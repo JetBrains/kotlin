@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 
-object FirAnonymousInitializerInInterfaceChecker : FirAnonymousInitializerChecker() {
-    override fun check(declaration: FirAnonymousInitializer, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirAnonymousInitializerInInterfaceChecker : FirAnonymousInitializerChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirAnonymousInitializer) {
         val clazz = context.findClosestClassOrObject() ?: return
         if (clazz.isInterface) {
-            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE, context)
+            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE)
         }
     }
 }

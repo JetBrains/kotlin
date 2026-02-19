@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A {
     fun foo() {}
@@ -43,3 +44,6 @@ fun A?.test3() {
     this?.bar()
     this?.buzz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, safeCall,
+thisExpression */

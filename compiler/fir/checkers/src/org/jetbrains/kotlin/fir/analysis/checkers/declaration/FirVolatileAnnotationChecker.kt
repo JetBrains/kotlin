@@ -5,34 +5,28 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassIds
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirVolatileAnnotationChecker : FirPropertyChecker() {
-    private val VOLATILE_CLASS_IDS = listOf(StandardClassIds.Annotations.Volatile, StandardClassIds.Annotations.JvmVolatile)
-
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.source?.kind != KtRealSourceElementKind) return
-
-        val fieldAnnotation = declaration.backingField?.annotations?.getAnnotationByClassIds(VOLATILE_CLASS_IDS, context.session)
+object FirVolatileAnnotationChecker : FirPropertyChecker(MppCheckerKind.Platform) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
+        val volatileAnnotations = context.session.annotationPlatformSupport.volatileAnnotations
+        val fieldAnnotation = declaration.backingField?.annotations?.getAnnotationByClassIds(volatileAnnotations, context.session)
             ?: return
 
         if (!declaration.isVar) {
-            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_VALUE, context)
+            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_VALUE)
         }
 
         if (declaration.delegateFieldSymbol != null) {
-            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_DELEGATE, context)
+            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_DELEGATE)
         }
     }
 }

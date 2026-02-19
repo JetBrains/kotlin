@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun <reified T> parse(json: String): T? = TODO()
 
@@ -16,3 +17,6 @@ fun parseMyData(json: String): MyType =
 fun main() {
     parseMyData("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, inline, localProperty, nullableType,
+propertyDeclaration, reified, stringLiteral, tryExpression, typeParameter */

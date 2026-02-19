@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Num<T: Number>(val x: T)
 
 typealias N<T> = Num<T>
@@ -15,3 +16,6 @@ typealias TC2<T, C> = TC<T, C>
 val y1 = TColl<Any, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>()
 val y2 = TC<Any, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>()
 val y3 = TC2<Any, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

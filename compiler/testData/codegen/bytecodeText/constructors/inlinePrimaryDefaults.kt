@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // This tests both KT-37013 and KT-37015.
 
 inline class A(val x: Int = 0)

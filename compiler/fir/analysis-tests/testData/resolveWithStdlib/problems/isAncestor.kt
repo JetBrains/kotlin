@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: their/Condition.java
 
 package their;
@@ -14,11 +15,11 @@ import their.Condition;
 
 public final class ContainerUtil {
     public static <T> T find(Iterable<? extends T> iterable, Condition<? super T> condition) {
-        return true;
+        return iterable.iterator().next();
     }
 
     public static <T> T find(Iterable<? extends T> iterable, T equalTo) {
-        return true;
+        return iterable.iterator().next();
     }
 }
 
@@ -51,3 +52,6 @@ fun foo() {
         val base = find(externalsMap.keys) { isAncestor(it, file, false) }
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, javaFunction, javaType, lambdaLiteral,
+localFunction, localProperty, nullableType, propertyDeclaration, samConversion */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A(val w: Char) {
     val x: Int
     var y: Int
@@ -31,3 +32,6 @@ class A(val w: Char) {
         y = 8
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

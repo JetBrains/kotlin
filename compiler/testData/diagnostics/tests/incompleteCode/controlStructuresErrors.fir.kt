@@ -1,6 +1,6 @@
-
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (<!UNRESOLVED_REFERENCE!>rr<!>) {
+    if (<!UNRESOLVED_REFERENCE!>rr<!>) {
         if (<!UNRESOLVED_REFERENCE!>l<!>) {
             <!UNRESOLVED_REFERENCE!>a<!>.q()
         }
@@ -15,7 +15,7 @@ fun test1() {
         else {
             <!UNRESOLVED_REFERENCE!>a<!>.u()
         }
-    }<!>
+    }
 }
 
 fun test2(l: List<<!UNRESOLVED_REFERENCE!>AA<!>>) {
@@ -23,3 +23,5 @@ fun test2(l: List<<!UNRESOLVED_REFERENCE!>AA<!>>) {
         <!UNRESOLVED_REFERENCE!>it<!>!!
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, lambdaLiteral */

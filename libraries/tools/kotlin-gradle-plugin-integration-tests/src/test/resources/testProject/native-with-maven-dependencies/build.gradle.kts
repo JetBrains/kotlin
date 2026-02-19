@@ -2,11 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     <SingleNativeTarget>("native") {
         binaries.executable()

@@ -34,7 +34,7 @@ FILE: complexConflictingProjections.kt
 
         public final fun test(): R|kotlin/Unit| {
             lval x: R|Qux<in T, Baz<T, Bar<Foo, in T>>>| = Null(null)!!
-            R|<local>/x|.R|SubstitutionOverride</Qux.f: R|CapturedType(out Baz<T, out ERROR CLASS: Inconsistent type: Bar<Foo, in T> (1 parameter has declared variance: out, but argument variance is in)>)|>| = Null(null)!!
+            R|<local>/x|.R|SubstitutionOverride</Qux.f: R|Baz<T, Bar<Foo, in T>>|>| = Null(null)!!
         }
 
     }

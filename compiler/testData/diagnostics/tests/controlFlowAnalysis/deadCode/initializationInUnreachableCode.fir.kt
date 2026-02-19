@@ -1,13 +1,16 @@
-// COMPARE_WITH_LIGHT_TREE
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-40851
 
 fun error(): Nothing = throw Exception()
 
-<!UNREACHABLE_CODE{LT}!>class Some<!UNREACHABLE_CODE{PSI}!>()<!> {
-    var x: Int
-    val y: Int =<!> error()
+class Some() {
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var x: Int<!>
+    val y: Int = error()
 
-    <!UNREACHABLE_CODE{LT}!>init {
+    init {
         <!UNREACHABLE_CODE!>x = 1<!>;
     }
-}<!>
+}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, integerLiteral, primaryConstructor,
+propertyDeclaration */

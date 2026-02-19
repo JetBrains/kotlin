@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 private object NotEmptyList : MutableList<Any> {
     override fun contains(element: Any): Boolean = true
     override fun indexOf(element: Any): Int = 0

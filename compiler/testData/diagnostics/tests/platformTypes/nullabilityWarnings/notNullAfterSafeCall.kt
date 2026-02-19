@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: J.java
 
@@ -15,3 +16,6 @@ fun test(j: J?) {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, javaFunction, javaType, localProperty,
+nullableType, propertyDeclaration, safeCall */

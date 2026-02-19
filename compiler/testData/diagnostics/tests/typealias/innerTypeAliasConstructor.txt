@@ -1,13 +1,11 @@
 package
 
-public val test0: [Error type: Not found recorded type for C<Int>.P(1, 1)]
-public val test1: [Error type: Not found recorded type for C<Int>.P1<String>("", 1)]
-public val test2: [Error type: Not found recorded type for C<Int>.P2<String>(1, "")]
-public val test3: [Error type: Not found recorded type for C<Int>.P1("", 1)]
-public val test4: [Error type: Not found recorded type for C<Int>.P2(1, "")]
-public val test5: C<T>.P /* = Pair<T, T> */
-public val test6: C<T>.P1<kotlin.String> /* = Pair<kotlin.String, T> */
-public val test7: C<T>.P2<kotlin.String> /* = Pair<T, kotlin.String> */
+public val c: C<kotlin.Int>
+public val test0: [Error type: Not found recorded type for c.P(1, 1)]
+public val test1: [Error type: Not found recorded type for c.P1<String>("", 1)]
+public val test2: [Error type: Not found recorded type for c.P2<String>(1, "")]
+public val test3: [Error type: Not found recorded type for c.P1("", 1)]
+public val test4: [Error type: Not found recorded type for c.P2(1, "")]
 
 public final class C</*0*/ T> {
     public constructor C</*0*/ T>()
@@ -27,3 +25,4 @@ public final class Pair</*0*/ X, /*1*/ Y> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

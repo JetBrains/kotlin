@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: -EnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // WITH_STDLIB
 
 enum class E {
@@ -10,3 +10,5 @@ enum class E {
         E.entries
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

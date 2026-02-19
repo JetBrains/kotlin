@@ -1,4 +1,4 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 
 var effectCount = 0
 

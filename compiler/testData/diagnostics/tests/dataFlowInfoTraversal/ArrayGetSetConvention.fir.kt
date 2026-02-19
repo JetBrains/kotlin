@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 interface G {
     operator fun get(x: Int, y: Int): Int = x + y
@@ -26,3 +27,7 @@ fun foo4(a: Int?, b: G) {
     checkSubtype<Int>(a)
     checkSubtype<Int>(r)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, interfaceDeclaration, localProperty, nullableType, operator,
+propertyDeclaration, smartcast, typeParameter, typeWithExtension */

@@ -10,7 +10,7 @@
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
@@ -29,9 +29,21 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-scripting-common</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-scripting-jvm</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-scripting-compiler-impl-embeddable</artifactId>
       <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>

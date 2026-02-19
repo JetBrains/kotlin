@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.classFileContainsMethod
-import org.jetbrains.kotlin.backend.jvm.ir.extensionReceiverName
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticValueClassReplacement
-import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
+import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -17,13 +15,16 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.util.concurrent.ConcurrentHashMap
+
+var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
@@ -33,12 +34,8 @@ class MemoizedInlineClassReplacements(
     irFactory: IrFactory,
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("inline-class-replacements")) {
-
-    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-
     private val mangleCallsToJavaMethodsWithValueClasses =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)
 
     /**
      * Get a replacement for a function or a constructor.
@@ -89,7 +86,9 @@ class MemoizedInlineClassReplacements(
 
     private val IrSimpleFunction.needsReplacement: Boolean
         get() {
-            if (!hasMangledParameters(includeMFVC = false) && !(mangleReturnTypes && hasMangledReturnType)) return false
+            if (!(shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) || hasMangledParameters(includeMFVC = false) ||
+                        mangleReturnTypes && hasMangledReturnType)
+            ) return false
             if (isFromJava()) return mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
             return true
         }
@@ -129,7 +128,7 @@ class MemoizedInlineClassReplacements(
                 returnType = irClass.inlineClassRepresentation!!.underlyingType
             }.apply {
                 parent = irClass
-                createDispatchReceiverParameter()
+                parameters += createDispatchReceiverParameterWithClassParent()
             }
         }
 
@@ -161,15 +160,15 @@ class MemoizedInlineClassReplacements(
 
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
-            originalFunctionForMethodReplacement[this] = function
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
-            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
-                // The function's name will be mangled, so preserve the old receiver name.
-                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
-            )
-            contextReceiverParametersCount = function.contextReceiverParametersCount
-            valueParameters = function.valueParameters.mapIndexed { index, parameter ->
-                parameter.copyTo(this, index = index, defaultValue = null).also {
+            parameters += function.parameters.map { parameter ->
+                parameter.copyTo(
+                    this,
+                    defaultValue = null,
+                    name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
+                        // The function's name will be mangled, so preserve the old receiver name.
+                        Name.identifier(function.extensionReceiverName(context.config))
+                    } else parameter.name
+                ).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -180,37 +179,45 @@ class MemoizedInlineClassReplacements(
 
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
-            originalFunctionForStaticReplacement[this] = function
+            this.originalFunctionOfStaticInlineClassReplacement = function
 
-            val newValueParameters = mutableListOf<IrValueParameter>()
-            if (function.dispatchReceiverParameter != null) {
-                // FAKE_OVERRIDEs have broken dispatch receivers
-                newValueParameters += function.parentAsClass.thisReceiver!!.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier("arg${newValueParameters.size}"),
-                    type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-                )
-            }
-            if (function.contextReceiverParametersCount != 0) {
-                function.valueParameters.take(function.contextReceiverParametersCount).forEachIndexed { i, contextReceiver ->
-                    newValueParameters += contextReceiver.copyTo(
-                        this, index = newValueParameters.size, name = Name.identifier("contextReceiver$i"),
-                        origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
-                    )
+            var nextContextReceiverIndex = 0
+            parameters += function.parameters.map { parameter ->
+                when (parameter.kind) {
+                    IrParameterKind.DispatchReceiver -> {
+                        // FAKE_OVERRIDEs have broken dispatch receivers
+                        function.parentAsClass.thisReceiver!!.copyTo(
+                            this,
+                            name = Name.identifier("arg0"),
+                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
+                            kind = IrParameterKind.Regular,
+                        )
+                    }
+                    IrParameterKind.Context -> {
+                        parameter.copyTo(
+                            this,
+                            name = parameter.name,
+                            origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER,
+                            kind = IrParameterKind.Regular,
+                        )
+                    }
+                    IrParameterKind.ExtensionReceiver -> {
+                        parameter.copyTo(
+                            this,
+                            name = Name.identifier(function.extensionReceiverName(context.config)),
+                            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
+                            kind = IrParameterKind.Regular,
+                        )
+                    }
+                    IrParameterKind.Regular -> {
+                        parameter.copyTo(this, defaultValue = null).also {
+                            // See comment next to a similar line above.
+                            it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
+                        }
+                    }
                 }
             }
-            function.extensionReceiverParameter?.let {
-                newValueParameters += it.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.state)),
-                    origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
-                )
-            }
-            for (parameter in function.valueParameters.drop(function.contextReceiverParametersCount)) {
-                newValueParameters += parameter.copyTo(this, index = newValueParameters.size, defaultValue = null).also {
-                    // See comment next to a similar line above.
-                    it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
-                }
-            }
-            valueParameters = newValueParameters
+
             context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 
@@ -220,12 +227,12 @@ class MemoizedInlineClassReplacements(
         noFakeOverride: Boolean = false,
         body: IrFunction.() -> Unit
     ): IrSimpleFunction {
-        val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures || function.fromStdlib()
         val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)
         // When using the new mangling scheme we might run into dependencies using the old scheme
         // for which we will fall back to the old mangling scheme as well.
         if (!useOldManglingScheme && replacement.name.asString().contains('-') && function.parentClassId != null) {
-            val resolved = (function as? IrSimpleFunction)?.resolveFakeOverride(true)
+            val resolved = (function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstractOrFail()
             if (resolved?.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false) {
                 return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
             }
@@ -258,4 +265,21 @@ class MemoizedInlineClassReplacements(
     }
 
     override fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? = null
+}
+
+// In some scenarios, compiler mangles calls to stdlib using new mangling scheme, however, stdlib is compiled using the old mangling scheme.
+//
+// Actually, it is the only library in the wild, which still uses the old scheme.
+// Unfortunately, we cannot use the new scheme for stdlib as well, otherwise, we will break binary compatibility.
+//
+// See KT-79611
+private fun IrFunction.fromStdlib(): Boolean {
+    if (!getPackageFragment().packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return false
+    // Since there can be libraries, which use -Xallow-kotlin-package, check, that the top-level declaration has @SinceKotlin
+    if (hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
+    var cursor: IrDeclaration = this
+    while (true) {
+        if (cursor.hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
+        cursor = cursor.parentClassOrNull ?: return false
+    }
 }

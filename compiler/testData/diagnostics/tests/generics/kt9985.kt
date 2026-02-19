@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // Incorrect "type mismatch" error for generic extension safe call (required not-null, found nullable)
 
 // FILE: B.java
@@ -44,3 +45,7 @@ fun bar() {
     foo(l?.bar()) checkType { _<String?>() }
     foo(l?.gav()) checkType { _<String?>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, javaFunction, javaType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, smartcast, stringLiteral, typeParameter, typeWithExtension */

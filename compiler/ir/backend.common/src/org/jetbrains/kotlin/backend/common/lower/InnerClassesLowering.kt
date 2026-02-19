@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irSetField
@@ -17,11 +18,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 interface InnerClassesSupport {
     fun getOuterThisField(innerClass: IrClass): IrField
@@ -29,7 +33,12 @@ interface InnerClassesSupport {
     fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor?
 }
 
-class InnerClassesLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : DeclarationTransformer {
+/**
+ * Adds 'outer this' fields to inner classes.
+ */
+open class InnerClassesLowering(val context: CommonBackendContext) : DeclarationTransformer {
+    private val innerClassesSupport = context.innerClassesSupport
+
     override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -60,7 +69,7 @@ class InnerClassesLowering(val context: BackendContext, private val innerClasses
 
     private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
         val loweredConstructor = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(irConstructor)
-        val outerThisParameter = loweredConstructor.valueParameters[0]
+        val outerThisParameter = loweredConstructor.parameters[0]
 
         val irClass = irConstructor.parentAsClass
         val parentThisField = innerClassesSupport.getOuterThisField(irClass)
@@ -110,23 +119,22 @@ private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstruct
 
     val loweredConstructor = getInnerClassConstructorWithOuterThisParameter(originalConstructor)
 
-    var index = 0
-
-    originalConstructor.dispatchReceiverParameter?.let {
-        oldConstructorParameterToNew[it] = loweredConstructor.valueParameters[index++]
+    originalConstructor.parameters.forEachIndexed { index, parameter ->
+        oldConstructorParameterToNew[parameter] = loweredConstructor.parameters[index]
     }
 
-    originalConstructor.valueParameters.forEach { old ->
-        oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[index++]
-    }
-
-    assert(loweredConstructor.valueParameters.size == index)
+    assert(loweredConstructor.parameters.size == originalConstructor.parameters.size)
 
     return oldConstructorParameterToNew
 }
 
+/**
+ * Replaces `this` with 'outer this' field references.
+ */
+@PhasePrerequisites(InnerClassesLowering::class)
+open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    private val innerClassesSupport = context.innerClassesSupport
 
-class InnerClassesMemberBodyLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, true)
     }
@@ -134,10 +142,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
     private val IrValueSymbol.classForImplicitThis: IrClass?
         // TODO: is this the correct way to get the class?
         get() =
-            if (this is IrValueParameterSymbol && owner.index == -1 &&
-                (owner == (owner.parent as? IrFunction)?.dispatchReceiverParameter ||
-                        owner == (owner.parent as? IrClass)?.thisReceiver)
-            ) {
+            if (this is IrValueParameterSymbol && owner.kind == IrParameterKind.DispatchReceiver) {
                 owner.type.classOrNull?.owner
             } else
                 null
@@ -152,6 +157,12 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
             if (primaryConstructor != null) {
                 val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(primaryConstructor)
                 irBody.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
+            }
+        }
+
+        if (container is IrFunction) {
+            container.parameters.forEach { parameter ->
+                parameter.defaultValue?.fixThisReference(irClass, container)
             }
         }
 
@@ -179,8 +190,10 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val origin = expression.origin
-                val function = (currentFunction?.irElement ?: enclosingFunction) as? IrFunction
-                val enclosingThisReceiver = function?.dispatchReceiverParameter ?: irClass.thisReceiver!!
+                val enclosingFunction = enclosingFunction as? IrFunction
+                val function = currentFunction?.irElement as? IrFunction ?: enclosingFunction
+                val enclosingThisReceiver =
+                    function?.dispatchReceiverParameter ?: enclosingFunction?.dispatchReceiverParameter ?: irClass.thisReceiver!!
 
                 var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, enclosingThisReceiver.symbol, origin)
                 var innerClass = irClass
@@ -194,7 +207,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
                     irThis = if (function is IrConstructor && irClass == innerClass) {
                         // Might be before a super() call (e.g. an argument to one), in which case the JVM bytecode verifier will reject
                         // an attempt to access the field. Good thing we have a local variable as well.
-                        IrGetValueImpl(startOffset, endOffset, function.valueParameters[0].symbol, origin)
+                        IrGetValueImpl(startOffset, endOffset, function.parameters[0].symbol, origin)
                     } else {
                         val outerThisField = innerClassesSupport.getOuterThisField(innerClass)
                         IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)
@@ -207,28 +220,27 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
     }
 }
 
-class InnerClassConstructorCallsLowering(val context: BackendContext, val innerClassesSupport: InnerClassesSupport) : BodyLoweringPass {
+open class InnerClassConstructorCallsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    private val innerClassesSupport: InnerClassesSupport = context.innerClassesSupport
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val dispatchReceiver = expression.dispatchReceiver ?: return expression
+                if (expression.dispatchReceiver == null) return expression
                 val callee = expression.symbol
                 val parent = callee.owner.parentAsClass
                 if (!parent.isInner) return expression
 
                 val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
-                val classTypeParametersCount = expression.typeArgumentsCount - expression.constructorTypeArgumentsCount
+                val classTypeParametersCount = expression.typeArguments.size - expression.constructorTypeArgumentsCount
                 val newCall = IrConstructorCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, classTypeParametersCount, expression.origin
                 )
 
                 newCall.copyTypeArgumentsFrom(expression)
-                newCall.putValueArgument(0, dispatchReceiver)
-                for (i in 1..newCallee.valueParameters.lastIndex) {
-                    newCall.putValueArgument(i, expression.getValueArgument(i - 1))
-                }
+                newCall.arguments.assignFrom(expression.arguments)
 
                 return newCall
             }
@@ -236,25 +248,36 @@ class InnerClassConstructorCallsLowering(val context: BackendContext, val innerC
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val dispatchReceiver = expression.dispatchReceiver ?: return expression
+                if (expression.dispatchReceiver == null) return expression
                 val classConstructor = expression.symbol.owner
                 if (!classConstructor.parentAsClass.isInner) return expression
 
                 val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol,
-                    typeArgumentsCount = expression.typeArgumentsCount,
-                    valueArgumentsCount = newCallee.valueParameters.size
+                    typeArgumentsCount = expression.typeArguments.size,
                 ).apply { copyTypeArgumentsFrom(expression) }
 
-                newCall.putValueArgument(0, dispatchReceiver)
-                for (i in 1..newCallee.valueParameters.lastIndex) {
-                    newCall.putValueArgument(i, expression.getValueArgument(i - 1))
-                }
+                newCall.arguments.assignFrom(expression.arguments)
 
                 return newCall
             }
 
+
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                val callee = expression.symbol as? IrConstructorSymbol ?: return expression
+                val parent = callee.owner.parent as? IrClass ?: return expression
+                if (!parent.isInner) return expression
+
+                val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+
+                expression.symbol = newCallee.symbol
+                return expression
+            }
+
+            // TODO remove after KT-78719
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
@@ -276,24 +299,12 @@ class InnerClassConstructorCallsLowering(val context: BackendContext, val innerC
                         endOffset,
                         type,
                         newCallee.symbol,
-                        typeArgumentsCount = typeArgumentsCount,
-                        valueArgumentsCount = newCallee.valueParameters.size,
+                        typeArgumentsCount = typeArguments.size,
                         reflectionTarget = newReflectionTarget?.symbol,
                         origin = origin
                     )
                 }
-
-                newReference.let {
-                    it.copyTypeArgumentsFrom(expression)
-                    // TODO: This is wrong, since we moved all parameters into value parameters,
-                    //       but changing it breaks JS IR in CallableReferenceLowering.
-                    it.dispatchReceiver = expression.dispatchReceiver
-                    it.extensionReceiver = expression.extensionReceiver
-                    for (v in 0 until expression.valueArgumentsCount) {
-                        it.putValueArgument(v, expression.getValueArgument(v))
-                    }
-                }
-
+                newReference.copyTypeAndValueArgumentsFrom(expression)
                 return newReference
             }
             // TODO callable references?

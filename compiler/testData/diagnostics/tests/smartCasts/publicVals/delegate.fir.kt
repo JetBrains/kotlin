@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KProperty
 
 class Delegate {
@@ -21,3 +22,6 @@ class Example {
         return if (r != null) r else ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType, operator,
+propertyDeclaration, propertyDelegate, smartcast, starProjection, stringLiteral */

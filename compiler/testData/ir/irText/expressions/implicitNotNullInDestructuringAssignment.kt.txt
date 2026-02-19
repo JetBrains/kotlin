@@ -8,8 +8,9 @@ private operator fun J.component2(): Int {
 
 fun test() {
   // COMPOSITE {
-  val tmp0_container: @FlexibleNullability J? = j()
-  val a: Int = tmp0_container.component1()
-  val b: Int = tmp0_container /*!! J */.component2()
+  val tmp_0: @FlexibleNullability J? = j()
+  val a: Int = component1(/* <this> = tmp_0 */)
+  val b: Int = component2(/* <this> = tmp_0 /*!! J */ */)
   // }
 }
+

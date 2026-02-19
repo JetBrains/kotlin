@@ -2,7 +2,9 @@ description = "Lombok compiler plugin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -11,32 +13,21 @@ dependencies {
     embedded(project(":kotlin-lombok-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-lombok-compiler-plugin.cli")) { isTransitive = false }
 
-    testImplementation(intellijCore())
-    testImplementation(project(":kotlin-lombok-compiler-plugin.common"))
-    testImplementation(project(":kotlin-lombok-compiler-plugin.k1"))
-    testImplementation(project(":kotlin-lombok-compiler-plugin.k2"))
-    testImplementation(project(":kotlin-lombok-compiler-plugin.cli"))
+    testFixturesApi(intellijCore())
+    testFixturesApi(project(":kotlin-lombok-compiler-plugin.common"))
+    testFixturesApi(project(":kotlin-lombok-compiler-plugin.k1"))
+    testFixturesApi(project(":kotlin-lombok-compiler-plugin.k2"))
+    testFixturesApi(project(":kotlin-lombok-compiler-plugin.cli"))
 
-    testImplementation(commonDependency("org.projectlombok:lombok"))
+    testFixturesApi(commonDependency("org.projectlombok:lombok"))
 
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:ir.backend.common"))
-    testApi(project(":compiler:backend.jvm"))
-    testApi(project(":compiler:cli"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
-    // FIR dependencies
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-
-    testApi(commonDependency("junit:junit"))
+    testFixturesApi(libs.junit4)
 
     testRuntimeOnly(libs.guava)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
@@ -48,25 +39,34 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
-    workingDir = rootDir
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
+    ) {
+        val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
+        doFirst {
+            testRuntimeClasspathFiles
+                .find { "guava" in it.name }
+                ?.absolutePath
+                ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
 
-    doFirst {
-        project.configurations
-            .testRuntimeClasspath.get()
-            .files
-            .find { "guava" in it.name }
-            ?.absolutePath
-            ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
-
+        }
     }
+
+    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt", generateTestsInBuildDirectory = true)
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withTestJar()
+
+    testData(project(":kotlin-lombok-compiler-plugin").isolated, "testData")
 }
 
 publish()

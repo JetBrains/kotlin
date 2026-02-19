@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
@@ -68,6 +70,7 @@ public class ClassBuildingContext(
             classKind = this@ClassBuildingContext.classKind
             scopeProvider = session.kotlinScopeProvider
             status = generateStatus()
+            source = getSourceForFirDeclaration()
             name = classId.shortClassName
             symbol = FirRegularClassSymbol(classId)
 
@@ -85,7 +88,7 @@ public class ClassBuildingContext(
                 superTypeRefs += session.builtinTypes.anyType
             } else {
                 superTypeProviders.mapTo(this.superTypeRefs) {
-                    buildResolvedTypeRef { type = it(this@buildRegularClass.typeParameters) }
+                    buildResolvedTypeRef { coneType = it(this@buildRegularClass.typeParameters) }
                 }
             }
         }.apply {
@@ -107,6 +110,7 @@ public class ClassBuildingContext(
  *
  * Created class won't have a constructor; constructor can be added separately with [createConstructor] function
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelClass(
     classId: ClassId,
     key: GeneratedDeclarationKey,
@@ -137,10 +141,17 @@ public fun FirExtension.createNestedClass(
     config: ClassBuildingContext.() -> Unit = {}
 ): FirRegularClass {
     return ClassBuildingContext(session, key, owner, owner.classId.createNestedClassId(name), classKind).apply(config).apply {
+        if (owner.isLocal) {
+            visibility = Visibilities.Local
+        }
         status {
             isExpect = owner.isExpect
         }
-    }.build()
+    }.build().apply {
+        if (owner.isLocal) {
+            containingClassForLocalAttr = owner.toLookupTag()
+        }
+    }
 }
 
 /**
@@ -162,9 +173,16 @@ public fun FirExtension.createCompanionObject(
     val classId = owner.classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
     return ClassBuildingContext(session, key, owner, classId, ClassKind.OBJECT).apply(config).apply {
         modality = Modality.FINAL
+        if (owner.isLocal) {
+            visibility = Visibilities.Local
+        }
         status {
             isCompanion = true
             isExpect = owner.isExpect
         }
-    }.build()
+    }.build().apply {
+        if (owner.isLocal) {
+            containingClassForLocalAttr = owner.toLookupTag()
+        }
+    }
 }

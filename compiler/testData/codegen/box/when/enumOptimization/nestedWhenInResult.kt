@@ -17,5 +17,4 @@ fun box(): String =
     test(ABCD.B, ABCD.A, "O") + test(ABCD.A, ABCD.B, "K")
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 2 (TABLE|LOOKUP)SWITCH

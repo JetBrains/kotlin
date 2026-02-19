@@ -1,0 +1,11 @@
+<caret_1>:
+  KDocName(41,43): 'xx'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(56,58): 'xx'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(74,76): 'xx'
+    NO_CANDIDATES

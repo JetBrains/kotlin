@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 public class A {
     public operator fun get(vararg attrs : Pair<String, String>) : A = this
@@ -22,3 +23,7 @@ val x = B()["a", "v"]["a" to "b"] {} ["q" to "p"] // does not parses around {}
 //from library
 data class Pair<out A, out B> (val first: A, val second: B)
 infix fun <A,B> A.to(that: B) = Pair(this, that)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, multiplicativeExpression, nullableType, operator, out, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression, typeParameter, typeWithExtension, unaryExpression, vararg */

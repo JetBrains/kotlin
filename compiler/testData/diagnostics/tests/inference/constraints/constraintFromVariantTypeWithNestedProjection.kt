@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Out<out T>
 class In<in T>
@@ -13,3 +14,5 @@ fun f(o: Out<Out<*>>, i: In<In<*>>, inv: Inv<Inv<*>>) {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>choose2<!>(i)
     choose3(<!TYPE_MISMATCH!>inv<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, nullableType, out, starProjection, typeParameter */

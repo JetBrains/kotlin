@@ -1,11 +1,14 @@
 // WITH_REFLECT
-// KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: WASM
-// IGNORE_INLINER: IR
+// WITH_STDLIB
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.2
+// ^^^ KT-79704 is fixed in 2.3.0-Beta1, see improved `toString()` in kotlin.reflect.js.internal.KTypeParameterImpl, commit 4bdbc543
+// ^^^ Expected <in IN>, actual <IN>.
+//     at assertEquals
+
+// FILE: lib.kt
 package test
 
 import kotlin.reflect.*
-import kotlin.test.assertEquals
 
 class Container<T>
 
@@ -17,6 +20,11 @@ class C<INV, in IN, out OUT> {
 
 inline fun <reified X, Y : X> getY() = typeOf<Container<Y>>().arguments.single().type!!.classifier as KTypeParameter
 
+// FILE: main.kt
+package test
+import kotlin.reflect.*
+import kotlin.test.assertEquals
+
 fun box(): String {
     val c = C<Any, Any, Any>()
     assertEquals(KVariance.INVARIANT, c.getInv().variance)
@@ -24,22 +32,16 @@ fun box(): String {
     assertEquals(KVariance.OUT, c.getOut().variance)
     assertEquals(false, c.getInv().isReified)
 
-    if (!isJS) {
-        val y = getY<Any, Any>()
-        assertEquals(false, y.isReified)
-        val x = y.upperBounds.single().classifier as KTypeParameter
-        assertEquals(true, x.isReified)
-        assertEquals(KVariance.INVARIANT, x.variance)
-        assertEquals("X", x.toString())
-    }
+    val y = getY<Any, Any>()
+    assertEquals(false, y.isReified)
+    val x = y.upperBounds.single().classifier as KTypeParameter
+    assertEquals(true, x.isReified)
+    assertEquals(KVariance.INVARIANT, x.variance)
+    assertEquals("X", x.toString())
 
     assertEquals("INV", c.getInv().toString())
-    if (!isJS) {
-        assertEquals("in IN", c.getIn().toString())
-        assertEquals("out OUT", c.getOut().toString())
-    }
+    assertEquals("in IN", c.getIn().toString())
+    assertEquals("out OUT", c.getOut().toString())
 
     return "OK"
 }
-
-val isJS = 1 as Any is Double

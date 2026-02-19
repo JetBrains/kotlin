@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KClass
 
 open class A
@@ -25,3 +26,6 @@ class MyClass4
 
 @Ann2(<!TYPE_MISMATCH!>arrayOf(<!TYPE_MISMATCH!>B2::class<!>)<!>)
 class MyClass5
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, collectionLiteral, outProjection,
+primaryConstructor, propertyDeclaration */

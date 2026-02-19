@@ -21,12 +21,6 @@ fun box(): String {
 // The 1st ICONST_0 is for initializing the list. 2nd is for initializing the index in the lowered for-loop.
 // 2 ICONST_0
 
-// JVM_TEMPLATES
-// 1 iterator
-// 1 hasNext
-// 1 next
-
-// JVM_IR_TEMPLATES
 // 0 iterator
 // 0 hasNext
 // 0 next
@@ -37,7 +31,6 @@ fun box(): String {
 // 0 getStep
 // 0 getIndices
 
-// JVM_IR_TEMPLATES
 // 4 ILOAD
 // 4 ISTORE
 // 0 IADD

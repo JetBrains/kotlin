@@ -44,6 +44,7 @@ class Sample {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     Sample().test()
     StateMachineChecker.check(0, checkFinished = false)
     return "OK"

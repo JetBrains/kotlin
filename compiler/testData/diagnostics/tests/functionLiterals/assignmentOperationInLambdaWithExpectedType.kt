@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(bal: Array<Int>) {
     var bar = 4
 
@@ -13,3 +14,6 @@ fun test(bal: Array<Int>) {
 
     val f: Int = <!TYPE_MISMATCH!>run { <!TYPE_MISMATCH!>bar += 4<!> }<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, propertyDeclaration */

@@ -1,9 +1,5 @@
 expression: "nananananananana " + "batman"
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: "nananananananana batman"
-constantValueKind: String
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: "nananananananana batman"
-constantLikeValueKind: String
+constantValueKind: StringValue
+constantValueSource: BINARY_EXPRESSION
+constantValueSourceText: "nananananananana " + "batman"

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import java.io.File
@@ -38,7 +37,15 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             required = false, allowMultipleOccurrences = false
         )
         val DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION = CliOption(
-            "disable-script-definitions-autoloading", "true/false", "Do not automatically load compiler-supplied script definitions, like main-kts",
+            "disable-script-definitions-autoloading",
+            "true/false",
+            "Do not automatically load compiler-supplied script definitions, like main-kts",
+            required = false, allowMultipleOccurrences = false
+        )
+        val ENABLE_SCRIPT_EXPLANATION_OPTION = CliOption(
+            "enable-script-explanation",
+            "true/false",
+            "Enable additional IR generation which contains script expressions evaluation info  (works via power-assert plugin)",
             required = false, allowMultipleOccurrences = false
         )
         val LEGACY_SCRIPT_TEMPLATES_OPTION = CliOption(
@@ -49,6 +56,12 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "script-resolver-environment", "<key=value[,]>",
             "Script resolver environment in key-value pairs (the value could be quoted and escaped)",
             required = false, allowMultipleOccurrences = true
+        )
+        val DISABLE_SCRIPT_COMPILATION_CACHE = CliOption(
+            "disable-script-compilation-cache",
+            "true/false",
+            "Do not attempt to use script compilation cache, even if provided by the definition",
+            required = false, allowMultipleOccurrences = false
         )
     }
 
@@ -62,7 +75,9 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION,
             DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION,
             LEGACY_SCRIPT_TEMPLATES_OPTION,
-            LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION
+            LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
+            ENABLE_SCRIPT_EXPLANATION_OPTION,
+            DISABLE_SCRIPT_COMPILATION_CACHE,
         )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -101,6 +116,12 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
                 value.takeUnless { it.isBlank() }?.toBoolean() ?: true
             )
         }
+        ENABLE_SCRIPT_EXPLANATION_OPTION -> {
+            configuration.put(
+                ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: false
+            )
+        }
         LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION -> {
             val currentEnv = configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION).toMutableMap()
             // parses key/value pairs in the form <key>=<value>, where
@@ -118,9 +139,15 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
                     throw CliOptionProcessingException("Unable to parse script-resolver-environment argument $envParam")
                 }
                 currentEnv[match.groupValues[1]] =
-                        match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") }
+                    match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") }
             }
             configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, currentEnv)
+        }
+        DISABLE_SCRIPT_COMPILATION_CACHE -> {
+            configuration.put(
+                ScriptingConfigurationKeys.DISABLE_SCRIPT_COMPILATION_CACHE,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: false
+            )
         }
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }

@@ -31,6 +31,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsWasm.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION, "Only top-level functions can be external")
         put(ErrorsWasm.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, "External functions should be annotated with @WasmImport")
 
+        put(ErrorsWasm.ASSOCIATED_OBJECT_INVALID_BINDING, "Invalid associated object binding.")
+
         put(ErrorsWasm.NESTED_WASM_IMPORT, "Only top-level functions can be imported with @WasmImport")
         put(ErrorsWasm.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, "Functions annotated with @WasmImport must be external")
         put(ErrorsWasm.WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE, "Default parameter values are not supported with @WasmImport and @WasmExport")

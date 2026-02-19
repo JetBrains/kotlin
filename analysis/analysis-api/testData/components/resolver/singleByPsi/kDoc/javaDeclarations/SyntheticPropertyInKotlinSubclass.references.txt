@@ -1,0 +1,17 @@
+<caret_2>:
+  KDocName(53,57): 'prop'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in dependency.JavaBase) open fun getProp(): kotlin.String!
+
+<caret_1>:
+  KDocName(63,79): 'KotlinChild.prop'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in dependency.JavaBase) open fun getProp(): kotlin.String!

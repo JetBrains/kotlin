@@ -4,7 +4,7 @@ val propertyWithInferredType1 get() = 1
 val propertyWithInferredType2 get() = "hello"
 val propertyWithInferredType3 get() = 42.toString()
 val propertyWithInferredType4 get() = null
-val propertyWithInferredType5 get() = Planet("Earth", 12742)
+val propertyWithInferredType5 get() = Planet("Earth", 12742.0)
 
 typealias B = Planet
 typealias C = Planet
@@ -12,20 +12,20 @@ typealias C = Planet
 // with explicit type:
 val property1: Int = 1
 val property2: String = "hello"
-val property3: Planet = Planet("Earth", 12742)
-val property4: B = Planet("Earth", 12742)
-val property5: Planet = A("Earth", 12742)
-val property6: Planet = A("Earth", 12742)
-val property7: C = Planet("Earth", 12742)
+val property3: Planet = Planet("Earth", 12742.0)
+val property4: B = Planet("Earth", 12742.0)
+val property5: Planet = B("Earth", 12742.0)
+val property6: Planet = B("Earth", 12742.0)
+val property7: C = Planet("Earth", 12742.0)
 
 // with explicit type:
 fun function1(): Int = 1
 fun function2(): String = "hello"
-fun function3(): Planet = Planet("Earth", 12742)
-fun function4(): B = A("Earth", 12742)
-fun function5(): Planet = A("Earth", 12742)
-fun function6(): Planet = Planet("Earth", 12742)
-fun function7(): C = C("Earth", 12742)
+fun function3(): Planet = Planet("Earth", 12742.0)
+fun function4(): B = B("Earth", 12742.0)
+fun function5(): Planet = B("Earth", 12742.0)
+fun function6(): Planet = Planet("Earth", 12742.0)
+fun function7(): C = C("Earth", 12742.0)
 
 val propertyWithMismatchedType1: Long = 1
 val propertyWithMismatchedType2: Short = 1
@@ -51,7 +51,7 @@ fun functionWithTypeParametersInReturnType6(): List<String> = listOf("hello")
 fun functionWithTypeParametersInReturnType7() = Box(1)
 fun functionWithTypeParametersInReturnType8() = Box("hello")
 fun functionWithTypeParametersInReturnType9() = Box("hello")
-fun functionWithTypeParametersInReturnType10() = Box(Planet("Earth", 12742))
+fun functionWithTypeParametersInReturnType10() = Box(Planet("Earth", 12742.0))
 fun functionWithTypeParametersInReturnType11() = Box(Fox())
 fun functionWithTypeParametersInReturnType12() = Box(Fox())
 

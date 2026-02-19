@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: ALambda.java
 
@@ -21,3 +22,5 @@ public interface ACheckedFunction0 extends ALambda {
 fun test() {
     ACheckedFunction0 { 2 } // error: Interface ACheckedFunction0 does not have constructors
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral */

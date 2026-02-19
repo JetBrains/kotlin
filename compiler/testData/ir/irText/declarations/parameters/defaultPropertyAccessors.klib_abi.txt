@@ -1,0 +1,27 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Host { // /Host|null[0]
+    final val testMember1 // /Host.testMember1|{}testMember1[0]
+        final fun <get-testMember1>(): kotlin/Int // /Host.testMember1.<get-testMember1>|<get-testMember1>(){}[0]
+    final var testMember2 // /Host.testMember2|{}testMember2[0]
+        final fun <get-testMember2>(): kotlin/Int // /Host.testMember2.<get-testMember2>|<get-testMember2>(){}[0]
+        final fun <set-testMember2>(kotlin/Int) // /Host.testMember2.<set-testMember2>|<set-testMember2>(kotlin.Int){}[0]
+    constructor <init>() // /Host.<init>|<init>(){}[0]
+}
+final class <#A: kotlin/Any?> /InPrimaryCtor { // /InPrimaryCtor|null[0]
+    final val testInPrimaryCtor1 // /InPrimaryCtor.testInPrimaryCtor1|{}testInPrimaryCtor1[0]
+        final fun <get-testInPrimaryCtor1>(): #A // /InPrimaryCtor.testInPrimaryCtor1.<get-testInPrimaryCtor1>|<get-testInPrimaryCtor1>(){}[0]
+    final var testInPrimaryCtor2 // /InPrimaryCtor.testInPrimaryCtor2|{}testInPrimaryCtor2[0]
+        final fun <get-testInPrimaryCtor2>(): kotlin/Int // /InPrimaryCtor.testInPrimaryCtor2.<get-testInPrimaryCtor2>|<get-testInPrimaryCtor2>(){}[0]
+        final fun <set-testInPrimaryCtor2>(kotlin/Int) // /InPrimaryCtor.testInPrimaryCtor2.<set-testInPrimaryCtor2>|<set-testInPrimaryCtor2>(kotlin.Int){}[0]
+    constructor <init>(#A, kotlin/Int = ...) // /InPrimaryCtor.<init>|<init>(1:0;kotlin.Int){}[0]
+}
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin/Int // /test1.<get-test1>|<get-test1>(){}[0]
+final var /test2 // /test2|{}test2[0]
+    final fun <get-test2>(): kotlin/Int // /test2.<get-test2>|<get-test2>(){}[0]
+    final fun <set-test2>(kotlin/Int) // /test2.<set-test2>|<set-test2>(kotlin.Int){}[0]

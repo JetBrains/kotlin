@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 // imports should be resolved
@@ -85,3 +86,7 @@ class B : A(<!TYPE_MISMATCH!>""<!>) {
 class C : A {
     constructor() : super(<!TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+incrementDecrementExpression, integerLiteral, interfaceDeclaration, override, propertyDeclaration,
+propertyWithExtensionReceiver, secondaryConstructor, stringLiteral, superExpression */

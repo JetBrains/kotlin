@@ -1,0 +1,12 @@
+LOW:
+  <EMPTY>
+HIGH:
+  import kotlin.*
+  import kotlin.annotation.*
+  import kotlin.collections.*
+  import kotlin.comparisons.*
+  import kotlin.io.*
+  import kotlin.native.*
+  import kotlin.ranges.*
+  import kotlin.sequences.*
+  import kotlin.text.*

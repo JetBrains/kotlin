@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 @file:Suppress("INLINE_CLASS_DEPRECATED")
 
@@ -35,3 +36,6 @@ value class C2(val x: B2)
 inline class C3(val x: B2)
 
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class C4(val x: B2)
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral, value */

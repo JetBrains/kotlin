@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.regressionTests
 
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
@@ -30,18 +29,18 @@ class JvmAndAndroidIntermediateSourceSetTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
-        addBuildEventsListenerRegistryMock(project)
 
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
+        android.configureDefaults()
 
         /* Kotlin Setup */
         kotlin = project.multiplatformExtension
         kotlin.jvm()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         jvmAndAndroidMain = kotlin.sourceSets.create("jvmAndAndroidMain")
         kotlin.sourceSets.run {

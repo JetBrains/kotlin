@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-799 Allow 'return' expressions in conditionals assigned to variables
 
 package kt799
@@ -23,3 +24,5 @@ fun f(mi: Int = if (true) 0 else <!RETURN_NOT_ALLOWED!>return<!>) {}
 
 fun doSmth(i: Int) {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration */

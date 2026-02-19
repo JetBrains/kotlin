@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-57425
 // WITH_STDLIB
@@ -12,3 +13,6 @@ fun test(pair: Pair<String?, Data>) {
         <!SMARTCAST_IMPOSSIBLE!>pair.first<!>.length // should be an error
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast */

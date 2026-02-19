@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // ISSUE: KT-8263
 
@@ -6,3 +7,5 @@ fun test(x: Int, y: Int) {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral */

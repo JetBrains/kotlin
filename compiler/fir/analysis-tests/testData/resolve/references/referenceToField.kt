@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val x: Int = 1
         get() {
@@ -5,3 +6,5 @@ class A {
             return field
         }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, propertyDeclaration */

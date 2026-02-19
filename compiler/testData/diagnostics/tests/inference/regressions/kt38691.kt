@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class Inv<T>
 fun <T> materializeInv() = Inv<T>()
@@ -12,3 +13,6 @@ fun <R> main(fn: () -> R) {
     val x2 = foo<R>(materializeInv(), fn) // OK
     val x3 = foo<R>(materializeInv(), ::bar) // OK
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localFunction, localProperty, nullableType, propertyDeclaration, typeParameter */

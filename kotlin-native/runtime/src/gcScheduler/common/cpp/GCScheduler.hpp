@@ -6,13 +6,13 @@
 #pragma once
 
 #include <cstddef>
+#include <memory>
 #include <functional>
 #include <utility>
 
 #include "GCSchedulerConfig.hpp"
 #include "KAssert.h"
 #include "Utils.hpp"
-#include "std_support/Memory.hpp"
 
 namespace kotlin::mm {
 class ThreadData;
@@ -36,7 +36,7 @@ public:
         void safePoint() noexcept;
 
     private:
-        std_support::unique_ptr<Impl> impl_;
+        std::unique_ptr<Impl> impl_;
     };
 
     GCScheduler() noexcept;
@@ -66,7 +66,7 @@ public:
 
 private:
     GCSchedulerConfig config_;
-    std_support::unique_ptr<Impl> impl_;
+    std::unique_ptr<Impl> impl_;
 };
 
 } // namespace kotlin::gcScheduler

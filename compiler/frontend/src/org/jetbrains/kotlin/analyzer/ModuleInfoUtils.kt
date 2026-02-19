@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analyzer
 
-import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 val ModuleDescriptor.moduleInfo: ModuleInfo?
@@ -24,8 +23,3 @@ internal fun collectAllExpectedByModules(entryModule: ModuleInfo): Set<ModuleInf
 
     return expectedByModules
 }
-
-val JDK_CAPABILITY = ModuleCapability<Boolean>("IsJdk")
-
-val ModuleDescriptor.hasJdkCapability: Boolean
-    get() = getCapability(JDK_CAPABILITY) == true

@@ -8,23 +8,29 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_FUNCTION_CLASS
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFunctionInterfaceFile
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
+import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionSerializer
+import org.jetbrains.kotlin.backend.konan.isCalledFromExportedInlineFunction
+import org.jetbrains.kotlin.backend.konan.isConstructedFromExportedInlineFunctions
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedFileReference
+import org.jetbrains.kotlin.backend.konan.serialization.buildSerializedClassFields
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.impl.javaFile
 
 internal class CacheInfoBuilder(
         private val generationState: NativeGenerationState,
-        private val moduleDeserializer: KonanIrLinker.KonanPartialModuleDeserializer,
+        private val moduleDeserializer: KonanPartialModuleDeserializer,
         private val irModule: IrModuleFragment
 ) {
     fun build() {
@@ -33,7 +39,7 @@ internal class CacheInfoBuilder(
         irModule.files.forEach { irFile ->
             var hasEagerlyInitializedProperties = false
 
-            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+            irFile.acceptChildrenVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -41,11 +47,11 @@ internal class CacheInfoBuilder(
                 override fun visitClass(declaration: IrClass) {
                     declaration.acceptChildrenVoid(this)
 
-                    if (!declaration.isInterface && !declaration.isLocal
+                    if (!declaration.isInterface && !declaration.isOriginallyLocal
                             && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
                     ) {
                         val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields(generationState.llvm)
-                        generationState.classFields.add(moduleDeserializer.buildClassFields(declaration, declaredFields))
+                        generationState.classFields.add(buildSerializedClassFields(declaration, declaredFields, moduleDeserializer))
                     }
                 }
 
@@ -54,7 +60,8 @@ internal class CacheInfoBuilder(
                     // as for functions - both their callees will be handled and inline bodies will be built for the top function.
 
                     if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
-                        generationState.inlineFunctionBodies.add(moduleDeserializer.buildInlineFunctionReference(declaration))
+                        val inlineFunctionSerializer = InlineFunctionSerializer(moduleDeserializer)
+                        generationState.inlineFunctionBodies.add(inlineFunctionSerializer.buildInlineFunctionReference(declaration))
                         trackCallees(declaration)
                     }
                 }
@@ -71,7 +78,7 @@ internal class CacheInfoBuilder(
             })
 
             if (hasEagerlyInitializedProperties)
-                generationState.eagerInitializedFiles.add(moduleDeserializer.buildEagerInitializedFile(irFile))
+                generationState.eagerInitializedFiles.add(SerializedEagerInitializedFile(SerializedFileReference(irFile)))
 
             if (generationState.config.producePerFileCache && !irFile.isFunctionInterfaceFile)
                 generationState.klibHash = SerializedIrFileFingerprint(moduleDeserializer.klib, moduleDeserializer.getKlibFileIndexOf(irFile)).fileFingerprint
@@ -79,7 +86,7 @@ internal class CacheInfoBuilder(
     }
 
     private val IrDeclaration.isExported
-        get() = with(KonanManglerIr) { isExported(compatibleMode = moduleDeserializer.compatibilityMode.oldSignatures) }
+        get() = with(KonanManglerIr) { isExported(compatibleMode = moduleDeserializer.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations) }
 
     private val visitedInlineFunctions = mutableSetOf<IrFunction>()
 
@@ -87,17 +94,15 @@ internal class CacheInfoBuilder(
         if (irFunction in visitedInlineFunctions) return
         visitedInlineFunctions += irFunction
 
-        irFunction.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irFunction.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
             private fun processFunction(function: IrFunction) {
-                if (generationState.context.irLinker.getCachedDeclarationModuleDeserializer(function) == null) {
-                    generationState.calledFromExportedInlineFunctions.add(function)
-                    (function as? IrConstructor)?.constructedClass?.let {
-                        generationState.constructedFromExportedInlineFunctions.add(it)
-                    }
+                if (generationState.context.moduleDeserializerProvider.getDeserializerOrNull(function) == null) {
+                    function.isCalledFromExportedInlineFunction = true
+                    (function as? IrConstructor)?.constructedClass?.isConstructedFromExportedInlineFunctions = true
                     if (function.isInline && !function.isExported) {
                         // An exported inline function calls a non-exported inline function:
                         // should track its callees as well as it won't be handled by the main visitor.

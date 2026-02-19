@@ -44,6 +44,7 @@ internal abstract class AbstractPlatformRandom : Random() {
     override fun nextBoolean(): Boolean = impl.nextBoolean()
     override fun nextDouble(): Double = impl.nextDouble()
     override fun nextFloat(): Float = impl.nextFloat()
+    @IgnorableReturnValue
     override fun nextBytes(array: ByteArray): ByteArray = array.also { impl.nextBytes(it) }
 }
 

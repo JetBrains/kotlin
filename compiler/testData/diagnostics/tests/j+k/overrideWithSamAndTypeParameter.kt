@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: MyFunc.java
 
@@ -21,3 +22,6 @@ public class B<E> implements A<E> {
 fun main() {
     B<String>().foo("") { "" }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion,
+stringLiteral */

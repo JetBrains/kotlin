@@ -1,14 +1,13 @@
 # Artifacts Tests
 
-This module contains tests for changes in pom files for all maven artifacts we publish
+This module contains tests for changes in Maven and Gradle metadata for all maven artifacts we publish, 
+as well as verifies the contents of the Kotlin distribution
 
-To reproduce locally build all artifacts first:
+To reproduce locally, first run:
 
 ```shell
-# clean local m2 from old artifacts to avoid unrelated failures
-find ~/.m2/repository/org/jetbrains/kotlin -name "*-1.9.255*" -delete
-
-./gradlew install
-cd libraries
-mvn install -DskipTests
+./gradlew clean install publish mvnPublish dist -Pteamcity=true
 ```
+
+`-Pteamcity=true` is needed for Gradle metadata tests because the tests expect artifacts to contain metadata for Javadoc elements, 
+which are only generated on CI.

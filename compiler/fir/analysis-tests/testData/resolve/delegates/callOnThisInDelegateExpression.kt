@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-57288
 import kotlin.properties.ReadWriteProperty
@@ -19,3 +20,7 @@ abstract class SomeImpl<R : Some> : Some {
 
     fun <M : SomeImpl<T>, T : Some> getFactory(): Factory<M, T?> = null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, infix,
+interfaceDeclaration, nullableType, propertyDeclaration, propertyDelegate, setter, starProjection, typeConstraint,
+typeParameter */

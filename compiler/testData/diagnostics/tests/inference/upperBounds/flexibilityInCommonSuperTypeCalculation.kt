@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNSUPPORTED -UNUSED_EXPRESSION -DEBUG_INFO_SMARTCAST -USELESS_CAST -UNUSED_PARAMETER -UNCHECKED_CAST -CAST_NEVER_SUCCEEDS -UNUSED_VARIABLE -UNREACHABLE_CODE -DEBUG_INFO_CONSTANT
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNSUPPORTED -UNUSED_EXPRESSION -DEBUG_INFO_SMARTCAST -USELESS_CAST -UNUSED_PARAMETER -UNCHECKED_CAST -CAST_NEVER_SUCCEEDS -UNUSED_VARIABLE -UNREACHABLE_CODE -DEBUG_INFO_CONSTANT
 // SKIP_TXT
 
 // FILE: Test.java
@@ -270,3 +271,7 @@ fun case_14() {
     <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<kotlin.Any?>?..kotlin.collections.List<*>?)>")!>result_7<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.MutableList<out kotlin.Any?>?..kotlin.collections.List<*>?)>")!>result_8<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, equalityExpression, flexibleType, functionDeclaration,
+ifExpression, integerLiteral, intersectionType, javaFunction, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter, vararg */

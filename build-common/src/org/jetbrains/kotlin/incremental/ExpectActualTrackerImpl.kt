@@ -14,7 +14,16 @@ class ExpectActualTrackerImpl : ExpectActualTracker {
     val expectToActualMap: Map<File, Set<File>>
         get() = expectToActual
 
+    private val expectsOfLenientStubs = hashSetOf<File>()
+
+    val expectsOfLenientStubsSet: Set<File>
+        get() = expectsOfLenientStubs
+
     override fun report(expectedFile: File, actualFile: File) {
         expectToActual.getOrPut(expectedFile) { hashSetOf() }.add(actualFile)
+    }
+
+    override fun reportExpectOfLenientStub(expectedFile: File) {
+        expectsOfLenientStubs.add(expectedFile)
     }
 }

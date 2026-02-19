@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION
+// DIAGNOSTICS: -JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION
 package a.b.c
 
 @kotlin.Deprecated("aaa")
@@ -26,3 +27,6 @@ annotation class annArray(val p: Array<String> = kotlin.arrayOf("a"))
 class A {
     annotation class IAnn
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
+nestedClass, primaryConstructor, propertyDeclaration, stringLiteral */

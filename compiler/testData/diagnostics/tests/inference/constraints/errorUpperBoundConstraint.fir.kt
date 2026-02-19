@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: Sam.java
 
@@ -19,7 +20,9 @@ public class Foo {
 // FILE: test.kt
 
 fun test(e: <!UNRESOLVED_REFERENCE!>ErrorType<!>) {
-    Foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {
-        Sam.Result.create(e)
+    Foo.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!> {
+        Sam.Result.<!CANNOT_INFER_PARAMETER_TYPE!>create<!>(e)
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

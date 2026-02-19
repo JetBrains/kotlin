@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
+
 fun castInTry(s: Any) {
     try {
         s as String // Potential cast exception
@@ -30,3 +33,5 @@ fun castAtAll(s: Any) {
     }
     <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, localProperty, propertyDeclaration, smartcast, tryExpression */

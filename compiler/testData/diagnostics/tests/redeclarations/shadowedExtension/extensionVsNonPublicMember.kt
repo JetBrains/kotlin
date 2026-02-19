@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class WithPublicInvoke {
     public operator fun invoke() {}
 }
@@ -45,3 +46,6 @@ fun Test.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>withPubli
 fun Test.wihtInternalInvoke() {}
 fun Test.withProtectedInvoke() {}
 fun Test.withPrivateInvoke() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, operator,
+propertyDeclaration, propertyWithExtensionReceiver */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // ISSUE: KT-30507
 
@@ -36,6 +37,9 @@ operator fun Int.invoke(y: Int, z: Int) {}
 fun test5() {
     var x: Int? = 10
     x!!
-    <!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(if (true) { x = null; 0 } else 0, x)
+    x(if (true) { x = null; 0 } else 0, <!ARGUMENT_TYPE_MISMATCH!>x<!>)
     x<!UNSAFE_CALL!>.<!>inv()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+ifExpression, integerLiteral, localProperty, nullableType, operator, propertyDeclaration, smartcast */

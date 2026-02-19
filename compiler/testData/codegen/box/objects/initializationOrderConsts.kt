@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 var result = "OK"
 
 object A {

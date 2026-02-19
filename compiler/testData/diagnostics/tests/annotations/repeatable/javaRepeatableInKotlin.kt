@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FULL_JDK
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 
 //import java.lang.annotation.*
 
@@ -11,3 +12,5 @@ annotation class RepeatableAnnotation
 annotation class RepeatableAnnotationContainer
 
 @RepeatableAnnotation class Annotated
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, typeAliasDeclaration */

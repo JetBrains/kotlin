@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 class FirNoArgExtensionRegistrar(val noArgAnnotationFqNames: List<String>) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +FirNoArgPredicateMatcher.getFactory(noArgAnnotationFqNames)
+        +::FirNoArgConstructorGenerator
         +::FirNoArgCheckers
+
+        registerDiagnosticContainers(KtErrorsNoArg)
     }
 }

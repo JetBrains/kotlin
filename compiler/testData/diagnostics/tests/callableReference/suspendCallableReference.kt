@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-32452
 
 interface A {
@@ -15,3 +16,6 @@ open class B<T : Any> {
 class MyService : A, B<A>() {
     override suspend fun foo(input: String) = call(A::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+nullableType, override, suspend, typeConstraint, typeParameter, typeWithExtension */

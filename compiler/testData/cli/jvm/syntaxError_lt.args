@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/../syntaxError.kt
+-d
+$TEMP_DIR$
+-Xuse-fir-lt=true

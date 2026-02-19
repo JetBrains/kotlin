@@ -1,0 +1,36 @@
+KtNameReferenceExpression(83,94): 'setListener'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = jClass
+        isSafeNavigation = false
+        type = JavaTest.SomeJavaClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /JavaTest.SomeJavaClass.setListener(<dispatch receiver>: JavaTest.SomeJavaClass, listener: JavaTest.SAMInterface!): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = listener
+            receiverType = null
+            returnType = JavaTest.SAMInterface!
+            symbol = listener: JavaTest.SAMInterface!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /JavaTest.SomeJavaClass.setListener
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {} -> (KaVariableSignature:
+          name = listener
+          receiverType = null
+          returnType = JavaTest.SAMInterface!
+          symbol = listener: JavaTest.SAMInterface!
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public fun foo(x: String?, y: String?): Int {
     do {
         // After the check, smart cast should work
@@ -13,3 +14,6 @@ public fun foo(x: String?, y: String?): Int {
     // break is possible before so !! is necessary
     return y!!.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast, stringLiteral */

@@ -1,5 +1,8 @@
-// !DIAGNOSTICS: -UNCHECKED_CAST
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED, -CONTEXT_CLASS_OR_CONSTRUCTOR
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNCHECKED_CAST
+// LANGUAGE: +ContextReceivers
 
 interface A
 interface B : A
@@ -219,3 +222,7 @@ fun f(g: <!SUBTYPING_BETWEEN_CONTEXT_RECEIVERS!>context(A, B)<!> () -> Unit, val
 fun test() {
     val lf: <!SUBTYPING_BETWEEN_CONTEXT_RECEIVERS!>context(A, B)<!> () -> Unit = { }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+functionalType, getter, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out,
+propertyDeclaration, propertyDeclarationWithContext, typeAliasDeclaration, typeParameter, typeWithContext */

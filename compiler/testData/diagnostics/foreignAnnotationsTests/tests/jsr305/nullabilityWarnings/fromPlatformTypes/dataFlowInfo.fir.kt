@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java
@@ -12,15 +12,15 @@ public class J {
 // FILE: k.kt
 fun test() {
     val n = J.staticN
-    foo(n)
-    J.staticNN = n
+    foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>)
+    J.staticNN = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>
     if (n != null) {
         foo(n)
         J.staticNN = n
     }
 
     val x: J? = null
-    J.staticNN = x
+    J.staticNN = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x<!>
     if (x != null) {
         J.staticNN = x
     }

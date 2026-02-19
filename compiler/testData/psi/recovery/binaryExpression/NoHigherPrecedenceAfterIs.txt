@@ -1,0 +1,61 @@
+KtFile: NoHigherPrecedenceAfterIs.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// It's found during working on binary expression optimizing KT-77993')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('x')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    WHEN
+      PsiElement(when)('when')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace(' ')
+      WHEN_ENTRY
+        WHEN_CONDITION_WITH_EXPRESSION
+          IS_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('value')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(is)('is')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting '->'
+          PsiElement(IDENTIFIER)('value2')
+        PsiErrorElement:Expecting an element
+          <empty list>
+      PsiWhiteSpace(' ')
+      WHEN_ENTRY
+        WHEN_CONDITION_IS_PATTERN
+          PsiElement(is)('is')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace(' ')
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// `value2` should not be treated as infix function')

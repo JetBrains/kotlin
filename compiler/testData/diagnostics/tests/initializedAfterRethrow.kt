@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(): Int = 42
 
 object ThrowInTryWithCatch {
@@ -220,3 +221,6 @@ object InnerFinallyWithCatch {
         p = "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, init, integerLiteral, localProperty, objectDeclaration,
+propertyDeclaration, stringLiteral, tryExpression */

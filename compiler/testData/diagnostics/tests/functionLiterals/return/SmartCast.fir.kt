@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // NI_EXPECTED_FILE
 // KT-6822 Smart cast doesn't work inside local returned expression in lambda
 
@@ -16,3 +17,6 @@ val b /*: Int? */ = let { // but must be Int
 val c /*: Int*/ = let {
     if (it != null) it else 5
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, smartcast, typeParameter */

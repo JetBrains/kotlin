@@ -1,3 +1,4 @@
+
 fun foo(block: () -> String): String = block()
 inline fun bar(crossinline f: () -> String) = foo { f() }
 

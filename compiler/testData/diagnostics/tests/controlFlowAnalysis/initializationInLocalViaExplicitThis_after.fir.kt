@@ -1,4 +1,5 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 // See KT-17479
 
 class Test {
@@ -16,3 +17,6 @@ class Test {
         <!VAL_REASSIGNMENT!>str<!> = "C"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, lambdaLiteral, propertyDeclaration, stringLiteral,
+thisExpression */

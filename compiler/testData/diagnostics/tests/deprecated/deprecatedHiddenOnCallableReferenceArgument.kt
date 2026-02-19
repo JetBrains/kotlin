@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 object Scope {
     fun foo(): Int = 0
@@ -22,3 +23,6 @@ object Scope {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

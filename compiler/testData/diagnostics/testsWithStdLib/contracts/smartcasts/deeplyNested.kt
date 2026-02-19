@@ -1,6 +1,8 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -101,3 +103,6 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
     y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
 }
 
+/* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, disjunctionExpression, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, intersectionType, isExpression, lambdaLiteral, nullableType,
+smartcast, stringLiteral */

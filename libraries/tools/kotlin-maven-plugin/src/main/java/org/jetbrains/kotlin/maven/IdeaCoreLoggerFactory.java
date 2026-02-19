@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.diagnostic.Logger;
-import org.apache.log4j.Level;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.kotlin.org.apache.log4j.Level;
 
 import java.util.StringJoiner;
 

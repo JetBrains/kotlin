@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: K1.kt
 open class KFirst<T: java.io.Serializable>() {
     fun foo(t: T): T = t
@@ -15,3 +16,6 @@ class K2: J1() {
         baz()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+primaryConstructor, typeConstraint, typeParameter */

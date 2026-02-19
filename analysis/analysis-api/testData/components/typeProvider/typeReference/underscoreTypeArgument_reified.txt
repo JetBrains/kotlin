@@ -1,2 +1,2 @@
-expression: _
-ktType: OtherImplementation
+KtTypeReference: _
+KaType: OtherImplementation

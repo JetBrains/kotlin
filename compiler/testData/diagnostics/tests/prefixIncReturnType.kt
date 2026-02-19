@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Breaking change in K2, see KT-57178
 
 open class I {
@@ -13,3 +14,6 @@ var topLevel: I
 fun main() {
     val x: ST = ++topLevel
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, incrementDecrementExpression,
+localProperty, operator, propertyDeclaration, setter */

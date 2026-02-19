@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: test/JavaBase.java
@@ -18,3 +19,5 @@ import test.*
 class KotlinClass : JavaBase2() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2972 Wrong "unused value" warning when finally is present
 
@@ -27,3 +28,7 @@ public inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline,
+javaFunction, localProperty, nullableType, propertyDeclaration, thisExpression, tryExpression, typeConstraint,
+typeParameter */

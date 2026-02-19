@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
@@ -51,3 +52,7 @@ fun testFail(first: First, bound: Bound, second: Second) {
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(Out(Inv(first)), Out(Inv(second)))
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(In(Inv(first)), In(Inv(second)))
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, in, integerLiteral,
+interfaceDeclaration, intersectionType, localProperty, nullableType, out, outProjection, primaryConstructor,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

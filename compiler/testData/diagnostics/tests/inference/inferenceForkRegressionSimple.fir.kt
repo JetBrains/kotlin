@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FULL_JDK
 // WITH_STDLIB
@@ -19,3 +20,6 @@ fun <K, V> foo(m: MutableMap<K, V>, c: C) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+lambdaLiteral, nullableType, smartcast, stringLiteral, typeParameter */

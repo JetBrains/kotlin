@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import junit.framework.TestCase.assertNull
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
@@ -17,8 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetVariantDslImpl
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class KotlinAndroidTargetHierarchyDsl {
 
@@ -50,6 +50,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
+            @Suppress("DEPRECATION")
             kotlin.androidTarget {
                 unitTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
                 instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
@@ -72,6 +73,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
+            @Suppress("DEPRECATION")
             kotlin.androidTarget {
                 unitTestVariant.sourceSetTree.set(KotlinSourceSetTree("xxx"))
                 instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree("yyy"))

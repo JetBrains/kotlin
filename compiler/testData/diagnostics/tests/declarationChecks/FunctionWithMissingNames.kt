@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
 annotation class a
 interface A
@@ -24,3 +25,6 @@ fun outerFun() {
     @a fun () {}
     fun @a A.() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration */

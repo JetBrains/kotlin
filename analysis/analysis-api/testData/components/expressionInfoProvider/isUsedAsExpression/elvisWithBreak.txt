@@ -1,3 +1,4 @@
 expression: BREAK
 text: break
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

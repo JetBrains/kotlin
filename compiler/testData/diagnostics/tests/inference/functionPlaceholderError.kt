@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 package a
 
@@ -14,3 +15,6 @@ fun test() {
 
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>({}, <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>())
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

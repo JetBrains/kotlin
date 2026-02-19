@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 public interface A {
@@ -17,3 +18,5 @@ class C: B {
     override fun bar(r: Runnable?) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override */

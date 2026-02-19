@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
@@ -10,7 +10,6 @@ repositories {
 kotlin {
     sourceSets["commonMain"].apply {
         dependencies {
-            api("org.jetbrains.kotlin:kotlin-stdlib-common")
             api(project(":exported"))
         }
     }

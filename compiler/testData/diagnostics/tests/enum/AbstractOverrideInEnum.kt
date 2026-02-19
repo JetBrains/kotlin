@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 enum class E : T {
     ENTRY {
@@ -11,3 +12,5 @@ enum class E : T {
 interface T {
     fun f()
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration, override */

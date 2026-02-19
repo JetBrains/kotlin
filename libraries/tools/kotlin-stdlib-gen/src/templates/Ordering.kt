@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -163,6 +163,17 @@ object Ordering : TemplateGroupBase() {
         }
     }
 
+    val stableSortBySelectorNote = """
+        The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order 
+        relative to each other after sorting.
+    """.trimIndent()
+
+    fun MemberBuilder.appendStableSortBySelectorNote() {
+        doc {
+            doc.orEmpty().trimIndent() + "\n\n" + stableSortBySelectorNote
+        }
+    }
+
     val f_sorted = fn("sorted()") {
         includeDefault()
         exclude(PrimitiveType.Boolean)
@@ -282,7 +293,7 @@ object Ordering : TemplateGroupBase() {
             Returns a list of all elements sorted descending according to their natural sort order.
             """
         }
-        if (f != ArraysOfPrimitives) {
+        if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
         returns("List<T>")
@@ -409,10 +420,12 @@ object Ordering : TemplateGroupBase() {
     } builder {
         inline()
         doc { """Sorts elements in the ${f.collection} in-place according to natural sort order of the value returned by specified [selector] function.""" }
-        appendStableSortNote()
+        appendStableSortBySelectorNote()
         returns("Unit")
         typeParam("R : Comparable<R>")
         specialFor(Lists) { receiver("MutableList<T>") }
+        
+        sample("samples.collections.Collections.Sorting.sortBy")
 
         body { """if (size > 1) sortWith(compareBy(selector))""" }
     }
@@ -429,18 +442,28 @@ object Ordering : TemplateGroupBase() {
             Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
             """
         }
-        if (f != ArraysOfPrimitives) {
-            appendStableSortNote()
+        appendStableSortBySelectorNote()
+
+        when (f) {
+            ArraysOfPrimitives -> {
+                sample("samples.collections.Collections.Sorting.sortedPrimitiveArrayBy")
+            }
+            Sequences -> {
+                sample("samples.collections.Sequences.Sorting.sortedBy")
+            }
+            else -> {
+                sample("samples.collections.Collections.Sorting.sortedBy")
+            }
         }
+
         specialFor(Sequences) {
             returns("SELF")
             doc {
                 "Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [selector] function."
             }
-            appendStableSortNote()
+            appendStableSortBySelectorNote()
             sequenceClassification(intermediate, stateful)
         }
-        sample("samples.collections.Collections.Sorting.sortedBy")
 
         body {
             "return sortedWith(compareBy(selector))"
@@ -452,10 +475,12 @@ object Ordering : TemplateGroupBase() {
     } builder {
         inline()
         doc { """Sorts elements in the ${f.collection} in-place descending according to natural sort order of the value returned by specified [selector] function.""" }
-        appendStableSortNote()
+        appendStableSortBySelectorNote()
         returns("Unit")
         typeParam("R : Comparable<R>")
         specialFor(Lists) { receiver("MutableList<T>") }
+        
+        sample("samples.collections.Collections.Sorting.sortByDescending")
 
         body {
             """if (size > 1) sortWith(compareByDescending(selector))""" }
@@ -473,8 +498,18 @@ object Ordering : TemplateGroupBase() {
             Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
             """
         }
-        if (f != ArraysOfPrimitives) {
-            appendStableSortNote()
+        appendStableSortBySelectorNote()
+
+        when (f) {
+            ArraysOfPrimitives -> {
+                sample("samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending")
+            }
+            Sequences -> {
+                sample("samples.collections.Sequences.Sorting.sortedByDescending")
+            }
+            else -> {
+                sample("samples.collections.Collections.Sorting.sortedByDescending")
+            }
         }
 
         specialFor(Sequences) {
@@ -482,7 +517,7 @@ object Ordering : TemplateGroupBase() {
             doc {
                 "Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [selector] function."
             }
-            appendStableSortNote()
+            appendStableSortBySelectorNote()
             sequenceClassification(intermediate, stateful)
         }
 
@@ -516,7 +551,7 @@ object Ordering : TemplateGroupBase() {
             """
             Randomly shuffles elements in this ${f.collection} in-place using the specified [random] instance as the source of randomness.
             
-            See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+            See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
             """
         }
         specialFor(Lists) {

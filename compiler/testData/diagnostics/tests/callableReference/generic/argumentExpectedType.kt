@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Case<T>
 fun <T> test(case: Case<T>) {}
@@ -11,3 +12,6 @@ fun test() {
     runTest(::test)
     runTestGeneric<Int>(::test)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, nullableType,
+typeParameter */

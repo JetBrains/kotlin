@@ -1,0 +1,48 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'inlineClass.kt'
+    public method <init>(): void
+    public final @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method returnsPositiveInt(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, @kotlin.IntroducedAt(version="2") p2: boolean): PositiveInt
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed method returnsPositiveInt(p0: java.lang.String): PositiveInt
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed method returnsPositiveInt(p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int): PositiveInt
+    public synthetic deprecated static method returnsPositiveInt-ZYDw_Go$default(p0: C, p1: java.lang.String, p2: int, p3: int, p4: java.lang.Object): int
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method returnsPositiveInt-ZYDw_Go(p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int): int
+    public synthetic static method returnsPositiveInt-iz3qbZA$default(p0: C, p1: java.lang.String, p2: int, p3: boolean, p4: int, p5: java.lang.Object): int
+    public final method returnsPositiveInt-iz3qbZA(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, @kotlin.IntroducedAt(version="2") p2: boolean): int
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method returnsPositiveInt-mU8ZMxg(p0: java.lang.String): int
+    public final @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method takesPositiveInt(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: PositiveInt, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed method takesPositiveInt(p0: java.lang.String): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed method takesPositiveInt(p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: PositiveInt): java.lang.String
+    public synthetic deprecated static method takesPositiveInt-C0JGfoE$default(p0: C, p1: java.lang.String, p2: int, p3: int, p4: java.lang.Object): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method takesPositiveInt-C0JGfoE(p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int): java.lang.String
+    public synthetic static method takesPositiveInt-xCZ01W8$default(p0: C, p1: java.lang.String, p2: int, p3: boolean, p4: int, p5: java.lang.Object): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method takesPositiveInt-xCZ01W8(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+}
+
+@kotlin.Metadata
+public final class InlineClassKt {
+    // source: 'inlineClass.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class PositiveInt {
+    // source: 'inlineClass.kt'
+    private final field n: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): PositiveInt
+    public synthetic static method constructor-impl$default(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): int
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getN(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

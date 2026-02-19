@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class A {
     private val
     // private is parsed as val's identifier

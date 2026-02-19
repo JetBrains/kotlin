@@ -1,0 +1,45 @@
+FILE: varargNonOperatorOfWithMoreNarrowTypeAsExtension.kt
+    public open class P : R|kotlin/Any| {
+        public constructor(): R|P| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Q : R|P| {
+        public constructor(): R|Q| {
+            super<R|P|>()
+        }
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg p: R|kotlin/Array<out P>|): R|A| {
+                ^of R|/A.A|()
+            }
+
+        }
+
+        public final class B : R|kotlin/Any| {
+            public constructor(): R|A.B| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun R|A.Companion|.of(vararg q: R|kotlin/Array<out Q>|): R|A.B| {
+        ^of Q|A|.R|/A.B.B|()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval x: R|A| = Q|A.Companion|.R|/A.Companion.of|()
+        lval y: R|A| = Q|A.Companion|.R|/A.Companion.of|(vararg(R|/P.P|()))
+        lval z: R|A| = Q|A.Companion|.R|/A.Companion.of|(vararg(R|/Q.Q|()))
+    }

@@ -1,0 +1,25 @@
+FILE: inJavaLangPackage.kt
+    package java.lang
+
+    public final object Math : R|kotlin/Any| {
+        private [ContainingClassKey=Math] constructor(): R|java/lang/Math| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final const [EvaluatedValue=Double(2.718281828459045)] val E: R|kotlin/Double| = Q|kotlin/math|.R|kotlin/math/E|
+            public [ContainingClassKey=Math] get(): R|kotlin/Double|
+
+        public final const [EvaluatedValue=Double(3.141592653589793)] val PI: R|kotlin/Double| = Q|kotlin/math|.R|kotlin/math/PI|
+            public [ContainingClassKey=Math] get(): R|kotlin/Double|
+
+        public final const [EvaluatedValue=String(OK)] val OK: R|kotlin/String| = String(OK)
+            public [ContainingClassKey=Math] get(): R|kotlin/String|
+
+    }
+    public final const [EvaluatedValue=Double(2.718281828459045)] val usageE: R|kotlin/Double| = Q|java/lang/Math|.R|java/lang/Math.E|
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(3.141592653589793)] val usagePI: R|kotlin/Double| = Q|java/lang/Math|.R|java/lang/Math.PI|
+        public get(): R|kotlin/Double|
+    public final fun box(): R|kotlin/String| {
+        ^box Q|java/lang/Math|.R|java/lang/Math.OK|
+    }

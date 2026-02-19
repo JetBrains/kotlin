@@ -11,6 +11,7 @@ import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getEvaluationContext
+import kotlin.script.experimental.impl.simpleRefineImpl
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptEvaluationConfigurationKeys
@@ -33,7 +34,9 @@ open class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<
 
     companion object : ScriptEvaluationConfigurationKeys
 
-    object Default : ScriptEvaluationConfiguration()
+    object Default : ScriptEvaluationConfiguration() {
+        private fun readResolve(): Any = Default
+    }
 }
 
 /**
@@ -51,7 +54,7 @@ fun ScriptEvaluationConfiguration?.with(body: ScriptEvaluationConfiguration.Buil
 /**
  * The list of actual script implicit receiver object, in the same order as specified in {@link ScriptCompilationConfigurationKeys#implicitReceivers}
  */
-val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()
+val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any?>>()
 
 /**
  * The map of names to actual provided properties objects, according to the properties specified in

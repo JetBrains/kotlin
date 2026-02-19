@@ -1,7 +1,9 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     kotlin("multiplatform")
+    id("nodejs-cache-redirector-configuration")
 }
 
 kotlin {
@@ -16,7 +18,6 @@ val commonMainFullSources by task<Sync> {
         "libraries/stdlib/common/src/",
         "libraries/stdlib/src/kotlin/",
         "libraries/stdlib/unsigned/",
-        "core/builtins/src/kotlin/internal/",
     )
 
     sources.forEach { path ->
@@ -25,7 +26,19 @@ val commonMainFullSources by task<Sync> {
         }
     }
 
-    into("$buildDir/commonMainFullSources")
+    into(layout.buildDirectory.dir("commonMainFullSources"))
+}
+
+val commonNonJvmMainFullSources by task<Sync> {
+    val sources = listOf(
+        "libraries/stdlib/common-non-jvm/src/",
+    )
+    sources.forEach { path ->
+        from("$rootDir/$path") {
+            into(path.dropLastWhile { it != '/' })
+        }
+    }
+    into(layout.buildDirectory.dir("commonNonJvmMainFullSources"))
 }
 
 val commonMainSources by task<Sync> {
@@ -66,13 +79,14 @@ val commonMainSources by task<Sync> {
                 "libraries/stdlib/src/kotlin/time/**",
                 "libraries/stdlib/src/kotlin/util/KotlinVersion.kt",
                 "libraries/stdlib/src/kotlin/util/Tuples.kt",
+                "libraries/stdlib/src/kotlin/uuid/**",
                 "libraries/stdlib/src/kotlin/enums/**"
             )
         )
         commonMainFullSources.get().outputs.files.singleFile
     }
 
-    into("$buildDir/commonMainSources")
+    into(layout.buildDirectory.dir("commonMainSources"))
 }
 
 val commonMainCollectionSources by task<Sync> {
@@ -82,84 +96,129 @@ val commonMainCollectionSources by task<Sync> {
         commonMainFullSources.get().outputs.files.singleFile
     }
 
-    into("$buildDir/commonMainCollectionSources")
+    into(layout.buildDirectory.dir("commonMainCollectionSources"))
+}
+
+val commonNonJvmMainSources by task<Sync> {
+    dependsOn(commonNonJvmMainFullSources)
+    from {
+        exclude(
+            "libraries/stdlib/common-non-jvm/src/kotlin/reflect/KTypeImpl.kt",
+        )
+        commonNonJvmMainFullSources.get().outputs.files.singleFile
+    }
+
+    into(layout.buildDirectory.dir("commonNonJvmMainSources"))
+}
+
+val commonJsAndWasmJsSources by task<Sync> {
+    val jsAndWasmJsDir = file("$rootDir/libraries/stdlib/common-js-wasmjs")
+
+    from("$jsAndWasmJsDir/src") {
+        include(
+            "kotlin/js/annotations.kt",
+            "kotlin/js/ExperimentalWasmJsInterop.kt",
+            "kotlin/js/core.kt",
+        )
+    }
+
+    into(layout.buildDirectory.dir("commonJsAndWasmJsSources"))
 }
 
 val jsMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
+    val jsDir = file("$rootDir/libraries/stdlib/js")
 
-    from {
-        val fullJsMainSources = tasks.getByPath(":kotlin-stdlib:prepareJsIrMainSources")
+    from("$jsDir/src") {
         exclude(
-            listOf(
-                "libraries/stdlib/js/src/org.w3c/**",
-                "libraries/stdlib/js/src/kotlin/char.kt",
-                "libraries/stdlib/js/src/kotlin/collectionJs.kt",
-                "libraries/stdlib/js/src/kotlin/collections/**",
-                "libraries/stdlib/js/src/kotlin/time/**",
-                "libraries/stdlib/js/src/kotlin/console.kt",
-                "libraries/stdlib/js/src/kotlin/coreDeprecated.kt",
-                "libraries/stdlib/js/src/kotlin/date.kt",
-                "libraries/stdlib/js/src/kotlin/GroupingJs.kt",
-                "libraries/stdlib/js/src/kotlin/ItemArrayLike.kt",
-                "libraries/stdlib/js/src/kotlin/io/**",
-                "libraries/stdlib/js/src/kotlin/json.kt",
-                "libraries/stdlib/js/src/kotlin/promise.kt",
-                "libraries/stdlib/js/src/kotlin/regexp.kt",
-                "libraries/stdlib/js/src/kotlin/sequenceJs.kt",
-                "libraries/stdlib/js/src/kotlin/throwableExtensions.kt",
-                "libraries/stdlib/js/src/kotlin/text/**",
-                "libraries/stdlib/js/src/kotlin/reflect/KTypeHelpers.kt",
-                "libraries/stdlib/js/src/kotlin/reflect/KTypeParameterImpl.kt",
-                "libraries/stdlib/js/src/kotlin/reflect/KTypeImpl.kt",
-                "libraries/stdlib/js/src/kotlin/dom/**",
-                "libraries/stdlib/js/src/kotlin/browser/**",
-                "libraries/stdlib/js/src/kotlinx/dom/**",
-                "libraries/stdlib/js/src/kotlinx/browser/**",
-                "libraries/stdlib/js/src/kotlin/enums/**"
-            )
+            "generated/**",
+            "org.w3c/**",
+            "kotlin/char.kt",
+            "kotlin/collectionJs.kt",
+            "kotlin/js.collections.kt",
+            "kotlin/collections/**",
+            "kotlin/time/**",
+            "kotlin/console.kt",
+            "kotlin/coreDeprecated.kt",
+            "kotlin/date.kt",
+            "kotlin/GroupingJs.kt",
+            "kotlin/ItemArrayLike.kt",
+            "kotlin/io/**",
+            "kotlin/wasmJs/**",
+            "kotlin/json.kt",
+            "kotlin/Promise.kt",
+            "kotlin/regexp.kt",
+            "kotlin/sequenceJs.kt",
+            "kotlin/throwableExtensions.kt",
+            "kotlin/text/**",
+            "kotlin/reflect/KTypeHelpers.kt",
+            "kotlin/reflect/DynamicKType.kt",
+            "kotlin/dom/**",
+            "kotlin/browser/**",
+            "kotlinx/dom/**",
+            "kotlinx/browser/**",
+            "kotlin/enums/**",
+            "kotlin/uuid/UuidJs.kt",
         )
-        fullJsMainSources.outputs.files.singleFile
+    }
+    from {
+        val fullJsMainSources = tasks.getByPath(":kotlin-stdlib:prepareJsIrMainSources") as Sync
+        fullJsMainSources.destinationDir
+    }
+    from("$jsDir/runtime") {
+        exclude("collectionsHacks.kt")
+        exclude("collectionsInterop.kt")
+        into("runtime")
+    }
+    from("$jsDir/builtins") {
+        exclude("Collections.kt")
+        into("builtins")
     }
 
-    for (jsIrSrcDir in listOf("builtins", "runtime", "src")) {
-        from("$rootDir/libraries/stdlib/js-ir/$jsIrSrcDir") {
-            exclude(
-                listOf(
-                    "collectionsHacks.kt",
-                    "generated/**",
-                    "kotlin/text/**"
-                )
-            )
-            into("libraries/stdlib/js-ir/$jsIrSrcDir")
-        }
-    }
-
-    from("$rootDir/libraries/stdlib/js-ir-minimal-for-test/src")
-    into("$buildDir/jsMainSources")
+    into(layout.buildDirectory.dir("jsMainSources"))
 }
 
 kotlin {
     sourceSets {
-        named("commonMain") {
+        val commonMain by getting {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
+            kotlin.srcDir("common-src")
+        }
+        val commonNonJvmMain by creating {
+            dependsOn(commonMain)
+            kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
+        }
+        val commonJsAndWasmJs by creating {
+            dependsOn(commonMain)
+            kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
         }
         named("jsMain") {
+            dependsOn(commonJsAndWasmJs)
+            dependsOn(commonNonJvmMain)
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
+            kotlin.srcDir("js-src")
         }
     }
 }
 
-tasks.withType<KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xallow-kotlin-package",
-        "-opt-in=kotlin.ExperimentalMultiplatform",
-        "-opt-in=kotlin.contracts.ExperimentalContracts",
-        "-opt-in=kotlin.RequiresOptIn",
-        "-opt-in=kotlin.ExperimentalUnsignedTypes",
-        "-opt-in=kotlin.ExperimentalStdlibApi",
-    )
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        compilerOptions.languageVersion = KotlinVersion.KOTLIN_2_3
+        compilerOptions.apiVersion = KotlinVersion.KOTLIN_2_3
+        compilerOptions.freeCompilerArgs.addAll(
+            listOf(
+                "-Xallow-kotlin-package",
+                "-Xexpect-actual-classes",
+                "-Xstdlib-compilation",
+                "-Xdont-warn-on-error-suppression",
+                "-opt-in=kotlin.ExperimentalMultiplatform",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
+                "-Xcontext-parameters",
+                "-Xreturn-value-checker=full",
+            )
+        )
+    }
 }
 
 tasks {
@@ -167,7 +226,7 @@ tasks {
         enabled = false
     }
 
-    named("compileKotlinJs", KotlinCompile::class) {
-        kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
+    named<KotlinCompilationTask<*>>("compileKotlinJs") {
+        compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin")
     }
 }

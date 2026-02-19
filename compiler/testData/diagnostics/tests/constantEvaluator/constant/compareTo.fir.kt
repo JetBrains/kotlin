@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 package test
 
 // val prop1: false
@@ -18,3 +19,5 @@ val prop5 = 1.compareTo(2)
 
 // val prop6: false
 val prop6 = 1.compareTo(2) > 0
+
+/* GENERATED_FIR_TAGS: comparisonExpression, integerLiteral, propertyDeclaration */

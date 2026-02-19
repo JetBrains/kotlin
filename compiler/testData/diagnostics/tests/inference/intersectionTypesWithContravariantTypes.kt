@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 abstract class Foo<T>
 
@@ -12,3 +13,6 @@ fun test(b: Bar<Long>) {
     val result = greater(b, b)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

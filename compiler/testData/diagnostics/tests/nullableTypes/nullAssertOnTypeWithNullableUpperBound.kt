@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 fun <T> test(t: T): T {
     if (t != null) {
         return t<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
@@ -12,3 +13,5 @@ fun <T> T.testThis(): String {
     return this!!.toString()
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, intersectionType, nullableType, smartcast, thisExpression, typeParameter */

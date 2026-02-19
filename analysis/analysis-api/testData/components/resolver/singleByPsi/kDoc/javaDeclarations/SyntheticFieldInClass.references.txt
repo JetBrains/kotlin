@@ -1,0 +1,17 @@
+<caret_1>:
+  KDocName(25,38): 'Storage.value'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in Storage) open fun getValue(): kotlin.String!
+
+<caret_2>:
+  KDocName(44,60): 'Storage.getValue'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in Storage) open fun getValue(): kotlin.String!

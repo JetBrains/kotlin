@@ -1,8 +1,6 @@
-// IGNORE_BACKEND: JVM
-// DONT_TARGET_EXACT_BACKEND: JS
 // IGNORE_DEXING
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // MODULE: lib
 // FILE: lib.kt

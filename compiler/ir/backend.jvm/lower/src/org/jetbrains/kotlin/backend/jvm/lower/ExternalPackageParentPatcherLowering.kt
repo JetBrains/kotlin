@@ -5,41 +5,30 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmFileFacadeClass
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.backend.jvm.classNameOverride
+import org.jetbrains.kotlin.backend.jvm.createJvmFileFacadeClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 
-internal val externalPackageParentPatcherPhase = makeIrModulePhase(
-    ::createLowering,
-    name = "ExternalPackageParentPatcherLowering",
-    description = "Replace parent from package fragment to FileKt class for top-level callables (K2 only)"
-)
-
-private fun createLowering(context: CommonBackendContext): FileLoweringPass {
-    require(context is JvmBackendContext)
-    return when (context.configuration[CommonConfigurationKeys.USE_FIR]) {
-        true -> ExternalPackageParentPatcherLowering(context)
-        false, null -> FileLoweringPass.Empty
-    }
-}
-
-class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
+/**
+ * Replaces parent from package fragment to FileKt class for top-level callables (K2 only).
+ */
+internal class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(Visitor())
+        if (context.config.useFir) {
+            irFile.acceptVoid(Visitor())
+        }
     }
 
-    private inner class Visitor : IrElementVisitorVoid {
+    private inner class Visitor : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -62,14 +51,14 @@ class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : Fil
             val deserializedSource = declaration.containerSource ?: return null
             if (deserializedSource !is FacadeClassSource) return null
             val facadeName = deserializedSource.facadeClassName ?: deserializedSource.className
-            return JvmFileFacadeClass(
+            return createJvmFileFacadeClass(
                 if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
                 facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
                 deserializedSource,
                 deserializeIr = { irClass -> deserializeTopLevelClass(irClass) }
             ).also {
-                it.createParameterDeclarations()
-                context.classNameOverride[it] = facadeName
+                it.createThisReceiverParameter()
+                it.classNameOverride = facadeName
             }
         }
 

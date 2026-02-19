@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: MyAnn.java
@@ -20,3 +21,6 @@ public @interface MyAnn {
 fun foo(y: MyAnn?): List<Class<*>>? {
     return y?.value?.map { it.java }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, javaProperty, javaType, lambdaLiteral, nullableType,
+outProjection, safeCall, starProjection */

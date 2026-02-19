@@ -10,4 +10,5 @@ package org.jetbrains.kotlin.buildtools.api
  *
  * @property message A [String] that contains a description of the exception that occurred.
  */
+@ExperimentalBuildToolsApi
 public sealed class KotlinBuildToolsException(message: String) : Exception(message)

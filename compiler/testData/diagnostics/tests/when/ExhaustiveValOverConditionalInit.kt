@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -33,3 +34,6 @@ fun bar(a: Boolean, b: Boolean): Int {
     }
     return <!UNINITIALIZED_VARIABLE!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, smartcast, whenExpression, whenWithSubject */

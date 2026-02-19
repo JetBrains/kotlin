@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: f1.kt
 package test
 
@@ -10,3 +10,5 @@ package test
 
 class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
 class F2
+
+/* GENERATED_FIR_TAGS: classDeclaration */

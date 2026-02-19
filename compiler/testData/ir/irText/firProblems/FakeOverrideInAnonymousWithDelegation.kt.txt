@@ -1,10 +1,4 @@
 class Wrapper {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   private val dummy: <no name provided>
     field = { // BLOCK
       local class <no name provided> : Bar {
@@ -23,13 +17,13 @@ class Wrapper {
   private val bar: <no name provided>
     field = { // BLOCK
       local class <no name provided> : Bar {
+        private /* final field */ val $$delegate_0: <no name provided> = <this>.<get-dummy>()
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
-        private /* final field */ val $$delegate_0: <no name provided> = <this>.<get-dummy>()
         override val foo: String
           override get(): String {
             return <this>.#$$delegate_0.<get-foo>()
@@ -41,6 +35,12 @@ class Wrapper {
     }
     private get
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
 interface Bar {
@@ -50,3 +50,4 @@ interface Bar {
     }
 
 }
+

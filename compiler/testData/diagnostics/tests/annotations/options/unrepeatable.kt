@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 annotation class unrepann(val x: Int)
 
@@ -22,3 +23,6 @@ var annotated = 1 // No errors should be here
 @unrepann(0)
 <!REPEATED_ANNOTATION!>@property:unrepann(1)<!>
 var annotated2 = 2
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetProperty, annotationUseSiteTargetPropertyGetter,
+classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

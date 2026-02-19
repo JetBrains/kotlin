@@ -1,0 +1,32 @@
+KtNameReferenceExpression(51,60): 'JavaClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = JavaClass
+        symbol = <constructor>(s: @EnhancedNullability kotlin.String): JavaClass
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = @EnhancedNullability kotlin.String
+            symbol = s: @EnhancedNullability kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = @EnhancedNullability kotlin.String
+          symbol = s: @EnhancedNullability kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

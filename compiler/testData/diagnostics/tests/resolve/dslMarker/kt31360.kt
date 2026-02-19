@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @DslMarker
 annotation class MyDsl
@@ -24,3 +25,7 @@ fun f() {
         property
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, getter, interfaceDeclaration,
+lambdaLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver, starProjection, typeParameter,
+typeWithExtension */

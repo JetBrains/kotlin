@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 var current = true
@@ -20,7 +20,7 @@ fun box() {
     foo()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:20 box
 // test.kt:12 foo
 // test.kt:13 foo
@@ -36,6 +36,37 @@ fun box() {
 // test.kt:17 foo
 // test.kt:21 box
 
+// EXPECTATIONS NATIVE
+// test.kt:20 box
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:6 alternate
+// test.kt:7 alternate
+// test.kt:4 <get-current>
+// test.kt:7 alternate
+// test.kt:4 <set-current>
+// test.kt:8 alternate
+// test.kt:4 <get-current>
+// test.kt:8 alternate
+// test.kt:9 alternate
+// test.kt:13 foo
+// test.kt:15 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:6 alternate
+// test.kt:7 alternate
+// test.kt:4 <get-current>
+// test.kt:7 alternate
+// test.kt:4 <set-current>
+// test.kt:8 alternate
+// test.kt:4 <get-current>
+// test.kt:8 alternate
+// test.kt:9 alternate
+// test.kt:13 foo
+// test.kt:14 foo
+// test.kt:21 box
+
 // EXPECTATIONS JS_IR
 // test.kt:20 box
 // test.kt:7 alternate
@@ -44,3 +75,20 @@ fun box() {
 // test.kt:8 alternate
 // test.kt:17 foo
 // test.kt:21 box
+
+// EXPECTATIONS WASM
+// test.kt:20 $box (4)
+// test.kt:12 $foo (11)
+// test.kt:13 $foo (12)
+// test.kt:7 $alternate (15, 14, 4)
+// test.kt:8 $alternate (11, 4)
+// test.kt:13 $foo (12)
+// test.kt:17 $foo (1)
+// test.kt:12 $foo (11)
+// test.kt:13 $foo (12)
+// test.kt:7 $alternate (15, 14, 4)
+// test.kt:8 $alternate (11, 4)
+// test.kt:13 $foo (12)
+// test.kt:14 $foo (12)
+// test.kt:17 $foo (1)
+// test.kt:21 $box (1)

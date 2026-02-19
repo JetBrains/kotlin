@@ -1,8 +1,41 @@
-    @JustString(string = "kotlin") @StringArray(stringArray = {}) class C1 constructor()
-    @StringArray(stringArray = {"java", ""}) class C2 constructor()
-    annotation class JustString constructor(string: String) : Annotation {
-        val string: String
+library {
+  // module name: <string.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/JustString
+    // class name: test/StringArray
+
+    @test/JustString(string = "kotlin")
+    @test/StringArray(stringArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
     }
-    annotation class StringArray constructor(stringArray: Array<String>) : Annotation {
-        val stringArray: Array<String>
+
+    @test/StringArray(stringArray = ["java", ""])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
     }
+
+    public final annotation class test/JustString : kotlin/Annotation {
+
+      public constructor(string: kotlin/String)
+
+      public final val string: kotlin/String
+        public final get
+    }
+
+    public final annotation class test/StringArray : kotlin/Annotation {
+
+      public constructor(stringArray: kotlin/Array<kotlin/String>)
+
+      public final val stringArray: kotlin/Array<kotlin/String>
+        public final get
+    }
+  }
+}

@@ -69,6 +69,10 @@ object ErrorsNative {
     val FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
     @JvmField
     val FORWARD_DECLARATION_AS_CLASS_LITERAL = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+    @JvmField
+    val CONFLICTING_OBJC_OVERLOADS = DiagnosticFactory1.create<PsiElement, Collection<DeclarationDescriptor>>(Severity.ERROR)
+    @JvmField
+    val INAPPLICABLE_OBJC_OVERRIDE = DiagnosticFactory0.create<PsiElement>(Severity.ERROR)
 
     init {
         Errors.Initializer.initializeFactoryNames(ErrorsNative::class.java)

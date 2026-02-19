@@ -1,6 +1,7 @@
-// !LANGUAGE: +OverloadResolutionByLambdaReturnType
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +OverloadResolutionByLambdaReturnType
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
 // FILE: OverloadResolutionByLambdaReturnType.kt
@@ -60,3 +61,6 @@ fun test_6(c: C) {
     val x = <!CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION!>foo { c }<!>
     takeString(x)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

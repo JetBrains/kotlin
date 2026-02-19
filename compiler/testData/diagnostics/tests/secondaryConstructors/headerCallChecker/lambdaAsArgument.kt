@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun A.foobar() = 3
 
@@ -13,3 +15,6 @@ class A {
                 <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foobar<!>()
             })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, secondaryConstructor, thisExpression */

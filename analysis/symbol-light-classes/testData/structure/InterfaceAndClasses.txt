@@ -1,4 +1,64 @@
 KtClass:
+  line: 23
+  name: AbstractClassTransitiveBaseInterface
+  qualifier: my.AbstractClassTransitiveBaseInterface
+  light: SymbolLightClassForClassOrObject
+    name: AbstractClassTransitiveBaseInterface
+    qualifier: my.AbstractClassTransitiveBaseInterface
+    superTypes: [
+      PsiType:AbstractClassWithBaseInterface
+      PsiType:BaseInterface1
+    ]
+    superClass: SymbolLightClassForClassOrObject: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
+    interfaces: [
+      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
+    ]
+    supers: [
+      SymbolLightClassForClassOrObject: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
+      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
+    ]
+
+KtClass:
+  line: 19
+  name: AbstractClassWithBaseInterface
+  qualifier: my.AbstractClassWithBaseInterface
+  light: SymbolLightClassForClassOrObject
+    name: AbstractClassWithBaseInterface
+    qualifier: my.AbstractClassWithBaseInterface
+    superTypes: [
+      PsiType:Object
+      PsiType:BaseInterface2
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: [
+      SymbolLightClassForInterface: BaseInterface2 (my.BaseInterface2)
+    ]
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+      SymbolLightClassForInterface: BaseInterface2 (my.BaseInterface2)
+    ]
+
+KtClass:
+  line: 21
+  name: AbstractClassWithComplexInterface
+  qualifier: my.AbstractClassWithComplexInterface
+  light: SymbolLightClassForClassOrObject
+    name: AbstractClassWithComplexInterface
+    qualifier: my.AbstractClassWithComplexInterface
+    superTypes: [
+      PsiType:Object
+      PsiType:ComplexInterface
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: [
+      SymbolLightClassForInterface: ComplexInterface (my.ComplexInterface)
+    ]
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+      SymbolLightClassForInterface: ComplexInterface (my.ComplexInterface)
+    ]
+
+KtClass:
   line: 3
   name: BaseInterface1
   qualifier: my.BaseInterface1
@@ -53,22 +113,6 @@ KtClass:
     ]
 
 KtClass:
-  line: 9
-  name: OpenBaseClass
-  qualifier: my.OpenBaseClass
-  light: SymbolLightClassForClassOrObject
-    name: OpenBaseClass
-    qualifier: my.OpenBaseClass
-    superTypes: [
-      PsiType:Object
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: []
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-    ]
-
-KtClass:
   line: 11
   name: FinalClassWithBaseInterface
   qualifier: my.FinalClassWithBaseInterface
@@ -86,29 +130,6 @@ KtClass:
     supers: [
       ClsClassImpl: Object (java.lang.Object)
       SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
-    ]
-
-KtClass:
-  line: 13
-  name: FinalClassWithSeveralBaseInterfaces
-  qualifier: my.FinalClassWithSeveralBaseInterfaces
-  light: SymbolLightClassForClassOrObject
-    name: FinalClassWithSeveralBaseInterfaces
-    qualifier: my.FinalClassWithSeveralBaseInterfaces
-    superTypes: [
-      PsiType:Object
-      PsiType:BaseInterface1
-      PsiType:BaseInterface2
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: [
-      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
-      SymbolLightClassForInterface: BaseInterface2 (my.BaseInterface2)
-    ]
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
-      SymbolLightClassForInterface: BaseInterface2 (my.BaseInterface2)
     ]
 
 KtClass:
@@ -155,63 +176,58 @@ KtClass:
     ]
 
 KtClass:
-  line: 19
-  name: AbstractClassWithBaseInterface
-  qualifier: my.AbstractClassWithBaseInterface
+  line: 13
+  name: FinalClassWithSeveralBaseInterfaces
+  qualifier: my.FinalClassWithSeveralBaseInterfaces
   light: SymbolLightClassForClassOrObject
-    name: AbstractClassWithBaseInterface
-    qualifier: my.AbstractClassWithBaseInterface
+    name: FinalClassWithSeveralBaseInterfaces
+    qualifier: my.FinalClassWithSeveralBaseInterfaces
     superTypes: [
       PsiType:Object
+      PsiType:BaseInterface1
       PsiType:BaseInterface2
     ]
     superClass: ClsClassImpl: Object (java.lang.Object)
     interfaces: [
+      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
       SymbolLightClassForInterface: BaseInterface2 (my.BaseInterface2)
     ]
     supers: [
       ClsClassImpl: Object (java.lang.Object)
+      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
       SymbolLightClassForInterface: BaseInterface2 (my.BaseInterface2)
     ]
 
 KtClass:
-  line: 21
-  name: AbstractClassWithComplexInterface
-  qualifier: my.AbstractClassWithComplexInterface
+  line: 27
+  name: OnlyTransitiveInterface
+  qualifier: my.OnlyTransitiveInterface
   light: SymbolLightClassForClassOrObject
-    name: AbstractClassWithComplexInterface
-    qualifier: my.AbstractClassWithComplexInterface
+    name: OnlyTransitiveInterface
+    qualifier: my.OnlyTransitiveInterface
+    superTypes: [
+      PsiType:OpenComplexClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: OpenComplexClass (my.OpenComplexClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: OpenComplexClass (my.OpenComplexClass)
+    ]
+
+KtClass:
+  line: 9
+  name: OpenBaseClass
+  qualifier: my.OpenBaseClass
+  light: SymbolLightClassForClassOrObject
+    name: OpenBaseClass
+    qualifier: my.OpenBaseClass
     superTypes: [
       PsiType:Object
-      PsiType:ComplexInterface
     ]
     superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: [
-      SymbolLightClassForInterface: ComplexInterface (my.ComplexInterface)
-    ]
+    interfaces: []
     supers: [
       ClsClassImpl: Object (java.lang.Object)
-      SymbolLightClassForInterface: ComplexInterface (my.ComplexInterface)
-    ]
-
-KtClass:
-  line: 23
-  name: AbstractClassTransitiveBaseInterface
-  qualifier: my.AbstractClassTransitiveBaseInterface
-  light: SymbolLightClassForClassOrObject
-    name: AbstractClassTransitiveBaseInterface
-    qualifier: my.AbstractClassTransitiveBaseInterface
-    superTypes: [
-      PsiType:AbstractClassWithBaseInterface
-      PsiType:BaseInterface1
-    ]
-    superClass: SymbolLightClassForClassOrObject: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
-    interfaces: [
-      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
-    ]
-    supers: [
-      SymbolLightClassForClassOrObject: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
-      SymbolLightClassForInterface: BaseInterface1 (my.BaseInterface1)
     ]
 
 KtClass:
@@ -232,21 +248,5 @@ KtClass:
     supers: [
       SymbolLightClassForClassOrObject: AbstractClassTransitiveBaseInterface (my.AbstractClassTransitiveBaseInterface)
       SymbolLightClassForInterface: ComplexInterface (my.ComplexInterface)
-    ]
-
-KtClass:
-  line: 27
-  name: OnlyTransitiveInterface
-  qualifier: my.OnlyTransitiveInterface
-  light: SymbolLightClassForClassOrObject
-    name: OnlyTransitiveInterface
-    qualifier: my.OnlyTransitiveInterface
-    superTypes: [
-      PsiType:OpenComplexClass
-    ]
-    superClass: SymbolLightClassForClassOrObject: OpenComplexClass (my.OpenComplexClass)
-    interfaces: []
-    supers: [
-      SymbolLightClassForClassOrObject: OpenComplexClass (my.OpenComplexClass)
     ]
 

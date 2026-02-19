@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
 
 import java.util.*;
@@ -39,3 +40,6 @@ fun foo() {
     val b4: Collection<String?> = x
     val b6: MutableCollection<String?> = x
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+localProperty, nullableType, propertyDeclaration, stringLiteral */

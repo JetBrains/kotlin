@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +LocalTypeAliases
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 fun <T> emptyList(): List<T> = null!!
 
@@ -17,3 +19,6 @@ fun <T> foo() {
 
     localFun()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, localFunction, localProperty, nullableType,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

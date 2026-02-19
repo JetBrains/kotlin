@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowReifiedGenericsInContracts
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowReifiedGenericsInContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE
 
 import kotlin.contracts.*
 
@@ -29,3 +30,6 @@ fun test_2(x: Any) {
     val s: String = cast(x)
     x.length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, contractConditionalEffect, contracts, functionDeclaration, ifExpression, inline,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified, smartcast, typeParameter */

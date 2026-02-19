@@ -1,59 +1,68 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 
-internal val KtSymbol.firSymbol: FirBasedSymbol<*>
+internal val KaSymbol.firSymbol: FirBasedSymbol<*>
     get() {
-        require(this is KtFirSymbol<*>)
+        requireIsInstance<KaFirSymbol<*>>(this)
         return this.firSymbol
     }
 
-internal val KtTypeParameterSymbol.firSymbol: FirTypeParameterSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirTypeParameterSymbol
-internal val KtTypeAliasSymbol.firSymbol: FirTypeAliasSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirTypeAliasSymbol
+internal val KaTypeParameterSymbol.firSymbol: FirTypeParameterSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirTypeParameterSymbol
+internal val KaTypeAliasSymbol.firSymbol: FirTypeAliasSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirTypeAliasSymbol
 
-internal val KtCallableSymbol.firSymbol: FirCallableSymbol<*> get() = (this as KtFirSymbol<*>).firSymbol as FirCallableSymbol<*>
-internal val KtValueParameterSymbol.firSymbol: FirValueParameterSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirValueParameterSymbol
-internal val KtEnumEntrySymbol.firSymbol: FirEnumEntrySymbol get() = (this as KtFirSymbol<*>).firSymbol as FirEnumEntrySymbol
-internal val KtConstructorSymbol.firSymbol: FirConstructorSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirConstructorSymbol
-internal val KtPropertyAccessorSymbol.firSymbol: FirPropertyAccessorSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirPropertyAccessorSymbol
-internal val KtClassInitializerSymbol.firSymbol: FirAnonymousInitializerSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirAnonymousInitializerSymbol
-internal val KtClassLikeSymbol.firSymbol: FirClassLikeSymbol<*> get() = (this as KtFirSymbol<*>).firSymbol as FirClassLikeSymbol<*>
+internal val KaCallableSymbol.firSymbol: FirCallableSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirCallableSymbol<*>
+internal val KaValueParameterSymbol.firSymbol: FirValueParameterSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirValueParameterSymbol
+internal val KaContextParameterSymbol.firSymbol: FirValueParameterSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirValueParameterSymbol
+internal val KaEnumEntrySymbol.firSymbol: FirEnumEntrySymbol get() = (this as KaFirSymbol<*>).firSymbol as FirEnumEntrySymbol
+internal val KaConstructorSymbol.firSymbol: FirConstructorSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirConstructorSymbol
+internal val KaPropertyAccessorSymbol.firSymbol: FirPropertyAccessorSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirPropertyAccessorSymbol
+internal val KaClassInitializerSymbol.firSymbol: FirAnonymousInitializerSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirAnonymousInitializerSymbol
+internal val KaClassLikeSymbol.firSymbol: FirClassLikeSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirClassLikeSymbol<*>
+internal val KaClassSymbol.firSymbol: FirClassSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirClassSymbol<*>
 
 
-fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule {
+internal fun FirBasedSymbol<*>.getContainingKtModule(resolutionFacade: LLResolutionFacade): KaModule {
     val target = when (this) {
         is FirCallableSymbol -> {
             // callable fake overrides have use-site FirModuleData
-            dispatchReceiverClassLookupTagOrNull()?.toFirRegularClassSymbol(firResolveSession.useSiteFirSession) ?: this
+            dispatchReceiverClassLookupTagOrNull()?.toRegularClassSymbol(resolutionFacade.useSiteFirSession) ?: this
         }
         else -> this
     }
     return target.llFirModuleData.ktModule
 }
 
-fun KtSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule = when (this) {
-    is KtFirSymbol<*> -> firSymbol.getContainingKtModule(firResolveSession)
-    is KtReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(firResolveSession)
+internal fun KaSymbol.getContainingKtModule(resolutionFacade: LLResolutionFacade): KaModule = when (this) {
+    is KaFirSymbol<*> -> firSymbol.getContainingKtModule(resolutionFacade)
+    is KaReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(resolutionFacade)
     else -> TODO("${this::class}")
 }
 
-fun KtSymbol.getActualAnnotationTargets(): List<KotlinTarget>? {
+@KaImplementationDetail
+context(session: KaSession)
+fun KaSymbol.getActualAnnotationTargets(): List<KotlinTarget>? {
     val firSymbol = this.firSymbol.fir as? FirAnnotationContainer ?: return null
-    return getActualTargetList(firSymbol).defaultTargets
+    val firSession = (session as? KaFirSession)?.firSession ?: return null
+    return getActualTargetList(firSymbol, firSession).defaultTargets
 }

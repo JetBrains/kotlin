@@ -1,0 +1,4 @@
+FILE[kind=File[packageFqName=foo]]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=foo]
+  IMPORT_LIST

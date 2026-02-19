@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C1 : /Cell<kotlin/String> { // /C1|null[0]
+    constructor <init>() // /C1.<init>|<init>(){}[0]
+}
+final class /C2 : /Cell<kotlin/String> { // /C2|null[0]
+    constructor <init>() // /C2.<init>|<init>(){}[0]
+}
+open class <#A: kotlin/Any?> /Cell { // /Cell|null[0]
+    final val value // /Cell.value|{}value[0]
+        final fun <get-value>(): #A // /Cell.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(#A) // /Cell.<init>|<init>(1:0){}[0]
+}

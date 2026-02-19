@@ -1,0 +1,22 @@
+library {
+  // module name: <kt56018_value_parameters_annotations.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Annotation
+
+    // signature: test/Annotation|null[0]
+    public final annotation class test/Annotation : kotlin/Annotation {
+
+      // signature: test/Annotation.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: test/foo|foo(kotlin.Int){}[0]
+      public final fun foo(@test/Annotation arg: kotlin/Int): kotlin/Unit
+    }
+  }
+}

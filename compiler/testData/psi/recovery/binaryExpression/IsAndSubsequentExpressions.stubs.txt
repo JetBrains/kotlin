@@ -1,0 +1,11 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=IsAndSubsequentExpressionsKt]]
+  facadeFqName: IsAndSubsequentExpressionsKt
+  partSimpleName: "IsAndSubsequentExpressionsKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=testLowerPriority, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=testLowerPriority]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=testEqualPriority, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=testEqualPriority]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=testHigherPriority, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=testHigherPriority]
+    VALUE_PARAMETER_LIST

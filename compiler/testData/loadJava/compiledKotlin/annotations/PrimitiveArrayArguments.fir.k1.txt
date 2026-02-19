@@ -27,7 +27,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 
 }
 
-@R|test/Anno|(bytes = <implicitArrayOf>(Byte(42), Byte(-1)), shorts = <implicitArrayOf>(Short(-42), Short(0)), ints = <implicitArrayOf>(Int(42), Int(239)), longs = <implicitArrayOf>(Long(42), Long(239)), chars = <implicitArrayOf>(Char(a), Char(Z)), floats = <implicitArrayOf>(Float(2.72), Float(0.0)), doubles = <implicitArrayOf>(Double(42.0), Double(-3.14)), booleans = <implicitArrayOf>(Boolean(true), Boolean(false))) public final class Klass : R|kotlin/Any| {
+@R|test/Anno|(bytes = <collectionLiteralCall>(Byte(42), Byte(-1)), shorts = <collectionLiteralCall>(Short(-42), Short(0)), ints = <collectionLiteralCall>(Int(42), Int(239)), longs = <collectionLiteralCall>(Long(42), Long(239)), chars = <collectionLiteralCall>(Char(a), Char(Z)), floats = <collectionLiteralCall>(Float(2.72), Float(0.0)), doubles = <collectionLiteralCall>(Double(42.0), Double(-3.14)), booleans = <collectionLiteralCall>(Boolean(true), Boolean(false))) public final class Klass : R|kotlin/Any| {
     public constructor(): R|test/Klass|
 
 }

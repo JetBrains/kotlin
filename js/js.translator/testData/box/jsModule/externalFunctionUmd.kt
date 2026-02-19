@@ -1,5 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1286
-// MODULE_KIND: UMD
+// JS_MODULE_KIND: UMD
 package foo
 
 @JsModule("lib-foo")

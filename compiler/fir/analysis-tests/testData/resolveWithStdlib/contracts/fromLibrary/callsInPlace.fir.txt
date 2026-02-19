@@ -14,10 +14,10 @@ FILE: callsInPlace.kt
         )
     }
     public final fun test_3(): R|kotlin/Unit| {
-        R|kotlin/repeat|(action = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+        R|kotlin/repeat|(repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             String(test_3)
         }
-        , times = Int(10))
+        , Int(10))
     }
     public final fun test_4(): R|kotlin/Unit| {
         Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(<L> = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -27,7 +27,7 @@ FILE: callsInPlace.kt
         )
     }
     public final fun test_5(): R|kotlin/Unit| {
-        Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(predicate = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
+        Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
             String(test_5)
             ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(0)))
         }
@@ -47,10 +47,10 @@ FILE: callsInPlace.kt
         )
     }
     public final fun test_7(): R|kotlin/Unit| {
-        R|/myRun|(block2 = myRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+        R|/myRun|(myRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             String(test_7_2)
         }
-        , block1 = myRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+        , myRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             String(test_7_1)
         }
         )

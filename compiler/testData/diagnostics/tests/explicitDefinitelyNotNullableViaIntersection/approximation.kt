@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> foo(x: T, y: T & Any) = x!!
 
@@ -13,3 +14,5 @@ fun main() {
     foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>).length
     foo(null, "").length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, dnnType, functionDeclaration, nullableType, stringLiteral, typeParameter */

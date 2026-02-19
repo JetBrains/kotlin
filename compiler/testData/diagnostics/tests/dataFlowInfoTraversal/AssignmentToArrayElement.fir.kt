@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun arrayAccessRHS(a: Int?, b: Array<Int>) {
     b[0] = a!!
@@ -10,3 +11,5 @@ fun arrayAccessLHS(a: Int?, b: Array<Int>) {
     checkSubtype<Int>(a)
 }
 
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, nullableType, smartcast, typeParameter, typeWithExtension */

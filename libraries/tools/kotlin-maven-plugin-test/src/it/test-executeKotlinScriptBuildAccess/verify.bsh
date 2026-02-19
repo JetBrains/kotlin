@@ -1,3 +1,4 @@
-source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
 
-assertBuildLogHasLine("[INFO] kotlin build script accessing build info of test-executeKotlinScriptBuildAccess project")
+assertBuildLogHasLineThatContains("Executing scripts in maven build files is deprecated");
+assertBuildLogHasLine("[INFO] kotlin build script accessing build info of test-executeKotlinScriptBuildAccess project");

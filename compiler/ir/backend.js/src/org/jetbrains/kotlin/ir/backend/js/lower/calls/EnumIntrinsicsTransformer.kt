@@ -24,7 +24,7 @@ object EnumIntrinsicsUtils {
         call: IrFunctionAccessExpression,
         staticMethodPredicate: (IrSimpleFunction) -> Boolean
     ): IrExpression {
-        val enum = call.getTypeArgument(0)?.getClass() ?: return call
+        val enum = call.typeArguments[0]?.getClass() ?: return call
         if (!enum.isEnumClass) return call
         val staticMethod = enum.findDeclaration(staticMethodPredicate)
         if (staticMethod == null || !staticMethod.isStaticMethodOfClass)
@@ -38,12 +38,12 @@ object EnumIntrinsicsUtils {
 
     fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("valueOf") &&
-                it.valueParameters.count() == 1 &&
-                it.valueParameters[0].type.isString()
+                it.parameters.size == 1 &&
+                it.parameters[0].type.isString()
     }
 
     fun transformEnumValuesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
-        it.name == Name.identifier("values") && it.valueParameters.count() == 0
+        it.name == Name.identifier("values") && it.parameters.isEmpty()
     }
 
     fun transformEnumEntriesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
@@ -53,9 +53,9 @@ object EnumIntrinsicsUtils {
 
 class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) = when (call.symbol) {
-        context.intrinsics.enumValueOfIntrinsic -> EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
-        context.intrinsics.enumValuesIntrinsic -> EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
-        context.intrinsics.enumEntriesIntrinsic -> EnumIntrinsicsUtils.transformEnumEntriesIntrinsic(call)
+        context.symbols.enumValueOfIntrinsic -> EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
+        context.symbols.enumValuesIntrinsic -> EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
+        context.symbols.enumEntriesIntrinsic -> EnumIntrinsicsUtils.transformEnumEntriesIntrinsic(call)
         else -> call
     }
 }

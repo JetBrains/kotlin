@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -28,15 +25,13 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import java.lang.annotation.ElementType
 
-internal val additionalClassAnnotationPhase = makeIrFilePhase(
-    ::AdditionalClassAnnotationLowering,
-    name = "AdditionalClassAnnotation",
-    description = "Add Documented, Retention, Target, Repeatable annotations to annotation classes",
-    prerequisite = setOf(repeatedAnnotationPhase)
-)
-
-private class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-    private val symbols = context.ir.symbols.javaAnnotations
+/**
+ * Adds [java.lang.annotation.Documented], [java.lang.annotation.Retention], [java.lang.annotation.Target],
+ * [java.lang.annotation.Repeatable] annotations to annotation classes.
+ */
+@PhasePrerequisites(RepeatedAnnotationLowering::class)
+internal class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
+    private val symbols = context.symbols.javaAnnotations
     private val noNewJavaAnnotationTargets =
         context.config.noNewJavaAnnotationTargets || !context.isCompilingAgainstJdk8OrLater
 
@@ -55,7 +50,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         ) return
 
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.documentedConstructor.returnType, symbols.documentedConstructor.symbol, 0
             )
     }
@@ -66,14 +61,11 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         val javaRetentionPolicy = kotlinRetentionPolicy?.let { symbols.annotationRetentionMap[it] } ?: symbols.rpRuntime
 
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionConstructor.returnType, symbols.retentionConstructor.symbol, 0
             ).apply {
-                putValueArgument(
-                    0,
-                    IrGetEnumValueImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionPolicyEnum.defaultType, javaRetentionPolicy.symbol
-                    )
+                arguments[0] = IrGetEnumValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionPolicyEnum.defaultType, javaRetentionPolicy.symbol
                 )
             }
     }
@@ -100,10 +92,10 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         }
 
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.targetConstructor.returnType, symbols.targetConstructor.symbol, 0
             ).apply {
-                putValueArgument(0, vararg)
+                arguments[0] = vararg
             }
     }
 
@@ -128,16 +120,16 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
             containerClass.symbol, containerClass.defaultType
         )
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.repeatableConstructor.returnType, symbols.repeatableConstructor.symbol, 0
             ).apply {
-                putValueArgument(0, containerReference)
+                arguments[0] = containerReference
             }
     }
 
     private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-        val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
-        return getValueArgument(index)
+        val parameter = symbol.owner.parameters.find { it.name == name } ?: return null
+        return arguments[parameter]
     }
 
     private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {

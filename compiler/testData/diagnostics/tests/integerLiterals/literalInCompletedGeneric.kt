@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // FIR_DUMP
@@ -8,3 +9,6 @@ fun foo() {
 }
 
 fun <T : Comparable<T>> foo(vararg values: Pair<T, T>): List<T> = TODO()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, typeConstraint,
+typeParameter, vararg */

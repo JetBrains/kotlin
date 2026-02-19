@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun noArgs() {}
 fun oneLambdaArg(fn: () -> Unit) {}
@@ -115,3 +116,17 @@ fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
         <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{ <!CANNOT_INFER_PARAMETER_TYPE!>l2<!> -> <!DEBUG_INFO_MISSING_UNRESOLVED!>l2<!>() }<!><!>
     }
 }
+
+fun hasOverload(x: Int) {}
+fun hasOverload(x: String) {}
+
+fun testOverloads() {
+    <!NONE_APPLICABLE!>hasOverload<!>(true)
+    {}
+
+    <!NONE_APPLICABLE!>hasOverload<!>(true)
+    foo@ {}
+}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction,
+vararg */

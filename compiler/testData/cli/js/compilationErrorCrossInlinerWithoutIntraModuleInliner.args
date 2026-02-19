@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/simple2js.kt
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-XXLanguage\:+IrCrossModuleInlinerBeforeKlibSerialization

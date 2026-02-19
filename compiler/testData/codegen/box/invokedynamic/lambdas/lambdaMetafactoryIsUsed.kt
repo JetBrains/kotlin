@@ -4,7 +4,6 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 14 java/lang/invoke/LambdaMetafactory
 
 

@@ -9,14 +9,15 @@ open annotation class SomeAnn : Annotation {
 
 @SomeAnn
 class My {
+  init {
+    val x: Int = 1
+  }
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  init {
-    val x: Int = 1
-  }
-
 }
+

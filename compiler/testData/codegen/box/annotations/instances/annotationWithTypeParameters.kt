@@ -1,12 +1,5 @@
-// IGNORE_BACKEND: JVM
-// DONT_TARGET_EXACT_BACKEND: JS
-// IGNORE_BACKEND: WASM
-// WASM ticket: KT-59032
-
-// supported: JVM_IR, JS_IR(_ES6), NATIVE
-
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 package test
 

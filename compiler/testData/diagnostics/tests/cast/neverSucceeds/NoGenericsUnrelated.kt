@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNCHECKED_CAST
 interface Trait1
 interface Trait2
 open class OClass1
@@ -33,3 +33,6 @@ fun <TP1: OClass1, TP2: OClass2> test(
   tp1 as FClass2
   tp1 as TP2
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType,
+smartcast, typeConstraint, typeParameter */

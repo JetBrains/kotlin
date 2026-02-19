@@ -1,9 +1,10 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !SKIP_JAVAC
+// SKIP_JAVAC
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 package kotlin.jvm
 
@@ -17,3 +18,6 @@ value class Foo(val x: Int) {
         val f = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, init, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration, value */

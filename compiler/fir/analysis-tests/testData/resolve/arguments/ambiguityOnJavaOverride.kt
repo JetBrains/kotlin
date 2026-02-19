@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 
 public class A {
@@ -17,3 +18,5 @@ class B : A() {
 fun test(b: B) {
     b.<!INVISIBLE_REFERENCE!>foo<!>("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, stringLiteral */

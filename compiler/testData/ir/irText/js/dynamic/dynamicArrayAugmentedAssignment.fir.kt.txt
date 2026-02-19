@@ -1,0 +1,7 @@
+fun testArrayAugmentedAssignment(d: dynamic) {
+  d["KEY"] += "+=" /*~> Unit */
+  d["KEY"] -= "-=" /*~> Unit */
+  d["KEY"] *= "*=" /*~> Unit */
+  d["KEY"] /= "/=" /*~> Unit */
+  d["KEY"] %= "%=" /*~> Unit */
+}

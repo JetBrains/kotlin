@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -25,5 +26,8 @@ fun main() {
     Test.rawAField.second = rawA.first.second
 
     rawA.listOfDoubles = strList
-    rawA.listOfDoubles = <!ASSIGNMENT_TYPE_MISMATCH!>""<!> // first should be List
+    rawA.listOfDoubles <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "" // first should be List
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, javaProperty, localProperty,
+nullableType, outProjection, propertyDeclaration, starProjection, stringLiteral */

@@ -19,10 +19,6 @@ import java.nio.file.Path
 class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("works with native tasks in complex project")
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-    )
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
         val expectedTasks = mutableListOf(
@@ -48,14 +44,15 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 ":lib:transformCommonMainCInteropDependenciesMetadata",
                 ":lib:linkDebugFrameworkIosArm64",
                 ":lib:linkDebugFrameworkIosX64",
-                ":lib:linkDebugFrameworkIosFat",
                 ":lib:linkReleaseFrameworkIosArm64",
                 ":lib:linkReleaseFrameworkIosX64",
-                ":lib:linkReleaseFrameworkIosFat",
             )
         }
 
-        project("native-configuration-cache", gradleVersion) {
+        project(
+            "native-configuration-cache",
+            gradleVersion,
+        ) {
             testConfigurationCacheOf(
                 "build",
                 executedTaskNames = expectedTasks,
@@ -66,10 +63,6 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("works with apple framework embedding and signing")
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-    )
     @GradleTest
     fun testAppleFrameworkTasks(gradleVersion: GradleVersion, @TempDir targetBuildDir: Path) {
         project(
@@ -81,7 +74,8 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 "ARCHS" to "arm64",
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                 "TARGET_BUILD_DIR" to targetBuildDir.toString(),
-                "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir"
+                "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir",
+                "BUILT_PRODUCTS_DIR" to "builtProductsDir",
             ),
         ) {
             testConfigurationCacheOf(":shared:embedAndSignAppleFrameworkForXcode")

@@ -3,14 +3,14 @@
 final class LambdaKt$test$1 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field D$0: double
-    private synthetic field L$0: java.lang.Object
+    synthetic field D$0: double
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -19,13 +19,13 @@ final class LambdaKt$test$10 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
-    private synthetic field L$0: java.lang.Object
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$10
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -37,9 +37,9 @@ final class LambdaKt$test$11 {
     field label: int
     inner (anonymous) class LambdaKt$test$11
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -50,9 +50,9 @@ final class LambdaKt$test$12 {
     field label: int
     inner (anonymous) class LambdaKt$test$12
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -61,13 +61,13 @@ final class LambdaKt$test$13 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
-    private synthetic field L$0: java.lang.Object
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$13
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -79,9 +79,9 @@ final class LambdaKt$test$14 {
     field label: int
     inner (anonymous) class LambdaKt$test$14
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -89,13 +89,13 @@ final class LambdaKt$test$14 {
 final class LambdaKt$test$15 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field L$0: java.lang.Object
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$15
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -106,9 +106,9 @@ final class LambdaKt$test$16 {
     field label: int
     inner (anonymous) class LambdaKt$test$16
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -120,9 +120,9 @@ final class LambdaKt$test$17 {
     field label: int
     inner (anonymous) class LambdaKt$test$17
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -130,13 +130,13 @@ final class LambdaKt$test$17 {
 final class LambdaKt$test$2 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field D$0: double
+    synthetic field D$0: double
     field label: int
     inner (anonymous) class LambdaKt$test$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -144,13 +144,13 @@ final class LambdaKt$test$2 {
 final class LambdaKt$test$3 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field L$0: java.lang.Object
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$3
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -158,13 +158,13 @@ final class LambdaKt$test$3 {
 final class LambdaKt$test$4 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field D$0: double
+    synthetic field D$0: double
     field label: int
     inner (anonymous) class LambdaKt$test$4
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -172,13 +172,13 @@ final class LambdaKt$test$4 {
 final class LambdaKt$test$5 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field L$0: java.lang.Object
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$5
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -186,15 +186,15 @@ final class LambdaKt$test$5 {
 final class LambdaKt$test$6 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field D$0: double
+    synthetic field D$0: double
     private synthetic field J$0: long
-    private synthetic field L$0: java.lang.Object
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$6
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -202,14 +202,14 @@ final class LambdaKt$test$6 {
 final class LambdaKt$test$7 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field D$0: double
+    synthetic field D$0: double
     private synthetic field J$0: long
     field label: int
     inner (anonymous) class LambdaKt$test$7
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -218,13 +218,13 @@ final class LambdaKt$test$8 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
-    private synthetic field L$0: java.lang.Object
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$8
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -232,14 +232,14 @@ final class LambdaKt$test$8 {
 final class LambdaKt$test$9 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
-    private synthetic field D$0: double
+    synthetic field D$0: double
     private synthetic field J$0: long
     field label: int
     inner (anonymous) class LambdaKt$test$9
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata

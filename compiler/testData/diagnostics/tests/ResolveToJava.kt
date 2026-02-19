@@ -1,7 +1,8 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // SKIP_JAVAC
 // FULL_JDK
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 // FILE: a.kt
 
@@ -50,9 +51,15 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
   xxx.<!UNRESOLVED_REFERENCE!>Class<!>()
+
+  java.lang.String()
 }
 
 
 // FILE: b.kt
 package xxx
   import java.lang.Class;
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, inProjection, infix, integerLiteral, javaFunction, javaProperty, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression, typeParameter, typeWithExtension */

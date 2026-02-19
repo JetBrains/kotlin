@@ -83,31 +83,32 @@ class Base64IOStreamTest {
     @Test
     fun readDifferentOffsetAndLengthMime() {
         val repeat = 10_000
-        val symbols = ("Zm9vYmFy".repeat(repeat) + "Zm8=").chunked(76).joinToString(separator = "\r\n")
-        val expected = "foobar".repeat(repeat) + "fo"
+        for ((codec, lineLength) in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
+            val symbols = ("Zm9vYmFy".repeat(repeat) + "Zm8=").chunked(lineLength).joinToString(separator = "\r\n")
+            val expected = "foobar".repeat(repeat) + "fo"
 
-        val bytes = ByteArray(expected.length)
+            val bytes = ByteArray(expected.length)
+            symbols.byteInputStream().decodingWith(codec).use { input ->
+                var read = 0
+                repeat(6) {
+                    bytes[read++] = input.read().toByte()
+                }
 
-        symbols.byteInputStream().decodingWith(Base64.Mime).use { input ->
-            var read = 0
-            repeat(6) {
-                bytes[read++] = input.read().toByte()
+                var toRead = 1
+                while (read < bytes.size) {
+                    val length = minOf(toRead, bytes.size - read)
+                    val result = input.read(bytes, read, length)
+
+                    assertEquals(length, result)
+
+                    read += result
+                    toRead += toRead * 10 / 9
+                }
+
+                assertEquals(-1, input.read(bytes))
+                assertEquals(-1, input.read())
+                assertEquals(expected, bytes.decodeToString())
             }
-
-            var toRead = 1
-            while (read < bytes.size) {
-                val length = minOf(toRead, bytes.size - read)
-                val result = input.read(bytes, read, length)
-
-                assertEquals(length, result)
-
-                read += result
-                toRead += toRead * 10 / 9
-            }
-
-            assertEquals(-1, input.read(bytes))
-            assertEquals(-1, input.read())
-            assertEquals(expected, bytes.decodeToString())
         }
     }
 
@@ -140,27 +141,29 @@ class Base64IOStreamTest {
     @Test
     fun writeDifferentOffsetAndLengthMime() {
         val repeat = 10_000
-        val bytes = ("foobar".repeat(repeat) + "fo").encodeToByteArray()
-        val expected = ("Zm9vYmFy".repeat(repeat) + "Zm8=").chunked(76).joinToString(separator = "\r\n")
+        for ((codec, lineLength) in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
+            val bytes = ("foobar".repeat(repeat) + "fo").encodeToByteArray()
+            val expected = ("Zm9vYmFy".repeat(repeat) + "Zm8=").chunked(lineLength).joinToString(separator = "\r\n")
 
-        val underlying = ByteArrayOutputStream()
+            val underlying = ByteArrayOutputStream()
 
-        underlying.encodingWith(Base64.Mime).use { output ->
-            var written = 0
-            repeat(8) {
-                output.write(bytes[written++].toInt())
+            underlying.encodingWith(codec).use { output ->
+                var written = 0
+                repeat(8) {
+                    output.write(bytes[written++].toInt())
+                }
+                var toWrite = 1
+                while (written < bytes.size) {
+                    val length = minOf(toWrite, bytes.size - written)
+                    output.write(bytes, written, length)
+
+                    written += length
+                    toWrite += toWrite * 10 / 9
+                }
             }
-            var toWrite = 1
-            while (written < bytes.size) {
-                val length = minOf(toWrite, bytes.size - written)
-                output.write(bytes, written, length)
 
-                written += length
-                toWrite += toWrite * 10 / 9
-            }
+            assertEquals(expected, underlying.toString())
         }
-
-        assertEquals(expected, underlying.toString())
     }
 
 
@@ -308,16 +311,42 @@ class Base64IOStreamTest {
     @Test
     fun withoutPadding() {
         for (base64 in listOf(Base64, Base64.Mime)) {
-            val inputStream = "Zm9vYg".byteInputStream()
+            for (paddingOption in Base64.PaddingOption.entries) {
+                val configuredBase64 = base64.withPadding(paddingOption)
+
+                val inputStream = "Zm9vYg".byteInputStream()
+                val wrapper = inputStream.decodingWith(configuredBase64)
+
+                wrapper.use {
+                    assertEquals('f'.code, it.read())
+                    assertEquals('o'.code, it.read())
+                    assertEquals('o'.code, it.read())
+
+                    if (paddingOption == Base64.PaddingOption.PRESENT) {
+                        assertFailsWith<IllegalArgumentException> { it.read() }
+                    } else {
+                        assertEquals('b'.code, it.read())
+                        assertEquals(-1, it.read())
+                        assertEquals(-1, it.read())
+                    }
+                }
+
+                // closed
+                assertFailsWith<IOException> {
+                    wrapper.read()
+                }
+            }
+        }
+    }
+
+    @Test
+    fun nonZeroPadBits() {
+        for (base64 in listOf(Base64, Base64.Mime)) {
+            val inputStream = "Zm9=".byteInputStream()
             val wrapper = inputStream.decodingWith(base64)
 
             wrapper.use {
-                assertEquals('f'.code, it.read())
-                assertEquals('o'.code, it.read())
-                assertEquals('o'.code, it.read())
-                assertEquals('b'.code, it.read())
-                assertEquals(-1, it.read())
-                assertEquals(-1, it.read())
+                assertFailsWith<IllegalArgumentException> { it.read() }
             }
 
             // closed

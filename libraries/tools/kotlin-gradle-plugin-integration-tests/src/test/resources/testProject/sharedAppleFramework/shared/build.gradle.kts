@@ -17,6 +17,9 @@ kotlin {
             framework("custom") {
                 baseName = "lib"
             }
+            framework("withoutSymbolicLink") {
+                baseName = "withoutSymbolicLink"
+            }
         }
     }
     sourceSets {

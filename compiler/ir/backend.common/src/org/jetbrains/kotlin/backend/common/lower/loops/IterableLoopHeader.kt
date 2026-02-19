@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class IterableLoopHeader(
@@ -27,25 +28,29 @@ internal class IterableLoopHeader(
     override val consumesLoopVariableComponents = false
 
     override fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement> =
         with(builder) {
-            // loopVariable = iteratorVar.next()
+            // loopVariable0 = iteratorVar.next()
+            // loopVariable1 = loopVariable0
+            // ...
+            // loopVariableN = loopVariable0
             val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
             val next =
                 irCall(iteratorClass.functions.first {
-                    it.name == OperatorNameConventions.NEXT && it.valueParameters.isEmpty()
+                    it.name == OperatorNameConventions.NEXT && it.hasShape(dispatchReceiver = true)
                 }.symbol).apply {
-                    dispatchReceiver = irGet(headerInfo.iteratorVariable)
+                    arguments[0] = irGet(headerInfo.iteratorVariable)
                 }
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(next), null)
+            loopVariables.firstOrNull()?.let { it.initializer = it.initializer?.transform(InitializerCallReplacer(next), null) }
+            loopVariables.drop(1).forEach { it.initializer = irGet(loopVariables.first()) }
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
-            listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns, backendContext.typeSystem))
+            loopVariables.ifEmpty { listOf(next.coerceToUnitIfNeeded(next.type, context.irBuiltIns)) }
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {
@@ -58,9 +63,10 @@ internal class IterableLoopHeader(
         //   }
         val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
         val hasNext =
-            irCall(iteratorClass.functions.first { it.name == OperatorNameConventions.HAS_NEXT && it.valueParameters.isEmpty() }).apply {
-                dispatchReceiver = irGet(headerInfo.iteratorVariable)
-            }
+            irCall(iteratorClass.functions.first { it.name == OperatorNameConventions.HAS_NEXT && it.hasShape(dispatchReceiver = true) })
+                .apply {
+                    dispatchReceiver = irGet(headerInfo.iteratorVariable)
+                }
         val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
             label = oldLoop.label
             condition = hasNext

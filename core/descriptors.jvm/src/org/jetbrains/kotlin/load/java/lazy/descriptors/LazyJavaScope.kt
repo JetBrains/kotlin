@@ -186,6 +186,7 @@ abstract class LazyJavaScope(
                 emptyMap<CallableDescriptor.UserDataKey<ValueParameterDescriptor>, ValueParameterDescriptor>()
         )
 
+        functionDescriptorImpl.isExternal = method.isNative
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
 
         if (effectiveSignature.errors.isNotEmpty()) {
@@ -306,7 +307,7 @@ abstract class LazyJavaScope(
             emptyList()
         )
         (ownerDescriptor as? ClassDescriptor)?.let { classDescriptor ->
-            propertyDescriptor = with(c) { c.components.syntheticPartsProvider.modifyField(classDescriptor, propertyDescriptor) }
+            propertyDescriptor = c.components.syntheticPartsProvider.modifyField(classDescriptor, propertyDescriptor, c)
         }
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {

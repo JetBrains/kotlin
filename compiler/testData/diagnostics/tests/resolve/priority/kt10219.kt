@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Calendar.java
 public class Calendar {
     public void setTimeInMillis(long millis) {}
@@ -20,3 +21,6 @@ fun a(c: Calendar) {
         timeInMillis = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, javaProperty, javaType, lambdaLiteral,
+propertyDeclaration, propertyWithExtensionReceiver, setter, stringLiteral */

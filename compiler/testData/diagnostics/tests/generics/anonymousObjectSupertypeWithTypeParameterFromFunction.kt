@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 abstract class Checker<StateT>
 
@@ -7,3 +8,6 @@ class ToolchainPanel {
         object : Checker<MyState>() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

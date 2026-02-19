@@ -1,4 +1,4 @@
-// !CHECK_HIGHLIGHTING
+// CHECK_HIGHLIGHTING
 
 expect class My
 

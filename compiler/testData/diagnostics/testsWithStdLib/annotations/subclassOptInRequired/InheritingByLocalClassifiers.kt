@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 
 @RequiresOptIn
@@ -8,11 +9,11 @@ interface Interface
 
 fun foo() {
     // error: inheriting Interface requires an explicit opt-in
-    open class LocalOpenKlassA: <!OPT_IN_USAGE_ERROR!>Interface<!>
-    abstract class LocalAbstractKlassA: <!OPT_IN_USAGE_ERROR!>Interface<!>
-    class LocalKlassA: <!OPT_IN_USAGE_ERROR!>Interface<!>
-    data class LocalDataKlassA(val arg: Int): <!OPT_IN_USAGE_ERROR!>Interface<!>
-    object: <!OPT_IN_USAGE_ERROR!>Interface<!> {}
+    open class LocalOpenKlassA: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    abstract class LocalAbstractKlassA: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    class LocalKlassA: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    data class LocalDataKlassA(val arg: Int): <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    object: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!> {}
 
     // opt-in is present, no errors
     @OptIn(ApiMarker::class) open class LocalOpenKlassB: Interface
@@ -29,3 +30,6 @@ fun foo() {
     @ApiMarker data class LocalDataKlassC(val arg: Int): Interface
     @ApiMarker object: Interface {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, classReference, data,
+functionDeclaration, interfaceDeclaration, localClass, primaryConstructor, propertyDeclaration */

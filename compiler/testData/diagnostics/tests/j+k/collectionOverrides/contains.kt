@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
 // JAVAC_EXPECTED_FILE
 // FILE: A.java
 
@@ -64,3 +65,6 @@ fun foo(
     "" in al
     <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in al
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, nullableType,
+operator, override, stringLiteral, typeParameter */

@@ -1,0 +1,8 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.asJava.KotlinAsJavaSupport"
+        serviceImplementation="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport"
+    />
+  </extensions>
+</idea-plugin>

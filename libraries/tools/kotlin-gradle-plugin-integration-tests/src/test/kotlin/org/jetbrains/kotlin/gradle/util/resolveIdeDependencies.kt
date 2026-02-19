@@ -6,24 +6,42 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.testkit.runner.BuildResult
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildModel
 import java.io.File
+import java.io.Serializable
 import kotlin.test.fail
 
 
+// TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
+private fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+
 /* Test Utils / Test Infrastructure Implementation */
+
+// Using local constant to avoid relying on internal PropertiesProvider API from production code
+private const val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES: String = "kotlin.internal.kmp.strictResolveIdeDependencies"
 
 internal fun TestProject.resolveIdeDependencies(
     subproject: String? = null,
-    assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit
+    buildOptions: BuildOptions = this.buildOptions,
+    strictMode: Boolean = true,
+    assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit,
 ) {
-    build("${subproject.orEmpty()}:resolveIdeDependencies") {
+    build(
+        "${subproject.orEmpty()}:resolveIdeDependencies",
+        "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=${strictMode}",
+        buildOptions = buildOptions.disableConfigurationCache_KT70416()
+    ) {
         assertions(readIdeDependencies(subproject))
     }
 }
@@ -47,6 +65,36 @@ internal fun TestProject.readIdeDependencies(subproject: String? = null): IdeaKo
     return IdeaKotlinDependenciesContainer(dependenciesBySourceSetName)
 }
 
+
+private interface ResolveIdeDependenciesModel {
+    val dependencies: Map<String, List<ByteArray>>
+}
+private class ResolveIdeDependenciesModelImpl(
+    override val dependencies: Map<String, List<ByteArray>>
+) : ResolveIdeDependenciesModel, Serializable
+
+internal fun TestProject.resolveIdeDependenciesAsModel(
+    sourceSets: Set<String>,
+    buildOptions: BuildOptions = this.buildOptions,
+): IdeaKotlinDependenciesContainer {
+    val model = buildModel<ResolveIdeDependenciesModel>("prepareKotlinIdeaImport", buildOptions = buildOptions) { project ->
+        val deps = sourceSets.associateWith {
+            @OptIn(ExternalKotlinTargetApi::class)
+            project.kotlinIdeMultiplatformImport.resolveDependenciesSerialized(it)
+        }
+        ResolveIdeDependenciesModelImpl(deps)
+    }
+
+    val deserializedDependencies = model.dependencies.mapValues { (sourceSet, serializedDependencies) ->
+        serializedDependencies.map { bytes ->
+            GradleIntegrationTestIdeaKotlinSerializationContext.IdeaKotlinDependency(bytes)
+                ?: fail("Failed to deserialize dependency on source set $sourceSet:")
+        }.toSet()
+    }
+
+    return IdeaKotlinDependenciesContainer(deserializedDependencies)
+}
+
 private fun deserializeIdeaKotlinDependencyOrFail(file: File): IdeaKotlinDependency {
     return GradleIntegrationTestIdeaKotlinSerializationContext.IdeaKotlinDependency(file.readBytes())
         ?: fail("Failed to deserialize dependency. $file")
@@ -63,8 +111,21 @@ private object GradleIntegrationTestIdeaKotlinSerializationContext : IdeaKotlinS
 }
 
 class IdeaKotlinDependenciesContainer(
-    private val dependencies: Map<String, Set<IdeaKotlinDependency>>
-) {
-    operator fun get(sourceSetName: String) = dependencies[sourceSetName]
+    private val dependencies: Map<String, Set<IdeaKotlinDependency>>,
+) : Map<String, Set<IdeaKotlinDependency>> by dependencies {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override operator fun get(sourceSetName: String) = dependencies[sourceSetName]
         ?: fail("SourceSet with name $sourceSetName not found. Found: ${dependencies.keys}")
+
+    fun assertResolvedDependenciesOnly() {
+        dependencies.entries.forEach { (sourceSet, sourceSetDependencies) ->
+            sourceSetDependencies.assertResolvedDependenciesOnly("Unexpected unresolved dependencies for $sourceSet:")
+        }
+    }
+}
+
+fun Iterable<IdeaKotlinDependency>.assertResolvedDependenciesOnly(message: String = "Unexpected unresolved dependencies:") {
+    val unresolved = filterIsInstance<IdeaKotlinUnresolvedBinaryDependency>()
+    if (unresolved.isEmpty()) return
+    fail("$message\n${unresolved.joinToString("\n")}")
 }

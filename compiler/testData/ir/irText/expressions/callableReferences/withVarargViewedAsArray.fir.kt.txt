@@ -1,17 +1,3 @@
-fun sum(vararg args: Int): Int {
-  var result: Int = 0
-  { // BLOCK
-    val <iterator>: IntIterator = args.iterator()
-    while (<iterator>.hasNext()) { // BLOCK
-      val arg: Int = <iterator>.next()
-      { // BLOCK
-        result = result.plus(other = arg)
-      }
-    }
-  }
-  return result
-}
-
 fun nsum(vararg args: Number): Int {
   return sum(args = [*IntArray(size = args.<get-size>(), init = local fun <anonymous>(it: Int): Int {
     return args.get(index = it).toInt()
@@ -19,19 +5,30 @@ fun nsum(vararg args: Number): Int {
 )])
 }
 
-fun zap(vararg b: String, k: Int = 42) {
+fun sum(vararg args: Int): Int {
+  var result: Int = 0
+  { // BLOCK
+    val tmp_0: IntIterator = args.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val arg: Int = tmp_0.next()
+      result = result.plus(other = arg)
+    }
+  }
+  return result
 }
 
-fun usePlainArgs(fn: Function2<Int, Int, Int>) {
+fun testArrayAndDefaults() {
+  useStringArray(fn = { // BLOCK
+    local fun zap(p0: Array<out String>) {
+      zap(b = [*p0])
+    }
+
+    ::zap
+  })
 }
 
-fun usePrimitiveArray(fn: Function1<IntArray, Int>) {
-}
-
-fun useArray(fn: Function1<Array<Int>, Int>) {
-}
-
-fun useStringArray(fn: Function1<Array<String>, Unit>) {
+fun testArrayAsVararg() {
+  useArray(fn = ::nsum)
 }
 
 fun testPlainArgs() {
@@ -48,17 +45,18 @@ fun testPrimitiveArrayAsVararg() {
   usePrimitiveArray(fn = ::sum)
 }
 
-fun testArrayAsVararg() {
-  useArray(fn = ::nsum)
+fun useArray(fn: Function1<Array<Int>, Int>) {
 }
 
-fun testArrayAndDefaults() {
-  useStringArray(fn = { // BLOCK
-    local fun zap(p0: Array<out String>) {
-      zap(b = [*p0])
-    }
+fun usePlainArgs(fn: Function2<Int, Int, Int>) {
+}
 
-    ::zap
-  })
+fun usePrimitiveArray(fn: Function1<IntArray, Int>) {
+}
+
+fun useStringArray(fn: Function1<Array<String>, Unit>) {
+}
+
+fun zap(vararg b: String, k: Int = 42) {
 }
 

@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.util.PrivateForInline
 
 /**
  * A component to lazy resolve [FirBasedSymbol] to the required phase.
@@ -20,29 +23,74 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
  * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
  */
 abstract class FirLazyDeclarationResolver : FirSessionComponent {
-    var lazyResolveContractChecksEnabled: Boolean = true
+    @PrivateForInline
+    @Suppress("PropertyName")
+    val _lazyResolveContractChecksEnabled: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
+
+    @OptIn(PrivateForInline::class)
+    val lazyResolveContractChecksEnabled: Boolean
+        get() = _lazyResolveContractChecksEnabled.get()
+
+
+    @PrivateForInline
+    @Suppress("PropertyName")
+    val _lazyResolveIsAllowed: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
 
     abstract fun startResolvingPhase(phase: FirResolvePhase)
 
     abstract fun finishResolvingPhase(phase: FirResolvePhase)
 
+    @OptIn(PrivateForInline::class)
     fun disableLazyResolveContractChecks() {
-        lazyResolveContractChecksEnabled = false
+        _lazyResolveContractChecksEnabled.set(false)
     }
 
+    @OptIn(PrivateForInline::class)
     inline fun <T> disableLazyResolveContractChecksInside(action: () -> T): T {
-        val current = lazyResolveContractChecksEnabled
-        lazyResolveContractChecksEnabled = false
+        val current = _lazyResolveContractChecksEnabled.get()
+        _lazyResolveContractChecksEnabled.set(false)
         try {
             return action()
         } finally {
-            lazyResolveContractChecksEnabled = current
+            _lazyResolveContractChecksEnabled.set(current)
         }
     }
 
-    abstract fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase)
-    abstract fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase)
+    @OptIn(PrivateForInline::class)
+    inline fun <T> forbidLazyResolveInside(action: () -> T): T {
+        val current = _lazyResolveIsAllowed.get()
+        _lazyResolveIsAllowed.set(false)
+        try {
+            return action()
+        } finally {
+            _lazyResolveIsAllowed.set(current)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    protected fun assertLazyResolveAllowed() {
+        if (!_lazyResolveIsAllowed.get()) {
+            throw FirLazyResolveForbiddenException()
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+     */
+    abstract fun lazyResolveToPhase(element: FirElementWithResolveState, toPhase: FirResolvePhase)
+
+    /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
+     */
+    abstract fun lazyResolveToPhaseWithCallableMembers(clazz: FirClass, toPhase: FirResolvePhase)
+
+    /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
+     */
+    abstract fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase)
 }
+
+class FirLazyResolveForbiddenException() : IllegalStateException("Lazy resolve is forbidden")
 
 class FirLazyResolveContractViolationException(
     currentPhase: FirResolvePhase,
@@ -57,7 +105,7 @@ class FirLazyResolveContractViolationException(
 
 val FirSession.lazyDeclarationResolver: FirLazyDeclarationResolver by FirSession.sessionComponentAccessor()
 
-private val FirDeclaration.lazyDeclarationResolver get() = moduleData.session.lazyDeclarationResolver
+private val FirElementWithResolveState.lazyDeclarationResolver get() = moduleData.session.lazyDeclarationResolver
 
 /**
  * Lazy resolve [FirBasedSymbol] to [FirResolvePhase].
@@ -74,22 +122,25 @@ private val FirDeclaration.lazyDeclarationResolver get() = moduleData.session.la
  * @param toPhase the minimum phase, the declaration should be resolved to after an execution of the [lazyResolveToPhase]
  */
 fun FirBasedSymbol<*>.lazyResolveToPhase(toPhase: FirResolvePhase) {
-    fir.lazyDeclarationResolver.lazyResolveToPhase(this, toPhase)
+    fir.lazyResolveToPhase(toPhase)
 }
 
 /**
- * Lazy resolve [FirDeclaration] to [FirResolvePhase].
+ * Lazy resolve [FirElementWithResolveState] to [FirResolvePhase].
  *
  * @see lazyResolveToPhase
  */
-fun FirDeclaration.lazyResolveToPhase(toPhase: FirResolvePhase) {
-    symbol.lazyResolveToPhase(toPhase)
+fun FirElementWithResolveState.lazyResolveToPhase(toPhase: FirResolvePhase) {
+    invokeLazyResolveToPhase(toPhase, FirLazyDeclarationResolver::lazyResolveToPhase)
 }
 
 /**
  * Lazy resolve [FirClassSymbol] and its callable members to [FirResolvePhase].
  *
  * Might resolve additional required declarations.
+ *
+ * Note: for the [STATUS][FirResolvePhase.STATUS] phase it guarantees
+ * that all callables in [this] or superclasses are resolved to at least the [STATUS][FirResolvePhase.STATUS] phase.
  *
  * @receiver [FirClassSymbol] which should be resolved and which callable members should be resolved
  * @param toPhase the minimum phase, the declaration and callable members should be resolved
@@ -104,9 +155,8 @@ fun FirDeclaration.lazyResolveToPhase(toPhase: FirResolvePhase) {
  *
  * @see lazyResolveToPhase
  */
-
 fun FirClassSymbol<*>.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
-    fir.lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembers(this, toPhase)
+    fir.lazyResolveToPhaseWithCallableMembers(toPhase)
 }
 
 /**
@@ -115,5 +165,51 @@ fun FirClassSymbol<*>.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolveP
  * @see lazyResolveToPhaseWithCallableMembers
  */
 fun FirClass.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
-    symbol.lazyResolveToPhaseWithCallableMembers(toPhase)
+    lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembers(this, toPhase)
+}
+
+/**
+ * Lazy resolve [FirBasedSymbol] and all nested declarations to [FirResolvePhase].
+ *
+ * In the case of lazy resolution (inside Analysis API), it checks that the declaration phase `>= toPhase`.
+ * If not, it resolves the declaration for the requested phase.
+ *
+ * If the [lazyResolveToPhase] is called inside a fir transformer,
+ * it should always request the phase which is strictly lower than the current transformer phase,
+ * otherwise a deadlock/StackOverflow is possible.
+ *
+ * For the compiler mode, it does nothing, as the compiler is non-lazy.
+ *
+ * @receiver [FirBasedSymbol] which should be resolved
+ * @param toPhase the minimum phase, the declaration and all nested declarations should be resolved to after an execution of the [lazyResolveToPhase]
+ */
+fun FirBasedSymbol<*>.lazyResolveToPhaseRecursively(toPhase: FirResolvePhase) {
+    fir.lazyResolveToPhaseRecursively(toPhase)
+}
+
+/**
+ * Lazy resolve [FirElementWithResolveState] and all nested declarations to [FirResolvePhase].
+ *
+ * @see lazyResolveToPhaseRecursively
+ */
+fun FirElementWithResolveState.lazyResolveToPhaseRecursively(toPhase: FirResolvePhase) {
+    invokeLazyResolveToPhase(toPhase, FirLazyDeclarationResolver::lazyResolveToPhaseRecursively)
+}
+
+private fun FirElementWithResolveState.invokeLazyResolveToPhase(
+    toPhase: FirResolvePhase,
+    resolver: FirLazyDeclarationResolver.(FirElementWithResolveState, FirResolvePhase) -> Unit,
+) {
+    when (this) {
+        // This element is stateless, so we must not resolve it directly
+        is FirSyntheticPropertyAccessor -> delegate.invokeLazyResolveToPhase(toPhase, resolver)
+
+        // This element is stateless, so we must not resolve it directly
+        is FirSyntheticProperty -> {
+            getter.invokeLazyResolveToPhase(toPhase, resolver)
+            setter?.invokeLazyResolveToPhase(toPhase, resolver)
+        }
+
+        else -> lazyDeclarationResolver.resolver(this, toPhase)
+    }
 }

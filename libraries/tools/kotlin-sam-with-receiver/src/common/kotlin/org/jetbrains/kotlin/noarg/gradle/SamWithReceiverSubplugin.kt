@@ -18,19 +18,15 @@ package org.jetbrains.kotlin.samWithReceiver.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.noarg.gradle.model.builder.SamWithReceiverModelBuilder
 import javax.inject.Inject
 
 class SamWithReceiverGradleSubplugin
 @Inject internal constructor(
-    private val registry: ToolingModelBuilderRegistry
 ) : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
-        registry.register(SamWithReceiverModelBuilder())
     }
 
     companion object {

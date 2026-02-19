@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 fun interface Supplier<SupplierTP> {
     fun get(): SupplierTP
 }

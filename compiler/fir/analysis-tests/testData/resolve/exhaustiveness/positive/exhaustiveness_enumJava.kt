@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JavaEnum.java
 public enum JavaEnum {
     A, B, C;
@@ -10,13 +11,13 @@ fun test_1(e: JavaEnum) {
     val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
-        is String -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 3
+    }.plus(0)
 
     val c = when (e) {
         JavaEnum.A -> 1
@@ -35,7 +36,7 @@ fun test_2(e: JavaEnum?) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val b = when (e) {
         JavaEnum.A -> 1
@@ -58,3 +59,6 @@ fun test_3(e: JavaEnum) {
         JavaEnum.C -> 2
     }.plus(0)
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

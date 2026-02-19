@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -7,9 +9,9 @@ expect annotation class Foo3
 expect annotation class Foo4
 expect annotation class Foo5()
 expect annotation class Foo6()
-<!INCOMPATIBLE_MATCHING{JVM}!>expect annotation class Foo7<!INCOMPATIBLE_MATCHING{JVM}!>()<!><!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class Foo7<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>()<!>
 
-@<!UNRESOLVED_REFERENCE!>Foo1<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@Foo1<!>
 fun foo() {}
 
 @Foo5
@@ -45,3 +47,6 @@ actual annotation class Foo5
 actual annotation class Foo6(val s: String = "value")
 
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo7<!> = Bar2
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, javaType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeAliasDeclaration */

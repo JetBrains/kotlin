@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
 
 sealed class A
@@ -9,9 +10,9 @@ object CC : C()
 
 fun foo(a: A) {
     if (a is B) {
-        if (a is C) {
+        if (<!USELESS_IS_CHECK!>a is C<!>) {
             val t = when (a) {
-                is CC -> "CC"
+                <!USELESS_IS_CHECK!>is CC<!> -> "CC"
             }
         }
     }
@@ -19,10 +20,13 @@ fun foo(a: A) {
 
 fun foo2(a: A) {
     if (a is C) {
-        if (a is B) {
+        if (<!USELESS_IS_CHECK!>a is B<!>) {
             val t = when (a) {
-                    is CC -> "CC"
+                    <!USELESS_IS_CHECK!>is CC<!> -> "CC"
             }
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, intersectionType, isExpression,
+localProperty, objectDeclaration, propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

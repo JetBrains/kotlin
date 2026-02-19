@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.psi.PsiField
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -14,11 +16,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@OptIn(DirectDeclarationsAccess::class)
 class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<RequiredArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
         return lombokService.getRequiredArgsConstructor(classSymbol)
-            ?: lombokService.getData(classSymbol)?.asRequiredArgsConstructor()
+            ?: runIf(!containsExplicitConstructor(classSymbol)) {
+                lombokService.getData(classSymbol)?.takeIf {
+                    lombokService.getAllArgsConstructor(classSymbol) == null &&
+                            lombokService.getNoArgsConstructor(classSymbol) == null
+                }?.asRequiredArgsConstructor()
+            }
     }
 
     @OptIn(SymbolInternals::class)
@@ -29,6 +38,8 @@ class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstr
     }
 
     private fun FirJavaField.isFieldRequired(): Boolean {
+        if (isStatic) return false
+
         // TODO: consider adding `hasInitializer` property directly to java model
         val hasInitializer = (source?.psi as? PsiField)?.hasInitializer() ?: false
         if (hasInitializer) return false

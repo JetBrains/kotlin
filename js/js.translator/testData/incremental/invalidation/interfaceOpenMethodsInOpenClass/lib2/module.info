@@ -1,13 +1,18 @@
 STEP 0:
     dependencies: lib1
     added file: MyClass.kt, GetB.kt, GetA.kt
-STEP 1..4:
+STEP 1..3:
+    dependencies: lib1
+    updated imports <wasm>: MyClass.kt, GetA.kt, GetB.kt
+STEP 4:
     dependencies: lib1
 STEP 5:
     dependencies: lib1
     updated imports: GetA.kt, MyClass.kt
 STEP 6:
     dependencies: lib1
+    updated imports <wasm>: MyClass.kt, GetA.kt, GetB.kt
 STEP 7:
     dependencies: lib1
     updated imports: MyClass.kt
+    updated imports <wasm>: GetA.kt, GetB.kt

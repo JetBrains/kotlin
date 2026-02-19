@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-4415 Class Auto-Cast Bug
 
 interface SelfJson
@@ -15,3 +16,6 @@ object A {
 
 //from library
 val <T> T.javaClass : Class<T> get() = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, ifExpression, interfaceDeclaration, isExpression, nullableType,
+objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, smartcast, starProjection, typeParameter */

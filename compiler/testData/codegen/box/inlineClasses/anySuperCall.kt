@@ -1,7 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class A(val x: Int) {

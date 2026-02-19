@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun test(
     ub1: UByte, ub2: UByte,
@@ -21,3 +22,6 @@ fun test(
 
     val c1 = <!FORBIDDEN_IDENTITY_EQUALS!>bu1 === bu2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>bu1 !== bu2<!>
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, localProperty,
+propertyDeclaration, unsignedLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 open class A {
@@ -29,3 +30,6 @@ open class X5 : C() {
     <!CONFLICTING_OVERLOADS!>fun some(text: String)<!> = ""
 }
 open class X6 : X5()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
+stringLiteral, typeParameter */

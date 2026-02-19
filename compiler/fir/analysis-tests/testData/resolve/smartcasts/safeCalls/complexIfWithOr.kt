@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface State
 interface Complex {
     val superClass: Complex?
@@ -11,3 +12,6 @@ fun test(qualifier: State?) {
     }
     qualifier.superClass
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, intersectionType, isExpression, nullableType, propertyDeclaration, safeCall, smartcast */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 
 open class A {
@@ -14,7 +15,8 @@ class B : A() {
     fun test() {
         foo()
         bar()
-        <!NONE_APPLICABLE!>buz<!>()
+        <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>buz<!>()
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override, thisExpression */

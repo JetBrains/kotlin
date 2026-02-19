@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val x: Array<String> = emptyArray()
 
 val y: Array<String>
@@ -7,3 +8,5 @@ interface My
 
 val z: Array<out My>
     get() = emptyArray()
+
+/* GENERATED_FIR_TAGS: getter, interfaceDeclaration, outProjection, propertyDeclaration */

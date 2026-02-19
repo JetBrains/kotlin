@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
-import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
@@ -52,6 +52,11 @@ abstract class KotlinCompileCommon @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsCompat(
         { this },
         compilerOptions
@@ -87,7 +92,7 @@ abstract class KotlinCompileCommon @Inject constructor(
                 args.reportPerf = true
             }
 
-            args.expectActualLinker = expectActualLinker.get()
+            args.metadataKlib = produceMetadataKlib.get()
 
             args.destination = destinationDirectory.get().asFile.normalize().absolutePath
 
@@ -99,6 +104,8 @@ abstract class KotlinCompileCommon @Inject constructor(
             if (localExecutionTimeFreeCompilerArgs != null) {
                 args.freeArgs = localExecutionTimeFreeCompilerArgs
             }
+
+            args.targetPlatform = targetPlatformArg.get().toTypedArray()
         }
 
         pluginClasspath { args ->
@@ -128,7 +135,10 @@ abstract class KotlinCompileCommon @Inject constructor(
     internal val refinesMetadataPaths: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @get:Internal
-    internal val expectActualLinker = objectFactory.property(Boolean::class.java)
+    internal val produceMetadataKlib = objectFactory.property(Boolean::class.java)
+
+    @get:Input
+    internal val targetPlatformArg: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     override fun callCompilerAsync(
         args: K2MetadataCompilerArguments,
@@ -142,9 +152,10 @@ abstract class KotlinCompileCommon @Inject constructor(
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             reportingSettings = reportingSettings(),
-            outputFiles = allOutputFiles()
+            outputFiles = allOutputFiles(),
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
         )
         compilerRunner.runMetadataCompilerAsync(args, environment)
-        compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
+        compilerRunner.errorsFiles?.let { gradleMessageCollector.flush(it) }
     }
 }

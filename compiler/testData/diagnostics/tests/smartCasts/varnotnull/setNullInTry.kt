@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SoundSmartCastsAfterTry
+// LANGUAGE: +SoundSmartCastsAfterTry
 
 fun foo() {
     var s: String?
@@ -9,3 +10,6 @@ fun foo() {
     } catch (ex: Exception) {}
     s<!UNSAFE_CALL!>.<!>hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, stringLiteral,
+tryExpression */

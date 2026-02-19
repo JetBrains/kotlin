@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class A<T> {
     fun <S> foo(s: S): S = s
@@ -5,3 +6,6 @@ class A<T> {
 
     fun test() = foo(bar(""))
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nullableType, stringLiteral,
+typeParameter */

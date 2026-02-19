@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 import Kind.EXT_RETURN
 import Kind.GLOBAL_RETURN
@@ -40,3 +41,7 @@ fun test1(intKind: Kind, extKind: Kind): Global {
 public inline fun <R> doCall(block: ()-> R) : R {
     return block()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, disjunctionExpression, enumDeclaration, enumEntry,
+equalityExpression, functionDeclaration, functionalType, ifExpression, inline, lambdaLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter */

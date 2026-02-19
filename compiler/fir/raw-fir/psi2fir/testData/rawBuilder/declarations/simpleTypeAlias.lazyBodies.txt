@@ -1,9 +1,9 @@
 FILE: simpleTypeAlias.kt
-    public? final? interface B : R|kotlin/Any| {
+    public final? interface B : R|kotlin/Any| {
     }
-    public? final typealias C = B
-    public? final? class D : C {
-        public? constructor(): R|D| {
+    public final typealias C = B
+    public final? class D : C {
+        public? [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<<implicit>>
         }
 

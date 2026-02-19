@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class My
 
 fun foo(arg: Int): Int {
@@ -7,3 +8,6 @@ fun foo(arg: Int): Int {
         return -1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, functionDeclaration, integerLiteral, localProperty,
+multiplicativeExpression, propertyDeclaration, tryExpression */

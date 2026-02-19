@@ -1,0 +1,30 @@
+inline fun inlineFunctionFull() = "inlineFunctionFull.v2"
+
+inline fun inlineFunctionWithParamFull(param: String = "defaultFull.v2") = "inlineFunctionWithParamFull.v2: $param"
+
+context(c: String)
+inline fun String.inlineExtensionFunctionFull() = "$this.inlineExtensionFunctionFull.v2 with context $c"
+
+inline val inlinePropertyFull: String
+    get() = "inlinePropertyFull.v2"
+
+context(c: String)
+inline val String.inlineExtensionPropertyFull: String
+    get() = "$this.inlineExtensionPropertyFull.v2 with context $c"
+
+
+class C {
+    inline fun inlineClassFunctionFull() = "inlineClassFunctionFull.v2"
+
+    inline fun inlineClassFunctionWithParamFull(param: String = "defaultFull.v2") = "inlineClassFunctionWithParamFull.v2: $param"
+
+    context(c: String)
+    inline fun String.inlineClassExtensionFunctionFull() = "$this.inlineClassExtensionFunctionFull.v2 with context $c"
+
+    inline val inlineClassPropertyFull: String
+        get() = "inlineClassPropertyFull.v2"
+
+    context(c: String)
+    inline val String.inlineClassExtensionPropertyFull: String
+        get() = "$this.inlineClassExtensionPropertyFull.v2 with context $c"
+}

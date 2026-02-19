@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface A {
     fun a(): Int
@@ -15,3 +17,6 @@ var b = <!CONTEXT_RECEIVERS_WITH_BACKING_FIELD!>2<!>
 
 context(A, B)
 val c get() = a() + b()
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration, propertyDeclarationWithContext */

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
 
 class CirKnownClassifiers(
     val classifierIndices: TargetDependent<CirClassifierIndex>,
@@ -30,8 +30,8 @@ interface CirCommonizedClassifierNodes {
 
     companion object {
         fun default(allowedDuplicates: Set<CirEntityId> = setOf()) = object : CirCommonizedClassifierNodes {
-            private val classNodes = THashMap<CirEntityId, CirClassNode>()
-            private val typeAliases = THashMap<CirEntityId, CirTypeAliasNode>()
+            private val classNodes = CommonizerMap<CirEntityId, CirClassNode>()
+            private val typeAliases = CommonizerMap<CirEntityId, CirTypeAliasNode>()
 
             override fun classNode(classId: CirEntityId) = classNodes[classId]
             override fun typeAliasNode(typeAliasId: CirEntityId) = typeAliases[typeAliasId]

@@ -7,23 +7,24 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.expression
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
-object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker() {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkReifiedTypeParameters(expression, context, reporter)
+object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
+        checkReifiedTypeParameters(expression)
 
         val calleeSymbols = extractModuleCalleeSymbols(expression)
         for ((calleeSymbol, source) in calleeSymbols) {
-            checkJsModuleUsage(calleeSymbol, context, reporter, source ?: expression.source)
+            checkJsModuleUsage(calleeSymbol, source ?: expression.source)
         }
     }
 
@@ -31,12 +32,12 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker()
         expression: FirQualifiedAccessExpression
     ): List<Pair<FirBasedSymbol<*>, AbstractKtSourceElement?>> {
         val calleeSymbol = expression.calleeReference.toResolvedBaseSymbol()
-        if (calleeSymbol != null && calleeSymbol.getContainingClassSymbol(calleeSymbol.moduleData.session) == null) {
+        if (calleeSymbol != null && calleeSymbol.getContainingClassSymbol() == null) {
             return listOf(calleeSymbol to expression.calleeReference.source)
         }
 
-        return when (val receiver = expression.dispatchReceiver) {
-            is FirNoReceiverExpression -> listOfNotNull(calleeSymbol?.to(expression.calleeReference.source))
+        return when (val receiver = expression.dispatchReceiver?.unwrapSmartcastExpression()) {
+            null -> listOfNotNull(calleeSymbol?.to(expression.calleeReference.source))
             is FirResolvedQualifier -> {
                 val classSymbol = receiver.symbol
                 if (expression is FirCallableReferenceAccess) {
@@ -49,11 +50,14 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker()
         }
     }
 
-    private fun checkReifiedTypeParameters(expr: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkReifiedTypeParameters(
+        expr: FirQualifiedAccessExpression,
+    ) {
         (expr as? FirFunctionCall)?.forAllReifiedTypeParameters { type, typeArgument ->
-            val typeArgumentClass = type.toRegularClassSymbol(context.session) ?: return@forAllReifiedTypeParameters
+            val typeArgumentClass = type.toRegularClassSymbol() ?: return@forAllReifiedTypeParameters
             val source = typeArgument.source ?: expr.calleeReference.source ?: expr.source
-            checkJsModuleUsage(typeArgumentClass, context, reporter, source)
+            checkJsModuleUsage(typeArgumentClass, source)
         }
     }
 }

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun B<(@A C)>.receiverArgument()
 fun B<(@A C)?>.receiverArgumentN()
 

@@ -8,26 +8,34 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
 import org.jetbrains.kotlin.gradle.utils.androidExtension
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import kotlin.test.Test
 
 class IdeStdlibResolutionTest {
+    // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
+    @BeforeEach
+    fun setUp() {
+        provisionKotlinNativeDistribution()
+    }
 
     @Test
     fun `test single jvm target`() {
@@ -208,20 +216,10 @@ class IdeStdlibResolutionTest {
         project.evaluate()
 
         project.assertStdlibDependencies(
-            linuxSharedMain, listOf(
-                nativeStdlibDependency(kotlin),
-
-                /* See: KT-56278: We still need stdlib-common for shared native source sets */
-                stdlibCommonMainDependency(kotlin)
-            )
+            linuxSharedMain, listOf(nativeStdlibDependency(kotlin))
         )
         project.assertStdlibDependencies(
-            linuxSharedTest, listOf(
-                nativeStdlibDependency(kotlin),
-
-                /* See: KT-56278: We still need stdlib-common for shared native source sets */
-                stdlibCommonMainDependency(kotlin)
-            )
+            linuxSharedTest, listOf(nativeStdlibDependency(kotlin))
         )
     }
 
@@ -230,6 +228,7 @@ class IdeStdlibResolutionTest {
         val project = createProjectWithAndroidAndDefaultStdlibEnabled()
 
         val kotlin = project.multiplatformExtension
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         kotlin.jvm()
 
@@ -280,7 +279,7 @@ class IdeStdlibResolutionTest {
         enableDependencyVerification(false)
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
-        androidExtension.compileSdkVersion(33)
+        androidExtension.configureDefaults()
         repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
         repositories.google()
@@ -300,5 +299,5 @@ class IdeStdlibResolutionTest {
         binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-js:${kotlin.coreLibrariesVersion}")
 
     private fun nativeStdlibDependency(kotlin: KotlinMultiplatformExtension) =
-        binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${kotlin.project.konanVersion}")
+        binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${kotlin.project.nativeProperties.kotlinNativeVersion.get()}")
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-3833 Invoke method not working inside companion object?
 package m
@@ -34,3 +35,5 @@ class C{
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionalType, inner, nestedClass,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration */

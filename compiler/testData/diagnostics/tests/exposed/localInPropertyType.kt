@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My<T>(val value: T)
 
 open class Base
@@ -58,3 +59,6 @@ val valid7 = run {
     class Local
     My<My<*>>(My(Local()))
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, lambdaLiteral, localClass,
+localFunction, nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection, typeParameter */

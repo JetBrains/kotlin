@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // FILE: A.java
@@ -12,3 +13,5 @@ public class A<T> {
 fun test(x: A.B) {
     x.add { }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, lambdaLiteral, samConversion */

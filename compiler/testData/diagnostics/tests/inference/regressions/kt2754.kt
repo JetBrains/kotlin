@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // T is the immutable type
 interface Builder<out T> {
@@ -27,3 +28,7 @@ fun test() {
     val foo2 = foo1.copy { y = 3 } // this doesn't work
     foo2 checkType { _<Foo>() }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nestedClass, nullableType, out, override,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

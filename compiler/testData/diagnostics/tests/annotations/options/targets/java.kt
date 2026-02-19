@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: test/AnnotationTargets.java
 
 package test;
@@ -81,3 +81,7 @@ import test.AnnotationTargets.*
 
     @base <!WRONG_ANNOTATION_TARGET!>@method<!> @konstructor constructor(): this(0)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetFile, classDeclaration,
+functionDeclaration, integerLiteral, javaType, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

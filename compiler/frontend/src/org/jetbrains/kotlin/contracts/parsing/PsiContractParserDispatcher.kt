@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableRef
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.ContractDescriptionValue
 import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
-import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CALLS_IN_PLACE_EFFECT
-import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CONDITIONAL_EFFECT
-import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.RETURNS_EFFECT
-import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.RETURNS_NOT_NULL_EFFECT
+import org.jetbrains.kotlin.resolve.ContractsDslNames.CALLS_IN_PLACE_EFFECT
+import org.jetbrains.kotlin.resolve.ContractsDslNames.CONDITIONAL_EFFECT
+import org.jetbrains.kotlin.resolve.ContractsDslNames.RETURNS_EFFECT
+import org.jetbrains.kotlin.resolve.ContractsDslNames.RETURNS_NOT_NULL_EFFECT
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiCallsEffectParser
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiConditionalEffectParser
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiReturnsEffectParser
@@ -48,10 +48,10 @@ internal class PsiContractParserDispatcher(
     private val conditionParser = PsiConditionParser(collector, callContext, this)
     private val constantParser = PsiConstantParser(callContext)
     private val effectsParsers: Map<Name, PsiEffectParser> = mapOf(
-        RETURNS_EFFECT to PsiReturnsEffectParser(collector, callContext, this),
-        RETURNS_NOT_NULL_EFFECT to PsiReturnsEffectParser(collector, callContext, this),
-        CALLS_IN_PLACE_EFFECT to PsiCallsEffectParser(collector, callContext, this),
-        CONDITIONAL_EFFECT to PsiConditionalEffectParser(collector, callContext, this)
+        RETURNS_EFFECT.callableName to PsiReturnsEffectParser(collector, callContext, this),
+        RETURNS_NOT_NULL_EFFECT.callableName to PsiReturnsEffectParser(collector, callContext, this),
+        CALLS_IN_PLACE_EFFECT.callableName to PsiCallsEffectParser(collector, callContext, this),
+        CONDITIONAL_EFFECT.callableName to PsiConditionalEffectParser(collector, callContext, this)
     )
 
     fun parseContract(): ContractDescription? {

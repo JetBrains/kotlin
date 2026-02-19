@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1822 Error 'cannot infer visibility' required
 package kt1822
 
@@ -28,3 +29,5 @@ interface D {
 class E : A(), B, D {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

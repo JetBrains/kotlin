@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
+// DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 
 interface Rec<T>
 class A : Rec<A>
@@ -10,3 +11,6 @@ fun test(a: A, b: B, c: Boolean) {
     ab = a
     ab = b
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration,
+localProperty, nullableType, propertyDeclaration, starProjection, typeParameter */

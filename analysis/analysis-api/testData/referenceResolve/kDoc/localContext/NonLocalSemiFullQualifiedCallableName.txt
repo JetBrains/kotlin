@@ -1,2 +1,0 @@
-Resolved to:
-0: (in <local>: f.C.X.YY) fun aa()

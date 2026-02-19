@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !OPT_IN: kotlin.js.ExperimentalJsExport
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.js.ExperimentalJsExport
 
 package foo
 

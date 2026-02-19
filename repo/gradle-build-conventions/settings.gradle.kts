@@ -1,24 +1,20 @@
-import java.util.*
-
 pluginManagement {
-    apply(from = "../scripts/cache-redirector.settings.gradle.kts")
-    apply(from = "../scripts/kotlin-bootstrap.settings.gradle.kts")
-
     includeBuild("../gradle-settings-conventions")
 
     repositories {
-        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        mavenCentral()
-        google()
+        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+        mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+        google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
         gradlePluginPortal()
     }
 }
 
 plugins {
-    id("build-cache")
-    id("gradle-enterprise")
+    id("kotlin-bootstrap")
+    id("develocity")
     id("jvm-toolchain-provisioning")
     id("kotlin-daemon-config")
+    id("cache-redirector")
 }
 
 dependencyResolutionManagement {
@@ -31,3 +27,18 @@ dependencyResolutionManagement {
 
 include(":buildsrc-compat")
 include(":prepare-deps")
+include(":generators")
+include(":project-tests-convention")
+include(":android-sdk-provisioner")
+include(":asm-deprecating-transformer")
+include(":binary-compatibility-extended")
+include(":gradle-plugins-documentation")
+include(":gradle-plugins-common")
+include(":d8-configuration")
+// TODO: uncomment after bootstrap
+// include(":swc-configuration")
+include(":foreign-class-usage-checker")
+include(":binaryen-configuration")
+include(":nodejs-configuration")
+include(":test-data-manager-convention")
+include(":utilities")

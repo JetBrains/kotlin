@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 // See KT-13401: SOE in VarianceChecker
 
@@ -15,3 +16,6 @@ class Owner<in T> {
 
     fun foo(arg: Inner<*>) = arg.getT()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, in, inner, interfaceDeclaration,
+nullableType, out, primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

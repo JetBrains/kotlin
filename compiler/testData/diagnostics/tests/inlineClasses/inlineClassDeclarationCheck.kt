@@ -1,5 +1,6 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER, -INLINE_CLASS_DEPRECATED
 
 inline class A0(val x: Int)
 
@@ -37,4 +38,7 @@ final inline class D0(val x: Int)
 <!VALUE_CLASS_NOT_FINAL!>abstract<!> inline class D2(val x: Int)
 <!VALUE_CLASS_NOT_FINAL!>sealed<!> inline class D3(val x: Int)
 
-<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class <!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>D4(val x: String)<!>
+<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, functionDeclaration, inner, localClass, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, sealed, vararg */

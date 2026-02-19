@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -42,14 +42,12 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
             val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry) ?: continue
             when (annotation.fqName) {
                 OptInNames.OPT_IN_FQ_NAME -> {
-                    val annotationClasses = (annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS] as? ArrayValue)
-                        ?.value.orEmpty()
-                    checkOptInUsage(annotationClasses, trace, entry)
+                    val annotationClasses = getOptInAnnotationArgs(annotation)
+                    checkOptInUsage(annotationClasses, trace, entry, OptInNames.OPT_IN_FQ_NAME)
                 }
                 OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME -> {
-                    val annotationClass =
-                        annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS]
-                    checkSubclassOptInUsage(annotated, listOfNotNull(annotationClass), trace, entry)
+                    val annotationClasses = getOptInAnnotationArgs(annotation)
+                    checkSubclassOptInUsage(annotated, annotationClasses, trace, entry, OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME)
                 }
                 OptInNames.REQUIRES_OPT_IN_FQ_NAME -> {
                     hasOptIn = true
@@ -88,19 +86,25 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
         }
     }
 
-    private fun checkOptInUsage(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry) {
+    private fun checkOptInUsage(
+        annotationClasses: List<ConstantValue<*>>,
+        trace: BindingTrace,
+        entry: KtAnnotationEntry,
+        annotationFqName: FqName,
+    ) {
         if (annotationClasses.isEmpty()) {
             trace.report(Errors.OPT_IN_WITHOUT_ARGUMENTS.on(entry))
             return
         }
-        checkArgumentsAreMarkers(annotationClasses, trace, entry)
+        checkArgumentsAreMarkers(annotationClasses, trace, entry, annotationFqName)
     }
 
     private fun checkSubclassOptInUsage(
         annotated: KtAnnotated?,
         annotationClasses: List<ConstantValue<*>>,
         trace: BindingTrace,
-        entry: KtAnnotationEntry
+        entry: KtAnnotationEntry,
+        annotationFqName: FqName
     ) {
         when (annotated) {
             is KtAnnotatedExpression -> {
@@ -136,11 +140,11 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
                 }
             }
         }
-        checkArgumentsAreMarkers(annotationClasses, trace, entry)
+        checkArgumentsAreMarkers(annotationClasses, trace, entry, annotationFqName)
     }
 
-    private fun checkArgumentsAreMarkers(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry) {
-        for (annotationClass in annotationClasses) {
+    private fun checkArgumentsAreMarkers(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry, annotationFqName: FqName) {
+        for ((index, annotationClass) in annotationClasses.withIndex()) {
             val classDescriptor =
                 (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
                     ?: continue
@@ -148,7 +152,12 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
                 classDescriptor.loadOptInForMarkerAnnotation()
             }
             if (optInDescription == null) {
-                trace.report(Errors.OPT_IN_ARGUMENT_IS_NOT_MARKER.on(entry, classDescriptor.fqNameSafe))
+                val source = entry.valueArguments[index].getArgumentExpression() ?: return
+                when (annotationFqName) {
+                    OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME ->
+                        trace.report(Errors.SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER.on(source, classDescriptor.fqNameSafe))
+                    else -> trace.report(Errors.OPT_IN_ARGUMENT_IS_NOT_MARKER.on(source, classDescriptor.fqNameSafe))
+                }
             }
         }
     }
@@ -185,7 +194,3 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
         }
     }
 }
-
-@Deprecated("Please use OptInMarkerDeclarationAnnotationChecker instead", ReplaceWith("OptInMarkerDeclarationAnnotationChecker"))
-@Suppress("unused")
-typealias ExperimentalMarkerDeclarationAnnotationChecker = OptInMarkerDeclarationAnnotationChecker

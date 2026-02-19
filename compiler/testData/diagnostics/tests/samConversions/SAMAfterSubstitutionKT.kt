@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions
+// LANGUAGE: +SamConversionForKotlinFunctions
 // FILE: Runnable.java
 public interface Runnable {
     void run();
@@ -16,3 +17,6 @@ fun test(k: K<Runnable>, r: Runnable) {
     k.foo({}, r)
     k.foo({}, {})
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, lambdaLiteral, nullableType, samConversion,
+typeParameter */

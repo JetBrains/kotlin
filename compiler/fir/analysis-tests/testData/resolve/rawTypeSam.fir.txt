@@ -1,7 +1,7 @@
 FILE: main.kt
     public final fun foo(): R|kotlin/Unit| {
-        Q|RawType|.R|/RawType.bar*s|(<L> = bar@fun <anonymous>(it: R|kotlin/CharSequence!|): R|kotlin/Boolean| <inline=NoInline>  {
+        Q|RawType|.R|/RawType.bar*s|(<L> = SAM(bar@fun <anonymous>(it: R|kotlin/CharSequence!|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ CMP(>, R|<local>/it|.R|kotlin/CharSequence.length|.R|kotlin/Int.compareTo|(Int(0)))
         }
-        )
+        ))
     }

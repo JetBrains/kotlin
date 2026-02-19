@@ -1,42 +1,49 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode", "unused")
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override val delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall>,
 ) : FirMultiDelegatedConstructorCall() {
-    override val source: KtSourceElement? get() = delegatedConstructorCalls.last().source
-    override val annotations: List<FirAnnotation> get() = delegatedConstructorCalls.last().annotations
-    override val argumentList: FirArgumentList get() = delegatedConstructorCalls.last().argumentList
-    override val contextReceiverArguments: List<FirExpression> get() = delegatedConstructorCalls.last().contextReceiverArguments
-    override val constructedTypeRef: FirTypeRef get() = delegatedConstructorCalls.last().constructedTypeRef
-    override val dispatchReceiver: FirExpression get() = delegatedConstructorCalls.last().dispatchReceiver
-    override val calleeReference: FirReference get() = delegatedConstructorCalls.last().calleeReference
-    override val isThis: Boolean get() = delegatedConstructorCalls.last().isThis
-    override val isSuper: Boolean get() = !isThis
+    override val annotations: List<FirAnnotation>
+        get() = delegatedConstructorCalls.last().annotations
+    override val argumentList: FirArgumentList
+        get() = delegatedConstructorCalls.last().argumentList
+    override val contextArguments: List<FirExpression>
+        get() = delegatedConstructorCalls.last().contextArguments
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = delegatedConstructorCalls.last().coneTypeOrNull
+    override val constructedTypeRef: FirTypeRef
+        get() = delegatedConstructorCalls.last().constructedTypeRef
+    override val dispatchReceiver: FirExpression?
+        get() = delegatedConstructorCalls.last().dispatchReceiver
+    override val calleeReference: FirReference
+        get() = delegatedConstructorCalls.last().calleeReference
+    override val source: KtSourceElement?
+        get() = delegatedConstructorCalls.last().source
+    override val isThis: Boolean
+        get() = delegatedConstructorCalls.last().isThis
+    override val isSuper: Boolean
+        get() = !isThis
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegatedConstructorCalls.forEach { it.accept(visitor, data) }
@@ -48,6 +55,10 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMultiDelegatedConstructorCallImpl {
+        return this
+    }
+
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirMultiDelegatedConstructorCallImpl {
         return this
     }
 
@@ -68,15 +79,23 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {}
 
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {}
+    override fun replaceContextArguments(newContextArguments: List<FirExpression>) {}
+
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        require(newConeTypeOrNull == coneTypeOrNull) { "${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '${newConeTypeOrNull}'. Current type is '$coneTypeOrNull'" }
+    }
 
     override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef) {}
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {}
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {}
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {}
 
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {}
+
     override fun replaceDelegatedConstructorCalls(newDelegatedConstructorCalls: List<FirDelegatedConstructorCall>) {
+        if (delegatedConstructorCalls === newDelegatedConstructorCalls) return
         delegatedConstructorCalls.clear()
         delegatedConstructorCalls.addAll(newDelegatedConstructorCalls)
     }

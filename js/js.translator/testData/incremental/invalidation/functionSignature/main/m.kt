@@ -1,6 +1,6 @@
 fun isEqual(l: Any?, r: Any?) = if (l == r) true else null
 
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     when (stepId) {
         0, 8, 15, 16 -> isEqual(foo(), 42) ?: return "Fail"
         1 -> isEqual(foo(), false) ?: return "Fail"

@@ -14,8 +14,8 @@ import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 @JvmOverloads
@@ -23,31 +23,37 @@ fun Project.configureJava9Compilation(
     moduleName: String,
     moduleOutputs: Collection<FileCollection> = setOf(sourceSets["main"].output),
     compileClasspathConfiguration: Configuration = configurations["compileClasspath"],
+    sourceSetName: String = "java9"
 ) {
-    configurations["java9CompileClasspath"].extendsFrom(compileClasspathConfiguration)
+    val sourceSetNameC = sourceSetName.capitalize()
+    val java9CompileClasspath = configurations["${sourceSetName}CompileClasspath"]
+    java9CompileClasspath.extendsFrom(compileClasspathConfiguration)
 
-    tasks.withType(KotlinCompile::class.java).matching {
-        it.name == "compileJava9Kotlin" || it.name == "compileJava9KotlinJvm"
-    }.configureEach {
-        configureTaskToolchain(JdkMajorVersion.JDK_9_0)
-        @Suppress("DEPRECATION")
-        kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9_0.targetName
+    val kotlinCompileTaskNames = setOf("compile${sourceSetNameC}Kotlin", "compile${sourceSetNameC}KotlinJvm")
+
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        if (name in kotlinCompileTaskNames) {
+            configureTaskToolchain(JdkMajorVersion.JDK_17_0)
+            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(JdkMajorVersion.JDK_9_0.targetName))
+            compilerOptions.freeCompilerArgs.add("-Xjdk-release=${JdkMajorVersion.JDK_9_0.targetName}")
+        }
     }
 
-    tasks.named("compileJava9Java", JavaCompile::class.java) {
+    tasks.named("compile${sourceSetNameC}Java", JavaCompile::class.java) {
         dependsOn(moduleOutputs)
 
         targetCompatibility = JavaVersion.VERSION_1_9.toString()
         sourceCompatibility = JavaVersion.VERSION_1_9.toString()
-        configureTaskToolchain(JdkMajorVersion.JDK_9_0)
+        configureTaskToolchain(JdkMajorVersion.JDK_17_0)
 
         // module-info.java should be in java9 source set by convention
-        val java9SourceSet = sourceSets["java9"].java
+        val java9SourceSet = sourceSets[sourceSetName].java
         destinationDirectory.set(java9SourceSet.destinationDirectory.asFile.get().resolve("META-INF/versions/9"))
         options.sourcepath = files(java9SourceSet.srcDirs)
-        val compileClasspath = configurations["java9CompileClasspath"]
+        val compileClasspath = java9CompileClasspath
         val moduleFiles = objects.fileCollection().from(moduleOutputs)
         val modulePath = compileClasspath.filter { it !in moduleFiles.files }
+        dependsOn(modulePath)
         classpath = objects.fileCollection().from()
         options.compilerArgumentProviders.add(
             Java9AdditionalArgumentsProvider(
@@ -67,30 +73,8 @@ private class Java9AdditionalArgumentsProvider(
     override fun asArguments(): Iterable<String> = listOf(
         "--module-path", modulePath.asPath,
         "--patch-module", "$moduleName=${moduleFiles.asPath}",
-        "-Xlint:-requires-transitive-automatic" // suppress automatic module transitive dependencies in kotlin.test
+        "--release", "9"
     )
-}
-
-fun Project.configureFrontendIr() = tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions {
-        if (project.kotlinBuildProperties.useFirForLibraries) {
-            freeCompilerArgs.add("-Xuse-k2")
-            allWarningsAsErrors.set(false)
-        } else {
-            if (project.kotlinBuildProperties.useFir) {
-                freeCompilerArgs.add("-Xskip-prerelease-check")
-            }
-            if (languageVersion.get() >= KotlinVersion.KOTLIN_2_0) {
-                languageVersion.set(KotlinVersion.KOTLIN_1_9)
-                progressiveMode.set(false)
-            }
-        }
-
-        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
-        if (renderDiagnosticNames) {
-            freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
-        }
-    }
 }
 
 @JvmOverloads

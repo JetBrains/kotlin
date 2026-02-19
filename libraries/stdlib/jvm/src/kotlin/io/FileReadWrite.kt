@@ -9,9 +9,15 @@
 package kotlin.io
 
 import java.io.*
+import java.nio.ByteBuffer
+import java.nio.CharBuffer
 import java.util.*
 import java.nio.charset.Charset
-import kotlin.internal.*
+import java.nio.charset.CharsetEncoder
+import java.nio.charset.CodingErrorAction
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.math.ceil
 
 
 /**
@@ -23,6 +29,8 @@ public inline fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamRea
 
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
+ *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
  *
  * @param bufferSize necessary size of the buffer.
  */
@@ -39,6 +47,8 @@ public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWr
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
+ *
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
  *
  * @param bufferSize necessary size of the buffer.
  */
@@ -83,7 +93,7 @@ public fun File.readBytes(): ByteArray = inputStream().use { input ->
     // when RS >> ES, ES << DBS => RS + DBS + DBS+1 + RS + ES = 2RS + 2DBS + ES
     val extra = ExposingBufferByteArrayOutputStream(DEFAULT_BUFFER_SIZE + 1)
     extra.write(extraByte)
-    input.copyTo(extra)
+    val _ = input.copyTo(extra)
 
     val resultingSize = result.size + extra.size()
     if (resultingSize < 0) throw OutOfMemoryError("File $this is too big to fit in memory.")
@@ -131,7 +141,8 @@ public fun File.readText(charset: Charset = Charsets.UTF_8): String = reader(cha
  * @param text text to write into file.
  * @param charset character set to use.
  */
-public fun File.writeText(text: String, charset: Charset = Charsets.UTF_8): Unit = writeBytes(text.toByteArray(charset))
+public fun File.writeText(text: String, charset: Charset = Charsets.UTF_8): Unit =
+    FileOutputStream(this).use { it.writeTextImpl(text, charset) }
 
 /**
  * Appends [text] to the content of this file using UTF-8 or the specified [charset].
@@ -139,7 +150,54 @@ public fun File.writeText(text: String, charset: Charset = Charsets.UTF_8): Unit
  * @param text text to append to file.
  * @param charset character set to use.
  */
-public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Unit = appendBytes(text.toByteArray(charset))
+public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Unit =
+    FileOutputStream(this, true).use { it.writeTextImpl(text, charset) }
+
+internal fun OutputStream.writeTextImpl(text: String, charset: Charset) {
+    val chunkSize = DEFAULT_BUFFER_SIZE
+
+    if (text.length < 2 * chunkSize) {
+        this.write(text.toByteArray(charset))
+        return
+    }
+
+    val encoder = charset.newReplaceEncoder()
+    val charBuffer = CharBuffer.allocate(chunkSize)
+    val byteBuffer = byteBufferForEncoding(chunkSize, encoder)
+
+    var startIndex = 0
+    var leftover = 0
+
+    while (startIndex < text.length) {
+        val copyLength = minOf(chunkSize - leftover, text.length - startIndex)
+        val endIndex = startIndex + copyLength
+
+        text.toCharArray(charBuffer.array(), leftover, startIndex, endIndex)
+        charBuffer.limit(copyLength + leftover)
+        encoder.encode(charBuffer, byteBuffer, /*endOfInput = */endIndex == text.length).let { check(it.isUnderflow) }
+        this.write(byteBuffer.array(), 0, byteBuffer.position())
+
+        if (charBuffer.position() != charBuffer.limit()) {
+            charBuffer.put(0, charBuffer.get()) // the last char is a high surrogate
+            leftover = 1
+        } else {
+            leftover = 0
+        }
+
+        charBuffer.clear()
+        byteBuffer.clear()
+        startIndex = endIndex
+    }
+}
+
+internal fun Charset.newReplaceEncoder() = newEncoder()
+    .onMalformedInput(CodingErrorAction.REPLACE)
+    .onUnmappableCharacter(CodingErrorAction.REPLACE)
+
+internal fun byteBufferForEncoding(chunkSize: Int, encoder: CharsetEncoder): ByteBuffer {
+    val maxBytesPerChar = ceil(encoder.maxBytesPerChar()).toInt() // including replacement sequence
+    return ByteBuffer.allocate(chunkSize * maxBytesPerChar)
+}
 
 /**
  * Reads file by byte blocks and calls [action] for each block read.
@@ -227,5 +285,9 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
  * @param charset character set to use. By default uses UTF-8 charset.
  * @return the value returned by [block].
  */
-public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T =
-    bufferedReader(charset).use { block(it.lineSequence()) }
+public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return bufferedReader(charset).use { block(it.lineSequence()) }
+}

@@ -5,7 +5,7 @@ FILE: topLevelResolve.kt
         lval z: R|kotlin/Double| = Int(5).R|kotlin/Int.plus|(Double(6.0))
         lval w: R|kotlin/Double| = Double(7.0).R|kotlin/Double.plus|(Int(8))
         lval c: R|kotlin/Char| = Char(a).R|kotlin/Char.plus|(Int(1))
-        lval s: R|kotlin/String| = String(.).R|kotlin/String.plus|(String(..))
+        lval s: R|kotlin/String| = <strcat>(String(.), String(..))
         lval ss: R|kotlin/String| = String().R|kotlin/String.plus|(Int(1))
         lval list: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))).R|kotlin/collections/plus|<R|kotlin/Int|>(Int(4))
         lval listAndList: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(4), Int(5), Int(6))).R|kotlin/collections/plus|<R|kotlin/Int|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(7), Int(8))))

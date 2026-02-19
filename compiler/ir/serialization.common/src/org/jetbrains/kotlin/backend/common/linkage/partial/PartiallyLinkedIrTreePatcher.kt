@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
@@ -17,17 +18,19 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.linkage.partial.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -37,8 +40,8 @@ import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.*
 import kotlin.properties.Delegates
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
 internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,
@@ -46,14 +49,9 @@ internal class PartiallyLinkedIrTreePatcher(
     private val stubGenerator: MissingDeclarationStubGenerator,
     logger: PartialLinkageLogger
 ) {
-    // Avoid revisiting roots that already have been visited.
-    private val visitedModuleFragments = hashSetOf<IrModuleFragment>()
-    private val visitedDeclarations = hashSetOf<IrDeclaration>()
-
     private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
 
     private val PLModule.shouldBeSkipped: Boolean get() = this == PLModule.SyntheticBuiltInFunctions || this == stdlibModule
-    private val IrModuleFragment.shouldBeSkipped: Boolean get() = files.isEmpty() || name.asString() == stdlibModule.name
 
     // Used only to generate IR expressions that throw linkage errors.
     private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logger) }
@@ -62,25 +60,44 @@ internal class PartiallyLinkedIrTreePatcher(
 
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
 
-    fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
-        roots.forEach { root ->
-            // Optimization: Don't patch stdlib and already visited fragments.
-            if (!root.shouldBeSkipped && visitedModuleFragments.add(root)) {
-                root.transformVoid(DeclarationTransformer(startingFile = null))
-                root.transformVoid(ExpressionTransformer(startingFile = null))
-                root.transformVoid(NonLocalReturnsPatcher(startingFile = null))
-            }
+    fun removeUnusableAnnotationsFromFiles(files: Collection<IrFile>) {
+        for (file in files) {
+            val currentFile: PLFile = PLFile.IrBased(file)
+
+            // Optimization: Don't patch declarations from stdlib/built-ins.
+            if (currentFile.module.shouldBeSkipped)
+                continue
+
+            with(ExpressionTransformer(currentFile)) { file.filterUnusableAnnotations() }
         }
     }
 
-    fun patchDeclarations(roots: Collection<IrDeclaration>) {
-        roots.forEach { root ->
-            val startingFile = PLFile.determineFileFor(root)
-            // Optimization: Don't patch already visited declarations and declarations from stdlib/built-ins.
-            if (!startingFile.module.shouldBeSkipped && visitedDeclarations.add(root)) {
-                root.transformVoid(DeclarationTransformer(startingFile))
-                root.transformVoid(ExpressionTransformer(startingFile))
-                root.transformVoid(NonLocalReturnsPatcher(startingFile))
+    fun patchDeclarations(declarations: Collection<IrDeclaration>) {
+        val declarationsGroupedByDirectParent = declarations.groupBy { it.parent }
+
+        for ((directParent: IrDeclarationParent, declarationsWithSameParent: List<IrDeclaration>) in declarationsGroupedByDirectParent) {
+            val currentFile: PLFile = PLFile.determineFileFor(declarationsWithSameParent[0])
+
+            // Optimization: Don't patch declarations from stdlib/built-ins.
+            if (currentFile.module.shouldBeSkipped)
+                continue
+
+            val directParentAsPackageFragment: IrPackageFragment? = directParent as? IrPackageFragment
+
+            val declarationTransformer = DeclarationTransformer(currentFile)
+            val expressionTransformer = ExpressionTransformer(currentFile)
+            val nonLocalReturnsPatcher = NonLocalReturnsPatcher(currentFile)
+
+            // For top-level declarations, we need to supply their declaration container (either IR file or
+            // IR package fragment in case of Lazy IR) to `DeclarationTransformer` before starting visiting
+            // these declarations. This is necessary to be able to remove problematic declarations from
+            // the container after finishing visiting (i.e., on exit from `withRemoval***()`).
+            declarationTransformer.withRemovalOfChildrenIn(directParentAsPackageFragment) {
+                for (declaration in declarationsWithSameParent) {
+                    declaration.transformVoid(declarationTransformer)
+                    declaration.transformVoid(expressionTransformer)
+                    declaration.transformVoid(nonLocalReturnsPatcher)
+                }
             }
         }
     }
@@ -121,7 +138,7 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     // Declarations are transformed top-down.
-    private inner class DeclarationTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private inner class DeclarationTransformer(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<DeclarationTransformerContext>()
 
         private fun <T : IrDeclaration> T.transformChildren(): T {
@@ -129,15 +146,22 @@ internal class PartiallyLinkedIrTreePatcher(
             return this
         }
 
-        private fun <T : IrDeclarationContainer> T.transformChildrenWithRemoval(): T =
-            transformChildrenWithRemoval(DeclarationTransformerContext.DeclarationContainer(this))
+        inline fun withRemovalOfChildrenIn(declarationContainer: IrPackageFragment?, action: () -> Unit) {
+            if (declarationContainer != null)
+                declarationContainer.withRemovalOfChildren { action() }
+            else
+                action()
+        }
 
-        private fun <T : IrStatementContainer> T.transformChildrenWithRemoval(): T =
-            transformChildrenWithRemoval(DeclarationTransformerContext.StatementContainer(this))
+        private inline fun <T : IrDeclarationContainer> T.withRemovalOfChildren(action: T.() -> Unit): T =
+            withRemovalInContext(DeclarationTransformerContext.DeclarationContainer(this), action)
 
-        private fun <T : IrElement> T.transformChildrenWithRemoval(context: DeclarationTransformerContext): T {
+        private inline fun <T : IrStatementContainer> T.withRemovalOfChildren(action: T.() -> Unit): T =
+            withRemovalInContext(DeclarationTransformerContext.StatementContainer(this), action)
+
+        private inline fun <T : IrElement> T.withRemovalInContext(context: DeclarationTransformerContext, action: T.() -> Unit): T {
             stack.push(context)
-            transformChildrenVoid()
+            action()
             assert(stack.pop() === context)
 
             context.performRemoval()
@@ -151,18 +175,14 @@ internal class PartiallyLinkedIrTreePatcher(
                 stack.peek().scheduleForRemoval(this)
         }
 
-        override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
-            return declaration.transformChildrenWithRemoval()
-        }
-
         override fun visitClass(declaration: IrClass): IrStatement {
             // Discover the reason why the class itself is unusable.
             val unusableClass = declaration.symbol.explore()
             if (unusableClass != null) {
                 // Transform the reason into the most appropriate linkage case.
                 val partialLinkageCase = when (unusableClass) {
-                    is ExploredClassifier.Unusable.CanBeRootCause -> UnusableClassifier(unusableClass)
-                    is ExploredClassifier.Unusable.DueToOtherClassifier -> DeclarationWithUnusableClassifier(
+                    is ClassifierPartialLinkageStatus.Unusable.CanBeRootCause -> UnusableClassifier(unusableClass)
+                    is ClassifierPartialLinkageStatus.Unusable.DueToOtherClassifier -> DeclarationWithUnusableClassifier(
                         declaration.symbol,
                         unusableClass.rootCause
                     )
@@ -216,7 +236,7 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             // Process underlying declarations. Collect declarations to remove.
-            return declaration.transformChildrenWithRemoval()
+            return declaration.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         override fun visitConstructor(declaration: IrConstructor): IrStatement {
@@ -239,7 +259,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 if (invalidConstructorDelegation != null) {
                     // Drop invalid delegating constructor call. Otherwise it may break some lowerings.
-                    blockBody.statements.removeIf { it is IrDelegatingConstructorCall }
+                    blockBody.statements.removeAll { it is IrDelegatingConstructorCall }
                 }
 
                 // IMPORTANT: Unlike it's done for IrSimpleFunction don't clean-up statements. Insert PL linkage as the first one.
@@ -251,6 +271,8 @@ internal class PartiallyLinkedIrTreePatcher(
                         // - All such members are unusable anyway since their dispatch receiver (class) is unusable.
                         // - Also, this reduces the number of compiler error messages and makes the compiler output less polluted.
                         doNotLog = declaration.isDirectMemberOf(unusableClassifierInSignature)
+                                // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+                                || declaration.symbol.isSubclassOptInRequiredAnnotationConstructor()
                     )
                 )
             }
@@ -273,6 +295,16 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             if (partialLinkageCase != null) {
+                if (declaration.isFakeOverride) {
+                    declaration.isFakeOverride = false
+                    if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
+                        declaration.origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION
+                    }
+                }
+                if (declaration.modality == Modality.ABSTRACT) {
+                    declaration.modality = Modality.OPEN
+                }
+
                 // Note: Block body is missing for UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER and MISSING_DECLARATION.
                 val blockBody = declaration.body as? IrBlockBody
                     ?: builtIns.irFactory.createBlockBody(declaration.startOffset, declaration.endOffset).apply { declaration.body = this }
@@ -291,14 +323,12 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 // Don't remove inline functions, this may harm linkage in K/N backend with enabled static caches.
                 if (!declaration.isInline) {
-                    if (declaration.isTopLevelDeclaration) {
-                        // Optimization: Remove unlinked top-level functions.
-                        declaration.scheduleForRemoval()
-                    } else {
-                        // Optimization: Remove unlinked top-level properties.
+                    if (declaration.isTopLevel) {
                         val property = declaration.correspondingPropertySymbol?.owner
-                        if (property?.isTopLevelDeclaration == true)
+                        if (property != null)
                             property.scheduleForRemoval()
+                        else
+                            declaration.scheduleForRemoval()
                     }
                 }
 
@@ -365,11 +395,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         /**
-         * Returns the first encountered [ExploredClassifier.Unusable].
+         * Returns the first encountered [ClassifierPartialLinkageStatus.Unusable].
          */
-        private fun IrFunction.rewriteTypesInFunction(): ExploredClassifier.Unusable? {
+        private fun IrFunction.rewriteTypesInFunction(): ClassifierPartialLinkageStatus.Unusable? {
             // Remember the first assignment. Ignore all subsequent.
-            var result: ExploredClassifier.Unusable? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
+            var result: ClassifierPartialLinkageStatus.Unusable? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
 
             fun IrValueParameter.fixType() {
                 val newType = type.toPartiallyLinkedMarkerTypeOrNull() ?: return
@@ -380,9 +410,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 result = newType.unusableClassifier
             }
 
-            dispatchReceiverParameter?.fixType() // The dispatcher (aka this) is intentionally the first one.
-            extensionReceiverParameter?.fixType()
-            valueParameters.forEach { it.fixType() }
+            parameters.forEach { it.fixType() }
 
             returnType.toPartiallyLinkedMarkerTypeOrNull()?.let { newReturnType ->
                 returnType = newReturnType
@@ -407,7 +435,7 @@ internal class PartiallyLinkedIrTreePatcher(
         override fun visitField(declaration: IrField): IrStatement {
             return declaration.type.toPartiallyLinkedMarkerTypeOrNull()?.let { newType ->
                 val property = declaration.correspondingPropertySymbol?.owner
-                if (property?.isTopLevelDeclaration == true) {
+                if (property?.isTopLevel == true) {
                     // Optimization: Remove unlinked top-level properties.
                     property.scheduleForRemoval()
                 }
@@ -427,11 +455,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
-            return body.transformChildrenWithRemoval()
+            return body.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-            return expression.transformChildrenWithRemoval()
+            return expression.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         private fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
@@ -449,7 +477,7 @@ internal class PartiallyLinkedIrTreePatcher(
             supportForLowerings.throwLinkageError(this, declaration, currentFile, doNotLog)
     }
 
-    private open inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private open inner class ExpressionTransformer(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
             (declaration as? IrFile)?.filterUnusableAnnotations()
             return super.visitPackageFragment(declaration)
@@ -457,7 +485,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
             // Optimization: Don't patch expressions under generated synthetic declarations.
-            return if (declaration.origin is PartiallyLinkedDeclarationOrigin)
+            return if (declaration.origin in PartiallyLinkedDeclarationOrigin.entries)
                 declaration // There are neither expressions nor annotations to patch.
             else {
                 declaration.filterUnusableAnnotations()
@@ -514,7 +542,9 @@ internal class PartiallyLinkedIrTreePatcher(
             checkReferencedDeclaration(symbol)
                 ?: checkNotAbstractClass()
                 ?: checkExpressionTypeArguments()
-                ?: customConstructorCallChecks()
+                ?: checkReferencedDeclarationType(symbol.owner.parentAsClass, "class") { constructedClass ->
+                    constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
+                } ?: checkArgumentsAndValueParameters()
         }
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = expression.maybeThrowLinkageError {
@@ -548,15 +578,66 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkExpressionTypeArguments()
         }
 
+        override fun visitRichFunctionReference(expression: IrRichFunctionReference) = expression.maybeThrowLinkageError {
+            // A type of function reference is usually FunctionN or KFunctionN, and its overriddenFunctionSymbol is FunctionN.invoke.
+            // But the type can also be a user defined fun interface, and either that interface or its SAM could have gone missing.
+            checkReferencedDeclaration(overriddenFunctionSymbol)
+                ?: checkExpressionType(type)
+                ?: checkHasFunctionalType(type)
+                ?: checkOverriddenFunctionConsistentWithSam()
+                ?: run {
+                    // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
+                    reflectionTargetLinkageError = checkReferencedDeclaration(reflectionTargetSymbol)
+                    null
+                }
+        }
+
+        override fun visitRichPropertyReference(expression: IrRichPropertyReference) = expression.maybeThrowLinkageError {
+            // While the classifier of IrRichPropertyReference.type is always a KPropertyN, which should be present in stdlib,
+            // its type argument may be some missing type.
+            checkExpressionType(type)
+                ?: run {
+                    // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
+                    expression.reflectionTargetLinkageError = expression.checkReferencedDeclaration(expression.reflectionTargetSymbol)
+                    if (expression.reflectionTargetLinkageError != null) {
+                        (expression.reflectionTargetSymbol?.owner as? IrProperty)?.let { property ->
+                            // checkReferencedDeclaration() above generates a stub for reflectionTargetSymbol itself, but
+                            // we also to need create stubs for the property's getter and setter to not leave unbound IR.
+                            if (property.getter == null) {
+                                property.getter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                            }
+                            if (expression.setterFunction != null && property.setter == null) {
+                                property.setter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                            }
+                        }
+                    }
+                    null
+                }
+        }
+
         // Never patch instance initializers. Otherwise, this will break a lot of lowerings.
         override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression
 
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression = inlinedBlock.maybeThrowLinkageError {
+            val error = inlinedBlock.checkReferencedDeclaration(inlinedBlock.inlinedFunctionSymbol)
+            if (error != null) {
+                inlinedBlock.inlinedFunctionSymbol = null
+            }
+            null
+        }
+
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
 
-        private inline fun <T : IrExpression> T.maybeThrowLinkageError(computePartialLinkageCase: T.() -> PartialLinkageCase?): IrExpression =
-            maybeThrowLinkageError(transformer = this@ExpressionTransformer) {
+        protected inline fun <T : IrExpression> T.maybeThrowLinkageError(
+            doNotLogWhen: (PartialLinkageCase) -> Boolean = { false },
+            computePartialLinkageCase: T.() -> PartialLinkageCase?,
+        ): IrExpression = maybeThrowLinkageError(
+            transformer = this@ExpressionTransformer,
+            doNotLogWhen = doNotLogWhen,
+            computePartialLinkageCase = {
                 computePartialLinkageCase() ?: checkExpressionType(type) // Check something that is always present in every expression.
-            }.also { onAfterMaybeThrowLinkageError() }
+            },
+        ).also { onAfterMaybeThrowLinkageError() }
 
         // Custom post-check. Can be overridden.
         protected open fun IrExpression.onAfterMaybeThrowLinkageError() = Unit
@@ -565,15 +646,15 @@ internal class PartiallyLinkedIrTreePatcher(
             return ExpressionWithUnusableClassifier(this, type.explore() ?: return null)
         }
 
-        private fun IrMemberAccessExpression<*>.checkExpressionTypeArguments(): PartialLinkageCase? {
+        protected fun IrMemberAccessExpression<*>.checkExpressionTypeArguments(): PartialLinkageCase? {
             // TODO: is it necessary to check that the number of type parameters matches the number of type arguments?
             return ExpressionWithUnusableClassifier(
                 this,
-                (0 until typeArgumentsCount).firstNotNullOfOrNull { index -> getTypeArgument(index)?.explore() } ?: return null
+                this.typeArguments.firstNotNullOfOrNull { it?.explore() } ?: return null
             )
         }
 
-        private fun IrExpression.checkReferencedDeclaration(
+        protected fun IrExpression.checkReferencedDeclaration(
             symbol: IrSymbol?,
             checkVisibility: Boolean = true
         ): PartialLinkageCase? {
@@ -607,9 +688,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 else -> when (symbol) {
                     is IrFunctionSymbol -> with(symbol.owner) {
-                        dispatchReceiverParameter?.type?.precalculatedUnusableClassifier()
-                            ?: extensionReceiverParameter?.type?.precalculatedUnusableClassifier()
-                            ?: valueParameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
+                        parameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
                             ?: returnType.precalculatedUnusableClassifier()
                             ?: typeParameters.firstNotNullOfOrNull { it.superTypes.precalculatedUnusableClassifier() }
                     }
@@ -651,8 +730,8 @@ internal class PartiallyLinkedIrTreePatcher(
                     // OK. Used in the same module.
                     null
                 }
-                containingModule.shouldBeSkipped -> {
-                    // Optimization: Don't check visibility of declarations in stdlib & co.
+                containingModule == PLModule.SyntheticBuiltInFunctions -> {
+                    // Optimization: Don't check the visibility of synthetic built-in functions.
                     null
                 }
                 !declaration.isEffectivelyPrivate() -> {
@@ -674,10 +753,10 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         }
 
-        private fun IrType.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
+        private fun IrType.precalculatedUnusableClassifier(): ClassifierPartialLinkageStatus.Unusable? =
             (this as? PartiallyLinkedMarkerType)?.unusableClassifier ?: explore()
 
-        private fun List<IrType>.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
+        private fun List<IrType>.precalculatedUnusableClassifier(): ClassifierPartialLinkageStatus.Unusable? =
             firstNotNullOfOrNull { it.precalculatedUnusableClassifier() }
 
         protected fun <D : IrDeclaration> IrExpression.checkReferencedDeclarationType(
@@ -690,137 +769,179 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
-        protected inline fun IrMemberAccessExpression<IrFunctionSymbol>.checkArgumentsAndValueParameters(
+        protected inline fun IrFunctionAccessExpression.checkArgumentsAndValueParameters(
             checkDefaultArgument: (index: Int, defaultArgumentExpressionBody: IrExpressionBody?) -> Boolean =
                 { _, defaultArgumentExpressionBody -> defaultArgumentExpressionBody != null }
         ): PartialLinkageCase? {
             val function = symbol.owner
 
-            val expressionEffectivelyHasDispatchReceiver = when {
-                dispatchReceiver != null -> true
-                this is IrFunctionReference -> run {
-                    // For function references it really depends on whether the reference was obtained on a class or on an instance.
-                    // Based on this the dispatch receiver may be null or non-null, but this is always reflected in the expression type.
-                    // Example:
-                    //   class C {
-                    //     fun foo(i: Int): String = i.toString()
-                    //     inner class I {
-                    //       fun bar(i: Int): String = i.toString()
-                    //     }
-                    //   }
-                    //
-                    //   fun test() {
-                    //     val a: KFunction0<C> = ::C                     //    IrConstructor.dispatchReceiverParameter == null, IrFunctionReference.dispatchReceiver == null
-                    //     val b: KFunction2<C, Int, String> = C::foo     // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val c: KFunction1<Int, String> = C()::foo      // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //     val d: KFunction1<C, C.I> = C::I               //    IrConstructor.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val e: KFunction0<C.I> = C()::I                //    IrConstructor.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //     val f: KFunction2<C.I, Int, String> = C.I::bar // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val g: KFunction1<Int, String> = C().I()::bar  // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //   }
-                    val expectedDispatchReceiverClassifier: IrClassSymbol = when (symbol) {
-                        is IrSimpleFunctionSymbol -> function.parent as? IrClass
-                        is IrConstructorSymbol -> (function.parent as? IrClass)?.takeIf { it.isInner }?.parent as? IrClass
-                    }?.symbol ?: return@run false
-
-                    val referenceType: IrSimpleType = type as? IrSimpleType ?: return@run false
-                    if (!referenceType.classifier.isKFunction() && !referenceType.classifier.isKSuspendFunction()) return@run false
-
-                    val actualDispatchReceiverClassifier: IrClassifierSymbol? =
-                        (referenceType.arguments.firstOrNull() as? IrSimpleType)?.classifier
-
-                    /*
-                     * FIR generates function references for certain overridden functions in a different way than K1. Example:
-                     *   class A
-                     *
-                     *   fun test(a: A): Boolean {
-                     *       return (A::equals)(a, a)
-                     *       //         ^^^ IrFunctionReferenceImpl slightly differs:
-                     *       // | Frontend | Attribute                | Value                          |
-                     *       // +----------+--------------------------+--------------------------------+
-                     *       // | K1       | dispatchReceiver         | null                           |
-                     *       // | K1       | symbol.parent as IrClass | "class A"                      |
-                     *       // | K1       | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
-                     *       // | FIR      | dispatchReceiver         | null                           |
-                     *       // | FIR      | symbol.parent as IrClass | "class Any"                    |
-                     *       // | FIR      | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
-                     *   }
-                     *
-                     * So instead of checking that `expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier` it's
-                     * safer to check that `actualDispatchReceiverClassifier` is the same or subclass of `expectedDispatchReceiverClassifier`.
-                     */
-                    // expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier
-                    actualDispatchReceiverClassifier?.isSubtypeOfClass(expectedDispatchReceiverClassifier) ?: false
-                }
-                else -> false
-            }
-            val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
-
-            if (expressionEffectivelyHasDispatchReceiver != functionHasDispatchReceiver)
-                return MemberAccessExpressionArgumentsMismatch(
+            if (arguments.size > function.parameters.size) {
+                return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(
                     this,
-                    expressionEffectivelyHasDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    0, // Does not matter here.
-                    0 // Does not matter here.
+                    arguments.size - function.parameters.size
                 )
-
-            when (this) {
-                is IrFunctionAccessExpression -> {
-                    if (function.isExternal) {
-                        // External functions may have the default arguments declared in native implementations,
-                        // which are not available from Kotlin.
-                        return null
-                    } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
-                        // This is a special case. IrEnumConstructorCall don't contain arguments.
-                        return null
-                    }
-                }
-                is IrFunctionReference -> {
-                    // Function references don't contain arguments.
-                    return null
-                }
+            } else if (arguments.size < function.parameters.size) {
+                return MemberAccessExpressionArgumentsMismatch.MissingArguments(
+                    this,
+                    function.parameters.drop(arguments.size)
+                )
             }
+
+            if (function.isExternal) {
+                // External functions may have the default arguments declared in native implementations,
+                // which are not available from Kotlin.
+                return null
+            } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
+                // This is a special case. IrEnumConstructorCall don't contain arguments.
+                return null
+            }
+
 
             // Default values are not kept in value parameters of fake override/delegated/override functions.
             // So we need to look up for default value across all overridden functions.
             val functionsToCheckDefaultValues by lazy {
-                if (function !is IrSimpleFunction)
-                    listOf(function)
-                else
-                    function.allOverridden(includeSelf = true)
+                when (function) {
+                    is IrConstructor -> listOf(function)
+                    is IrSimpleFunction -> function.allOverridden(includeSelf = true)
                         .filterNot { it.isFakeOverride || it.origin == IrDeclarationOrigin.DELEGATED_MEMBER }
+                }
             }
 
-            val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
-                if (getValueArgument(index) != null)
-                    return@count true
-
-                val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
-                    it.valueParameters.getOrNull(index)?.defaultValue
+            val missingValues = arguments.withIndex().filterNot { (index, arg) ->
+                if (arg != null) {
+                    return@filterNot true
                 }
 
-                return@count checkDefaultArgument(index, defaultArgumentExpressionBody)
-                        || function.valueParameters.getOrNull(index)?.isVararg == true
-            }
-            val functionValueParameterCount = function.valueParameters.size
+                val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
+                    it.parameters[index].defaultValue
+                }
 
-            return if (expressionValueArgumentCount != functionValueParameterCount)
-                MemberAccessExpressionArgumentsMismatch(
+                return@filterNot checkDefaultArgument(index, defaultArgumentExpressionBody)
+                        || function.parameters[index].isVararg
+            }
+            if (missingValues.isNotEmpty()) {
+                return MemberAccessExpressionArgumentsMismatch.MissingArgumentValues(
                     this,
-                    expressionEffectivelyHasDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    expressionValueArgumentCount,
-                    functionValueParameterCount
+                    missingValues.map { function.parameters[it.index] }
                 )
-            else
-                null
+            }
+
+            return null
+        }
+
+        private fun IrFunctionReference.checkArgumentsAndValueParameters(): PartialLinkageCase? {
+            val function = symbol.owner
+
+            val referenceType = type as? IrSimpleType
+            if (referenceType != null && referenceType.classifier.isKFunction()) {
+                // How many parameters were already provided (via binding) when the reference was created.
+                // In practise, it can be either 0 or 1, because the language currently doesn't allow binding more.
+                val boundParameters = arguments.count { it != null }
+                // How many parameters were left to be provided by the caller, via the created KFunctionN.
+                val unboundParameters = (referenceType.classifier.owner as IrClass).typeParameters.size - 1
+                // Both bound and unbound parameters, as seen by the reference creation site, should add up to the actual number
+                // of parameters of the target function.
+                val expectedParameters = boundParameters + unboundParameters
+
+                if (expectedParameters > function.parameters.size) {
+                    return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(
+                        this,
+                        expectedParameters - function.parameters.size
+                    )
+                } else if (expectedParameters < function.parameters.size) {
+                    return MemberAccessExpressionArgumentsMismatch.MissingArguments(
+                        this,
+                        function.parameters.dropLast(expectedParameters)
+                    )
+                }
+            }
+
+            return null
+        }
+
+        private fun IrRichFunctionReference.checkOverriddenFunctionConsistentWithSam(): PartialLinkageCase? {
+            /*
+            In the following case:
+
+            // v1
+            fun interface I {
+                fun foo()
+            }
+            // v2
+            fun interface I {
+                fun foo() {}
+                fun bar()
+            }
+
+            While the second version of I is still a valid SAM (it has one abstract method), and [IrRichFunctionReference.overriddenFunctionSymbol]
+            still points to a valid method, those are now two different methods. Such a case confuses potential SAM conversions done via
+            the old-school [IrTypeOperatorCall] with SAM_CONVERSION, as it now assumes that [I.bar] is the target method instead of [I.foo].
+            To avoid behavioral difference between [IrRichFunctionReference]-style and [IrTypeOperatorCall]-style SAM conversions, we prohibit
+            such a case.
+            This restriction may be lifted if we discontinue IrTypeOperatorCall for SAMs. That would make the behavior closer to that of JVM.
+            */
+
+            val actualSam = type.classOrFail.owner.selectSAMOverriddenFunction().symbol
+            if (overriddenFunctionSymbol != actualSam) {
+                return InvalidSamConversion.SamChanged(
+                    expression = this,
+                    type.classOrFail,
+                    originalOverriddenFunction = overriddenFunctionSymbol,
+                    newOverriddenFunction = actualSam,
+                )
+            }
+
+            return null
         }
 
         private fun IrTypeOperatorCall.checkSamConversion(): PartialLinkageCase? {
             if (operator != IrTypeOperator.SAM_CONVERSION) return null
 
-            val funInterface: IrClass = typeOperand.classOrNull?.owner ?: return null
+            val reportOn = if (argument is IrRichFunctionReference) argument else this
+
+            reportOn.checkHasFunctionalType(typeOperand)?.let { return it }
+            val newFunInterface: IrClass = typeOperand.classOrNull?.owner ?: return null
+
+            val newOverriddenFunction = newFunInterface.selectSAMOverriddenFunction()
+            reportOn.checkReferencedDeclaration(newOverriddenFunction.symbol)?.let { return it }
+
+            val oldOverriddenFunction = when (val argument = argument) {
+                is IrRichFunctionReference -> argument.overriddenFunctionSymbol.owner
+                else -> argument.type.classOrNull?.owner?.selectSAMOverriddenFunctionOrNull() ?: return null
+            }
+
+            if (oldOverriddenFunction.parameters.size != newOverriddenFunction.parameters.size) {
+                return InvalidSamConversion.FunctionIsIncompatible(
+                    expression = reportOn,
+                    originalOverriddenFunction = oldOverriddenFunction.symbol,
+                    newOverriddenFunction = newOverriddenFunction.symbol,
+                )
+            }
+            if (oldOverriddenFunction.isSuspend != newOverriddenFunction.isSuspend) {
+                return InvalidSamConversion.FunctionIsIncompatible(
+                    expression = reportOn,
+                    originalOverriddenFunction = oldOverriddenFunction.symbol,
+                    newOverriddenFunction = newOverriddenFunction.symbol,
+                )
+            }
+
+            return null
+        }
+
+        private fun IrExpression.checkHasFunctionalType(type: IrType): PartialLinkageCase? {
+            if (type.isFunctionOrKFunction() || type.isSuspendFunctionOrKFunction()) {
+                // KFunction is special as technically it has more than one abstract member, so the checks below do not apply.
+                // But it is a type provided by stdlib, so no need to verify it :)
+                return null
+            }
+
+            val funInterface = type.classOrNull?.owner ?: return null
+            if (!(funInterface.isInterface && funInterface.isFun)) {
+                return InvalidSamConversion.NotAFunInterface(
+                    expression = this,
+                    classifier = funInterface.symbol,
+                )
+            }
 
             val abstractFunctionSymbols = newHashSetWithExpectedSize<IrSimpleFunctionSymbol>(funInterface.declarations.size)
             funInterface.declarations.forEach { member ->
@@ -831,26 +952,26 @@ internal class PartiallyLinkedIrTreePatcher(
                     }
                     is IrProperty -> {
                         if (member.modality == Modality.ABSTRACT)
-                            return InvalidSamConversion(
+                            return InvalidSamConversion.FunInterfaceHasAbstractProperty(
                                 expression = this,
-                                abstractFunctionSymbols = emptySet(),
-                                abstractPropertySymbol = member.symbol
+                                funInterface = funInterface.symbol,
+                                abstractPropertySymbol = member.symbol,
                             )
                     }
                 }
             }
 
             return if (abstractFunctionSymbols.size != 1)
-                InvalidSamConversion(
+                InvalidSamConversion.FunInterfaceHasNotSingleFunction(
                     expression = this,
+                    funInterface = funInterface.symbol,
                     abstractFunctionSymbols = abstractFunctionSymbols,
-                    abstractPropertySymbol = null
                 )
             else
                 null
         }
 
-        private fun IrConstructorCall.checkNotAbstractClass(): PartialLinkageCase? {
+        protected fun IrConstructorCall.checkNotAbstractClass(): PartialLinkageCase? {
             val createdClass = symbol.owner.parentAsClass
             return if (createdClass.modality == Modality.ABSTRACT || createdClass.modality == Modality.SEALED)
                 AbstractClassInstantiation(this, createdClass.symbol)
@@ -858,13 +979,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 null
         }
 
-        // Custom checks for constructor call. Can be overridden.
-        protected open fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? =
-            checkReferencedDeclarationType(symbol.owner.parentAsClass, "class") { constructedClass ->
-                constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
-            } ?: checkArgumentsAndValueParameters()
-
-        private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
+        fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
             if (annotations.isNotEmpty()) {
                 annotations = annotations.filterTo(ArrayList(annotations.size)) { annotation ->
                     // Visit the annotation as an expression.
@@ -874,12 +989,16 @@ internal class PartiallyLinkedIrTreePatcher(
                     if (checker.isUsableAnnotation) {
                         true // No PL errors have been found.
                     } else {
-                        // Just log a warning. Do not throw a linkage error as this would produce broken IR.
-                        supportForLowerings.renderAndLogLinkageError(
-                            partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
-                            element = this,
-                            file = currentFile
-                        )
+                        if (annotation.symbol.isSubclassOptInRequiredAnnotationConstructor()) {
+                            // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+                        } else {
+                            // Log a warning. Do not throw a linkage error as this would produce broken IR.
+                            supportForLowerings.renderAndLogLinkageError(
+                                partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
+                                element = this,
+                                file = currentFile
+                            )
+                        }
 
                         false // Drop the annotation.
                     }
@@ -900,50 +1019,61 @@ internal class PartiallyLinkedIrTreePatcher(
                 isUsableAnnotation = initialErrorMessagesCount == currentErrorMessagesCount && !isPartialLinkageRuntimeError()
         }
 
-        override fun visitConst(expression: IrConst<*>): IrExpression = expression // Nothing can be unlinked here.
+        override fun visitConst(expression: IrConst): IrExpression = expression // Nothing can be unlinked here.
 
-        override fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? =
-            checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
-                constructedClass.kind == ClassKind.ANNOTATION_CLASS
-            } ?: run {
-                val annotationFile by lazy { PLFile.determineFileFor(symbol.owner) }
+        override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError(
+            doNotLogWhen = { partialLinkageCase ->
+                // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+                partialLinkageCase is ExpressionWithMissingDeclaration && expression.symbol.isSubclassOptInRequiredAnnotationConstructor()
+            }
+        ) {
+            checkReferencedDeclaration(symbol)
+                ?: checkNotAbstractClass()
+                ?: checkExpressionTypeArguments()
+                ?: checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
+                    constructedClass.kind == ClassKind.ANNOTATION_CLASS
+                } ?: customConstructorCallChecks()
+        }
 
-                checkArgumentsAndValueParameters { index, defaultArgumentExpressionBody ->
-                    val defaultArgument = defaultArgumentExpressionBody?.expression
-                    when {
-                        defaultArgument == null -> {
-                            // A workaround for KT-59030. See also KT-58651.
-                            val valueParameter = symbol.owner.valueParameters.getOrNull(index)
-                            return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
-                        }
-                        defaultArgument is IrConst<*> -> {
-                            // Nothing can be unlinked here.
-                        }
-                        defaultArgument is IrErrorExpression -> {
-                            // Such expression is used as a placeholder for a real default value in Lazy IR.
-                            // Nothing to check here specifically.
-                        }
-                        defaultArgument.isPartialLinkageRuntimeError() -> {
-                            // Default arg has already been processed by ExpressionsTransformer, and it is known to be a PL error.
-                            isUsableAnnotation = false
-                        }
-                        annotationFile.module.shouldBeSkipped -> {
-                            // It does not make sense to check the default arguments in annotation classes from stdlib.
-                        }
-                        else -> {
-                            // WARNING: Jump to (probably) another file and patch the default argument expression right there.
-                            runInFile(annotationFile) {
-                                defaultArgumentExpressionBody.transformVoid(this@AnnotationChecker)
-                            }
+        private fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? {
+            val annotationFile by lazy { PLFile.determineFileFor(symbol.owner) }
+
+            return checkArgumentsAndValueParameters { index, defaultArgumentExpressionBody ->
+                val defaultArgument = defaultArgumentExpressionBody?.expression
+                when {
+                    defaultArgument == null -> {
+                        // A workaround for KT-59030. See also KT-58651.
+                        val valueParameter = symbol.owner.parameters.getOrNull(index)
+                        return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
+                    }
+                    defaultArgument is IrConst -> {
+                        // Nothing can be unlinked here.
+                    }
+                    defaultArgument is IrErrorExpression -> {
+                        // Such expression is used as a placeholder for a real default value in Lazy IR.
+                        // Nothing to check here specifically.
+                    }
+                    defaultArgument.isPartialLinkageRuntimeError() -> {
+                        // Default arg has already been processed by ExpressionsTransformer, and it is known to be a PL error.
+                        isUsableAnnotation = false
+                    }
+                    annotationFile.module.shouldBeSkipped -> {
+                        // It does not make sense to check the default arguments in annotation classes from stdlib.
+                    }
+                    else -> {
+                        // WARNING: Jump to (probably) another file and patch the default argument expression right there.
+                        runInFile(annotationFile) {
+                            defaultArgumentExpressionBody.transformVoid(this@AnnotationChecker)
                         }
                     }
-                    true // Count the current default value as non-missing.
                 }
+                true // Count the current default value as non-missing.
             }
+        }
     }
 
-    private fun IrClassifierSymbol.explore(): ExploredClassifier.Unusable? = classifierExplorer.exploreSymbol(this)
-    private fun IrType.explore(): ExploredClassifier.Unusable? = classifierExplorer.exploreType(this)
+    private fun IrClassifierSymbol.explore(): ClassifierPartialLinkageStatus.Unusable? = classifierExplorer.exploreSymbol(this)
+    private fun IrType.explore(): ClassifierPartialLinkageStatus.Unusable? = classifierExplorer.exploreType(this)
 
     private fun IrType.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         explore()?.let { PartiallyLinkedMarkerType(builtIns, it) }
@@ -961,7 +1091,7 @@ internal class PartiallyLinkedIrTreePatcher(
      * Collects direct children statements up to the first IR p.l. error (everything after the IR p.l. error
      * if effectively dead code and do not need to be kept in the IR tree).
      */
-    private class DirectChildrenStatementsCollector : IrElementVisitorVoid {
+    private class DirectChildrenStatementsCollector : IrVisitorVoid() {
         private val children = mutableListOf<IrStatement>()
         private var hasPartialLinkageRuntimeError = false
 
@@ -975,30 +1105,58 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
+    /**
+     * [ReturnTargetContext] represents all valid return targets available at certain level of IR tree.
+     *
+     * Each [IrReturn] statement is validated against [validReturnTargets] in the current [ReturnTargetContext]
+     * to make sure no non-local returns are present. See also [IllegalNonLocalReturn].
+     */
     private sealed interface ReturnTargetContext {
         val validReturnTargets: Set<IrReturnTargetSymbol>
 
-        data object Empty : ReturnTargetContext {
-            override val validReturnTargets: Set<IrReturnTargetSymbol> get() = emptySet()
-        }
+        /** Just keeps track of [validReturnTargets]. */
+        data class Default(
+            override val validReturnTargets: Set<IrReturnTargetSymbol>
+        ) : ReturnTargetContext
 
-        class InFunction(
+        /**
+         * We have just entered a function.
+         * The function is a possible [IrReturnTarget] for underlying return statements.
+         * However, returning to this function is not available yet (it will be possible only from the function's body).
+         *
+         * @property function The function being visited.
+         * @property isInlined If this function is actually an inline-able lambda argument of some inline function call.
+         */
+        data class InFunction(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val function: IrFunction,
             val isInlined: Boolean
         ) : ReturnTargetContext
 
-        class InFunctionBody(
+        /**
+         * Now we have entered the function's body.
+         * This is the place where the symbol of the function becomes a valid return target.
+         */
+        data class InFunctionBody(
             override val validReturnTargets: Set<IrReturnTargetSymbol>
         ) : ReturnTargetContext
 
-        class InInlinedCall(
+        /**
+         * We have entered an IR call of an inline function, and we are going to visit the call's arguments further.
+         * Some of these arguments could be an inline-able function expression, which should be tracked in
+         * [inlinedLambdaArgumentsWithPermittedNonLocalReturns] as a possible return target for underlying return statements.
+         */
+        data class InInlinedCall(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val inlinedLambdaArgumentsWithPermittedNonLocalReturns: Set<IrFunctionSymbol>
         ) : ReturnTargetContext
+
+        companion object {
+            val Empty = Default(emptySet())
+        }
     }
 
-    private inner class NonLocalReturnsPatcher(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private inner class NonLocalReturnsPatcher(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<ReturnTargetContext>()
         private val currentContext: ReturnTargetContext get() = stack.peek() ?: ReturnTargetContext.Empty
 
@@ -1047,22 +1205,24 @@ internal class PartiallyLinkedIrTreePatcher(
             { oldContext ->
                 val functionSymbol = expression.symbol
                 val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext
-                if (!function.isInline && !function.isInlineArrayConstructor(builtIns)) return@withContext oldContext
+                if (!function.isInline && !function.isInlineArrayConstructor()) return@withContext oldContext
 
-                fun IrValueParameter?.canHaveNonLocalReturns(): Boolean = this != null && !isCrossinline && !isNoinline
-
-                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.valueParameters.size + 1)
+                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.parameters.size)
 
                 fun IrExpression?.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns() {
-                    inlinedLambdaArgumentsWithPermittedNonLocalReturns.addIfNotNull((this as? IrFunctionExpression)?.function?.symbol)
+                    inlinedLambdaArgumentsWithPermittedNonLocalReturns.addIfNotNull(
+                        when (this) {
+                            is IrFunctionExpression -> this.function.symbol
+                            is IrRichFunctionReference -> invokeFunction.symbol
+                            else -> null
+                        }
+                    )
                 }
-
-                if (function.extensionReceiverParameter.canHaveNonLocalReturns())
-                    expression.extensionReceiver.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
-
-                function.valueParameters.forEachIndexed { index, valueParameter ->
-                    if (valueParameter.canHaveNonLocalReturns())
-                        expression.getValueArgument(index).countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                for (param in function.parameters) {
+                    if (!param.isCrossinline && !param.isNoinline) {
+                        // the argument can have non-local returns
+                        expression.arguments[param].countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                    }
                 }
 
                 if (inlinedLambdaArgumentsWithPermittedNonLocalReturns.isEmpty())
@@ -1075,19 +1235,36 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         ) { super.visitFunctionAccess(expression) }
 
-        override fun visitReturn(expression: IrReturn) = withContext { context ->
-            expression.maybeThrowLinkageError(transformer = this@NonLocalReturnsPatcher) {
-                if (returnTargetSymbol !in context.validReturnTargets)
-                    IllegalNonLocalReturn(expression, context.validReturnTargets)
-                else
-                    null
+        override fun visitReturnableBlock(expression: IrReturnableBlock) = withContext(
+            { oldContext ->
+                val newValidReturnTargets = oldContext.validReturnTargets + expression.symbol
+                when (oldContext) {
+                    is ReturnTargetContext.Default -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                    is ReturnTargetContext.InFunction -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                    is ReturnTargetContext.InFunctionBody -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                    is ReturnTargetContext.InInlinedCall -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                }
             }
+        ) { super.visitReturnableBlock(expression) }
+
+        override fun visitReturn(expression: IrReturn) = withContext { context ->
+            expression.maybeThrowLinkageError(
+                transformer = this@NonLocalReturnsPatcher,
+                computePartialLinkageCase = {
+                    if (returnTargetSymbol !in context.validReturnTargets)
+                        IllegalNonLocalReturn(expression, context.validReturnTargets)
+                    else
+                        null
+                },
+                doNotLogWhen = { false }
+            )
         }
     }
 
     private inline fun <T : IrExpression> T.maybeThrowLinkageError(
         transformer: FileAwareIrElementTransformerVoid,
-        computePartialLinkageCase: T.() -> PartialLinkageCase?
+        computePartialLinkageCase: T.() -> PartialLinkageCase?,
+        doNotLogWhen: (PartialLinkageCase) -> Boolean,
     ): IrExpression {
         // The codegen uses postorder traversal: Children are evaluated/executed before the containing expression.
         // So it's important to patch children and insert the necessary `throw IrLinkageError(...)` calls if necessary
@@ -1105,7 +1282,8 @@ internal class PartiallyLinkedIrTreePatcher(
         val linkageError = supportForLowerings.throwLinkageError(
             partialLinkageCase,
             element = this,
-            transformer.currentFile
+            transformer.currentFile,
+            doNotLog = doNotLogWhen(partialLinkageCase)
         )
 
         return if (directChildren.statements.isNotEmpty())
@@ -1118,7 +1296,7 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     companion object {
-        private fun IrDeclaration.isDirectMemberOf(unusableClassifier: ExploredClassifier.Unusable?): Boolean {
+        private fun IrDeclaration.isDirectMemberOf(unusableClassifier: ClassifierPartialLinkageStatus.Unusable?): Boolean {
             val unusableClassifierSymbol = unusableClassifier?.symbol ?: return false
             val containingClassSymbol = parentClassOrNull?.symbol ?: return false
             return unusableClassifierSymbol == containingClassSymbol
@@ -1130,7 +1308,7 @@ internal class PartiallyLinkedIrTreePatcher(
          */
         private fun MutableList<IrStatement>.eliminateDeadCodeStatements() {
             var hasPartialLinkageRuntimeError = false
-            removeIf { statement ->
+            removeAll { statement ->
                 val needToRemove = when (statement) {
                     is IrInstanceInitializerCall,
                     is IrDelegatingConstructorCall,
@@ -1145,6 +1323,12 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun IrExpression.hasBranches(): Boolean = when (this) {
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
+        }
+
+        // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+        private fun IrConstructorSymbol.isSubclassOptInRequiredAnnotationConstructor(): Boolean {
+            val signature = signature as? IdSignature.CommonSignature ?: return false
+            return signature.packageFqName == "kotlin" && signature.declarationFqName == "SubclassOptInRequired.<init>"
         }
 
         private val REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN = FqName("kotlin.ReplaceWith.<init>.expression")

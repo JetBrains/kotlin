@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:_03_collections/CollectionTest.java
 package _03_collections;
@@ -19,3 +20,5 @@ fun test() {
   val c = CollectionTest()
   CollectionTest.add(ArrayList())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

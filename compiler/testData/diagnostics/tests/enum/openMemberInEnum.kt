@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 enum class EnumWithOpenMembers {
     E1 {
@@ -16,3 +17,6 @@ enum class EnumWithOpenMembers {
     fun f() = 2
     val b = 3
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, propertyDeclaration,
+stringLiteral */

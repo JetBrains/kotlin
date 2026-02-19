@@ -1,0 +1,42 @@
+test1: ---
+assert(this.a)
+       |    |
+       |    false
+       A
+---
+test2: ---
+assert(this.b == 2)
+       |    | |
+       |    | false
+       |    1
+       A
+---
+test3: ---
+assert(this)
+       |
+       false
+---
+test4: ---
+assert(this == 2)
+       |    |
+       |    false
+       1
+---
+test5: ---
+assert(this == 2)
+       |    |
+       |    false
+       1
+---
+test6: ---
+assert(this@A.a)
+       |      |
+       |      false
+       A
+---
+test7: ---
+assert(this@lambda == 2)
+       |           |
+       |           false
+       1
+---

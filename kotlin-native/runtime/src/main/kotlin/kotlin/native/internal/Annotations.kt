@@ -5,6 +5,9 @@
 
 package kotlin.native.internal
 
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 /**
  * Makes this function to be possible to call by given name from C++ part of runtime using C ABI.
  * The parameters are mapped in an implementation-dependent manner.
@@ -23,6 +26,7 @@ package kotlin.native.internal
 )
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal annotation class ExportForCppRuntime(val name: String = "")
 
 /**
@@ -43,23 +47,6 @@ internal annotation class Intrinsic
 internal annotation class ExportForCompiler
 
 /**
- * Class is frozen by default. Also this annotation is (ab)used for marking objects
- * where mutability checks are not needed, and they are shared, such as atomics.
- */
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-@FreezingIsDeprecated
-internal annotation class Frozen
-
-/**
- * Similar to `@Frozen`, but works only for legacy MM. On the new MM this has no effect.
- */
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-@FreezingIsDeprecated
-internal annotation class FrozenLegacyMM
-
-/**
  * Fields of annotated class won't be sorted.
  */
 @Target(AnnotationTarget.CLASS)
@@ -74,28 +61,9 @@ internal annotation class NoReorderFields
 @PublishedApi
 internal annotation class ExportTypeInfo(val name: String)
 
-/**
- * If a lambda shall be carefully lowered by the compiler.
- */
-@Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class VolatileLambda
-
-/**
- * Escape analysis annotations.
- */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-internal annotation class Escapes(val who: Int)
-
-// Decyphering of binary values can be found in EscapeAnalysis.kt
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class PointsTo(vararg val onWhom: Int)
-
-
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
+@UsedFromCompilerGeneratedCode
 internal annotation class TypedIntrinsic(val kind: String)
 
 @Target(AnnotationTarget.CONSTRUCTOR)
@@ -119,7 +87,9 @@ internal annotation class Independent
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-@PublishedApi internal annotation class FilterExceptions(val mode: String = "terminate")
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+internal annotation class FilterExceptions(val mode: String = "terminate")
 
 /**
  * Marks a class whose instances to be added to the list of leak detector candidates.
@@ -128,14 +98,14 @@ internal annotation class Independent
 @PublishedApi internal annotation class LeakDetectorCandidate
 
 /**
- * Indicates that given top level signleton object can be created in compile time and thus
+ * Indicates that given top level singleton object can be created in compile time and thus
  * members access doesn't need to use an init barrier and allow better optimizations for
  * field access, such as constant folding.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @PublishedApi
-internal annotation class CanBePrecreated
+internal actual annotation class CanBePrecreated
 
 /**
  * Marks a class that has a finalizer.
@@ -146,16 +116,22 @@ internal annotation class HasFinalizer
 /**
  * Marks a declaration that is internal for Kotlin/Native and shouldn't be used externally.
  */
+@Target(
+        AnnotationTarget.CLASS,
+        AnnotationTarget.ANNOTATION_CLASS,
+        AnnotationTarget.PROPERTY,
+        AnnotationTarget.FIELD,
+        AnnotationTarget.LOCAL_VARIABLE,
+        AnnotationTarget.VALUE_PARAMETER,
+        AnnotationTarget.CONSTRUCTOR,
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.PROPERTY_GETTER,
+        AnnotationTarget.PROPERTY_SETTER,
+        AnnotationTarget.TYPEALIAS
+)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(value = AnnotationRetention.BINARY)
 internal annotation class InternalForKotlinNative
-
-/**
- * Marks a class that has a freeze hook.
- */
-@Target(AnnotationTarget.CLASS)
-@FreezingIsDeprecated
-internal annotation class HasFreezeHook
 
 /**
  * Indicates that calls of this function will be replaced with calls to the
@@ -168,7 +144,7 @@ internal annotation class HasFreezeHook
 @Target(AnnotationTarget.FUNCTION)
 @Retention(value = AnnotationRetention.BINARY)
 @InternalForKotlinNative
-annotation class GCUnsafeCall(val callee: String)
+public annotation class GCUnsafeCall(val callee: String)
 
 /**
  * Marks a declaration that is internal for Kotlin/Native tests and shouldn't be used externally.
@@ -180,3 +156,21 @@ internal annotation class InternalForKotlinNativeTests
 @InternalForKotlinNativeTests
 @Target(AnnotationTarget.FILE)
 public annotation class ReflectionPackageName(val name: String)
+
+/**
+ * Indicates that the marked function is an exported bridge between Kotlin and the platform.
+ * This annotation prevents the function from being removed by DCE
+ * and specifies a stable [bridgeName] for the function symbol.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(value = AnnotationRetention.BINARY)
+@ExperimentalNativeApi
+public annotation class ExportedBridge(val bridgeName: String)
+
+/**
+ * Indicates that the marked function should be skipped by the debugger when stepping into (if allowed by the platform).
+ */
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
+@Retention(value = AnnotationRetention.BINARY)
+@UsedFromCompilerGeneratedCode
+internal annotation class TransparentForDebugger

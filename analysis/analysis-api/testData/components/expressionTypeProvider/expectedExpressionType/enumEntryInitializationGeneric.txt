@@ -1,0 +1,4 @@
+expression: message
+expected type: KaTypeParameterType:
+  annotations: []
+  type: T

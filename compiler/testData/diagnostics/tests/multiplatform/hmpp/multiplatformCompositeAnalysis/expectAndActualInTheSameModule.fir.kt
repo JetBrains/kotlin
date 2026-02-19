@@ -1,68 +1,70 @@
-// IGNORE_REVERSED_RESOLVE
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-// TARGET_PLATFORM: Common
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class CommonClass {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>CommonClass<!> {
     fun memberFun()
     val memberProp: Int
     class Nested
     inner class Inner
-}<!>
-actual class <!ACTUAL_WITHOUT_EXPECT!>CommonClass<!> {
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>memberFun<!>() {}
-    actual val <!ACTUAL_WITHOUT_EXPECT!>memberProp<!>: Int = 42
-    actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
-    actual inner class <!ACTUAL_WITHOUT_EXPECT!>Inner<!>
+}
+actual class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>CommonClass<!> {
+    actual fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>memberFun<!>() {}
+    actual val <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>memberProp<!>: Int = 42
+    actual class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>Nested<!>
+    actual inner class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>Inner<!>
 }
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun commonFun()<!>
-actual fun <!ACTUAL_WITHOUT_EXPECT!>commonFun<!>() {}
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>commonFun<!>()
+actual fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>commonFun<!>() {}
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val commonProperty: String<!>
-actual val <!ACTUAL_WITHOUT_EXPECT!>commonProperty<!>: String
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>commonProperty<!>: String
+actual val <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>commonProperty<!>: String
     get() = "hello"
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 
-expect class IntermediateClass {
+expect class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>IntermediateClass<!> {
     fun memberFun()
     val memberProp: Int
     class Nested
     inner class Inner
 }
-actual class <!ACTUAL_WITHOUT_EXPECT!>IntermediateClass<!> {
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>memberFun<!>() {}
-    actual val <!ACTUAL_WITHOUT_EXPECT!>memberProp<!>: Int = 42
-    actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
-    actual inner class <!ACTUAL_WITHOUT_EXPECT!>Inner<!>
+actual class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>IntermediateClass<!> {
+    actual fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>memberFun<!>() {}
+    actual val <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>memberProp<!>: Int = 42
+    actual class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>Nested<!>
+    actual inner class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>Inner<!>
 }
 
-expect fun intermediateFun()
-actual fun <!ACTUAL_WITHOUT_EXPECT!>intermediateFun<!>() {}
+expect fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>intermediateFun<!>()
+actual fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>intermediateFun<!>() {}
 
-expect val intermediateProperty: String
-actual val <!ACTUAL_WITHOUT_EXPECT!>intermediateProperty<!>: String
+expect val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>intermediateProperty<!>: String
+actual val <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}!>intermediateProperty<!>: String
     get() = "hello"
 
 // MODULE: main()()(intermediate)
 
-expect class PlatformClass {
+expect class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>PlatformClass<!> {
     fun memberFun()
     val memberProp: Int
     class Nested
     inner class Inner
 }
-actual class <!ACTUAL_WITHOUT_EXPECT!>PlatformClass<!> {
+actual class <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>PlatformClass<!> {
     actual fun <!ACTUAL_WITHOUT_EXPECT!>memberFun<!>() {}
     actual val <!ACTUAL_WITHOUT_EXPECT!>memberProp<!>: Int = 42
     actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
     actual inner class <!ACTUAL_WITHOUT_EXPECT!>Inner<!>
 }
 
-expect fun platformFun()
-actual fun <!ACTUAL_WITHOUT_EXPECT!>platformFun<!>() {}
+expect fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformFun<!>()
+actual fun <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformFun<!>() {}
 
-expect val platformProperty: String
-actual val <!ACTUAL_WITHOUT_EXPECT!>platformProperty<!>: String
+expect val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformProperty<!>: String
+actual val <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformProperty<!>: String
     get() = "hello"
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, getter, inner, integerLiteral, nestedClass,
+propertyDeclaration, stringLiteral */

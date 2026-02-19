@@ -42,10 +42,10 @@ class PackageJsonTypeAdapter : TypeAdapterFactory {
                 val jsonObject = delegateAdapter.toJsonTree(value).asJsonObject
 
                 customFieldsField.isAccessible = true
-                val customFields = customFieldsField.get(value) as Map<*, *>
+                val customFields = customFieldsField.get(value) as Map<*, *>?
 
                 customFields
-                    .forEach { (key, value) ->
+                    ?.forEach { (key, value) ->
                         val valueElement = gson.toJsonTree(value)
                         key as String
                         jsonObject.add(key, valueElement)

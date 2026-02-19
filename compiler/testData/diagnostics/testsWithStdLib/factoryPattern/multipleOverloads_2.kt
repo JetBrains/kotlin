@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +OverloadResolutionByLambdaReturnType
+// LANGUAGE: +OverloadResolutionByLambdaReturnType
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -OPT_IN_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -OPT_IN_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
 // ISSUE: KT-11265
 
 // FILE: OverloadResolutionByLambdaReturnType.kt
@@ -29,3 +30,7 @@ fun test() {
 }
 
 fun takeDouble(value: Double) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, thisExpression, typeConstraint,
+typeParameter, unaryExpression */

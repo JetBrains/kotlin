@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KProperty
 
 abstract class FirProperty {
@@ -29,3 +30,7 @@ class MyLazy<out M>(initializer: () -> M) {
 class Session(val property: FirProperty) {
     val expectedType: ConeKotlinType? by myLazy { property.returnTypeRef.coneTypeSafe() }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, inline, lambdaLiteral, nullableType, operator, out, primaryConstructor, propertyDeclaration, propertyDelegate,
+reified, safeCall, starProjection, thisExpression, typeConstraint, typeParameter */

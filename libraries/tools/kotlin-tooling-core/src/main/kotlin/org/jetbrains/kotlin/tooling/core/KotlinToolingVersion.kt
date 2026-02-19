@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.tooling.core
 
 import java.io.Serializable
-import java.util.*
 
 fun KotlinToolingVersion(kotlinVersionString: String): KotlinToolingVersion {
     val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
@@ -35,18 +34,6 @@ fun KotlinToolingVersion(kotlinVersion: KotlinVersion, classifier: String? = nul
     return KotlinToolingVersion(kotlinVersion.major, kotlinVersion.minor, kotlinVersion.patch, classifier)
 }
 
-@Deprecated(
-    "Use KotlinToolingVersion instead. Scheduled for removal with Kotlin 2.0",
-    replaceWith = ReplaceWith("KotlinToolingVersion(kotlinVersionString)")
-)
-fun KotlinToolingVersionOrNull(kotlinVersionString: String): KotlinToolingVersion? {
-    return try {
-        KotlinToolingVersion(kotlinVersionString)
-    } catch (t: IllegalArgumentException) {
-        null
-    }
-}
-
 class KotlinToolingVersion(
     val major: Int,
     val minor: Int,
@@ -59,7 +46,7 @@ class KotlinToolingVersion(
     }
 
     val maturity: Maturity = run {
-        val classifier = this.classifier?.toLowerCase(Locale.ROOT)
+        val classifier = this.classifier?.lowercase()
         when {
             classifier == null || classifier.matches(Regex("""(release-)?\d+""")) -> Maturity.STABLE
             classifier == "snapshot" -> Maturity.SNAPSHOT
@@ -129,7 +116,7 @@ class KotlinToolingVersion(
         if (this.major != other.major) return false
         if (this.minor != other.minor) return false
         if (this.patch != other.patch) return false
-        if (this.classifier?.toLowerCase(Locale.ROOT) != other.classifier?.toLowerCase(Locale.ROOT)) return false
+        if (this.classifier?.lowercase() != other.classifier?.lowercase()) return false
         return true
     }
 

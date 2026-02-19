@@ -1,5 +1,9 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// IGNORE_BACKEND_K1: JVM_IR
+// ^ K1 does not support coercing assigment to Any?
+
 // FILE: destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt
 
 import kotlin.test.*
@@ -15,7 +19,7 @@ fun use(x: Any) {}
 
 fun box(): String {
     assertFailsWith<NullPointerException> {
-        val (a, b) = J.j()
+        val [a, b] = J.j()
     }
     if (!component1Evaluated) return "component1 should be evaluated"
     return "OK"

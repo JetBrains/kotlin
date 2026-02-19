@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Example {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(): String = ""
@@ -30,3 +31,6 @@ class Example2 {
         <!UNRESOLVED_REFERENCE!>-<!>this
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, operator,
+stringLiteral, thisExpression, unaryExpression */

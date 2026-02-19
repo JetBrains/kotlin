@@ -1,0 +1,29 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /DefaultImpl : /IFoo { // /DefaultImpl|null[0]
+    constructor <init>() // /DefaultImpl.<init>|<init>(){}[0]
+}
+final class /Delegated : /IFoo { // /Delegated|null[0]
+    final val extProp // /Delegated.extProp|@kotlin.String{}extProp[0]
+        final fun (kotlin/String).<get-extProp>(): kotlin/String // /Delegated.extProp.<get-extProp>|<get-extProp>@kotlin.String(){}[0]
+    final val prop // /Delegated.prop|{}prop[0]
+        final fun <get-prop>(): kotlin/String // /Delegated.prop.<get-prop>|<get-prop>(){}[0]
+    constructor <init>(/IFoo) // /Delegated.<init>|<init>(IFoo){}[0]
+}
+final class /ExplicitOverride : /IFoo { // /ExplicitOverride|null[0]
+    final val extProp // /ExplicitOverride.extProp|@kotlin.String{}extProp[0]
+        final fun (kotlin/String).<get-extProp>(): kotlin/String // /ExplicitOverride.extProp.<get-extProp>|<get-extProp>@kotlin.String(){}[0]
+    final val prop // /ExplicitOverride.prop|{}prop[0]
+        final fun <get-prop>(): kotlin/String // /ExplicitOverride.prop.<get-prop>|<get-prop>(){}[0]
+    constructor <init>() // /ExplicitOverride.<init>|<init>(){}[0]
+}
+abstract interface /IFoo { // /IFoo|null[0]
+    open val extProp // /IFoo.extProp|@kotlin.String{}extProp[0]
+        open fun (kotlin/String).<get-extProp>(): kotlin/String // /IFoo.extProp.<get-extProp>|<get-extProp>@kotlin.String(){}[0]
+    open val prop // /IFoo.prop|{}prop[0]
+        open fun <get-prop>(): kotlin/String // /IFoo.prop.<get-prop>|<get-prop>(){}[0]
+}

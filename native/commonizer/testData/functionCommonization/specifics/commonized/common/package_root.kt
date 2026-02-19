@@ -14,5 +14,5 @@ expect fun tailrecFunction2()
 expect fun externalFunction1()
 expect fun externalFunction2()
 
-expect inline fun inlineFunction1() {}
-expect fun inlineFunction2() {}
+expect inline fun inlineFunction1()
+expect fun inlineFunction2()

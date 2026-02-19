@@ -5,11 +5,14 @@
 
 package kotlin.io
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 
 /** Prints the given [message] to the standard output stream. */
 @GCUnsafeCall("Kotlin_io_Console_print")
 @PublishedApi
+@Escapes.Nothing
 internal external fun print(message: String)
 
 /** Prints the given [message] to the standard output stream. */
@@ -20,10 +23,13 @@ public actual fun print(message: Any?) {
 /** Prints the given [message] and the line separator to the standard output stream. */
 @GCUnsafeCall("Kotlin_io_Console_println")
 @PublishedApi
+@Escapes.Nothing
+@UsedFromCompilerGeneratedCode
 internal external fun println(message: String)
 
 /** Prints the given [message] and the line separator to the standard error output stream. */
 @GCUnsafeCall("Kotlin_io_Console_printlnToStdErr")
+@Escapes.Nothing
 internal external fun printlnToStdErr(message: String)
 
 /** Prints the given [message] and the line separator to the standard output stream. */
@@ -56,6 +62,9 @@ public actual fun readln(): String = readlnOrNull() ?: throw ReadAfterEOFExcepti
  */
 @SinceKotlin("1.6")
 @GCUnsafeCall("Kotlin_io_Console_readlnOrNull")
+// The return value may be an empty string, which is statically allocated and immutable;
+// we can treat it as non-escaping
+@Escapes.Nothing
 public actual external fun readlnOrNull(): String?
 
 /**
@@ -64,4 +73,7 @@ public actual external fun readlnOrNull(): String?
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
 @GCUnsafeCall("Kotlin_io_Console_readLine")
+@Escapes.Nothing
+@Deprecated("Use `readln()` instead of `readLine()!!`, and `readlnOrNull()` instead of `readLine()`.")
+@DeprecatedSinceKotlin(warningSince = "2.1")
 public external fun readLine(): String?

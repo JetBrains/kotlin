@@ -1,8 +1,5 @@
 // WITH_STDLIB
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57778
-
 private fun test(x: Long) =
     countIssues {
         +(spentTime lessEq 2 * 60)

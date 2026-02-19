@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.JavaVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.START_TASK_ACTION_EXECUTION
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -27,11 +29,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
-import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
@@ -46,7 +45,6 @@ import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
@@ -99,6 +97,13 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
     return result ?: "<unknown>"
 }
 
+private val JavaVersion.supportsArgsFile: Boolean
+    get() = isJava9Compatible
+
+/**
+ * @param explicitJdk Optional pair of JDK path and its Java version to explicitly use for process execution;
+ *                    defaults to null meaning using the current `java.home`.
+ */
 internal fun runToolInSeparateProcess(
     argsArray: Array<String>,
     compilerClassName: String,
@@ -106,22 +111,40 @@ internal fun runToolInSeparateProcess(
     logger: KotlinLogger,
     buildDir: File,
     jvmArgs: List<String> = emptyList(),
+    explicitJdk: Pair<File, Int>? = null,
 ): ExitCode {
-    val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
+    val javaHome = explicitJdk?.first?.toString() ?: System.getProperty("java.home")
+    val javaVersion = explicitJdk?.second?.let { JavaVersion.toVersion(it) } ?: JavaVersion.current()
+    val javaBin = javaHome + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.joinToString(separator = File.pathSeparator) { it.absolutePath }
-
-    val compilerOptions = writeArgumentsToFile(buildDir, argsArray)
-
-    val builder = ProcessBuilder(
-        javaBin,
+    val javaCommandArgs = listOf(
         *(jvmArgs.toTypedArray()),
         "-cp",
         classpathString,
         compilerClassName,
-        "@${compilerOptions.absolutePath}"
     )
+    val argsList = argsArray.toList()
+
+    val processBuilderArgs = if (javaVersion.supportsArgsFile) {
+        val fullArgsFile = writeArgumentsToFile(ArgumentsFileKind.JVM_ARGS, buildDir, javaCommandArgs + argsList)
+        logger.debug("Using JVM args file to run the compiler")
+        listOf(
+            javaBin,
+            "@${fullArgsFile.absolutePath}",
+        )
+    } else {
+        val compilerOptions = writeArgumentsToFile(ArgumentsFileKind.KOTLIN_COMPILER_ARGS, buildDir, argsList)
+        logger.debug("Using regular JVM arguments to run the compiler")
+        buildList {
+            add(javaBin)
+            addAll(javaCommandArgs)
+            add("@${compilerOptions.absolutePath}")
+        }
+    }
+
+    val builder = ProcessBuilder(processBuilderArgs)
     val messageCollector = GradleErrorMessageCollector(logger, createLoggingMessageCollector(logger))
-    val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
+    val process = builder.start()
 
     // important to read inputStream, otherwise the process may hang on some systems
     val readErrThread = thread {
@@ -130,32 +153,32 @@ internal fun runToolInSeparateProcess(
         }
     }
 
-    if (logger is GradleKotlinLogger) {
-        process.inputStream!!.bufferedReader().forEachLine {
-            logger.lifecycle(it)
-        }
-    } else {
-        process.inputStream!!.bufferedReader().forEachLine {
-            println(it)
-        }
+    process.inputStream!!.bufferedReader().forEachLine {
+        logger.lifecycle(it)
     }
 
     readErrThread.join()
 
     val exitCode = process.waitFor()
+    @Suppress("DEPRECATION")
     logger.logFinish(KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     return exitCodeFromProcessExitCode(logger, exitCode)
 }
 
-private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
+private enum class ArgumentsFileKind(val suffix: String) {
+    KOTLIN_COMPILER_ARGS(".compiler.options"),
+    JVM_ARGS(".jvm.args"),
+}
+
+private fun writeArgumentsToFile(kind: ArgumentsFileKind, directory: File, args: List<String>): File {
     val prefix = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_"
-    val suffix = ".compiler.options"
+    val suffix = kind.suffix
     val compilerOptions = if (directory.exists())
         Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
     else
         Files.createTempFile(prefix, suffix).toFile()
     compilerOptions.writeText(
-        argsArray.joinToString(" ") {
+        args.joinToString(" ") {
             "\"${it.escapeJavaStyleString()}\""
         }
     )
@@ -172,9 +195,9 @@ internal fun String.escapeJavaStyleString(
     return buildString {
         this@escapeJavaStyleString.forEach { ch ->
             when {
-                ch.toInt() > 0xfff -> append("\\u${ch.hex()}")
-                ch.toInt() > 0xff -> append("\\u0${ch.hex()}")
-                ch.toInt() >= 0x7f -> append("\\u00${ch.hex()}")
+                ch.code > 0xfff -> append("\\u${ch.hex()}")
+                ch.code > 0xff -> append("\\u0${ch.hex()}")
+                ch.code >= 0x7f -> append("\\u00${ch.hex()}")
                 ch < 32.toChar() -> when (ch) {
                     '\b' -> append('\\').append('b')
                     '\n' -> append('\\').append('n')
@@ -205,7 +228,7 @@ internal fun String.escapeJavaStyleString(
 }
 
 private fun Char.hex(): String {
-    return Integer.toHexString(toInt()).toUpperCase(Locale.ENGLISH)
+    return Integer.toHexString(code).uppercase()
 }
 
 private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector = object : MessageCollector {
@@ -224,6 +247,7 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
             CompilerMessageSeverity.EXCEPTION -> log.error(locMessage)
             CompilerMessageSeverity.ERROR,
             CompilerMessageSeverity.STRONG_WARNING,
+            CompilerMessageSeverity.FIXED_WARNING,
             CompilerMessageSeverity.WARNING,
             CompilerMessageSeverity.INFO,
             -> log.info(locMessage)
@@ -238,7 +262,7 @@ internal val KotlinCompilerExecutionStrategy.asFinishLogMessage: String
     get() = "Finished executing kotlin compiler using $this strategy"
 
 internal fun KotlinLogger.logFinish(strategy: KotlinCompilerExecutionStrategy) {
-    debug(strategy.asFinishLogMessage)
+    info(strategy.asFinishLogMessage)
 }
 
 internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode {
@@ -249,27 +273,12 @@ internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode
     return if (code == 0) ExitCode.OK else ExitCode.COMPILATION_ERROR
 }
 
-//Copy of CommonCompilerArguments.parseOrConfigureLanguageVersion to avoid direct dependency
-internal fun parseLanguageVersion(languageVersion: String?, useK2: Boolean): KotlinVersion {
-    val explicitVersion = languageVersion?.let { KotlinVersion.fromVersion(languageVersion) } ?: KotlinVersion.DEFAULT
-    return if (useK2 && (explicitVersion < KotlinVersion.KOTLIN_2_0)) KotlinVersion.KOTLIN_2_0 else explicitVersion
-}
-
-internal fun parseLanguageVersion(args: List<String>): KotlinVersion {
-    val languageVersionIndex = args.indexOf("-language-version")
-    val languageVersion = if (languageVersionIndex >= 0) {
-        args[languageVersionIndex + 1]
-    } else null
-    val useK2 = args.indexOf("-Xuse-k2") >= 0
-    return parseLanguageVersion(languageVersion, useK2)
-}
-
 internal fun UsesBuildMetricsService.addBuildMetricsForTaskAction(
-    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     languageVersion: KotlinVersion?,
     fn: () -> Any
 ) {
-    metricsReporter.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+    metricsReporter.addTimeMetric(START_TASK_ACTION_EXECUTION)
     buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, metricsReporter) }
 
     try {

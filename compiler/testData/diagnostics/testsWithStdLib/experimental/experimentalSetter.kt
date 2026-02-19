@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
@@ -22,3 +23,6 @@ fun user(): Int {
     <!OPT_IN_USAGE_ERROR!>z<!> = 15
     return x + <!OPT_IN_USAGE_ERROR!>y<!> + z
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetPropertySetter, assignment,
+functionDeclaration, integerLiteral, propertyDeclaration, setter */

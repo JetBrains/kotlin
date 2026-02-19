@@ -1,0 +1,10 @@
+compiler/testData/cli/jvm/diagnosticTests/firDeprecationJava.kt:3:12: warning: 'fun stop(): Unit' is deprecated. Deprecated in Java.
+    thread.stop()
+           ^^^^
+compiler/testData/cli/jvm/diagnosticTests/firDeprecationJava.kt:4:17: warning: 'fun bar(a: String!, b: Int, c: Double): String!' is deprecated. Deprecated in Java.
+    JavaClass().bar("", 1, 2.0)
+                ^^^
+compiler/testData/cli/jvm/diagnosticTests/firDeprecationJava.kt:5:27: warning: 'field baz: (Mutable)List<String!>!' is deprecated. Deprecated in Java.
+    val baz = JavaClass().baz
+                          ^^^
+OK

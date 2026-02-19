@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 val a0: Int = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1uL<!>
 val a1: UInt = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1uL<!>
@@ -14,3 +15,5 @@ fun test() {
     takeULong(1u + 0uL)
     takeULong(1uL + 4u)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, propertyDeclaration, unaryExpression, unsignedLiteral */

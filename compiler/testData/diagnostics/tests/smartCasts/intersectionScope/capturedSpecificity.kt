@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 class C<T>(val value: T?)
@@ -12,3 +13,7 @@ fun <V> foo(t: C<out Any>, v: C<out V>) {
         assignable<V?> { t.value }
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, equalityExpression, functionDeclaration, functionalType,
+ifExpression, intersectionType, lambdaLiteral, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+smartcast, typeParameter */

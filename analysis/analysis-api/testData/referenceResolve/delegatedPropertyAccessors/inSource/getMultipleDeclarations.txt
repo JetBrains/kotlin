@@ -1,3 +1,0 @@
-Resolved to:
-0: (in Baz) override operator fun getValue(p1: kotlin.Any?, p2: kotlin.Any?): kotlin.Int
-1: (in Baz) override operator fun setValue(p1: kotlin.Any?, p2: kotlin.Any?, p3: kotlin.Any?)

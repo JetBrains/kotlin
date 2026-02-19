@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // JSPECIFY_STATE: warn
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // FILE: J1.java
 import org.jetbrains.annotations.Nullable;
 

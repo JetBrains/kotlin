@@ -12,6 +12,7 @@
 #include <cstdint>
 
 #include "GCSchedulerConfig.hpp"
+#include "Logging.hpp"
 
 namespace kotlin::gcScheduler::internal {
 
@@ -33,6 +34,7 @@ public:
 
     // Can be called by any thread.
     MemoryBoundary boundaryForHeapSize(size_t totalAllocatedBytes) noexcept {
+        RuntimeLogDebug({logging::Tag::kGCScheduler}, "Total allocated %zu bytes", totalAllocatedBytes);
         if (totalAllocatedBytes >= targetHeapBytes_) {
             return config_.mutatorAssists() ? MemoryBoundary::kTarget : MemoryBoundary::kTrigger;
         } else if (totalAllocatedBytes >= triggerHeapBytes_) {
@@ -59,6 +61,8 @@ public:
         } else {
             targetHeapBytes_ = config_.targetHeapBytes.load(std::memory_order_relaxed);
         }
+        RuntimeLogInfo({logging::Tag::kGCScheduler},
+                       "Updated heap boundaries: alive %zu, target %zu, trigger %zu", aliveBytes, targetHeapBytes_, triggerHeapBytes_);
     }
 
     size_t targetHeapBytes() const noexcept { return targetHeapBytes_; }

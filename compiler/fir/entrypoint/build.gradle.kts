@@ -1,12 +1,12 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
     api(project(":core:descriptors.jvm"))
     api(project(":compiler:frontend.java"))
-    api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:fir-jvm"))
+    api(project(":compiler:fir:fir-native"))
     api(project(":compiler:fir:raw-fir:psi2fir"))
     api(project(":compiler:fir:raw-fir:light-tree2fir"))
     api(project(":compiler:fir:fir2ir"))
@@ -14,13 +14,18 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.jvm"))
     api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:checkers:checkers.native"))
-    api(project(":js:js.frontend"))
+    api(project(":compiler:fir:checkers:checkers.wasm"))
+    api(project(":compiler:fir:fir-deserialization"))
+    api(project(":wasm:wasm.frontend"))
+    api(project(":native:frontend.native"))
+    api(project(":compiler:ir.actualization"))
 
     implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:fir:resolve"))
+    implementation(project(":compiler:fir:fir-js"))
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
-    implementation(project(":compiler:backend.jvm"))
+    implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.jvm"))
     implementation(project(":compiler:ir.serialization.js"))

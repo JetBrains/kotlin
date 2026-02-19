@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-30242
 
 class A
@@ -61,3 +62,6 @@ fun test_6(b: Boolean) {
         if (b) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral, stringLiteral,
+whenExpression */

@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +LocalTypeAliases
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 typealias L<T> = List<T>
 typealias NL<T> = List<T>?
@@ -12,7 +14,7 @@ fun testL4(x: Collection<Int>?): List<Int>? = x as? L
 
 fun testNL1(x: Collection<Int>?): Boolean = x is NL
 fun testNL2(x: Collection<Int>?): List<Int>? = x as NL
-fun testNL3(x: Collection<Int>?): List<Int>? = x as NL?
+fun testNL3(x: Collection<Int>?): List<Int>? = x as NL<!REDUNDANT_NULLABLE!>?<!>
 
 fun testLStar(x: Collection<Int>): List<Int> = x as LStar
 fun testMyList(x: Collection<Int>): List<Int> = x as MyList
@@ -29,7 +31,11 @@ fun testWrong4(x: List<Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>ReadableList<!>
 
 fun <T> testLocal(x: Any) {
     class C
-    typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>CA<!> = C
-    if (x is <!NO_TYPE_ARGUMENTS_ON_RHS!>C<!>) {}
-    if (x is <!UNRESOLVED_REFERENCE!>CA<!>) {}
+    typealias CA = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>C<!>
+    if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {}
+    if (x is <!CANNOT_CHECK_FOR_ERASED!>CA<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, ifExpression, inProjection, isExpression,
+localClass, nullableType, outProjection, starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter */

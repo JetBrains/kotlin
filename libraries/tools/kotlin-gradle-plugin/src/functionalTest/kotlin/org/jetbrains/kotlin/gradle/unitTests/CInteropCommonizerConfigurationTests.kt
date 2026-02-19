@@ -7,14 +7,22 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.linuxMain
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.utils.markConsumable
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCommonizedCInteropDependencyConfiguration
+import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -25,8 +33,7 @@ class CInteropCommonizerConfigurationTests {
     fun `test - compatibility rule - superset is compatible`() {
         val project = buildProjectWithMPP()
 
-        val consumable = project.configurations.create("testElements") { configuration ->
-            configuration.markConsumable()
+        val consumable = project.configurations.createConsumable("testElements").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -38,8 +45,7 @@ class CInteropCommonizerConfigurationTests {
             )
         }
 
-        val resolvable = project.configurations.create("testDependencies") { configuration ->
-            configuration.markResolvable()
+        val resolvable = project.configurations.createResolvable("testDependencies").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -64,8 +70,7 @@ class CInteropCommonizerConfigurationTests {
     fun `test - disambiguation rule - chooses most specific variant`() {
         val project = buildProjectWithMPP()
 
-        project.configurations.create("testConsumableAll") { configuration ->
-            configuration.markConsumable()
+        project.configurations.createConsumable("testConsumableAll").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -80,8 +85,7 @@ class CInteropCommonizerConfigurationTests {
         }
 
         /* More specific as it does not offer macos parts */
-        val consumableSpecific = project.configurations.create("testConsumableSpecific") { configuration ->
-            configuration.markConsumable()
+        val consumableSpecific = project.configurations.createConsumable("testConsumableSpecific").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -93,8 +97,7 @@ class CInteropCommonizerConfigurationTests {
             )
         }
 
-        val resolvable = project.configurations.create("testDependencies") { configuration ->
-            configuration.markResolvable()
+        val resolvable = project.configurations.createResolvable("testDependencies").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -113,5 +116,73 @@ class CInteropCommonizerConfigurationTests {
         if (resolvedDependencies.size > 1) fail("Expected exactly one dependency. Found: $resolvedDependencies")
         val resolved = resolvedDependencies.single()
         assertEquals(consumableSpecific.name, resolved.configuration)
+    }
+
+    @Test
+    fun `test - KT-63338 - source sets have own cinterop configurations`() {
+        val rootProject = buildProject()
+
+        val producerAProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("producer-a") }
+        ) {
+            kotlin {
+                linuxX64().compilations.main.cinterops.create("myInterop")
+                linuxArm64().compilations.main.cinterops.create("myInterop")
+            }
+        }
+
+        val producerBProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("producer-b") }
+        ) {
+            kotlin {
+                linuxX64().compilations.main.cinterops.create("myInterop")
+                linuxArm64().compilations.main.cinterops.create("myInterop")
+            }
+        }
+
+
+        val consumerProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("consumer") }
+        ) {
+            kotlin {
+                linuxX64()
+                linuxArm64()
+
+                sourceSets.commonMain.dependencies {
+                    implementation(project(":producer-a"))
+                }
+
+                sourceSets.linuxMain.dependencies {
+                    implementation(project(":producer-b"))
+                }
+            }
+        }
+
+        producerAProject.evaluate()
+
+        consumerProject.runLifecycleAwareTest {
+            val commonMain = consumerProject.multiplatformExtension.sourceSets.commonMain
+            val linuxMain = consumerProject.multiplatformExtension.sourceSets.linuxMain
+
+            @OptIn(UnsafeApi::class)
+            val commonMainCinterop = consumerProject.locateOrCreateCommonizedCInteropDependencyConfiguration(commonMain.get())!!
+
+            @OptIn(UnsafeApi::class)
+            val linuxMainCinterop = consumerProject.locateOrCreateCommonizedCInteropDependencyConfiguration(linuxMain.get())!!
+
+            if (linuxMainCinterop == commonMainCinterop)
+                fail("Expected different source sets have different resolvable Cinterop configurations")
+
+            fun Configuration.allProjectDependencies(): Set<Project?> = allDependencies
+                .filterIsInstance<ProjectDependency>()
+                .map { project.project(it.path) }
+                .toSet()
+
+            if (commonMainCinterop.allProjectDependencies() != setOf(producerAProject))
+                fail("commonMain Cinterop configuration should depend only on `producer-a` project")
+
+            if (linuxMainCinterop.allProjectDependencies() != setOf(producerAProject, producerBProject))
+                fail("linuxMain Cinterop configuration should depend on both `producer-a` and `producer-b` projects")
+        }
     }
 }

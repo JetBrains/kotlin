@@ -27,13 +27,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import javax.inject.Inject
 
-fun Project.createJavaClassFinder(scope: GlobalSearchScope): JavaClassFinder =
-    JavaClassFinderImpl().apply {
+fun Project.createJavaClassFinder(
+    scope: GlobalSearchScope,
+    annotationProvider: JavaAnnotationProvider?
+): JavaClassFinder =
+    JavaClassFinderImpl(annotationProvider).apply {
         setProjectInstance(this@createJavaClassFinder)
         setScope(scope)
     }
 
-class JavaClassFinderImpl : AbstractJavaClassFinder() {
+class JavaClassFinderImpl(private val annotationProvider: JavaAnnotationProvider?) : AbstractJavaClassFinder() {
     private lateinit var javaFacade: KotlinJavaPsiFacade
 
     @Inject
@@ -61,7 +64,12 @@ class JavaClassFinderImpl : AbstractJavaClassFinder() {
     ): JavaPackageImpl {
         val project = javaFacade.project
         val sourceFactory = JavaElementSourceFactory.getInstance(project)
-        return JavaPackageImpl(sourceFactory.createPsiSource(psiPackage), javaSearchScope, mayHaveAnnotations)
+        return JavaPackageImpl(
+            psiPackageSource = sourceFactory.createPsiSource(psiPackage),
+            scope = javaSearchScope,
+            mayHaveAnnotations = mayHaveAnnotations,
+            annotationsProvider = annotationProvider
+        )
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {

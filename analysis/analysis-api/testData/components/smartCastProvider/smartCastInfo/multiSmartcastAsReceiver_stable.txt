@@ -1,3 +1,0 @@
-expression: a
-isStable: true
-smartCastType: A & B

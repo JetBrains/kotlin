@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: Test.java
 public class Test {
     public <T> T with(Foo<T> matcher) {
@@ -19,3 +20,6 @@ fun main(foo1: Foo<Boolean>, foo2: Foo<String>) {
     x.with(foo2) checkType { _<String>() }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, javaFunction, javaType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, typeWithExtension */

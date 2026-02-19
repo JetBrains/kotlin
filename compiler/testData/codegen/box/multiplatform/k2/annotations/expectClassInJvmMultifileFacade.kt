@@ -1,13 +1,12 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM, JVM_IR
 // WITH_STDLIB
 
 // MODULE: common
 // FILE: common.kt
 
-@file:JvmMultifileClass
-@file:JvmName("Test")
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("Test")
 package test
 
 expect class Foo {

@@ -1,9 +1,7 @@
-// WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, WASM
-// KT-57181
-//  JS IR & Wasm: https://youtrack.jetbrains.com/issue/KT-51225
-// !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND_K1: ANY
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-51156
+// WITH_STDLIB
 
 // MODULE: common
 // FILE: common.kt

@@ -8,6 +8,9 @@
 
 package kotlin
 
+import java.io.ObjectInputStream
+import kotlin.internal.throwReadObjectNotSupported
+
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -15,8 +18,10 @@ package kotlin
  *
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
- * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
- * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
+ * The returned instance uses itself to synchronize on. Do not synchronize from external code on
+ * the returned instance as it may cause accidental deadlock. This behavior might be changed in the future.
+ *
+ * @sample samples.lazy.LazySamples.lazySample
  */
 public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
@@ -26,9 +31,12 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl
  *
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
- * Note that when the [LazyThreadSafetyMode.SYNCHRONIZED] mode is specified the returned instance uses itself
+ * When the [LazyThreadSafetyMode.SYNCHRONIZED] mode is specified, the returned instance uses itself
  * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
- * Also this behavior can be changed in the future.
+ * This behavior might be changed in the future.
+ *
+ * @sample samples.lazy.LazySamples.lazySynchronizedSample
+ * @sample samples.lazy.LazySamples.lazySafePublicationSample
  */
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
     when (mode) {
@@ -46,16 +54,20 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  * The returned instance uses the specified [lock] object to synchronize on.
  * When the [lock] is not specified the instance uses itself to synchronize on,
  * in this case do not synchronize from external code on the returned instance as it may cause accidental deadlock.
- * Also this behavior can be changed in the future.
+ * This behavior might be changed in the future.
+ *
+ * @sample samples.lazy.LazySamples.explicitLockLazySample
  */
 public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer, lock)
 
-
-
 private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
-    @Volatile private var _value: Any? = UNINITIALIZED_VALUE
-    // final field is required to enable safe publication of constructed instance
+
+    @Volatile
+    private var _value: Any? = UNINITIALIZED_VALUE
+
+    // final field to ensure safe publication of 'SynchronizedLazyImpl' itself through
+    // var lazy = lazy() {}
     private val lock = lock ?: this
 
     override val value: T
@@ -88,9 +100,15 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
 
 
 private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
-    @Volatile private var initializer: (() -> T)? = initializer
-    @Volatile private var _value: Any? = UNINITIALIZED_VALUE
-    // this final field is required to enable safe initialization of the constructed instance
+    @Volatile
+    private var initializer: (() -> T)? = initializer
+
+    @Volatile
+    private var _value: Any? = UNINITIALIZED_VALUE
+
+    // Artificial final field to ensure safe publication of 'SafePublicationLazyImpl' itself through
+    // var lazy = lazy() {}
+    @Suppress("unused")
     private val final: Any = UNINITIALIZED_VALUE
 
     override val value: T
@@ -119,6 +137,8 @@ private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Se
     override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 
     private fun writeReplace(): Any = InitializedLazyImpl(value)
+
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
 
     companion object {
         private val valueUpdater = java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater(

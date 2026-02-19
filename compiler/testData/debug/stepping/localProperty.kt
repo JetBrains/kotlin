@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND_K2: JVM_IR
+
+
 
 // FILE: test.kt
 fun box(): String {
@@ -14,14 +14,29 @@ fun box(): String {
     return o + k
 }
 
-// EXPECTATIONS JVM JVM_IR
-
+// EXPECTATIONS JVM_IR
 // test.kt:9 box
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:7 box
+// EXPECTATIONS FIR JVM_IR
+// test.kt:6 box
+// EXPECTATIONS JVM_IR
 // test.kt:12 box
 // test.kt:14 box
+
+// EXPECTATIONS NATIVE
+// test.kt:9 box
+// test.kt:12 box
+// test.kt:14 box
+// test.kt:14 box
+// test.kt:15 box
 
 // EXPECTATIONS JS_IR
 // test.kt:9 box
 // test.kt:12 box
 // test.kt:14 box
+
+// EXPECTATIONS WASM
+// test.kt:9 $box (8)
+// test.kt:12 $box (12)
+// test.kt:14 $box (11, 15, 11, 4)

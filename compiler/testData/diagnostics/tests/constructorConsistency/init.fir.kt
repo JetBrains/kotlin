@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My {
     val x: String
 
@@ -7,3 +8,5 @@ class My {
 
     fun foo(): String = x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, propertyDeclaration */

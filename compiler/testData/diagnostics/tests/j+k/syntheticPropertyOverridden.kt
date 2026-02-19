@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57166
 
@@ -24,3 +25,6 @@ abstract class KtCodeFragment : JavaCodeFragment {
         thisType = psiType
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaType, nullableType, override,
+propertyDeclaration */

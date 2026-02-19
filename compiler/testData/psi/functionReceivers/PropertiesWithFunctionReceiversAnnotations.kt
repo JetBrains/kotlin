@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val (@[a] T<T>.(A<B>) -> Unit).foo: P
 val (@[a] T<T>.(A<B>) ->  C<D, E>).foo: P
 val @[a] (@[a] T<T>.(A<B>) -> R).foo: P

@@ -15,7 +15,7 @@ When substantial changes are made to the public API, it may be convenient to ove
 the entire dump and compare changes later before committing: pass `-Doverwrite.output=true` 
 property to the test to do so. 
 
-Also you can use shared run configuration "Binary compatibility tests", which also 
+Also you can use shared run configuration `Test: public API binary compatibility validator[ w/Native], overwrite results`, which also 
 overwrites the results when they differ.
 
 ## What constitutes the public API

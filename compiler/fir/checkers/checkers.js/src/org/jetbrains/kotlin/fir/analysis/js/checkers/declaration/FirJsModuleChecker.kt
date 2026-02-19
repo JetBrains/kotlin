@@ -8,51 +8,61 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocalWith
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
 
-object FirJsModuleChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkSuperClass(declaration, context, reporter)
+object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
+        checkSuperClass(declaration)
 
         if (declaration is FirFile || !declaration.isEitherModuleOrNonModule(context.session)) return
 
         if (declaration is FirProperty && declaration.isVar) {
-            reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR, context)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
-        val closestNonLocal = context.closestNonLocalWith(declaration)?.symbol ?: return
+        val closestNonLocal = context.closestNonLocalWith(declaration) ?: return
 
-        if (!closestNonLocal.isNativeObject(context)) {
-            reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE, context)
+        if (!closestNonLocal.isNativeObject()) {
+            reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE)
         }
 
-        if (context.isTopLevel && context.containingFile?.isEitherModuleOrNonModule(context.session) == true) {
-            reporter.reportOn(declaration.source, FirJsErrors.NESTED_JS_MODULE_PROHIBITED, context)
+        if (context.isTopLevel && context.containingFileSymbol?.isEitherModuleOrNonModule(context.session) == true) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
 
-    private fun checkSuperClass(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkSuperClass(declaration: FirDeclaration) {
         val classDeclaration = declaration as? FirClass ?: return
-        val superClassSymbol = classDeclaration.superClassNotAny(context.session)?.toSymbol(context.session) ?: return
+        val superClassSymbol = classDeclaration.superClassNotAny(context.session)?.toSymbol() ?: return
 
         val superClassRef = classDeclaration.superTypeRefs.firstOrNull {
-            it.coneTypeOrNull?.toSymbol(context.session) == superClassSymbol
+            it.coneTypeOrNull?.toSymbol() == superClassSymbol
         }
-        checkJsModuleUsage(superClassSymbol, context, reporter, superClassRef?.source ?: declaration.source)
+        checkJsModuleUsage(superClassSymbol, superClassRef?.source ?: declaration.source)
     }
 
-    private fun FirDeclaration.isEitherModuleOrNonModule(session: FirSession) =
-        hasAnnotation(JsModule, session) || hasAnnotation(JsNonModule, session)
+    private fun FirDeclaration.isEitherModuleOrNonModule(session: FirSession): Boolean {
+        return symbol.isEitherModuleOrNonModule(session)
+    }
+
+    private fun FirBasedSymbol<*>.isEitherModuleOrNonModule(session: FirSession): Boolean {
+        return hasAnnotation(JsModule, session) || hasAnnotation(JsNonModule, session)
+    }
 }

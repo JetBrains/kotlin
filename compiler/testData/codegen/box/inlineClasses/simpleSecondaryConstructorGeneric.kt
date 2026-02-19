@@ -1,9 +1,6 @@
-// JVM backend throws runtime exception: java.lang.ClassCastException: kotlin.Unit cannot be cast to Foo
-// IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter, +ValueClassesSecondaryConstructorWithBody
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter, +ValueClassesSecondaryConstructorWithBody
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Foo<T: String>(val x: T) {

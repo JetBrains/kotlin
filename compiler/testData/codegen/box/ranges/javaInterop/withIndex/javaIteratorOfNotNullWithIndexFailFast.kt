@@ -1,13 +1,8 @@
-// !LANGUAGE: +StrictJavaNullabilityAssertions
+// LANGUAGE: +StrictJavaNullabilityAssertions +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM, JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 // WITH_STDLIB
 // JVM_TARGET: 1.8
-
-// Note: This fails on JVM (non-IR) with "Fail: should throw on get()". The not-null assertion is not generated when assigning to the
-// variables in the destructuring declaration. The root cause seems to be that
-// CodegenAnnotatingVisitor/RuntimeAssertionsOnDeclarationBodyChecker do not analyze the need for not-null assertions on
-// KtDestructuringDeclarations and their entries.
 
 // Note: this fails on JVM_IR because of KT-36347.
 // It requires potentially breaking changes in FE, so please, don't touch it until the language design decision.
@@ -18,12 +13,12 @@ import kotlin.test.*
 fun box(): String {
     // Sanity check to make sure there IS an exception even when not in a for-loop
     try {
-        val (index, i) = J.iteratorOfNotNull().withIndex().next()
+        val [index, i] = J.iteratorOfNotNull().withIndex().next()
         return "Fail: should throw on get()"
     } catch (e: NullPointerException) {}
 
     try {
-        for ((index, i) in J.iteratorOfNotNull().withIndex()) {
+        for ([index, i] in J.iteratorOfNotNull().withIndex()) {
             return "Fail: should throw on get() in loop header"
         }
     }

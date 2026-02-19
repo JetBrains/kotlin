@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-50776
@@ -10,3 +11,6 @@ abstract class StringEntities : Entities<String> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+typeParameter */

@@ -5,10 +5,10 @@
 
 #include "ObjectFactoryAllocator.hpp"
 
+#include <memory>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-
-#include "std_support/Memory.hpp"
 
 using namespace kotlin;
 
@@ -28,7 +28,7 @@ public:
     void* Alloc(size_t size) { return mock_->Alloc(size); }
 
 private:
-    std_support::unique_ptr<testing::StrictMock<MockAllocator>> mock_ = std_support::make_unique<testing::StrictMock<MockAllocator>>();
+    std::unique_ptr<testing::StrictMock<MockAllocator>> mock_ = std::make_unique<testing::StrictMock<MockAllocator>>();
 };
 
 class MockGC {

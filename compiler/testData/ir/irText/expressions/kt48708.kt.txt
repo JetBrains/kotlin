@@ -1,3 +1,6 @@
+fun takeInt(x: Int) {
+}
+
 fun test(b: Boolean) {
   val x: Int = when {
     b -> { // BLOCK
@@ -11,5 +14,3 @@ fun test(b: Boolean) {
   takeInt(x = x)
 }
 
-fun takeInt(x: Int) {
-}

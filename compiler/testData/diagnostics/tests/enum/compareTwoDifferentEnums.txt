@@ -1,8 +1,11 @@
 package
 
 public fun jj(/*0*/ a: JavaEnumA, /*1*/ b: JavaEnumB): kotlin.Boolean
+public fun jj2(/*0*/ a: JavaEnumA, /*1*/ b: JavaEnumB): kotlin.Boolean
 public fun jk(/*0*/ a: JavaEnumA, /*1*/ b: KotlinEnumB): kotlin.Boolean
+public fun jk2(/*0*/ a: JavaEnumA, /*1*/ b: KotlinEnumB): kotlin.Boolean
 public fun kk(/*0*/ a: KotlinEnumA, /*1*/ b: KotlinEnumB): kotlin.Boolean
+public fun kk2(/*0*/ a: KotlinEnumA, /*1*/ b: KotlinEnumB): kotlin.Boolean
 
 public final enum class JavaEnumA : kotlin.Enum<JavaEnumA!> {
     public constructor JavaEnumA()

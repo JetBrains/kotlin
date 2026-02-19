@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt
@@ -34,3 +35,6 @@ public fun X.gav(): Int {
     else
         return 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, nullableType, propertyDeclaration, smartcast */

@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val xs = listOf("a", "b", "c", "d")
@@ -5,7 +6,7 @@ val xs = listOf("a", "b", "c", "d")
 fun box(): String {
     val s = StringBuilder()
 
-    for ((index, x) in xs.withIndex()) {
+    for ([index, x] in xs.withIndex()) {
         if (index == 0) continue
         if (index == 3) break
         s.append("$index:$x;")

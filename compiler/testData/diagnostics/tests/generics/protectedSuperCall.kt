@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: GA.kt
 
 package test.x
@@ -20,3 +21,6 @@ class C : GA<Any>() {
 fun main(args: Array<String>) {
     C.bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nullableType, objectDeclaration,
+primaryConstructor, typeParameter */

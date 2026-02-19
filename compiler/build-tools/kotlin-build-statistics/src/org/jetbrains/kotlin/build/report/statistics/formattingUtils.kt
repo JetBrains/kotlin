@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.statistics
 
 internal fun formatTime(ms: Long): String {
     val seconds = ms.toDouble() / 1_000
-    return seconds.asString(2) + " s"
+    return seconds.asString(3) + " s"
 }
 
 private const val kbSize = 1024

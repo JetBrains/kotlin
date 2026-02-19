@@ -6,19 +6,17 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.createFile
-import kotlin.io.path.exists
+import kotlin.io.path.*
 
 internal fun Path.applyAndroidTestFixes() {
     // Path relative to the current gradle module project dir
-    val keystoreFile = Paths.get("src/test/resources/common/debug.keystore")
+    val keystoreFile = Path("src/test/resources/common/debug.keystore")
     assert(keystoreFile.exists()) {
         "Common 'debug.keystore' file does not exists in ${keystoreFile.toAbsolutePath()} location!"
     }
     resolve("gradle.properties").also { if (!it.exists()) it.createFile() }.append(
         """
-        |test.fixes.android.debugKeystore=${keystoreFile.toAbsolutePath().toString().normalizePath()}
+        |test.fixes.android.debugKeystore=${keystoreFile.absolute().normalize().invariantSeparatorsPathString}
         |
         """.trimMargin()
     )

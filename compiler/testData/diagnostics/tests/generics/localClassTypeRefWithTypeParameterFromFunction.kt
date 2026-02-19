@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class C1<T1>
 
@@ -12,3 +13,6 @@ class A<T> {
     private inner class Inner
     private val test = ArrayList<Inner>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localClass, nullableType, propertyDeclaration,
+typeParameter */

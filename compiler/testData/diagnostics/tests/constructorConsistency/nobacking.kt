@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class My {
 
@@ -11,3 +12,5 @@ class My {
 
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, init, integerLiteral, propertyDeclaration */

@@ -1,10 +1,12 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1-common
 // FILE: common.kt
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Container {
-    <!INCOMPATIBLE_MATCHING{JVM}!>internal open fun internalFun()<!>
-}<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class Container {
+    internal open fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>internalFun<!>()
+}
 
 // MODULE: m2-jvm()()(m1-common)
 
@@ -18,4 +20,6 @@ public class Foo {
 
 // FILE: jvm.kt
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Container<!> = foo.Foo
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Container<!> = foo.Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration */

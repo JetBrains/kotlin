@@ -1,0 +1,40 @@
+// S0.class
+// ------------------------------------------
+public abstract class S0 : suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// S0S0.class
+// ------------------------------------------
+public abstract class S0S0 : suspend kotlin/Function1<kotlin/coroutines/Continuation<suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Any>, kotlin/Any?>>, kotlin/Any?> {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// S1.class
+// ------------------------------------------
+public abstract class S1 : suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/String>, kotlin/Any?> {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// S1N.class
+// ------------------------------------------
+public abstract class S1N : suspend kotlin/Function2<kotlin/Int, kotlin/coroutines/Continuation<kotlin/String?>, kotlin/Any?> {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

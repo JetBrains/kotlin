@@ -1,4 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -8,7 +9,7 @@ expect class MyList {
 
 open class Wrapper(val list: MyList)
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual open class MyList {
@@ -37,3 +38,6 @@ class DerivedWrapper : Wrapper(MyList()) {
         list.set(2, 3)
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

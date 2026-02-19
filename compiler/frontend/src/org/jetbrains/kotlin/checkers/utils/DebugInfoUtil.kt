@@ -30,7 +30,7 @@ object DebugInfoUtil {
     private val EXCLUDED = TokenSet.create(
         KtTokens.COLON,
         KtTokens.AS_KEYWORD,
-        KtTokens.`AS_SAFE`,
+        KtTokens.AS_SAFE,
         KtTokens.IS_KEYWORD,
         KtTokens.NOT_IS,
         KtTokens.OROR,
@@ -172,7 +172,7 @@ object DebugInfoUtil {
                 }
                 if (resolved && markedWithError) {
                     if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(factory)) {
-                        debugInfoReporter.reportUnresolvedWithTarget(expression, target!!)
+                        debugInfoReporter.reportUnresolvedWithTarget(expression, target)
                     }
                 } else if (!resolved && !markedWithError) {
                     debugInfoReporter.reportMissingUnresolved(expression)

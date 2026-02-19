@@ -1,8 +1,0 @@
-Before shortening: some.SomeAnnotation
-with DO_NOT_SHORTEN:
-with SHORTEN_IF_ALREADY_IMPORTED:
-[type] some.SomeAnnotation
-with SHORTEN_AND_IMPORT:
-[type] some.SomeAnnotation
-with SHORTEN_AND_STAR_IMPORT:
-[type] some.SomeAnnotation

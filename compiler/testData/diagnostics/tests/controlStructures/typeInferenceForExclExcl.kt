@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: A.java
 public class A {
     public static String foo() {
@@ -19,3 +20,6 @@ fun test11() {
     A.foo()!! checkType { _<String>() }
     A.foo()!! checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String?>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, javaFunction, lambdaLiteral, nullableType, typeConstraint, typeParameter, typeWithExtension */

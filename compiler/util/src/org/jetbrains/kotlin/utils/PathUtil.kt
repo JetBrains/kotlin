@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
-import org.jetbrains.jps.model.java.impl.JavaSdkUtil
 
 import java.io.File
 import java.nio.file.Paths
@@ -80,8 +79,6 @@ object PathUtil {
     const val KOTLINX_COROUTINES_CORE_JAR = "$KOTLINX_COROUTINES_CORE_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_IMPL_NAME = "kotlin-scripting-compiler-impl"
     const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "$KOTLIN_SCRIPTING_COMPILER_IMPL_NAME.jar"
-    const val JS_ENGINES_NAME = "js.engines"
-    const val JS_ENGINES_JAR = "$JS_ENGINES_NAME.jar"
     const val MAIN_KTS_NAME = "kotlin-main-kts"
 
     val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS = arrayOf(
@@ -97,9 +94,6 @@ object PathUtil {
     const val KOTLIN_TEST_JS_JAR = "$KOTLIN_TEST_JS_NAME.jar"
 
     const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
-
-    const val TROVE4J_NAME = "trove4j"
-    const val TROVE4J_JAR = "$TROVE4J_NAME.jar"
 
     const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
     const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"

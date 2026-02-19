@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
-import org.jetbrains.kotlin.fir.checkers.generator.getGenerationPath
+import org.jetbrains.kotlin.generators.util.getGenerationPath
 import java.io.File
 
 fun generateDiagnostics(rootPath: File, packageName: String, diagnosticList: DiagnosticList, starImportsToAdd: Set<String>) {

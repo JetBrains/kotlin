@@ -1,26 +1,34 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
+}
 
 android {
-    namespace "org.maw.library"
-    compileSdkVersion 33
+    namespace = "org.maw.library"
+    compileSdkVersion = 33
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdkVersion = 21
+        targetSdkVersion = 33
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
-        dataBinding true
+        dataBinding = true
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
+        }
+    }
+
+    packagingOptions {
+        resources {
+            excludes += "META-INF/kotlinx_coroutines_core.version"
         }
     }
 }

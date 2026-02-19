@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-30756
 
 fun condition(): Boolean = true
@@ -77,3 +78,6 @@ fun test_8() {
 
     a<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, doWhileLoop, elvisExpression, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, smartcast, whileLoop */

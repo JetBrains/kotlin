@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-14705
 
 enum class En { A, B, С }
@@ -38,3 +39,7 @@ fun bar(x: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression,
+intersectionType, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

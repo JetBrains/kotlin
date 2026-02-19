@@ -55,6 +55,8 @@ open internal class GroupQuantifierSet(
             return result
         }
 
+        // If a group consumed nothing, we should not dive into the recursion as it will never end.
+        // Instead, let's try to match next.
         if (!innerSet.hasConsumed(matchResult)) {
             return matchNext()
         }
@@ -93,4 +95,9 @@ open internal class GroupQuantifierSet(
 
     override val name: String
             get() = quantifier.toString()
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        innerSet.reportOwnProperties(properties) // report own, don't jump into a recursion
+        properties.nonTrivialBacktracking = true
+    }
 }

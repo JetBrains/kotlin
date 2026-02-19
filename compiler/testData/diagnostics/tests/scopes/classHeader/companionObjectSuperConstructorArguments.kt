@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 open class S(val a: Any, val b: Any, val c: Any) {}
 
 interface A {
@@ -18,3 +18,6 @@ class B {
         fun func() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, objectDeclaration, primaryConstructor, propertyDeclaration */

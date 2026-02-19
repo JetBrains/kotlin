@@ -1,0 +1,15 @@
+Classifier names:
+  InnerClass
+  NestedClass
+
+Callable names:
+  <init>
+  bar
+  field
+  foo
+  getActualRandomNumber
+  getRandomNumber
+  hello
+  superBar
+  superField
+  superFoo

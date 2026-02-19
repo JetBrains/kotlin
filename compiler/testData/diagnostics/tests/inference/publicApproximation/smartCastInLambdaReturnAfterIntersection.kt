@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 
 interface Base {
@@ -20,3 +21,7 @@ fun smartCastAfterIntersection(a: One, b: Two) = run {
 fun test(one: One, two: Two) {
     smartCastAfterIntersection(one, two)<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>base<!>()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, smartcast, typeConstraint, typeParameter,
+vararg */

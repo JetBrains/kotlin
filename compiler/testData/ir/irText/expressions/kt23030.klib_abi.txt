@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    final fun (kotlin/Int).compareTo(kotlin/Char): kotlin/Int // /C.compareTo|compareTo@kotlin.Int(kotlin.Char){}[0]
+    final fun testMemberExtensionCompareToCall(kotlin/Int, kotlin/Char): kotlin/Boolean // /C.testMemberExtensionCompareToCall|testMemberExtensionCompareToCall(kotlin.Int;kotlin.Char){}[0]
+    final fun testMemberExtensionCompareToCallWithSmartCast(kotlin/Any, kotlin/Any): kotlin/Boolean // /C.testMemberExtensionCompareToCallWithSmartCast|testMemberExtensionCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}[0]
+}
+final fun (kotlin/Int)./compareTo(kotlin/Char): kotlin/Int // /compareTo|compareTo@kotlin.Int(kotlin.Char){}[0]
+final fun /testEqualsWithSmartCast(kotlin/Any, kotlin/Any): kotlin/Boolean // /testEqualsWithSmartCast|testEqualsWithSmartCast(kotlin.Any;kotlin.Any){}[0]
+final fun /testOverloadedCompareToCall(kotlin/Int, kotlin/Char): kotlin/Boolean // /testOverloadedCompareToCall|testOverloadedCompareToCall(kotlin.Int;kotlin.Char){}[0]
+final fun /testOverloadedCompareToCallWithSmartCast(kotlin/Any, kotlin/Any): kotlin/Boolean // /testOverloadedCompareToCallWithSmartCast|testOverloadedCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}[0]

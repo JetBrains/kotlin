@@ -22,7 +22,7 @@
     </dependencies>
 
     <properties>
-        <kotlin.compiler.jdkHome>${jdk_1_7}</kotlin.compiler.jdkHome>
+        <kotlin.compiler.jdkHome>${kotlinCompilerJdk}</kotlin.compiler.jdkHome>
     </properties>
 
     <build>
@@ -47,27 +47,27 @@
 
     <profiles>
         <profile>
-            <id>jdk_1_7_new</id>
+            <id>jdk_1_8_new</id>
             <activation>
                 <property>
-                    <name>env.JDK_1_7</name>
+                    <name>env.JDK_1_8</name>
                 </property>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <jdk_1_7>${env.JDK_1_7}</jdk_1_7>
+                <kotlinCompilerJdk>${env.JDK_1_8}</kotlinCompilerJdk>
             </properties>
         </profile>
         <profile>
-            <id>jdk_1_7_old</id>
+            <id>jdk_1_8_old</id>
             <activation>
                 <property>
-                    <name>!env.JDK_1_7</name>
+                    <name>!env.JDK_1_8</name>
                 </property>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <jdk_1_7>${env.JDK_17}</jdk_1_7>
+                <kotlinCompilerJdk>${env.JDK_18}</kotlinCompilerJdk>
             </properties>
         </profile>
     </profiles>

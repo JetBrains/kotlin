@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FULL_JDK
 
 import java.util.*
@@ -46,3 +47,6 @@ fun fooLinkedHashSet() {
     val b4: Collection<String?> = x
     val b6: MutableCollection<String?> = <!TYPE_MISMATCH!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration,
+stringLiteral */

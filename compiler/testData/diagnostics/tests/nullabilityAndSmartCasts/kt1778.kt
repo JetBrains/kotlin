@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// WITH_EXTENDED_CHECKERS
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 //KT-1778 Automatically cast error
 package kt1778
 
@@ -13,3 +13,8 @@ fun main(args : Array<String>) {
         if ("a" == x && "a" == x) <!DEBUG_INFO_SMARTCAST!>x<!>.length else <!DEBUG_INFO_SMARTCAST!>x<!>.length() // <– ELSE ERROR
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, disjunctionExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, infix, integerLiteral, intersectionType,
+isExpression, javaFunction, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter,
+typeWithExtension */

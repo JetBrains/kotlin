@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: -DefinitelyNonNullableTypes
+// LANGUAGE: -DefinitelyNonNullableTypes
 
 fun Any.bar() {}
 fun Boolean.baz() {}
@@ -15,3 +16,6 @@ inline fun <reified T> foo(v: Any?): T {
 
     return v as T <!SYNTAX!>& Any<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, comparisonExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+inline, integerLiteral, isExpression, nullableType, propertyDeclaration, reified, typeParameter */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface RecursiveGeneric<T : RecursiveGeneric<T, U>, U>
 
@@ -12,3 +13,6 @@ fun foo(a: A, b: B, c: C) {
     select(a, b)
     select(a, c)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, outProjection,
+starProjection, typeConstraint, typeParameter */

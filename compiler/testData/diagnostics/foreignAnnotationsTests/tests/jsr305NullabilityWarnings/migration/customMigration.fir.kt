@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: ignore
 
 // FILE: MyErrorNonnull.java
@@ -72,11 +72,11 @@ fun main(a: A) {
     a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     a.foo2("")
-    a.foo2(null)
+    a.foo2(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
     a.foo3("")
     a.foo3(null)
 
     a.foo4("")
-    a.foo4(null)
+    a.foo4(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

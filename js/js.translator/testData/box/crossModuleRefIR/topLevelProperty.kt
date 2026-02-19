@@ -1,5 +1,4 @@
 // SPLIT_PER_MODULE
-// EXPECTED_REACHABLE_NODES: 1287
 // MODULE: lib
 // FILE: lib.kt
 package lib

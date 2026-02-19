@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.kt
 
@@ -21,3 +22,7 @@ class B(x: Int) : A<Int>(x) {
         override fun create(): A<Int>? = createWith(0, ::B)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, functionalType, inline,
+integerLiteral, nullableType, objectDeclaration, override, primaryConstructor, propertyDeclaration, reified,
+typeParameter */

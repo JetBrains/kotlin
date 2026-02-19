@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
 
 interface Bound
 
@@ -50,3 +51,6 @@ fun test8() {
         <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReifiedUnbound<!>()
     )
 }
+
+/* GENERATED_FIR_TAGS: dnnType, elvisExpression, functionDeclaration, inline, interfaceDeclaration, nullableType,
+reified, typeConstraint, typeParameter */

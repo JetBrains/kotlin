@@ -11,11 +11,11 @@
   <artifactId>kotlin-test-junit5</artifactId>
   <version>ArtifactsTest.version</version>
   <name>Kotlin Test Junit5</name>
-  <description>Kotlin Test Support for junit5</description>
+  <description>Kotlin Test library support for JUnit5</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
@@ -41,13 +41,19 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.6.3</version>
+      <version>5.10.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.6.3</version>
+      <version>5.10.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>1.10.1</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

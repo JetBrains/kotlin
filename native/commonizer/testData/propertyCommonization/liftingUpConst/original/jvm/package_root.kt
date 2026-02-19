@@ -4,7 +4,7 @@ const val property3 = 42
 val property4 = 42 // intentionally left as non-const
 
 const val property5: Byte = 42
-const val property6: Byte = 142
+const val property6: Byte = 14
 
 const val property7: Short = 42
 const val property8: Short = 142

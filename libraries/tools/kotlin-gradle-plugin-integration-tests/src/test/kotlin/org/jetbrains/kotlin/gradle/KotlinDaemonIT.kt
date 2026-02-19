@@ -23,7 +23,7 @@ import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.test.assertTrue
@@ -104,14 +104,16 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
 
     @DisplayName("On Kotlin daemon OOM helpful message is displayed")
     @GradleTest
+    @Disabled("KTI-2127 Flaky test displaySpecialMessageOnOOM")
     fun displaySpecialMessageOnOOM(gradleVersion: GradleVersion) {
         project(
             "kotlinProject",
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
         ) {
             gradleProperties.append(
-                "\nkotlin.daemon.jvmargs=-Xmx12m"
+                "\nkotlin.daemon.jvmargs=-Xmx20m"
             )
 
             buildAndFail("assemble") {
@@ -138,7 +140,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     }
 
     @DisplayName("KT-56789: Kotlin daemon does not triggers OOM in Metaspace on multiple invocations")
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     fun testMultipleCompilations(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
@@ -156,11 +158,11 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     }
 
     @DisplayName("KT-57154: Compiler should use specified toolchain regardless of Gradle Runtime JDK")
+    @Disabled("KT-58894: re-enable once fixed")
     @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11, JavaVersion.VERSION_17])
     @GradleWithJdkTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     internal fun testCompilerRuntimeJdkToolchainIndependence(gradleVersion: GradleVersion, jdkVersion: JdkVersions.ProvidedJdk) {
-        assumeFalse(defaultBuildOptions.isK2ByDefault, "KT-58894")
         project(
             projectName = "kotlin-java-toolchain/onlyJdk11Compatible",
             gradleVersion = gradleVersion,

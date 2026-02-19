@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 public class A {
     public static void take(A[] array) {}
@@ -16,3 +17,5 @@ fun test(array: Array<B>) {
     takeA(<!ARGUMENT_TYPE_MISMATCH!>array<!>)
     takeOutA(array)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, outProjection */

@@ -5,32 +5,27 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.types.valueParameterName
 import org.jetbrains.kotlin.fir.types.type
 
-object FirDuplicateParameterNameInFunctionTypeChecker : FirTypeRefChecker() {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef) return
+object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
+        if (!typeRef.coneType.isSomeFunctionType(context.session)) return
 
-        val nameToArgumentProjection = typeRef.type.typeArguments.dropLast(1).groupBy {
-            val type = it.type ?: return@groupBy null
-            val annotation = type.customAnnotations.getAnnotationByClassId(StandardNames.FqNames.parameterNameClassId, context.session)
-            val nameEntry = annotation?.argumentMapping?.mapping?.get(StandardNames.NAME)
-            (nameEntry as? FirConstExpression<*>)?.value as? String
-        }
+        val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1)
+            .groupBy { it.type?.valueParameterName(context.session) }
 
         for ((name, projections) in nameToArgumentProjection) {
             if (name != null && projections.size >= 2) {
-                reporter.reportOn(typeRef.source, FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE, context)
+                reporter.reportOn(typeRef.source, FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE)
             }
         }
     }

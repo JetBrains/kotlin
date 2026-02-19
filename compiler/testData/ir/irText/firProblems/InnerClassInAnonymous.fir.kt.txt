@@ -1,18 +1,21 @@
 fun box(): String {
   val obj: <no name provided> = { // BLOCK
     local class <no name provided> {
-      constructor() /* primary */ {
-        super/*Any*/()
-        /* <init>() */
-
-      }
-
       val end: String
         field = "K"
         get
 
-      fun foo(): String {
-        return <this>.Some(s = "O").bar()
+      local open inner class Base {
+        val s: String
+          field = s
+          get
+
+        constructor(s: String) /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
       }
 
       local inner class Some : Base {
@@ -28,17 +31,14 @@ fun box(): String {
 
       }
 
-      local open inner class Base {
-        constructor(s: String) /* primary */ {
-          super/*Any*/()
-          /* <init>() */
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
 
-        }
+      }
 
-        val s: String
-          field = s
-          get
-
+      fun foo(): String {
+        return <this>.Some(s = "O").bar()
       }
 
     }
@@ -47,3 +47,4 @@ fun box(): String {
   }
   return obj.foo()
 }
+

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -16,14 +17,15 @@ import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DynamicExtension
 
-object FirDynamicReceiverChecker : FirCallableDeclarationChecker() {
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirDynamicReceiverChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (
             declaration.receiverParameter?.typeRef?.coneType is ConeDynamicType &&
             !declaration.hasAnnotation(DynamicExtension, context.session) &&
             declaration !is FirAnonymousFunction
         ) {
-            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED, context)
+            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED)
         }
     }
 }

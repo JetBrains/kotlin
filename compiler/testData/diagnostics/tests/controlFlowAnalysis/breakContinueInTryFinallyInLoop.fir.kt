@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-51759
 
 fun testBreak(b: Boolean, s: String?) {
@@ -21,3 +22,6 @@ fun testContinue(b: Boolean, s: String?) {
         x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, continue, elvisExpression, functionDeclaration,
+localProperty, nullableType, propertyDeclaration, smartcast, tryExpression, whileLoop */

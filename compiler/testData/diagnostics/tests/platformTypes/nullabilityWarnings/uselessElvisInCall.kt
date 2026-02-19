@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: J.java
 
@@ -27,3 +28,6 @@ fun foo(a: Any) {}
 class Bar {
     operator fun invoke(a: Any) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, javaProperty, javaType, localProperty,
+operator, propertyDeclaration, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-9134: smart cast is not provided inside lambda call
 
 @Target(AnnotationTarget.EXPRESSION)
@@ -9,3 +10,6 @@ fun bar(): Int = @My {
     i = 42
     <!DEBUG_INFO_SMARTCAST!>i<!>
 }()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

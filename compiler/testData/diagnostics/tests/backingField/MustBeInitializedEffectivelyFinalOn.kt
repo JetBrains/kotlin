@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE:+TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck
 open class Base {
@@ -11,3 +12,5 @@ class Foo : Base() {
         x = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, override, propertyDeclaration, stringLiteral */

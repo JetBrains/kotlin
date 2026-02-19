@@ -5,8 +5,8 @@ FILE: contextReceivers.kt
     public? final? val x: Int
         public? get(): Int { LAZY_BLOCK }
     context(A, b@B)
-    public? final? class C : R|kotlin/Any| {
-        public? constructor(): R|C| {
+    public final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|kotlin/Any|>
         }
 

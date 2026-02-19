@@ -1,31 +1,47 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirPartialBodyResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-internal abstract class LLFirLazyResolver(
-    val resolverPhase: FirResolvePhase,
-) {
-    abstract fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        session: FirSession,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    )
+/**
+ * This class is responsible for [LLFirResolveTarget] resolution and "is resolved" check after that.
+ *
+ * @see LLFirLazyResolverRunner
+ * @see LLFirTargetResolver
+ */
+internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
+    fun resolve(target: LLFirResolveTarget) {
+        val resolver = createTargetResolver(target)
+        requireWithAttachment(
+            resolverPhase == resolver.resolverPhase,
+            {
+                """
+                Phase mismatch between ${this::class.simpleName} and ${resolver::class.simpleName}.
+                The resolver phase is ${resolver.resolverPhase}, but $resolverPhase is expected
+                """.trimIndent()
+            },
+        )
+
+        resolver.resolveDesignation()
+
+        if (target !is LLFirPartialBodyResolveTarget) {
+            target.forEachTarget(::checkIsResolved)
+        }
+
+        checkCanceled()
+    }
+
+    protected abstract fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver
 
     fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(resolverPhase)
@@ -38,65 +54,51 @@ internal abstract class LLFirLazyResolver(
      * Will be performed to resolved declaration and its nested declarations
      * @see checkNestedDeclarationsAreResolved
      */
-    protected open fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {}
-
-    fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
-            target = target,
-            newPhase = resolverPhase,
-            updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
-        )
-    }
-
-    fun checkIsResolved(designation: LLFirResolveTarget) {
-        designation.forEachTarget(::checkIsResolved)
-    }
+    protected abstract fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState)
 
     private fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {
         if (target !is FirDeclaration) return
 
         checkFunctionParametersAreResolved(target)
-        checkPropertyAccessorsAreResolved(target)
-        checkPropertyBackingFieldIsResolved(target)
+        checkVariableSubDeclarationsAreResolved(target)
         checkTypeParametersAreResolved(target)
-        checkScriptDependentDeclaration(target)
+        checkReceiversAreResolved(target)
     }
 
-    private fun checkPropertyAccessorsAreResolved(declaration: FirDeclaration) {
-        if (declaration is FirProperty) {
-            declaration.getter?.let { checkIsResolved(it) }
-            declaration.setter?.let { checkIsResolved(it) }
+    private fun checkReceiversAreResolved(declaration: FirDeclaration) {
+        when (declaration) {
+            is FirCallableDeclaration -> {
+                declaration.receiverParameter?.let(::checkIsResolved)
+                declaration.contextParameters.forEach(::checkIsResolved)
+            }
+
+            is FirScript -> declaration.receivers.forEach(::checkIsResolved)
+            is FirRegularClass -> declaration.contextParameters.forEach(::checkIsResolved)
+            is FirDanglingModifierList -> declaration.contextParameters.forEach(::checkIsResolved)
+            else -> {}
         }
     }
 
+    private fun checkVariableSubDeclarationsAreResolved(declaration: FirDeclaration) {
+        if (declaration !is FirVariable) return
 
-    private fun checkPropertyBackingFieldIsResolved(declaration: FirDeclaration) {
-        if (declaration is FirProperty) {
-            declaration.backingField?.let { checkIsResolved(it) }
-        }
+        declaration.getter?.let(::checkIsResolved)
+        declaration.setter?.let(::checkIsResolved)
+        declaration.backingField?.let(::checkIsResolved)
     }
-
 
     private fun checkFunctionParametersAreResolved(declaration: FirDeclaration) {
-        if (declaration is FirFunction) {
-            for (parameter in declaration.valueParameters) {
-                checkIsResolved(parameter)
-            }
-        }
+        if (declaration !is FirFunction) return
+
+        declaration.valueParameters.forEach(::checkIsResolved)
     }
 
     private fun checkTypeParametersAreResolved(declaration: FirDeclaration) {
-        if (declaration is FirTypeParameterRefsOwner) {
-            for (parameter in declaration.typeParameters) {
-                if (parameter is FirTypeParameter) {
-                    checkIsResolved(parameter)
-                }
-            }
-        }
-    }
+        if (declaration !is FirTypeParameterRefsOwner) return
 
-    private fun checkScriptDependentDeclaration(declaration: FirDeclaration) {
-        if (declaration !is FirScript) return
-        declaration.forEachDependentDeclaration(::checkIsResolved)
+        for (parameter in declaration.typeParameters) {
+            if (parameter !is FirTypeParameter) continue
+            checkIsResolved(parameter)
+        }
     }
 }

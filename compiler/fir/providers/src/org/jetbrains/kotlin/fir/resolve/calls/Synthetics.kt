@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature.DontCreateSyntheticPropertiesWithoutBaseJavaGetter
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAccessors
-import org.jetbrains.kotlin.fir.declarations.isHiddenEverywhereBesideSuperCalls
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope.SyntheticGetterCompatibility.*
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -47,6 +48,7 @@ class FirSyntheticPropertiesScope private constructor(
     private val dispatchReceiverType: ConeKotlinType,
     private val syntheticNamesProvider: FirSyntheticNamesProvider,
     private val returnTypeCalculator: ReturnTypeCalculator?,
+    private val isSuperCall: Boolean,
 ) : FirContainingNamesAwareScope() {
     companion object {
         fun createIfSyntheticNamesProviderIsDefined(
@@ -54,6 +56,7 @@ class FirSyntheticPropertiesScope private constructor(
             dispatchReceiverType: ConeKotlinType,
             baseScope: FirTypeScope,
             returnTypeCalculator: ReturnTypeCalculator? = null,
+            isSuperCall: Boolean = false,
         ): FirSyntheticPropertiesScope? {
             val syntheticNamesProvider = session.syntheticNamesProvider ?: return null
             return FirSyntheticPropertiesScope(
@@ -62,6 +65,7 @@ class FirSyntheticPropertiesScope private constructor(
                 dispatchReceiverType,
                 syntheticNamesProvider,
                 returnTypeCalculator,
+                isSuperCall,
             )
         }
     }
@@ -113,41 +117,46 @@ class FirSyntheticPropertiesScope private constructor(
         if (getter.valueParameters.isNotEmpty()) return
         if (getter.isStatic) return
 
-        var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
+        // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
+        val (getterCompatibility, deprecatedOverrideOfHidden, originalJavaGetter) = getterSymbol.computeGetterCompatibility()
+        if (getterCompatibility == Incompatible) return
+
+        var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.coneType
         if (getterReturnType == null && needCheckForSetter) {
             // During implicit body resolve phase, we can encounter a reference to a not yet resolved Kotlin class that inherits a
             // synthetic property from a Java class. In that case, resolve the return type here, ignoring error types (e.g. cycles).
-            getterReturnType = returnTypeCalculator?.tryCalculateReturnTypeOrNull(getter)?.type?.takeUnless { it is ConeErrorType }
+            getterReturnType = returnTypeCalculator?.tryCalculateReturnTypeOrNull(getter)?.coneType?.takeUnless { it is ConeErrorType }
         }
 
         // `void` type is the only case when we've got not-nullable non-enhanced Unit from Java
         // And it doesn't make sense to make a synthetic property for `void` typed getters
-        if (getterReturnType?.isUnit == true && CompilerConeAttributes.EnhancedNullability !in getterReturnType.attributes) return
+        val getterReturnTypeForUnitCheck = originalJavaGetter?.fir?.returnTypeRef?.coneType ?: getterReturnType
+        if (getterReturnTypeForUnitCheck?.isUnit == true && !getterReturnTypeForUnitCheck.hasEnhancedNullability) return
 
-        // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
-        if (!getterSymbol.mayBeUsedAsGetterForSyntheticProperty()) return
-
-        var matchingSetter: FirSimpleFunction? = null
+        var matchingSetter: FirNamedFunction? = null
         if (needCheckForSetter && getterReturnType != null) {
             val setterName = syntheticNamesProvider.setterNameByGetterName(getterName)
             baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirNamedFunctionSymbol) {
                 if (matchingSetter != null) return
 
                 val setter = setterSymbol.fir
-                val parameter = setter.valueParameters.singleOrNull() ?: return
                 if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
-                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
+                val parameter = setter.valueParameters.singleOrNull() ?: return
+                if (parameter.isVararg) return
+                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.coneType ?: return
                 if (!setterTypeIsConsistentWithGetterType(propertyName, getterSymbol, setterSymbol, parameterType)) return
                 matchingSetter = setterSymbol.fir
             })
         }
 
-        val property = buildSyntheticProperty(propertyName, getter, matchingSetter)
+        val property = buildSyntheticProperty(propertyName, getter, matchingSetter, getterCompatibility, deprecatedOverrideOfHidden)
         getter.originalForSubstitutionOverride?.let {
             property.originalForSubstitutionOverrideAttr = buildSyntheticProperty(
                 propertyName,
                 it,
-                matchingSetter?.originalForSubstitutionOverride ?: matchingSetter
+                matchingSetter?.originalForSubstitutionOverride ?: matchingSetter,
+                getterCompatibility,
+                deprecatedOverrideOfHidden,
             )
         }
         val syntheticSymbol = property.symbol
@@ -159,7 +168,13 @@ class FirSyntheticPropertiesScope private constructor(
         processor(syntheticSymbol)
     }
 
-    private fun buildSyntheticProperty(propertyName: Name, getter: FirSimpleFunction, setter: FirSimpleFunction?): FirSyntheticProperty {
+    private fun buildSyntheticProperty(
+        propertyName: Name,
+        getter: FirNamedFunction,
+        setter: FirNamedFunction?,
+        getterCompatibility: SyntheticGetterCompatibility,
+        deprecatedOverrideOfHidden: Boolean,
+    ): FirSyntheticProperty {
         val classLookupTag = getter.symbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
         val packageName = classLookupTag?.classId?.packageFqName ?: getter.symbol.callableId.packageName
         val className = classLookupTag?.classId?.relativeClassName
@@ -174,6 +189,13 @@ class FirSyntheticPropertiesScope private constructor(
             delegateGetter = getter
             delegateSetter = setter
             deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
+        }.apply {
+            if (getterCompatibility != HasJavaOrigin) {
+                noJavaOrigin = true
+            }
+            if (deprecatedOverrideOfHidden) {
+                this.deprecatedOverrideOfHidden = true
+            }
         }
     }
 
@@ -183,7 +205,7 @@ class FirSyntheticPropertiesScope private constructor(
         setterSymbol: FirNamedFunctionSymbol,
         setterParameterType: ConeKotlinType
     ): Boolean {
-        val getterReturnType = getterSymbol.resolvedReturnTypeRef.type
+        val getterReturnType = getterSymbol.resolvedReturnTypeRef.coneType
         if (AbstractTypeChecker.equalTypes(session.typeContext, getterReturnType, setterParameterType)) return true
         if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, getterReturnType, setterParameterType)) return false
 
@@ -213,7 +235,7 @@ class FirSyntheticPropertiesScope private constructor(
             baseScope.processDirectOverriddenFunctionsWithBaseScope(symbolToStart) l@{ symbol, scope ->
                 if (hasMatchingSetter) return@l ProcessorAction.STOP
                 val baseDispatchReceiverType = symbol.dispatchReceiverType ?: return@l ProcessorAction.NEXT
-                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider, returnTypeCalculator)
+                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider, returnTypeCalculator, isSuperCall)
                 val baseProperties = syntheticScope.getProperties(propertyName)
                 val propertyFound = baseProperties.any {
                     val baseProperty = it.fir
@@ -233,22 +255,155 @@ class FirSyntheticPropertiesScope private constructor(
                 || processOverrides(getterSymbol, setterSymbolToCompare = setterSymbol)
     }
 
-    private fun FirNamedFunctionSymbol.mayBeUsedAsGetterForSyntheticProperty(): Boolean {
-        var result = false
+    private enum class SyntheticGetterCompatibility {
+        Incompatible,
+        HasKotlinOrigin,
+        HasJavaOrigin
+    }
+
+    private data class GetterCompatibilityResult(
+        val compatibility: SyntheticGetterCompatibility,
+        val deprecatedOverrideOfHidden: Boolean,
+        val originalJavaGetter: FirNamedFunctionSymbol?,
+    )
+    /**
+     * This method computes if getter method can be used as base for synthetic property based on overridden hierarchy
+     * There are three kinds of compatibility:
+     * - `Incompatible` (obvious)
+     * - `HasJavaOrigin` indicates that this getter is based on root java function (ok to create property)
+     * - `HasKotlinOrigin` shows that there is no base java getter overridden. Property will be created only with some LV (KT-64358)
+     */
+    private fun FirNamedFunctionSymbol.computeGetterCompatibility(): GetterCompatibilityResult {
+        val kotlinBaseAllowed = !session.languageVersionSettings.supportsFeature(DontCreateSyntheticPropertiesWithoutBaseJavaGetter)
+
         var isHiddenEverywhereBesideSuperCalls = false
-        baseScope.processOverriddenFunctionsAndSelf(this) {
-            val unwrapped = it.unwrapFakeOverrides().fir
-            if (unwrapped.origin == FirDeclarationOrigin.Enhancement) {
-                result = true
+        var isDeprecatedOverrideOfHidden = false
+        var result = Incompatible
+        var originalJavaGetter: FirNamedFunctionSymbol? = null
+
+        val visited = mutableSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
+        fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope, isOverridden: Boolean) {
+            val hidden = symbol.hiddenStatusOfCall(isSuperCall = isSuperCall, isCallToOverride = isOverridden)
+            when (hidden) {
+                CallToPotentiallyHiddenSymbolResult.Hidden -> isHiddenEverywhereBesideSuperCalls = true
+                CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation -> isDeprecatedOverrideOfHidden = true
+                CallToPotentiallyHiddenSymbolResult.Visible -> {}
             }
 
-            if (unwrapped.isHiddenEverywhereBesideSuperCalls == true) {
-                isHiddenEverywhereBesideSuperCalls = true
+            @OptIn(ScopeFunctionRequiresPrewarm::class)
+            val overriddenWithScope = scope.getDirectOverriddenFunctionsWithBaseScope(symbol)
+
+            if (symbol.origin == FirDeclarationOrigin.Enhancement) {
+                /**
+                 * If there is no overridden then we found java root and want to stick with it
+                 * Otherwise we are in the middle of the hierarchy, so leaf potentially can be from Kotlin
+                 */
+                val potentialResult = when {
+                    overriddenWithScope.isEmpty() -> HasJavaOrigin.also {
+                        originalJavaGetter = symbol
+                    }
+                    kotlinBaseAllowed -> HasKotlinOrigin
+                    else -> Incompatible
+                }
+                result = maxOf(result, potentialResult)
             }
 
-            ProcessorAction.NEXT
+            overriddenWithScope.forEach {
+                if (!visited.add(it)) return@forEach
+                checkJavaOrigin(it.member, it.baseScope, isOverridden = true)
+            }
         }
 
-        return result && !isHiddenEverywhereBesideSuperCalls
+        checkJavaOrigin(this, baseScope, isOverridden = false)
+
+        val syntheticGetterCompatibility = when {
+            isHiddenEverywhereBesideSuperCalls -> Incompatible
+            result != Incompatible -> result
+            !kotlinBaseAllowed -> Incompatible
+            // This branch is needed for compatibility reasons, see KT-64358
+            isJavaTypeOnThePath(this.dispatchReceiverType) -> HasKotlinOrigin
+            else -> Incompatible
+        }
+        return GetterCompatibilityResult(syntheticGetterCompatibility, isDeprecatedOverrideOfHidden, originalJavaGetter)
+    }
+
+    /*
+     * We should check the whole hierarchy between dispatch receiver type of found getter and our dispatch receiver type, because
+     *   synthetic properly should be created if there is a java class on this way (KT-62394)
+     *
+     * // FILE: Base.kt
+     * abstract class Base(private val x: String) {
+     *     fun getFoo() = x
+     * }
+     *
+     * // FILE: Intermediate.java
+     * public class Intermediate extends Base {
+     *     public Intermediate(String x) {
+     *         super(x);
+     *     }
+     * }
+     *
+     * // FILE: Final.kt
+     * class Final(x: String) : Intermediate(x)
+     *
+     * fun test(f: Final) {
+     *     f.foo // <-------
+     * }
+     */
+    private fun isJavaTypeOnThePath(baseType: ConeSimpleKotlinType?): Boolean {
+        val lookupTagToStop = baseType?.lookupTagIfAny ?: return false
+        val dispatchReceiverClassSymbol = dispatchReceiverType.lookupTagIfAny?.toSymbol(session) ?: return false
+
+        val typeContext = session.typeContext
+        fun checkType(type: ConeClassLikeType): Boolean {
+            if (type.toRegularClassSymbol(session)?.isJavaOrEnhancement == true) {
+                if (AbstractTypeChecker.isSubtypeOfClass(typeContext, type.lookupTag, lookupTagToStop)) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        if (dispatchReceiverType is ConeClassLikeType && checkType(dispatchReceiverType)) {
+            return true
+        }
+
+        when (dispatchReceiverClassSymbol) {
+            is FirClassLikeSymbol -> {
+                val superTypes = lookupSuperTypes(dispatchReceiverClassSymbol, lookupInterfaces = true, deep = true, session)
+                for (superType in superTypes) {
+                    if (checkType(superType)) return true
+                }
+                return false
+            }
+            is FirTypeParameterSymbol -> {
+                return false
+            }
+        }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirSyntheticPropertiesScope? {
+        return FirSyntheticPropertiesScope(
+            newSession,
+            baseScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: baseScope,
+            dispatchReceiverType,
+            syntheticNamesProvider,
+            returnTypeCalculator,
+            isSuperCall
+        )
     }
 }
+
+private object NoJavaOriginKey : FirDeclarationDataKey()
+private var FirSyntheticProperty.noJavaOrigin: Boolean? by FirDeclarationDataRegistry.data(NoJavaOriginKey)
+
+val FirSimpleSyntheticPropertySymbol.noJavaOrigin: Boolean
+    get() = (fir as FirSyntheticProperty).noJavaOrigin == true
+
+private object DeprecatedOverrideOfHidden : FirDeclarationDataKey()
+private var FirSyntheticProperty.deprecatedOverrideOfHidden: Boolean? by FirDeclarationDataRegistry.data(DeprecatedOverrideOfHidden)
+
+val FirSimpleSyntheticPropertySymbol.deprecatedOverrideOfHidden: Boolean
+    get() = (fir as FirSyntheticProperty).deprecatedOverrideOfHidden == true
+

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 fun demo() {
   val abc = 1
   val a = ""
@@ -20,3 +22,6 @@ fun demo() {
       "foo$sdf${ buzz{}}" }}sdfsdf"
     "a<!ILLEGAL_ESCAPE!>\u<!> <!ILLEGAL_ESCAPE!>\u<!>0 <!ILLEGAL_ESCAPE!>\u<!>00 <!ILLEGAL_ESCAPE!>\u<!>000 \u0000 \u0AaA <!ILLEGAL_ESCAPE!>\u<!>0AAz.length( ) + \u0022b"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localFunction, localProperty, nullableType, propertyDeclaration, stringLiteral */

@@ -1,6 +1,8 @@
 // ImplicitArrayWithFlexibleParameterTypesKt
 // SKIP_IDE_TEST
 // WITH_STDLIB
+// LIBRARY_PLATFORMS: JVM
+
 // FILE: ImplicitArrayWithFlexibleParameterTypes.kt
 
 fun getArrayOfFlexibleInts() /* : Array<Int!> */ = arrayOf(JavaClass.getJavaInt())
@@ -13,5 +15,3 @@ public class JavaClass {
         return 10;
     }
 }
-
-// FIR_COMPARISON

@@ -12,8 +12,9 @@ internal data class CompilerExecutionSettings(
     val daemonJvmArgs: List<String>?,
     val strategy: KotlinCompilerExecutionStrategy,
     val useDaemonFallbackStrategy: Boolean,
+    val generateCompilerRefIndex: Boolean,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 1L
     }
 }

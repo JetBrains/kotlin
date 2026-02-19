@@ -1,13 +1,9 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
-// TARGET_BACKEND: NATIVE
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND_K1: ANY
+// Reason: break/continue in inline lambdas unsupported
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun foo(
     block1: () -> Unit,
     noinline block2: () -> Unit,
@@ -17,6 +13,9 @@ inline fun foo(
     block2()
     block3()
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box(): String {
     val visited = mutableListOf<Int>()

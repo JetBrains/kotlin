@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // FILE: Logger.java
 
@@ -24,3 +25,6 @@ class MyTest {
 
     private val logger = Logger.getInstance(klass)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, classReference, flexibleType, functionDeclaration, javaFunction,
+localProperty, outProjection, propertyDeclaration, stringLiteral, thisExpression */

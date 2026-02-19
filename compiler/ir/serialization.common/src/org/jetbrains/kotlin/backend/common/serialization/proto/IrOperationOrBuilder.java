@@ -329,4 +329,48 @@ public interface IrOperationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression error_call_expression = 35;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression getErrorCallExpression();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 36;</code>
+   *
+   * <pre>
+   * Operations again
+   * </pre>
+   */
+  boolean hasReturnableBlock();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 36;</code>
+   *
+   * <pre>
+   * Operations again
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+   */
+  boolean hasInlinedFunctionBlock();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getInlinedFunctionBlock();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference rich_function_reference = 38;</code>
+   */
+  boolean hasRichFunctionReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference rich_function_reference = 38;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference getRichFunctionReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference rich_property_reference = 39;</code>
+   */
+  boolean hasRichPropertyReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference rich_property_reference = 39;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference getRichPropertyReference();
 }

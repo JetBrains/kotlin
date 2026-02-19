@@ -1,5 +1,3 @@
-// SKIP_MINIFICATION
-
 @JsExport
 fun foo(): Char = '1'
 

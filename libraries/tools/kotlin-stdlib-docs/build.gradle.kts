@@ -8,7 +8,7 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-val isTeamcityBuild = project.hasProperty("teamcity.version")
+val isTeamcityBuild = project.hasProperty("teamcity.version") || System.getenv("TEAMCITY_VERSION") != null
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
 val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
@@ -60,6 +60,7 @@ dependencies {
 
 fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-stdlib_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlin_stdlib_dir = file("$kotlin_root/libraries/stdlib")
@@ -74,6 +75,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 "kotlin.native.internal",
                 "kotlin.jvm.functions",
                 "kotlin.coroutines.jvm.internal",
+                "kotlin.wasm.internal",
         )
 
         val kotlinLanguageVersion = version
@@ -82,7 +84,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
         val moduleDirName = "kotlin-stdlib"
         with(pluginsMapConfiguration) {
             put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-            put("org.jetbrains.dokka.analysis.kotlin.descriptors.compiler.CompilerDescriptorAnalysisPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
             put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version" }" }""")
         }
         if (isLatest) {
@@ -99,8 +100,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 noJdkLink.set(true)
 
                 displayName.set("Common")
-                sourceRoots.from("$kotlin_root/core/builtins/native")
-                sourceRoots.from("$kotlin_root/core/builtins/src/")
 
                 sourceRoots.from("$kotlin_stdlib_dir/common/src")
                 sourceRoots.from("$kotlin_stdlib_dir/src")
@@ -115,6 +114,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 dependsOn("common")
 
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/src")
+
+                sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins")
 
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/jvm/annotations")
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/jvm/JvmClassMapping.kt")
@@ -134,21 +135,34 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 displayName.set("JS")
                 dependsOn("common")
 
-                // list src subdirectories except 'generated' as it should be taken from js-ir/src
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/generated")
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
-                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlinx")
-                sourceRoots.from("$kotlin_stdlib_dir/js/src/org.w3c")
 
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/builtins")
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/kotlinHacks.kt")
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/long.kt")
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/src")
+                sourceRoots.from("$kotlin_stdlib_dir/js/builtins")
+                // We don't generate docs for the intermediate webMain source set, so to make
+                // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/JsInterop.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/js/ExperimentalWasmJsInterop.kt")
+                // We don't generate docs for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/coroutines/cancellation/CancellationException.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/reflect/AssociatedObjects.kt")
 
-                perPackageOption("org.w3c") {
-                    reportUndocumented.set(false)
+                // builtin sources that are copied from common builtins during JS stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "Any.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Iterator.kt",
+                    "Nothing.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
+
+                perPackageOption("kotlin.browser") {
+                    suppress.set(true)
                 }
-                perPackageOption("org.khronos") {
-                    reportUndocumented.set(false)
+                perPackageOption("kotlin.dom") {
+                    suppress.set(true)
                 }
             }
             register("native") {
@@ -161,9 +175,12 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
                 sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/main/kotlin")
                 sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/native/kotlin")
-                sourceRoots.from("$kotlin_native_root/Interop/JsRuntime/src/main/kotlin")
                 sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/native-wasm/wasi")
+                // We don't generate docs for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/coroutines/cancellation/CancellationException.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/reflect/AssociatedObjects.kt")
                 perPackageOption("kotlin.test") {
                     suppress.set(true)
                 }
@@ -182,6 +199,21 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/internal")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/src")
+                // We don't generate docs for the intermediate webMain source set, so to make
+                // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/JsInterop.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/js/ExperimentalWasmJsInterop.kt")
+                // We don't generate docs for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/coroutines/cancellation/CancellationException.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/reflect/AssociatedObjects.kt")
+
+                // builtin sources that are copied from common builtins during Wasm stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
             }
             register("wasm-wasi") {
                 platform.set(Platform.wasm)
@@ -190,12 +222,24 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 displayName.set("Wasm-WASI")
                 dependsOn("common")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/native-wasm/wasi")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/internal")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/stubs")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/src")
+                // We don't generate docs for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/coroutines/cancellation/CancellationException.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/reflect/AssociatedObjects.kt")
+
+                // builtin sources that are copied from common builtins during Wasm stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
             }
             configureEach {
                 documentedVisibilities.set(setOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED))
@@ -212,10 +256,12 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceLinksFromRoot()
             }
         }
+        fixIntersectedSourceRootsAndSamples(dokkaSourceSets, "stdlib")
     }
 
 fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-reflect_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlinReflectIncludeMd = file("$kotlin_root/libraries/reflect/Module.md")
@@ -261,11 +307,12 @@ fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
 
 fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-test_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlinTestIncludeMd = file("$kotlin_root/libraries/kotlin.test/Module.md")
 
-        val kotlinTestCommonClasspath = fileTree("$kotlin_libs/kotlin-test-common")
+        val kotlinTestCommonClasspath = fileTree("$kotlin_libs/kotlin-stdlib-common")
         val kotlinTestJunitClasspath = fileTree("$kotlin_libs/kotlin-test-junit")
         val kotlinTestJunit5Classpath = fileTree("$kotlin_libs/kotlin-test-junit5")
         val kotlinTestTestngClasspath = fileTree("$kotlin_libs/kotlin-test-testng")
@@ -400,11 +447,13 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceLinksFromRoot()
             }
         }
+        fixIntersectedSourceRootsAndSamples(dokkaSourceSets, "kotlin.test")
     }
 
 
 fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg libTasks: TaskProvider<DokkaTaskPartial>) =
     tasks.register<DokkaMultiModuleTask>("all-libs_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         moduleName.set("Kotlin libraries")
         plugins.extendsFrom(configurations.dokkaHtmlMultiModulePlugin.get())
         runtime.extendsFrom(configurations.dokkaHtmlMultiModuleRuntime.get())
@@ -420,10 +469,22 @@ fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg lib
         pluginsMapConfiguration.put("org.jetbrains.dokka.base.DokkaBase", """{ "templatesDir": "$templatesDir" }""")
         if (isLatest) {
             outputDirectory.set(outputDirLatest.resolve(moduleDirName))
-            pluginsMapConfiguration.put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version", "olderVersionsDir": "${inputDirPrevious.resolve(moduleDirName).invariantSeparatorsPath}" }""")
+            pluginsMapConfiguration.put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version", "olderVersionsDirName": "", "olderVersionsDir": "${inputDirPrevious.resolve(moduleDirName).invariantSeparatorsPath}" }""")
         } else {
             outputDirectory.set(outputDirPrevious.resolve(moduleDirName).resolve(version))
             pluginsMapConfiguration.put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version" }""")
+        }
+
+        doLast {
+            // copy package-list files from partial tasks of single modules
+            libTasks.map { it.get() }.forEach { child ->
+                val originalOutput = child.outputDirectory
+                val mergedOutput = outputDirectory.dir(child.moduleName)
+                project.copy {
+                    from(originalOutput.file("package-list"))
+                    into(mergedOutput)
+                }
+            }
         }
     }
 
@@ -466,5 +527,112 @@ run {
             latestAll.configure { dependsOn(versionAll) }
         }
         buildAllVersions.configure { dependsOn(versionStdlib, versionTest, versionAll) }
+    }
+}
+
+/**
+ * The Dokka K2 does not support intersecting source or sample roots
+ * https://github.com/Kotlin/dokka/issues/3701
+ *
+ * As a workaround, the intersecting roots may be copied and source links should be fixed
+ *
+ * This function detects such source and sample roots, copy them and fix source links.
+ * It should be called after all other configurations
+ */
+fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
+    dokkaSourceSets: NamedDomainObjectContainer<GradleDokkaSourceSetBuilder>,
+    libraryName: String
+) {
+    val kotlin_library_dir = file("$kotlin_root/libraries/$libraryName")
+
+    fun intersectOfNormalizedPaths(normalizedPaths: Set<File>, normalizedPaths2: Set<File>): Set<File> {
+        val result = mutableSetOf<File>()
+        for (p1 in normalizedPaths) {
+            for (p2 in normalizedPaths2) {
+                if (p1.startsWith(p2) || p2.startsWith(p1)) {
+                    result.add(p1)
+                    result.add(p2)
+                }
+            }
+        }
+        return result
+    }
+
+    fun Set<File>.normalize() = mapTo(mutableSetOf()) { it.normalize() }
+    fun intersect(paths: Set<File>, paths2: Set<File>): Set<File> = intersectOfNormalizedPaths(paths.normalize(), paths2.normalize())
+
+    val sourceSets = dokkaSourceSets.toList()
+    val temporaryDirectory = buildDir.resolve("temporary_dokka_source_sets/$libraryName/").toPath()
+
+    val replacementsSources = mutableMapOf<String, MutableMap<File, File>>()
+    val replacementsSamples = mutableMapOf<String, MutableMap<File, File>>()
+
+    for (i in sourceSets.indices) {
+        for (j in i + 1 until sourceSets.size) {
+            intersect(
+                sourceSets[i].sourceRoots.toSet(),
+                sourceSets[j].sourceRoots.toSet()
+            ).forEach {
+                val relativePath = kotlin_library_dir.toPath().relativize(it.toPath())
+                replacementsSources.getOrPut(sourceSets[i].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[i].name).resolve(relativePath).toFile()
+                replacementsSources.getOrPut(sourceSets[j].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[j].name).resolve(relativePath).toFile()
+            }
+
+            intersect(
+                sourceSets[i].samples.toSet(),
+                sourceSets[j].samples.toSet()
+            ).forEach {
+                val relativePath = kotlin_library_dir.toPath().relativize(it.toPath())
+                replacementsSamples.getOrPut(sourceSets[i].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[i].name).resolve(relativePath).toFile()
+                replacementsSamples.getOrPut(sourceSets[j].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[j].name).resolve(relativePath).toFile()
+            }
+        }
+    }
+    replacementsSamples.forEach { (sourceSetName, replacements) ->
+        val sourceSet = dokkaSourceSets[sourceSetName]
+
+        // replace samples here
+        sourceSet.samples.setFrom(sourceSet.samples.map { replacements[it] ?: it })
+    }
+
+    val kotlin_library_url = "https://github.com/JetBrains/kotlin/tree/$githubRevision/libraries/$libraryName"
+    replacementsSources.forEach { (sourceSetName, replacements) ->
+        val sourceSet = dokkaSourceSets[sourceSetName]
+        // replace sourceRoots here
+        sourceSet.sourceRoots.setFrom(sourceSet.sourceRoots.map { replacements[it] ?: it })
+
+        replacements.forEach { (original, replacement) ->
+            // setup source-links
+            sourceSet.sourceLink {
+                remoteUrl.set(URL("$kotlin_library_url/${kotlin_library_dir.toPath().relativize(original.toPath())}"))
+                localDirectory.set(replacement)
+                remoteLineSuffix.set("#L")
+            }
+        }
+
+        // The order of source links is important
+        // source links to temporary directories should have higher priority
+        sourceSet.sourceLinks.set(sourceSet.sourceLinks.get().reversed())
+
+        // work with files
+        doFirst {
+            temporaryDirectory.toFile().deleteRecursively()
+            replacementsSamples.forEach { (_, replacements) ->
+                replacements.forEach { (original, replacement) ->
+                    // copy files
+                    original.copyRecursively(replacement, overwrite = true)
+                }
+            }
+            replacementsSources.forEach { (_, replacements) ->
+                replacements.forEach { (original, replacement) ->
+                    // copy files
+                    original.copyRecursively(replacement, overwrite = true)
+                }
+            }
+        }
     }
 }

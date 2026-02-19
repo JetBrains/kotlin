@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -32,7 +32,7 @@ import checkSubtype
 // TESTCASE NUMBER: 1
 fun case1() {
     val a = JavaClass.STR
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>a<!>
     val res = a!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>res<!>
 }
@@ -40,7 +40,7 @@ fun case1() {
 // TESTCASE NUMBER: 2
 fun case2() {
     val a = JavaClass.obj
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any..kotlin.Any?!")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any..kotlin.Any?)")!>a<!>
     val x = a!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
 }

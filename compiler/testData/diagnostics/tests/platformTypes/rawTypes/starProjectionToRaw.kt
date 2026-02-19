@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -24,3 +25,5 @@ class Test {
 fun main(x: B<*>) {
     Test.foo(x)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, starProjection */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See also KT-7800
 
 fun foo(): Int {
@@ -11,3 +12,6 @@ fun foo(): Int {
     }
     return x
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

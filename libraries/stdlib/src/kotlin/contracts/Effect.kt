@@ -56,6 +56,7 @@ public interface SimpleEffect : Effect {
      */
     @ContractsDsl
     @ExperimentalContracts
+    @IgnorableReturnValue
     public infix fun implies(booleanExpression: Boolean): ConditionalEffect
 }
 
@@ -92,3 +93,14 @@ public interface ReturnsNotNull : SimpleEffect
 @ExperimentalContracts
 @SinceKotlin("1.3")
 public interface CallsInPlace : Effect
+
+/**
+ * Describes a situation when a provided condition is guaranteed to be true in the body of a functional parameter.
+ *
+ * @see ContractBuilder.holdsIn
+ */
+@ContractsDsl
+@ExperimentalContracts
+@ExperimentalExtendedContracts
+@SinceKotlin("2.2")
+public interface HoldsIn : Effect

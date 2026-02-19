@@ -1,0 +1,1 @@
+override fun <K> foo() where K : kotlin.String?, K : java.lang.Runnable?

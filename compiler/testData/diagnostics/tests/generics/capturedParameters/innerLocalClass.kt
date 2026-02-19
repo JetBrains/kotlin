@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // NI_EXPECTED_FILE
 private class Outer<E> {
     private inner class Inner<out F> {
@@ -32,3 +33,7 @@ private class Outer<E> {
 }
 
 fun <T> magic(): T = null!!
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, lambdaLiteral, localClass, localFunction, nullableType, out, propertyDeclaration,
+typeParameter, typeWithExtension */

@@ -26,3 +26,6 @@ public val KonanDistribution.platformLibsDir: File
 
 public val KonanDistribution.sourcesDir: File
     get() = root.resolve(KONAN_DISTRIBUTION_SOURCES_DIR)
+
+public val KonanDistribution.toolsDir: File
+    get() = root.resolve(KONAN_DISTRIBUTION_TOOLS_DIR)

@@ -3,16 +3,16 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
 android {
-    namespace "com.example.parcelize"
+    namespace = "com.example.parcelize"
 
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     defaultConfig {
-        applicationId "com.example.dagger.kotlin"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.dagger.kotlin"
+        minSdkVersion = 14
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
 
     kotlin {
@@ -24,8 +24,8 @@ android {
     }
 
     lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
+        checkReleaseBuilds = false
+        abortOnError = false
     }
 }
 

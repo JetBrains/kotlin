@@ -16,6 +16,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     PROJECT_PATH(OVERRIDE, RegexControlled("([0-9A-Fa-f]{40,64})|undefined", true)),
 
     OS_TYPE(OVERRIDE, RegexControlled("(Windows|Windows |Windows Server |Mac|Linux|FreeBSD|Solaris|Other|Mac OS X)\\d*", false)),
+    OS_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
     IDES_INSTALLED(CONCAT, AllowedListAnonymizer(listOf("AS", "OC", "CL", "IU", "IC", "WC"))),
 
@@ -32,13 +33,11 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
                 "androidJvm",
                 "android_arm32",
                 "android_arm64",
-                "ios_arm32",
                 "ios_arm64",
                 "ios_simulator_arm64",
                 "ios_x64",
                 "watchos_arm32",
                 "watchos_arm64",
-                "watchos_x86",
                 "watchos_x64",
                 "watchos_simulator_arm64",
                 "watchos_device_arm64",
@@ -46,15 +45,11 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
                 "tvos_x64",
                 "tvos_simulator_arm64",
                 "linux_arm32_hfp",
-                "linux_mips32",
-                "linux_mipsel32",
                 "linux_arm64",
                 "linux_x64",
                 "macos_x64",
                 "macos_arm64",
                 "mingw_x64",
-                "mingw_x86",
-                "wasm32",
                 "wasm"
             )
         )
@@ -67,6 +62,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     LIBRARY_GWT_VERSION(OVERRIDE_VERSION_IF_NOT_SET, ComponentVersionAnonymizer()),
     LIBRARY_HIBERNATE_VERSION(OVERRIDE_VERSION_IF_NOT_SET, ComponentVersionAnonymizer()),
 
+    KOTLIN_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_COMPILER_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_STDLIB_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_REFLECT_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
@@ -75,22 +71,25 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     ANDROID_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
+    KSP_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
+
     // Features
     KOTLIN_LANGUAGE_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_API_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
-    USE_CLASSPATH_SNAPSHOT(CONCAT, AllowedListAnonymizer(listOf("true", "false", "default-true"))),
     JS_GENERATE_EXECUTABLE_DEFAULT(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
     JS_OUTPUT_GRANULARITY(OVERRIDE, RegexControlled("(whole_program|per_module|per_file)", false)),
 
     // Compiler parameters
-    JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("disable", "enable", "compatibility", "all", "all-compatibility"))),
+    JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("enable", "no-compatibility", "disable"))),
     USE_OLD_BACKEND(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     USE_FIR(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
 
+    KOTLIN_COMPILER_EXECUTION_POLICY(CONCAT, AllowedListAnonymizer(listOf("in-process", "daemon", "out-of-process"))),
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
+
     companion object {
-        const val VERSION = 1
+        const val VERSION = 7
     }
 }

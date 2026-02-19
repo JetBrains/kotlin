@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import kotlin.reflect.KProperty1
 import kotlin.test.fail
 
 fun <T : CommonToolArguments, R> T.assertNotNull(property: KProperty1<T, R?>): R {
     return property.get(this) ?: fail("Missing '${property.name}'")
 }
+
+internal fun LanguageVersion.asKotlinVersion() = KotlinVersion.fromVersion(versionString)

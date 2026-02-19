@@ -11,7 +11,6 @@ package kotlin.time
 import java.util.concurrent.TimeUnit
 
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 public actual enum class DurationUnit(internal val timeUnit: TimeUnit) {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
@@ -45,16 +44,18 @@ public actual enum class DurationUnit(internal val timeUnit: TimeUnit) {
 
 /**
  * Converts this [kotlin.time.DurationUnit][DurationUnit] enum value to the corresponding [java.util.concurrent.TimeUnit][java.util.concurrent.TimeUnit] value.
+ *
+ * @sample samples.time.Durations.durationUnitToTimeUnitConversion
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalTime::class)
 public fun DurationUnit.toTimeUnit(): TimeUnit = timeUnit
 
 /**
  * Converts this [java.util.concurrent.TimeUnit][java.util.concurrent.TimeUnit] enum value to the corresponding [kotlin.time.DurationUnit][DurationUnit] value.
+ *
+ * @sample samples.time.Durations.timeUnitToDurationUnitConversion
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalTime::class)
 public fun TimeUnit.toDurationUnit(): DurationUnit = when (this) {
     TimeUnit.NANOSECONDS -> DurationUnit.NANOSECONDS
     TimeUnit.MICROSECONDS -> DurationUnit.MICROSECONDS

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Outer {
     fun foo(): Int {
@@ -17,3 +18,6 @@ class Outer {
     
     val outerState = 42
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, functionDeclaration, ifExpression, inner, integerLiteral,
+localClass, propertyDeclaration */

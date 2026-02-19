@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
@@ -22,3 +23,7 @@ fun test2(arg: InvRecursive<out DerivedInv>) {
 fun test3(arg: InvRecursive<in DerivedInv>) {
     id(arg)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+inProjection, interfaceDeclaration, nullableType, out, outProjection, starProjection, stringLiteral, typeConstraint,
+typeParameter */

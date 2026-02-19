@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil;
 import org.junit.Assert;
 
 import java.io.File;
@@ -28,6 +28,19 @@ class MavenExecutionResult {
         this.stdout = output;
         this.workingDir = workingDir;
         this.exitCode = exitCode;
+        assertArtifactsAreDownloadedFromCacheRedirector();
+    }
+
+    private void assertArtifactsAreDownloadedFromCacheRedirector() {
+        final String lines[] = stdout.split(System.lineSeparator());
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.startsWith("[INFO] Downloading from")) {
+                if (!line.contains("cache-redirector.jetbrains.com")) {
+                    throw new AssertionError("cache-redirector is not enabled: " + line);
+                }
+            }
+        }
     }
 
     MavenExecutionResult check(@NotNull Action<MavenExecutionResult> fn) throws Exception {
@@ -85,7 +98,7 @@ class MavenExecutionResult {
         return check(new Action<MavenExecutionResult>() {
             @Override
             public void run(MavenExecutionResult execResult) {
-                Pattern kotlinCompileIteration = Pattern.compile("(?m)Kotlin compile iteration: (.*)$");
+                Pattern kotlinCompileIteration = Pattern.compile("(?m)compile iteration: (.*)$");
                 Matcher m = kotlinCompileIteration.matcher(stdout);
 
                 Set<String> normalizedActualPaths = new HashSet<String>();

@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI, NATIVE
+// ^^ Because main function will be called firstly with empty arguments that will chrash runtime
 // FILE: test.kt
 
 fun main(args: Array<String>) {
@@ -9,14 +10,17 @@ fun box() {
     main(arrayOf("OK"))
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:9 box
-// test.kt:5 main
-// test.kt:6 main
+// EXPECTATIONS JVM_IR
 // test.kt:10 box
+// test.kt:6 main
+// test.kt:7 main
+// test.kt:11 box
+
+// EXPECTATIONS NATIVE
 
 // EXPECTATIONS JS_IR
-// test.kt:9 box
-// test.kt:5 main
-// test.kt:6 main
 // test.kt:10 box
+// test.kt:10 box
+// test.kt:6 main
+// test.kt:7 main
+// test.kt:11 box

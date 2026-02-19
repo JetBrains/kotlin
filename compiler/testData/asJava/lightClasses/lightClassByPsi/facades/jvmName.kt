@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 var rwProp: Int
 	@JvmName("get_rwProp")
 	get() = 0

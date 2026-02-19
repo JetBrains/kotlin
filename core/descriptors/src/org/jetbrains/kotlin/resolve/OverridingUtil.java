@@ -258,8 +258,6 @@ public class OverridingUtil {
                 case OVERRIDABLE:
                     wasSuccess = true;
                     break;
-                case CONFLICT:
-                    return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
                     return OverrideCompatibilityInfo.incompatible("External condition");
                 case UNKNOWN:
@@ -280,8 +278,6 @@ public class OverridingUtil {
             ExternalOverridabilityCondition.Result result =
                     externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
             switch (result) {
-                case CONFLICT:
-                    return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
                     return OverrideCompatibilityInfo.incompatible("External condition");
                 case OVERRIDABLE:
@@ -408,7 +404,7 @@ public class OverridingUtil {
         if (firstParameters.isEmpty()) {
             return new OverridingUtilTypeSystemContext(
                     null, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
-            ).newTypeCheckerState(true, true);
+            ).newTypeCheckerState(true, true, false);
         }
 
         Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
@@ -418,7 +414,7 @@ public class OverridingUtil {
 
         return new OverridingUtilTypeSystemContext(
                 matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
-        ).newTypeCheckerState(true, true);
+        ).newTypeCheckerState(true, true, false);
     }
 
     @Nullable
@@ -1030,6 +1026,11 @@ public class OverridingUtil {
         @NotNull
         public String getDebugMessage() {
             return debugMessage;
+        }
+
+        @Override
+        public String toString() {
+            return overridable + ": " + debugMessage;
         }
     }
 }

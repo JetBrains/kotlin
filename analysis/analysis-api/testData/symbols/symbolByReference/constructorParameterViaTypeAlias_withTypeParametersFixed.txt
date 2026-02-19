@@ -1,0 +1,33 @@
+KaValueParameterSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  generatedPrimaryConstructorProperty: null
+  hasDeclaredDefaultValue: false
+  hasDefaultValue: false
+  hasSynthesizedName: false
+  isActual: false
+  isCrossinline: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isImplicitLambdaParameter: false
+  isNoinline: false
+  isVal: true
+  isVararg: false
+  location: LOCAL
+  modality: FINAL
+  name: param
+  origin: TYPEALIASED_CONSTRUCTOR
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(constructorParameterViaTypeAlias_withTypeParametersFixed.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  importableFqName: null

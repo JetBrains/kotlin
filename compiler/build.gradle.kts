@@ -1,73 +1,78 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("d8-configuration")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
-val antLauncherJar by configurations.creating
-
 dependencies {
     testImplementation(intellijCore()) // Should come before compiler, because of "progarded" stuff needed for tests
 
-    testApi(project(":kotlin-script-runtime"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    
-    testApi(kotlinStdlib())
+    testImplementation(project(":kotlin-script-runtime"))
 
-    testApi(commonDependency("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
-    testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testApi(projectTests(":generators:test-generator"))
-    testApi(project(":compiler:ir.ir2cfg"))
-    testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testApi(project(":kotlin-scripting-compiler"))
+    testImplementation(kotlinStdlib())
+
+    testImplementation(kotlinTest())
+    testCompileOnly(kotlinTest("junit"))
+    testImplementation(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testFixturesApi(project(":kotlin-scripting-compiler"))
 
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
 
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(toolsJar())
-
-    antLauncherJar(commonDependency("org.apache.ant", "ant"))
-    antLauncherJar(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
 }
 
+optInToK1Deprecation()
 optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" {}
+    "testFixtures" { projectDefault() }
     "test" {
         projectDefault()
         generatedTestDir()
     }
 }
 
-projectTest(
-    parallel = true,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
-) {
-    dependsOn(":dist")
-    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit4,
+        parallel = true,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+    ) {
+        dependsOn(":dist")
 
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    val antLauncherJarPathProvider = project.provider {
-        antLauncherJar.asPath
+        filter {
+            excludeTestsMatching("org.jetbrains.kotlin.jvm.compiler.io.FastJarFSLongTest*")
+        }
+
+        workingDir = rootDir
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+
+    testTask("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
+        include("**/FastJarFSLongTest*")
     }
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.TestGeneratorForCompilerTestsKt")
+
+    withJvmStdlibAndReflect()
 }
 
-val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")
+val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt", testSourceSet)
 
 testsJar()

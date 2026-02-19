@@ -1,0 +1,5 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=Shebang, fqName=Shebang, name=Shebang]
+    SCRIPT_INITIALIZER

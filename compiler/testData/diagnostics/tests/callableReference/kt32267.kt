@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun main() {
     Configuration().commands {
@@ -37,3 +38,7 @@ interface SomeService {
     fun execute(command: Command1)
     fun execute(command: Command2)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, inline, interfaceDeclaration, lambdaLiteral, nestedClass, objectDeclaration,
+operator, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

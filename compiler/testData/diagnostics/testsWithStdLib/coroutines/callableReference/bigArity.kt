@@ -1,5 +1,6 @@
-// !LANGUAGE: -FunctionTypesWithBigArity
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -FunctionTypesWithBigArity
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 class A {
@@ -17,3 +18,5 @@ suspend fun expectsLambdaWithBigArity(c: suspend <!UNSUPPORTED_FEATURE!>(Long, L
                                                   Long, Long, Long, Long, Long, Long, Long, Long, Long, String) -> String<!>): String {
     return c.invoke(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, "OK")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, stringLiteral, suspend */

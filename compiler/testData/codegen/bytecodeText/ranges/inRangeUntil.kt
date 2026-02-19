@@ -1,5 +1,4 @@
-// !OPT_IN: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JVM
+// OPT_IN: kotlin.ExperimentalStdlibApi
 
 fun testChar(a: Char, x: Char, y: Char) = a in x..<y
 

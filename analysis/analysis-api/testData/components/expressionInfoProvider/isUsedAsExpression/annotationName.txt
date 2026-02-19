@@ -1,3 +1,4 @@
 expression: CONSTRUCTOR_CALLEE
 text: SuppressWarnings
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

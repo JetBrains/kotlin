@@ -13,6 +13,11 @@ internal expect fun lookupAsserter(): Asserter
 @PublishedApi // required to get stable name as it's called from box tests
 internal fun overrideAsserter(value: Asserter?): Asserter? = _asserter.also { _asserter = value }
 
+internal fun formatResultMessage(value: Any?) = when (value) {
+    is Unit -> "but was completed successfully."
+    else -> "but was completed successfully with the result: <$value>."
+}
+
 
 private fun checkAbsoluteTolerance(absoluteTolerance: Double) {
     require(absoluteTolerance >= 0.0) { "Illegal negative absolute tolerance <$absoluteTolerance>." }

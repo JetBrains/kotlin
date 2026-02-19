@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -34,10 +34,10 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
         return classLoader.tryLoadClass(fqName)?.let { ReflectKotlinClass.create(it) }?.let(::KotlinClass)
     }
 
-    override fun findKotlinClassOrContent(classId: ClassId, jvmMetadataVersion: JvmMetadataVersion) =
+    override fun findKotlinClassOrContent(classId: ClassId, metadataVersion: MetadataVersion) =
         findKotlinClass(classId.toRuntimeFqName())
 
-    override fun findKotlinClassOrContent(javaClass: JavaClass, jvmMetadataVersion: JvmMetadataVersion): KotlinClassFinder.Result? {
+    override fun findKotlinClassOrContent(javaClass: JavaClass, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
         // TODO: go through javaClass's class loader
         return findKotlinClass(javaClass.fqName?.asString() ?: return null)
     }

@@ -7,4 +7,4 @@ package kotlin.test
 
 private val currentAdapter: FrameworkAdapter by lazy { TeamcityAdapter() }
 
-internal fun adapter(): FrameworkAdapter = currentAdapter
+internal actual fun adapter(): FrameworkAdapter = currentAdapter

@@ -1,8 +1,12 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Anno(vararg val x: String, val y: String)
 
 @Anno(x = [<!TYPE_MISMATCH, TYPE_MISMATCH!>["a", "b"]<!>, <!TYPE_MISMATCH, TYPE_MISMATCH!>["a", "b"]<!>], y = "a")
 fun foo1() {}
+
+@Anno(x = [<!TYPE_MISMATCH, TYPE_MISMATCH!>[["a"]]<!>], y = "b")
+fun foo11() {}
 
 @Anno(x = ["a", "b"], y = "a")
 fun foo2() {}
@@ -21,3 +25,6 @@ annotation class Anno2(vararg val x: String, val y: String)
 
 @Anno1(x = ["", Anno2(x = [""], y = "")], y = "")
 fun foo5() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, inProjection, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, vararg */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.kt
 
 import B.<!INVISIBLE_REFERENCE!>foo<!>
@@ -14,3 +15,6 @@ object B : C<String>()
 open class C<T> {
     private var foo: String = "abc"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, objectDeclaration, propertyDeclaration,
+stringLiteral, typeParameter */

@@ -34,8 +34,4 @@ fun main(args: Array<String>) {
     i = i - -128
 }
 
-// JVM_IR_TEMPLATES
 // 16 IINC
-
-// JVM_TEMPLATES
-// 0 IINC

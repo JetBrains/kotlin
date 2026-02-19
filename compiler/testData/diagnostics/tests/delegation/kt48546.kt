@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 object DelegateTest {
@@ -7,3 +8,6 @@ object DelegateTest {
         "hello"
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, lambdaLiteral, objectDeclaration, propertyDeclaration,
+propertyDelegate, stringLiteral */

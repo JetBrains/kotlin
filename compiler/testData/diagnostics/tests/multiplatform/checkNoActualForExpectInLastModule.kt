@@ -1,4 +1,8 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // ISSUE: KT-58483
-// MODULE: jvm
-// FILE: jvm.kt
-expect class <!NO_ACTUAL_FOR_EXPECT!>A<!>
+// MODULE: common
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>A<!>
+
+// MODULE: platform()()(common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect */

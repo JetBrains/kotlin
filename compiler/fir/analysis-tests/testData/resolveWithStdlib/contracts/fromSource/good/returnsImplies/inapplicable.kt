@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: BACKEND
+// OPT_IN: kotlin.RequiresOptIn
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)
@@ -56,3 +57,6 @@ fun wrongReturnType(x: String?): Any? {
 
     return "true"
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+integerLiteral, lambdaLiteral, nullableType, stringLiteral */

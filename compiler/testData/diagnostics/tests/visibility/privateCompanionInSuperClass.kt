@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 open class BaseWithPrivate {
     private companion object {
@@ -22,3 +23,6 @@ class Derived : Base() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+objectDeclaration, propertyDeclaration, stringLiteral */

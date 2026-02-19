@@ -13,13 +13,10 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.internal.KotlinTestReportCompatibilityHelper
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.readSystemPropertyAtConfigurationTime
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 /**
@@ -37,7 +34,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
 
     fun registerTestTask(
         taskHolder: TaskProvider<out AbstractTestTask>,
-        aggregate: TaskProvider<KotlinTestReport> = allTestsTask
+        aggregate: TaskProvider<KotlinTestReport> = allTestsTask,
     ) {
         project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(taskHolder)
         project.cleanAllTestTask.configure { it.dependsOn(cleanTaskName(taskHolder.name)) }
@@ -65,7 +62,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
     fun getOrCreateAggregatedTestTask(
         name: String,
         description: String,
-        parent: TaskProvider<KotlinTestReport>? = allTestsTask
+        parent: TaskProvider<KotlinTestReport>? = allTestsTask,
     ): TaskProvider<KotlinTestReport> {
         if (name == parent?.name) return parent
 
@@ -76,31 +73,27 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         name: String,
         description: String,
         parent: TaskProvider<KotlinTestReport>? = null,
-        configure: (TaskProvider<KotlinTestReport>) -> Unit = {}
+        configure: (TaskProvider<KotlinTestReport>) -> Unit = {},
     ): TaskProvider<KotlinTestReport> {
         val existed = project.locateTask<KotlinTestReport>(name)
         if (existed != null) return existed
 
-        val reportName = name
         val testReportService = TestReportService.registerIfAbsent(project)
         val aggregate: TaskProvider<KotlinTestReport> = project.registerTask(name) { aggregate ->
             aggregate.description = description
             aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 
-            val compatibilityHelper = project
-                .variantImplementationFactory<KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory>()
-                .getInstance(project.objects)
+            aggregate.destinationDirectory.value(
+                project.testReportsDir.map { it.dir(name) }
+            ).finalizeValueOnRead()
 
-            compatibilityHelper.setDestinationDirectory(aggregate, project.testReportsDir.resolve(reportName))
-
-            val isIdeaActive = project.readSystemPropertyAtConfigurationTime("idea.active").isPresent
+            val isIdeaActive = project.providers.systemProperty("idea.active").isPresent
 
             if (isIdeaActive) {
                 aggregate.extensions.extraProperties.set("idea.internal.test", true)
             }
-            aggregate.htmlReportFile.value(compatibilityHelper.getDestinationDirectory(aggregate).file("index.html")).disallowChanges()
+            aggregate.htmlReportFile.value(aggregate.destinationDirectory.file("index.html")).disallowChanges()
             aggregate.testReportServiceProvider.value(testReportService).finalizeValueOnRead()
-            aggregate.testReportCompatibilityHelper.value(compatibilityHelper).finalizeValueOnRead()
 
             project.gradle.taskGraph.whenReady { graph ->
                 aggregate.maybeOverrideReporting(graph)

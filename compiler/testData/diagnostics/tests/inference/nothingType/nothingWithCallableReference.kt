@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <K> select2(x: K, y: K): K = TODO()
 fun <K> select3(x: K, y: K, z: K): K = TODO()
@@ -29,3 +30,6 @@ fun test(f1: (Int) -> Unit, f2: kotlin.Function1<Int, Unit>) {
     dependantSelect3(null, f1, ::foo)
     dependantSelect3(null, ::foo, f1)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, nullableType, typeConstraint,
+typeParameter */

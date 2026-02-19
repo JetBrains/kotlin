@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public interface<<T0:Ljava/lang/Object;R:Ljava/lang/Object;>Ljava/lang/Object;>  FunIFace {
+    // source: 'genericLambdaSignature.kt'
+    public abstract <(TT0;)TR;> method call(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class<null>  GenericLambdaSignatureKt {
+    // source: 'genericLambdaSignature.kt'
+    public final static <<T1:Ljava/lang/Object;R:Ljava/lang/Object;>(TT1;LFunIFace<TT1;TR;>;)TR;> method call(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: FunIFace): java.lang.Object
+    public final static <<T2:Ljava/lang/Object;>(TT2;)TT2;> method test(p0: java.lang.Object): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull <null> method box(): java.lang.String
+    private final static <null> method test$lambda$0(p0: java.lang.Object): java.lang.Object
+}

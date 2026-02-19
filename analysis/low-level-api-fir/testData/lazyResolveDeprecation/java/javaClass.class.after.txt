@@ -1,0 +1,1 @@
+@R|kotlin/Deprecated|(message = String(Deprecated in Java)) public/*package*/ open [ResolvedTo(BODY_RESOLVE)] class JJ : R|kotlin/Any|

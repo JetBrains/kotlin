@@ -1,4 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 // TODO: .fir.kt version is just a stub.
@@ -13,7 +14,7 @@ expect interface My {
 
     open val a: Int
     open val b: String
-    open val c: String get() = ""
+    open val c: String <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = ""
     <!REDUNDANT_MODIFIER!>open<!> abstract val e: Int
 
     val f: Int
@@ -35,3 +36,6 @@ expect interface Outer {
         fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+nestedClass, override, propertyDeclaration, stringLiteral */

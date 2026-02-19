@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -USELESS_IS_CHECK
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTICS_FULL_TEXT
+// DIAGNOSTICS: -UNUSED_PARAMETER, -USELESS_IS_CHECK
 // SKIP_TXT
 
 import kotlin.concurrent.withLock
@@ -59,3 +60,7 @@ suspend fun ifWhenAndOtherNonsence() {
 }
 
 suspend fun returnsInt(): Int = 0
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, isExpression, javaFunction, lambdaLiteral, propertyDeclaration, stringLiteral, suspend, whenExpression,
+whenWithSubject */

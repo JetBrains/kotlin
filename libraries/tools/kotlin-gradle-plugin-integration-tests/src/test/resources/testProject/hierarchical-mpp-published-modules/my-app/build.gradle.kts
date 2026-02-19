@@ -2,12 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    maven("<localRepo>")
-    mavenCentral()
-}
-
 group = "com.example.app"
 version = "1.0"
 

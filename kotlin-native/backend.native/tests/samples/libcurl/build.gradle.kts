@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.target.KonanTarget
+
 plugins {
     kotlin("multiplatform")
 }
@@ -20,10 +22,10 @@ kotlin {
     hostTarget.apply {
         compilations["main"].cinterops {
             val libcurl by creating {
-                when (preset) {
-                    presets["macosX64"] -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
-                    presets["linuxX64"] -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
-                    presets["mingwX64"] -> includeDirs.headerFilterOnly(mingwPath.resolve("include"))
+                when (konanTarget) {
+                    KonanTarget.MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
+                    KonanTarget.LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
+                    KonanTarget.MINGW_X64 -> includeDirs.headerFilterOnly(mingwPath.resolve("include"))
                 }
             }
         }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package n
 
@@ -11,3 +12,6 @@ fun test(arrayList: ArrayList<Int>, list: List<Int>) {
 }
 
 fun <T> List<T>.reverse() : List<T> = this
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, thisExpression, typeParameter */

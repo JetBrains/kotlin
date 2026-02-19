@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -18,3 +20,5 @@ public class Foo {
 class <!ACTUAL_MISSING!>Foo<!><T>(t: T) {
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, nullableType, primaryConstructor, typeParameter */

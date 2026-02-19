@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // API_VERSION: 1.5
 // LANGUAGE: +JvmRecordSupport
@@ -23,3 +24,6 @@ fun foo(mr: MyRecord) {
     takeInt(mr.y)
     takeStringArray(mr.z)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty, javaType,
+outProjection, stringLiteral */

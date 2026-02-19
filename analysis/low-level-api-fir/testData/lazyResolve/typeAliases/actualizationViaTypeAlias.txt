@@ -1,0 +1,389 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] MyInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : Closeable {
+        public? open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final? expect [ResolvedTo(RAW_FIR)] interface AutoCloseable : R|kotlin/Any| {
+        public final? expect [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+    public final? expect [ResolvedTo(RAW_FIR)] interface Closeable : AutoCloseable {
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] MyClass.kt
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : MyInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final actual [ResolvedTo(RAW_FIR)] typealias AutoCloseable = java.lang.AutoCloseable
+    public final actual [ResolvedTo(RAW_FIR)] typealias Closeable = java.io.Closeable
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] MyInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : Closeable {
+        public? open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final? expect [ResolvedTo(RAW_FIR)] interface AutoCloseable : R|kotlin/Any| {
+        public final? expect [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+    public final? expect [ResolvedTo(RAW_FIR)] interface Closeable : AutoCloseable {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : MyInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final actual [ResolvedTo(RAW_FIR)] typealias AutoCloseable = java.lang.AutoCloseable
+    public final actual [ResolvedTo(RAW_FIR)] typealias Closeable = java.io.Closeable
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] MyInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : Closeable {
+        public? open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final? expect [ResolvedTo(RAW_FIR)] interface AutoCloseable : R|kotlin/Any| {
+        public final? expect [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+    public final? expect [ResolvedTo(RAW_FIR)] interface Closeable : AutoCloseable {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : MyInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final actual [ResolvedTo(RAW_FIR)] typealias AutoCloseable = java.lang.AutoCloseable
+    public final actual [ResolvedTo(RAW_FIR)] typealias Closeable = java.io.Closeable
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] MyInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : Closeable {
+        public? open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final? expect [ResolvedTo(RAW_FIR)] interface AutoCloseable : R|kotlin/Any| {
+        public final? expect [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+    public final? expect [ResolvedTo(RAW_FIR)] interface Closeable : AutoCloseable {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : MyInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open? override [ResolvedTo(COMPANION_GENERATION)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] util.kt
+    public final actual [ResolvedTo(RAW_FIR)] typealias AutoCloseable = java.lang.AutoCloseable
+    public final actual [ResolvedTo(RAW_FIR)] typealias Closeable = java.io.Closeable
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface MyInterface : R|example/Closeable| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final? expect [ResolvedTo(SUPER_TYPES)] interface AutoCloseable : R|kotlin/Any| {
+        public final? expect [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+    public final? expect [ResolvedTo(SUPER_TYPES)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|example/MyInterface| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open? override [ResolvedTo(SUPER_TYPES)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface MyInterface : R|example/Closeable| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final? expect [ResolvedTo(SUPER_TYPES)] interface AutoCloseable : R|kotlin/Any| {
+        public final? expect [ResolvedTo(RAW_FIR)] fun close(): R|kotlin/Unit|
+
+    }
+    public final? expect [ResolvedTo(SUPER_TYPES)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final? [ResolvedTo(TYPES)] class MyClass : R|example/MyInterface| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open? override [ResolvedTo(TYPES)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|example/Closeable| {
+        public abstract override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public abstract expect [ResolvedTo(STATUS)] interface AutoCloseable : R|kotlin/Any| {
+        public abstract expect [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final [ResolvedTo(STATUS)] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|example/Closeable| {
+        public abstract override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public abstract expect [ResolvedTo(STATUS)] interface AutoCloseable : R|kotlin/Any| {
+        public abstract expect [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|example/Closeable| {
+        public abstract override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public abstract expect [ResolvedTo(STATUS)] interface AutoCloseable : R|kotlin/Any| {
+        public abstract expect [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|example/Closeable| {
+        public abstract override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public abstract expect [ResolvedTo(STATUS)] interface AutoCloseable : R|kotlin/Any| {
+        public abstract expect [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|example/Closeable| {
+        public abstract override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public abstract expect [ResolvedTo(STATUS)] interface AutoCloseable : R|kotlin/Any| {
+        public abstract expect [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|example/Closeable| {
+        public abstract override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public abstract expect [ResolvedTo(STATUS)] interface AutoCloseable : R|kotlin/Any| {
+        public abstract expect [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] MyInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|example/Closeable| {
+        public abstract override [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public abstract expect [ResolvedTo(STATUS)] interface AutoCloseable : R|kotlin/Any| {
+        public abstract expect [ResolvedTo(STATUS)] fun close(): R|kotlin/Unit|
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] interface Closeable : R|example/AutoCloseable| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] MyClass.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| {
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] util.kt
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias AutoCloseable = R|java/lang/AutoCloseable|
+    public final actual [ResolvedTo(SUPER_TYPES)] typealias Closeable = R|java/io/Closeable|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] MyClass.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass, ExpectForActualAttributeKey={}] constructor(): R|example/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| {
+        }
+
+    }

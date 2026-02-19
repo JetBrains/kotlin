@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kt786
 
 //KT-786 Exception on incomplete code with 'when'
@@ -24,3 +25,6 @@ fun fff(): Int {
 }
 
 fun bar(): Int = 8
+
+/* GENERATED_FIR_TAGS: assignment, disjunctionExpression, equalityExpression, functionDeclaration,
+incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration, whenExpression, whenWithSubject */

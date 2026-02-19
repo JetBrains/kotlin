@@ -1,0 +1,68 @@
+open class Bar : IParentImpl, IChild {
+  constructor() /* primary */ {
+    super/*IParentImpl*/()
+    /* <init>() */
+
+  }
+
+  override fun b(t: String): String {
+    return "Bar"
+  }
+
+}
+
+open class Foo : IParentImpl, IChild {
+  constructor() /* primary */ {
+    super/*IParentImpl*/()
+    /* <init>() */
+
+  }
+
+  override fun b(t: String): String {
+    return "Foo"
+  }
+
+}
+
+open class IParentImpl : IParent<String, String> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun b(t: String): String {
+    return "ParentIntImpl"
+  }
+
+}
+
+interface IChild : IParent<String, String> {
+}
+
+interface IParent<T : Any?, V : Any?> {
+  abstract fun b(t: T): V
+
+}
+
+fun getChild(): IChild? {
+  val child: IChild? = Bar()
+  val isFooOrBar: Boolean = when {
+    child is Foo -> true
+    else -> child is Bar
+  }
+  return when {
+    isFooOrBar -> child
+    else -> null
+  }
+}
+
+fun test(): String? {
+  return { // BLOCK
+    val tmp_0: IChild? = getChild()
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.b(t = "")
+    }
+  }
+}

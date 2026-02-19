@@ -15,14 +15,14 @@ STEP 4:
     updated imports: test.kt
 STEP 5:
     dependencies: lib1
-    modifications:
+    modifications <js>:
         U : JsModuleC.5.kt -> JsModuleC.kt
-    added file: JsModuleC.kt
-    updated exports: JsModuleC.kt
-    updated imports: test.kt
+    added file <js>: JsModuleC.kt
+    updated exports <js>: JsModuleC.kt
+    updated imports <js>: test.kt
 STEP 6:
     dependencies: lib1
-    modifications:
+    modifications <js>:
         U : JsModuleC.6.kt -> JsModuleC.kt
-    modified ir: JsModuleC.kt
-    updated imports: test.kt
+    modified ir <js>: JsModuleC.kt
+    updated imports <js>: test.kt

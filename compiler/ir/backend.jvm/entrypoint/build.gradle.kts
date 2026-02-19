@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -13,7 +12,7 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" {

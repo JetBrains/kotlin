@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-609 Analyze not only local variables, but function parameters as well in 'unused values' analysis
 
 package kt609
@@ -18,3 +19,6 @@ open class A() {
 class B() : A() {
     final override fun foo(s : String) {}  //should not be a warning
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, override,
+primaryConstructor, propertyDeclaration */

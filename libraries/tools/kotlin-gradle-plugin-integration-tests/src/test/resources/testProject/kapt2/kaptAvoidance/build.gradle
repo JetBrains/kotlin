@@ -2,10 +2,3 @@ plugins {
     id "org.jetbrains.kotlin.jvm" apply false
     id "org.jetbrains.kotlin.kapt" apply false
 }
-
-subprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}

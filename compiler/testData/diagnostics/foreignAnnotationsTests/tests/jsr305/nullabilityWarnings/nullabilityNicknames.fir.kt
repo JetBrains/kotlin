@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: MyNullable.java
@@ -77,15 +77,15 @@ public class A {
 // FILE: main.kt
 fun main(a: A) {
     a.foo("", null)?.length
-    a.foo("", null).length
-    a.foo(null, "").length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo("", null)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
 
-    a.baz("", null).length
-    a.baz(null, "").length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz("", null)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
 
     a.bar().length
-    a.bar()!!.length
+    a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
-    a.field.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.length
 }

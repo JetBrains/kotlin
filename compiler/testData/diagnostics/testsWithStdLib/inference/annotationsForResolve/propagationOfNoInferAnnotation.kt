@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 private object TopLevelTypeVariable {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "HIDDEN")
@@ -23,3 +24,6 @@ private object NestedTypeVariable {
         bar(foo<String>())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, nullableType, objectDeclaration,
+stringLiteral, typeParameter */

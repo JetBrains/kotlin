@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-30054
 // FIR_IDENTICAL
-// !LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
+// LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
 interface I {
     fun foo(): String
 }
@@ -18,3 +19,6 @@ fun main() {
     bar(false)<!UNSAFE_CALL!>.<!>foo()
     bar(false)?.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+override, safeCall, stringLiteral */

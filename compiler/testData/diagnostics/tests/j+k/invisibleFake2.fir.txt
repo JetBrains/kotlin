@@ -1,0 +1,15 @@
+FILE: C.kt
+    private open class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+        public open override fun foo(d: R|kotlin/Any?|): R|kotlin/String| {
+            ^foo String(C)
+        }
+
+    }
+FILE: box.kt
+    public final fun box(): R|kotlin/String| {
+        ^box R|/D.D|().R|/B.foo|(String())
+    }

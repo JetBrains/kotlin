@@ -1,3 +1,7 @@
+// FILE: lib.kt
+inline fun <T, R> T.foo(f: (T) -> R) = f(this)
+
+// FILE: main.kt
 var log = ""
 
 class A(p: String) {
@@ -12,8 +16,6 @@ operator fun A.plusAssign(s: String) {
     pp += s
     log += "pp = $pp;"
 }
-
-inline fun <T, R> T.foo(f: (T) -> R) = f(this)
 
 fun <T, R> T.bar(f: (T) -> R) = f(this)
 

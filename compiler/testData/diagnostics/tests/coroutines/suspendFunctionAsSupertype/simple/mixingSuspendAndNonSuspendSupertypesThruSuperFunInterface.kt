@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 // SKIP_TXT
-// DIAGNOSTICS: -CONFLICTING_INHERITED_MEMBERS, -CONFLICTING_OVERLOADS
+// DIAGNOSTICS: -CONFLICTING_INHERITED_MEMBERS, -CONFLICTING_OVERLOADS, -ABSTRACT_MEMBER_NOT_IMPLEMENTED, -FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS
 
 fun interface FISuper: () -> Unit
 
@@ -54,3 +55,6 @@ object O2: <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>SFISuper, FISuper<!> {
     override suspend fun invoke() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, functionalType, interfaceDeclaration,
+objectDeclaration, operator, override, suspend */

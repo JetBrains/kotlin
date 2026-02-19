@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Base.java
 
 public class Base {
@@ -11,3 +12,5 @@ class Derived : Base() {
 
     fun foo() = value
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType */

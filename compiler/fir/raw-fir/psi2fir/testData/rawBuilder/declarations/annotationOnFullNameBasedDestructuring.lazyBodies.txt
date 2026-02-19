@@ -1,0 +1,2 @@
+FILE: annotationOnFullNameBasedDestructuring.kt
+    public? final? fun test1(): R|kotlin/Unit| { LAZY_BLOCK }

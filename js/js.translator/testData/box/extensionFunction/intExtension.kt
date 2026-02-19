@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1281
 package foo
 
 fun Int.quadruple(): Int {

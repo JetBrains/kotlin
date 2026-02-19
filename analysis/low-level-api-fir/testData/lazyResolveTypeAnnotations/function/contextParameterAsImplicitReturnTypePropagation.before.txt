@@ -1,0 +1,21 @@
+@R|Anno|(LAZY_EXPRESSION)  kotlin/String
+  context -> FirNamedFunctionSymbol /bar
+  anchor -> [FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo]
+
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
+        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] parameter: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
+        ^foo R|<local>/parameter|
+    }

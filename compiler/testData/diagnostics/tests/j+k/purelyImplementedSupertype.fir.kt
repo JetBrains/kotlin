@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 
 // FILE: Util.java
@@ -27,3 +28,7 @@ fun testWithUtil(map: ConcurrentHashMap<Int, String>): Int {
 fun test(list: java.util.ArrayList<String?>) {
     val x = list.get(0)<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, functionDeclaration, ifExpression, inProjection,
+integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+samConversion, smartcast, stringLiteral */

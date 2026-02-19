@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -21,32 +23,28 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 class FirIntegerConstantOperatorScope(
-    val session: FirSession,
-    val scopeSession: ScopeSession,
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
     val isUnsigned: Boolean
-) : FirTypeScope() {
+) : FirTypeScope(), SessionAndScopeSessionHolder {
     private val baseScope: FirTypeScope = run {
         val baseType = when (isUnsigned) {
             true -> session.builtinTypes.uIntType
             false -> session.builtinTypes.intType
-        }.type
+        }.coneType
 
         baseType.scope(
-            session,
-            scopeSession,
-            FakeOverrideTypeCalculator.DoNothing,
+            CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         ) ?: Empty
     }
 
-    private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()
+    private val mappedFunctions = hashMapOf<Name, FirNamedFunctionSymbol?>()
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         // Constant conversion for those unary operators works only for signed integers
@@ -58,9 +56,9 @@ class FirIntegerConstantOperatorScope(
         val requiresUnsignedOperand = isUnsigned && name !in binaryOperatorsWithSignedArgument
         val wrappedSymbol = mappedFunctions.getOrPut(name) {
             val allFunctions = baseScope.getFunctions(name)
-            val functionSymbol = allFunctions.first {
+            val functionSymbol = allFunctions.firstOrNull {
                 // unary operators have only one overload
-                if (isUnaryOperator) return@first true
+                if (isUnaryOperator) return@firstOrNull true
 
                 val coneType = it.fir.valueParameters.first().returnTypeRef.coneType
                 if (requiresUnsignedOperand) {
@@ -69,19 +67,19 @@ class FirIntegerConstantOperatorScope(
                     coneType.isInt
                 }
             }
-            wrapIntOperator(functionSymbol)
+            functionSymbol?.let { wrapIntOperator(it) }
         }
-        processor(wrappedSymbol)
+        wrappedSymbol?.let { processor(it) }
         baseScope.processFunctionsByName(name, processor)
     }
 
     private fun wrapIntOperator(originalSymbol: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
         val originalFunction = originalSymbol.fir
-        val wrappedFunction = buildSimpleFunctionCopy(originalFunction) {
+        val wrappedFunction = buildNamedFunctionCopy(originalFunction) {
             symbol = FirNamedFunctionSymbol(originalSymbol.callableId)
             origin = FirDeclarationOrigin.WrappedIntegerOperator
             returnTypeRef = buildResolvedTypeRef {
-                type = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
+                coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable = false)
             }
         }.also {
             it.originalForWrappedIntegerOperator = originalSymbol
@@ -127,6 +125,11 @@ class FirIntegerConstantOperatorScope(
     ): ProcessorAction {
         return ProcessorAction.NONE
     }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirIntegerConstantOperatorScope {
+        return FirIntegerConstantOperatorScope(newSession, newScopeSession, isUnsigned)
+    }
 }
 
 fun ScopeSession.getOrBuildScopeForIntegerConstantOperatorType(
@@ -143,20 +146,20 @@ private val INTEGER_CONSTANT_OPERATOR_SCOPE = scopeSessionKey<Boolean, FirIntege
 private object OriginalForWrappedIntegerOperator : FirDeclarationDataKey()
 private object IsUnsignedForWrappedIntegerOperator : FirDeclarationDataKey()
 
-var FirSimpleFunction.originalForWrappedIntegerOperator: FirNamedFunctionSymbol? by FirDeclarationDataRegistry.data(
+var FirNamedFunction.originalForWrappedIntegerOperator: FirNamedFunctionSymbol? by FirDeclarationDataRegistry.data(
     OriginalForWrappedIntegerOperator
 )
 
-private var FirSimpleFunction.isUnsignedWrappedIntegerOperator: Boolean? by FirDeclarationDataRegistry.data(
+private var FirNamedFunction.isUnsignedWrappedIntegerOperator: Boolean? by FirDeclarationDataRegistry.data(
     IsUnsignedForWrappedIntegerOperator
 )
 
 @OptIn(ExperimentalContracts::class)
 fun FirDeclaration.isWrappedIntegerOperator(): Boolean {
     contract {
-        returns(true) implies (this@isWrappedIntegerOperator is FirSimpleFunction)
+        returns(true) implies (this@isWrappedIntegerOperator is FirNamedFunction)
     }
-    return (this as? FirSimpleFunction)?.originalForWrappedIntegerOperator != null
+    return (this as? FirNamedFunction)?.originalForWrappedIntegerOperator != null
 }
 
 @OptIn(ExperimentalContracts::class)

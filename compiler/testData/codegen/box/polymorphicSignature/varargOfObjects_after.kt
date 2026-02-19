@@ -1,6 +1,4 @@
-// !LANGUAGE: +PolymorphicSignature
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: Fail 9
+// LANGUAGE: +PolymorphicSignature
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // SKIP_JDK6
@@ -18,7 +16,7 @@ fun box(): String {
         MethodType.methodType(Any::class.java, Array<Any>::class.java)
     )
 
-    val args = arrayOf("aaa", 1)
+    val args = arrayOf<Any>("aaa", 1)
 
     val r1 = mh.invokeExact(args)
     if (r1 != "aaa") return "Fail 1: $r1"

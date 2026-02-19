@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package collections
 
 fun <T> testCollection(c: Collection<T>, t: T) {
@@ -7,7 +8,7 @@ fun <T> testCollection(c: Collection<T>, t: T) {
     val iterator: Iterator<T> = c.iterator()
     c.containsAll(c)
 
-    val mutableIterator: MutableIterator<T> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>c.iterator()<!>
+    val mutableIterator: MutableIterator<T> <!INITIALIZER_TYPE_MISMATCH!>=<!> c.iterator()
     c.<!UNRESOLVED_REFERENCE!>add<!>(t)
     c.<!UNRESOLVED_REFERENCE!>remove<!>(1)
     c.<!UNRESOLVED_REFERENCE!>addAll<!>(c)
@@ -44,9 +45,9 @@ fun <T> testList(l: List<T>, t: T) {
     val value: T = l.<!UNRESOLVED_REFERENCE!>set<!>(1, t)
     l.<!UNRESOLVED_REFERENCE!>add<!>(1, t)
     l.<!UNRESOLVED_REFERENCE!>remove<!>(1)
-    val mutableListIterator: MutableListIterator<T> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>l.listIterator()<!>
-    val mutableListIterator1: MutableListIterator<T> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>l.listIterator(1)<!>
-    val mutableList: MutableList<T> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>l.subList(1, 2)<!>
+    val mutableListIterator: MutableListIterator<T> <!INITIALIZER_TYPE_MISMATCH!>=<!> l.listIterator()
+    val mutableListIterator1: MutableListIterator<T> <!INITIALIZER_TYPE_MISMATCH!>=<!> l.listIterator(1)
+    val mutableList: MutableList<T> <!INITIALIZER_TYPE_MISMATCH!>=<!> l.subList(1, 2)
 }
 
 fun <T> testMutableList(l: MutableList<T>, t: T) {
@@ -65,7 +66,7 @@ fun <T> testSet(s: Set<T>, t: T) {
     val iterator: Iterator<T> = s.iterator()
     s.containsAll(s)
 
-    val mutableIterator: MutableIterator<T> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>s.iterator()<!>
+    val mutableIterator: MutableIterator<T> <!INITIALIZER_TYPE_MISMATCH!>=<!> s.iterator()
     s.<!UNRESOLVED_REFERENCE!>add<!>(t)
     s.<!UNRESOLVED_REFERENCE!>remove<!>(1)
     s.<!UNRESOLVED_REFERENCE!>addAll<!>(s)
@@ -96,9 +97,9 @@ fun <K, V> testMap(m: Map<K, V>) {
     val collection: Collection<V> = m.values
     val set1: Set<Map.Entry<K, V>> = m.entries
 
-    val mutableSet: MutableSet<K> = <!INITIALIZER_TYPE_MISMATCH!>m.keys<!>
-    val mutableCollection: MutableCollection<V> = <!INITIALIZER_TYPE_MISMATCH!>m.values<!>
-    val mutableSet1: MutableSet<MutableMap.MutableEntry<K, V>> = <!INITIALIZER_TYPE_MISMATCH!>m.entries<!>
+    val mutableSet: MutableSet<K> <!INITIALIZER_TYPE_MISMATCH!>=<!> m.keys
+    val mutableCollection: MutableCollection<V> <!INITIALIZER_TYPE_MISMATCH!>=<!> m.values
+    val mutableSet1: MutableSet<MutableMap.MutableEntry<K, V>> <!INITIALIZER_TYPE_MISMATCH!>=<!> m.entries
 }
 
 fun <K, V> testMutableMap(m: MutableMap<K, V>) {
@@ -108,3 +109,6 @@ fun <K, V> testMutableMap(m: MutableMap<K, V>) {
 }
 
 fun <T> array(vararg t: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, vararg */

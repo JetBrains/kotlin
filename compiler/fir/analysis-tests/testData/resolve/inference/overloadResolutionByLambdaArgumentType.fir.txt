@@ -12,7 +12,7 @@ FILE: overloadResolutionByLambdaArgumentType.kt
         ^foo Int(2)
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/A.A|<R|kotlin/Int|>().<Ambiguity: foo, [/foo, /foo]>#(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/A.A|<R|kotlin/Int|>().R|/foo|<R|kotlin/Int|>(<L> = foo@fun R|A<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@foo Unit
         }
         )

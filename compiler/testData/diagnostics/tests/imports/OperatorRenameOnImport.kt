@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: a.kt
 package a
 
@@ -15,3 +16,6 @@ import a.<!OPERATOR_RENAMED_ON_IMPORT!>plus<!> as minus
 
 fun test(a1: A, a2: A) =
         a1 - a2
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, operator,
+thisExpression */

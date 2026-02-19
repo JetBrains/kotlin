@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-49747
 // DUMP_CFG
 
@@ -19,3 +20,7 @@ fun test(a: A?): Base? {
 }
 
 fun takeInt(x: Int) {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, elvisExpression, functionDeclaration,
+inheritanceDelegation, interfaceDeclaration, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+safeCall, smartcast */

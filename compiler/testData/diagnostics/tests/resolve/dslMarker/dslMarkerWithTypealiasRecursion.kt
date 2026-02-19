@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)
@@ -21,3 +22,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, typeAliasDeclaration, typeWithExtension */

@@ -15,33 +15,30 @@ plugins {
     `maven-publish`
 }
 
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 
 publishing {
     repositories {
-        this.maven {
-            this.name = "build"
-            this.url = rootProject.buildDir.resolve("repo").toURI()
-        }
+        maven("<localRepo>")
     }
 }
 
 kotlin {
-    js().nodejs()
     jvm()
 
     linuxX64()
     linuxArm64()
 
     macosX64("macos")
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     mingwX64("windowsX64")
 
     val commonMain by sourceSets.getting
     val concurrentMain by sourceSets.creating
     val jvmMain by sourceSets.getting
-    val jsMain by sourceSets.getting
     val nativeMain by sourceSets.creating
     val appleAndLinuxMain by sourceSets.creating
     val linuxMain by sourceSets.creating
@@ -49,17 +46,23 @@ kotlin {
     val linuxArm64Main by sourceSets.getting
     val appleMain by sourceSets.creating
     val macosMain by sourceSets.getting
-    val iosMain by sourceSets.getting
+    val iosMain by sourceSets.creating
+    val iosX64Main by sourceSets.getting
+    val iosArm64Main by sourceSets.getting
+    val iosSimulatorArm64Main by sourceSets.getting
     val windowsX64Main by sourceSets.getting
 
     commonMain {
-        -jsMain
         -concurrentMain {
             -jvmMain
             -nativeMain {
                 -appleAndLinuxMain {
                     -appleMain {
-                        -iosMain
+                        -iosMain {
+                            -iosX64Main
+                            -iosArm64Main
+                            -iosSimulatorArm64Main
+                        }
                         -macosMain
                     }
                     -linuxMain {
@@ -73,12 +76,12 @@ kotlin {
         }
     }
 
-    targets.withType<KotlinNativeTarget>().forEach { target ->
-        target.compilations.getByName("main").cinterops.create("withPosix") {
+    targets.withType<KotlinNativeTarget>().configureEach {
+        compilations.getByName("main").cinterops.create("withPosix") {
             this.packageName = "withPosix"
             header(file("libs/withPosix.h"))
         }
-        target.compilations.getByName("main").cinterops.create("simple") {
+        compilations.getByName("main").cinterops.create("simple") {
             header(file("libs/simple.h"))
         }
     }

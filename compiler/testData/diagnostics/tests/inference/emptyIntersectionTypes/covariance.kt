@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class KotlinSharedNativeCompilation() : KotlinMetadataCompilation<KotlinCommonOptions>, AbstractKotlinCompilation<KotlinCommonOptions>()
 
@@ -21,3 +22,6 @@ fun main() {
         else -> KotlinCommonCompilation()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty, out,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, whenExpression */

@@ -14,10 +14,5 @@ fun test() =
         .boxed()
         .collect(Collectors.toList())
 
-// JVM_IR_TEMPLATES
 // 4 INVOKEDYNAMIC
 // 0 class StreamApiKt\$test\$
-
-// JVM_TEMPLATES
-// 0 INVOKEDYNAMIC
-// 4 class StreamApiKt\$test\$

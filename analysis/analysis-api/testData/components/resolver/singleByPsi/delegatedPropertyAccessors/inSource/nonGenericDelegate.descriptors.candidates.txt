@@ -1,0 +1,76 @@
+KtPropertyDelegate(361,389): 'by NonGenericHolder("world")'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = NonGenericHolder("world")
+          isSafeNavigation = false
+          type = myPack.NonGenericHolder
+        signature = KaFunctionSignature:
+          receiverType = myPack.NonGenericHolder
+          returnType = kotlin.String
+          symbol = myPack/getValue(<extension receiver>: myPack.NonGenericHolder, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = myPack/getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = NonGenericHolder("world")
+          isSafeNavigation = false
+          type = myPack.NonGenericHolder
+        signature = KaFunctionSignature:
+          receiverType = myPack.NonGenericHolder
+          returnType = kotlin.Unit
+          symbol = myPack/setValue(<extension receiver>: myPack.NonGenericHolder, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.String
+              symbol = value: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = myPack/setValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    isInBestCandidates = true

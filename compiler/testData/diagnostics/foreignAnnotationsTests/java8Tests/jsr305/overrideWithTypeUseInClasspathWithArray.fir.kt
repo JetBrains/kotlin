@@ -1,7 +1,7 @@
 // SOURCE_RETENTION_ANNOTATIONS
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: strict
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: spr/Nullable.java
 package spr;
@@ -80,7 +80,7 @@ import javax.annotation.Nonnull;
 @Retention(AnnotationRetention.RUNTIME)
 @Nonnull
 @TypeQualifierNickname
-annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NotNull<!>
+annotation class <!CLASSIFIER_REDECLARATION!>NotNull<!>
 
 // FILE: main.kt
 

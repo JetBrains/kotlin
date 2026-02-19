@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Annotated.java
 
 import org.jetbrains.annotations.NotNull;
@@ -20,3 +21,5 @@ class User : Annotated() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

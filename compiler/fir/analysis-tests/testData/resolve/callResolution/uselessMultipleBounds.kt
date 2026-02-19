@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-39032
 
 interface A {
@@ -11,3 +12,5 @@ interface B : A {
 fun <E> bar(e: E) where E : A, E : B {
     e.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, typeConstraint, typeParameter */

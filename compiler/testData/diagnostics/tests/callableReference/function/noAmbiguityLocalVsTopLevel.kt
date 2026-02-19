@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 fun bar() = 42
 
 fun main() {
@@ -7,3 +8,5 @@ fun main() {
 
     ::bar
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, localFunction */

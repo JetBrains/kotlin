@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: p/Foo.java
 package p;
 
@@ -16,4 +17,6 @@ class Bar : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>Foo
 }
 
 private fun foo(): <!INVISIBLE_REFERENCE!>Nested<!>? = null
-private fun bar(): <!INVISIBLE_REFERENCE!>p.Foo.Nested<!>? = null
+private fun bar(): p.<!INVISIBLE_REFERENCE!>Foo<!>.Nested? = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

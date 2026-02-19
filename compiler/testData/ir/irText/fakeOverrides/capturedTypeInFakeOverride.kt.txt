@@ -1,0 +1,20 @@
+abstract class C : A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun m(x: B<out List<Number>>): Int {
+    return TODO()
+  }
+
+}
+
+interface A {
+  abstract fun m(x: B<out List<Number>>): Int
+
+}
+
+interface B<T : List<out Number>> {
+}

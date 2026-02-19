@@ -1,7 +1,4 @@
-compiler/testData/cli/jvm/readingConfigFromEnvironment/appendingArgs.kt:4:9: warning: [UNUSED_VARIABLE] Variable 'x' is never used
-    val x = 1?.dec()
-        ^
-compiler/testData/cli/jvm/readingConfigFromEnvironment/appendingArgs.kt:4:14: warning: [UNNECESSARY_SAFE_CALL] Unnecessary safe call on a non-null receiver of type Int
-    val x = 1?.dec()
-             ^
+compiler/testData/cli/jvm/readingConfigFromEnvironment/appendingArgs.kt:4:13: warning: [DIVISION_BY_ZERO] Division by zero.
+    val x = arg / 0
+            ^^^^^^^
 OK

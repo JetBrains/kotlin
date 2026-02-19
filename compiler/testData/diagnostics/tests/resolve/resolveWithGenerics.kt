@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //If this test hangs, it means something is broken.
 package a
@@ -20,3 +21,5 @@ fun test(a: A) {
     foo(foo(a, foo(a, foo(a, a.testVal))), a)
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeParameter */

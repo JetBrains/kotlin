@@ -57,9 +57,6 @@ backend.native/tests/teamcity-test.property
 samples/**/*.kt.bc-build
 
 # CMake
-tools/performance-server/node_modules
-tools/performance-server/server
-tools/performance-server/ui/js
 cmake-build-debug/
 
 # compilation database
@@ -68,9 +65,6 @@ compile_commands.json
 # clangd caches
 .clangd/
 .cache/clangd
-
-# googletest framework used by runtime tests
-runtime/googletest/
 
 # Toolchain builder artifacts
 tools/toolchain_builder/artifacts

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
@@ -102,23 +101,15 @@ class PSICallResolver(
         resolutionKind: NewResolutionOldInference.ResolutionKind,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
-        val isBinaryRemOperator = isBinaryRemOperator(context.call)
-        val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
-
         val kotlinCallKind = resolutionKind.toKotlinCallKind()
-        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, refinedName, tracingStrategy, isSpecialFunction = false)
+        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, name, tracingStrategy, isSpecialFunction = false)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
         val expectedType = calculateExpectedType(context)
-        var result = kotlinCallResolver.resolveAndCompleteCall(
+        val result = kotlinCallResolver.resolveAndCompleteCall(
             scopeTower, resolutionCallbacks, kotlinCall, expectedType, context.collectAllCandidates
         )
-
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllInapplicable())) {
-            result = resolveToDeprecatedMod(name, context, kotlinCallKind, tracingStrategy, scopeTower, resolutionCallbacks, expectedType)
-        }
 
         if (result.isEmpty() && reportAdditionalDiagnosticIfNoCandidates(context, scopeTower, kotlinCallKind, kotlinCall)) {
             return OverloadResolutionResultsImpl.nameNotFound()
@@ -180,29 +171,6 @@ class PSICallResolver(
         // Mostly, we approximate captured or some other internal types that don't live longer than resolve for a call,
         // so it's quite useless to preserve cache for longer time
         typeApproximator.clearCache()
-    }
-
-    private fun resolveToDeprecatedMod(
-        remOperatorName: Name,
-        context: BasicCallResolutionContext,
-        kotlinCallKind: KotlinCallKind,
-        tracingStrategy: TracingStrategy,
-        scopeTower: ImplicitScopeTower,
-        resolutionCallbacks: KotlinResolutionCallbacksImpl,
-        expectedType: UnwrappedType?
-    ): CallResolutionResult {
-        val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
-        val callWithDeprecatedName = toKotlinCall(
-            context, kotlinCallKind, context.call, deprecatedName, tracingStrategy, isSpecialFunction = false
-        )
-        return kotlinCallResolver.resolveAndCompleteCall(
-            scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType, context.collectAllCandidates
-        )
-    }
-
-    private fun refineNameForRemOperator(isBinaryRemOperator: Boolean, name: Name): Name {
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        return if (isBinaryRemOperator && !shouldUseOperatorRem) OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]!! else name
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
@@ -331,7 +299,7 @@ class PSICallResolver(
     private val List<ResolvedCall<*>>.allIncomplete: Boolean get() = all { it.status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE }
 
     private fun ResolvedCall<*>.recordEffects(trace: BindingTrace) {
-        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
+        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor.containingDeclaration)
         recordLambdasInvocations(trace, moduleDescriptor)
         recordResultInfo(trace, moduleDescriptor)
     }
@@ -349,10 +317,7 @@ class PSICallResolver(
     private fun CallResolutionResult.isEmpty(): Boolean =
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>() != null
 
-    private fun Collection<ResolutionCandidate>.areAllFailed() =
-        all {
-            !it.resultingApplicability.isSuccess
-        }
+    private fun Collection<ResolutionCandidate>.areAllFailed() = all { !it.isSuccessful }
 
     private fun Collection<ResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
         all {
@@ -628,7 +593,7 @@ class PSICallResolver(
                     if (i == 0) continue
                     val lambdaExpression = externalLambdaArguments[i].getLambdaExpression() ?: continue
 
-                    if (lambdaExpression.isTrailingLambdaOnNewLIne) {
+                    if (lambdaExpression.isTrailingLambdaOnNewLine) {
                         context.trace.report(Errors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.on(lambdaExpression))
                     }
                     context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(lambdaExpression))

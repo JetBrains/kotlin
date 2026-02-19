@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // MODULE: m1
 // FILE: a.kt
 
@@ -40,3 +41,6 @@ fun test() {
     c(<!ARGUMENT_TYPE_MISMATCH!>M1().b<!>) // Type arguments do not match
     d(M1().b) // Type arguments do match
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, propertyDeclaration,
+typeParameter */

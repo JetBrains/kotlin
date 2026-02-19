@@ -2,6 +2,7 @@ package
 
 public fun test(): kotlin.Unit
 public operator fun C.plus(/*0*/ a: kotlin.Any): C
+public operator fun C2.plus(/*0*/ a: kotlin.Any): C2
 public operator fun C.plusAssign(/*0*/ a: kotlin.Any): kotlin.Unit
 
 public final class C {
@@ -18,5 +19,14 @@ public final class C1 {
     public final operator fun get(/*0*/ i: kotlin.Int): C
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final operator fun set(/*0*/ i: kotlin.Int, /*1*/ v: C): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C2 {
+    public constructor C2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun get(/*0*/ i: kotlin.Int): C2
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ i: kotlin.Int, /*1*/ v: C2): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

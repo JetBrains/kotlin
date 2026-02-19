@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /IA { // /IA|null[0]
+    abstract fun foo() // /IA.foo|foo(){}[0]
+}
+abstract interface /IB { // /IB|null[0]
+    abstract fun bar() // /IB.bar|bar(){}[0]
+}
+abstract interface <#A: in kotlin/Any?> /In // /In|null[0]
+abstract interface <#A: kotlin/Any?> /Inv { // /Inv|null[0]
+    abstract val t // /Inv.t|{}t[0]
+        abstract fun <get-t>(): #A // /Inv.t.<get-t>|<get-t>(){}[0]
+}
+abstract interface /Z { // /Z|null[0]
+    abstract fun <#A1: kotlin/Any?> create(/In<#A1>, /In<#A1>): /Inv<#A1> // /Z.create|create(In<0:0>;In<0:0>){0§<kotlin.Any?>}[0]
+}
+final fun /test(/In</IA>, /In</IB>, /Z) // /test|test(In<IA>;In<IB>;Z){}[0]

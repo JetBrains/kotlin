@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: Kt-47447, KT-47729
 
@@ -18,3 +19,5 @@ fun test() {
     Foo infixOperator 1 + 1
     Foo infixOperator (1 + 1)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, infix, integerLiteral, objectDeclaration, propertyDeclaration */

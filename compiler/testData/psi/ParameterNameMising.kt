@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(Array<String>) : Unit {
     var x : Int = 42
     x += 1

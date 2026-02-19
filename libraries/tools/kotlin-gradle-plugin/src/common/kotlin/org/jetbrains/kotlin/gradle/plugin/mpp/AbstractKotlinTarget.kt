@@ -10,14 +10,13 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
@@ -26,23 +25,16 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
+@InternalKotlinGradlePluginApi
 abstract class AbstractKotlinTarget(
     final override val project: Project,
 ) : InternalKotlinTarget {
 
     final override val extras: MutableExtras = mutableExtrasOf()
 
-    private val attributeContainer = HierarchyAttributeContainer(parent = null)
+    private val attributeContainer = HierarchyAttributeContainer(parent = null, project.objects)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
-
-    @Deprecated("Scheduled for removal with Kotlin 2.2")
-    override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
-        internal set
-
-    @Deprecated("Scheduled for removal with Kotlin 2.2")
-    override var overrideDisambiguationClassifierOnIdeImport: String? = null
-        internal set
 
     override val apiElementsConfigurationName: String
         get() = disambiguateName("apiElements")
@@ -52,6 +44,10 @@ abstract class AbstractKotlinTarget(
 
     override val sourcesElementsConfigurationName: String
         get() = disambiguateName("sourcesElements")
+
+    @InternalKotlinGradlePluginApi
+    override val resourcesElementsConfigurationName: String
+        get() = disambiguateName("resourcesElements")
 
     override val artifactsTaskName: String
         get() = disambiguateName("jar")
@@ -92,7 +88,6 @@ abstract class AbstractKotlinTarget(
 
     /**
      * Returns, potentially not configured (e.g. without some usages), Gradle SoftwareComponent's for this target
-     * For final version of components use [awaitComponents]
      */
     override val components: Set<KotlinTargetSoftwareComponent> by lazy {
         kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()
@@ -106,11 +101,11 @@ abstract class AbstractKotlinTarget(
         val kotlinExtension = project.kotlinExtension
 
         val result =
-            if (kotlinExtension !is KotlinMultiplatformExtension || targetName == KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
+            if (kotlinExtension !is KotlinMultiplatformExtension || targetName == KotlinMetadataTarget.METADATA_TARGET_NAME)
                 KotlinVariantWithCoordinates(compilation, usageContexts)
             else {
                 val metadataTarget =
-                    kotlinExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as AbstractKotlinTarget
+                    kotlinExtension.targets.getByName(KotlinMetadataTarget.METADATA_TARGET_NAME) as AbstractKotlinTarget
 
                 KotlinVariantWithMetadataVariant(compilation, usageContexts, metadataTarget)
             }
@@ -124,7 +119,10 @@ abstract class AbstractKotlinTarget(
     ): Set<DefaultKotlinUsageContext> {
         return listOfNotNull(
             COMPILE to apiElementsConfigurationName,
-            (RUNTIME to runtimeElementsConfigurationName).takeIf { producingCompilation is KotlinCompilationToRunnableFiles }
+            (RUNTIME to runtimeElementsConfigurationName).takeIf {
+                @Suppress("DEPRECATION_ERROR")
+                producingCompilation is KotlinCompilationToRunnableFiles
+            }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
             DefaultKotlinUsageContext(
                 producingCompilation,
@@ -179,12 +177,7 @@ abstract class AbstractKotlinTarget(
         publicationConfigureActions.all { action -> action.execute(publication) }
     }
 
-    @OptIn(DeprecatedTargetPresetApi::class)
-    @Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.WARNING,
-    )
-    override var preset: KotlinTargetPreset<out KotlinTarget>? = null
+    override var targetPreset: InternalKotlinTargetPreset<KotlinTarget>? = null
         internal set
 }
 

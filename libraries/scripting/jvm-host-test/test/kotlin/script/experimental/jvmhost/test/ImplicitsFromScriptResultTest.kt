@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
@@ -20,6 +19,8 @@ import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleInMemory
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 /**
  * This test shows an ability of using KClasses loaded with classloaders
@@ -33,9 +34,10 @@ import kotlin.script.experimental.jvmhost.JvmScriptCompiler
  * in [ScriptCompilationConfiguration] for saving previous classes in
  * underlying module will be introduced.
  */
-class ImplicitsFromScriptResultTest : TestCase() {
+class ImplicitsFromScriptResultTest {
 
-    fun testImplicits() = expectTestToFailOnK2 {
+    @Test
+    fun testImplicits() {
         // the implementation of the Compiler Host doesn't work with IR - the inter-script symbol table
         // should be maintained to make it run (see latest REPL compiler implementations for details
         // TODO: consider either fix it or rewrite to the REPL compiler
@@ -106,7 +108,9 @@ class CompilerHost {
 
     private val evaluationConfiguration = ScriptEvaluationConfiguration()
 
-    private val compiler = JvmScriptCompiler(myHostConfiguration)
+    private val compiler =
+        if (isRunningTestOnK2) JvmScriptCompiler(myHostConfiguration)
+        else JvmScriptCompiler.createLegacy(myHostConfiguration)
 
     private fun getImplicitsClasses(): List<KClass<*>> = implicits
 
@@ -127,7 +131,7 @@ class CompilerHost {
 
     private class SourceCodeTestImpl(number: Int, override val text: String) : SourceCode {
         override val name: String = "Line_$number"
-        override val locationId: String = "location_$number"
+        override val locationId: String = "$name.kts"
     }
 }
 

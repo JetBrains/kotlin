@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FULL_JDK
 
@@ -10,12 +11,14 @@ class X<B extends I<P>, P> {
     }
 }
 
+// FILE: E.java
 class E<T> {
     T getT() {
         return null;
     }
 }
 
+// FILE: I.java
 interface I<P> {}
 
 // FILE: test.kt
@@ -24,3 +27,5 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("(X<(I<(kotlin.Any..kotlin.Any?)>..I<(kotlin.Any..kotlin.Any?)>?), (kotlin.Any..kotlin.Any?)>..X<out (I<*>..I<*>?), *>?)")!>t<!>
     t.id // should be OK
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, localProperty, propertyDeclaration */

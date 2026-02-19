@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -27,27 +28,48 @@ class ConeUnderscoreIsReserved(source: KtSourceElement) : ConeDiagnosticWithSour
     override val reason: String get() = "Names _, __, ___, ..., are reserved in Kotlin"
 }
 
+class ConeMultipleLabelsAreForbidden(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
+    override val reason: String get() = "Multiple labels per statement are forbidden"
+}
+
+abstract class ConeCannotInferType : ConeDiagnostic
+
 class ConeCannotInferTypeParameterType(
     val typeParameter: FirTypeParameterSymbol,
     override val reason: String = "Cannot infer type for parameter ${typeParameter.name}"
-) : ConeDiagnostic
+) : ConeCannotInferType() {
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for type parameter ${typeParameter.name}"
+}
 
 class ConeCannotInferValueParameterType(
-    val valueParameter: FirValueParameterSymbol,
-    override val reason: String = "Cannot infer type for parameter ${valueParameter.name}"
-) : ConeDiagnostic
+    val valueParameter: FirValueParameterSymbol?,
+    reason: String? = null,
+    // Currently, we use it to preserve the exact previous diagnostic VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE for top-levels.
+    // By top-level, we mean any lambda outside any call, both with and without an expected type.
+    val isTopLevelLambda: Boolean = false,
+) : ConeCannotInferType() {
+    private val _reason: String? = reason
+
+    override val reason: String get() = _reason ?: ("Cannot infer type for parameter " + (valueParameter?.let { "${it.name}" } ?: "it"))
+
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for value parameter " + (valueParameter?.let { "${it.name}" } ?: "it")
+}
 
 class ConeCannotInferReceiverParameterType(
     override val reason: String = "Cannot infer type for receiver parameter"
-) : ConeDiagnostic
+) : ConeCannotInferType() {
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for receiver parameter"
+}
 
 class ConeTypeVariableTypeIsNotInferred(
     val typeVariableType: ConeTypeVariableType,
-    override val reason: String = "Type for ${typeVariableType.lookupTag.debugName} is not inferred"
-) : ConeDiagnostic
-
-class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
-    override val reason: String get() = "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
+    override val reason: String = "Type for ${typeVariableType.typeConstructor.debugName} is not inferred"
+) : ConeCannotInferType() {
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for ${typeVariableType.typeConstructor.debugName}"
 }
 
 class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
@@ -83,8 +105,24 @@ object ConeNoConstructorError : ConeDiagnostic {
     override val reason: String get() = "This type does not have a constructor"
 }
 
-object ConeMissingConstructorKeyword : ConeDiagnostic {
-    override val reason: String get() = "Use the 'constructor' keyword after the modifiers of the primary constructor."
+object ConeNoImplicitDefaultConstructorOnExpectClass : ConeDiagnostic {
+    override val reason: String get() = "No implicit default constructor on expect class"
+}
+
+object ConeContractShouldBeFirstStatement : ConeDiagnostic {
+    override val reason: String get() = "Contract should be the first statement."
+}
+
+object ConeContractMayNotHaveLabel : ConeDiagnostic {
+    override val reason: String get() = "Contract call may not have a label."
+}
+
+object ConeContextParameterWithDefaultValue : ConeDiagnostic {
+    override val reason: String get() = "Context parameters cannot have default values"
+}
+
+class ConeCollectionLiteralAmbiguity(val candidatesWithOf: List<FirRegularClassSymbol>) : ConeDiagnostic {
+    override val reason: String get() = "Ambiguous collection literal"
 }
 
 enum class DiagnosticKind {
@@ -95,6 +133,8 @@ enum class DiagnosticKind {
 
     ReturnNotAllowed,
     UnresolvedLabel,
+    AmbiguousLabel,
+    LabelNameClash,
     NotAFunctionLabel,
     NoThis,
     IllegalConstExpression,
@@ -107,12 +147,12 @@ enum class DiagnosticKind {
     Java,
     SuperNotAllowed,
     ValueParameterWithNoTypeAnnotation,
-    CannotInferParameterType, // TODO: replace this with ConeCannotInferValueParameterType and ConeCannotInferTypeParameterType
     IllegalProjectionUsage,
     MissingStdlibClass,
     NotASupertype,
     SuperNotAvailable,
-    AnnotationNotAllowed,
+    AnnotationInWhereClause,
+    MultipleAnnotationWithAllTarget,
 
     LoopInSupertype,
     RecursiveTypealiasExpansion,
@@ -125,12 +165,15 @@ enum class DiagnosticKind {
     IllegalEscape,
 
     IntLiteralOutOfRange,
+    IntLiteralWithLeadingZeros,
     FloatLiteralOutOfRange,
     WrongLongSuffix,
     UnsignedNumbersAreNotPresent,
 
     IsEnumEntry,
     EnumEntryAsType,
+
+    UnderscoreWithoutRenamingInDestructuring,
 
     Other,
 }

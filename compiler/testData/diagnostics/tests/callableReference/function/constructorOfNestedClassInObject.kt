@@ -1,4 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-15951 Callable reference to class constructor from object is not resolved
+// KT-63069
 
 object A {
     class Wrapper
@@ -19,3 +21,6 @@ fun test() {
     Outer::<!UNRESOLVED_REFERENCE!>Wrapper<!>
     (Outer)::<!UNRESOLVED_REFERENCE!>Wrapper<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, nestedClass,
+objectDeclaration */

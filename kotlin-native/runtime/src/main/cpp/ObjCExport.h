@@ -9,61 +9,12 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 
 #import "Types.h"
 #import "Memory.h"
 
 extern "C" {
-
-struct ObjCToKotlinMethodAdapter {
-  const char* selector;
-  const char* encoding;
-  IMP imp;
-};
-
-struct KotlinToObjCMethodAdapter {
-  const char* selector;
-  ClassId interfaceId;
-  int itableSize;
-  int itableIndex;
-  int vtableIndex;
-  const void* kotlinImpl;
-};
-
-struct ObjCTypeAdapter {
-  const TypeInfo* kotlinTypeInfo;
-
-  const void * const * kotlinVtable;
-  int kotlinVtableSize;
-
-  const InterfaceTableRecord* kotlinItable;
-  int kotlinItableSize;
-
-  const char* objCName;
-
-  const ObjCToKotlinMethodAdapter* directAdapters;
-  int directAdapterNum;
-
-  const ObjCToKotlinMethodAdapter* classAdapters;
-  int classAdapterNum;
-
-  const ObjCToKotlinMethodAdapter* virtualAdapters;
-  int virtualAdapterNum;
-
-  const KotlinToObjCMethodAdapter* reverseAdapters;
-  int reverseAdapterNum;
-};
-
-struct TypeInfoObjCExportAddition {
-  /*convertReferenceToRetainedObjC*/ void* convertToRetained;
-  Class objCClass;
-  const ObjCTypeAdapter* typeAdapter;
-};
-
-struct WritableTypeInfo {
-  TypeInfoObjCExportAddition objCExport;
-};
 
 struct Block_descriptor_1;
 
@@ -122,6 +73,9 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
 
 /// Utility function that is used to determine NSInteger size in compile time.
 NSInteger Kotlin_ObjCExport_NSIntegerTypeProvider();
+
+Class Kotlin_ObjCExport_GetOrCreateClass(const TypeInfo *typeInfo);
+Class Kotlin_ObjCExport_GetOrCreateObjCClass(const TypeInfo *typeInfo);
 
 } // extern "C"
 

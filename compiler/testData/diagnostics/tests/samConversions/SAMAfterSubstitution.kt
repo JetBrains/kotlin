@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: J.java
 public interface J<T> {
@@ -16,3 +17,5 @@ fun test(j: J<Runnable>, r: Runnable) {
     j.foo({}, r)
     j.foo({}, {})
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, lambdaLiteral, samConversion */

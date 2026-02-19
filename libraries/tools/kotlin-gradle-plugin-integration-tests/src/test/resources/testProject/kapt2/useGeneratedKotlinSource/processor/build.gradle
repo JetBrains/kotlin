@@ -9,3 +9,4 @@ repositories {
 }
 
 compileKotlin.kotlinOptions.allWarningsAsErrors = true
+compileKotlin.kotlinOptions.freeCompilerArgs += ["-Xsuppress-version-warnings"]

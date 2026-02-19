@@ -1,11 +1,9 @@
 ## FIR/Builder inference
 See also: [Kotlin Spec: Builder-style type inference](https://kotlinlang.org/spec/type-inference.html#builder-style-type-inference)
 
+**NB:** This document is quite obsolete, see [pcla.md](pcla.md).
+
 ### Glossary
-#### CS = Constraint system
-An instance of `org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl`
-#### Call-tree
-A tree of calls, in which constraint systems are joined and solved(completed) together
 #### Postponed type variable
 Type-variable, that was used to build a stub type on, and fixation of which is postponed until the end of lambda analysis.
 Selection of type variables to postpone happens during [Initiation](#initiation) phase

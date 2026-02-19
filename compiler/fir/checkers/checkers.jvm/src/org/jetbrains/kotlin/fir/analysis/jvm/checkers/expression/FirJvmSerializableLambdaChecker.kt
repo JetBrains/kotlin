@@ -5,32 +5,41 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.declarations.InlineStatus.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 
-object FirJvmSerializableLambdaChecker : FirAnnotationChecker() {
-    private val JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSerializableLambda")
-
-    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotation) {
         if (expression.fqName(context.session) == JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME) {
             val declaration = context.containingDeclarations.last()
-            if (declaration !is FirAnonymousFunction) {
+            if (declaration !is FirAnonymousFunctionSymbol) {
                 val actualTargets = getActualTargetList(declaration)
                 val targetDescription = actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
                 reporter.reportOn(
                     expression.source,
                     FirErrors.WRONG_ANNOTATION_TARGET,
                     targetDescription,
-                    context
+                    listOf(KotlinTarget.LAMBDA_EXPRESSION)
                 )
+            } else {
+                val diagnostic = when (declaration.inlineStatus) {
+                    Inline, CrossInline -> FirJvmErrors.JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS
+                    NoInline, Unknown -> return
+                }
+                reporter.reportOn(expression.source, diagnostic)
             }
         }
     }

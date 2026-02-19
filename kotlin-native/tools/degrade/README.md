@@ -7,7 +7,8 @@ without Gradle.
 Intended to be helpful in minimizing reproducers or investigating
 Kotlin/Native-related problems.
 
-Confirmed to work with Kotlin versions from 1.8.10 to 1.9.0-Beta
+Confirmed to work with Kotlin versions from 1.8.10 to 2.2.0-RC.
+
 Probably doesn't work on Windows.
 
 ## Usage

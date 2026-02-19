@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(x: String) {}
 fun foo(x: Int) {}
@@ -10,3 +11,5 @@ fun bar(nullX: Int?, nullY: String?, notNullY: String) {
     foo(<!TYPE_MISMATCH!>nullX<!>, <!TYPE_MISMATCH!>nullY<!>)
     <!NONE_APPLICABLE!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType */

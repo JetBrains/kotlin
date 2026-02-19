@@ -1,53 +1,53 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrEnumEntry.declaringField: IrField? by irAttribute(copyByDefault = false)
+private var IrProperty.staticBackingFields: IrField? by irAttribute(copyByDefault = false)
+private var IrSimpleFunction.staticCompanionDeclarations: Pair<IrSimpleFunction, IrSimpleFunction>? by irAttribute(copyByDefault = false)
+
+private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrClass.defaultImplsClass: IrClass? by irAttribute(copyByDefault = false)
+private var IrSimpleFunction.classFakeOverrideReplacement: ClassFakeOverrideReplacement? by irAttribute(copyByDefault = false)
+var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+private var IrClass.repeatedAnnotationSyntheticContainer: IrClass? by irAttribute(copyByDefault = false)
 
 class JvmCachedDeclarations(
     private val context: JvmBackendContext,
     val fieldsForObjectInstances: CachedFieldsForObjectInstances,
 ) {
-    val syntheticAccessorGenerator = CachedSyntheticDeclarations(context)
-
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
-    private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
-
-    private val defaultImplsMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
-    private val defaultImplsRedirections = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsOriginalMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-
-    private val repeatedAnnotationSyntheticContainers = ConcurrentHashMap<IrClass, IrClass>()
-
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
-        singletonFieldDeclarations.getOrPut(enumEntry) {
+        enumEntry::declaringField.getOrSetIfNull {
             context.irFactory.buildField {
                 setSourceRange(enumEntry)
                 name = enumEntry.name
@@ -71,7 +71,7 @@ class JvmCachedDeclarations(
         val oldField = irProperty.backingField ?: return null
         val oldParent = irProperty.parent as? IrClass ?: return null
         if (!oldParent.isObject) return null
-        return staticBackingFields.getOrPut(irProperty) {
+        return irProperty::staticBackingFields.getOrSetIfNull {
             context.irFactory.buildField {
                 updateFrom(oldField)
                 name = oldField.name
@@ -83,19 +83,16 @@ class JvmCachedDeclarations(
                 val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
                 val shouldMoveFields = oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)
                 if (shouldMoveFields) {
-                   parent = oldParent.parentAsClass
-                   val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
-                   val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
-                   annotations = if (parentIsPrivate && !isPrivate) {
-                       context.createJvmIrBuilder(this.symbol).run {
-                           filterOutAnnotations(
-                               DeprecationResolver.JAVA_DEPRECATED,
-                               oldField.annotations
-                           ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
-                       }
-                   } else {
-                       oldField.annotations
-                   }
+                    parent = oldParent.parentAsClass
+                    val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
+                    val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
+                    if (parentIsPrivate && !isPrivate) {
+                        with(context.createJvmIrBuilder(this.symbol)) {
+                            copyAnnotationsAndAddJavaLangDeprecated(oldField)
+                        }
+                    } else {
+                        annotations = oldField.annotations
+                    }
                 } else {
                     parent = oldParent
                     annotations = oldField.annotations
@@ -108,7 +105,7 @@ class JvmCachedDeclarations(
     }
 
     fun getStaticAndCompanionDeclaration(jvmStaticFunction: IrSimpleFunction): Pair<IrSimpleFunction, IrSimpleFunction> =
-        staticCompanionDeclarations.getOrPut(jvmStaticFunction) {
+        jvmStaticFunction::staticCompanionDeclarations.getOrSetIfNull {
             val companion = jvmStaticFunction.parentAsClass
             assert(companion.isCompanion)
             if (jvmStaticFunction.isExternal) {
@@ -117,14 +114,13 @@ class JvmCachedDeclarations(
                 val staticExternal = context.irFactory.buildFun {
                     updateFrom(jvmStaticFunction)
                     name = jvmStaticFunction.name
-                    returnType = jvmStaticFunction.returnType
                 }.apply {
                     parent = companion.parent
                     copyAttributes(jvmStaticFunction)
                     copyAnnotationsFrom(jvmStaticFunction)
                     copyCorrespondingPropertyFrom(jvmStaticFunction)
-                    copyParameterDeclarationsFrom(jvmStaticFunction)
-                    dispatchReceiverParameter = null
+                    copyFunctionSignatureFrom(jvmStaticFunction)
+                    parameters = nonDispatchParameters
                     metadata = jvmStaticFunction.metadata
                 }
                 staticExternal to companion.makeProxy(staticExternal, isStatic = false)
@@ -135,6 +131,7 @@ class JvmCachedDeclarations(
 
     private fun IrClass.makeProxy(target: IrSimpleFunction, isStatic: Boolean) =
         context.irFactory.buildFun {
+            setSourceRange(target)
             returnType = target.returnType
             origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
             // The proxy needs to have the same name as what it is targeting. If that is a property accessor,
@@ -164,21 +161,24 @@ class JvmCachedDeclarations(
             copyAttributes(target)
             copyTypeParametersFrom(target)
             copyAnnotationsFrom(target)
+            parameters = target.nonDispatchParameters.map { it.copyTo(this) }
             if (!isStatic) {
-                dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
+                parameters = listOfNotNull(
+                    thisReceiver?.copyTo(this, type = defaultType, kind = IrParameterKind.DispatchReceiver)
+                ) + parameters
             }
-            extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
-            valueParameters = target.valueParameters.map { it.copyTo(this) }
 
             body = context.createIrBuilder(symbol).run {
                 irExprBody(irCall(target).apply {
                     passTypeArgumentsFrom(this@proxy)
+
+                    var dstIndex = 0
                     if (target.dispatchReceiverParameter != null) {
-                        dispatchReceiver = irGetField(null, getFieldForObjectInstance(target.parentAsClass))
+                        arguments[dstIndex++] = irGetField(null, getFieldForObjectInstance(target.parentAsClass))
                     }
-                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
-                    for ((i, valueParameter) in valueParameters.withIndex()) {
-                        putValueArgument(i, irGet(valueParameter))
+                    for (param in parameters) {
+                        if (param.kind == IrParameterKind.DispatchReceiver) continue
+                        arguments[dstIndex++] = irGet(param)
                     }
                 })
             }
@@ -187,8 +187,8 @@ class JvmCachedDeclarations(
     fun getDefaultImplsFunction(interfaceFun: IrSimpleFunction, forCompatibilityMode: Boolean = false): IrSimpleFunction {
         val parent = interfaceFun.parentAsClass
         assert(parent.isJvmInterface) { "Parent of ${interfaceFun.dump()} should be interface" }
-        assert(!forCompatibilityMode || !defaultImplsMethods.containsKey(interfaceFun)) { "DefaultImpls stub in compatibility mode should be requested only once from interface lowering: ${interfaceFun.dump()}" }
-        return defaultImplsMethods.getOrPut(interfaceFun) {
+        assert(!forCompatibilityMode || interfaceFun.defaultImplsMethod == null) { "DefaultImpls stub in compatibility mode should be requested only once from interface lowering: ${interfaceFun.dump()}" }
+        return interfaceFun::defaultImplsMethod.getOrSetIfNull {
             val defaultImpls = getDefaultImplsClass(interfaceFun.parentAsClass)
 
             // If `interfaceFun` is not a real implementation, then we're generating stubs in a descendant
@@ -201,7 +201,7 @@ class JvmCachedDeclarations(
             // The classes are not actually related and `I2.DefaultImpls.f` is not a fake override but a bridge.
             val defaultImplsOrigin =
                 if (!forCompatibilityMode && !interfaceFun.isFakeOverride) interfaceFun.origin
-                else interfaceFun.resolveFakeOverride()!!.origin
+                else interfaceFun.resolveFakeOverrideOrFail().origin
 
             // Interface functions are public or private, with one exception: clone in Cloneable, which is protected.
             // However, Cloneable has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend.
@@ -225,24 +225,19 @@ class JvmCachedDeclarations(
             ).also {
                 it.copyCorrespondingPropertyFrom(interfaceFun)
 
-                if (forCompatibilityMode && !interfaceFun.resolveFakeOverride()!!.origin.isSynthetic) {
-                    context.createJvmIrBuilder(it.symbol).run {
-                        it.annotations = it.annotations
-                            .filterNot { it.symbol.owner.constructedClass.hasEqualFqName(DeprecationResolver.JAVA_DEPRECATED) }
-                            .plus(irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag))
+                if (forCompatibilityMode && !interfaceFun.resolveFakeOverrideOrFail().origin.isSynthetic) {
+                    with(context.createJvmIrBuilder(it.symbol)) {
+                        it.addJavaLangDeprecatedAnnotation()
                     }
                 }
 
-                defaultImplsOriginalMethods[it] = interfaceFun
+                it.originalFunctionForDefaultImpl = interfaceFun
             }
         }
     }
 
-    fun getOriginalFunctionForDefaultImpl(defaultImplFun: IrSimpleFunction) =
-        defaultImplsOriginalMethods[defaultImplFun]
-
     fun getDefaultImplsClass(interfaceClass: IrClass): IrClass =
-        defaultImplsClasses.getOrPut(interfaceClass) {
+        interfaceClass::defaultImplsClass.getOrSetIfNull {
             context.irFactory.buildClass {
                 startOffset = interfaceClass.startOffset
                 endOffset = interfaceClass.endOffset
@@ -250,49 +245,75 @@ class JvmCachedDeclarations(
                 name = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
             }.apply {
                 parent = interfaceClass
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
             }
         }
 
-    fun getDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction =
-        defaultImplsRedirections.getOrPut(fakeOverride) {
-            assert(fakeOverride.isFakeOverride)
-            val irClass = fakeOverride.parentAsClass
-            val redirectFunction = context.irFactory.buildFun {
-                origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
-                name = fakeOverride.name
-                visibility = fakeOverride.visibility
-                modality = fakeOverride.modality
-                returnType = fakeOverride.returnType
-                isInline = fakeOverride.isInline
-                isExternal = false
-                isTailrec = false
-                isSuspend = fakeOverride.isSuspend
-                isOperator = fakeOverride.isOperator
-                isInfix = fakeOverride.isInfix
-                isExpect = false
-                isFakeOverride = false
-            }.apply {
-                parent = irClass
-                overriddenSymbols = fakeOverride.overriddenSymbols
-                copyParameterDeclarationsFrom(fakeOverride)
-                // The fake override's dispatch receiver has the same type as the real declaration's,
-                // i.e. some superclass of the current class. This is not good for accessibility checks.
-                dispatchReceiverParameter?.type = irClass.defaultType
-                annotations = fakeOverride.annotations
-                copyCorrespondingPropertyFrom(fakeOverride)
-            }
-            context.remapMultiFieldValueClassStructure(fakeOverride, redirectFunction, parametersMappingOrNull = null)
-            redirectFunction
+    fun getClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement =
+        if (!fakeOverride.isFakeOverride || fakeOverride.parentAsClass.isJvmInterface) {
+            ClassFakeOverrideReplacement.None
+        } else fakeOverride::classFakeOverrideReplacement.getOrSetIfNull {
+            computeClassFakeOverrideReplacement(fakeOverride) ?: ClassFakeOverrideReplacement.None
         }
+
+    private fun computeClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement? {
+        val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true) ?: return null
+        val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
+        context.remapMultiFieldValueClassStructure(fakeOverride, newFunction, parametersMappingOrNull = null)
+        val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
+
+        findDefaultImplsRedirection(implementation, newFunction, superFunction)?.let { return it }
+        if (needsJvmDefaultCompatibilityBridge(fakeOverride)) {
+            return ClassFakeOverrideReplacement.DefaultCompatibilityBridge(newFunction, superFunction)
+        }
+        return null
+    }
+
+    private fun findDefaultImplsRedirection(
+        implementation: IrSimpleFunction, newFunction: IrSimpleFunction, superFunction: IrSimpleFunction,
+    ): ClassFakeOverrideReplacement.DefaultImplsRedirection? {
+        val callee =
+            if (implementation.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+                implementation.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                implementation.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
+            ) {
+                return null
+            } else if (implementation.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode, implementation)) {
+                val klass = newFunction.parentAsClass
+                when (context.config.jvmDefaultMode) {
+                    JvmDefaultMode.NO_COMPATIBILITY if !klass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME) -> return null
+                    JvmDefaultMode.ENABLE if klass.hasAnnotation(JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME) -> return null
+                    else -> superFunction
+                }
+            } else {
+                getDefaultImplsFunction(superFunction)
+            }
+
+        return ClassFakeOverrideReplacement.DefaultImplsRedirection(newFunction, superFunction, callee)
+    }
+
+    // Generating the default compatibility bridge is only necessary if there's a risk that some other method will be called at runtime
+    // by JVM when resolving the call to method from this class. This is only possible when this class has a superclass, where this method
+    // is present as a bridge to DefaultImpls of some other interface.
+    private fun needsJvmDefaultCompatibilityBridge(declaration: IrSimpleFunction): Boolean {
+        var current: IrSimpleFunction? = declaration.overriddenSymbols.singleOrNull { it.owner.parentAsClass.isClass }?.owner
+        while (current != null) {
+            if (current.modality == Modality.ABSTRACT) return false
+
+            if (current.findInterfaceImplementation(context.config.jvmDefaultMode) != null) return true
+
+            current = current.overriddenSymbols.singleOrNull { it.owner.parentAsClass.isClass }?.owner
+        }
+        return false
+    }
 
     fun getRepeatedAnnotationSyntheticContainer(annotationClass: IrClass): IrClass =
-        repeatedAnnotationSyntheticContainers.getOrPut(annotationClass) {
+        annotationClass::repeatedAnnotationSyntheticContainer.getOrSetIfNull {
             val containerClass = context.irFactory.buildClass {
                 kind = ClassKind.ANNOTATION_CLASS
                 name = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
             }.apply {
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
                 parent = annotationClass
                 superTypes = listOf(context.irBuiltIns.annotationType)
             }
@@ -322,14 +343,18 @@ class JvmCachedDeclarations(
             containerClass.annotations = annotationClass.annotations
                 .filter {
                     it.isAnnotationWithEqualFqName(StandardNames.FqNames.retention) ||
-                            it.isAnnotationWithEqualFqName(StandardNames.FqNames.target)
+                            it.isAnnotationWithEqualFqName(StandardNames.FqNames.target) ||
+                            it.isAnnotationWithEqualFqName(JvmAnnotationNames.INHERITED_ANNOTATION)
                 }
                 .map { it.deepCopyWithSymbols(containerClass) } +
-                    context.createJvmIrBuilder(containerClass.symbol).irCall(context.ir.symbols.repeatableContainer.constructors.single())
+                    context.createJvmIrBuilder(containerClass.symbol).irAnnotation(context.symbols.repeatableContainer.constructors.single())
 
             containerClass
         }
 }
+
+private var IrClass.fieldForObjectInstance: IrField? by irAttribute(copyByDefault = false)
+private var IrClass.interfaceCompanionFieldForObjectInstance: IrField? by irAttribute(copyByDefault = false)
 
 /*
     This class keeps track of singleton fields for instances of object classes.
@@ -338,11 +363,8 @@ class CachedFieldsForObjectInstances(
     private val irFactory: IrFactory,
     private val languageVersionSettings: LanguageVersionSettings,
 ) {
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-
     fun getFieldForObjectInstance(singleton: IrClass): IrField =
-        singletonFieldDeclarations.getOrPut(singleton) {
+        singleton::fieldForObjectInstance.getOrSetIfNull {
             val originalVisibility = singleton.visibility
             val isNotMappedCompanion = singleton.isCompanion && !singleton.isMappedIntrinsicCompanionObject()
             val useProperVisibilityForCompanion =
@@ -371,7 +393,7 @@ class CachedFieldsForObjectInstances(
 
     fun getPrivateFieldForObjectInstance(singleton: IrClass): IrField =
         if (singleton.isCompanion && singleton.parentAsClass.isJvmInterface)
-            interfaceCompanionFieldDeclarations.getOrPut(singleton) {
+            singleton::interfaceCompanionFieldForObjectInstance.getOrSetIfNull {
                 irFactory.buildField {
                     name = Name.identifier("\$\$INSTANCE")
                     type = singleton.defaultType

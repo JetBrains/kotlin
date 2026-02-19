@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 annotation class AnnE(val i: String)
 
 enum class MyEnum {
@@ -16,3 +18,5 @@ class Test3
 @AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + arrayOf("23", "34")<!>)
 class Test4
 
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, classReference, collectionLiteral,
+enumDeclaration, enumEntry, primaryConstructor, propertyDeclaration, stringLiteral */

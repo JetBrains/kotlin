@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.utils.KOTLIN_TO_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal const val KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER = "kotlin.jvm.internal.RepeatableContainer"
@@ -55,19 +56,9 @@ private fun PsiAnnotation.extractArrayAnnotationFqNames(attributeName: String): 
 
 private val targetMapping = run {
     val javaAnnotationElementTypeId = ClassId.fromString(JvmAnnotationNames.ELEMENT_TYPE_ENUM.asString())
-    hashMapOf(
-        "kotlin.annotation.AnnotationTarget.CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE")),
-        "kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("ANNOTATION_TYPE")),
-        "kotlin.annotation.AnnotationTarget.FIELD" to EnumValue(javaAnnotationElementTypeId, Name.identifier("FIELD")),
-        "kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE" to EnumValue(javaAnnotationElementTypeId, Name.identifier("LOCAL_VARIABLE")),
-        "kotlin.annotation.AnnotationTarget.VALUE_PARAMETER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("PARAMETER")),
-        "kotlin.annotation.AnnotationTarget.CONSTRUCTOR" to EnumValue(javaAnnotationElementTypeId, Name.identifier("CONSTRUCTOR")),
-        "kotlin.annotation.AnnotationTarget.FUNCTION" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-        "kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-        "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-        "kotlin.annotation.AnnotationTarget.TYPE_PARAMETER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_PARAMETER")),
-        "kotlin.annotation.AnnotationTarget.TYPE" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_USE")),
-    )
+    KOTLIN_TO_JAVA_ANNOTATION_TARGETS.entries.associate { (key, value) ->
+        "kotlin.annotation.AnnotationTarget.$key" to EnumValue(javaAnnotationElementTypeId, Name.identifier(value))
+    }
 }
 
 internal fun PsiAnnotation.tryConvertAsTarget(): KtLightAbstractAnnotation? {

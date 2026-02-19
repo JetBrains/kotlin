@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-35134
 
 interface A
@@ -21,3 +22,6 @@ fun foo(a: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, isExpression, smartcast, stringLiteral, whenExpression, whenWithSubject */

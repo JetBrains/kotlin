@@ -39,7 +39,7 @@ if $cygwin; then
     KOTLIN_HOME=`cygpath --windows --short-name "$KOTLIN_HOME"`
 fi
 
-[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms128M"
+[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx512M -Xms128M"
 
 declare -a java_args
 declare -a kotlin_args
@@ -72,9 +72,13 @@ fi
 declare -a kotlin_app
 
 java_version="$(findJavaVersion)"
-if [[ $java_version -ge 9 ]]; then
-    # Workaround the illegal reflective access warning from ReflectionUtil to ResourceBundle.setParent, see IDEA-248785.
-    java_args=("${java_args[@]}" "--add-opens" "java.base/java.util=ALL-UNNAMED")
+
+if [[ $java_version -ge 24 ]]; then
+    # Allow JNI access for all compiler code. In particular, this is needed for jansi (see `PlainTextMessageRenderer`).
+    java_args=("${java_args[@]}" "--enable-native-access=ALL-UNNAMED")
+
+    # Suppress unsafe deprecation warnings, see KT-76799 and IDEA-370928.
+    java_args=("${java_args[@]}" "--sun-misc-unsafe-memory-access=allow")
 fi
 
 if [ -n "$KOTLIN_RUNNER" ]; then

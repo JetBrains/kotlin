@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /A { // /A|null[0]
+    final val q // /A.q|{}q[0]
+        final fun <get-q>(): #A // /A.q.<get-q>|<get-q>(){}[0]
+    constructor <init>(#A) // /A.<init>|<init>(1:0){}[0]
+}
+final fun /bar() // /bar|bar(){}[0]

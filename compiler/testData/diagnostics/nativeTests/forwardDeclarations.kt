@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // WITH_STDLIB
 
 // FILE: stdlib.kt
@@ -48,7 +50,7 @@ interface FwdProtocol
 // FILE: main.kt
 
 // this inspections differs in K1/K2, but unrelated to what is tested in this test
-@file:Suppress("CAST_NEVER_SUCCEEDS", "UNUSED_PARAMETER", "UNUSED_EXPRESSION", "UNUSED_VARIABLE", "INCOMPATIBLE_TYPES")
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_EXPRESSION", "UNUSED_VARIABLE", <!ERROR_SUPPRESSION!>"INCOMPATIBLE_TYPES"<!>)
 
 fun testUnckeckedAsFromAny(x: Any) {
     <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as? cnames.structs.FwdStruct<!>
@@ -68,8 +70,8 @@ fun testIs(x: Any) : Int {
     }
 }
 
-fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is cnames.structs.FwdStruct<!>
-fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is objcnames.classes.FwdObjcClass<!>
+fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_ERROR!>x is cnames.structs.FwdStruct<!>
+fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_ERROR!>x is objcnames.classes.FwdObjcClass<!>
 fun testIs4(x: lib.FwdProtocol) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is objcnames.protocols.FwdProtocol<!>
 
 
@@ -95,6 +97,9 @@ fun testInline4() {
 fun testCheckedAs1(x : lib.FwdStruct) = x as cnames.structs.FwdStruct
 fun testCheckedAs2(x : lib.FwdObjcClass) = x as objcnames.classes.FwdObjcClass
 fun testCheckedAs3(x : lib.FwdProtocol) = x as objcnames.protocols.FwdProtocol
+fun testCheckedSafeAs4(x : lib.FwdStruct) = x as? cnames.structs.FwdStruct
+fun testCheckedSafeAs5(x : lib.FwdObjcClass) = x as? objcnames.classes.FwdObjcClass
+fun testCheckedSafeAs6(x : lib.FwdProtocol) = x as? objcnames.protocols.FwdProtocol
 
 fun testUnCheckedAs1(x : lib2.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as cnames.structs.FwdStruct<!>
 fun testUnCheckedAs2(x : lib2.FwdObjcClass) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.classes.FwdObjcClass<!>

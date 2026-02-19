@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // fun foo:     abstract in A,      unresolved in I
 // fun bar:     implemented in A,   abstract in I
 // fun qux:     abstract in A,      abstract in I
@@ -37,3 +38,6 @@ class B : A(), I {
         <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>qux<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, override,
+propertyDeclaration, superExpression */

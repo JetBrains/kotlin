@@ -1,3 +1,6 @@
-fun foo1(): () -> String = <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> { "some long expression "}
-fun foo2(): () -> String = <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY, RETURN_NOT_ALLOWED!>return@label<!> { "some long expression "}
-fun foo3(): () -> String = <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!><!SYNTAX!>@<!> { "some long expression "}
+// RUN_PIPELINE_TILL: FRONTEND
+fun foo1(): () -> String = <!REDUNDANT_RETURN!>return<!> { "some long expression "}
+fun foo2(): () -> String = return<!UNRESOLVED_LABEL!>@label<!> { "some long expression "}
+fun foo3(): () -> String = <!REDUNDANT_RETURN!>return<!><!SYNTAX!>@<!> { "some long expression "}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

@@ -15,7 +15,6 @@ fun test() {
     }
 }
 
-// JVM_IR_TEMPLATES
 // 2 INVOKEDYNAMIC
 // 0 receiver
 // 5 LOCALVARIABLE

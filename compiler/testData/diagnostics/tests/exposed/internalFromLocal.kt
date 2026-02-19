@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 interface Your
 
 class My {
@@ -9,3 +9,6 @@ class My {
         Local()
     }()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+lambdaLiteral, localClass, propertyDeclaration */

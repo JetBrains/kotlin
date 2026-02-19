@@ -11,11 +11,11 @@
   <artifactId>kotlin-test-junit</artifactId>
   <version>ArtifactsTest.version</version>
   <name>Kotlin Test Junit</name>
-  <description>Kotlin Test Support for junit</description>
+  <description>Kotlin Test library support for JUnit</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>

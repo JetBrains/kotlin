@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.FirCallResolver
+import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -18,15 +19,15 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-data class SessionHolderImpl(override val session: FirSession, override val scopeSession: ScopeSession) : SessionHolder {
+data class SessionHolderImpl(override val session: FirSession, override val scopeSession: ScopeSession) : SessionAndScopeSessionHolder {
     companion object {
         fun createWithEmptyScopeSession(session: FirSession): SessionHolderImpl = SessionHolderImpl(session, ScopeSession())
     }
 }
 
-abstract class BodyResolveComponents : SessionHolder {
+abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val returnTypeCalculator: ReturnTypeCalculator
-    abstract val implicitReceiverStack: ImplicitReceiverStack
+    abstract val implicitValueStorage: ImplicitValueStorage
     abstract val containingDeclarations: List<FirDeclaration>
     abstract val fileImportsScope: List<FirScope>
     abstract val towerDataElements: List<FirTowerDataElement>
@@ -45,6 +46,7 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val dataFlowAnalyzer: FirDataFlowAnalyzer
     abstract val outerClassManager: FirOuterClassManager
     abstract val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer
+    abstract val inlineFunction: FirFunction?
 }
 
 // --------------------------------------- Utils ---------------------------------------

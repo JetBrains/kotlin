@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Derived.kt
 
 class Derived : Some()
@@ -15,3 +16,6 @@ public class Some implements Strange {
 interface Strange<out T> {
     fun foo(): T
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType, out,
+typeParameter */

@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: a.kt
 
@@ -20,7 +20,7 @@ abstract class Foo<T>() {
 package foobar.a
     import java.util.*
 
-    val b : List<Int>? = <!INITIALIZER_TYPE_MISMATCH!>a<!>
+    val b : List<Int>? <!INITIALIZER_TYPE_MISMATCH!>=<!> a
     val b1 : <!UNRESOLVED_REFERENCE!>util<!>.List<Int>? = a
 
 // FILE: d.kt
@@ -69,3 +69,6 @@ abstract class Collection<E> : Iterable<E> {
       return current.done()
   }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, functionDeclaration, ifExpression, in, localProperty,
+nullableType, out, override, primaryConstructor, propertyDeclaration, thisExpression, typeParameter */

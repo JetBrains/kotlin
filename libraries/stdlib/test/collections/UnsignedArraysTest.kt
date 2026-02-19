@@ -240,6 +240,33 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun copyOfWithInitializer() {
+        assertArrayContentEquals(uintArrayOf(), uintArrayOf(1u, 2u, 3u).copyOf(0) { 4u })
+        assertArrayContentEquals(uintArrayOf(1u, 2u, 3u), uintArrayOf(1u, 2u, 3u).copyOf(3) { 4u })
+        assertArrayContentEquals(uintArrayOf(1u, 2u, 3u, 4u, 4u), uintArrayOf(1u, 2u, 3u).copyOf(5) { 4u })
+        assertArrayContentEquals(uintArrayOf(0u, 1u, 2u), uintArrayOf().copyOf(3) { it.toUInt() })
+        assertFailsWith<IllegalArgumentException> { uintArrayOf(1u, 2u, 3u).copyOf(-1) { 0u } }
+
+        assertArrayContentEquals(ulongArrayOf(), ulongArrayOf(1uL, 2uL, 3uL).copyOf(0) { 4uL })
+        assertArrayContentEquals(ulongArrayOf(1uL, 2uL, 3uL), ulongArrayOf(1uL, 2uL, 3uL).copyOf(3) { 4uL })
+        assertArrayContentEquals(ulongArrayOf(1uL, 2uL, 3uL, 4uL, 4uL), ulongArrayOf(1uL, 2uL, 3uL).copyOf(5) { 4uL })
+        assertArrayContentEquals(ulongArrayOf(0uL, 1uL, 2uL), ulongArrayOf().copyOf(3) { it.toULong() })
+        assertFailsWith<IllegalArgumentException> { ulongArrayOf(1uL, 2uL, 3uL).copyOf(-1) { 0uL } }
+
+        assertArrayContentEquals(ushortArrayOf(), ushortArrayOf(1u, 2u, 3u).copyOf(0) { 4u })
+        assertArrayContentEquals(ushortArrayOf(1u, 2u, 3u), ushortArrayOf(1u, 2u, 3u).copyOf(3) { 4u })
+        assertArrayContentEquals(ushortArrayOf(1u, 2u, 3u, 4u, 4u), ushortArrayOf(1u, 2u, 3u).copyOf(5) { 4u })
+        assertArrayContentEquals(ushortArrayOf(0u, 1u, 2u), ushortArrayOf().copyOf(3) { it.toUShort() })
+        assertFailsWith<IllegalArgumentException> { ushortArrayOf(1u, 2u, 3u).copyOf(-1) { 0u } }
+
+        assertArrayContentEquals(ubyteArrayOf(), ubyteArrayOf(1u, 2u, 3u).copyOf(0) { 4u })
+        assertArrayContentEquals(ubyteArrayOf(1u, 2u, 3u), ubyteArrayOf(1u, 2u, 3u).copyOf(3) { 4u })
+        assertArrayContentEquals(ubyteArrayOf(1u, 2u, 3u, 4u, 4u), ubyteArrayOf(1u, 2u, 3u).copyOf(5) { 4u })
+        assertArrayContentEquals(ubyteArrayOf(0u, 1u, 2u), ubyteArrayOf().copyOf(3) { it.toUByte() })
+        assertFailsWith<IllegalArgumentException> { ubyteArrayOf(1u, 2u, 3u).copyOf(-1) { 0u } }
+    }
+
+    @Test
     fun plus() {
         assertArrayContentEquals(uintArrayOf(1u, 2u, 3u), uintArrayOf(1u, 2u) + 3u)
         assertArrayContentEquals(uintArrayOf(1u, 2u, 3u, 4u), uintArrayOf(1u, 2u) + listOf(3u, 4u))

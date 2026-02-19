@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun a(
     a : foo = Unit,
     a : foo = 10,

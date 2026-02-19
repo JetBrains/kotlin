@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Test.java
 
 public class Test extends KotlinBase {
@@ -13,7 +14,7 @@ open class KotlinBase {
 // FILE: JavaDerived.java
 
 public class JavaDerived extends Test {
-    public final String abcd = "AaBbCcDd"
+    public final String abcd = "AaBbCcDd";
 }
 
 // FILE: test.kt
@@ -21,3 +22,6 @@ public class JavaDerived extends Test {
 fun test(d: JavaDerived) {
     d.abcd // JavaDerived
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, propertyDeclaration,
+stringLiteral */

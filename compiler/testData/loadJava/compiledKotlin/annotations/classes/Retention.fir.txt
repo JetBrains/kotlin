@@ -1,4 +1,4 @@
-@R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) public final annotation class Anno : R|kotlin/Annotation| {
+@R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) public final annotation class Anno : R|kotlin/Annotation| {
     public constructor(): R|test/Anno|
 
 }

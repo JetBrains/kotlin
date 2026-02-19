@@ -7,14 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import kotlin.reflect.KProperty
 
-open class ProviderDelegate<out T : Any>(
-    private val defaultValueProvider: () -> T
-) {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return defaultValueProvider()
-    }
-}
-
 class PropertyDelegate<T : Any>(
     private val defaultValueProvider: () -> T
 ) {
@@ -28,10 +20,6 @@ class PropertyDelegate<T : Any>(
         backing = value
     }
 }
-
-fun <T : Any> provider(
-    defaultValueProvider: () -> T
-): ProviderDelegate<T> = ProviderDelegate(defaultValueProvider)
 
 fun <T : Any> property(
     defaultValueProvider: () -> T

@@ -2,16 +2,4 @@ expression: { a: Int ->
     val b = 1
     a + b
 }
-expected type: KtFunctionalType:
-  annotationsList: []
-  ownTypeArguments: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Int
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Int
-  ]
-  type: kotlin/Function1<kotlin/Int, kotlin/Int>
+expected type: null

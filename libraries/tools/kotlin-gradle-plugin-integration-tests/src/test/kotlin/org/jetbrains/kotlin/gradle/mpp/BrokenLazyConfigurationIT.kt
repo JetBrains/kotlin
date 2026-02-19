@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
 
@@ -37,6 +36,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
     @MppGradlePluginTests
     @GradleTest
     @DisplayName("works in JS")
+    @TestMetadata("kotlin-js-browser-project")
     fun testBrokenTcaInJs(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             val subprojects = listOf("app", "base", "lib")
@@ -53,7 +53,10 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
                     )
                 }
             }
-            build("build")
+            build(
+                "build",
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+            )
         }
     }
 
@@ -72,7 +75,10 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
                     """.trimIndent()
                 )
             }
-            build("build")
+            build(
+                "build",
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+            )
         }
     }
 
@@ -88,32 +94,11 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
                     project.layout.buildDirectory.set(project.layout.projectDirectory.dir("build2"))
                 """.trimIndent()
             )
-            build("build") {
-                try {
-                    assertDirectoryInProjectDoesNotExist("build")
-                    assert(false) // The assertion above now fails. This line is to ensure try-catch is removed after fixing related issues
-                } catch (e: AssertionError) {
-                    val expectedTopLevelSubdirectoriesMapping = mapOf(
-                        "js" to "KT-61294",
-                        "reports" to "KT-61295",
-                    )
-                    val expectedTopLevelSubdirectories = expectedTopLevelSubdirectoriesMapping.keys
-                    val actualTopLevelDirectories =
-                        e.message?.lines()?.filter { it.startsWith(" ") }?.map { it.replace("\\", "").trim() }?.toSet() ?: emptySet()
-
-                    val fixed = expectedTopLevelSubdirectories - actualTopLevelDirectories
-                    val new = actualTopLevelDirectories - expectedTopLevelSubdirectories
-                    if (fixed.isNotEmpty()) {
-                        throw Exception(
-                            "Please remove the tests workaround for ${
-                                fixed.map(expectedTopLevelSubdirectoriesMapping::get).joinToString(" and ")
-                            } as seems like it's not anymore required", e
-                        )
-                    }
-                    if (new.isNotEmpty()) {
-                        throw Exception("Unexpected new top level files and/or directories are found: ${new.joinToString(",")}", e)
-                    }
-                }
+            build(
+                "build",
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+            ) {
+                assertDirectoryInProjectDoesNotExist("build")
 
                 assertDirectoryInProjectExists("build2")
             }

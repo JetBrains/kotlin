@@ -1,0 +1,6 @@
+error: '-Xexplicit-api' and '-XXexplicit-return-types' flags cannot have different values at the same time.
+Consider use only one of those flags
+Passed:
+  '-Xexplicit-api=strict'
+  '-XXexplicit-return-types=warning'
+COMPILATION_ERROR

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface IBase {
     fun copy(): IBase
@@ -36,3 +37,5 @@ abstract class CDerived2 : ILeft, IRight, IDerived
 class CDerived2a : ILeft, IRight, IDerived {
     override fun copy(): IDerived = CDerived2a()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

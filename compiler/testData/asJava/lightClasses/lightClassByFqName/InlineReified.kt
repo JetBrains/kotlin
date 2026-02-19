@@ -11,5 +11,3 @@ class InlineReified {
         inline get() = toString()
         inline set(value) {}
 }
-
-// FIR_COMPARISON

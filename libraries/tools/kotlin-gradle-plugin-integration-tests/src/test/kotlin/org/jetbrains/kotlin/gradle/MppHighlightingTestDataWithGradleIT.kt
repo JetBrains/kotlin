@@ -5,137 +5,104 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
-import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import java.io.File
-import java.util.*
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.capitalize
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsSource
+import java.nio.file.Path
+import java.util.stream.Stream
+import kotlin.io.path.*
+import kotlin.streams.asStream
 
-@RunWith(Parameterized::class)
-class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+@DisplayName("Check Multiplatform IDE highlighting projects")
+@MppGradlePluginTests
+internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
 
-    @Test
-    fun runTestK2NativeCli() = doTest(CliCompiler.NATIVE)
-
-    @Test
-    fun runTestK2MetadataCli() = doTest(CliCompiler.K2METADATA)
-
-    @Before
-    fun cleanup() {
-        project.setupWorkingDir(false)
-        project.gradleSettingsScript().modify { it.lines().filter { !it.startsWith("include") }.joinToString("\n") }
-        project.projectDir.resolve("src").deleteRecursively()
-        project.gradleBuildScript().modify { line ->
-            line.lines().dropLastWhile { it != buildScriptCustomizationMarker }.joinToString("\n")
-        }
-
-        project.projectDir.toPath().enableCacheRedirector()
-    }
-
-    private val project by lazy { Project("mpp-source-set-hierarchy-analysis") }
-
-    private fun doTest(cliCompiler: CliCompiler) = with(project) {
-        val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->
-            sourceRoot.kotlinSourceSetName to testDataDir.resolve(sourceRoot.directoryName).walkTopDown()
-                .filter { it.extension == "kt" }
-                .map { CodeWithErrorInfo.parse(it.readText()) }.toList()
-                .flatMap { it.errorInfo }
-        }
-
-        // put sources into project dir:
-        sourceRoots.forEach { sourceRoot ->
-            val sourceSetDir = projectDir.resolve(sourceRoot.gradleSrcDir)
-            testDataDir.resolve(sourceRoot.directoryName).copyRecursively(sourceSetDir)
-            sourceSetDir.walkTopDown().filter { it.isFile }.forEach { file ->
-                file.modify { CodeWithErrorInfo.parse(file.readText()).code }
-            }
-        }
-
-        // create Gradle Kotlin source sets for project roots:
-        val scriptCustomization = buildString {
-            appendLine()
-            appendLine("kotlin {\n    sourceSets {")
-            sourceRoots.forEach { sourceRoot ->
-                if (sourceRoot.kotlinSourceSetName != "commonMain") {
-                    appendLine(
-                        """        create("${sourceRoot.kotlinSourceSetName}") {
-                          |            dependsOn(getByName("commonMain"))
-                          |            listOf(${cliCompiler.targets.joinToString { "$it()" }}).forEach { 
-                          |                it.compilations["main"].defaultSourceSet.dependsOn(this@create) 
-                          |            }
-                          |        }
-                          |    
-                        """.trimMargin()
-                    )
-                } else {
-                    appendLine("    // commonMain source set used for common module")
-                }
+    @GradleWithMppHighlightingTest
+    fun runTest(
+        gradleVersion: GradleVersion,
+        cliCompiler: CliCompiler,
+        testDataDir: Path,
+        sourceRoots: List<TestCaseSourceRoot>,
+    ) {
+        val buildOptions = if (cliCompiler.isIsolatedProjectsCompatible) defaultBuildOptions else defaultBuildOptions.copy(
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+        )
+        project(
+            "mpp-source-set-hierarchy-analysis",
+            gradleVersion,
+            buildOptions = buildOptions,
+        ) {
+            buildScriptInjection(cliCompiler.setupBuildScript)
+            val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->
+                sourceRoot.kotlinSourceSetName to testDataDir.resolve(sourceRoot.directoryName)
+                    .walk()
+                    .filter { it.extension == "kt" }
+                    .map { CodeWithErrorInfo.parse(it.readText()) }
+                    .flatMap { it.errorInfo }
+                    .toList()
             }
 
-            // Add dependencies using dependsOn:
+            // put sources into project dir:
             sourceRoots.forEach { sourceRoot ->
-                sourceRoot.dependencies.forEach { dependency ->
-                    sourceRoots.find { it.qualifiedName == dependency }?.let { depSourceRoot ->
-                        val depSourceSet = depSourceRoot.kotlinSourceSetName
-                        appendLine("""        getByName("${sourceRoot.kotlinSourceSetName}").dependsOn(getByName("$depSourceSet"))""")
+                val sourceSetDir = projectPath.resolve(sourceRoot.gradleSrcDir)
+                testDataDir.resolve(sourceRoot.directoryName).copyRecursively(sourceSetDir)
+                sourceSetDir.walk()
+                    .filter { it.isRegularFile() }
+                    .forEach { file ->
+                        file.modify { CodeWithErrorInfo.parse(file.readText()).code }
+                    }
+            }
+
+            // create Gradle Kotlin source sets for project roots:
+            val scriptCustomization = buildString {
+                appendLine()
+                appendLine("kotlin {\n    sourceSets {")
+                sourceRoots.forEach { sourceRoot ->
+                    if (sourceRoot.kotlinSourceSetName != "commonMain") {
+                        appendLine(
+                            """        
+                            |            create("${sourceRoot.kotlinSourceSetName}") {
+                            |            dependsOn(getByName("commonMain"))
+                            |            listOf(${cliCompiler.targets.joinToString { "$it()" }}).forEach { 
+                            |                it.compilations["main"].defaultSourceSet.dependsOn(this@create) 
+                            |            }
+                            |        }
+                            |    
+                            """.trimMargin()
+                        )
+                    } else {
+                        appendLine("    // commonMain source set used for common module")
                     }
                 }
+
+                // Add dependencies using dependsOn:
+                sourceRoots.forEach { sourceRoot ->
+                    sourceRoot.dependencies.forEach { dependency ->
+                        sourceRoots.find { it.qualifiedName == dependency }?.let { depSourceRoot ->
+                            val depSourceSet = depSourceRoot.kotlinSourceSetName
+                            appendLine("""        getByName("${sourceRoot.kotlinSourceSetName}").dependsOn(getByName("$depSourceSet"))""")
+                        }
+                    }
+                }
+                appendLine("    }\n}")
             }
-            appendLine("    }\n}")
-        }
 
-        gradleBuildScript().appendText("\n" + scriptCustomization)
+            buildGradleKts.appendText("\n" + scriptCustomization)
 
-        val tasks = sourceRoots.map { "compile" + it.kotlinSourceSetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + "KotlinMetadata" }
+            val tasks = sourceRoots.map {
+                "compile" + it.kotlinSourceSetName.capitalize() + "KotlinMetadata"
+            }
 
-        build(*tasks.toTypedArray()) {
             if (expectedErrorsPerSourceSetName.values.all { it.all(ErrorInfo::isAllowedInCli) }) {
-                assertSuccessful()
+                build(*tasks.toTypedArray())
             } else {
-                assertFailed() // TODO: check the exact error message in the output, not just that the build failed
+                buildAndFail(*tasks.toTypedArray())
             }
-        }
-    }
-
-    companion object {
-        private val testDataRoot =
-            File("../../../idea/testData/multiModuleHighlighting/multiplatform")
-
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun testData() = testDataRoot.listFiles()!!.filter { it.isDirectory }.mapNotNull { testDataDir ->
-            val testDataSourceRoots = checkNotNull(testDataDir.listFiles())
-            val sourceRoots = testDataSourceRoots.map { TestCaseSourceRoot.parse(it.name) }
-
-            arrayOf(testDataDir.name, testDataDir, sourceRoots).takeIf { isTestSuiteValidForCommonCode(testDataDir, sourceRoots) }
-        }
-
-        private val bannedDependencies = setOf("fulljdk", "stdlib", "coroutines")
-
-        const val testSourceRootSuffix = "tests"
-
-        private const val buildScriptCustomizationMarker = "// customized content below"
-
-        private fun isTestSuiteValidForCommonCode(testDataDir: File, sourceRoots: List<TestCaseSourceRoot>): Boolean {
-            sourceRoots.forEach {
-                val bannedDepsFound = bannedDependencies.intersect(it.dependencies)
-                if (bannedDepsFound.isNotEmpty())
-                    return false
-            }
-
-            // Java sources can't be used in intermediate source sets
-            if (testDataDir.walkTopDown().any { it.extension == "java" })
-                return false
-
-            // Cannot test !CHECK_HIGHLIGHTING in CLI
-            if (testDataDir.walkTopDown().filter { it.isFile }.any { "!CHECK_HIGHLIGHTING" in it.readText() })
-                return false
-
-            return true
         }
     }
 
@@ -145,6 +112,9 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
         val dependencies: Iterable<String>,
     ) {
         companion object {
+            private const val TEST_SOURCE_ROOT_SUFFIX = "tests"
+            private const val COMMON_SOURCE_ROOT_NAME = "common"
+
             fun parse(directoryName: String): TestCaseSourceRoot {
                 val parts = directoryName.split("_")
 
@@ -156,20 +126,18 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
                 val platformIndex = when (nameParts.size) {
                     1 -> 0
-                    else -> if (nameParts.last() == testSourceRootSuffix) 0 else 1
+                    else -> if (nameParts.last() == TEST_SOURCE_ROOT_SUFFIX) 0 else 1
                 }
 
                 val additionalDependencies = mutableListOf<String>().apply {
-                    if (nameParts[platformIndex] != commonSourceRootName)
-                        add(partsToQualifiedName(nameParts.take(platformIndex) + commonSourceRootName + nameParts.drop(platformIndex + 1)))
-                    if (nameParts.last() == testSourceRootSuffix)
+                    if (nameParts[platformIndex] != COMMON_SOURCE_ROOT_NAME)
+                        add(partsToQualifiedName(nameParts.take(platformIndex) + COMMON_SOURCE_ROOT_NAME + nameParts.drop(platformIndex + 1)))
+                    if (nameParts.last() == TEST_SOURCE_ROOT_SUFFIX)
                         add(partsToQualifiedName(nameParts.dropLast(1)))
                 }
 
                 return TestCaseSourceRoot(directoryName, nameParts, deps + additionalDependencies)
             }
-
-            private const val commonSourceRootName = "common"
 
             private fun partsToQualifiedName(parts: Iterable<String>) = parts.joinToString("")
         }
@@ -178,7 +146,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
             get() = partsToQualifiedName(qualifiedNameParts)
 
         val kotlinSourceSetName
-            get() = "intermediate${qualifiedName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+            get() = "intermediate${qualifiedName.capitalize()}"
 
         val gradleSrcDir
             get() = "src/$kotlinSourceSetName/kotlin"
@@ -186,7 +154,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
     private class CodeWithErrorInfo(
         val code: String,
-        val errorInfo: Iterable<ErrorInfo>
+        val errorInfo: Iterable<ErrorInfo>,
     ) {
         companion object {
             private val errorRegex = "<error(?: descr=\"\\[(.*?)] (.*?)\")?>".toRegex()
@@ -206,26 +174,96 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
     private data class ErrorInfo(
         val expectedErrorKind: String?,
-        val expectedErrorMessage: String?
+        val expectedErrorMessage: String?,
     ) {
         val isAllowedInCli
             get() = when (expectedErrorKind) {
-                "NO_ACTUAL_FOR_EXPECT", "ACTUAL_WITHOUT_EXPECT", null /*TODO are some nulls better than others?*/ -> true
+                "NO_ACTUAL_FOR_EXPECT", null -> true
                 else -> false
             }
     }
 
-    private enum class CliCompiler(val targets: List<String>) {
-        K2METADATA(listOf("jvm", "js")), NATIVE(listOf("linuxX64", "linuxArm64"))
+    internal enum class CliCompiler(
+        val targets: List<String>,
+        val isIsolatedProjectsCompatible: Boolean,
+        val setupBuildScript: GradleProjectBuildScriptInjectionContext.() -> Unit,
+    ) {
+        K2METADATA(
+            targets = listOf("jvm", "js"),
+            isIsolatedProjectsCompatible = false,
+            setupBuildScript = {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    js { nodejs() }
+                }
+            },
+        ),
+        NATIVE(
+            targets = listOf("linuxX64", "linuxArm64"),
+            isIsolatedProjectsCompatible = true,
+            setupBuildScript = {
+                kotlinMultiplatform.apply {
+                    linuxX64()
+                    linuxArm64()
+                }
+            },
+        );
     }
 
-    @Suppress("unused") // used for parameter string representation in test output
-    @Parameterized.Parameter(0)
-    lateinit var testCaseName: String
+    class GradleAndMppHighlightingProvider : GradleArgumentsProvider() {
+        private val testDataRoot = Path("../../../idea/testData/multiModuleHighlighting/multiplatform")
 
-    @Parameterized.Parameter(1)
-    lateinit var testDataDir: File
+        private val bannedDependencies = setOf("fulljdk", "stdlib", "coroutines")
 
-    @Parameterized.Parameter(2)
-    lateinit var sourceRoots: List<TestCaseSourceRoot>
+        private fun isTestSuiteValidForCommonCode(
+            testDataDir: Path,
+            sourceRoots: List<TestCaseSourceRoot>,
+        ): Boolean = when {
+            sourceRoots.any { bannedDependencies.intersect(it.dependencies.toSet()).isNotEmpty() } -> false
+            // Java sources can't be used in intermediate source sets
+            testDataDir.walk().any { it.extension == "java" } -> false
+            // Cannot test CHECK_HIGHLIGHTING in CLI
+            testDataDir.walk().filter { it.isRegularFile() }.any { "CHECK_HIGHLIGHTING" in it.readText() } -> false
+            else -> true
+        }
+
+        private val testData: List<Pair<Path, List<TestCaseSourceRoot>>> =
+            testDataRoot
+                .listDirectoryEntries()
+                .filter { it.isDirectory() && it.listDirectoryEntries().isNotEmpty() }
+                .map { testDataDir ->
+                    testDataDir to testDataDir.useDirectoryEntries { entries ->
+                        entries.sorted().map { TestCaseSourceRoot.parse(it.name) }.toList()
+                    }
+                }
+                .filter { (testDataDir, sourceRoots) ->
+                    isTestSuiteValidForCommonCode(testDataDir, sourceRoots)
+                }
+
+        override fun provideArguments(
+            context: ExtensionContext,
+        ): Stream<out Arguments> {
+            val gradleVersions = super.provideArguments(context)
+                .map { it.get().first() as GradleVersion }
+                .toList()
+
+            return gradleVersions
+                .asSequence()
+                .flatMap { gradleVersion ->
+                    CliCompiler.entries.flatMap { cliCompiler ->
+                        testData.map { (testDataDir, sourceRoots) ->
+                            Arguments.of(gradleVersion, cliCompiler, testDataDir, sourceRoots)
+                        }
+                    }
+                }
+                .asStream()
+        }
+    }
+
+    @Target(AnnotationTarget.FUNCTION)
+    @Retention(AnnotationRetention.RUNTIME)
+    @GradleTestVersions
+    @ParameterizedTest(name = "{0} - {1} - {2} - {3}: {displayName}")
+    @ArgumentsSource(GradleAndMppHighlightingProvider::class)
+    annotation class GradleWithMppHighlightingTest
 }

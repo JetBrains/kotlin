@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.IrWhenUtils
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -15,14 +16,22 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-private class ExtractedWhenCondition<T>(val condition: IrCall, val const: IrConst<T>)
-private class ExtractedWhenBranch<T>(val conditions: List<ExtractedWhenCondition<T>>, val expression: IrExpression)
+private class ExtractedWhenCondition(val condition: IrCall, val const: IrConst)
+private class ExtractedWhenBranch(val conditions: List<ExtractedWhenCondition>, val expression: IrExpression)
 
-internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols: WasmSymbols): Boolean {
+private class ExtractedWhenBranchWithIntConditions(val intConditions: List<Int>, val expression: IrExpression)
+
+internal fun BodyGenerator.tryGenerateOptimisedWhen(
+    expression: IrWhen,
+    irBuiltIns: IrBuiltIns,
+    symbols: BackendWasmSymbols,
+    functionContext: WasmFunctionCodegenContext,
+    wasmModuleTypeTransformer: WasmModuleTypeTransformer
+): Boolean {
     if (expression.branches.size <= 2) return false
 
     var elseExpression: IrExpression? = null
-    val extractedBranches = mutableListOf<ExtractedWhenBranch<Any>>()
+    val extractedBranches = mutableListOf<ExtractedWhenBranch>()
 
     // Parse when structure. Note that the condition can be nested. See matchConditions() for details.
     var noMultiplyConditionBranches = true
@@ -31,10 +40,10 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
         if (isElseBranch(branch)) {
             elseExpression = branch.result
         } else {
-            val conditions = IrWhenUtils.matchConditions(symbols.irBuiltIns.ororSymbol, branch.condition) ?: return false
+            val conditions = IrWhenUtils.matchConditions<IrCall>(irBuiltIns.ororSymbol, branch.condition) ?: return false
             val extractedConditions = tryExtractEqEqNumberConditions(symbols, conditions) ?: return false
             val filteredExtractedConditions = extractedConditions.filter { it.const.value !in seenConditions }
-            seenConditions.addAll(extractedConditions.map { it.const.value })
+            seenConditions.addAll(extractedConditions.map { it.const.value!! })
             if (filteredExtractedConditions.isNotEmpty()) {
                 noMultiplyConditionBranches = noMultiplyConditionBranches && filteredExtractedConditions.size == 1
                 extractedBranches.add(ExtractedWhenBranch(filteredExtractedConditions, branch.result))
@@ -42,7 +51,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
         }
     }
     if (extractedBranches.isEmpty()) return false
-    val subject = extractedBranches[0].conditions[0].condition.getValueArgument(0) ?: return false
+    val subject = extractedBranches[0].conditions[0].condition.arguments[0] ?: return false
 
     // Do the optimization only if all conditions read and compare the same var or val
     // TODO: consider supporting other cases
@@ -50,24 +59,41 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     val subjectValue = subject.symbol
     val allConditionsReadsSameValue = !extractedBranches.all { branch ->
         branch.conditions.all { whenCondition ->
-            (whenCondition.condition.getValueArgument(0) as? IrGetValue)?.symbol == subjectValue
+            (whenCondition.condition.arguments[0] as? IrGetValue)?.symbol == subjectValue
         }
     }
     if (allConditionsReadsSameValue) return false
 
+    val supportedBasicTypes = setOf(
+        IrConstKind.Char,
+        IrConstKind.Int,
+    )
+
     // Check all kinds are the same
-    for (branch in extractedBranches) {
-        //TODO: Support all primitive types
-        if (!branch.conditions.all { it.const.kind.equals(IrConstKind.Int) }) return false
+    //TODO: Support all primitive types
+    val validBranches = supportedBasicTypes.any { type ->
+        extractedBranches.all { branch ->
+            branch.conditions.all { it.const.kind.equals(type) }
+        }
+    }
+    if (!validBranches) {
+        return false
     }
 
     val intBranches = extractedBranches.map { branch ->
-        @Suppress("UNCHECKED_CAST")
-        branch as ExtractedWhenBranch<Int>
+        ExtractedWhenBranchWithIntConditions(
+            branch.conditions.map {
+                when (val v = it.const.value) {
+                    is Int -> v
+                    is Char -> v.code
+                    else -> error("Unreachable branch")
+                }
+            }, branch.expression
+        )
     }
 
-    val maxValue = intBranches.maxOf { branch -> branch.conditions.maxOf { it.const.value } }
-    val minValue = intBranches.minOf { branch -> branch.conditions.minOf { it.const.value } }
+    val maxValue = intBranches.maxOf { branch -> branch.intConditions.maxOf { it } }
+    val minValue = intBranches.minOf { branch -> branch.intConditions.minOf { it } }
     if (minValue == maxValue) return false
 
     val selectorLocal = functionContext.referenceLocal(SyntheticLocalType.TABLE_SWITCH_SELECTOR)
@@ -77,7 +103,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     val noLocation = SourceLocation.NoLocation("When's binary search infra")
     body.buildSetLocal(selectorLocal, noLocation)
 
-    val resultType = context.transformBlockResultType(expression.type)
+    val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
     //int overflow or load is too small then make table switch
     val tableSize = maxValue - minValue
     if (tableSize <= 0 || tableSize > seenConditions.size * 2) {
@@ -105,7 +131,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     } else {
         val brTable = mutableListOf<Int>()
         for (i in minValue..maxValue) {
-            val branchIndex = intBranches.indexOfFirst { branch -> branch.conditions.any { it.const.value == i } }
+            val branchIndex = intBranches.indexOfFirst { branch -> branch.intConditions.any { it == i } }
             val brIndex = if (branchIndex != -1) branchIndex else intBranches.size
             brTable.add(brIndex)
         }
@@ -145,9 +171,9 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
  *   END IF
  * }
  */
-private fun BodyGenerator.createBinaryTable(selectorLocal: WasmLocal, intBranches: List<ExtractedWhenBranch<Int>>) {
+private fun BodyGenerator.createBinaryTable(selectorLocal: WasmLocal, intBranches: List<ExtractedWhenBranchWithIntConditions>) {
     val sortedCaseToBranchIndex = mutableListOf<Pair<Int, Int>>()
-    intBranches.flatMapIndexedTo(sortedCaseToBranchIndex) { index, branch -> branch.conditions.map { it.const.value to index } }
+    intBranches.flatMapIndexedTo(sortedCaseToBranchIndex) { index, branch -> branch.intConditions.map { it to index } }
     sortedCaseToBranchIndex.sortBy { it.first }
 
     val location = SourceLocation.NoLocation("When's binary search infra")
@@ -161,23 +187,23 @@ private fun BodyGenerator.createBinaryTable(selectorLocal: WasmLocal, intBranche
     createBinaryTable(selectorLocal, WasmI32, sortedCaseToBranchIndex, 0, sortedCaseToBranchIndex.size, thenBody, elseBody)
 }
 
-private fun tryExtractEqEqNumberConditions(symbols: WasmSymbols, conditions: List<IrCall>): List<ExtractedWhenCondition<Any>>? {
+private fun tryExtractEqEqNumberConditions(symbols: BackendWasmSymbols, conditions: List<IrCall>): List<ExtractedWhenCondition>? {
     if (conditions.isEmpty()) return null
 
     val firstCondition = conditions[0]
     val firstConditionSymbol = firstCondition.symbol
         .takeIf { it in symbols.equalityFunctions.values }
         ?: return null
-    if (firstCondition.valueArgumentsCount != 2) return null
+    if (firstCondition.arguments.size != 2) return null
 
     // All conditions has the same eqeq
     if (conditions.any { it.symbol != firstConditionSymbol }) return null
 
-    val result = mutableListOf<ExtractedWhenCondition<Any>>()
+    val result = mutableListOf<ExtractedWhenCondition>()
     for (condition in conditions) {
         if (condition.symbol != firstConditionSymbol) return null
-        @Suppress("UNCHECKED_CAST")
-        val conditionConst = condition.getValueArgument(1) as? IrConst<Any> ?: return null
+        val conditionConst = condition.arguments[1] as? IrConst ?: return null
+        if (conditionConst.value == null) return null
         result.add(ExtractedWhenCondition(condition, conditionConst))
     }
 
@@ -210,13 +236,13 @@ private fun tryExtractEqEqNumberConditions(symbols: WasmSymbols, conditions: Lis
 */
 private fun BodyGenerator.createBinaryTable(
     selectorLocal: WasmLocal,
-    intBranches: List<ExtractedWhenBranch<Int>>,
+    intBranches: List<ExtractedWhenBranchWithIntConditions>,
     elseExpression: IrExpression?,
     resultType: WasmType?,
     expectedType: IrType,
 ) {
     val sortedCaseToBranchIndex = mutableListOf<Pair<Int, IrExpression>>()
-    intBranches.mapTo(sortedCaseToBranchIndex) { branch -> branch.conditions[0].const.value to branch.expression }
+    intBranches.mapTo(sortedCaseToBranchIndex) { branch -> branch.intConditions[0] to branch.expression }
     sortedCaseToBranchIndex.sortBy { it.first }
 
     body.buildBlock("when_block", resultType) { currentBlock ->
@@ -315,7 +341,7 @@ private fun <T> BodyGenerator.createBinaryTable(
 private fun BodyGenerator.genTableIntSwitch(
     selectorLocal: WasmLocal,
     resultType: WasmType?,
-    branches: List<ExtractedWhenBranch<Int>>,
+    branches: List<ExtractedWhenBranchWithIntConditions>,
     elseExpression: IrExpression?,
     shift: Int,
     brTable: List<Int>,
@@ -329,7 +355,10 @@ private fun BodyGenerator.genTableIntSwitch(
         body.buildBlock(resultType)
     }
 
-    resultType?.let { generateDefaultInitializerForType(it, body) } //stub value
+    if (resultType != null && resultType !is WasmUnreachableType) {
+        generateDefaultInitializerForType(resultType, body) //stub value
+    }
+
     body.buildGetLocal(selectorLocal, location)
     if (shift != 0) {
         body.buildConstI32(shift, location)
@@ -339,12 +368,12 @@ private fun BodyGenerator.genTableIntSwitch(
         WasmOp.BR_TABLE,
         location,
         WasmImmediate.LabelIdxVector(brTable),
-        WasmImmediate.LabelIdx(branches.size)
+        WasmImmediate.LabelIdx.get(branches.size)
     )
     body.buildEnd()
 
     for (expression in branches) {
-        if (resultType != null) {
+        if (resultType != null && resultType !is WasmUnreachableType) {
             body.buildDrop(location)
         }
         generateWithExpectedType(expression.expression, expectedType)
@@ -354,7 +383,7 @@ private fun BodyGenerator.genTableIntSwitch(
     }
 
     if (elseExpression != null) {
-        if (resultType != null) {
+        if (resultType != null && resultType !is WasmUnreachableType) {
             body.buildDrop(location)
         }
         generateWithExpectedType(elseExpression, expectedType)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun testBinary1() {
     operator fun Int.times(<!UNUSED_PARAMETER!>s<!>: String) {}
 
@@ -37,3 +38,7 @@ fun returnInBinary2(): Boolean {
 
 fun todo(): Nothing = throw Exception()
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, disjunctionExpression, elvisExpression,
+funWithExtensionReceiver, functionDeclaration, localFunction, multiplicativeExpression, nullableType, operator,
+stringLiteral */

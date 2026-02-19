@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class A {
     open val servers: List<C>
@@ -15,3 +16,6 @@ object B {
 
 open class C
 class D : C()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inline, lambdaLiteral, nullableType,
+objectDeclaration, propertyDeclaration, reified, stringLiteral, typeConstraint, typeParameter, vararg */

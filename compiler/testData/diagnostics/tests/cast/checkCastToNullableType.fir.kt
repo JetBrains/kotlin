@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaClass.java
 
 import org.jetbrains.annotations.Nullable;
@@ -36,3 +37,6 @@ fun <T, S: Any> test(x1: T, x2: T?, y1: S, y2: S?) {
     val f3 = JavaClass.fooNN()
     <!USELESS_IS_CHECK!>f3 is Int?<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, isExpression, javaFunction, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

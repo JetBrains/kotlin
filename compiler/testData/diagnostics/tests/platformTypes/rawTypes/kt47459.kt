@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: MapObjectManager.java
 abstract class MapObjectManager<C extends MapObjectManager.Collection> {
@@ -22,3 +23,6 @@ fun foo(markerManager: MarkerManager) {
     val test: MarkerManager.Collection = markerManager.getCollection("FOO")!!
     test.setOnMarkerClickListener()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration, stringLiteral */

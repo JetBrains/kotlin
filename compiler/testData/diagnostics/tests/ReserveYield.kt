@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_VARIABLE
-// !LANGUAGE: -YieldIsNoMoreReserved
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_VARIABLE
+// LANGUAGE: -YieldIsNoMoreReserved
 
 // FILE: 1.kt
 package p1.yield
@@ -69,3 +70,6 @@ fun yield(yield: Int) {
 }
 
 fun yield(i: (Int) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localClass, localProperty, propertyDeclaration, starProjection, typeConstraint, typeParameter */

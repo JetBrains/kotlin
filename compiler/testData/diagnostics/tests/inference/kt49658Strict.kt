@@ -1,4 +1,5 @@
-// !LANGUAGE: +DontLoseDiagnosticsDuringOverloadResolutionByReturnType
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +DontLoseDiagnosticsDuringOverloadResolutionByReturnType
 // WITH_STDLIB
 
 fun doTheMapThing1(elements: List<CharSequence>): List<String> {
@@ -15,3 +16,6 @@ fun doTheMapThing2(elements: List<CharSequence>): List<String> {
         <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>if (it is String) listOf("Yeah") else null<!> // it's OK with `if`
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType, stringLiteral,
+whenExpression, whenWithSubject */

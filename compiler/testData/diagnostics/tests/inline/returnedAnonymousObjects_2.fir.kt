@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // ISSUE: KT-33917
 
@@ -30,15 +31,15 @@ private inline fun foo22(crossinline f: () -> Int) = Inv(Inv(object : I1 {
     fun bar(): Int = f()
 }))
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun foo30(crossinline f: () -> Int)<!> = object : I1, I2 {
+private inline fun <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>foo30<!>(crossinline f: () -> Int) = object : I1, I2 {
     fun bar(): Int = f()
 }
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun foo31(crossinline f: () -> Int)<!> = Inv(object : I1, I2 {
+private inline fun <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>foo31<!>(crossinline f: () -> Int) = Inv(object : I1, I2 {
     fun bar(): Int = f()
 })
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun foo32(crossinline f: () -> Int)<!> = Inv(Inv(object : I1, I2 {
+private inline fun <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>foo32<!>(crossinline f: () -> Int) = Inv(Inv(object : I1, I2 {
     fun bar(): Int = f()
 }))
 
@@ -65,17 +66,17 @@ fun test10(b: Boolean) {
 }
 
 fun test11(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo11 { 1 }.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo11 { 1 }.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo11 { 2 }.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo11 { 2 }.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test12(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo12 { 1 }.value.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo12 { 1 }.value.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo12 { 2 }.value.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo12 { 2 }.value.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
@@ -91,17 +92,17 @@ fun test20(b: Boolean) {
 }
 
 fun test21(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo21 { 1 }.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo21 { 1 }.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo21 { 2 }.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo21 { 2 }.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test22(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo22 { 1 }.value.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo22 { 1 }.value.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo22 { 2 }.value.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo22 { 2 }.value.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
@@ -117,17 +118,17 @@ fun test30(b: Boolean) {
 }
 
 fun test31(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo31 { 1 }.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo31 { 1 }.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo31 { 2 }.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo31 { 2 }.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test32(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo32 { 1 }.value.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo32 { 1 }.value.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo32 { 2 }.value.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo32 { 2 }.value.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
@@ -157,3 +158,7 @@ fun test42(b: Boolean) {
     }
     x.bar()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, capturedType, classDeclaration, crossinline,
+functionDeclaration, functionalType, ifExpression, inline, integerLiteral, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration, typeParameter */

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -15,11 +16,12 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirOptionalExpectationDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirOptionalExpectationDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration || !declaration.isExpect) {
             declaration.getAnnotationByClassId(StandardClassIds.Annotations.OptionalExpectation, context.session)?.let {
-                reporter.reportOn(it.source, FirErrors.OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, context)
+                reporter.reportOn(it.source, FirErrors.OPTIONAL_EXPECTATION_NOT_ON_EXPECTED)
             }
         }
     }

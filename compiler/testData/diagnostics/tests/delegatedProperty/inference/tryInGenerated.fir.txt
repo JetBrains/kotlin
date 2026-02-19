@@ -25,4 +25,8 @@ FILE: tryInGenerated.kt
         finally {
         }
 
+            local get(): R|kotlin/String| {
+                ^ D|<local>/data|.R|/getValue|<R|kotlin/String|>(Null(null), ::R|<local>/data|)
+            }
+
     }

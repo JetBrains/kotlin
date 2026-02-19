@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 class A
 
 // Lifted up type aliases:
@@ -53,7 +55,7 @@ typealias Y = V // TA at the RHS with the different nullability of own RHS
 // Supertypes:
 typealias FILE = __sFILE
 
-final class __sFILE : kotlinx.cinterop.CStructVar {}
+final class __sFILE(rawPtr: kotlinx.cinterop.NativePtr) : kotlinx.cinterop.CStructVar(rawPtr) {}
 
 typealias uuid_t = __darwin_uuid_t
 typealias __darwin_uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>

@@ -5,7 +5,6 @@
 
 #include "ExtraObjectData.hpp"
 
-#include "MainQueueProcessor.hpp"
 #include "PointerBits.h"
 #include "ThreadData.hpp"
 
@@ -28,11 +27,12 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
-    auto& gc = mm::ThreadRegistry::Instance().CurrentThreadData()->gc();
-    auto& data = gc.CreateExtraObjectDataForObject(object, typeInfo);
-    if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
+    auto& allocator = mm::ThreadRegistry::Instance().CurrentThreadData()->allocator();
+    auto& data = allocator.allocateExtraObjectData(object, typeInfo);
+    std_support::atomic_ref objectAtomicTypeInfo{object->typeInfoOrMeta_};
+    if (!objectAtomicTypeInfo.compare_exchange_strong(typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
         // Somebody else created `mm::ExtraObjectData` for this object.
-        gc.DestroyUnattachedExtraObjectData(data);
+        allocator.destroyUnattachedExtraObjectData(data);
         return *reinterpret_cast<mm::ExtraObjectData*>(typeInfo);
     }
 
@@ -40,8 +40,11 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 }
 
 void mm::ExtraObjectData::UnlinkFromBaseObject() noexcept {
-    auto *object = GetBaseObject();
-    atomicSetRelease(const_cast<const TypeInfo**>(&object->typeInfoOrMeta_), typeInfo_);
+    auto* object = weakReferenceOrBaseObject_.exchange(nullptr);
+    RuntimeAssert(
+            !hasPointerBits(object, WEAK_REF_TAG), "ExtraObjectData %p has uncleared weak reference %p during unlink", this,
+            clearPointerBits(object, WEAK_REF_TAG));
+    std_support::atomic_ref{object->typeInfoOrMeta_}.store(const_cast<TypeInfo*>(typeInfo_), std::memory_order_release);
     RuntimeAssert(
             !object->has_meta_object(), "Object %p has metaobject %p after removing metaobject %p", object, object->meta_object_or_null(),
             this);
@@ -50,13 +53,7 @@ void mm::ExtraObjectData::UnlinkFromBaseObject() noexcept {
 void mm::ExtraObjectData::ReleaseAssociatedObject() noexcept {
 #ifdef KONAN_OBJC_INTEROP
     if (void* associatedObject = associatedObject_) {
-        if (getFlag(FLAGS_RELEASE_ON_MAIN_QUEUE) && isMainQueueProcessorAvailable()) {
-            runOnMainQueue(associatedObject, [](void* obj) {
-                Kotlin_ObjCExport_releaseAssociatedObject(obj);
-            });
-        } else {
-            Kotlin_ObjCExport_releaseAssociatedObject(associatedObject);
-        }
+        Kotlin_ObjCExport_releaseAssociatedObject(associatedObject);
         associatedObject_ = nullptr;
     }
 #endif

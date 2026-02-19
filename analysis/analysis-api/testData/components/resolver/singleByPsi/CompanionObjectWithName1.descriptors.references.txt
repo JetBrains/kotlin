@@ -1,0 +1,13 @@
+KtNameReferenceExpression(65,70): 'Inner'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: true
+    usesContextSensitiveResolution: false
+    symbols:
+      (in my.sample.Inner) companion object Inner
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

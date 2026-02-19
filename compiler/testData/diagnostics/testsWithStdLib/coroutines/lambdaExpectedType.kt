@@ -1,6 +1,7 @@
-// !LANGUAGE: -SuspendConversion
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -SuspendConversion
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
 
 fun builder(c: suspend () -> Int) = 1
 fun <T> genericBuilder(c: suspend () -> T): T = null!!
@@ -50,3 +51,7 @@ fun foo() {
         y checkType { _<Int>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, suspend, typeParameter, typeWithExtension */

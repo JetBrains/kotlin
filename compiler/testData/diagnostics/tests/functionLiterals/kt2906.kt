@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2906 If function parameter/variable is invoked in closure using parenthesis syntax, in IDEA it is not highlighted as captured in closure
 
@@ -21,3 +22,5 @@ fun main() {
 }
 
 fun println(s: String) = s
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

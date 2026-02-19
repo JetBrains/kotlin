@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(i: @a Int?) {}
 
 fun foo(l: List<@a Int?>) {}

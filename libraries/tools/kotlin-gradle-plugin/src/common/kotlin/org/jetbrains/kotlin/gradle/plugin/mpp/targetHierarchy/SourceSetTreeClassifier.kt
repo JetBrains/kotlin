@@ -3,22 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
-import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 
 @ExternalKotlinTargetApi
 @Deprecated(
-    "Use org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier instead",
+    "Use org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier instead. Scheduled for removal in Kotlin 2.3.",
     ReplaceWith("org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier"),
+    level = DeprecationLevel.ERROR,
 )
 sealed class SourceSetTreeClassifier {
 

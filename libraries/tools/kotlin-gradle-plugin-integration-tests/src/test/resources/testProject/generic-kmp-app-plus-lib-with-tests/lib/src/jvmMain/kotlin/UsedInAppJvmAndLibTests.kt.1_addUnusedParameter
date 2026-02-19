@@ -1,0 +1,1 @@
+fun libJvmPlatformUtil(unused: Boolean = true): Int = 400

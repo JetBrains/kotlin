@@ -1,8 +1,9 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // FIR_IDENTICAL
 // FULL_JDK
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 // FILE: A.java
 import java.util.List;
@@ -23,3 +24,7 @@ fun bar(): Int {
         }
     }.baz()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, infix, integerLiteral, javaFunction,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 object D {
     operator fun getValue(a: Any?, b: Any?): String = "OK"
 }

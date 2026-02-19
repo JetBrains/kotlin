@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class MyClass
 
 // Correct at compile time but wrong at run-time
@@ -10,3 +11,6 @@ public fun box() : MyClass? {
     j.hashCode()
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, localProperty, nullableType, operator, propertyDeclaration */

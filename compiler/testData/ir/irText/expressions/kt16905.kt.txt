@@ -1,10 +1,4 @@
 class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   open inner class Inner {
     constructor() /* primary */ {
       super/*Any*/()
@@ -32,9 +26,16 @@ class Outer {
 
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
-typealias OI = Inner
 fun test(): Inner {
   return Outer().Inner()
 }
+
+typealias OI = Inner

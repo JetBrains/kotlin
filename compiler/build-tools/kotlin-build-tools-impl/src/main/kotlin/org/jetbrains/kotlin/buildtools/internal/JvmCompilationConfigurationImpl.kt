@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -53,7 +55,7 @@ internal abstract class JvmIncrementalCompilationConfigurationImpl<P : Increment
     override var rootProjectDir: File? = null,
     override var buildDir: File? = null,
     override var forcedNonIncrementalMode: Boolean = false,
-    override var outputDirs: Set<File> = emptySet(),
+    override var outputDirs: Set<File>? = null,
 ) : IncrementalJvmCompilationConfiguration<P> {
     override fun setRootProjectDir(rootProjectDir: File): IncrementalJvmCompilationConfiguration<P> {
         this.rootProjectDir = rootProjectDir
@@ -93,6 +95,7 @@ internal abstract class JvmIncrementalCompilationConfigurationImpl<P : Increment
 
 internal class ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl(
     override var assuredNoClasspathSnapshotsChanges: Boolean = false,
+    override var isUsingFirRunner: Boolean = false,
 ) :
     JvmIncrementalCompilationConfigurationImpl<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>(),
     ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
@@ -128,6 +131,11 @@ internal class ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl(
 
     override fun assureNoClasspathSnapshotsChanges(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
         assuredNoClasspathSnapshotsChanges = value
+        return this
+    }
+
+    override fun useFirRunner(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
+        isUsingFirRunner = value
         return this
     }
 

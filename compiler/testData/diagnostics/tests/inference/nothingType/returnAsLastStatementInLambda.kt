@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-58149
 
@@ -38,3 +39,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, starProjection, typeParameter, whenExpression */

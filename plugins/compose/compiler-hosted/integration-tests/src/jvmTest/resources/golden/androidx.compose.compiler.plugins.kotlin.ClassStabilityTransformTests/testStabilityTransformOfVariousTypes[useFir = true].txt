@@ -1,0 +1,141 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Stable
+import kotlin.reflect.KProperty
+
+@Stable
+class StableDelegate {
+    operator fun setValue(thisObj: Any?, property: KProperty<*>, value: Int) {
+    }
+    operator fun getValue(thisObj: Any?, property: KProperty<*>): Int {
+        return 10
+    }
+}
+
+class UnstableDelegate {
+    var value: Int = 0
+    operator fun setValue(thisObj: Any?, property: KProperty<*>, value: Int) {
+        this.value = value
+    }
+    operator fun getValue(thisObj: Any?, property: KProperty<*>): Int {
+        return 10
+    }
+}
+class Unstable { var value: Int = 0 }
+class EmptyClass
+class SingleStableVal(val p1: Int)
+class SingleParamProp<T>(val p1: T)
+class SingleParamNonProp<T>(p1: T) { val p2 = p1.hashCode() }
+class DoubleParamSingleProp<T, V>(val p1: T, p2: V) { val p3 = p2.hashCode() }
+class X<T>(val p1: List<T>)
+class NonBackingFieldUnstableProp {
+    val p1: Unstable get() { TODO() }
+}
+class NonBackingFieldUnstableVarProp {
+    var p1: Unstable
+        get() { TODO() }
+        set(value) { }
+}
+class StableDelegateProp {
+    var p1 by StableDelegate()
+}
+class UnstableDelegateProp {
+    var p1 by UnstableDelegate()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Stable
+class StableDelegate {
+  fun setValue(thisObj: Any?, property: KProperty<*>, value: Int) { }
+  fun getValue(thisObj: Any?, property: KProperty<*>): Int {
+    return 10
+  }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 0)
+class UnstableDelegate {
+  var value: Int = 0
+  fun setValue(thisObj: Any?, property: KProperty<*>, value: Int) {
+    value = value
+  }
+  fun getValue(thisObj: Any?, property: KProperty<*>): Int {
+    return 10
+  }
+  static val %stable: Int = 8
+}
+@StabilityInferred(parameters = 0)
+class Unstable {
+  var value: Int = 0
+  static val %stable: Int = 8
+}
+@StabilityInferred(parameters = 1)
+class EmptyClass {
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class SingleStableVal(val p1: Int) {
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class SingleParamProp<T> (val p1: T) {
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 2)
+class SingleParamNonProp<T> (p1: T) {
+  val p2: Int = p1.hashCode()
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class DoubleParamSingleProp<T, V> (val p1: T, p2: V) {
+  val p3: Int = p2.hashCode()
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 0)
+class X<T> (val p1: List<T>) {
+  static val %stable: Int = 8
+}
+@StabilityInferred(parameters = 1)
+class NonBackingFieldUnstableProp {
+  val p1: Unstable
+    get() {
+      TODO()
+    }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class NonBackingFieldUnstableVarProp {
+  var p1: Unstable
+    get() {
+      TODO()
+    }
+    set(value) {
+    }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class StableDelegateProp {
+  var p1: StableDelegate = StableDelegate()
+    get() {
+      return <this>.p1%delegate.getValue(<this>, ::p1)
+    }
+    set(value) {
+      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+    }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 0)
+class UnstableDelegateProp {
+  var p1: UnstableDelegate = UnstableDelegate()
+    get() {
+      return <this>.p1%delegate.getValue(<this>, ::p1)
+    }
+    set(value) {
+      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+    }
+  static val %stable: Int = 8
+}

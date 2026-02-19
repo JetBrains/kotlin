@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,14 +9,19 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightReferenceListBuilder
+import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.toFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
@@ -25,19 +30,16 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
-import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasPublishedApiAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     protected val methodIndex: Int,
+    val isJvmExposedBoxed: Boolean,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
     override fun getBody(): PsiCodeBlock? = null
 
@@ -52,7 +54,8 @@ internal abstract class SymbolLightMethodBase(
     override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean): List<MethodSignatureBackedByPsiMethod> =
         PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
 
-    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+    @Deprecated("Deprecated in Java")
+    override fun findDeepestSuperMethod(): PsiMethod? = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
 
     override fun findDeepestSuperMethods(): Array<out PsiMethod> = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
 
@@ -66,6 +69,15 @@ internal abstract class SymbolLightMethodBase(
 
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature =
         MethodSignatureBackedByPsiMethod.create(this, substitutor)
+
+    override fun processDeclarations(
+        processor: PsiScopeProcessor,
+        state: ResolveState,
+        lastParent: PsiElement?,
+        place: PsiElement,
+    ): Boolean {
+        return PsiImplUtil.processDeclarationsInMethod(this, processor, state, lastParent, place)
+    }
 
     abstract override fun equals(other: Any?): Boolean
 
@@ -105,22 +117,57 @@ internal abstract class SymbolLightMethodBase(
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
-    context(KtAnalysisSession)
-    protected fun <T> T.computeJvmMethodName(
+    protected fun computeJvmMethodName(
+        symbol: KaCallableSymbol,
         defaultName: String,
-        containingClass: SymbolLightClassBase,
-        annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-        visibility: Visibility = this.visibility,
-    ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
-        getJvmNameFromAnnotation(annotationUseSiteTarget.toOptionalFilter())?.let { return it }
+    ): String {
+        symbol.getJvmNameFromAnnotation()?.let { return it }
 
-        if (visibility != Visibilities.Internal) return defaultName
         if (containingClass is KtLightClassForFacade) return defaultName
-        if (hasPublishedApiAnnotation(annotationUseSiteTarget.toFilter())) return defaultName
+        val sourceModule = ktModule.baseContextModuleOrSelf as? KaSourceModule ?: return defaultName
 
-        val sourceModule = ktModule as? KtSourceModule ?: return defaultName
-        return mangleInternalName(defaultName, sourceModule)
+        if (symbol.hasPublishedApiAnnotation()) return defaultName
+        if (symbol.visibility != KaSymbolVisibility.INTERNAL) return defaultName
+        return mangleInternalName(defaultName, sourceModule.stableModuleName ?: sourceModule.name)
     }
 
+    protected fun computeJvmExposeBoxedMethodName(
+        symbol: KaCallableSymbol,
+        defaultName: String,
+    ): String = symbol.getJvmExposeBoxedNameFromAnnotation() ?: symbol.getJvmNameFromAnnotation() ?: defaultName
+
     abstract fun isOverride(): Boolean
+
+    internal open fun suppressWildcards(): Boolean? = null
+
+    protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
+        get() = if (isJvmExposedBoxed) ExcludeAnnotationFilter.JvmName else ExcludeAnnotationFilter.JvmExposeBoxed
+
+    // Inspired by KotlinTypeMapper#forceBoxedReturnType
+    protected fun KaSession.shouldEnforceBoxedReturnType(symbol: KaCallableSymbol): Boolean {
+        val returnType = symbol.returnType
+        return when {
+            // 'invoke' methods for lambdas, function literals, and callable references
+            // implicitly override generic 'invoke' from a corresponding base class.
+            symbol is KaNamedFunctionSymbol && symbol.isBuiltinFunctionInvoke && isInlineClassType(returnType) -> true
+
+            isJvmExposedBoxed && typeForValueClass(returnType) -> true
+
+            returnType.isPrimitiveBacked -> {
+                if (symbol.origin == KaSymbolOrigin.DELEGATED) {
+                    !symbol.fakeOverrideOriginal.returnType.isPrimitiveBacked
+                } else {
+                    symbol.allOverriddenSymbols.any { overriddenSymbol ->
+                        !overriddenSymbol.returnType.isPrimitiveBacked
+                    }
+                }
+            }
+
+            else -> false
+        }
+    }
+
+    private fun isInlineClassType(type: KaType): Boolean {
+        return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isInline == true
+    }
 }

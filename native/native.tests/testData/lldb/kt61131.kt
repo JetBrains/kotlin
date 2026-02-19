@@ -1,5 +1,6 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: kt61131.txt
+// FREE_COMPILER_ARGS: -Xbinary=enableDebugTransparentStepping=false
+
 // FILE: kt61131-1.kt
 class FooImpl : Foo {
     override fun bar() = "zzz"

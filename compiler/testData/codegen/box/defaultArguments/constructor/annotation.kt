@@ -1,3 +1,4 @@
+
 annotation class A(val a: Int = 0)
 
 @A fun test1() = 1

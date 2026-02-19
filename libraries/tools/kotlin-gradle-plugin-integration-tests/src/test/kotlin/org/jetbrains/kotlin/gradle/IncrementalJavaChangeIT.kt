@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
@@ -71,7 +74,7 @@ abstract class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChange
 
     @DisplayName("Type alias change is incremental")
     @GradleTest
-    fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
+    open fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
         project("typeAlias", gradleVersion) {
             build("build")
 
@@ -98,156 +101,112 @@ class IncrementalK1JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
 }
 
 @DisplayName("Default incremental compilation with default precise java tracking on K2")
-class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
+open class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
-    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
-        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
-        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
-    }
-}
-
-@DisplayName("Default incremental compilation with precise compilation outputs backup")
-abstract class IncrementalJavaChangePreciseCompilationBackupIT : IncrementalJavaChangeDefaultIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
-}
-
-@DisplayName("Default incremental compilation with precise compilation outputs backup on K1")
-class IncrementalK1JavaChangePreciseCompilationBackupIT : IncrementalJavaChangePreciseCompilationBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-}
-
-@DisplayName("Default incremental compilation with precise compilation outputs backup on K2")
-class IncrementalK2JavaChangePreciseCompilationBackupIT : IncrementalJavaChangePreciseCompilationBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("KT-57147")
-    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
-        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
-        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
-        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
-        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
-    }
-}
-
-@DisplayName("Incremental compilation via history files with default precise java tracking")
-abstract class IncrementalJavaChangeOldICIT : IncrementalJavaChangeDefaultIT() {
-
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
-
-    @DisplayName("Lib: method signature ABI change")
     @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
-            build("assemble")
-
-            javaClassInLib.modify(changeMethodSignature)
-
-            build("assemble") {
-                val expectedToCompileSources = sourceFilesRelativeToProject(
-                    listOf(
-                        "foo/JavaClassChild.kt",
-                        "foo/useJavaClass.kt",
-                        "foo/useJavaClassFooMethodUsage.kt"
-                    ),
-                    subProjectName = "app"
-                )
-                assertCompiledKotlinSources(
-                    expectedToCompileSources,
-                    output
-                )
-            }
-        }
+        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
     }
-
-    @DisplayName("Lib: method body non-ABI change")
-    @GradleTest
-    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
-            build("assemble")
-
-            javaClassInLib.modify(changeMethodBody)
-
-            build("assemble") {
-                val expectedToCompileSources = sourceFilesRelativeToProject(
-                    listOf(
-                        "foo/JavaClassChild.kt",
-                        "foo/useJavaClass.kt",
-                        "foo/useJavaClassFooMethodUsage.kt"
-                    ),
-                    subProjectName = "app"
-                )
-
-                assertCompiledKotlinSources(
-                    expectedToCompileSources,
-                    output
-                )
-            }
-        }
-    }
-}
-
-@DisplayName("Incremental compilation via history files with default precise java tracking with K1")
-class IncrementalK1JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-}
-
-@DisplayName("Incremental compilation via history files with default precise java tracking with K2")
-class IncrementalK2JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
+    @GradleTest
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
+    }
+}
+
+@DisplayName("Default incremental compilation with default precise java tracking on K2 using Fir Runner")
+class IncrementalK2JavaChangeDefaultWithFirIT : IncrementalK2JavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
+}
+
+@DisplayName("Default incremental compilation via Build Tools API")
+open class IncrementalK2JavaChangeBuildToolsApiDaemonIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
+
+    @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }
+}
+
+@DisplayName("Default incremental compilation via Build Tools API")
+class IncrementalK2JavaChangeWithFirRunnerAndBuildToolsApiDaemonIT : IncrementalK2JavaChangeBuildToolsApiDaemonIT() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
+}
+
+@DisplayName("Incremental compilation via Build Tools API using in-process strategy")
+open class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
+
+    @Disabled("KT-57147")
+    @GradleTest
+    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    @GradleTest
+    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    @GradleTest
+    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    @GradleTest
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
+    }
+}
+
+@DisplayName("Incremental compilation via Build Tools API using in-process strategy and FIR runner")
+class IncrementalK2JavaChangeUsingFirRunnerBuildToolsApiInProcessIT : IncrementalK2JavaChangeBuildToolsApiInProcessIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 @DisplayName("Default incremental compilation with enabled precise java tracking")
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
     usePreciseJavaTracking = true
 ) {
+    @Disabled("KT-57147")
     @DisplayName("Lib: tracked method signature ABI change")
     @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
@@ -266,6 +225,7 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
         }
     }
 
+    @Disabled("KT-57147")
     @DisplayName("Lib: tracked method body non-ABI change")
     @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
@@ -334,8 +294,13 @@ class IncrementalK1JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePrec
 }
 
 @DisplayName("Default incremental compilation with disabled precise java tracking and enabled K2")
-class IncrementalK2JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
+open class IncrementalK2JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+@DisplayName("Default incremental compilation with disabled precise java tracking and enabled FIR runner and K2")
+class IncrementalK2JavaChangeDisablePreciseFirIT : IncrementalK2JavaChangeDisablePreciseIT() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 @JvmGradlePluginTests
@@ -389,4 +354,35 @@ abstract class IncrementalCompilationJavaChangesBase(
 
     abstract fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion)
     abstract fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion)
+}
+
+@JvmGradlePluginTests
+class BasicIncrementalJavaInteropIT : KGPBaseTest() {
+
+    @DisplayName("Basic scenario: Kotlin constant tracks a Java constant")
+    @GradleTest
+    fun testKotlinConstantTrackingJavaConstant(gradleVersion: GradleVersion) {
+        project("kt-69042-basic-java-interop", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                // Hack: Read property to ensure Gradle 9.1.0+ invalidates CC when it changes
+                providers.gradleProperty("invalidateCC").orNull
+                """.trimIndent()
+            )
+            build("assemble")
+
+            val javaSource = projectPath.resolve("src/main/java/JavaConstants.java")
+            javaSource.replaceWithVersion("newValue")
+
+            // KT-75850: we need to explicitly invalidate the CC here, as changing the logLevel doesn't trigger it
+            build(
+                "assemble",
+                "-PinvalidateCC=${generateIdentifier()}", // Now this will actually trigger invalidation
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+            ) {
+                assertTasksExecuted(":compileJava", ":compileKotlin")
+                assertIncrementalCompilation(listOf(kotlinSourcesDir().resolve("usage.kt")).relativizeTo(projectPath))
+            }
+        }
+    }
 }

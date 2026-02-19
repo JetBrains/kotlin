@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 object A {
     <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>
@@ -19,3 +20,6 @@ class C {
 val anonObject = object {
     <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, enumDeclaration, enumEntry, init,
+objectDeclaration, propertyDeclaration, secondaryConstructor */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-40327
 
 interface Foo {
@@ -17,3 +18,5 @@ class Impl : Foo, Bar {
 fun main() {
     Impl().some()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override */

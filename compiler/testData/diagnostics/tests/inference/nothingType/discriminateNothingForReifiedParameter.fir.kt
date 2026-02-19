@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
 
 interface Bound
 
@@ -13,18 +14,18 @@ inline fun <reified M> materializeReifiedUnbound(): M = TODO()
 fun <T> select(a: T, b: T): T = TODO()
 
 fun test1() {
-    take(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>take(null)<!>
 }
 
 fun test2() {
-    takeReified(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Bound")!>takeReified(null)<!>
 }
 
 fun test3() {
     <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>takeReifiedUnbound<!>(null)
 }
 
-fun test4(): Bound = takeReifiedUnbound(null)
+fun test4(): Bound = <!DEBUG_INFO_EXPRESSION_TYPE("Bound")!>takeReifiedUnbound(null)<!>
 
 fun test5(): Bound? = select(
     null,
@@ -41,12 +42,15 @@ fun test6() {
 fun test7(): Bound? =
     select(
         null,
-        materializeReifiedUnbound()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Bound?")!>materializeReifiedUnbound()<!>
     )
 
 fun test8() {
     select(
         null,
-        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReifiedUnbound<!>()
+        materializeReifiedUnbound()
     )
 }
+
+/* GENERATED_FIR_TAGS: dnnType, elvisExpression, functionDeclaration, inline, interfaceDeclaration, nullableType,
+reified, typeConstraint, typeParameter */

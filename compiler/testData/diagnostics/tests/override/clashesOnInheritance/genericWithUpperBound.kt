@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: JFooWithUpperBound.java
 public interface JFooWithUpperBound<T extends IBase> {
@@ -55,3 +56,6 @@ interface Test5<T : IDerived> : JFooWithUpperBoundDerived<T>, IFooDerived
 class Test6<T : IBase> : JCFooWithUpperBound<T>(), IFoo
 
 class Test7<T : IDerived> : JCFooWithUpperBoundDerived<T>(), IFooDerived
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType, override,
+typeConstraint, typeParameter */

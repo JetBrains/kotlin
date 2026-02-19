@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo() {}
 
 class C {
@@ -6,7 +7,7 @@ class C {
 
     class Nested {
         fun test() {
-            <!UNRESOLVED_REFERENCE!>err<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>err<!>()
         }
     }
 }
@@ -19,3 +20,5 @@ fun test() {
     val err = C()
     err.<!UNRESOLVED_REFERENCE!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration */

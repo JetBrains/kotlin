@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
+import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -30,40 +30,35 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val enumWhenPhase = makeIrFilePhase(
-    ::MappedEnumWhenLowering,
-    name = "EnumWhenLowering",
-    description = "Replace `when` subjects of enum types with their ordinals"
-)
-
-// A version of EnumWhenLowering that is more friendly to incremental compilation. For example,
-// suppose the code initially looks like this:
-//
-//     // 1.kt
-//     enum E { X }
-//
-//     // 2.kt
-//     fun f(e: E) = when (e) { E.X -> 1 }
-//
-// EnumWhenLowering would transform 2.kt into this:
-//
-//     fun f(e: E) = when (e.ordinal()) { 0 -> 1 }
-//
-// While this lowering would generate (approximately) this instead:
-//
-//     fun f(e: E) = when (WhenMappings.$EnumSwitchMapping$0[e.ordinal()]) { 1 -> 1 }
-//
-//     object WhenMappings {
-//         // Note the runtime call to ordinal(): 0 is not hardcoded.
-//         val $EnumSwitchMapping$0 = IntArray(E.values().size).also { it[E.X.ordinal()] = 1 }
-//     }
-//
-// The latter would not need to be recompiled if new entries were added before `X`
-// at the negligible cost of an additional initializer per run + one array read per call.
-//
-private class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
+/**
+ * Replaces `when` subjects of enum types with their ordinals, which is needed for incremental compilation.
+ * For example, suppose the code initially looks like this:
+ *
+ *     // 1.kt
+ *     enum E { X }
+ *
+ *     // 2.kt
+ *     fun f(e: E) = when (e) { E.X -> 1 }
+ *
+ * [EnumWhenLowering] would transform 2.kt into this:
+ *
+ *     fun f(e: E) = when (e.ordinal()) { 0 -> 1 }
+ *
+ * While this lowering would generate (approximately) this instead:
+ *
+ *     fun f(e: E) = when (WhenMappings.$EnumSwitchMapping$0[e.ordinal()]) { 1 -> 1 }
+ *
+ *     object WhenMappings {
+ *         // Note the runtime call to ordinal(): 0 is not hardcoded.
+ *         val $EnumSwitchMapping$0 = IntArray(E.values().size).also { it[E.X.ordinal()] = 1 }
+ *     }
+ *
+ * The latter would not need to be recompiled if new entries were added before `X`
+ * at the negligible cost of an additional initializer per run + one array read per call.
+ */
+internal class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
     private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
-    private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
+    private val intArrayConstructor = intArray.constructors.single { it.owner.hasShape(regularParameters = 1) }
     private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }
     private val intArraySet = intArray.functions.single { it.owner.name == OperatorNameConventions.SET }
     private val refArraySize = context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }.getter!!
@@ -85,7 +80,7 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
                 name = Name.identifier("WhenMappings")
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
             }.apply {
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
             }
         }
 
@@ -117,8 +112,8 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
             mapping.isPublicAbi = mapping.isPublicAbi ||
                     (builder.scope.scopeOwnerSymbol.owner as? IrDeclaration)?.isInPublicInlineScope == true
 
-            dispatchReceiver = builder.irGetField(null, mapping.field)
-            putValueArgument(0, super.mapRuntimeEnumEntry(builder, subject))
+            arguments[0] = builder.irGetField(null, mapping.field)
+            arguments[1] = super.mapRuntimeEnumEntry(builder, subject)
         }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
@@ -132,16 +127,16 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
             val builder = context.createIrBuilder(mapping.field.symbol)
             mapping.field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
-                val result = irTemporary(irCall(intArrayConstructor).apply { putValueArgument(0, enumSize) })
+                val result = irTemporary(irCall(intArrayConstructor).apply { arguments[0] = enumSize })
                 for ((entry, index) in mapping.ordinals) {
                     val runtimeEntry = IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, enum.defaultType, entry.symbol)
                     val writeToMapping = irCall(intArraySet).apply {
-                        dispatchReceiver = irGet(result)
-                        putValueArgument(0, super.mapRuntimeEnumEntry(builder, runtimeEntry)) // <entry>.ordinal()
-                        putValueArgument(1, irInt(index))
+                        arguments[0] = irGet(result)
+                        arguments[1] = super.mapRuntimeEnumEntry(builder, runtimeEntry) // <entry>.ordinal()
+                        arguments[2] = irInt(index)
                     }
                     val noSuchFieldVariable = scope.createTemporaryVariableDeclaration(
-                        this@MappedEnumWhenLowering.context.ir.symbols.noSuchFieldErrorType,
+                        this@MappedEnumWhenLowering.context.symbols.noSuchFieldErrorType,
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET
                     )
@@ -161,7 +156,7 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
             declaration.declarations += mappingState.mappingsClass.apply {
                 parent = declaration
                 if (mappingState.isPublicAbi) {
-                    context.publicAbiSymbols += symbol
+                    this.isPublicAbi = true
                 }
             }
         }

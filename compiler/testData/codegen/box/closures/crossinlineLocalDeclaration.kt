@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 interface Wrapper { fun runBlock() }
 
 inline fun crossInlineBuildWrapper(crossinline block: () -> Unit) = object : Wrapper {
@@ -8,6 +9,7 @@ inline fun crossInlineBuildWrapper(crossinline block: () -> Unit) = object : Wra
     }
 }
 
+// FILE: main.kt
 class Container {
     val wrapper = crossInlineBuildWrapper {
         object { }

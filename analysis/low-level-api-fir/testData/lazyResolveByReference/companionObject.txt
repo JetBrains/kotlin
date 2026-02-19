@@ -1,0 +1,14 @@
+BODY_RESOLVE:
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] class ClassWithImplicitConstructorAndCompanion : R|kotlin/Any| {
+    public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+    }
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithImplicitConstructorAndCompanion] constructor(): R|library/ClassWithImplicitConstructorAndCompanion|
+
+}
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|library/ClassWithImplicitConstructorAndCompanion|
+    }

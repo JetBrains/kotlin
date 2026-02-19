@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /TestInitValFromParameter { // /TestInitValFromParameter|null[0]
+    final val x // /TestInitValFromParameter.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitValFromParameter.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /TestInitValFromParameter.<init>|<init>(kotlin.Int){}[0]
+}
+final class /TestInitValInClass { // /TestInitValInClass|null[0]
+    final val x // /TestInitValInClass.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitValInClass.x.<get-x>|<get-x>(){}[0]
+    constructor <init>() // /TestInitValInClass.<init>|<init>(){}[0]
+}
+final class /TestInitValInInitBlock { // /TestInitValInInitBlock|null[0]
+    final val x // /TestInitValInInitBlock.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitValInInitBlock.x.<get-x>|<get-x>(){}[0]
+    constructor <init>() // /TestInitValInInitBlock.<init>|<init>(){}[0]
+}

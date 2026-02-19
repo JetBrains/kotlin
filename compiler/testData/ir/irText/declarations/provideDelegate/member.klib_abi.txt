@@ -1,0 +1,23 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Delegate { // /Delegate|null[0]
+    final val value // /Delegate.value|{}value[0]
+        final fun <get-value>(): kotlin/String // /Delegate.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(kotlin/String) // /Delegate.<init>|<init>(kotlin.String){}[0]
+    final fun getValue(kotlin/Any?, kotlin/Any?): kotlin/String // /Delegate.getValue|getValue(kotlin.Any?;kotlin.Any?){}[0]
+}
+final class /DelegateProvider { // /DelegateProvider|null[0]
+    final val value // /DelegateProvider.value|{}value[0]
+        final fun <get-value>(): kotlin/String // /DelegateProvider.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(kotlin/String) // /DelegateProvider.<init>|<init>(kotlin.String){}[0]
+    final fun provideDelegate(kotlin/Any?, kotlin/Any?): /Delegate // /DelegateProvider.provideDelegate|provideDelegate(kotlin.Any?;kotlin.Any?){}[0]
+}
+final class /Host { // /Host|null[0]
+    final val testMember // /Host.testMember|{}testMember[0]
+        final fun <get-testMember>(): kotlin/String // /Host.testMember.<get-testMember>|<get-testMember>(){}[0]
+    constructor <init>() // /Host.<init>|<init>(){}[0]
+}

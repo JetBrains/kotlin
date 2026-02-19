@@ -21,15 +21,14 @@ class BinaryFrameworksCustomAttributesTest {
         val project = buildProjectWithMPP {
             kotlin {
                 iosArm64("ios") {
-                    attributes.attribute(disambiguationAttribute1, "someValue")
+                    attributes.attributeProvider(disambiguationAttribute1, provider { "someValue" })
                     binaries {
                         framework("main")
                         framework("custom") {
-                            embedBitcode("disable")
                             linkerOpts = mutableListOf("-L.")
                             freeCompilerArgs = mutableListOf("-Xtime")
                             isStatic = true
-                            attributes.attribute(disambiguationAttribute2, "someValue2")
+                            attributes.attributeProvider(disambiguationAttribute2, provider { "someValue2" })
                         }
                     }
                 }

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 interface ExpectedType
 
@@ -16,3 +17,6 @@ fun test(s: String?, silent: Boolean) {
 
     <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, ifExpression, inline,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, reified, smartcast, typeParameter */

@@ -1,7 +1,5 @@
-// !LANGUAGE: +EnumEntries
-// IGNORE_BACKEND: JS
+// LANGUAGE: +EnumEntries
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1555
 
 // TODO: Remove after enumEntries become public
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")

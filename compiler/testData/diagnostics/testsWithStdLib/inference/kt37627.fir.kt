@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -NAME_SHADOWING -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -NAME_SHADOWING -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 fun foo1(x: Int) {
     val x = if (true) { // OI: Map<String, () → Int>?, NI: Nothing?, error
@@ -17,3 +18,6 @@ fun foo2(x: Int) {
 
     x
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

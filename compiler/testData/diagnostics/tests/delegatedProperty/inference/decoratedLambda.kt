@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57814
 import kotlin.reflect.KProperty
@@ -19,3 +20,6 @@ fun xPDFDocumentViewer(
 ) = pdfDocumentViewer(
     href // Should be OK to pass nullable String? there
 )
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+operator, propertyDeclaration, propertyDelegate, starProjection, thisExpression, typeParameter */

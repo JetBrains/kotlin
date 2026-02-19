@@ -7,22 +7,19 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeParameterDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope
-import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -57,6 +54,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
+        @OptIn(ClassIdBasedLocality::class)
         return declarationDescriptor?.classId?.isLocal == true
     }
 
@@ -71,13 +69,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
             return this.originalTypeParameter
         }
 
-    override fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
+    override fun RigidTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
         val typeConstructor = typeConstructor()
         require(typeConstructor is IntegerLiteralTypeConstructor, this::errorMessage)
         return typeConstructor.possibleTypes
     }
 
-    override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
+    override fun RigidTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         require(this is SimpleType, this::errorMessage)
         return this.makeNullableAsSpecified(nullable)
     }
@@ -97,17 +95,17 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return ErrorUtils.isUninferredTypeVariable(this)
     }
 
-    override fun SimpleTypeMarker.isStubType(): Boolean {
+    override fun RigidTypeMarker.isStubType(): Boolean {
         require(this is SimpleType, this::errorMessage)
         return this.isSimpleTypeStubType()
     }
 
-    override fun SimpleTypeMarker.isStubTypeForVariableInSubtyping(): Boolean {
+    override fun RigidTypeMarker.isStubTypeForVariableInSubtyping(): Boolean {
         require(this is SimpleType, this::errorMessage)
         return this.isSimpleTypeStubTypeForVariableInSubtyping()
     }
 
-    override fun SimpleTypeMarker.isStubTypeForBuilderInference(): Boolean {
+    override fun RigidTypeMarker.isStubTypeForBuilderInference(): Boolean {
         require(this is SimpleType, this::errorMessage)
         return this.isSimpleTypeStubTypeForBuilderInference()
     }
@@ -132,13 +130,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is IntersectionTypeConstructor
     }
 
-    override fun identicalArguments(a: SimpleTypeMarker, b: SimpleTypeMarker): Boolean {
+    override fun identicalArguments(a: RigidTypeMarker, b: RigidTypeMarker): Boolean {
         require(a is SimpleType, a::errorMessage)
         require(b is SimpleType, b::errorMessage)
         return a.arguments === b.arguments
     }
 
-    override fun KotlinTypeMarker.asSimpleType(): SimpleTypeMarker? {
+    override fun KotlinTypeMarker.asRigidType(): SimpleTypeMarker? {
         require(this is KotlinType, this::errorMessage)
         return this.unwrap() as? SimpleType
     }
@@ -177,7 +175,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return if (this is SimpleTypeWithEnhancement) origin.asCapturedType() else this as? NewCapturedType
     }
 
-    override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? {
+    override fun RigidTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? {
         require(this is SimpleType, this::errorMessage)
         return this as? DefinitelyNotNullType
     }
@@ -185,12 +183,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     @OptIn(ObsoleteTypeKind::class)
     override fun KotlinTypeMarker.isNotNullTypeParameter(): Boolean = this is NotNullTypeParameter
 
-    override fun SimpleTypeMarker.isMarkedNullable(): Boolean {
-        require(this is SimpleType, this::errorMessage)
-        return this.isMarkedNullable
+    override fun KotlinTypeMarker.isMarkedNullable(): Boolean {
+        return this is SimpleType && this.isMarkedNullable
     }
 
-    override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
+    override fun RigidTypeMarker.typeConstructor(): TypeConstructorMarker {
         require(this is SimpleType, this::errorMessage)
         return this.constructor
     }
@@ -236,7 +233,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.replaceType(newType)
     }
 
-    override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
+    override fun TypeArgumentMarker.getType(): KotlinTypeMarker? {
+        if (isStarProjection()) return null
         require(this is TypeProjection, this::errorMessage)
         return this.type.unwrap()
     }
@@ -330,12 +328,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return classDescriptor is ClassDescriptor && classDescriptor.isFinalClass
     }
 
-    override fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker {
+    override fun RigidTypeMarker.asArgumentList(): TypeArgumentListMarker {
         require(this is SimpleType, this::errorMessage)
         return this
     }
 
-    override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
+    override fun captureFromArguments(type: RigidTypeMarker, status: CaptureStatus): SimpleType? {
         require(type is SimpleType, type::errorMessage)
         return org.jetbrains.kotlin.types.checker.captureFromArguments(type, status)
     }
@@ -350,14 +348,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.nothing)
     }
 
+    override fun TypeConstructorMarker.isArrayConstructor(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.array)
+    }
+
     override fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker {
         require(this is KotlinType, this::errorMessage)
         return this.asTypeProjection()
-    }
-
-    override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
-        require(this is TypeConstructor, this::errorMessage)
-        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.unit)
     }
 
     /**
@@ -369,7 +367,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
      *
      * Such types can contain error types in our arguments, but type constructor isn't errorTypeConstructor
      */
-    override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
+    override fun RigidTypeMarker.isSingleClassifierType(): Boolean {
         require(this is SimpleType, this::errorMessage)
         return !isError &&
                 constructor.declarationDescriptor !is TypeAliasDescriptor &&
@@ -384,7 +382,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return containsInternal(this, predicate)
     }
 
-    override fun SimpleTypeMarker.typeDepth(): Int {
+    override fun RigidTypeMarker.typeDepth(): Int {
         require(this is SimpleType, this::errorMessage)
         if (this is TypeUtils.SpecialType) return 0
 
@@ -395,14 +393,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return maxInArguments + 1
     }
 
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
+    override fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return org.jetbrains.kotlin.types.checker.intersectTypes(types as List<UnwrappedType>)
+        return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<UnwrappedType>)
     }
 
-    override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
+    override fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return org.jetbrains.kotlin.types.checker.intersectTypes(types as List<SimpleType>)
+        return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<SimpleType>)
     }
 
     override fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker? {
@@ -420,7 +418,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return isBuiltinFunctionalTypeOrSubtype
     }
 
-    override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
+    override fun createFlexibleType(lowerBound: RigidTypeMarker, upperBound: RigidTypeMarker): KotlinTypeMarker {
         require(lowerBound is SimpleType, this::errorMessage)
         require(upperBound is SimpleType, this::errorMessage)
         return KotlinTypeFactory.flexibleType(lowerBound, upperBound)
@@ -428,7 +426,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
         return when (this) {
-            is SimpleTypeMarker -> this.withNullability(nullable)
+            is RigidTypeMarker -> this.withNullability(nullable)
             is FlexibleTypeMarker -> createFlexibleType(lowerBound().withNullability(nullable), upperBound().withNullability(nullable))
             else -> error("sealed")
         }
@@ -437,7 +435,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
+        dnnTypesEqualToFlexible: Boolean,
     ): TypeCheckerState {
         return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
     }
@@ -461,13 +460,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     val builtIns: KotlinBuiltIns
         get() = throw UnsupportedOperationException("Not supported")
 
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
         require(this is UnwrappedType, this::errorMessage)
         return makeDefinitelyNotNullOrNotNullInternal(this)
     }
 
 
-    override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
+    override fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
         require(this is SimpleType, this::errorMessage)
         return makeSimpleTypeDefinitelyNotNullOrNotNullInternal(this)
     }
@@ -493,7 +492,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return hasNoInferInternal(this)
     }
 
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
+    override fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker {
         errorSupportedOnlyInTypeInference()
     }
 
@@ -505,12 +504,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         }
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
         require(this is NewCapturedType, this::errorMessage)
 
         return NewCapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
         require(this is NewCapturedType, this::errorMessage)
         return this.isProjectionNotNull
@@ -528,6 +529,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = this is CapturedType
 
+    @K2Only
+    override fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean {
+        error("Is not expected to be called in K1")
+    }
+
     override fun KotlinTypeMarker.isNullableType(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return TypeUtils.isNullableType(this)
@@ -538,6 +544,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
+        contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
         require(constructor is TypeConstructor, constructor::errorMessage)
@@ -579,20 +586,19 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
                 this is NewCapturedType
     }
 
-    override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
+    override fun RigidTypeMarker.isExtensionFunction(): Boolean {
         require(this is SimpleType, this::errorMessage)
         return this.hasAnnotation(FqNames.extensionFunctionType)
     }
 
-    override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
+    override fun RigidTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
         require(this is SimpleType, this::errorMessage)
         @Suppress("UNCHECKED_CAST")
         return this.replace(newArguments as List<TypeProjection>)
     }
 
-    override fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
+    override fun RigidTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
         require(this is SimpleType, this::errorMessage)
-        @Suppress("UNCHECKED_CAST")
         return this.replaceArgumentsByExistingArgumentsWith(replacement)
     }
 
@@ -618,6 +624,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
+    @K2Only
+    override fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker {
+        error("Only for K2")
+    }
+
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
         require(type is UnwrappedType, type::errorMessage)
         require(this is TypeSubstitutor, this::errorMessage)
@@ -641,6 +652,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is TypeUtils.SpecialType
     }
 
+    @K2Only
+    override fun KotlinTypeMarker.hasEnhancedNullability(): Boolean {
+        error("hasEnhancedNullability is only supported in K2")
+    }
+
     override fun TypeConstructorMarker.isTypeVariable(): Boolean {
         errorSupportedOnlyInTypeInference()
     }
@@ -654,7 +670,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return classicIsSignedOrUnsignedNumberType() || constructor is IntegerLiteralTypeConstructor
     }
 
-    override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
+    override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<RigidTypeMarker>): SimpleTypeMarker? {
         @Suppress("UNCHECKED_CAST")
         explicitSupertypes as List<SimpleType>
         return IntegerLiteralTypeConstructor.findCommonSuperType(explicitSupertypes)
@@ -680,7 +696,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return ErrorUtils.isError(declarationDescriptor)
     }
 
-    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
+    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker {
         require(this is IntegerLiteralTypeConstructor, this::errorMessage)
         return this.getApproximatedType().unwrap()
     }
@@ -695,21 +711,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.attributes.toList()
     }
 
-    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
-        require(this is KotlinType, this::errorMessage)
-        return !this.attributes.isEmpty() && this.getCustomAttributes().size > 0
-    }
-
-    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
-        require(this is KotlinType, this::errorMessage)
-        return this.attributes.filterNot { it is AnnotationsTypeAttribute }
-    }
-
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
         return captureFromExpressionInternal(type as UnwrappedType)
     }
 
-    override fun createErrorType(debugName: String): SimpleTypeMarker {
+    override fun createErrorType(debugName: String, delegatedType: RigidTypeMarker?): SimpleTypeMarker {
         return ErrorUtils.createErrorType(ErrorTypeKind.RESOLUTION_ERROR_TYPE, debugName)
     }
 
@@ -793,10 +799,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return unsubstitutedUnderlyingType()
     }
 
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is KotlinType, this::errorMessage)
-        return substitutedUnderlyingType()
-    }
+    override fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
+        map.map { (parameter, argument) ->
+            (parameter as TypeConstructor) to (argument as KotlinType).asTypeProjection()
+        }.toMap().let { TypeSubstitutor.create(it) }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
         require(this is TypeConstructor, this::errorMessage)
@@ -834,7 +840,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return descriptor is ClassDescriptor && (descriptor.kind == ClassKind.INTERFACE || descriptor.kind == ClassKind.ANNOTATION_CLASS)
     }
 
-    override fun createTypeWithAlternativeForIntersectionResult(
+    override fun createTypeWithUpperBoundForIntersectionResult(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker,
     ): KotlinTypeMarker {
@@ -857,6 +863,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return this.isBuiltinExtensionFunctionalType
+    }
+
+    override fun KotlinTypeMarker.contextParameterCount(): Int {
+        require(this is KotlinType, this::errorMessage)
+        return this.contextFunctionTypeParamsCount()
     }
 
     override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {
@@ -895,9 +906,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (baseType.memberScope as? SubstitutingScope)?.substitutor
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = false
+    override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = false
 
-    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
+    override fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean = true
+
+    override fun substitutionSupertypePolicy(type: RigidTypeMarker): TypeCheckerState.SupertypesPolicy {
         require(type is SimpleType, type::errorMessage)
         val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()
 
@@ -906,7 +919,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
                 return substitutor.safeSubstitute(
                     type.lowerBoundIfFlexible() as KotlinType,
                     Variance.INVARIANT
-                ).asSimpleType()!!
+                ).asRigidType()!!
             }
         }
     }
@@ -918,7 +931,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override val isK2: Boolean
         get() = false
 
-    class WA // Workaround for KT-52313
+    override fun supportsImprovedVarianceInCst(): Boolean {
+        return false
+    }
 }
 
 fun TypeVariance.convertVariance(): Variance {

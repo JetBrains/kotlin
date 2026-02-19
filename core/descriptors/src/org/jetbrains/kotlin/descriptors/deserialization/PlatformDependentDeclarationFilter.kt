@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.deserialization
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -34,4 +35,4 @@ interface PlatformDependentDeclarationFilter {
     }
 }
 
-val PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME = FqName("kotlin.internal.PlatformDependent")
+val PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME: FqName = StandardNames.FqNames.platformDependent

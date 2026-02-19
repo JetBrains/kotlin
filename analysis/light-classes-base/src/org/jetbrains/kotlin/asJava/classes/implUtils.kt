@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSuperTypeList
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.KtUserType
 
 fun KtSuperTypeList.findEntry(fqNameToFind: String): KtSuperTypeListEntry? =
     entries.find { it.typeAsUserType?.fqName == fqNameToFind }
@@ -43,16 +44,6 @@ fun PsiReferenceList.addSuperTypeEntry(
     } else {
         // Preserve original entry order
         entry.replace(entryToAdd)
-    }
-}
-
-fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker> {
-    return with(KotlinModificationTrackerService.getInstance(project)) {
-        if (!this@getExternalDependencies.isLocal) return listOf(outOfBlockModificationTracker)
-        else when (val file = containingFile) {
-            is KtFile -> listOf(outOfBlockModificationTracker, fileModificationTracker(file))
-            else -> listOf(outOfBlockModificationTracker)
-        }
     }
 }
 
@@ -96,6 +87,13 @@ fun PsiType.annotateByTypeAnnotationProvider(
 
     fun recursiveAnnotator(psiType: PsiType) {
         if (!annotationsIterator.hasNext()) return
+
+        if (psiType is PsiWildcardType) {
+            // Wildcard itself cannot have annotations
+            psiType.bound?.let(::recursiveAnnotator)
+            return
+        }
+
         val typeAnnotations = annotationsIterator.next()
 
         when (psiType) {

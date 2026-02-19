@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A
 
 interface B : A
@@ -15,3 +16,6 @@ fun test(d: D) {
     val x = d.foo()
     takeInt(x)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, interfaceDeclaration,
+localProperty, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

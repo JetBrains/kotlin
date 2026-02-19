@@ -1,7 +1,7 @@
 enum class X {
     B {
         override val value2 = "K"
-        override val value = "O" + X.B.value2
+        override val value = "O" + this.value2
     };
 
     abstract val value2: String

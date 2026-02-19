@@ -7,15 +7,36 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import java.util.*
 
+/**
+ * The different modes of the Kotlin compiler for compiling source code into an output artifact for the [KotlinPlatformType.js] platform.
+ */
 enum class KotlinJsCompilerType {
-    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
+    /**
+     * @suppress
+     */
+    @Deprecated(
+        message = "The legacy compiler is deprecated. Migrate your project to the new IR-based compiler. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     LEGACY,
 
+    /**
+     * Represents the IR (Intermediate Representation) backend mode of the Kotlin compiler.
+     */
     IR,
 
-    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
+    /**
+     * @suppress
+     */
+    @Deprecated(
+        message = "The legacy compiler is deprecated. Migrate your project to the new IR-based compiler. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     BOTH;
 
+    /**
+     * @suppress
+     */
     companion object {
         const val jsCompilerProperty = "kotlin.js.compiler"
 
@@ -30,17 +51,23 @@ enum class KotlinJsCompilerType {
     }
 }
 
-@Deprecated("This method is planned to be removed")
+/**
+ * @suppress
+ */
+@Deprecated(message = "Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 val KotlinJsCompilerType.lowerName
-    get() = name.toLowerCase(Locale.ENGLISH)
+    get() = name.lowercase()
 
-@Suppress("DEPRECATION")
-@Deprecated("This method is planned to be removed")
+/**
+ * @suppress
+ */
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(message = "Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
     val truncatedString = removeSuffix(compilerType.lowerName)
     if (this != truncatedString) {
         return truncatedString
     }
 
-    return removeSuffix(compilerType.lowerName.capitalize(Locale.ENGLISH))
+    return removeSuffix(compilerType.lowerName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ENGLISH) else it.toString() })
 }

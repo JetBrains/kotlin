@@ -75,7 +75,7 @@ fun findInterfaceImplementation(descriptor: CallableMemberDescriptor, returnImpl
  * returns the first immediate super function of the given fake override which overrides that implementation.
  * The returned function should be called from TImpl-bridges generated for the given fake override.
  */
-fun firstSuperMethodFromKotlin(
+private fun firstSuperMethodFromKotlin(
     descriptor: CallableMemberDescriptor,
     implementation: CallableMemberDescriptor
 ): CallableMemberDescriptor? {

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class X {
     abstract class Y<T : Any>
@@ -27,3 +28,6 @@ fun <T : Any> testWithParameter(y: X.Y<T>, t: Any) {
 fun <T : Any> testWithCapturedParameter(y: X.Y<out T>, t: Any) {
     X().foo(y, <!TYPE_MISMATCH("CapturedType(out T); Any")!>t<!>)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, inProjection, nestedClass, outProjection,
+starProjection, typeConstraint, typeParameter */

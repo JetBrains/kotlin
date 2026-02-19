@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A {
     fun <T, E> foo(): E
 }
@@ -11,3 +12,6 @@ fun test(c: Any) {
         c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!><String, Int>()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, nullableType, smartcast, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A() {
   fun foo() {}
 }
@@ -225,3 +226,8 @@ fun foo(aa: Any?): Int {
     }
     return 1
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, classDeclaration, disjunctionExpression, doWhileLoop,
+equalityExpression, functionDeclaration, ifExpression, integerLiteral, intersectionType, isExpression, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast, stringLiteral, whenExpression,
+whenWithSubject, whileLoop */

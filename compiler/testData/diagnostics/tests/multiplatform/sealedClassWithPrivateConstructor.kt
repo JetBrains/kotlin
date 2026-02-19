@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-58033
 // MODULE: m1-common
@@ -9,3 +10,5 @@ expect sealed class Frame private constructor()
 // FILE: jvm.kt
 
 actual sealed class Frame actual constructor()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, sealed */

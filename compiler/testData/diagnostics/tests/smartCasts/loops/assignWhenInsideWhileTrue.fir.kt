@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 public fun foo(x: String?): Int {
     var y: Any
@@ -15,3 +16,7 @@ public fun foo(x: String?): Int {
     // x is null because of the break
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, typeWithExtension, whenExpression, whenWithSubject, whileLoop */

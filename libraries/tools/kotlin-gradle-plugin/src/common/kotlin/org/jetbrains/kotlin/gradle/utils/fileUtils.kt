@@ -6,26 +6,24 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
+import org.gradle.api.file.*
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.plugin.getOrNull
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSource
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
+import java.util.function.Consumer
+import kotlin.collections.map
 
 /**
  * Create all possible case-sensitive permutations for given [String].
  *
  * Useful to create for [org.gradle.api.tasks.util.PatternFilterable] Ant-style patterns.
  */
-@OptIn(ExperimentalStdlibApi::class)
 internal fun String.fileExtensionCasePermutations(): List<String> {
     val lowercaseInput = lowercase()
     val length = lowercaseInput.length
@@ -81,12 +79,11 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
     }
 }
 
-internal fun File.absolutePathWithoutExtension(): String =
-    normalize().absolutePath.substringBeforeLast(".")
-
 internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orEmpty()
 
 fun contentEquals(file1: File, file2: File): Boolean {
+    if (file1.readLines().size != file2.readLines().size) return false
+
     file1.useLines { seq1 ->
         file2.useLines { seq2 ->
             val iterator1 = seq1.iterator()
@@ -127,36 +124,11 @@ internal fun Provider<Directory>.getFile(): File = get().asFile
  * NOTE: You can remove this method and all its usages since the minimal supported version of gradle become 8.0
  */
 internal fun File.existsCompat(): Boolean =
-    if (isGradleVersionAtLeast(8, 0)) {
+    if (GradleVersion.current() >= GradleVersion.version("8.0")) {
         true
     } else {
         exists()
     }
-
-/**
- * Looks up the property in the following sources with decreasing priority:
- * 1. Current project extra properties
- * 2. Project Gradle properties (-P, gradle.properties, etc...)
- * 3. `local.properties` file located in the rootDir
- *
- * If multiple properties are loaded from a same caller, it is better to cache `localProperties` into local variable.
- */
-internal fun Project.loadProperty(
-    propName: String,
-    localPropertiesProvider: Provider<Map<String, String>> = localProperties
-): Provider<String> = providers
-    .provider<String> {
-        extraProperties.getOrNull(propName) as? String
-    }
-    .orElse(
-        project.providers
-            .gradleProperty(propName)
-            .usedAtConfigurationTime(configurationTimePropertiesAccessor)
-    )
-    .orElse(
-        @Suppress("TYPE_MISMATCH")
-        localPropertiesProvider.map { it[propName] }
-    )
 
 /**
  * Loads 'local.properties' file content as [Properties].
@@ -170,4 +142,112 @@ internal val Project.localProperties: Provider<Map<String, String>>
                 project.rootDir.resolve("local.properties")
             )
         }
-        .usedAtConfigurationTime(configurationTimePropertiesAccessor)
+
+/**
+ * Returns file collection [this] excluding files from [excludes] if not null
+ */
+internal fun FileCollection.exclude(excludes: FileCollection?): FileCollection = if (excludes != null) minus(excludes) else this
+
+internal fun Project.fileCollectionFromConfigurableFileTree(fileTree: ConfigurableFileTree): ConfigurableFileCollection {
+    // It is important to pass exactly `fileTree.dir` as provider with explicit task dependency
+    // Because of the following bugs:
+    // * https://github.com/gradle/gradle/issues/27881 ConfigurableFileTree.from() doesn't preserve Task Dependencies
+    // * https://github.com/gradle/gradle/issues/27882 SourceDirectorySet doesn't accept ConfigurableFileTree
+    return project.filesProvider(fileTree) { fileTree.dir }
+}
+
+// copied from IJ
+internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
+    val jarDirs: Array<Path>
+    val fileName = home.fileName
+    if (fileName != null && "Home" == fileName.toString() && Files.exists(home.resolve("../Classes/classes.jar"))) {
+        val libDir = home.resolve("lib")
+        val classesDir = home.resolveSibling("Classes")
+        val libExtDir = libDir.resolve("ext")
+        val libEndorsedDir = libDir.resolve("endorsed")
+        jarDirs = arrayOf(libEndorsedDir, libDir, classesDir, libExtDir)
+    } else if (Files.exists(home.resolve("lib/jrt-fs.jar"))) {
+        jarDirs = emptyArray()
+    } else {
+        val libDir = home.resolve(if (isJre) "lib" else "jre/lib")
+        val libExtDir = libDir.resolve("ext")
+        val libEndorsedDir = libDir.resolve("endorsed")
+        jarDirs = arrayOf(libEndorsedDir, libDir, libExtDir)
+    }
+
+    val rootFiles: MutableList<Path> = ArrayList<Path>()
+
+    val pathFilter: MutableSet<String?> = hashSetOf()
+    for (jarDir in jarDirs) {
+        if (Files.isDirectory(jarDir)) {
+            try {
+                Files.newDirectoryStream(jarDir, "*.jar").use { stream ->
+                    for (jarFile in stream) {
+                        val jarFileName = jarFile.getFileName().toString()
+                        if (jarFileName == "alt-rt.jar" || jarFileName == "alt-string.jar") {
+                            continue  // filter out alternative implementations
+                        }
+                        val canonicalPath = jarFile.toRealPath().toString()
+                        if (!pathFilter.add(canonicalPath)) {
+                            continue  // filter out duplicate (symbolically linked) .jar files commonly found in OS X JDK distributions
+                        }
+                        rootFiles.add(jarFile)
+                    }
+                }
+            } catch (_: IOException) {
+            }
+        }
+    }
+
+    if (rootFiles.any { path -> path.fileName.toString().startsWith("ibm") }) {
+        // ancient IBM JDKs split JRE classes between `rt.jar` and `vm.jar`, and the latter might be anywhere
+        try {
+            Files.walk(if (isJre) home else home.resolve("jre")).use { paths ->
+                paths.filter { path: Path? -> path!!.fileName.toString() == "vm.jar" }
+                    .findFirst()
+                    .ifPresent(Consumer { e -> rootFiles.add(e) })
+            }
+        } catch (_: IOException) {}
+    }
+
+    val classesZip = home.resolve("lib/classes.zip")
+    if (Files.isRegularFile(classesZip)) {
+        rootFiles.add(classesZip)
+    }
+
+    if (rootFiles.isEmpty()) {
+        val classesDir = home.resolve("classes")
+        if (Files.isDirectory(classesDir)) {
+            rootFiles.add(classesDir)
+        }
+    }
+
+    return rootFiles.map { it.toFile() }
+}
+
+internal val FileCollection.onlyJars: FileCollection get() = filter { it.extension == "jar" }
+
+// stdlib use function adapted AutoClosable
+internal inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
+    var closed = false
+    try {
+        return block(this)
+    } catch (e: Exception) {
+        closed = true
+        try {
+            this?.close()
+        } catch (_: Exception) {}
+        throw e
+    } finally {
+        if (!closed) {
+            this?.close()
+        }
+    }
+}
+
+// stdlib 'invariantSeparatorsPathString' copied for 'Path'
+internal val Path.invariantSeparatorsPathString: String
+    get() {
+        val separator = fileSystem.separator
+        return if (separator != "/") toString().replace(separator, "/") else toString()
+    }

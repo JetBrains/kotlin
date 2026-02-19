@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-54990
 
 class A<T1, T2: B<T1, Double>>
@@ -8,3 +9,6 @@ fun test() {
     val x: A<out Any, out B<Any, Double>> = A()
     C<Any>(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

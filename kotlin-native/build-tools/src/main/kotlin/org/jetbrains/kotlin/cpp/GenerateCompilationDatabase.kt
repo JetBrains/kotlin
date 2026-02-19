@@ -15,6 +15,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gson
 import java.io.FileReader
 import java.io.FileWriter
@@ -27,6 +28,7 @@ import java.io.FileWriter
  *
  * @see CompilationDatabaseExtension gradle plugin to simplify generation of these tasks.
  */
+@DisableCachingByDefault(because = "No point in caching")
 abstract class GenerateCompilationDatabase : DefaultTask() {
     /**
      * Entries in the compilation database.

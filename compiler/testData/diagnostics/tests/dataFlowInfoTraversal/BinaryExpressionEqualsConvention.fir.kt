@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 interface A
 interface B : A
@@ -14,3 +15,7 @@ fun foo2(a: A, b: B): Boolean {
     checkSubtype<B>(a)
     return result
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, interfaceDeclaration, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter,
+typeWithExtension */

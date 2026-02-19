@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
+
 
 // FILE: test.kt
 class MyPair(val x: String, val y: String) {
@@ -24,19 +24,22 @@ fun box(): String {
     return o + k
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:15 box:
 // test.kt:4 <init>: x:java.lang.String="X":java.lang.String, y:java.lang.String="Y":java.lang.String
 // test.kt:15 box:
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:23 box: p:MyPair=MyPair
+// EXPECTATIONS FIR JVM_IR
+// test.kt:18 box: p:MyPair=MyPair
+// EXPECTATIONS JVM_IR
 // test.kt:6 component1:
 // test.kt:18 box: p:MyPair=MyPair
-// test.kt:10 component2:
-// EXPECTATIONS JVM
-// test.kt:20 box: p:MyPair=MyPair
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS FIR JVM_IR
 // test.kt:20 box: p:MyPair=MyPair, o:java.lang.String="O":java.lang.String
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
+// test.kt:10 component2:
+// test.kt:20 box: p:MyPair=MyPair, o:java.lang.String="O":java.lang.String
 // test.kt:24 box: p:MyPair=MyPair, o:java.lang.String="O":java.lang.String, k:java.lang.String="K":java.lang.String
 
 // EXPECTATIONS JS_IR

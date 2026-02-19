@@ -1,6 +1,0 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
-
-dependencies {
-    api project(':lib1')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7"
-}

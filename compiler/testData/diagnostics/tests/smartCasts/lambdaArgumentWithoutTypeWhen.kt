@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-10223
 
 inline fun <T> using(input: Any?, f: (Any?) -> T): T = f(input)
@@ -11,3 +12,6 @@ val test4: String = using(input) {
         else -> throw RuntimeException()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, isExpression, lambdaLiteral, nullableType,
+propertyDeclaration, smartcast, typeParameter, whenExpression, whenWithSubject */

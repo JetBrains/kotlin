@@ -1,6 +1,6 @@
 // JSPECIFY_STATE: strict
 // MUTE_FOR_PSI_CLASS_FILES_READING
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: TypeArgumentsFromParameterBounds.java
 import org.jspecify.annotations.*;
@@ -35,11 +35,8 @@ fun main(
     a: A, b: B
 ): Unit {
     a.bar(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
     a.bar(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
     a.bar(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
     a.bar(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.bar(aNotNullNotNullNotNull)

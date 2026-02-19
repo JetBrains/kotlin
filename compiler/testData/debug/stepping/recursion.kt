@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 fun box() {
     val n = 3
@@ -12,7 +12,7 @@ fun foo(n :Int ) : Int {
     return foo(n-1) * n
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:9 foo
@@ -23,6 +23,26 @@ fun foo(n :Int ) : Int {
 // test.kt:10 foo
 // test.kt:12 foo
 // test.kt:12 foo
+// test.kt:5 box
+// test.kt:6 box
+
+// EXPECTATIONS NATIVE
+// test.kt:4 box
+// test.kt:5 box
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:12 foo
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:12 foo
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:10 foo
+// test.kt:13 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:12 foo
+// test.kt:13 foo
 // test.kt:5 box
 // test.kt:6 box
 
@@ -38,3 +58,16 @@ fun foo(n :Int ) : Int {
 // test.kt:12 foo
 // test.kt:12 foo
 // test.kt:6 box
+
+// EXPECTATIONS WASM
+// test.kt:4 $box (12)
+// test.kt:5 $box (16, 12)
+// test.kt:9 $foo (8, 13, 8, 18, 23, 18)
+// test.kt:12 $foo (15, 17, 15, 11)
+// test.kt:9 $foo (8, 13, 8, 18, 23, 18)
+// test.kt:12 $foo (15, 17, 15, 11)
+// test.kt:9 $foo (8, 13, 8, 18)
+// test.kt:10 $foo (15, 8)
+// test.kt:12 $foo (22, 11, 4, 22, 11, 4)
+// test.kt:5 $box (12)
+// test.kt:6 $box (1)

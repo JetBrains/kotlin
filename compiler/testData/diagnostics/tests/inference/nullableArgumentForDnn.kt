@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-58665
 
 fun <R, T : Any> use(x: String?, r: R, t: T) {
@@ -7,3 +8,5 @@ fun <R, T : Any> use(x: String?, r: R, t: T) {
 }
 
 fun <W> foo(x: W & Any) {}
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, nullableType, typeConstraint, typeParameter */

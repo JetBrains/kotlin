@@ -9,75 +9,40 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
-import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.applyUserDefinedAttributes
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
-import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
-internal open class KotlinAndroidPlugin(
-    private val registry: ToolingModelBuilderRegistry
-) : Plugin<Project> {
+internal open class KotlinAndroidPlugin() : Plugin<Project> {
 
     override fun apply(project: Project) {
-        checkGradleCompatibility()
-
         project.dynamicallyApplyWhenAndroidPluginIsApplied(
             {
-                project.objects.newInstance(
-                    KotlinAndroidTarget::class.java,
-                    "",
-                    project
-                ).also { target ->
-                    val kotlinAndroidExtension = project.kotlinExtension as KotlinAndroidProjectExtension
-                    kotlinAndroidExtension.target = target
-                    project.configureCompilerOptionsForTarget(
-                        kotlinAndroidExtension.compilerOptions,
-                        target.compilerOptions
-                    )
-                    kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
+                val target = project.objects.KotlinAndroidTarget(project)
+                val kotlinAndroidExtension = project.kotlinExtension as KotlinAndroidProjectExtension
+                kotlinAndroidExtension.targetFuture.complete(target)
+                project.configureCompilerOptionsForTarget(
+                    kotlinAndroidExtension.compilerOptions,
+                    target.compilerOptions
+                )
+                kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
 
-                    @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
-                        override val options: KotlinJvmCompilerOptions
-                            get() = kotlinAndroidExtension.compilerOptions
-                    }
-                    val ext = project.extensions.getByName("android") as BaseExtension
-                    ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
-                }
+                @Suppress("DEPRECATION")
+                val kotlinOptions = DeprecatedKotlinJvmOptions(kotlinAndroidExtension.compilerOptions)
+                val ext = project.extensions.getByName("android") as BaseExtension
+                ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
+                target
             }
         ) { androidTarget ->
-            applyUserDefinedAttributes(androidTarget)
-            customizeKotlinDependencies(project)
-            registry.register(KotlinModelBuilder(project.getKotlinPluginVersion(), androidTarget))
             project.whenEvaluated { project.components.addAll(androidTarget.components) }
         }
     }
 
     companion object {
-        private val minimalSupportedAgpVersion = AndroidGradlePluginVersion(4, 2, 2)
-        fun androidTargetHandler(): AndroidProjectHandler {
-            val tasksProvider = KotlinTasksProvider()
-            val androidGradlePluginVersion = AndroidGradlePluginVersion.currentOrNull
-
-            if (androidGradlePluginVersion != null) {
-                if (androidGradlePluginVersion < minimalSupportedAgpVersion) {
-                    throw IllegalStateException(
-                        "Kotlin: Unsupported version of com.android.tools.build:gradle plugin: " +
-                                "version $minimalSupportedAgpVersion or higher should be used with kotlin-android plugin"
-                    )
-                }
-            }
-
-            return AndroidProjectHandler(tasksProvider)
-        }
+        internal fun androidTargetHandler(): AndroidProjectHandler = AndroidProjectHandler(KotlinTasksProvider())
 
         internal fun Project.dynamicallyApplyWhenAndroidPluginIsApplied(
             kotlinAndroidTargetProvider: () -> KotlinAndroidTarget,
@@ -108,3 +73,20 @@ internal open class KotlinAndroidPlugin(
         }
     }
 }
+
+// KT-77288 Due to generated Gradle accessors, which do not carry over `@Deprecated` annotations,
+// users could not see the deprecation warning on `android.kotlinOptions {}` DSL.
+// Keeping it as deprecation with a warning to allow users to still compile generated accessors.
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(
+    message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    level = DeprecationLevel.WARNING,
+)
+class DeprecatedKotlinJvmOptions(
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
+    override val options: KotlinJvmCompilerOptions
+) : KotlinJvmOptions

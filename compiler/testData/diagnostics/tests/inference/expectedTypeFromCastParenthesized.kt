@@ -1,4 +1,5 @@
-// !LANGUAGE: +ExpectedTypeFromCast
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ExpectedTypeFromCast
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
@@ -20,3 +21,6 @@ object X {
 }
 
 val par5 = ( @bar() X.foo()) as String
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, asExpression, functionDeclaration, nullableType, objectDeclaration,
+propertyDeclaration, typeParameter */

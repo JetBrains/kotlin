@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 operator fun String.invoke() = this
 
 val some = ""
@@ -8,3 +9,6 @@ fun sss() {
     // because with local some invoke isn't applicable
     some()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty, operator,
+propertyDeclaration, stringLiteral, thisExpression */

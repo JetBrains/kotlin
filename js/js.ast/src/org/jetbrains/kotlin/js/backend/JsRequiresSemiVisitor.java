@@ -42,7 +42,7 @@ public class JsRequiresSemiVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitForIn(@NotNull JsForIn x) {
+    public void visitIterableLoop(@NotNull JsIterableLoop x) {
         if (x.getBody() instanceof JsEmpty) {
             needsSemicolon = true;
         }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package foo
 
@@ -75,3 +76,6 @@ class MyProperty3<T> {
 
 //--------------------------
 fun println(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

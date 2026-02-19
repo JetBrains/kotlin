@@ -1,5 +1,6 @@
 // SKIP_TXT
-// !LANGUAGE: -EnhanceNullabilityOfPrimitiveArrays
+// ISSUE: KT-54521
+// LANGUAGE: -EnhanceNullabilityOfPrimitiveArrays
 // FILE: J.java
 import org.jetbrains.annotations.Nullable;
 
@@ -9,3 +10,5 @@ public interface J {
 
 // FILE: main.kt
 fun bar(j: J) = j.foo()<!UNSAFE_CALL!>.<!>iterator()
+
+fun baz(j: J) = <!UNSAFE_CALL!>j.foo()[0]<!>

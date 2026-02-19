@@ -1,0 +1,32 @@
+KtNameReferenceExpression(134,141): 'MyAlias'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = {test.MyAlias=} test.MyClass<test.Other>
+        symbol = <constructor>(t: test.Other): {test.MyAlias=} test.MyClass<test.Other>
+        valueParameters = [
+          KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = test.Other
+            symbol = t: test.Other
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Other() -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = test.Other
+          symbol = t: test.Other
+          contextParameters = []
+          callableId = null)
+      }

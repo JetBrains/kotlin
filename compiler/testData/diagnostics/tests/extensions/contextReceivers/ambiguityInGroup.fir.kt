@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface Common {
     fun supertypeMember() {}
@@ -19,9 +21,12 @@ fun supertypeContextual() {}
 
 context(C1, C2)
 fun test() {
-    supertypeMember()
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>member<!>()
-    <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER!>supertypeExtension<!>()
-    <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER!>supertypeExtensionGeneric<!>()
-    <!MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER!>supertypeContextual<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeMember<!>()
+    <!UNRESOLVED_REFERENCE!>member<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeExtension<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeExtensionGeneric<!>()
+    <!NO_CONTEXT_ARGUMENT!>supertypeContextual<!>()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, typeConstraint, typeParameter */

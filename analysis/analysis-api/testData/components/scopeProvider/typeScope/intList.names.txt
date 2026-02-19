@@ -1,0 +1,61 @@
+KaTypeScope:
+  Classifier names:
+
+  Callable names:
+    <init>
+    add
+    addAll
+    clear
+    contains
+    containsAll
+    equals
+    first
+    get
+    getFirst
+    getLast
+    hashCode
+    indexOf
+    isEmpty
+    iterator
+    last
+    lastIndexOf
+    listIterator
+    remove
+    removeAll
+    retainAll
+    set
+    size
+    subList
+    toArray
+    toString
+
+Declaration Scope:
+  Classifier names:
+
+  Callable names:
+    <init>
+    add
+    addAll
+    clear
+    contains
+    containsAll
+    equals
+    first
+    get
+    getFirst
+    getLast
+    hashCode
+    indexOf
+    isEmpty
+    iterator
+    last
+    lastIndexOf
+    listIterator
+    remove
+    removeAll
+    retainAll
+    set
+    size
+    subList
+    toArray
+    toString

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KProperty
 
 @Retention(AnnotationRetention.SOURCE)
@@ -9,7 +10,7 @@ class CustomDelegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
 }
 
-public class A(@param:Ann <!REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: RepeatableAnn @Ann val y: Int) {
+public class A(@param:Ann <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property"), REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: RepeatableAnn <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Ann<!> val y: Int) {
 
     @field:Ann @property:Ann @RepeatableAnn @property:RepeatableAnn
     val a: Int = 0
@@ -57,3 +58,9 @@ public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPro
         // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY
         @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@set:getSetAndParamAnn<!> set(arg) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, annotationUseSiteTargetFieldDelegate,
+annotationUseSiteTargetParam, annotationUseSiteTargetProperty, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, annotationUseSiteTargetSetterParameter, classDeclaration, functionDeclaration,
+getter, integerLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter,
+starProjection, stringLiteral */

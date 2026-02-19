@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C {
     private val x = object {
         fun foo() = 42
@@ -11,3 +12,6 @@ class C {
 
     val w = z.<!UNRESOLVED_REFERENCE!>foo<!>() // ERROR!
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral,
+propertyDeclaration */

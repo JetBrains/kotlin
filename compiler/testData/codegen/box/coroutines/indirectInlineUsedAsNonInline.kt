@@ -1,10 +1,10 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
-var stopped = false
 var log = ""
 var postponed: () -> Unit = { }
 
@@ -23,6 +23,13 @@ suspend inline fun foo(x: String): String {
 }
 
 suspend inline fun bar(x: String) = foo(x)
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
+
+var stopped = false
 
 suspend fun baz(x: String) = bar(x)
 

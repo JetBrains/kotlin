@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -33,9 +34,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 class IntegerLiteralAndOperatorApproximationTransformer(
-    val session: FirSession,
-    val scopeSession: ScopeSession
-) : FirTransformer<ConeKotlinType?>() {
+    override val session: FirSession,
+    override val scopeSession: ScopeSession
+) : FirTransformer<ConeKotlinType?>(), SessionAndScopeSessionHolder {
     companion object {
         private val TO_LONG = Name.identifier("toLong")
         private val TO_U_LONG = Name.identifier("toULong")
@@ -45,10 +46,8 @@ class IntegerLiteralAndOperatorApproximationTransformer(
     private val toULongSymbol by lazy { findConversionFunction(session.builtinTypes.uIntType, TO_U_LONG) }
 
     private fun findConversionFunction(receiverType: FirImplicitBuiltinTypeRef, name: Name): FirNamedFunctionSymbol {
-        return receiverType.type.scope(
-            useSiteSession = session,
-            scopeSession = scopeSession,
-            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+        return receiverType.coneType.scope(
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )!!.getFunctions(name).single()
     }
@@ -57,27 +56,27 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         return element
     }
 
-    override fun <T> transformConstExpression(
-        constExpression: FirConstExpression<T>,
-        data: ConeKotlinType?
+    override fun transformLiteralExpression(
+        literalExpression: FirLiteralExpression,
+        data: ConeKotlinType?,
     ): FirStatement {
-        val type = constExpression.coneTypeSafe<ConeIntegerLiteralType>() ?: return constExpression
-        val approximatedType = type.getApproximatedType(data?.fullyExpandedType(session))
-        constExpression.resultType = approximatedType
-        @Suppress("UNCHECKED_CAST")
-        val kind = approximatedType.toConstKind() as ConstantValueKind<T>
-        constExpression.replaceKind(kind)
-        return constExpression
+        val type = literalExpression.resolvedType as? ConeIntegerLiteralType ?: return literalExpression
+        val approximatedType = type.getApproximatedType(data?.fullyExpandedType())
+        literalExpression.resultType = approximatedType
+        val kind = approximatedType.toConstKind() as ConstantValueKind
+        literalExpression.replaceKind(kind)
+        return literalExpression
     }
 
     override fun transformIntegerLiteralOperatorCall(
         integerLiteralOperatorCall: FirIntegerLiteralOperatorCall,
-        data: ConeKotlinType?
+        data: ConeKotlinType?,
     ): FirStatement {
         @Suppress("UnnecessaryVariable")
         val call = integerLiteralOperatorCall
-        val operatorType = call.coneTypeSafe<ConeIntegerLiteralType>() ?: return call
-        val approximatedType = operatorType.getApproximatedType(data?.fullyExpandedType(session))
+
+        val operatorType = call.resolvedType as? ConeIntegerLiteralType ?: return call
+        val approximatedType = operatorType.getApproximatedType(data?.fullyExpandedType())
         call.transformDispatchReceiver(this, null)
         call.transformExtensionReceiver(this, null)
         call.argumentList.transformArguments(this, null)
@@ -109,18 +108,20 @@ class IntegerLiteralAndOperatorApproximationTransformer(
 
         if (approximatedType.isInt || approximatedType.isUInt) return call
         val typeBeforeConversion = if (operatorType.isUnsigned) {
-            session.builtinTypes.uIntType.type
+            session.builtinTypes.uIntType.coneType
         } else {
-            session.builtinTypes.intType.type
+            session.builtinTypes.intType.coneType
         }
         call.replaceConeTypeOrNull(typeBeforeConversion)
 
         return buildFunctionCall {
-            source = call.source?.fakeElement(KtFakeSourceElementKind.IntToLongConversion)
-            coneTypeOrNull = session.builtinTypes.longType.type
+            val fakeSource = call.source?.fakeElement(KtFakeSourceElementKind.IntToLongConversion)
+            source = fakeSource
+            coneTypeOrNull = session.builtinTypes.longType.coneType
             explicitReceiver = call
             dispatchReceiver = call
             this.calleeReference = buildResolvedNamedReference {
+                source = fakeSource
                 if (operatorType.isUnsigned) {
                     name = TO_U_LONG
                     resolvedSymbol = toULongSymbol

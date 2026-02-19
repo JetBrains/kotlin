@@ -1,4 +1,5 @@
-// !LANGUAGE: +ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass
 
 // FILE: abc/Foo.java
 package abc;
@@ -27,3 +28,6 @@ class B : Foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, flexibleType, functionDeclaration, ifExpression,
+isExpression, javaProperty, javaType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

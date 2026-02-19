@@ -11,12 +11,12 @@ import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.utils.withType
 import java.io.Serializable
 import kotlin.reflect.KClass
 
@@ -25,13 +25,13 @@ import kotlin.reflect.KClass
  */
 class KotlinProjectNpmResolver(
     project: Project,
-    var resolver: KotlinRootNpmResolver
+    var resolver: KotlinRootNpmResolver,
 ) : Serializable {
     val projectPath by lazy { project.path }
 
     private val byCompilation = mutableMapOf<String, KotlinCompilationNpmResolver>()
 
-    operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolver {
+    operator fun get(compilation: KotlinJsIrCompilation): KotlinCompilationNpmResolver {
         return byCompilation[compilation.disambiguatedName] ?: error("$compilation was not registered in $this")
     }
 
@@ -53,40 +53,30 @@ class KotlinProjectNpmResolver(
             ?: error("NpmResolverPlugin should be applied after kotlin plugin")
 
         when (kotlin) {
-            is KotlinSingleTargetExtension<*> -> addTargetListeners(kotlin.target)
-            is KotlinMultiplatformExtension -> kotlin.targets.all {
+            is KotlinSingleTargetExtension<*> -> addTargetListeners(kotlin.target as KotlinJsIrTarget)
+            is KotlinMultiplatformExtension -> kotlin.targets.withType<KotlinJsIrTarget>().configureEach {
                 addTargetListeners(it)
             }
             else -> error("Unsupported kotlin model: $kotlin")
         }
     }
 
-    private fun addTargetListeners(target: KotlinTarget) {
+    private fun addTargetListeners(target: KotlinJsIrTarget) {
         check(resolution == null) { resolver.alreadyResolvedMessage("add target $target") }
 
-        if (target.platformType == KotlinPlatformType.js ||
-            target.platformType == KotlinPlatformType.wasm
+        if (target.platformType == resolver.platform && target.wasmTargetType != KotlinWasmTargetType.WASI
         ) {
             target.compilations.all { compilation ->
-                if (compilation is KotlinJsCompilation) {
+                if (compilation is KotlinJsIrCompilation) {
                     // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
                     addCompilation(compilation)
-                }
-            }
-
-            // Hack for mixed mode, when target is JS and contain JS-IR
-            if (target is KotlinJsTarget) {
-                target.irTarget?.compilations?.all { compilation ->
-                    if (compilation is KotlinJsCompilation) {
-                        addCompilation(compilation)
-                    }
                 }
             }
         }
     }
 
     @Synchronized
-    private fun addCompilation(compilation: KotlinJsCompilation) {
+    private fun addCompilation(compilation: KotlinJsIrCompilation) {
         check(resolution == null) { resolver.alreadyResolvedMessage("add compilation $compilation") }
 
         byCompilation[compilation.disambiguatedName] =

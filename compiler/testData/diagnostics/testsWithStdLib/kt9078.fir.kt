@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-9078 (NPE in control flow analysis); EA-71535
 abstract class KFunctionKt9005WorkAround<out R: Any?>(private val _functionInstance: Function<R>) {
     private val _reflectedFunction: kotlin.reflect.KFunction<R> = _functionInstance.<!UNRESOLVED_REFERENCE!>reflect<!>() ?: throw IllegalStateException("")
@@ -10,3 +11,7 @@ abstract class KFunctionKt9005WorkAround<out R: Any?>(private val _functionInsta
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, elvisExpression, flexibleType, integerLiteral,
+javaProperty, lambdaLiteral, nullableType, out, override, primaryConstructor, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter */

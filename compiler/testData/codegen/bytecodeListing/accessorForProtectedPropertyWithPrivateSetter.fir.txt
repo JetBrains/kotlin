@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public final class B {
+    // source: 'accessorForProtectedPropertyWithPrivateSetter.kt'
+    public method <init>(): void
+    private final static method test$lambda$0(p0: B): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method test(): kotlin.jvm.functions.Function0
+}
+
+@kotlin.Metadata
+public class a/A {
+    // source: 'a.kt'
+    private @org.jetbrains.annotations.NotNull field vk: java.lang.String
+    private @org.jetbrains.annotations.NotNull field vo: java.lang.String
+    public method <init>(): void
+    private final static method fk$lambda$0(p0: a.A): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method fk(): kotlin.jvm.functions.Function0
+    protected final @org.jetbrains.annotations.NotNull method getVk(): java.lang.String
+    protected final @org.jetbrains.annotations.NotNull method getVo(): java.lang.String
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Bar {
     fun next(): Bar? {
         if (2 == 4)
@@ -25,3 +26,6 @@ fun foo(): Bar {
     }
     return Bar()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, thisExpression, whileLoop */

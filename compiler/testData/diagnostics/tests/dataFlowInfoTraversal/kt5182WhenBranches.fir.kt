@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-5182 Data flow info is lost for 'when' branches
 
 open class A
@@ -11,3 +12,5 @@ fun foo(a: A) = when {
     true -> a.foo() //'foo' is unresolved, smart cast doesn't work
     else -> a.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, smartcast, whenExpression */

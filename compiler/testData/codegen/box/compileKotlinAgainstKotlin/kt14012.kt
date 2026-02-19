@@ -1,3 +1,4 @@
+
 // MODULE: lib
 // FILE: A.kt
 package test

@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 class A {
     @JvmSynthetic
     fun foo() {}
@@ -17,3 +19,6 @@ class A {
     lateinit var f: A
 }
 
+
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: A.class[foo;y]

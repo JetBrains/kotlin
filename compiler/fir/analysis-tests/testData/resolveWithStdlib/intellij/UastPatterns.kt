@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: ObjectPattern.java
 
 import org.jetbrains.annotations.NotNull;
@@ -36,3 +37,7 @@ open class UElementPattern<T : UElement, Self : UElementPattern<T, Self>>(clazz:
 open class UExpressionPattern<T : UExpression, Self : UExpressionPattern<T, Self>>(clazz: Class<T>) : UElementPattern<T, Self>(clazz) {
     open class Capture<T : UExpression>(clazz: Class<T>) : UExpressionPattern<T, Capture<T>>(clazz)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, classReference, functionDeclaration, functionalType,
+interfaceDeclaration, isExpression, javaType, lambdaLiteral, nestedClass, primaryConstructor, thisExpression,
+typeConstraint, typeParameter */

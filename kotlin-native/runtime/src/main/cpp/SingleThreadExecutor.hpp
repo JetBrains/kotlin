@@ -6,14 +6,14 @@
 #pragma once
 
 #include <condition_variable>
+#include <deque>
 #include <functional>
 #include <future>
 #include <mutex>
 #include <shared_mutex>
 
-#include "ScopedThread.hpp"
+#include "concurrent/UtilityThread.hpp"
 #include "Utils.hpp"
-#include "std_support/Deque.hpp"
 
 namespace kotlin {
 
@@ -30,7 +30,7 @@ public:
     // Starts the worker thread immediately.
     template <typename ContextFactory>
     explicit SingleThreadExecutor(ContextFactory&& contextFactory) noexcept :
-        thread_(&SingleThreadExecutor::runLoop<ContextFactory>, this, std::forward<ContextFactory>(contextFactory)) {}
+        thread_(std::string_view("Single thread executor"), &SingleThreadExecutor::runLoop<ContextFactory>, this, std::forward<ContextFactory>(contextFactory)) {}
 
     // Starts the worker thread immediately.
     SingleThreadExecutor() noexcept : SingleThreadExecutor([] { return Context(); }) {}
@@ -101,10 +101,10 @@ private:
 
     std::condition_variable workCV_;
     std::mutex workMutex_;
-    std_support::deque<std::packaged_task<void()>> queue_;
+    std::deque<std::packaged_task<void()>> queue_;
     bool shutdownRequested_ = false;
 
-    ScopedThread thread_;
+    UtilityThread thread_;
 };
 
 } // namespace kotlin

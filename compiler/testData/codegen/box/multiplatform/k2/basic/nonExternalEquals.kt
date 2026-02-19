@@ -1,5 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: ANY
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: common
 // FILE: common.kt
 
@@ -7,7 +6,7 @@ open class Base {
     open operator fun plus(b: Base) = Base()
 }
 
-expect open class Derived constructor() : Base() {
+expect open class Derived constructor() : Base {
 }
 
 // MODULE: main()()(common)

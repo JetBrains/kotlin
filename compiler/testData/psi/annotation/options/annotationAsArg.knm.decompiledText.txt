@@ -1,0 +1,12 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun foo(annotation: Annotation): kotlin.Int { /* compiled code */ }
+
+public final class Annotation public constructor(x: kotlin.Int) {
+    public final val x: kotlin.Int /* compiled code */
+
+    public final fun baz(): kotlin.Unit { /* compiled code */ }
+
+    public final fun bar(): kotlin.Int { /* compiled code */ }
+}

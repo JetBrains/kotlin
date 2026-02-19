@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 
 fun testReturnType(foo: String) {
     val bar = fun () = foo
@@ -8,7 +9,7 @@ fun testReturnType(foo: String) {
 
     val bas: () -> String = fun () = foo
 
-    val bag: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun () = foo<!>
+    val bag: () -> Int = fun () = <!RETURN_TYPE_MISMATCH!>foo<!>
 }
 
 fun testParamType() {
@@ -17,7 +18,7 @@ fun testParamType() {
     bar.checkType { _<(String) -> Unit>() }
 
     val bas: (String) -> Unit = fun (param: String) {}
-    val bag: (Int) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun (param: String) {}<!>
+    val bag: (Int) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> fun (param: String) {}
 }
 
 fun testReceiverType() {
@@ -27,5 +28,8 @@ fun testReceiverType() {
 
     val bas: String.() -> Unit = fun String.() {}
 
-    val bag: Int.() -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun String.() {}<!>
+    val bag: Int.() -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> fun String.() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

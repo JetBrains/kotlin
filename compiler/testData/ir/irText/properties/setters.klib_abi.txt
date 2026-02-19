@@ -1,0 +1,30 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Bar : /Foo { // /Bar|null[0]
+    final var foo // /Bar.foo|{}foo[0]
+        final fun <get-foo>(): kotlin/Int // /Bar.foo.<get-foo>|<get-foo>(){}[0]
+        final fun <set-foo>(kotlin/Int) // /Bar.foo.<set-foo>|<set-foo>(kotlin.Int){}[0]
+    constructor <init>() // /Bar.<init>|<init>(){}[0]
+}
+open class /Foo { // /Foo|null[0]
+    open var foo // /Foo.foo|{}foo[0]
+        open fun <get-foo>(): kotlin/Int // /Foo.foo.<get-foo>|<get-foo>(){}[0]
+        open fun <set-foo>(kotlin/Int) // /Foo.foo.<set-foo>|<set-foo>(kotlin.Int){}[0]
+    constructor <init>() // /Foo.<init>|<init>(){}[0]
+}
+final var /bar // /bar|{}bar[0]
+    final fun <get-bar>(): kotlin/Int // /bar.<get-bar>|<get-bar>(){}[0]
+    final fun <set-bar>(kotlin/Int) // /bar.<set-bar>|<set-bar>(kotlin.Int){}[0]
+final var /baz // /baz|{}baz[0]
+    final fun <get-baz>(): kotlin/Int // /baz.<get-baz>|<get-baz>(){}[0]
+    final fun <set-baz>(kotlin/Int) // /baz.<set-baz>|<set-baz>(kotlin.Int){}[0]
+final var /foo // /foo|{}foo[0]
+    final fun <get-foo>(): kotlin/Int // /foo.<get-foo>|<get-foo>(){}[0]
+    final fun <set-foo>(kotlin/Int) // /foo.<set-foo>|<set-foo>(kotlin.Int){}[0]
+final var /qux // /qux|{}qux[0]
+    final fun <get-qux>(): kotlin/Int // /qux.<get-qux>|<get-qux>(){}[0]
+    final fun <set-qux>(kotlin/Int) // /qux.<set-qux>|<set-qux>(kotlin.Int){}[0]

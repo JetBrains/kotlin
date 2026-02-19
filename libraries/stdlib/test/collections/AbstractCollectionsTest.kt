@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,6 +59,25 @@ class AbstractCollectionsTest {
 
         compare(list.toList(), list) {
             listBehavior()
+        }
+    }
+
+    @Test
+    fun chainedSubList() {
+        val list = object : AbstractList<Int>() {
+            override val size = 5
+            override fun get(index: Int) = if (index in 0 until size) index else -1
+        }
+        val subList = list.subList(0, 5).subList(1, 4)
+        compare(listOf(1, 2, 3), subList) {
+            listBehavior()
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            list.subList(1, 3).subList(0, 4)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            list.subList(1, 3).subList(3, 2)
         }
     }
 

@@ -3,6 +3,8 @@ plugins {
     id "java"
 }
 
+kotlin.jvmToolchain(8)
+
 sourceSets {
     deploy
 }

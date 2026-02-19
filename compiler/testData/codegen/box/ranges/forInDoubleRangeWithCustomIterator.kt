@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 operator fun ClosedRange<Double>.iterator() =

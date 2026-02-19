@@ -1,10 +1,9 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 import kotlinx.serialization.*
@@ -16,7 +15,6 @@ class Bar<T>(val t: T)
 class Wrapper(val b: Bar<String>)
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 import kotlinx.serialization.*

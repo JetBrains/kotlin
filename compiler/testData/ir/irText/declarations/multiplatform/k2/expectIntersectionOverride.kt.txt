@@ -1,0 +1,37 @@
+// FILE: common.kt
+
+interface I1 {
+  abstract fun f(): String
+
+  abstract val p: Int
+    abstract get
+
+}
+
+interface I2 {
+  abstract fun f(): String
+
+  abstract val p: Int
+    abstract get
+
+}
+
+// FILE: platform.kt
+
+class C : I1, I2 {
+  override val p: Int
+    field = 42
+    override get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun f(): String {
+    return "OK"
+  }
+
+}
+

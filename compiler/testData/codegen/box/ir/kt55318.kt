@@ -1,7 +1,6 @@
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, NATIVE, WASM
 // ISSUE: KT-55318
-// KT-55486: native linker error with `-Pkotlin.internal.native.test.cacheMode=STATIC_EVERYWHERE`
-// IGNORE_BACKEND_K2: NATIVE
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: JS:1.9
+// ^^^KT-55318 is fixed in 2.0.0-Beta1
 
 // MODULE: lib
 // FILE: lib.kt

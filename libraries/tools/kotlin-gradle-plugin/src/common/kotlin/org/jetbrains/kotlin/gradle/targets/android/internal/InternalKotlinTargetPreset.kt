@@ -7,19 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.android.internal
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.konan.util.Named
 
-internal interface InternalKotlinTargetPreset<T : KotlinTarget> : KotlinTargetPreset<T> {
+@InternalKotlinGradlePluginApi
+interface InternalKotlinTargetPreset<out T : KotlinTarget> : Named {
     fun createTargetInternal(name: String): T
-
-    override fun createTarget(name: String): T {
-        val target = createTargetInternal(name)
-        target.project.reportDiagnostic(KotlinToolingDiagnostics.CreateTarget())
-        return target
-    }
 }
-
-internal val <T : KotlinTarget> KotlinTargetPreset<T>.internal: InternalKotlinTargetPreset<T>
-    get() = this as InternalKotlinTargetPreset

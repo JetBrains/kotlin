@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val foo = object Name where T : G {}
 val foo = object : Bar where T : G {}
 

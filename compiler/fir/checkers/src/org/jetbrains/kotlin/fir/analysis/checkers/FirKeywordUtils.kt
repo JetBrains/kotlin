@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,13 +12,18 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 // DO
 // - use this to retrieve modifiers on the source and confirm a certain modifier indeed appears
@@ -85,7 +90,21 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
 fun KtSourceElement?.getModifierList(): FirModifierList? {
     return when (this) {
         null -> null
-        is KtPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
+        // todo this code is buggy. psi for fake declarations (e.g. ImplicitConstructor, EnumGeneratedDeclaration) means a completely different thing
+        //  KT-63751
+        is KtPsiSourceElement -> {
+            val modifierListOwner = psi as? KtModifierListOwner
+
+            // The check is required in the Analysis API mode as in this case property accessor
+            // has the containing property as a source
+            if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && modifierListOwner is KtProperty) {
+                errorWithAttachment("Don't request modifiers on fake PSI of delegated property accessors, it's not the right PSI") {
+                    withPsiEntry("property", modifierListOwner)
+                }
+            }
+
+            modifierListOwner?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
+        }
         is KtLightSourceElement -> {
             val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it.tokenType == KtNodeTypes.MODIFIER_LIST }
                 ?: return null
@@ -97,9 +116,17 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
 
 operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
-fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
+fun FirElement.getModifierList(): FirModifierList? = when {
+    source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.elementType != KtNodeTypes.PROPERTY_ACCESSOR -> null
+    else -> source.getModifierList()
+}
 
-fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
+fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = getModifierList()?.get(token)
+
+fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in getModifierList()
+
+@OptIn(SymbolInternals::class)
+fun FirBasedSymbol<*>.hasModifier(token: KtModifierKeywordToken): Boolean = fir.hasModifier(token)
 
 internal val KtSourceElement?.valOrVarKeyword: KtKeywordToken?
     get() = when (this) {

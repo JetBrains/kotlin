@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // KT-44234
 
 class App {

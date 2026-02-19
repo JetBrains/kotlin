@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 interface A
 interface B
@@ -32,3 +33,6 @@ fun test() {
 
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>multiple<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, interfaceDeclaration, intersectionType,
+localProperty, nullableType, propertyDeclaration, typeParameter */

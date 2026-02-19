@@ -1,0 +1,9 @@
+public final class cases/public/MultifileKt {
+	public static final fun getPublicVal ()Ljava/lang/String;
+	public static final fun publicFun1 ()Ljava/lang/String;
+}
+
+public final class cases/public/PublicPartKt {
+	public static final fun publicFun ()V
+}
+

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-3535 Functional value-parametr in nested class is inaccessible
 
@@ -8,3 +9,6 @@ class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, nestedClass,
+primaryConstructor, propertyDeclaration */

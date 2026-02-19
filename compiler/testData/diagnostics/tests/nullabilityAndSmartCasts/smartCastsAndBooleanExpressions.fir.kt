@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(b: Boolean?, c: Boolean) {
     if (b != null && b) {}
     if (b == null || b) {}
@@ -6,3 +7,6 @@ fun foo(b: Boolean?, c: Boolean) {
         if (b || c) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

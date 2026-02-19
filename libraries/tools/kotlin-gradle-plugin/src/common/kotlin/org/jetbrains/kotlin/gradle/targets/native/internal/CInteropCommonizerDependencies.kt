@@ -23,11 +23,6 @@ internal fun Project.setupCInteropCommonizerDependencies() {
     kotlin.forAllSharedNativeCompilations { compilation ->
         setupCInteropCommonizerDependenciesForCompilation(compilation)
     }
-
-    kotlin.forAllDefaultKotlinSourceSets { sourceSet ->
-        setupCInteropCommonizerDependenciesForIde(sourceSet)
-        setupCInteropTransformCompositeMetadataDependenciesForIde(sourceSet)
-    }
 }
 
 private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilation: KotlinSharedNativeCompilation) = launch {
@@ -38,15 +33,6 @@ private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilatio
             ?: return@filesProvider emptySet<File>()
         cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
     }
-}
-
-/**
- * IDE will resolve the dependencies provided on source sets.
- * This will use the [Project.copyCommonizeCInteropForIdeTask] over the regular cinterop commonization task.
- * The copying task prevent red code within the IDE after cleaning the build output.
- */
-private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: DefaultKotlinSourceSet) = launch {
-    addIntransitiveMetadataDependencyIfPossible(sourceSet, cinteropCommonizerDependencies(sourceSet))
 }
 
 internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSourceSet): FileCollection {
@@ -63,11 +49,3 @@ internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSour
         }.getOrThrow()
     }
 }
-
-private fun Project.setupCInteropTransformCompositeMetadataDependenciesForIde(sourceSet: DefaultKotlinSourceSet) = launch {
-    if (sourceSet.internal.commonizerTarget.await() !is SharedCommonizerTarget) return@launch
-    addIntransitiveMetadataDependencyIfPossible(
-        sourceSet, createCInteropMetadataDependencyClasspathForIde(sourceSet)
-    )
-}
-

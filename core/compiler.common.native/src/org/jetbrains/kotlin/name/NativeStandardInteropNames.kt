@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.name
 
+@Suppress("ConstPropertyName")
 object NativeStandardInteropNames {
     val cInteropPackage = FqName("kotlinx.cinterop")
 
@@ -20,7 +21,13 @@ object NativeStandardInteropNames {
     val objCFactoryClassId = ClassId(cInteropPackage, Name.identifier("ObjCFactory"))
     val objCConstructorClassId = ClassId(cInteropPackage, Name.identifier("ObjCConstructor"))
     val externalObjCClassClassId = ClassId(cInteropPackage, Name.identifier("ExternalObjCClass"))
+    val objCActionClassId = ClassId(cInteropPackage, Name.identifier("ObjCAction"))
+    val objCOutletClassId = ClassId(cInteropPackage, Name.identifier("ObjCOutlet"))
+    val objCOverrideInitClassId = ClassId(cInteropPackage, Name.identifier("ObjCObjectBase.OverrideInit"))
 
+    object Annotations {
+        val objCSignatureOverrideClassId = ClassId(cInteropPackage, Name.identifier("ObjCSignatureOverride"))
+    }
 
     object ForwardDeclarations {
         private val cNamesPackage = FqName("cnames")
@@ -32,4 +39,12 @@ object NativeStandardInteropNames {
 
         val syntheticPackages = setOf(cNamesPackage, objCNamesPackage)
     }
+
+    const val cTypeDefinitionsFileName = "CTypeDefinitions"
+
+    const val nativePointed = "NativePointed"
+    const val cPointer = "CPointer"
+    const val cValue = "CValue"
+    const val cValuesRef = "CValuesRef"
+    const val cEnumVar = "CEnumVar"
 }

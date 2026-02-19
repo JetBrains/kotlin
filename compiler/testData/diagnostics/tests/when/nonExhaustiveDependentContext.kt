@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // SKIP_TXT
 fun bar(a: String): String {
     return when {
@@ -11,3 +13,5 @@ fun bar(a: String): String {
         else -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, stringLiteral, whenExpression */

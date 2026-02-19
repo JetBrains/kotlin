@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR status: KT-65249 K2: False positive modality is different for native compilation
+
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
@@ -16,8 +19,6 @@ expect open class Foo : Transitive {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual open class Base<T> {
     actual fun existingMethodInBase(param: T) {}
     open fun injected(param: T): Any = ""
@@ -29,3 +30,6 @@ actual open class Foo : Transitive() {
 
     override fun injected(param: String): String = "" // covariant override
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nullableType, override,
+primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

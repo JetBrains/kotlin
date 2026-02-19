@@ -1,6 +1,5 @@
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// IGNORE_BACKEND: JVM
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(f: () -> String, g: suspend () -> String, h: suspend () -> String) {}
 

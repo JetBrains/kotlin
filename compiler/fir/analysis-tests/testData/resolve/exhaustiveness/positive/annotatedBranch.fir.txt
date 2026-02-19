@@ -17,11 +17,11 @@ FILE: annotatedBranch.kt
 
     }
     public final fun test(x: R|SomeEnum|): R|kotlin/Unit| {
-        when (R|<local>/x|) {
+        when (lval <when-subject>: R|SomeEnum| = R|<local>/x|) {
             ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
                 Int(1)
             }
-            ==($subj$, @R|kotlin/Suppress|(names = vararg(String(deprecation))) Q|SomeEnum|.R|/SomeEnum.B|) ->  {
+            ==($subj$, @R|kotlin/Suppress|(names = vararg(String(deprecation)) [evaluated = vararg(String(deprecation))]) Q|SomeEnum|.R|/SomeEnum.B|) ->  {
                 Int(2)
             }
         }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JavaClass.java
 public class JavaClass {
     public static int bar(String x) { return 0; }
@@ -18,3 +19,5 @@ fun main() {
     foo2(JavaClass::bar)
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(JavaClass::bar)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaCallableReference, javaType */

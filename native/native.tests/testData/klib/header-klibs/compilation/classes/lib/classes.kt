@@ -5,7 +5,11 @@ interface I {
     fun iMethod(): Int
 }
 
-open class A : I {
+private interface K {
+    fun kMethod() = 42
+}
+
+open class A : I, K {
     override val iProperty: Int = 0
     override fun iMethod(): Int = 10
 
@@ -29,3 +33,5 @@ class B : A() {
         const val bConst: Int = 90
     }
 }
+
+value class C(private val b: String)

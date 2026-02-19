@@ -74,7 +74,12 @@ public actual fun Char.isDigit(): Boolean {
 }
 
 /**
- * Determines whether a character is whitespace according to the Unicode standard.
+ * Determines whether a character is whitespace.
+ *
+ * A character is considered whitespace if either its Unicode [category][Char.category]
+ * is one of [CharCategory.SPACE_SEPARATOR], [CharCategory.LINE_SEPARATOR], [CharCategory.PARAGRAPH_SEPARATOR],
+ * or it is a [CharCategory.CONTROL] character in range `U+0009..U+000D` or `U+001C..U+001F`.
+ *
  * Returns `true` if the character is whitespace.
  *
  * @sample samples.text.Chars.isWhitespace
@@ -136,7 +141,7 @@ public actual fun Char.isTitleCase(): Boolean {
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use uppercaseChar() instead.", ReplaceWith("uppercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun Char.toUpperCase(): Char = uppercaseCharImpl()
 
 /**
@@ -149,7 +154,6 @@ public actual fun Char.toUpperCase(): Char = uppercaseCharImpl()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
 
 /**
@@ -163,14 +167,13 @@ public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercase(): String = uppercaseImpl()
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use lowercaseChar() instead.", ReplaceWith("lowercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun Char.toLowerCase(): Char = lowercaseCharImpl()
 
 /**
@@ -183,7 +186,6 @@ public actual fun Char.toLowerCase(): Char = lowercaseCharImpl()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
 
 /**
@@ -197,7 +199,6 @@ public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.lowercase(): String = lowercaseImpl()
 
 /**
@@ -221,18 +222,22 @@ public actual val Char.category: CharCategory
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
+@IgnorableReturnValue
 @PublishedApi
 @Suppress("DEPRECATION")
 internal actual fun checkRadix(radix: Int): Int {
-    if(radix !in Char.MIN_RADIX..Char.MAX_RADIX) {
-        throw IllegalArgumentException("radix $radix was not in valid range ${Char.MIN_RADIX..Char.MAX_RADIX}")
+    if(radix !in Char_MIN_RADIX..Char_MAX_RADIX) {
+        throw IllegalArgumentException("radix $radix was not in valid range ${Char_MIN_RADIX..Char_MAX_RADIX}")
     }
     return radix
 }
 
 // Char.Compaion methods. Konan specific.
-
+internal const val Char_MIN_RADIX: Int = 2
+internal const val Char_MAX_RADIX: Int = 36
 // TODO: Make public when supplementary codepoints are supported.
+internal const val Char_MIN_SUPPLEMENTARY_CODE_POINT: Int = 0x10000
+
 /** Converts a unicode code point to lower case. */
 internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
     if (codePoint <= MAX_VALUE.code) {
@@ -250,3 +255,8 @@ internal fun Char.Companion.toUpperCase(codePoint: Int): Int =
     } else {
         codePoint // TODO: Implement this transformation for supplementary codepoints.
     }
+
+internal expect fun Char.Companion.toCodePoint(high: Char, low: Char): Int
+internal expect fun Char.Companion.toChars(codePoint: Int): CharArray
+internal expect fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean
+internal expect fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean

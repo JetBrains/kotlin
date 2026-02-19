@@ -4,12 +4,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    maven(project(":producer").buildDir.resolve("repository"))
-    mavenCentral()
-}
-
 kotlin {
     jvm()
     js().browser()

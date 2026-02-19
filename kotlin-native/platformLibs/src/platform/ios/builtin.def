@@ -3,7 +3,6 @@ package = platform.builtin
 headerFilter = **
 language = C
 
-excludedFunctions.ios_arm32 = builtin_clear_cache
 excludedFunctions.ios_arm64 = builtin_clear_cache
 ---
 // See https://github.com/llvm-mirror/clang/blob/master/include/clang/Basic/Builtins.def

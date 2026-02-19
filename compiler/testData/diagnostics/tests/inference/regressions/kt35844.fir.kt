@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A<X>
 
@@ -24,3 +25,6 @@ fun <E> mainOut(a: AOut<E>) {
 
     foo(a).b()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, functionDeclaration, intersectionType, nullableType,
+out, smartcast, starProjection, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 public class X {
     public var x : String? = null
@@ -14,3 +15,5 @@ public class X {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

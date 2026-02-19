@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: a/a.java
 package a;
 
@@ -45,3 +46,5 @@ fun foo() {
     a.<!UNRESOLVED_REFERENCE!>a<!>
     a.<!UNRESOLVED_REFERENCE!>a<!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

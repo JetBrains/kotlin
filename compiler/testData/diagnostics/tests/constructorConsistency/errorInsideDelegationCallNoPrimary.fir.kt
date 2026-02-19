@@ -1,5 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A(i: Int)
 
-<!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>class B : A(<!UNRESOLVED_REFERENCE!>x<!>) {
+class B : <!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>A<!>(<!UNRESOLVED_REFERENCE!>x<!>) {
     constructor(i: Int) : super(i)
-}<!>
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, secondaryConstructor */

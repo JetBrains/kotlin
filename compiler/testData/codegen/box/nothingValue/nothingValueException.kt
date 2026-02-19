@@ -1,8 +1,3 @@
-// IGNORE_BACKEND: JS
-
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: REFLECTION
-
 fun <T> something(): T = Any() as T
 
 class Context<T>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -26,3 +27,6 @@ class E(val b: B, val c: C) : B by b, C by c
 
 class AdapterK : B, CK
 class F(val adapter: AdapterK) : B by adapter, CK by adapter
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, interfaceDeclaration, javaType, primaryConstructor,
+propertyDeclaration */

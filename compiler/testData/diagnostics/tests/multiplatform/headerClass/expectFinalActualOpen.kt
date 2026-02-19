@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -25,3 +26,6 @@ actual typealias Bar = JavaBar
 public class JavaBar {
     public void g() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 open class A<T1, T2> {
@@ -28,3 +29,6 @@ class C : B<String>() {
     override fun f1(arg: String) = arg
     override fun f2(arg: Int) = arg
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, inner, integerLiteral, nullableType,
+override, primaryConstructor, propertyDeclaration, typeParameter */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 package g
 
@@ -14,3 +15,7 @@ fun test(l: List<Int>) {
     val r = convert(l, HashSet())
     r checkType { _<HashSet<Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeConstraint,
+typeParameter, typeWithExtension */

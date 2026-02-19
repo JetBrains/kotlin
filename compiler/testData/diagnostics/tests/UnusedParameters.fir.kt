@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: +UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: +UNUSED_PARAMETER
 import kotlin.reflect.KProperty
 
 class C(a: Int, b: Int, c: Int, d: Int, e: Int = d, val f: String) {
@@ -42,3 +43,6 @@ fun set(p: Any) {
 fun foo(s: String) {
     s.<!UNRESOLVED_REFERENCE!>xxx<!> = 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+init, integerLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

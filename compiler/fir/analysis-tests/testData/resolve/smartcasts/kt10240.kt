@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun a(): Int {
     fun b(): Int {
         var c: Int? = null
@@ -34,3 +35,7 @@ fun d() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, elvisExpression, equalityExpression,
+functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, whileLoop */

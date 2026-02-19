@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1418
 // FILE: classes.kt
 class C : J
 

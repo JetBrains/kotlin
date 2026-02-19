@@ -22,7 +22,12 @@ import org.jetbrains.kotlin.library.abi.AbiClassifierReference.ClassReference
 import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
 import org.jetbrains.kotlin.library.abi.impl.LibraryDeserializer.ContainingEntity.Class.Companion.excludeFakeOverrides
 import org.jetbrains.kotlin.library.abi.impl.LibraryDeserializer.TypeDeserializer.Companion.underlyingTypeId
+import org.jetbrains.kotlin.library.components.KlibIrComponent
+import org.jetbrains.kotlin.library.components.ir
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -33,30 +38,35 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.backend.common.serialization.IrFlags as ProtoFlags
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoIrDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoIrDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullability
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy as ProtoSimpleTypeLegacy
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullability
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
-import org.jetbrains.kotlin.backend.common.serialization.IrFlags as ProtoFlags
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
 
 @ExperimentalLibraryAbiReader
 internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingFilter>) {
-    private val library = resolveSingleFileKlib(
-        KFile(libraryFile.absolutePath),
-        strategy = ToolingSingleFileKlibResolveStrategy
-    )
+    private val library: KotlinLibrary = run {
+        val klibLoadingResult = KlibLoader { libraryPaths(libraryFile) }.load()
+        klibLoadingResult.reportLoadingProblemsIfAny { _, message -> error(message) }
+
+        val library = klibLoadingResult.librariesStdlibFirst.single()
+        check(library.uniqueName.isNotEmpty()) { "Can't read unique name from manifest" }
+        check(library.ir != null) { "Library does not have IR" }
+
+        library
+    }
 
     private val compositeFilter: AbiReadingFilter.Composite? = if (filters.isNotEmpty()) AbiReadingFilter.Composite(filters) else null
 
@@ -67,18 +77,25 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
             manifest = readManifest(),
             uniqueName = library.uniqueName,
             signatureVersions = supportedSignatureVersions,
-            topLevelDeclarations = LibraryDeserializer(library, supportedSignatureVersions, compositeFilter).deserialize()
+            topLevelDeclarations = LibraryDeserializer(
+                ir = library.irOrFail,
+                platform = library.builtInsPlatform,
+                supportedSignatureVersions = supportedSignatureVersions,
+                compositeFilter = compositeFilter
+            ).deserialize()
         )
     }
 
     private fun readManifest(): LibraryManifest {
         val versions = library.versions
         return LibraryManifest(
-            platform = library.builtInsPlatform,
-            nativeTargets = library.nativeTargets.sorted(),
+            platform = library.builtInsPlatform?.name,
+            platformTargets = buildList {
+                library.nativeTargets.sorted().mapTo(this, LibraryTarget::Native)
+                library.wasmTargets.sorted().mapTo(this, LibraryTarget::WASM)
+            },
             compilerVersion = versions.compilerVersion,
             abiVersion = versions.abiVersion?.toString(),
-            libraryVersion = versions.libraryVersion,
             irProviderName = library.irProviderName
         )
     }
@@ -90,17 +107,16 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
 
 @ExperimentalLibraryAbiReader
 private class LibraryDeserializer(
-    private val library: KotlinLibrary,
+    private val ir: KlibIrComponent,
+    private val platform: BuiltInsPlatform?,
     supportedSignatureVersions: Set<AbiSignatureVersion>,
     private val compositeFilter: AbiReadingFilter.Composite?
 ) {
-    private val platform: BuiltInsPlatform? = library.builtInsPlatform?.let(BuiltInsPlatform::parseFromString)
-
     private val interner = IrInterningService()
 
-    private val annotationsInterner = object {
-        private val uniqueAnnotationClassNames = ObjectOpenHashSet<AbiQualifiedName>()
-        fun intern(annotationClassName: AbiQualifiedName): AbiQualifiedName = uniqueAnnotationClassNames.addOrGet(annotationClassName)
+    private val annotationInterner = object {
+        private val uniqueAnnotations = ObjectOpenHashSet<AbiAnnotationImpl>()
+        fun intern(annotation: AbiAnnotationImpl): AbiAnnotationImpl = uniqueAnnotations.addOrGet(annotation)
     }
 
     private val needV1Signatures = AbiSignatureVersions.Supported.V1 in supportedSignatureVersions
@@ -110,7 +126,7 @@ private class LibraryDeserializer(
         if (this != null && compositeFilter?.isDeclarationExcluded(this) == true) null else this
 
     private inner class FileDeserializer(fileIndex: Int) {
-        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library, fileIndex))
+        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
 
         private val packageName: AbiCompoundName
         private val topLevelDeclarationIds: List<Int>
@@ -118,13 +134,14 @@ private class LibraryDeserializer(
         private val typeDeserializer: TypeDeserializer
 
         init {
-            val proto = ProtoFile.parseFrom(library.file(fileIndex).codedInputStream, IrLibraryFileFromBytes.extensionRegistryLite)
+            val proto = ProtoFile.parseFrom(ir.irFile(fileIndex).codedInputStream, IrLibraryFileFromBytes.extensionRegistryLite)
             topLevelDeclarationIds = proto.declarationIdList
 
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
 
-            val fileName = if (proto.hasFileEntry() && proto.fileEntry.hasName()) proto.fileEntry.name else "<unknown>"
+            val fileEntry = ir.fileEntry(proto, fileIndex)
+            val fileName = fileReader.deserializeFileEntryName(fileEntry)
 
             val fileSignature = FileSignature(
                 id = Any(), // Just an unique object.
@@ -288,6 +305,11 @@ private class LibraryDeserializer(
                 is ContainingEntity.Class -> {
                     containingProperty = null
                     containingClass = containingEntity
+
+                    if (isConstructor && containingClass.modality == AbiModality.SEALED) {
+                        // Exclude constructors of sealed classes from ABI dump.
+                        return null
+                    }
                 }
                 is ContainingEntity.Property -> {
                     containingProperty = containingEntity
@@ -338,14 +360,30 @@ private class LibraryDeserializer(
             }
 
             val extensionReceiver = if (proto.hasExtensionReceiver())
-                deserializeValueParameter(proto.extensionReceiver, thisFunctionTypeParameterResolver)
+                deserializeValueParameter(
+                    proto = proto.extensionReceiver,
+                    kind = AbiValueParameterKind.EXTENSION_RECEIVER,
+                    typeParameterResolver = thisFunctionTypeParameterResolver
+                )
             else
                 null
-            val contextReceiversCount = if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
 
             val allValueParameters = ArrayList<AbiValueParameter>()
+            proto.contextParameterList.mapTo(allValueParameters) { contextParameterProto ->
+                deserializeValueParameter(
+                    proto = contextParameterProto,
+                    kind = AbiValueParameterKind.CONTEXT,
+                    typeParameterResolver = thisFunctionTypeParameterResolver
+                )
+            }
             allValueParameters.addIfNotNull(extensionReceiver)
-            proto.valueParameterList.mapTo(allValueParameters) { deserializeValueParameter(it, thisFunctionTypeParameterResolver) }
+            proto.regularParameterList.mapTo(allValueParameters) { regularParameterProto ->
+                deserializeValueParameter(
+                    proto = regularParameterProto,
+                    kind = AbiValueParameterKind.REGULAR,
+                    typeParameterResolver = thisFunctionTypeParameterResolver
+                )
+            }
 
             return if (isConstructor) {
                 check(extensionReceiver == null) { "Unexpected extension receiver found for constructor $functionName" }
@@ -355,7 +393,6 @@ private class LibraryDeserializer(
                     signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                     annotations = annotations,
                     isInline = flags.isInline,
-                    contextReceiverParametersCount = contextReceiversCount,
                     valueParameters = allValueParameters.compact()
                 )
             } else {
@@ -371,8 +408,6 @@ private class LibraryDeserializer(
                     isInline = flags.isInline,
                     isSuspend = flags.isSuspend,
                     typeParameters = deserializeTypeParameters(proto.typeParameterList, thisFunctionTypeParameterResolver),
-                    hasExtensionReceiverParameter = extensionReceiver != null,
-                    contextReceiverParametersCount = contextReceiversCount,
                     valueParameters = allValueParameters.compact(),
                     returnType = nonTrivialReturnType
                 )
@@ -423,6 +458,9 @@ private class LibraryDeserializer(
                         containingEntity = thisPropertyEntity,
                         parentTypeParameterResolver = typeParameterResolver
                     ).discardIfExcluded()
+                },
+                backingField = proto.hasBackingField().ifTrue {
+                    AbiFieldImpl(deserializeAnnotations(proto.backingField.base))
                 }
             )
         }
@@ -457,8 +495,8 @@ private class LibraryDeserializer(
             )
         }
 
-        private fun deserializeAnnotations(proto: ProtoDeclarationBase): Set<AbiQualifiedName> {
-            fun deserialize(annotation: ProtoConstructorCall): AbiQualifiedName {
+        private fun deserializeAnnotations(proto: ProtoDeclarationBase): AbiAnnotationListImpl {
+            fun deserialize(annotation: ProtoConstructorCall): AbiAnnotation {
                 val idSignature = deserializeIdSignature(annotation.symbol)
                 val annotationClassName = when {
                     idSignature is CommonSignature -> idSignature
@@ -471,20 +509,19 @@ private class LibraryDeserializer(
                     rawRelativeName.substring(0, rawRelativeName.length - INIT_SUFFIX.length)
                 }
 
-                // Avoid duplicated instances of popular signature names:
-                return annotationsInterner.intern(annotationClassName)
+                // Avoid duplicated instances of popular annotations:
+                return annotationInterner.intern(AbiAnnotationImpl(annotationClassName))
             }
 
             return when (proto.annotationCount) {
-                0 -> return emptySet()
-                1 -> return setOf(deserialize(proto.annotationList[0]))
-                else -> proto.annotationList.mapTo(SmartSet.create(), ::deserialize)
+                0 -> return AbiAnnotationListImpl.EMPTY
+                else -> AbiAnnotationListImpl(proto.annotationList.memoryOptimizedMap(::deserialize))
             }
         }
 
         private fun computeVisibilityStatus(
             proto: ProtoDeclarationBase,
-            annotations: Set<AbiQualifiedName>,
+            annotations: AbiAnnotationListImpl,
             containingClassModality: AbiModality?,
             parentPropertyVisibilityStatus: VisibilityStatus? = null
         ): VisibilityStatus = when (ProtoFlags.VISIBILITY.get(proto.flags.toInt())) {
@@ -499,7 +536,7 @@ private class LibraryDeserializer(
 
             ProtoBuf.Visibility.INTERNAL -> when {
                 parentPropertyVisibilityStatus == VisibilityStatus.INTERNAL_PUBLISHED_API -> VisibilityStatus.INTERNAL_PUBLISHED_API
-                PUBLISHED_API_CONSTRUCTOR_QUALIFIED_NAME in annotations -> VisibilityStatus.INTERNAL_PUBLISHED_API
+                @Suppress("DEPRECATION") annotations.hasAnnotation(PUBLISHED_API_CONSTRUCTOR_QUALIFIED_NAME) -> VisibilityStatus.INTERNAL_PUBLISHED_API
                 else -> VisibilityStatus.NON_PUBLIC
             }
 
@@ -508,11 +545,13 @@ private class LibraryDeserializer(
 
         private fun deserializeValueParameter(
             proto: ProtoValueParameter,
+            kind: AbiValueParameterKind,
             typeParameterResolver: TypeParameterResolver
         ): AbiValueParameter {
             val flags = ValueParameterFlags.decode(proto.base.flags)
 
             return AbiValueParameterImpl(
+                kind = kind,
                 type = typeDeserializer.deserializeType(BinaryNameAndType.decode(proto.nameType).typeIndex, typeParameterResolver),
                 isVararg = proto.hasVarargElementType(),
                 hasDefaultArg = proto.hasDefaultValue(),
@@ -539,7 +578,7 @@ private class LibraryDeserializer(
             override fun computeNestedName(simpleName: String) = qualifiedName(className, simpleName)
 
             companion object {
-                val Class?.excludeFakeOverrides: Boolean get() = this?.excludeFakeOverrides ?: false
+                val Class?.excludeFakeOverrides: Boolean get() = this?.excludeFakeOverrides == true
             }
         }
 
@@ -752,7 +791,7 @@ private class LibraryDeserializer(
     fun deserialize(): AbiTopLevelDeclarations {
         val topLevels = ArrayList<AbiDeclaration>()
 
-        for (fileIndex in 0 until library.fileCount()) {
+        for (fileIndex in 0 until ir.irFileCount) {
             FileDeserializer(fileIndex).deserializeTo(topLevels)
         }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //  Anonymous object's initialization does not affect smart casts
 
 abstract class A(val s: String) {
@@ -9,3 +10,6 @@ fun foo(o: String?): Int {
     a.bar()
     return o.length
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast */

@@ -1,7 +1,0 @@
-fun function(t: A)
-
-fun function(t: A)
-
-class A
-
-typealias TypeAlias = A

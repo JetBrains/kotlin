@@ -1,0 +1,11 @@
+@kotlin.Metadata
+public class KotlinSet {
+    // source: 'kotlinSet.kt'
+    public method <init>(): void
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method contains(p0: java.lang.String): boolean
+    public bridge method getSize(): int
+    public bridge final method remove(p0: java.lang.Object): boolean
+    public bridge method remove(p0: java.lang.String): boolean
+    public bridge final method size(): int
+}

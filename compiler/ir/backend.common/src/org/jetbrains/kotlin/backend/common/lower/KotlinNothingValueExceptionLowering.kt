@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class KotlinNothingValueExceptionLowering(
+/**
+ * Throws a proper exception for calls returning value of type [Nothing].
+ */
+open class KotlinNothingValueExceptionLowering(
     val backendContext: CommonBackendContext, val skip: (IrDeclaration) -> Boolean = { false }
 ) : BodyLoweringPass {
     override fun lower(irFile: IrFile) =
@@ -39,14 +42,14 @@ class KotlinNothingValueExceptionLowering(
                 // Replace call 'foo' of type 'kotlin.Nothing' with a block:
                 //
                 //  {
-                //      [ call 'foo' with type: 'kotlin.Unit' ]
+                //      [ call 'foo' with type: 'kotlin.Nothing' ]
                 //      call ThrowKotlinNothingValueException(): Nothing
                 //  }: Nothing
                 //
                 backendContext.createIrBuilder(parent, expression.startOffset, expression.endOffset).run {
                     irBlock(expression, null, context.irBuiltIns.nothingType) {
                         +super.visitCall(expression)
-                        +irCall(backendContext.ir.symbols.throwKotlinNothingValueException)
+                        +irCall(backendContext.symbols.throwKotlinNothingValueException)
                     }
                 }
             } else {

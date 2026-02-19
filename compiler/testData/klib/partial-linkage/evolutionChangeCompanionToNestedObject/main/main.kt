@@ -1,0 +1,2 @@
+fun box(): String = lib()
+

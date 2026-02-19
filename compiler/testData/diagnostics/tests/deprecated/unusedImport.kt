@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.kt
 
 package test
@@ -8,3 +9,5 @@ interface A
 // FILE: B.kt
 
 import test.<!DEPRECATION!>A<!>
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, stringLiteral */

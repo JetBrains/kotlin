@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //FILE:a/C.java
 //KT-1942 Package local members from Java are visible in subclasses
 package a;
@@ -17,3 +18,5 @@ class A : C() {
         val v = <!INVISIBLE_REFERENCE!>myValue<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, localProperty, propertyDeclaration */

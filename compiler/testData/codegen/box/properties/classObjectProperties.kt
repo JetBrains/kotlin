@@ -1,3 +1,4 @@
+
 class Test {
 
     companion object {

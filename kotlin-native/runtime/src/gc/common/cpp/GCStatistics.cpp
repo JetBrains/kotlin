@@ -10,8 +10,9 @@
 #include <optional>
 
 #include "Allocator.hpp"
+#include "CallsChecker.hpp"
 #include "Logging.hpp"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "Porting.h"
 #include "ThreadData.hpp"
 #include "Types.h"
@@ -42,6 +43,8 @@ namespace {
 
 constexpr KNativePtr heapPoolKey = const_cast<KNativePtr>(static_cast<const void*>("heap"));
 constexpr KNativePtr extraPoolKey = const_cast<KNativePtr>(static_cast<const void*>("extra"));
+
+constexpr auto kInvalidEpoch = std::numeric_limits<uint64_t>::max();
 
 struct MemoryUsage {
     uint64_t sizeBytes;
@@ -76,7 +79,7 @@ struct RootSetStatistics {
     KLong stackReferences;
     KLong globalReferences;
     KLong stableReferences;
-    KLong total() const { return threadLocalReferences + stableReferences + globalReferences + stableReferences; }
+    KLong total() const { return threadLocalReferences + stackReferences + globalReferences + stableReferences; }
 };
 
 struct GCInfo {
@@ -125,8 +128,9 @@ struct GCInfo {
 
 GCInfo last;
 GCInfo current;
-// This lock can be got by thread in runnable state making parallel mark, so
-kotlin::SpinLock<kotlin::MutexThreadStateHandling::kIgnore> lock;
+// This lock can be obtained by a thread in a runnable state which participates in parallel mark.
+// Thread state switches are undesirable during parallel mark.
+kotlin::SpinLock lock;
 
 GCInfo* statByEpoch(uint64_t epoch) {
     if (current.epoch == epoch) return &current;
@@ -178,7 +182,7 @@ GCHandle GCHandle::create(uint64_t epoch) {
     current.memoryUsageBefore.heap = currentHeapUsage();
     return getByEpoch(epoch);
 }
-GCHandle GCHandle::createFakeForTests() { return getByEpoch(invalid().getEpoch() - 1); }
+GCHandle GCHandle::createFakeForTests() { return getByEpoch(kInvalidEpoch - 1); }
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
     GCHandle handle{epoch};
     RuntimeAssert(handle.isValid(), "Must be valid");
@@ -187,6 +191,8 @@ GCHandle GCHandle::getByEpoch(uint64_t epoch) {
 
 // static
 std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto epoch = current.epoch) {
         return GCHandle::getByEpoch(*epoch);
@@ -195,7 +201,7 @@ std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
 }
 
 GCHandle GCHandle::invalid() {
-    return GCHandle{std::numeric_limits<uint64_t>::max()};
+    return GCHandle{kInvalidEpoch};
 }
 void GCHandle::ClearForTests() {
     std::lock_guard guard(lock);
@@ -203,7 +209,7 @@ void GCHandle::ClearForTests() {
     last = {};
 }
 bool GCHandle::isValid() const {
-    return epoch_ != GCHandle::invalid().epoch_;
+    return epoch_ != kInvalidEpoch;
 }
 void GCHandle::finished() {
     std::lock_guard guard(lock);
@@ -379,7 +385,24 @@ MarkStats GCHandle::getMarked() {
     return MarkStats{};
 }
 
+size_t GCHandle::getKeptSizeBytes() noexcept {
+    std::lock_guard guard(lock);
+    if (auto* stat = statByEpoch(epoch_)) {
+        size_t result = 0;
+        if (stat->sweepStats.heap) {
+            result += stat->sweepStats.heap->keptSizeBytes;
+        }
+        if (stat->sweepStats.extra) {
+            result += stat->sweepStats.extra->keptSizeBytes;
+        }
+        return result;
+    }
+    return 0;
+}
+
 void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& heap = stat->sweepStats.heap;
@@ -388,12 +411,15 @@ void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
         }
         heap->keptCount += stats.keptCount;
         heap->sweptCount += stats.sweptCount;
+        heap->keptSizeBytes += stats.keptSizeBytes;
         RuntimeAssert(static_cast<bool>(stat->markStats), "Mark must have already happened");
         stat->markStats->markedCount += markedCount;
     }
 }
 
 void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& extra = stat->sweepStats.extra;
@@ -402,6 +428,7 @@ void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
         }
         extra->keptCount += stats.keptCount;
         extra->sweptCount += stats.sweptCount;
+        extra->keptSizeBytes += stats.keptSizeBytes;
     }
 }
 
@@ -453,7 +480,7 @@ GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
     if (!handle_.isValid()) return;
     handle_.threadRootSetCollected(threadData_, threadLocalRoots_, stackRoots_);
     GCLogDebug(
-            handle_.getEpoch(), "Collected root set for thread #%d: stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
+            handle_.getEpoch(), "Collected root set for thread #%" PRIuPTR ": stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
             threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
 }
 

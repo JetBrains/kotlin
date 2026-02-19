@@ -43,10 +43,12 @@ class FirCachingCompositeSymbolProvider(
         session,
         providers.map { it.symbolNamesProvider },
     ) {
-        override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<String>? =
+        override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>? =
             super.computeTopLevelClassifierNames(packageFqName).also {
                 ensureNotNull(it) { "classifier names in package $packageFqName" }
             }
+
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
 
         override fun computePackageNamesWithTopLevelCallables(): Set<String>? =
             super.computePackageNamesWithTopLevelCallables().also {
@@ -63,6 +65,20 @@ class FirCachingCompositeSymbolProvider(
             // We know that `session` is the same as the sessions of all `providers`, so we can take a shortcut here.
             return classId.isNameForFunctionClass(session)
         }
+
+        // The compiler does not compute classifier and general package name sets because it is too expensive, so we can disable them.
+        // `FirCachingCompositeSymbolProvider` is only used by the compiler.
+        override fun computePackageNames(): Set<String>? = null
+        override fun computePackageNamesWithTopLevelClassifiers(): Set<String>? = null
+
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+
+        // Avoid cache accesses.
+        override fun getPackageNames(): Set<String>? = null
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? = null
+
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
+            super.getTopLevelClassifierNamesInPackageSkippingPackageCheck(packageFqName)
     }
 
     private inline fun ensureNotNull(v: Any?, representation: () -> String) {
@@ -100,7 +116,7 @@ class FirCachingCompositeSymbolProvider(
         destination += topLevelPropertyCache.getValue(CallableId(packageFqName, name))
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
+    override fun hasPackage(fqName: FqName): Boolean {
         return packageCache.getValue(fqName)
     }
 
@@ -124,8 +140,8 @@ class FirCachingCompositeSymbolProvider(
         providers.forEach { it.getTopLevelPropertySymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    private fun computePackage(it: FqName): FqName? =
-        providers.firstNotNullOfOrNull { provider -> provider.getPackage(it) }
+    private fun computePackage(it: FqName): Boolean =
+        providers.any { provider -> provider.hasPackage(it) }
 
     private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByClassId(classId) }

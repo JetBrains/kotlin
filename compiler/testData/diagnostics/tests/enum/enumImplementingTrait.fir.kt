@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface T1 {
     fun foo()
 }
@@ -19,3 +20,5 @@ enum class EnumImplementingTraitWithVal: T2 {
     },
     <!ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY!>E2<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration, propertyDeclaration */

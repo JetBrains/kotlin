@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import java.io.File
 import java.io.Serializable
 
@@ -17,14 +18,11 @@ internal class IncrementalCompilationEnvironment(
     val workingDir: File,
     val rootProjectDir: File,
     val buildDir: File,
-    val usePreciseJavaTracking: Boolean = false,
-    val disableMultiModuleIC: Boolean = false,
     val multiModuleICSettings: MultiModuleICSettings,
-    val withAbiSnapshot: Boolean = false,
-    val preciseCompilationResultsBackup: Boolean = false,
-    val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    val useJvmFirRunner: Boolean = false,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 3
+        const val serialVersionUID: Long = 6L
     }
 }

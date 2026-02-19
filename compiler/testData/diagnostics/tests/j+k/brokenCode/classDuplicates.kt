@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Hello.kt
 private class Hello()
 {
@@ -11,3 +12,5 @@ fun test() {
 
 // FILE: Hello.java
 public class Hello {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

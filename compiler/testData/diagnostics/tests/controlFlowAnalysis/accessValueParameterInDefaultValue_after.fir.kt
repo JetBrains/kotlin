@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitIllegalValueParameterUsageInDefaultArguments
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
@@ -70,3 +71,6 @@ fun test_8(
     x: String = "OK",
     y: Foo = object : Foo by getFoo(x) {} // OK
 ) {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, functionDeclaration, functionalType,
+inheritanceDelegation, init, interfaceDeclaration, lambdaLiteral, override, propertyDeclaration, stringLiteral */

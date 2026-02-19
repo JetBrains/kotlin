@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class Foo(var x: Int?) {
     init {
@@ -17,3 +18,6 @@ class Foo(var x: Int?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, ifExpression, init, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast */

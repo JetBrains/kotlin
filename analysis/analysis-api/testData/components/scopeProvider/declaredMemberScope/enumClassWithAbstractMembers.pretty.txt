@@ -1,0 +1,5 @@
+abstract val foo: kotlin.Int?
+
+abstract fun bar()
+
+constructor()

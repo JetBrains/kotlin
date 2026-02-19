@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: a/k.kt
 package a
@@ -29,3 +30,5 @@ fun test() = x().getK()
 fun test2() = x().getI()
 fun test3() = x().getIFromJava()
 fun test4() = y().getK()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, javaFunction, javaType, nullableType */

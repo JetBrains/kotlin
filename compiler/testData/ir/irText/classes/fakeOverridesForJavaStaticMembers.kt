@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FILE: fakeOverridesForJavaStaticMembers.kt
 import a.Base
@@ -5,7 +6,7 @@ import a.Base
 class Test : Base()
 
 // FILE: a/Base.java
-package a
+package a;
 
 public class Base {
     public static void publicStaticMethod() {}

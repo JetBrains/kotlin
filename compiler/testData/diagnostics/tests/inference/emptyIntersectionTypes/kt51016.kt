@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface A<T>
 interface B<T> : A<T>
@@ -10,3 +11,6 @@ interface C<T> : B<T>, Comparable<C<*>>
 fun test(x: C<Long?>) {
     x.foo(x)  // OVERLOAD_RESOLUTION_AMBIGUITY, shoub be OK
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, inProjection, interfaceDeclaration, nullableType,
+starProjection, typeConstraint, typeParameter */

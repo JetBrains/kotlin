@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_TYPEALIAS_PARAMETER, -CAST_NEVER_SUCCEEDS
-// !LANGUAGE: +TrailingCommas
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_TYPEALIAS_PARAMETER, -CAST_NEVER_SUCCEEDS
+// LANGUAGE: +TrailingCommas
 
 class Foo1<T1> {}
 
@@ -27,3 +28,7 @@ fun <T>foo () {
     val x6: Pair<(Float, Comparable<T,>,) -> Unit, (Float,) -> Unit,>? = null
     val x61: Pair<(Float, Comparable<T,/**/>,/**/) -> Unit, (Float,/**/) -> Unit,/**/>? = null
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

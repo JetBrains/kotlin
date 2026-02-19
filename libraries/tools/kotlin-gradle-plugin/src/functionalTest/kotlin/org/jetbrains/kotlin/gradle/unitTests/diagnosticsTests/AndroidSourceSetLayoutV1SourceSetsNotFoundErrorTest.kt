@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.util.androidApplication
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertFails
 
 class AndroidSourceSetLayoutV1SourceSetsNotFoundErrorTest {

@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 interface Closeable {
@@ -19,3 +18,6 @@ fun test() {
         <!UNRESOLVED_REFERENCE!>xx<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, interfaceDeclaration,
+lambdaLiteral, nullableType, thisExpression, typeConstraint, typeParameter, typeWithExtension */

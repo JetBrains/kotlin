@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_11
 // WITH_STDLIB
@@ -14,3 +15,6 @@ fun foo(s: IntStream) {
     val elapseTime = (System.nanoTime() - startTimeNanos) / 1e9
     println("Parallel Streams $pi $n $elapseTime")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+lambdaLiteral, localProperty, multiplicativeExpression, propertyDeclaration, samConversion, stringLiteral */

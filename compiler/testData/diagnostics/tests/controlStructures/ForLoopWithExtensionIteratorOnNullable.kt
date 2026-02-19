@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See also KT-7428
 class Container<K>(val k: K)
@@ -20,3 +21,6 @@ fun test2() {
     // Error
     for (s in <!ITERATOR_ON_NULLABLE!>other<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
+localProperty, nullableType, operator, primaryConstructor, propertyDeclaration, typeParameter */

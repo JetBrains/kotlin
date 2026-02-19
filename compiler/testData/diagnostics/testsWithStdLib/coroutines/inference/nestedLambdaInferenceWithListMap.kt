@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 val configurations4 = listOf(
@@ -35,3 +36,5 @@ val configurations1 = listOf(
         2
     }
 )
+
+/* GENERATED_FIR_TAGS: integerLiteral, lambdaLiteral, propertyDeclaration */

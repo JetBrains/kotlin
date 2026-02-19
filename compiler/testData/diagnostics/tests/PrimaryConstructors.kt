@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class X {
   <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x : Int<!>
@@ -28,3 +29,6 @@ class MyIterable<T> : Iterable<T>
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inner, integerLiteral, nullableType, operator,
+override, primaryConstructor, propertyDeclaration, typeParameter */

@@ -1,9 +1,7 @@
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
-// FIR works fine, however it generates another names for the temporary variables, therefore ignore it
-
 fun demo(f: () -> String) = f()
 
-// EXPECT_GENERATED_JS: function=test$lambda expect=deadCodeEliminationTestLambda.js
+// EXPECT_GENERATED_JS: function=test$lambda expect=deadCodeElimination.out.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=test$lambda expect=deadCodeElimination.out.es6.js TARGET_BACKENDS=JS_IR_ES6
 fun test(x: String?): String {
     val r = demo {
         val z = x ?: run {

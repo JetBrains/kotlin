@@ -1,8 +1,7 @@
 // NO_COMMON_FILES
-// EXPECTED_REACHABLE_NODES: 1283
 
 // MODULE: lib
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // FILE: a.kt
 @file:JsModule("foo")
 
@@ -18,7 +17,7 @@ external fun barF(): String
 fun dummyF() = "dummy"
 
 // MODULE: main(lib)
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // FILE: main.kt
 
 fun box(): String {

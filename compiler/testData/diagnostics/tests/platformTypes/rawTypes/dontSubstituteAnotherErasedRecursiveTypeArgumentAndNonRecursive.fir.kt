@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FULL_JDK
 
@@ -10,12 +11,14 @@ class X<B extends I<P, B>, P> {
     }
 }
 
+// FILE: E.java
 class E<T> {
     T getT() {
         return null;
     }
 }
 
+// FILE: I.java
 interface I<P, L> {}
 
 // FILE: test.kt
@@ -24,3 +27,6 @@ fun test() {
     t
     t.id // should be OK
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, localProperty, propertyDeclaration,
+starProjection */

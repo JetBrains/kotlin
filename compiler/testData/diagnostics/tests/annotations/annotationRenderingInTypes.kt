@@ -1,5 +1,6 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER
 
 fun f1(x: String) {}
 fun f2(f: () -> Unit) {}
@@ -23,3 +24,6 @@ var test3: Int = 0
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
 val test4 = f4 <!TYPE_MISMATCH("(Int, Int) -> Unit; (Int) -> Unit")!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH("2; Int, Int")!>single<!> -> }<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, functionDeclaration, functionalType, inProjection,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, setter, typeConstraint, typeParameter */

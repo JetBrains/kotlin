@@ -114,12 +114,7 @@ extend Property {
 }
 
 extend Type {
-  repeated Annotation type_annotation = 100;
   optional bool is_raw = 101;
-}
-
-extend TypeParameter {
-  repeated Annotation type_parameter_annotation = 100;
 }
 
 extend Class {

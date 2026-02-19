@@ -5,42 +5,62 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-fun FirTypeRef.approximateDeclarationType(
-    session: FirSession,
+context(holder: SessionHolder)
+fun FirResolvedTypeRef.approximateDeclarationType(
     containingCallableVisibility: Visibility?,
     isLocal: Boolean,
     isInlineFunction: Boolean = false,
-    stripEnhancedNullability: Boolean = true
-): FirTypeRef {
-    val baseType = (this as? FirResolvedTypeRef)?.type ?: return this
-
-    val configuration = when (isLocal) {
-        true -> TypeApproximatorConfiguration.LocalDeclaration
-        false -> when (shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) {
-            true -> TypeApproximatorConfiguration.PublicDeclaration.ApproximateAnonymousTypes
-            false -> TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes
-        }
-    }
-
-    val preparedType = if (isLocal) baseType else baseType.substituteAlternativesInPublicType(session)
-    val approximatedType = session.typeApproximator.approximateToSuperType(preparedType, configuration) ?: preparedType
+    stripEnhancedNullability: Boolean = true,
+    approximateLocalTypes: Boolean = false,
+): FirResolvedTypeRef {
+    val approximatedType = coneType.approximateDeclarationType(
+        containingCallableVisibility, isLocal, isInlineFunction, approximateLocalTypes
+    )
     return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() }
 }
 
-private fun ConeKotlinType.substituteAlternativesInPublicType(session: FirSession): ConeKotlinType {
-    val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
-        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-            if (type !is ConeIntersectionType) return null
-            val alternativeType = type.alternativeType ?: return null
-            return substituteOrSelf(alternativeType)
+context(holder: SessionHolder)
+fun ConeKotlinType.approximateDeclarationType(
+    containingCallableVisibility: Visibility?,
+    isLocal: Boolean,
+    isInlineFunction: Boolean = false,
+    approximateLocalTypes: Boolean = false,
+): ConeKotlinType {
+    val configuration = when {
+        isLocal -> TypeApproximatorConfiguration.LocalDeclaration
+        shouldApproximateLocalTypesOfNonLocalDeclaration(
+            containingCallableVisibility,
+            isInlineFunction
+        ) -> if (approximateLocalTypes || LanguageFeature.ApproximateLocalTypesInPublicDeclarations.isEnabled()) {
+            TypeApproximatorConfiguration.PublicDeclaration.ApproximateLocalAndAnonymousTypes
+        } else {
+            TypeApproximatorConfiguration.PublicDeclaration.ApproximateAnonymousTypes
         }
+        else -> TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes
     }
-    return substitutor.substituteOrSelf(this)
+
+    var approximatedType = holder.session.typeApproximator.approximateToSuperType(this, configuration) ?: this
+    if (approximatedType.contains { type -> type.attributes.any { !it.keepInInferredDeclarationType } }) {
+        approximatedType = UnnecessaryAttributesRemover(holder.session).substituteOrSelf(approximatedType)
+    }
+    return approximatedType
 }
+
+private class UnnecessaryAttributesRemover(session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        val filteredAttributes = type.attributes.filterNecessaryToKeep()
+        return if (filteredAttributes === type.attributes) null
+        else type.withAttributes(filteredAttributes)
+    }
+}
+

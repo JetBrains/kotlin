@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 sealed class Sealed(val x: Int) {
     object First: Sealed(12)
@@ -8,3 +9,6 @@ sealed class Sealed(val x: Int) {
         object Fourth: Sealed(78)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed */

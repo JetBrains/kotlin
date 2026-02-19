@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTabl
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.sort
@@ -28,7 +29,6 @@ class KlibMetadataSerializerExtension(
     private val languageVersionSettings: LanguageVersionSettings,
     override val metadataVersion: BinaryVersion,
     override val stringTable: StringTableImpl,
-    private val allowErrorTypes: Boolean,
     private val exportKDoc: Boolean,
     private val produceHeaderKlib: Boolean
 ) : KotlinSerializerExtensionBase(KlibMetadataSerializerProtocol) {
@@ -41,7 +41,7 @@ class KlibMetadataSerializerExtension(
                         DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)
                             .filterIsInstance<CallableMemberDescriptor>()
                             .filter { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
-                            .filter { it.visibility.isPublicAPI }
+                            .filter { it.visibility.isPublicAPI || it.visibility.delegate == Visibilities.Internal || classDescriptor.isInlineClass() }
                     )
             }
         else super.customClassMembersProducer
@@ -53,10 +53,6 @@ class KlibMetadataSerializerExtension(
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DYNAMIC_TYPE_DESERIALIZER_ID)
-    }
-
-    override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
-        if (!allowErrorTypes) super.serializeErrorType(type, builder)
     }
 
     override fun serializeClass(

@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
 
 import kotlin.reflect.KFunction0
 
@@ -29,3 +30,6 @@ class A {
         expectFunction1String(<!TYPE_MISMATCH!>::foo<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

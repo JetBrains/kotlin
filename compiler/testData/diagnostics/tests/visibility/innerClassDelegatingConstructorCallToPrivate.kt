@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -8,3 +9,6 @@ class Outer {
         constructor() : this(w)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

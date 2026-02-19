@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
@@ -15,20 +14,15 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-internal val jvmBuiltInsPhase = makeIrFilePhase(
-    ::JvmBuiltInsLowering,
-    name = "JvmBuiltInsLowering",
-    description = "JVM-specific implementations of some built-ins"
-)
-
-class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
-
+internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = object : IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -38,10 +32,10 @@ class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
                 val parentClassName = callee.parent.fqNameForIrSerialization.asString()
                 val functionName = callee.name.asString()
                 if (parentClassName == "kotlin.CompareToKt" && functionName == "compareTo") {
-                    val operandType = expression.getValueArgument(0)!!.type
+                    val operandType = expression.arguments[0]!!.type
                     when {
-                        operandType.isUInt() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedInt)
-                        operandType.isULong() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedLong)
+                        operandType.isUInt() -> return expression.replaceWithCallTo(context.symbols.compareUnsignedInt)
+                        operandType.isULong() -> return expression.replaceWithCallTo(context.symbols.compareUnsignedLong)
                     }
                 }
                 val jvm8Replacement = jvm8builtInReplacements[parentClassName to functionName]
@@ -51,7 +45,7 @@ class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
 
                 return when {
                     callee.isArrayOf() ->
-                        expression.getValueArgument(0)
+                        expression.arguments[0]
                             ?: throw AssertionError("Argument #0 expected: ${expression.dump()}")
 
                     callee.isEmptyArray() ->
@@ -67,14 +61,14 @@ class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
     }
 
     private val jvm8builtInReplacements = mapOf(
-        ("kotlin.UInt" to "compareTo") to context.ir.symbols.compareUnsignedInt,
-        ("kotlin.UInt" to "div") to context.ir.symbols.divideUnsignedInt,
-        ("kotlin.UInt" to "rem") to context.ir.symbols.remainderUnsignedInt,
-        ("kotlin.UInt" to "toString") to context.ir.symbols.toUnsignedStringInt,
-        ("kotlin.ULong" to "compareTo") to context.ir.symbols.compareUnsignedLong,
-        ("kotlin.ULong" to "div") to context.ir.symbols.divideUnsignedLong,
-        ("kotlin.ULong" to "rem") to context.ir.symbols.remainderUnsignedLong,
-        ("kotlin.ULong" to "toString") to context.ir.symbols.toUnsignedStringLong
+        ("kotlin.UInt" to "compareTo") to context.symbols.compareUnsignedInt,
+        ("kotlin.UInt" to "div") to context.symbols.divideUnsignedInt,
+        ("kotlin.UInt" to "rem") to context.symbols.remainderUnsignedInt,
+        ("kotlin.UInt" to "toString") to context.symbols.toUnsignedStringInt,
+        ("kotlin.ULong" to "compareTo") to context.symbols.compareUnsignedLong,
+        ("kotlin.ULong" to "div") to context.symbols.divideUnsignedLong,
+        ("kotlin.ULong" to "rem") to context.symbols.remainderUnsignedLong,
+        ("kotlin.ULong" to "toString") to context.symbols.toUnsignedStringLong
     )
 
     // Originals are so far only instance methods and extensions, while the replacements are
@@ -90,19 +84,8 @@ class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
             intrinsicCallType,
             replacement
         ).also { newCall ->
-            var valueArgumentOffset = 0
-
-            fun tryToAddCoercedArgument(expr: IrExpression): Boolean {
-                val coercedExpr = expr.coerceIfPossible(replacement.owner.valueParameters[valueArgumentOffset].type)
-                    ?: return false
-                newCall.putValueArgument(valueArgumentOffset++, coercedExpr)
-                return true
-            }
-
-            this.extensionReceiver?.let { if (!tryToAddCoercedArgument(it)) return this@replaceWithCallTo }
-            this.dispatchReceiver?.let { if (!tryToAddCoercedArgument(it)) return this@replaceWithCallTo }
-            for (index in 0 until valueArgumentsCount) {
-                if (!tryToAddCoercedArgument(getValueArgument(index)!!)) return this@replaceWithCallTo
+            newCall.arguments.assignFrom(replacement.owner.parameters zip arguments) { (parameter, argument) ->
+                argument!!.coerceIfPossible(parameter.type) ?: return this@replaceWithCallTo
             }
         }
 
@@ -123,10 +106,10 @@ class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
         return if (fromJvmType != toJvmType)
             null
         else
-            IrCallImpl.fromSymbolOwner(startOffset, endOffset, toType, context.ir.symbols.unsafeCoerceIntrinsic).also { call ->
-                call.putTypeArgument(0, type)
-                call.putTypeArgument(1, toType)
-                call.putValueArgument(0, this)
+            IrCallImpl.fromSymbolOwner(startOffset, endOffset, toType, context.symbols.unsafeCoerceIntrinsic).also { call ->
+                call.typeArguments[0] = type
+                call.typeArguments[1] = toType
+                call.arguments[0] = this
             }
     }
 }

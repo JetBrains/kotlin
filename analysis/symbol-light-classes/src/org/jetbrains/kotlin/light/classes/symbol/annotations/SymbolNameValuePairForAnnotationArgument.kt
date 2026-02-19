@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightIdentifier
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -15,14 +14,14 @@ import org.jetbrains.kotlin.light.classes.symbol.toAnnotationMemberValue
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class SymbolNameValuePairForAnnotationArgument(
-    private val constantValue: KtNamedAnnotationValue,
+    private val constantValue: AnnotationArgument,
     parent: PsiAnnotationParameterList,
 ) : KtLightElementBase(parent), PsiNameValuePair {
 
-    override val kotlinOrigin: KtElement? get() = constantValue.expression.sourcePsi
+    override val kotlinOrigin: KtElement? get() = constantValue.value.sourcePsi
 
     private val _value by lazyPub {
-        constantValue.expression.toAnnotationMemberValue(this)
+        constantValue.value.toAnnotationMemberValue(this)
     }
 
     override fun setValue(newValue: PsiAnnotationMemberValue) = cannotModify()

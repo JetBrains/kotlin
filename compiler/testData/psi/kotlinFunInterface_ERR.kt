@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 interface fun Foo
 
 fun private interface Foo

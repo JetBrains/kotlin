@@ -3,8 +3,8 @@ package
 public lateinit val topLevel: kotlin.String
 public lateinit var topLevelMutable: kotlin.String
 
-public abstract class A</*0*/ T : kotlin.Any, /*1*/ V : kotlin.String?> {
-    public constructor A</*0*/ T : kotlin.Any, /*1*/ V : kotlin.String?>(/*0*/ p2: kotlin.String)
+public abstract class A</*0*/ T : kotlin.Any, /*1*/ V : kotlin.String?, /*2*/ Z> {
+    public constructor A</*0*/ T : kotlin.Any, /*1*/ V : kotlin.String?, /*2*/ Z>(/*0*/ p2: kotlin.String)
     public final lateinit val a: kotlin.String
     public final lateinit val b: T
     private final lateinit var c: kotlin.CharSequence
@@ -12,6 +12,7 @@ public abstract class A</*0*/ T : kotlin.Any, /*1*/ V : kotlin.String?> {
     public final lateinit var e: kotlin.String
     public final lateinit var e1: V
     public abstract lateinit var e10: kotlin.String
+    public final lateinit var e1x: AN /* = kotlin.Any? */
     public final lateinit var e2: kotlin.String?
     public final lateinit var e3: kotlin.Int
     public final lateinit var e4: kotlin.Int?
@@ -68,3 +69,5 @@ public interface Intf {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias AN = kotlin.Any?
+

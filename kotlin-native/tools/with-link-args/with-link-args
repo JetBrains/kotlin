@@ -1,0 +1,50 @@
+#!/bin/sh
+set -eou pipefail
+
+# Copied from gradlew:
+# ------
+# Attempt to set APP_HOME
+# Resolve links: $0 may be a link
+PRG="$0"
+# Need this for relative symlinks.
+while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=`dirname "$PRG"`"/$link"
+    fi
+done
+SAVED="`pwd`"
+cd "`dirname \"$PRG\"`/" >/dev/null
+APP_HOME="`pwd -P`"
+cd "$SAVED" >/dev/null
+# ------
+
+linkArgs=()
+foundSeparator=false
+
+for arg in "$@"; do
+  shift
+  if [[ "$arg" == "--" ]]; then
+    foundSeparator=true
+    break
+  else
+    linkArgs+=("$arg")
+  fi
+done
+
+if [[ "$foundSeparator" == "false" ]]; then
+  echo "Format:"
+  echo "$PRG <link args> -- <gradlew> <common args>"
+  echo "Error: \"--\" not found in the arguments"
+  exit 1
+fi
+
+echo "COMPILE TASKS"
+"$@" -I "$APP_HOME/disable-stage.init.gradle.kts" -Pkotlin.disableSecondStage=true
+
+echo
+echo "LINK TASKS AND FURTHER"
+exec "$@" -I "$APP_HOME/disable-stage.init.gradle.kts" -Pkotlin.disableSecondStage=false ${linkArgs[@]+"${linkArgs[@]}"}

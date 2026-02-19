@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-41038
 
 import kotlin.reflect.*
@@ -19,3 +20,6 @@ fun main() {
     funWithCtor(Outer::Nested)
     funWithCtor(Outer::Nested::invoke)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nestedClass, primaryConstructor,
+propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 abstract class KotlinClass : JavaInterface1, JavaInterface2 {
     override fun getSomething(): String = ""
@@ -23,3 +24,6 @@ public interface JavaInterface1 {
 public interface JavaInterface2 {
     void setSomething(int value);
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, javaFunction, javaProperty, javaType, override, stringLiteral */

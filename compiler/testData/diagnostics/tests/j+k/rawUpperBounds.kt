@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -17,3 +18,5 @@ fun foo(i: IStubFileElementType<*>) {
 }
 
 fun bar(w: StubElement<CharSequence>) {}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, starProjection */

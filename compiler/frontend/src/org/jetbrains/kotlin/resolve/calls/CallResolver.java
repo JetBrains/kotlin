@@ -254,7 +254,7 @@ public class CallResolver {
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveCollectionLiteralCallWithGivenDescriptor(
+    public OverloadResolutionResults<FunctionDescriptor> resolveCollectionLiteralWithGivenDescriptor(
             @NotNull ExpressionTypingContext context,
             @NotNull KtCollectionLiteralExpression expression,
             @NotNull Call call,

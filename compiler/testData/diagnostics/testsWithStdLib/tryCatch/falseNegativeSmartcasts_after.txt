@@ -1,3 +1,0 @@
-package
-
-public fun test1(/*0*/ s1: kotlin.String?): kotlin.Unit

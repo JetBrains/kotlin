@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-880 Overload resolution ambiguity
 
@@ -15,3 +16,5 @@ public open class T() : A(), I {
         test() // Test no "Overload resolution ambiguity" is here
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, primaryConstructor */

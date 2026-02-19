@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.assignment.plugin.k2.diagnostics.FirErrorsAssignment
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -22,28 +23,29 @@ import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
-object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker() {
+object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         if (!expression.isOverloadAssignCallCandidate()) return
 
         val calleeReference = expression.calleeReference
         if (calleeReference.isError()) {
             if (expression.isOverloadedAssignCallError(context.session, calleeReference.diagnostic)) {
-                reporter.reportOn(expression.source, NO_APPLICABLE_ASSIGN_METHOD, context)
+                reporter.reportOn(expression.source, NO_APPLICABLE_ASSIGN_METHOD)
             }
         } else if (expression.isOverloadedAssignCall(context.session) && !expression.isReturnTypeUnit()) {
-            reporter.reportOn(expression.source, CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT, context)
+            reporter.reportOn(expression.source, CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT)
         }
     }
 
     private fun FirFunctionCall.isOverloadAssignCallCandidate() =
-        arguments.size == 1 && source?.kind == KtFakeSourceElementKind.DesugaredCompoundAssignment
+        arguments.size == 1 && source?.kind == KtFakeSourceElementKind.AssignmentPluginAltered
 
     private fun FirFunctionCall.isOverloadedAssignCallError(session: FirSession, diagnostic: ConeDiagnostic): Boolean {
         val functionName = when (diagnostic) {
@@ -59,7 +61,7 @@ object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker() {
         calleeReference.name == ASSIGN_METHOD && isAnnotated(session)
 
     private fun FirFunctionCall.isAnnotated(session: FirSession): Boolean =
-        session.annotationMatchingService.isAnnotated(explicitReceiver?.coneTypeOrNull?.toRegularClassSymbol(session))
+        session.annotationMatchingService.isAnnotated(explicitReceiver?.resolvedType?.toRegularClassSymbol(session))
 
     private fun FirFunctionCall.isReturnTypeUnit() = toResolvedCallableSymbol()?.resolvedReturnType?.isUnit ?: false
 }

@@ -1,7 +1,7 @@
 package
 
-public fun </*0*/ T : kotlin.Number?, /*1*/ S : T> Expression<T>.rem(/*0*/ t: S): ModOp<T, S>
-public fun </*0*/ T, /*1*/ S : T?> Expression<in S>.wrap(/*0*/ value: T): QueryParameter<T>
+public fun </*0*/ M : kotlin.Number?, /*1*/ Z : M> Expression<M>.rem(/*0*/ t: Z): ModOp<M, Z>
+public fun </*0*/ K, /*1*/ R : K?> Expression<in R>.wrap(/*0*/ value: K): QueryParameter<K>
 
 public open class Expression</*0*/ K> {
     public constructor Expression</*0*/ K>()
@@ -25,3 +25,4 @@ public final class QueryParameter</*0*/ A> : Expression<A> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

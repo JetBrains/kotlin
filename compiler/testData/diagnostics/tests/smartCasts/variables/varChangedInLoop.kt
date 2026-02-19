@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 
 public fun foo() {
@@ -9,3 +10,6 @@ public fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, incrementDecrementExpression,
+integerLiteral, isExpression, localProperty, propertyDeclaration, stringLiteral, whileLoop */

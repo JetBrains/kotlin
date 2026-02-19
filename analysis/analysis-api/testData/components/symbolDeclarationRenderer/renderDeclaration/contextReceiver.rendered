@@ -10,28 +10,28 @@ class Context2Impl<A>(value: A) : Context2<A> {
   val value: A
 }
 
-context(Int, String)
+context(Int@Int, String@String)
 class A {
   constructor(int: Int)
 }
 
-context(Context1, c2@Context2<String>)
+context(Context1@Context1, c2@Context2<String>)
 class B {
   override fun toString(): String
 }
 
-context(Context2<A>)
+context(Context2@Context2<A>)
 class C<A> {
   val a: A
     get()
 }
 
-context(Context1)
+context(Context1@Context1)
 @Deprecated(message = "Use `B` instead.")
 class D
 
 context(b@B, `fun`@A)
 fun foo()
 
-context(Context2<C<String>>)
+context(Context2@Context2<C<String>>)
 fun bar(): C<String>

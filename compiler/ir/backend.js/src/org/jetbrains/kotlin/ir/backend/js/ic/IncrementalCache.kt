@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 
+/**
+ * This class manages the incremental cache for a specific klib.
+ */
 internal class IncrementalCache(private val library: KotlinLibraryHeader, val cacheDir: File) {
     companion object {
         private const val CACHE_HEADER = "ic.header.bin"
@@ -86,8 +89,24 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
     private fun KotlinSourceFile.getCacheFile(suffix: String): File {
         val pathHash = path.cityHash64String()
-        return File(cacheDir, "${File(path).name}.$pathHash.$suffix")
+        return File(cacheDir, "${File(path).name}.$id.$pathHash.$suffix")
     }
+
+    fun buildCacheArtifact(): IncrementalCacheArtifact {
+        val klibSrcFiles = if (cacheHeaderShouldBeUpdated) {
+            val newCacheHeader = CacheHeader(library)
+            newCacheHeader.sourceFileFingerprints.keys
+        } else {
+            cacheHeaderFromDisk?.sourceFileFingerprints?.keys ?: notFoundIcError("source file fingerprints", library.libraryFile)
+        }
+
+        val fileArtifacts = klibSrcFiles.map { srcFile ->
+            val binaryAstFile = srcFile.getCacheFile(BINARY_AST_SUFFIX)
+            SourceFileCacheArtifact.DoNotChangeMetadata(srcFile, binaryAstFile)
+        }
+        return IncrementalCacheArtifact(cacheDir, removedSrcFiles.isNotEmpty(), fileArtifacts, library.jsOutputName)
+    }
+
 
     fun buildAndCommitCacheArtifact(
         signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>,
@@ -220,6 +239,17 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         }
     }
 
+    /**
+     * Fetches cached data for a specific [srcFile].
+     *
+     * @param loadSignatures
+     *  If false, it loads only file names for the (direct and inverse) dependencies.
+     *  If true, it also loads the declaration signatures [IdSignature] and declaration hashes [ICHash] for every dependency.
+     *
+     * Note that if the file is modified or removed, the signatures cannot be loaded, and [loadSignatures] must be false.
+     * This is because [IdSignatureSerialization] uses declaration indexes from the klib for serialization and deserialization.
+     * If the file is modified, the indexes can be modified (for example, shifted) too, leading to incorrect deserialization.
+     */
     private fun fetchSourceFileMetadata(srcFile: KotlinSourceFile, loadSignatures: Boolean) =
         kotlinLibrarySourceFileMetadata.getOrPut(srcFile) {
             val deserializer = idSignatureSerialization.getIdSignatureDeserializer(srcFile)

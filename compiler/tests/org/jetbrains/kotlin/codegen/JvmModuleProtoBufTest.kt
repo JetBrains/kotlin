@@ -1,30 +1,23 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
-import org.jetbrains.kotlin.resolve.jvm.JvmCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.JvmCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -34,7 +27,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         relativeDirectory: String,
         compileWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
         loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
-        extraOptions: List<String> = emptyList()
+        extraOptions: List<String> = emptyList(),
+        messageRenderer: MessageRenderer? = null,
     ) {
         val directory = KtTestUtil.getTestDataPathBase() + relativeDirectory
         val tmpdir = KtTestUtil.tmpDir(this::class.simpleName)
@@ -43,10 +37,11 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(), listOf(
                 directory,
-                "-d", tmpdir.path,
-                "-module-name", moduleName,
-                "-language-version", compileWith.versionString
-            ) + extraOptions
+                K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                K2JVMCompilerArguments::moduleName.cliArgument, moduleName,
+                CommonCompilerArguments::languageVersion.cliArgument, compileWith.versionString
+            ) + extraOptions,
+            messageRenderer
         )
 
         val mapping = ModuleMapping.loadModuleMapping(
@@ -74,7 +69,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(directory, "module-proto.txt"), result)
+        TestDataAssertions.assertEqualsToFile(File(directory, "module-proto.txt"), result)
     }
 
     fun testSimple() {

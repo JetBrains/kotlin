@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1
 // FILE: a.kt
 package p
@@ -32,3 +33,6 @@ fun test(b: B?) {
         <!DEBUG_INFO_SMARTCAST!>b<!><!UNNECESSARY_SAFE_CALL!>?.<!>foo(1, "")
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression,
+nullableType, override, safeCall, smartcast, stringLiteral */

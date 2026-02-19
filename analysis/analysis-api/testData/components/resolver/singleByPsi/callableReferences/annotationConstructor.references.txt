@@ -1,0 +1,7 @@
+KtCallExpression(106,121): 'consume(::Anno)'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

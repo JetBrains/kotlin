@@ -1,12 +1,13 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val flag = true
 
-val a: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>l@ {
-    if (flag) return@l 4
-}<!>
+val a: () -> Int = l@ {
+    <!RETURN_TYPE_MISMATCH!>if (flag) return@l 4<!>
+}
 
-val b: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>l@ {
-    if (flag) return@l 4
-}<!>
+val b: () -> Unit = l@ {
+    if (flag) return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>4<!>
+}
 
 val c: () -> Any = l@ {
     if (flag) return@l 4
@@ -17,6 +18,8 @@ val d: () -> Int = l@ {
     5
 }
 
-val e: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>l@ {
-    if (flag) 4
-}<!>
+val e: () -> Int = l@ {
+    <!RETURN_TYPE_MISMATCH!>if (flag) 4<!>
+}
+
+/* GENERATED_FIR_TAGS: functionalType, ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

@@ -1,6 +1,6 @@
 public abstract interface DeeplySubstitutedClassParameter : R|kotlin/Any| {
-    public abstract interface Middle<E : R|kotlin/Any!|> : R|test/DeeplySubstitutedClassParameter.Super<ft<E & Any, E?>>| {
-        public abstract fun foo(): R|ft<E & Any, E?>|
+    public abstract interface Middle<E : R|kotlin/Any!|> : R|test/DeeplySubstitutedClassParameter.Super<E!>| {
+        public abstract fun foo(): R|E!|
 
     }
     public abstract interface Sub : R|test/DeeplySubstitutedClassParameter.Middle<kotlin/String!>| {
@@ -8,7 +8,7 @@ public abstract interface DeeplySubstitutedClassParameter : R|kotlin/Any| {
 
     }
     public abstract interface Super<T : R|kotlin/Any!|> : R|kotlin/Any| {
-        public abstract fun foo(): R|ft<T & Any, T?>|
+        public abstract fun foo(): R|T!|
 
         public abstract fun dummy(): R|kotlin/Unit|
 

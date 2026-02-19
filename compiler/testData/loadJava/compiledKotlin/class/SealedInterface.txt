@@ -1,0 +1,16 @@
+package test
+
+public final class Inheritor2 : test.SealedInterface {
+    /*primary*/ public constructor Inheritor2()
+}
+
+public final class Inheritor3 : test.SealedInterface {
+    /*primary*/ public constructor Inheritor3()
+}
+
+public sealed interface SealedInterface {
+
+    public final class Inheritor1 : test.SealedInterface {
+        /*primary*/ public constructor Inheritor1()
+    }
+}

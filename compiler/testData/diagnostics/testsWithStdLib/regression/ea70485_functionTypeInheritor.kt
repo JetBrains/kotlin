@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class O : Function2<Int, String, Unit> {
     override fun invoke(p1: Int, p2: String) {
     }
@@ -15,3 +16,6 @@ fun test() {
 fun test2() {
     val f: Ext = <!TYPE_MISMATCH!>{}<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, operator, override, propertyDeclaration, typeWithExtension */

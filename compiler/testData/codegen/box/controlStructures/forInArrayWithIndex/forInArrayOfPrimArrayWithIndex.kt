@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun box(): String {
@@ -5,7 +6,7 @@ fun box(): String {
     val arr = Array(4) { intArrayOf(it) }
 
     var s = 0
-    for ((i, iarr) in arr.withIndex()) {
+    for ([i, iarr] in arr.withIndex()) {
         s += i*iarr[0]
     }
 

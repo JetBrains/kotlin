@@ -9,43 +9,39 @@ repositories {
 
 kotlin {
     jvm()
-    ios()
-    watchos()
-    tvos()
+    iosArm64()
+    iosX64()
     iosSimulatorArm64()
-    tvosSimulatorArm64()
+    watchosArm32()
+    watchosArm64()
+    watchosX64()
     watchosSimulatorArm64()
+    tvosArm64()
+    tvosX64()
+    tvosSimulatorArm64()
+
     macosX64 {
         binaries.executable {
             entryPoint = "main"
         }
     }
+
     macosArm64 {
         binaries.executable {
             entryPoint = "main"
         }
     }
 
-    val commonTest by sourceSets.getting
-    val jvmTest by sourceSets.getting
-    val macosMain by sourceSets.creating
-    val iosMain by sourceSets.getting
-    val tvosMain by sourceSets.getting
-    val watchosMain by sourceSets.getting
+    sourceSets {
+        commonTest.dependencies {
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
+        }
 
-    val macosX64Main by sourceSets.getting { dependsOn(macosMain) }
-    val macosArm64Main by sourceSets.getting { dependsOn(macosMain) }
-    val iosSimulatorArm64Main by sourceSets.getting { dependsOn(iosMain) }
-    val tvosSimulatorArm64Main by sourceSets.getting { dependsOn(tvosMain) }
-    val watchosSimulatorArm64Main by sourceSets.getting { dependsOn(watchosMain) }
+        jvmTest.dependencies {
+            implementation(kotlin("test-junit"))
+        }
 
-    commonTest.dependencies {
-        implementation(kotlin("test-common"))
-        implementation(kotlin("test-annotations-common"))
-    }
-
-    jvmTest.dependencies {
-        implementation(kotlin("test-junit"))
     }
 
     tasks.withType<AbstractTestTask>().configureEach {

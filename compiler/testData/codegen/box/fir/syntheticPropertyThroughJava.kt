@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61370
+// LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
 // ISSUE: KT-59550
-
 // FILE: Intermediate.java
 public class Intermediate extends Base {
     public Intermediate(String foo) {

@@ -1,8 +1,6 @@
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE, WASM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect fun func(): String

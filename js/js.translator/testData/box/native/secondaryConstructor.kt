@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: WASM
-// EXPECTED_REACHABLE_NODES: 1285
+// IGNORE_BACKEND: WASM_JS
 package foo
 
 external class A {

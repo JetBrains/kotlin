@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
-
 abstract class AbstractToolConfig(konanHome: String, userProvidedTargetName: String?, propertyOverrides: Map<String, String>, konanDataDir: String? = null) {
     private val distribution = Distribution(konanHome, propertyOverrides = propertyOverrides, konanDataDir = konanDataDir)
     private val platformManager = PlatformManager(distribution)
@@ -15,8 +13,6 @@ abstract class AbstractToolConfig(konanHome: String, userProvidedTargetName: Str
     val target = targetManager.target
 
     protected val platform = platformManager.platform(target)
-
-    val substitutions = defaultTargetSubstitutions(target)
 
     fun downloadDependencies() = platform.downloadDependencies()
 

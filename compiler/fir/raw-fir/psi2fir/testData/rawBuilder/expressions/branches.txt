@@ -36,7 +36,7 @@ FILE: branches.kt
 
     }
     public? final? fun grade(g: Int): String {
-        ^grade when (g#) {
+        ^grade when (lval <when-subject>: <implicit> = g#) {
             ==($subj$, IntegerLiteral(6)) || ==($subj$, IntegerLiteral(7)) ->  {
                 String(Outstanding)
             }

@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-59355
 
 // MODULE: common
@@ -17,8 +19,8 @@ internal expect open class Other {
 
 // MODULE: platform-jvm()()(common)
 public actual open class Some { // should be allowed
-    public class ProtectedNested  // should be allowed
-    public class InternalNested // should be allowed
+    public class <!ACTUAL_MISSING!>ProtectedNested<!>  // should be allowed
+    public class <!ACTUAL_MISSING!>InternalNested<!> // should be allowed
 
     public actual fun publicFun() {} // should be allowed
     public actual fun internalFun() {} // should be allowed
@@ -32,3 +34,4 @@ public open class PlatformOther { // should be allowed
 
 internal actual typealias Other = PlatformOther // should be allowed
 
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, typeAliasDeclaration */

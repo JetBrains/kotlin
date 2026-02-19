@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.*;
 
-/*package*/ interface ExpressionTypingInternals extends ExpressionTypingFacade {
+public interface ExpressionTypingInternals extends ExpressionTypingFacade {
     @NotNull
     KotlinTypeInfo checkInExpression(
             @NotNull KtElement callElement,

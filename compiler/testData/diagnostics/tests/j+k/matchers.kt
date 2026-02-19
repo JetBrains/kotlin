@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Assert.java
 
@@ -17,3 +18,5 @@ public class Matcher<T> {
 fun test(x: List<String>) {
     Assert.assertThat(x, Matcher.hasItem("abc"))
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, starProjection, stringLiteral */

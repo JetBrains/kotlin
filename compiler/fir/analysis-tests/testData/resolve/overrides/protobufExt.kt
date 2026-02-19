@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Ext<M : Message<M>, T>
 interface Message<M : Message<M>> {
     fun <T> ext(e: Ext<M, T>): T
@@ -12,3 +13,6 @@ fun foo(m: MyMessage, e: MyExt) {
     m.ext(e)
     m.extF(e)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+nullableType, typeConstraint, typeParameter */

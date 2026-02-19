@@ -16,9 +16,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.*
@@ -32,6 +34,7 @@ import javax.inject.Inject
 internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
+    providerFactory: ProviderFactory,
     jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
 ) : KotlinJavaToolchain {
 
@@ -60,8 +63,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 .map { jvm ->
                     jvm.javaVersion
                         ?: throw GradleException(
-                            "Kotlin could not get java version for the JDK installation: " +
-                                    jvm.javaHome?.let { "'$it' " }.orEmpty()
+                            "Kotlin could not get java version for the JDK installation: '${jvm.javaHome}'"
                         )
                 }
         )
@@ -76,8 +78,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                     objects.property<File>(
                         jvm.javaExecutable
                             ?: throw GradleException(
-                                "Kotlin could not find 'java' executable in the JDK installation: " +
-                                        jvm.javaHome?.let { "'$it' " }.orEmpty()
+                                "Kotlin could not find 'java' executable in the JDK installation: '${jvm.javaHome}'"
                             )
                     )
                 )
@@ -86,13 +87,14 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         .chainedFinalizeValueOnRead()
 
     private fun getToolsJarFromJvm(
+        providerFactory: ProviderFactory,
         jvmProvider: Provider<Jvm>,
         javaVersionProvider: Provider<JavaVersion>
     ): Provider<File?> {
         return objects
             .propertyWithConvention(
                 javaVersionProvider.flatMap { javaVersion ->
-                    jvmProvider.map { jvm ->
+                    jvmProvider.mapOrNull(providerFactory) { jvm ->
                         jvm.toolsJar.also {
                             if (it == null && javaVersion < JavaVersion.VERSION_1_9) {
                                 throw GradleException(
@@ -107,10 +109,11 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     }
 
     @get:Internal
-    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(buildJvm, javaVersion)
+    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providerFactory, buildJvm, javaVersion)
 
     @get:Internal
     internal val currentJvmJdkToolsJar: Provider<File?> = getToolsJarFromJvm(
+        providerFactory,
         gradleJvm,
         gradleJvm.map {
             // Current JVM should always have java version
@@ -152,7 +155,22 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
             providedJvm.set(
                 objects.providerWithLazyConvention {
-                    Jvm.discovered(jdkHomeLocation, null, jdkVersion)
+                    if (GradleVersion.current() < GradleVersion.version("8.8")) {
+                        // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
+                        @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        Jvm.discovered(
+                            jdkHomeLocation,
+                            null,
+                            jdkVersion
+                        )
+                    } else {
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        Jvm.discovered(
+                            jdkHomeLocation,
+                            null,
+                            jdkVersion.majorVersion.toInt()
+                        )
+                    }
                 }
             )
 
@@ -211,7 +229,8 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 else -> javaVersion.toString()
             }
 
-            // Update to the latest JDK LTS once it is released and Kotlin has JVM target with this version
+            // Update to the latest JDK LTS once it is released, and Kotlin has a JVM target with this version,
+            // plus the minimal supported Gradle version itself supports it
             return if (javaVersion > JavaVersion.VERSION_17) {
                 try {
                     JvmTarget.fromTarget(normalizedVersion)
@@ -254,12 +273,22 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
         private fun mapToJvm(javaLauncher: JavaLauncher): Jvm {
             val metadata = javaLauncher.metadata
-            val javaVersion = JavaVersion.toVersion(metadata.languageVersion.asInt())
-            return Jvm.discovered(
-                metadata.installationPath.asFile,
-                null,
-                javaVersion
-            )
+            return if (GradleVersion.current() < GradleVersion.version("8.8")) {
+                @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
+                Jvm.discovered(
+                    metadata.installationPath.asFile,
+                    null,
+                    JavaVersion.toVersion(metadata.languageVersion.asInt())
+                )
+            } else {
+                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                Jvm.discovered(
+                    metadata.installationPath.asFile,
+                    null,
+                    metadata.languageVersion.asInt()
+                )
+            }
         }
     }
 }

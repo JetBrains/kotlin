@@ -49,13 +49,14 @@ public final class DeprecatedPropertyKt {
 public final class I$DefaultImpls {
     // source: 'deprecatedProperty.kt'
     public synthetic deprecated static @kotlin.Deprecated(message="") method getId$annotations(p0: java.lang.Object): void
-    public deprecated static method getId(@org.jetbrains.annotations.NotNull p0: I, p1: java.lang.Object): java.lang.Object
+    public deprecated static @java.lang.Deprecated method getId(@org.jetbrains.annotations.NotNull p0: I, p1: java.lang.Object): java.lang.Object
     public final inner class I$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I {
     // source: 'deprecatedProperty.kt'
-    public deprecated abstract method getId(p0: java.lang.Object): java.lang.Object
+    public synthetic static method access$getId$jd(p0: I, p1: java.lang.Object): java.lang.Object
+    public deprecated method getId(p0: java.lang.Object): java.lang.Object
     public final inner class I$DefaultImpls
 }

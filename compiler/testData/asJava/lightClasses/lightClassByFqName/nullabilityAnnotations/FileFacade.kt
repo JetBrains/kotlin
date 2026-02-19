@@ -1,4 +1,5 @@
 // FileFacadeKt
+// LIBRARY_PLATFORMS: JVM
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
@@ -34,5 +35,3 @@ var nullableVarWithGetSet: String?
 private val privateNn: String = { "" }()
 private val privateN: String? = { "" }()
 private fun privateFun(a: String, b: String?): String? = null
-
-// FIR_COMPARISON

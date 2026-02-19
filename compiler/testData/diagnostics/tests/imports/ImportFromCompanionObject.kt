@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package a
 
@@ -136,3 +137,7 @@ fun testMembersFromSupertypes() {
 
     own
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,
+getter, integerLiteral, interfaceDeclaration, localProperty, nestedClass, nullableType, objectDeclaration,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, setter, stringLiteral, typeParameter */

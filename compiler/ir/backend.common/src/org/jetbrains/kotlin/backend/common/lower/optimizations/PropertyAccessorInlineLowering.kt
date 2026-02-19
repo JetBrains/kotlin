@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isTopLevel
+import org.jetbrains.kotlin.ir.util.isTrivialGetter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -107,7 +108,7 @@ open class PropertyAccessorInlineLowering(
         }
 
         private fun tryInlineSimpleGetter(call: IrCall, callee: IrSimpleFunction, backingField: IrField): IrExpression? {
-            if (!isSimpleGetter(callee, backingField)) return null
+            if (!callee.isTrivialGetter) return null
 
             val builder = context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)
 
@@ -122,30 +123,11 @@ open class PropertyAccessorInlineLowering(
                 getField
         }
 
-        private fun isSimpleGetter(callee: IrSimpleFunction, backingField: IrField): Boolean {
-            val body = callee.body?.let { it as IrBlockBody } ?: return false
-
-            val stmt = body.statements.singleOrNull() ?: return false
-            val returnStmt = stmt as? IrReturn ?: return false
-            val getFieldStmt = returnStmt.value as? IrGetField ?: return false
-            if (getFieldStmt.symbol !== backingField.symbol) return false
-            val receiver = getFieldStmt.receiver
-
-            if (receiver == null) {
-                assert(callee.dispatchReceiverParameter == null)
-                return true
-            }
-
-            if (receiver is IrGetValue) return receiver.symbol.owner === callee.dispatchReceiverParameter
-
-            return false
-        }
-
         private fun tryInlineSimpleSetter(call: IrCall, callee: IrSimpleFunction, backingField: IrField): IrExpression? {
             if (!isSimpleSetter(callee, backingField)) return null
 
             return call.run {
-                val value = getValueArgument(0) ?: error("Setter should have a value argument")
+                val value = arguments.last() ?: error("Setter should have a value argument")
                 IrSetFieldImpl(startOffset, endOffset, backingField.symbol, call.dispatchReceiver, value, unitType, origin)
             }
         }
@@ -165,7 +147,7 @@ open class PropertyAccessorInlineLowering(
 
             // TODO: support constant setters
             val setValue = setFieldStmt.value as? IrGetValue ?: return false
-            val valueSymbol = callee.valueParameters.single().symbol
+            val valueSymbol = callee.parameters.single { it.kind == IrParameterKind.Regular }.symbol
             if (setValue.symbol !== valueSymbol) return false
 
             val receiver = setFieldStmt.receiver

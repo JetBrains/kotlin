@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Base(val x: String) {
     fun foo() = bar()
 
@@ -9,3 +10,5 @@ class Derived(x: String): Base(x) {
     val y = foo()
     val z = x
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

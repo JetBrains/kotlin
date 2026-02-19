@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Inheritor.java
 
 public class Inheritor extends Second {
@@ -19,3 +20,6 @@ class Tester : Inheritor(), First {
         foo("abc", 456)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+interfaceDeclaration, javaFunction, javaType, stringLiteral */

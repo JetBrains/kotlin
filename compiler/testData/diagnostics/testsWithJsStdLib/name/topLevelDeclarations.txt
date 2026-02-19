@@ -1,0 +1,196 @@
+package
+
+package ClashJsNamedFunctionWithOtherFunction {
+    @kotlin.js.JsName(name = "test") public fun noTest(/*0*/ x: kotlin.String): kotlin.String
+    public fun test(): kotlin.Unit
+}
+
+package ClashJsNamedFunctionWithOtherProperty {
+    public val test: kotlin.Int = 1
+    @kotlin.js.JsName(name = "test") public fun noTest(/*0*/ x: kotlin.String): kotlin.String
+}
+
+package ClashJsNamedPropertyGetterWithOtherFunction {
+    @get:kotlin.js.JsName(name = "test") public val notTest: kotlin.Int
+    public fun test(): kotlin.Unit
+}
+
+package ClashJsNamedPropertySetterWithOtherFunction {
+    @get:kotlin.js.JsName(name = "getterTest") @set:kotlin.js.JsName(name = "test") public var notTest: kotlin.Int
+    public fun </*0*/ T> ignore(/*0*/ x: T): T
+    public fun test(): kotlin.Unit
+}
+
+package ClashJsNamedPropertyWithOtherFunction {
+    @kotlin.js.JsName(name = "test") public val notTest: kotlin.Int = 1
+    public fun test(): kotlin.Unit
+}
+
+package DeclarationOverloads {
+    public val test: kotlin.Int = 0
+    public val kotlin.Int.test: kotlin.Int
+    public var kotlin.String.test: kotlin.String
+    public fun test(): kotlin.Unit
+    @kotlin.Suppress(names = {"NOTHING_TO_INLINE"}) public inline fun </*0*/ reified T> test(): kotlin.Unit
+    public fun test(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Array<out kotlin.Any>
+    public fun test(/*0*/ x: kotlin.Int): kotlin.Int
+    public fun test(/*0*/ x: kotlin.String): kotlin.String
+    public fun test(/*0*/ x: kotlin.String?): kotlin.String?
+    public fun kotlin.Int.test(): kotlin.Unit
+    public fun kotlin.Int.test(/*0*/ x: kotlin.Int): kotlin.Int
+    public fun kotlin.String.test(): kotlin.Unit
+    public fun kotlin.String.test(/*0*/ x: kotlin.String): kotlin.String
+}
+
+package FunctionAndClassWithJsNameClash {
+    public fun test(): kotlin.Unit
+
+    @kotlin.js.JsName(name = "test") public final class NotTest {
+        public constructor NotTest()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionAndInterfaceClash {
+    public fun test(): kotlin.Unit
+
+    public interface test {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionAndInterfaceWithJsNameClash {
+    public fun test(): kotlin.Unit
+
+    @kotlin.js.JsName(name = "test") public interface NotTest {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionAndObjectWithJsNameClash {
+    public fun test(): kotlin.Unit
+
+    @kotlin.js.JsName(name = "test") public object NotTest {
+        private constructor NotTest()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionWithJsNameAndClassClash {
+    @kotlin.js.JsName(name = "test") public fun notTest(/*0*/ x: kotlin.Int): kotlin.Int
+
+    public final class test {
+        public constructor test()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionWithJsNameAndExternalDeclarationsNoClash {
+    @kotlin.js.JsName(name = "test") public external val NotTest3: kotlin.Int
+    public external val test: kotlin.Int
+    @kotlin.js.JsName(name = "test") public external fun NotTest2(/*0*/ x: kotlin.Int): kotlin.Int
+    @kotlin.js.JsName(name = "test") public fun notTest1(/*0*/ x: kotlin.Int): kotlin.Int
+    public external fun test(): kotlin.Int
+    public external fun test(/*0*/ x: kotlin.String): kotlin.Int
+
+    @kotlin.js.JsName(name = "test") public external object NotTest10 {
+        private constructor NotTest10()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsName(name = "test") public external interface NotTest4 {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsName(name = "test") public final external class NotTest5 {
+        public constructor NotTest5()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsName(name = "test") public abstract external class NotTest6 {
+        public constructor NotTest6()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsName(name = "test") public open external class NotTest7 {
+        public constructor NotTest7()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsName(name = "test") private final external class NotTest8 {
+        public constructor NotTest8()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsName(name = "test") internal final external class NotTest9 {
+        public constructor NotTest9()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionWithJsNameAndInterfaceClash {
+    @kotlin.js.JsName(name = "test") public fun notTest(/*0*/ x: kotlin.Int): kotlin.Int
+
+    public interface test {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionWithJsNameAndObjectClash {
+    @kotlin.js.JsName(name = "test") public fun notTest(/*0*/ x: kotlin.Int): kotlin.Int
+
+    public object test {
+        private constructor test()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package FunctionWithParamsAndInterfaceNoClash {
+    @kotlin.Suppress(names = {"NOTHING_TO_INLINE"}) public inline fun </*0*/ reified T> test(): kotlin.Unit
+    public fun test(/*0*/ x: kotlin.Int): kotlin.Int
+
+    public interface test {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package PropertyWithJsNameAndInterfaceClash {
+    @kotlin.js.JsName(name = "test") public val notTest: kotlin.Int = 1
+
+    public interface test {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

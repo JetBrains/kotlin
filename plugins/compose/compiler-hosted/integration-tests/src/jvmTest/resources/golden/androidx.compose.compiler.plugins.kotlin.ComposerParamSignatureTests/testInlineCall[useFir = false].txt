@@ -1,0 +1,29 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable inline fun Example(content: @Composable () -> Unit) {
+    content()
+}
+
+@Composable fun Test() {
+    Example {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Example(Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+  public final static Test(Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Test%2 null null
+}
+final class TestKt%Test%2 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %%changed
+  OUTERCLASS TestKt Test (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Test%2 null null
+}

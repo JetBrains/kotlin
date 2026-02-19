@@ -1,0 +1,13 @@
+KtNameReferenceExpression(87,100): 'mutableListOf'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin.collections) inline fun <T> mutableListOf(): kotlin.collections.MutableList<T>
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

@@ -8,29 +8,116 @@ public interface FileEntryOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required string name = 1;</code>
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_old` must be present.
+   * </pre>
+   */
+  boolean hasNameOld();
+  /**
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_old` must be present.
+   * </pre>
+   */
+  java.lang.String getNameOld();
+  /**
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_old` must be present.
+   * </pre>
+   */
+  org.jetbrains.kotlin.protobuf.ByteString
+      getNameOldBytes();
+
+  /**
+   * <code>optional int32 name = 4;</code>
+   *
+   * <pre>
+   * After 2.3.0 the string is stored in a string table with an index pointing to it,
+   * </pre>
    */
   boolean hasName();
   /**
-   * <code>required string name = 1;</code>
+   * <code>optional int32 name = 4;</code>
+   *
+   * <pre>
+   * After 2.3.0 the string is stored in a string table with an index pointing to it,
+   * </pre>
    */
-  java.lang.String getName();
-  /**
-   * <code>required string name = 1;</code>
-   */
-  org.jetbrains.kotlin.protobuf.ByteString
-      getNameBytes();
+  int getName();
 
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * the same way as in all other messages.
+   * </pre>
    */
   java.util.List<java.lang.Integer> getLineStartOffsetList();
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * the same way as in all other messages.
+   * </pre>
    */
   int getLineStartOffsetCount();
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * the same way as in all other messages.
+   * </pre>
    */
   int getLineStartOffset(int index);
+
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  java.util.List<java.lang.Integer> getLineStartOffsetDeltaList();
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  int getLineStartOffsetDeltaCount();
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  int getLineStartOffsetDelta(int index);
+
+  /**
+   * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   *
+   * <pre>
+   * subsequent entries are offsets relative to the previous line (deltas).
+   * Effectively, each entry encodes the length of the previous line.
+   * This is a size optimization, see KT-80866.
+   * </pre>
+   */
+  boolean hasFirstRelevantLineIndex();
+  /**
+   * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   *
+   * <pre>
+   * subsequent entries are offsets relative to the previous line (deltas).
+   * Effectively, each entry encodes the length of the previous line.
+   * This is a size optimization, see KT-80866.
+   * </pre>
+   */
+  int getFirstRelevantLineIndex();
 }

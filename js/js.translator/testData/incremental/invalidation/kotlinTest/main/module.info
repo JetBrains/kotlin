@@ -1,0 +1,16 @@
+STEP 0:
+    added file: m.kt, common.kt
+STEP 1:
+    modifications:
+        U : test1.1.kt -> test1.kt
+    added file: test1.kt
+    updated exports: common.kt
+STEP 2:
+    modifications:
+        U : test1.2.kt -> test1.kt
+    modified ir: test1.kt
+    updated exports: common.kt
+STEP 3:
+    modifications:
+        U : test2.3.kt -> test2.kt
+    added file: test2.kt

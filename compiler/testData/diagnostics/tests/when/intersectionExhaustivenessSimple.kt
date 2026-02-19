@@ -1,6 +1,7 @@
-// SKIP_TXT
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// SKIP_TXT
+// CHECK_TYPE
 
 sealed class KtClassifierSymbol
 
@@ -19,3 +20,7 @@ fun foo(symbol: KtClassifierSymbol) {
 
     x checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, sealed, smartcast, stringLiteral, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

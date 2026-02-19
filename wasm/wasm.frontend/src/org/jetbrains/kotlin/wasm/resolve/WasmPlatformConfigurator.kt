@@ -23,15 +23,15 @@ import org.jetbrains.kotlin.wasm.resolve.diagnostics.*
 object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-        JsExternalChecker, WasmExternalInheritanceChecker,
+        WasmExternalInheritanceChecker,
         JsRuntimeAnnotationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker,
         WasmExternalDeclarationChecker,
         WasmImportAnnotationChecker,
         WasmJsFunAnnotationChecker,
         WasmJsInteropTypesChecker,
         WasmJsExportChecker,
+        FirWasmJsAssociatedObjectChecker,
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
@@ -40,7 +40,6 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
-        container.useInstance(WasmNameSuggestion())
         container.useImpl<WasmJsCallChecker>()
         container.useImpl<WasmNameClashChecker>()
         container.useImpl<WasmNameCharsChecker>()
@@ -51,6 +50,8 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(WasmDiagnosticSuppressor)
+        container.useInstance(JsExternalChecker(allowCompanionInInterface = false, allowUnsignedTypes = true))
+        container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = false, includeUnsignedNumbers = true))
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
@@ -75,7 +76,6 @@ object WasmWasiPlatformConfigurator : PlatformConfiguratorBase(
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
-        container.useInstance(WasmNameSuggestion())
         container.useImpl<WasmNameClashChecker>()
         container.useImpl<WasmNameCharsChecker>()
         container.useImpl<JsReflectionAPICallChecker>()

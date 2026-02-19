@@ -3,7 +3,6 @@
 // SAM_CONVERSIONS: INDY
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 4 java/lang/invoke/LambdaMetafactory
 
 // FILE: primitiveVsWrapperInSam.kt

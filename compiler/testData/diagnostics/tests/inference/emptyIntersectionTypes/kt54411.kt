@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class AtomicRef<T>(val value: T)
 
@@ -19,3 +20,7 @@ private fun <C> createSegment(prev: OneElementSegment<C>?) = OneElementSegment<C
 class OneElementSegment<O>() : Segment<OneElementSegment<O>>()
 
 abstract class Segment<S : Segment<S>>
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

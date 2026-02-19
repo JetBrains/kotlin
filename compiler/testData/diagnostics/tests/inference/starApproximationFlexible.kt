@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -27,3 +29,6 @@ fun main() {
     JavaClass.id1Out(outBar()).x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x
     JavaClass.id2Out(outBar()).x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, out,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

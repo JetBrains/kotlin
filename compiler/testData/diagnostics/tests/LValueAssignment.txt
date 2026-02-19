@@ -73,6 +73,7 @@ package lvalue_assignment {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final fun testArrays(/*0*/ a: kotlin.Array<kotlin.Int>, /*1*/ ab: lvalue_assignment.Ab): kotlin.Unit
+        public final fun testIllegalTypeRef(): kotlin.Any
         public final fun testIllegalValues(): kotlin.Unit
         public final fun testIncompleteSyntax(): kotlin.Unit
         public final fun testVariables(): kotlin.Unit

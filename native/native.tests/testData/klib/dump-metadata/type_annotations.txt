@@ -1,6 +1,41 @@
-    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoBinary constructor() : Annotation
-    @Retention(value = AnnotationRetention.RUNTIME) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoRuntime constructor() : Annotation
-    @Retention(value = AnnotationRetention.SOURCE) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoSource constructor() : Annotation
-    fun withBinaryAnnotation(id: @AnnoBinary Int)
-    fun withRuntimeAnnotation(id: @AnnoRuntime Int)
-    fun withSourceAnnotation(id: Int)
+library {
+  // module name: <type_annotations.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnoBinary
+    // class name: test/AnnoRuntime
+    // class name: test/AnnoSource
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    public final annotation class test/AnnoBinary : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    public final annotation class test/AnnoRuntime : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    public final annotation class test/AnnoSource : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun withBinaryAnnotation(id: @test/AnnoBinary kotlin/Int): kotlin/Unit
+
+      public final fun withRuntimeAnnotation(id: @test/AnnoRuntime kotlin/Int): kotlin/Unit
+
+      public final fun withSourceAnnotation(id: kotlin/Int): kotlin/Unit
+    }
+  }
+}

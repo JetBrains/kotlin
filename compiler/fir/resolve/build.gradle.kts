@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -15,3 +14,5 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+optInTo("org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm")

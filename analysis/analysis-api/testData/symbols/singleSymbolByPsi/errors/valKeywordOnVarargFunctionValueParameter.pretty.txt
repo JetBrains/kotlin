@@ -1,0 +1,1 @@
+vararg parameter: ERROR(No type for parameter)

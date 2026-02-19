@@ -6,9 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.js.config.ModuleKind
 import java.io.File
 
-class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMultiArtifactCache<JsPerModuleCache.CachedModuleInfo>() {
+/**
+ * This class maintains incremental cache files used by [JsExecutableProducer] for per-module compilation mode.
+ */
+class JsPerModuleCache(
+    private val moduleKind: ModuleKind,
+    private val moduleArtifacts: List<JsModuleArtifact>
+) : JsMultiArtifactCache<JsPerModuleCache.CachedModuleInfo>() {
     companion object {
         private const val JS_MODULE_HEADER = "js.module.header.bin"
         private const val CACHED_MODULE_JS = "module.js"
@@ -17,16 +24,17 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
     }
 
     class CachedModuleInfo(
-        val artifact: ModuleArtifact,
+        val artifact: JsModuleArtifact,
         override val jsIrHeader: JsIrModuleHeader,
         var crossModuleReferencesHash: ICHash = ICHash()
     ) : CacheInfo
 
     private val headerToCachedInfo = hashMapOf<JsIrModuleHeader, CachedModuleInfo>()
 
-    private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
+    private fun JsModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
         val crossModuleReferencesHash = ICHash.fromProtoStream(this)
         val reexportedInModuleWithName = ifTrue { readString() }
+        val importedWithEffectInModuleWithName = ifTrue { readString() }
         val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
 
         CachedModuleInfo(
@@ -38,6 +46,7 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
                 nameBindings = nameBindings,
                 optionalCrossModuleImports = optionalCrossModuleImports,
                 reexportedInModuleWithName = reexportedInModuleWithName,
+                importedWithEffectInModuleWithName = importedWithEffectInModuleWithName,
                 associatedModule = null
             ),
             crossModuleReferencesHash = crossModuleReferencesHash
@@ -48,17 +57,12 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
         File(cacheDir, JS_MODULE_HEADER).useCodedOutput {
             crossModuleReferencesHash.toProtoStream(this)
             ifNotNull(jsIrHeader.reexportedInModuleWithName) { writeStringNoTag(it) }
+            ifNotNull(jsIrHeader.importedWithEffectInModuleWithName) { writeStringNoTag(it) }
             commitJsIrModuleHeaderNames(jsIrHeader)
         }
     }
 
     override fun loadJsIrModule(cacheInfo: CachedModuleInfo) = cacheInfo.artifact.loadJsIrModule()
-
-    override fun getMainModuleAndDependencies(cacheInfo: List<CachedModuleInfo>) =
-        cacheInfo.last() to cacheInfo.dropLast(1)
-
-    override fun fetchCompiledJsCodeForNullCacheInfo() =
-        error("Should never happen for per module granularity")
 
     override fun fetchCompiledJsCode(cacheInfo: CachedModuleInfo) = cacheInfo.artifact.artifactsDir?.let { cacheDir ->
         val jsCodeFile = File(cacheDir, CACHED_MODULE_JS).ifExists { this }
@@ -69,15 +73,31 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
 
     override fun commitCompiledJsCode(cacheInfo: CachedModuleInfo, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs =
         cacheInfo.artifact.artifactsDir?.let { cacheDir ->
-            val jsCodeFile = File(cacheDir, CACHED_MODULE_JS)
-            val jsMapFile = File(cacheDir, CACHED_MODULE_JS_MAP)
-            File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
-            compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, jsMapFile)
+            compilationOutputs.writeJsCodeIntoModuleCache(
+                File(cacheDir, CACHED_MODULE_JS),
+                File(cacheDir, CACHED_MODULE_D_TS),
+                File(cacheDir, CACHED_MODULE_JS_MAP)
+            )
         } ?: compilationOutputs
 
     override fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {
+        val mainModule = moduleArtifacts.last()
+        val mainModuleSafeName = mainModule.moduleSafeName
         return moduleArtifacts.map { artifact ->
-            fun loadModuleInfo() = CachedModuleInfo(artifact, artifact.loadJsIrModule().makeModuleHeader())
+            fun loadModuleInfo(): CachedModuleInfo {
+                val couldBeReexportedInMain = moduleKind !== ModuleKind.ES && artifact !== mainModule
+                val couldBeImportedWithEffectInMain = moduleKind === ModuleKind.ES && artifact !== mainModule
+                return CachedModuleInfo(
+                    artifact,
+                    artifact
+                        .loadJsIrModule(
+                            reexportedInModuleWithName = mainModuleSafeName.takeIf { couldBeReexportedInMain },
+                            importedWithEffectInModuleWithName = mainModuleSafeName.takeIf { couldBeImportedWithEffectInMain }
+                        )
+                        .makeModuleHeader()
+                )
+            }
+
             val actualInfo = when {
                 artifact.forceRebuildJs -> loadModuleInfo()
                 artifact.fileArtifacts.any { it.isModified() } -> loadModuleInfo()

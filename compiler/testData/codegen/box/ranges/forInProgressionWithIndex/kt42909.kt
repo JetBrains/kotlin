@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun box(): String {
@@ -8,7 +9,7 @@ fun box(): String {
 
 private fun test(): String {
     var r = ""
-    for ((i, _) in (1..'c' - 'a').withIndex()) {
+    for ([i, _] in (1..'c' - 'a').withIndex()) {
         r += i.toString()
     }
     return r

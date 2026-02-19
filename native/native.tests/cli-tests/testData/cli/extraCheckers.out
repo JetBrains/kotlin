@@ -1,0 +1,4 @@
+native/native.tests/cli-tests/testData/cli/extraCheckers.kt:2:9: warning: variable is unused.
+    val a = a + "b"
+        ^
+OK

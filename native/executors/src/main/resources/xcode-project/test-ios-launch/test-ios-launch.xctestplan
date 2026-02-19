@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "15FE87E8-3F39-4EFA-9DE5-3E1691552445",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:test-ios-launch.xcodeproj",
+        "identifier" : "770A31C92B1E38C30009761A",
+        "name" : "test-ios-launchTests"
+      }
+    }
+  ],
+  "version" : 1
+}

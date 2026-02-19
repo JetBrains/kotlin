@@ -1,11 +1,11 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaClass|.R|/JavaClass.foo*s|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        Q|JavaClass|.R|/JavaClass.foo*s|(<L> = SAM(foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             String()
         }
-        )
-        R|/JavaClass.JavaClass|().R|/JavaClass.bar|(<L> = bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ))
+        R|/JavaClass.JavaClass|().R|/JavaClass.bar|(<L> = SAM(bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             String()
         }
-        )
+        ))
     }

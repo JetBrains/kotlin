@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 // WITH_REFLECT
 
@@ -9,7 +10,7 @@ class ProcessorWithParent : Entity {
 }
 
 class ProcessorWithChildren : Entity {
-    var processors by children(ProcessorWithParent::class.java, ProcessorWithParent::<!UNRESOLVED_REFERENCE!>processor<!>)
+    var processors by children(ProcessorWithParent::class.java, ProcessorWithParent::<!INAPPLICABLE_CANDIDATE!>processor<!>)
 }
 
 class Processor2WithParent : Entity {
@@ -39,3 +40,7 @@ fun <SC : Entity, TC : Entity> SC.children(
 interface Delegate<R : Entity, T> : ReadWriteProperty<R, T>
 
 interface Entity
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, inline, interfaceDeclaration, nullableType, propertyDeclaration, propertyDelegate, reified, setter,
+typeConstraint, typeParameter */

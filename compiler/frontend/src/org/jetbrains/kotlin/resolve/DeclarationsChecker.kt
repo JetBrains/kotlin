@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
@@ -191,14 +180,16 @@ class DeclarationsChecker(
             return
         }
 
-        if (rhs.isNothing()) {
-            trace.report(ACTUAL_TYPE_ALIAS_TO_NOTHING.on(declaration))
-            return
-        }
+        if (languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
+            if (rhs.isNothing()) {
+                trace.report(ACTUAL_TYPE_ALIAS_TO_NOTHING.on(declaration))
+                return
+            }
 
-        if (rhs.isMarkedNullable) {
-            trace.report(ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE.on(declaration))
-            return
+            if (rhs.isMarkedNullable) {
+                trace.report(ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE.on(declaration))
+                return
+            }
         }
     }
 
@@ -260,6 +251,7 @@ class DeclarationsChecker(
         checkVarargParameters(trace, constructorDescriptor)
         checkConstructorVisibility(constructorDescriptor, declaration)
         checkExpectedClassConstructor(constructorDescriptor, declaration)
+        checkContextParameters(declaration.modifierList)
     }
 
     private fun checkExpectedClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
@@ -349,6 +341,7 @@ class DeclarationsChecker(
         checkPrimaryConstructor(classOrObject, classDescriptor)
 
         checkExpectDeclarationModifiers(classOrObject, classDescriptor)
+        checkContextParameters(classOrObject.modifierList)
     }
 
     private fun checkLocalAnnotation(classDescriptor: ClassDescriptor, classOrObject: KtClassOrObject) {
@@ -500,7 +493,7 @@ class DeclarationsChecker(
         for (parameter in declaration.valueParameters) {
             trace.get(PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
                 modifiersChecker.checkModifiersForDeclaration(parameter, it)
-                LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it, languageVersionSettings)
+                LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it)
             }
         }
 
@@ -615,7 +608,7 @@ class DeclarationsChecker(
         if (containingDeclaration is ClassDescriptor) {
             checkMemberProperty(property, propertyDescriptor, containingDeclaration)
         }
-        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, property, propertyDescriptor, languageVersionSettings)
+        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, property, propertyDescriptor)
         checkPropertyInitializer(property, propertyDescriptor)
         checkAccessors(property, propertyDescriptor)
         checkTypeParameterConstraints(property)
@@ -625,6 +618,7 @@ class DeclarationsChecker(
         checkImplicitCallableType(property, propertyDescriptor)
         checkExpectDeclarationModifiers(property, propertyDescriptor)
         checkBackingField(property)
+        checkContextParameters(property.modifierList)
     }
 
     private fun checkExpectDeclarationModifiers(declaration: KtDeclaration, descriptor: MemberDescriptor) {
@@ -635,7 +629,7 @@ class DeclarationsChecker(
         }
 
         checkExpectDeclarationHasNoExternalModifier(declaration)
-        if (declaration is KtFunction) {
+        if (declaration is KtFunction && languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
             declaration.modifierList?.getModifier(KtTokens.TAILREC_KEYWORD)?.let {
                 trace.report(EXPECTED_TAILREC_FUNCTION.on(it))
             }
@@ -643,8 +637,10 @@ class DeclarationsChecker(
     }
 
     private fun checkExpectDeclarationHasNoExternalModifier(declaration: KtDeclaration) {
-        declaration.modifierList?.getModifier(KtTokens.EXTERNAL_KEYWORD)?.let {
-            trace.report(EXPECTED_EXTERNAL_DECLARATION.on(it))
+        if (languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
+            declaration.modifierList?.getModifier(KtTokens.EXTERNAL_KEYWORD)?.let {
+                trace.report(EXPECTED_EXTERNAL_DECLARATION.on(it))
+            }
         }
     }
 
@@ -887,7 +883,7 @@ class DeclarationsChecker(
 
     private fun noExplicitTypeOrGetterType(property: KtProperty) =
         property.typeReference == null
-                && (property.getter == null || (property.getter!!.hasBlockBody() && property.getter!!.returnTypeReference == null))
+                && (property.getter == null || (property.getter!!.hasBlockBody() && property.getter!!.typeReference == null))
 
     fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
         val typeParameterList = function.typeParameterList
@@ -942,6 +938,7 @@ class DeclarationsChecker(
         }
 
         shadowedExtensionChecker.checkDeclaration(function, functionDescriptor)
+        checkContextParameters(function.modifierList)
     }
 
     private fun checkExpectedFunction(function: KtNamedFunction, functionDescriptor: FunctionDescriptor) {
@@ -1069,6 +1066,19 @@ class DeclarationsChecker(
                 val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter ?: continue
                 trace.report(FORBIDDEN_VARARG_PARAMETER_TYPE.on(parameterDeclaration, varargElementType))
             }
+        }
+    }
+
+    private fun checkContextParameters(modifierList: KtModifierList?) {
+        val contextReceiverLists = modifierList?.contextParameterLists ?: return
+        contextReceiverLists.forEach { contextReceiverList ->
+            if (contextReceiverList.contextParameters.isNotEmpty()) {
+                trace.report(CONTEXT_PARAMETERS_UNSUPPORTED.on(contextReceiverList))
+            }
+        }
+
+        if (contextReceiverLists.size > 1) {
+            trace.report(MULTIPLE_CONTEXT_LISTS.on(modifierList))
         }
     }
 

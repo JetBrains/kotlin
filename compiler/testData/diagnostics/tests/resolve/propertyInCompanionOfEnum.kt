@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // SKIP_TXT
 
 // FILE: test.kt
@@ -38,3 +39,7 @@ fun bar() {
     U.Companion.Entry checkType { _<String>() }
     U.NotEntry checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, lambdaLiteral, nullableType, objectDeclaration, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

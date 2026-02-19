@@ -3,6 +3,8 @@ KtFile: TypeModifiers_ERR.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')

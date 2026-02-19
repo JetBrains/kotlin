@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VALUE -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
-// !LANGUAGE: +LateinitLocalVariables
+// DIAGNOSTICS: -UNUSED_VALUE -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// LANGUAGE: +LateinitLocalVariables
 
 import kotlin.reflect.KProperty
 
@@ -17,3 +18,6 @@ fun test() {
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var test3: String = ""
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var test4 by Delegate
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lateinit, localProperty, nullableType, objectDeclaration, operator,
+propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral */

@@ -1,36 +1,30 @@
 class TestInitValFromParameter {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
 }
 
 class TestInitValInClass {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = 0
     get
 
-}
-
-class TestInitValInInitBlock {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class TestInitValInInitBlock {
   val x: Int
     get
 
@@ -38,4 +32,11 @@ class TestInitValInInitBlock {
     <this>.#x = 0
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

@@ -1,4 +1,8 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidTypeAliasToCompilerRequiredAnnotation
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 // MODULE: m1-common
 // FILE: common.kt
 expect annotation class TypealiasToKotlinPkg
@@ -25,3 +29,5 @@ actual typealias TypealiasToPlatformPkg = kotlin.jvm.Synchronized
 typealias NonActualTypealias = kotlin.Deprecated
 
 actual typealias TypealiasNotToAnnotation = kotlin.DeprecationLevel
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, expect, stringLiteral, typeAliasDeclaration */

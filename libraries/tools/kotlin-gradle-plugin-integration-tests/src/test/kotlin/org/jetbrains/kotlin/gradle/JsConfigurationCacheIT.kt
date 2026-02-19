@@ -7,15 +7,17 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
+import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
 class JsIrConfigurationCacheIT : KGPBaseTest() {
-    override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(
-            configurationCache = true,
-            configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
-        )
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("configuration cache is working for kotlin2js plugin")
     @GradleTest
@@ -31,17 +33,18 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
 
     @DisplayName("configuration cache is working for kotlin/js browser project")
     @GradleTest
+    @TestMetadata("kotlin-js-browser-project")
     fun testBrowserDistribution(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             assertSimpleConfigurationCacheScenarioWorks(
                 ":app:build",
                 buildOptions = defaultBuildOptions,
                 executedTaskNames = listOf(
-                    ":app:packageJson",
-                    ":app:publicPackageJson",
+                    ":app:jsPackageJson",
+                    ":app:jsPublicPackageJson",
                     ":app:compileKotlinJs",
                     ":app:compileProductionExecutableKotlinJs",
-                    ":app:browserProductionWebpack",
+                    ":app:jsBrowserProductionWebpack",
                 )
             )
         }
@@ -59,10 +62,10 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             build(":app:build", "-Didea.version=2020.1") {
                 assertConfigurationCacheReused()
                 assertTasksUpToDate(
-                    ":app:packageJson",
-                    ":app:publicPackageJson",
+                    ":app:jsPackageJson",
+                    ":app:jsPublicPackageJson",
                     ":app:compileProductionExecutableKotlinJs",
-                    ":app:browserProductionWebpack",
+                    ":app:jsBrowserProductionWebpack",
                 )
             }
         }
@@ -76,11 +79,11 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                 ":build",
                 buildOptions = defaultBuildOptions,
                 executedTaskNames = listOf(
-                    ":packageJson",
-                    ":publicPackageJson",
+                    ":jsPackageJson",
+                    ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
-                    ":nodeTest",
+                    ":jsNodeTest",
                 ) + listOf(":compileProductionExecutableKotlinJs")
             )
         }
@@ -98,11 +101,11 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             build(":build", "-Didea.version=2020.1") {
                 assertConfigurationCacheReused()
                 val upToDateTasks = listOf(
-                    ":packageJson",
-                    ":publicPackageJson",
+                    ":jsPackageJson",
+                    ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
-                    ":nodeTest",
+                    ":jsNodeTest",
                 ) + listOf(":compileProductionExecutableKotlinJs")
                 assertTasksUpToDate(*upToDateTasks.toTypedArray())
             }
@@ -114,8 +117,28 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     fun testTestDependencies(gradleVersion: GradleVersion) {
         project("kotlin-js-project-with-test-dependencies", gradleVersion) {
             assertSimpleConfigurationCacheScenarioWorks(
+                "assemble", "kotlinStorePackageLock",
+                buildOptions = defaultBuildOptions.copy(
+                    jsOptions = defaultBuildOptions.jsOptions?.copy(
+                        yarn = false
+                    )
+                ),
+                executedTaskNames = listOf(":rootPackageJson")
+            )
+        }
+    }
+
+    @DisplayName("KT-48241: configuration cache works with test dependencies for yarn.lock")
+    @GradleTest
+    fun testTestDependenciesYarnLock(gradleVersion: GradleVersion) {
+        project("kotlin-js-project-with-test-dependencies", gradleVersion) {
+            assertSimpleConfigurationCacheScenarioWorks(
                 "assemble", "kotlinStoreYarnLock",
-                buildOptions = defaultBuildOptions,
+                buildOptions = defaultBuildOptions.copy(
+                    jsOptions = defaultBuildOptions.jsOptions?.copy(
+                        yarn = true
+                    )
+                ),
                 executedTaskNames = listOf(":rootPackageJson")
             )
         }
@@ -125,11 +148,17 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJsRun(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
-            build("nodeRun", buildOptions = buildOptions) {
-                assertTasksExecuted(":nodeRun")
-                assertOutputContains(
-                    "Calculating task graph as no configuration cache is available for tasks: nodeRun"
-                )
+            build("jsNodeDevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":jsNodeDevelopmentRun")
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+                    assertOutputContains(
+                        "Calculating task graph as no configuration cache is available for tasks: jsNodeDevelopmentRun"
+                    )
+                } else {
+                    assertOutputContains(
+                        "Calculating task graph as no cached configuration is available for tasks: jsNodeDevelopmentRun"
+                    )
+                }
 
                 assertConfigurationCacheStored()
             }
@@ -137,10 +166,33 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             build("clean", buildOptions = buildOptions)
 
             // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-            build("nodeRun", buildOptions = buildOptions) {
-                assertTasksExecuted(":nodeRun")
+            build("jsNodeDevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":jsNodeDevelopmentRun")
                 assertConfigurationCacheReused()
             }
+        }
+    }
+
+    @DisplayName("Test with custom build logic plugin")
+    @GradleTest
+    fun testWithCustomBuildLogic(gradleVersion: GradleVersion) {
+        project("kotlin-js-build-logic", gradleVersion) {
+
+            settingsGradleKts
+                .replaceText(
+                    "pluginManagement {",
+                    """
+
+                    pluginManagement {
+                        includeBuild("build-logic")
+
+                    """.trimIndent()
+                )
+
+            assertSimpleConfigurationCacheScenarioWorks(
+                ":rootPackageJson",
+                buildOptions = defaultBuildOptions,
+            )
         }
     }
 }

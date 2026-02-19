@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 fun foo(arg: Int?) {
     run {
         var x = arg
@@ -6,3 +7,6 @@ fun foo(arg: Int?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast */

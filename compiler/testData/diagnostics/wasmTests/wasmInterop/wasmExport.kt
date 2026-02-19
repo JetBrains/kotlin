@@ -1,14 +1,22 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ContextParameters
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
+@file:OptIn(ExperimentalWasmInterop::class)
+
 import kotlin.wasm.WasmExport
+import kotlin.wasm.ExperimentalWasmInterop
 
-<!WASM_EXPORT_ON_EXTERNAL_DECLARATION!>@WasmExport("a")
-external fun foo0(): Unit<!>
+<!WASM_EXPORT_ON_EXTERNAL_DECLARATION!>@WasmExport("a")<!>
+external fun foo0(): Unit
 
-<!WASM_EXPORT_ON_EXTERNAL_DECLARATION!>@WasmExport("a")
-fun foo1(): Int = js("42")<!>
+<!WASM_EXPORT_ON_EXTERNAL_DECLARATION!>@WasmExport("a")<!>
+fun foo1(): Int = js("42")
 
 class C() {
-    <!NESTED_WASM_EXPORT!>@WasmExport("a")
-    fun foo2(): Int = 42<!>
+    <!NESTED_WASM_EXPORT!>@WasmExport("a")<!>
+    fun foo2(): Int = 42
 }
 
 @WasmExport("a")
@@ -22,7 +30,7 @@ fun foo4(): Int = 42
 @WasmExport()
 fun foo6(): Int = 42<!>
 
-val p1 = (<!NESTED_WASM_EXPORT!>@WasmExport("a") fun () {}<!>)
+val p1 = (<!NESTED_WASM_EXPORT!>@WasmExport("a")<!> fun () {})
 
 @WasmExport("a")
 fun foo7(
@@ -40,19 +48,30 @@ fun foo7(
 }
 
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
-fun returnNullableUnit(): Unit? { return null }<!>
+fun returnNullableUnit(): Unit?<!> { return null }
 
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
-fun returnNullableBoolean(): Boolean? { return null }<!>
+fun returnNullableBoolean(): Boolean?<!> { return null }
 
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
-fun returnNullableAny(): Any?  { return null }<!>
+fun returnNullableAny(): Any?<!>  { return null }
 
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
-fun <T> fooGeneric(<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>x: T<!>): T { return x }<!>
+fun <T> fooGeneric(<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>x: T<!>): T<!> { return x }
 
 @WasmExport("a")
 fun fooDeafultAndVararg(
-<!WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE!><!UNUSED_PARAMETER!>a<!>: Int = <!CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!><!>,
+<!WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE!>a: Int = <!CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!><!>,
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE, WASM_IMPORT_EXPORT_VARARG_PARAMETER!>vararg b: Int<!>
 ): Unit { b.toString() }
+
+@WasmExport("a")
+fun fooUnsigned1(): UInt = 42u
+
+@WasmExport()
+fun fooUnsigned2(): UByte = 42u
+
+<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+@WasmExport()
+fun fooWithContext() {
+}

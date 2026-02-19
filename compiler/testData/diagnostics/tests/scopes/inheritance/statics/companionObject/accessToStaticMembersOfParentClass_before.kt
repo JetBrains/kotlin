@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // FILE: J.java
 public class J {
     public static void foo() {}
@@ -44,3 +45,5 @@ class B : A() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, javaType, nestedClass,
+objectDeclaration */

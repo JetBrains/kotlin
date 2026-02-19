@@ -1,0 +1,17 @@
+<caret_1>:
+  KDocName(52,54): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: null
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(142,144): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in <local>: A) TT

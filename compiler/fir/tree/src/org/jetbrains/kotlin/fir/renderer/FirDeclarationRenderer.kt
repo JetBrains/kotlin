@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.isCatchParameter
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 open class FirDeclarationRenderer(
@@ -14,9 +17,9 @@ open class FirDeclarationRenderer(
 ) {
 
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
-    private val resolvePhaseRenderer get() = components.resolvePhaseRenderer
-    private val typeRenderer get() = components.typeRenderer
+    protected val printer: FirPrinter get() = components.printer
+    private val resolvePhaseRenderer: FirResolvePhaseRenderer? get() = components.resolvePhaseRenderer
+    private val typeRenderer: ConeTypeRenderer get() = components.typeRenderer
 
     fun render(declaration: FirDeclaration) {
         renderPhaseAndAttributes(declaration)
@@ -36,18 +39,19 @@ open class FirDeclarationRenderer(
                 is FirRegularClass -> declaration.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")
                 is FirTypeAlias -> "typealias"
                 is FirAnonymousFunction -> (declaration.label?.let { "${it.name}@" } ?: "") + "fun"
-                is FirSimpleFunction -> "fun"
+                is FirNamedFunction -> "fun"
                 is FirProperty -> {
                     if (declaration.isCatchParameter == true) {
                         ""
                     } else {
-                        val prefix = if (declaration.isLocal) localVariablePrefix else ""
+                        val prefix = if (declaration.symbol is FirLocalPropertySymbol || declaration.visibility == Visibilities.Local) localVariablePrefix else ""
                         prefix + if (declaration.isVal) "val" else "var"
                     }
                 }
                 is FirPropertyAccessor -> if (declaration.isGetter) "get" else "set"
                 is FirField -> "field"
                 is FirEnumEntry -> "enum entry"
+                is FirBackingField -> "backing field"
                 else -> "unknown"
             }
         )

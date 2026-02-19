@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object A {
     object B {
         object C
@@ -29,3 +30,6 @@ object A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, interfaceDeclaration, localClass, localProperty,
+nestedClass, objectDeclaration, propertyDeclaration, stringLiteral */

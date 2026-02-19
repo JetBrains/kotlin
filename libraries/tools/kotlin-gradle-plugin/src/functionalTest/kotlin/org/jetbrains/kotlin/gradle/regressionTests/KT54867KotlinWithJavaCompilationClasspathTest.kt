@@ -8,10 +8,10 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
-import org.junit.Test
+import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 

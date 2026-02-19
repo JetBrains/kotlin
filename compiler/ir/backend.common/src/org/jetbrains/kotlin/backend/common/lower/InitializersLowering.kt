@@ -20,10 +20,13 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
+/**
+ * Merges init block and field initializers into constructors.
+ */
+open class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, true)
     }
@@ -38,12 +41,12 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
         }
         val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
         // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
-        block.accept(object : IrElementVisitorVoid {
+        block.accept(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) =
                 element.acceptChildren(this, null)
 
             override fun visitClass(declaration: IrClass) =
-                throw AssertionError("class in initializer should have been moved out by LocalClassPopupLowering: ${declaration.render()}")
+                throw AssertionError("class in initializer should have been moved out by LocalDeclarationPopupLowering: ${declaration.render()}")
         }, null)
 
         container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -86,12 +89,14 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
 
     private fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
         with(declaration) {
-            IrBlockImpl(startOffset, endOffset, context.irBuiltIns.unitType, LoweredStatementOrigins.SYNTHESIZED_INIT_BLOCK, body.statements)
+            IrBlockImpl(startOffset, endOffset, context.irBuiltIns.unitType, IrStatementOrigin.SYNTHESIZED_INIT_BLOCK, body.statements)
         }
 }
 
-// Remove anonymous initializers and set field initializers to `null`
-class InitializersCleanupLowering(
+/**
+ * Removes anonymous initializers and sets field initializers to `null`.
+ */
+open class InitializersCleanupLowering(
     val context: CommonBackendContext,
     private val shouldEraseFieldInitializer: (IrField) -> Boolean = { it.correspondingPropertySymbol?.owner?.isConst != true }
 ) : DeclarationTransformer {

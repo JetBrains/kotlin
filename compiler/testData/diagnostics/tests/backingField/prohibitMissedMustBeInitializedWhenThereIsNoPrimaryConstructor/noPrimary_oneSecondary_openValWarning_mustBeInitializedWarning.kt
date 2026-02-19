@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE:-ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor, -ProhibitOpenValDeferredInitialization
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class Foo {
@@ -10,3 +10,5 @@ open class Foo {
         x = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, propertyDeclaration, secondaryConstructor, stringLiteral */

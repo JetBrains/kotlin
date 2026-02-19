@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1
 // FILE: a.kt
 
@@ -35,3 +36,5 @@ import p2.*
     a.<!UNRESOLVED_REFERENCE!>m1<!>()
     a.m2()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
@@ -29,53 +32,53 @@ private val nameToOperator = mapOf(
     OperatorNameConventions.RANGE_UNTIL to "..<",
 )
 
-object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker() {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val callee = expression.calleeReference.resolved ?: return
 
         if (callee.resolvedSymbol.origin !is FirDeclarationOrigin.DynamicScope) {
-            return checkSpreadOperator(expression, context, reporter)
+            return checkSpreadOperator(expression)
         }
 
         val symbol = callee.toResolvedCallableSymbol()
             ?: error("Resolved call callee without a callable symbol")
 
         when {
-            expression is FirCall && expression.isArrayAccessWithMultipleIndices -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "indexed access with more than one index", context
+            expression is FirCall && expression.isArrayAccessWithMultipleIndices(context.session) -> reporter.reportOn(
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "indexed access with more than one index"
             )
             expression is FirFunctionCall && expression.isInOperator -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`in` operation", context
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`in` operation"
             )
             expression is FirFunctionCall && expression.isRangeOperator -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`${nameToOperator[symbol.name]}` operation", context
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`${nameToOperator[symbol.name]}` operation"
             )
             expression is FirComponentCall -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`destructuring declaration", context
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`destructuring declaration"
             )
-            else -> checkIdentifier(callee, reporter, context)
+            else -> checkIdentifier(callee)
         }
 
         forAllSpreadArgumentsOf(expression) {
-            reporter.reportOn(it.source, FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL, context)
+            reporter.reportOn(it.source, FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL)
         }
     }
 
-    private val FirCall.isArrayAccessWithMultipleIndices: Boolean
-        get() {
-            val callee = calleeReference as? FirNamedReference
-                ?: return false
+    private fun FirCall.isArrayAccessWithMultipleIndices(session: FirSession): Boolean {
+        val callee = toReference(session) as? FirNamedReference
+            ?: return false
 
-            if (callee.source?.kind != KtFakeSourceElementKind.ArrayAccessNameReference) {
-                return false
-            }
-
-            val arguments = (arguments.singleOrNull() as? FirVarargArgumentsExpression)?.arguments
-                ?: return false
-
-            return callee.name == OperatorNameConventions.GET && arguments.size >= 2
-                    || callee.name == OperatorNameConventions.SET && arguments.size >= 3
+        if (callee.source?.kind != KtFakeSourceElementKind.ArrayAccessNameReference) {
+            return false
         }
+
+        val arguments = (arguments.singleOrNull() as? FirVarargArgumentsExpression)?.arguments
+            ?: return false
+
+        return callee.name == OperatorNameConventions.GET && arguments.size >= 2
+                || callee.name == OperatorNameConventions.SET && arguments.size >= 3
+    }
 
     private val FirFunctionCall.isInOperator
         get() = calleeReference.resolved?.name == OperatorNameConventions.CONTAINS && origin == FirFunctionCallOrigin.Operator
@@ -87,10 +90,13 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker() {
                     && origin == FirFunctionCallOrigin.Operator
         }
 
-    private fun checkSpreadOperator(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkSpreadOperator(
+        expression: FirQualifiedAccessExpression,
+    ) {
         forAllSpreadArgumentsOf(expression) {
             if (it.resolvedType is ConeDynamicType) {
-                reporter.reportOn(it.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "spread operator", context)
+                reporter.reportOn(it.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "spread operator")
             }
         }
     }
@@ -110,13 +116,16 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker() {
         }
     }
 
-    private fun checkIdentifier(namedReference: FirResolvedNamedReference, reporter: DiagnosticReporter, context: CheckerContext) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkIdentifier(
+        namedReference: FirResolvedNamedReference,
+    ) {
+        if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) {
             return
         }
         val name = namedReference.name.identifierOrNullIfSpecial ?: return
         if (sanitizeName(name) != name) {
-            reporter.reportOn(namedReference.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS, context)
+            reporter.reportOn(namedReference.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS)
         }
     }
 }

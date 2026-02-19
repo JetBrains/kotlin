@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 class A {
@@ -17,7 +17,7 @@ fun box() {
     A.foo()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:15 box
 // test.kt:6 <clinit>
 // test.kt:7 <clinit>
@@ -39,6 +39,35 @@ fun box() {
 // test.kt:17 box
 // test.kt:18 box
 
+// EXPECTATIONS NATIVE
+// test.kt:15 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:11 <get-$companion>
+// test.kt:15 box
+// test.kt:6 <get-prop0>
+// test.kt:15 box
+// test.kt:16 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:11 <get-$companion>
+// test.kt:16 box
+// test.kt:7 <get-prop1>
+// test.kt:16 box
+// test.kt:17 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:11 <get-$companion>
+// test.kt:17 box
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:6 <get-prop0>
+// test.kt:9 foo
+// test.kt:7 <get-prop1>
+// test.kt:9 foo
+// test.kt:10 foo
+// test.kt:18 box
+
 // EXPECTATIONS JS_IR
 // test.kt:15 box
 // test.kt:6 <init>
@@ -49,3 +78,15 @@ fun box() {
 // test.kt:17 box
 // test.kt:9 foo
 // test.kt:18 box
+
+// EXPECTATIONS WASM
+// test.kt:15 $box (6)
+// test.kt:6 $Companion.<init> (20)
+// test.kt:7 $Companion.<init> (20)
+// test.kt:11 $Companion.<init> (5)
+// test.kt:15 $box (6)
+// test.kt:16 $box (6)
+// test.kt:17 $box (6)
+// test.kt:9 $Companion.foo (19, 27, 19, 12)
+// test.kt:17 $box (6)
+// test.kt:18 $box (1)

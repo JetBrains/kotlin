@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitOpenValDeferredInitialization
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class A {
@@ -9,3 +9,5 @@ open class A {
         c = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, propertyDeclaration, setter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package test
 
@@ -17,3 +18,5 @@ package test.p; fun foo() {}
 
 // FILE: f.kt
 package test.p; fun foo(a: C) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, typeParameter */

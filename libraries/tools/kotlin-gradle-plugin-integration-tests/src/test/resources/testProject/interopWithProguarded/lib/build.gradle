@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:6.2.2'
+        classpath 'com.guardsquare:proguard-gradle:7.5.0'
     }
 }
 
@@ -23,8 +23,8 @@ configurations {
 
 tasks.register("obfuscate", proguard.gradle.ProGuardTask) {
     dependsOn(jar)
-    injars "${jar.archivePath}"
-    outjars "$buildDir/proguard/out.jar"
+    injars jar.archiveFile
+    outjars project.layout.buildDirectory.file("proguard/out.jar")
 
     if (JavaVersion.current().isJava9Compatible()) {
         libraryjars "${System.getProperty('java.home')}/jmods"
@@ -43,14 +43,12 @@ tasks.register("obfuscate", proguard.gradle.ProGuardTask) {
 
 }
 
-configurations {
-    proguarded
-}
+configurations.create('proguarded')
 
 artifacts {
     proguarded(file(obfuscate.outJarFiles[0])) {
-        name 'out'
-        type 'jar'
-        builtBy obfuscate
+        name =  'out'
+        type = 'jar'
+        builtBy(obfuscate)
     }
 }

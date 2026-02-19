@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
@@ -44,3 +45,5 @@ import api.*
 class Derived : Base() {
     override fun <!OPT_IN_OVERRIDE!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, override */

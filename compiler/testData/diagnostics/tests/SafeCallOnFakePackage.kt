@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Test.java
 public class Test {
     public static final String FOO = "test";
@@ -14,3 +15,6 @@ fun ff() {
     val b = <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!><!UNEXPECTED_SAFE_CALL!>?.<!>s
     <!NO_COMPANION_OBJECT!>System<!><!UNEXPECTED_SAFE_CALL!>?.<!>out<!UNSAFE_CALL!>.<!>println(a + b)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+safeCall, stringLiteral */

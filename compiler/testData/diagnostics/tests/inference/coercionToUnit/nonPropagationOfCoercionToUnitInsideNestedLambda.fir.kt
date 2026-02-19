@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 
 class Obj
 
@@ -49,3 +50,5 @@ fun foo(): String? {
 
     return ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, lambdaLiteral, nullableType, stringLiteral */

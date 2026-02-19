@@ -5,14 +5,17 @@
 
 package kotlin.collections
 
+import kotlin.internal.DoNotInlineOnFirstStage
+
 /**
- * Returns a *typed* array containing all of the elements of this collection.
+ * Returns a *typed* array containing all the elements of this collection.
  *
  * Allocates an array of runtime type `T` having its size equal to the size of this collection
  * and populates the array with the elements of this collection.
  * @sample samples.collections.Collections.Collections.collectionToTypedArray
  */
 @kotlin.internal.InlineOnly
+@DoNotInlineOnFirstStage
 public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
 @Suppress("UNCHECKED_CAST")
@@ -20,6 +23,6 @@ public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArra
 internal fun <T> copyToArray(collection: Collection<T>): Array<T> =
     if (collection is AbstractCollection<T>)
         //TODO: Find more proper way to call abstract collection's toArray
-        @Suppress("INVISIBLE_MEMBER") collection.toArray() as Array<T>
+        @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") collection.toArray() as Array<T>
     else
         collectionToArray(collection) as Array<T>

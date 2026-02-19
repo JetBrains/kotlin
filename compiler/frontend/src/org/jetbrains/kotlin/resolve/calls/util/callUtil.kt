@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.util
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -280,28 +279,12 @@ fun ResolvedCall<*>.getFirstArgumentExpression(): KtExpression? =
 fun ResolvedCall<*>.getReceiverExpression(): KtExpression? =
     (extensionReceiver as? ExpressionReceiver)?.expression ?: (dispatchReceiver as? ExpressionReceiver)?.expression
 
-val KtLambdaExpression.isTrailingLambdaOnNewLIne
-    get(): Boolean {
-        (parent as? KtLambdaArgument)?.let { lambdaArgument ->
-            var prevSibling = lambdaArgument.prevSibling
-
-            while (prevSibling != null && prevSibling !is KtElement) {
-                if (prevSibling is PsiWhiteSpace && prevSibling.textContains('\n'))
-                    return true
-                prevSibling = prevSibling.prevSibling
-            }
-        }
-
-        return false
-    }
-
-
 inline fun BindingTrace.reportTrailingLambdaErrorOr(
     expression: KtExpression?,
     originalDiagnostic: (KtExpression) -> Diagnostic
 ) {
     expression?.let { expr ->
-        if (expr is KtLambdaExpression && expr.isTrailingLambdaOnNewLIne) {
+        if (expr is KtLambdaExpression && expr.isTrailingLambdaOnNewLine) {
             report(Errors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.on(expr))
         } else {
             report(originalDiagnostic(expr))

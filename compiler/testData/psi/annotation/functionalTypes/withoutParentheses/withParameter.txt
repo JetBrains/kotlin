@@ -3,6 +3,8 @@ KtFile: withParameter.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   PsiComment(EOL_COMMENT)('// Issue: KT-31734')
   PsiWhiteSpace('\n\n')
   PROPERTY
@@ -44,8 +46,9 @@ KtFile: withParameter.kt
     PsiWhiteSpace(' ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -135,8 +138,9 @@ KtFile: withParameter.kt
     PsiWhiteSpace(' ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -238,8 +242,9 @@ KtFile: withParameter.kt
     PsiWhiteSpace(' ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -322,8 +327,9 @@ KtFile: withParameter.kt
     PsiWhiteSpace(' ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -1043,8 +1049,9 @@ KtFile: withParameter.kt
     PsiWhiteSpace(' ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')

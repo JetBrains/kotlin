@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // MODULE: m1
 // FILE: a.kt
 
@@ -25,3 +26,5 @@ import p.foo
 fun main() {
     foo(12)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, vararg */

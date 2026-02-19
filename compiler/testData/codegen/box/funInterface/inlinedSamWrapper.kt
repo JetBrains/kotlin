@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 fun interface MyRunnable {
     fun invoke()
 }
@@ -14,6 +15,7 @@ class A {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     var result = false
     A().doWork { result = true }

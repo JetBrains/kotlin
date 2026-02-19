@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 
 fun <K> materialize(): K = null!!
 
@@ -23,3 +24,6 @@ fun test_2() {
 fun test_3() {
     val x: String = run { materialize() }!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression, typeParameter */

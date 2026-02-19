@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -14,21 +14,26 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-internal val jvmOverloadsAnnotationPhase = makeIrFilePhase(
-    ::JvmOverloadsAnnotationLowering,
-    name = "JvmOverloadsAnnotation",
-    description = "Handle JvmOverloads annotations"
-)
-
-// TODO: `IrValueParameter.defaultValue` property does not track default values in super-parameters. See KT-28637.
-
-private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
+/**
+ * Handles JvmOverloads annotations.
+ *
+ * Note that [IrValueParameter.defaultValue] property does not track default values in super-parameters.
+ * See [KT-28637](youtrack.jetbrains.com/issue/KT-28637).
+ */
+@PhasePrerequisites(JvmVersionOverloadsLowering::class)
+internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         val functions = irClass.declarations.filterIsInstance<IrFunction>().filter {
@@ -41,10 +46,22 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     }
 
     private fun generateWrappers(target: IrFunction, irClass: IrClass) {
-        val numDefaultParameters = target.valueParameters.count { it.defaultValue != null }
+        val numDefaultParameters = target.parameters.count { it.defaultValue != null }
+        val hasIntroducedAt = target.parameters.any { it.hasAnnotation(StandardClassIds.Annotations.IntroducedAt) }
+
         for (i in numDefaultParameters - 1 downTo 0) {
             val wrapper = generateWrapper(target, i)
-            irClass.addMember(wrapper)
+
+            if (!hasIntroducedAt || !irClass.hasConflictingOverloads(wrapper)) {
+                irClass.addMember(wrapper)
+            }
+        }
+    }
+
+    private fun IrClass.hasConflictingOverloads(wrapper: IrFunction): Boolean {
+        val signature = context.defaultMethodSignatureMapper.mapAsmMethod(wrapper)
+        return functions.any {
+            context.defaultMethodSignatureMapper.mapAsmMethod(it) == signature
         }
     }
 
@@ -58,59 +75,36 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                 )
             is IrSimpleFunction ->
                 IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
-            else ->
-                error("unknown function kind: ${target.render()}")
         }
         for (arg in wrapperIrFunction.allTypeParameters) {
-            call.putTypeArgument(arg.index, arg.defaultType)
-        }
-        call.dispatchReceiver = wrapperIrFunction.dispatchReceiverParameter?.let { dispatchReceiver ->
-            IrGetValueImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                dispatchReceiver.symbol
-            )
-        }
-        call.extensionReceiver = wrapperIrFunction.extensionReceiverParameter?.let { extensionReceiver ->
-            IrGetValueImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                extensionReceiver.symbol
-            )
+            call.typeArguments[arg.index] = arg.defaultType
         }
 
         var parametersCopied = 0
         var defaultParametersCopied = 0
-        for ((i, valueParameter) in target.valueParameters.withIndex()) {
-            if (valueParameter.defaultValue != null) {
-                if (defaultParametersCopied < numDefaultParametersToExpect) {
-                    defaultParametersCopied++
-                    call.putValueArgument(
-                        i,
-                        IrGetValueImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            wrapperIrFunction.valueParameters[parametersCopied++].symbol
-                        )
-                    )
-                } else {
-                    call.putValueArgument(i, null)
-                }
-            } else {
-                call.putValueArgument(
-                    i,
-                    IrGetValueImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        wrapperIrFunction.valueParameters[parametersCopied++].symbol
-                    )
-                )
-            }
+        call.arguments.assignFrom(target.parameters) { valueParameter ->
+            fun irGetParameter() =
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, wrapperIrFunction.parameters[parametersCopied++].symbol)
 
+            when {
+                valueParameter.defaultValue == null -> irGetParameter()
+                defaultParametersCopied < numDefaultParametersToExpect -> {
+                    defaultParametersCopied++
+                    irGetParameter()
+                }
+                else -> null
+            }
         }
 
-        wrapperIrFunction.body = if (target is IrConstructor) {
-            IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
-        } else {
-            IrExpressionBodyImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
-            )
+        wrapperIrFunction.body = when (target) {
+            is IrConstructor -> {
+                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
+            }
+            is IrSimpleFunction -> {
+                context.irFactory.createExpressionBody(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
+                )
+            }
         }
 
         return wrapperIrFunction
@@ -120,6 +114,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         val res = when (oldFunction) {
             is IrConstructor -> {
                 buildConstructor {
+                    setSourceRange(oldFunction)
                     origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                     name = oldFunction.name
                     visibility = oldFunction.visibility
@@ -128,53 +123,45 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                 }
             }
             is IrSimpleFunction -> buildFun {
+                setSourceRange(oldFunction)
                 origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                 name = oldFunction.name
                 visibility = oldFunction.visibility
                 modality =
-                    if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
+                    if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
                     else oldFunction.modality
                 returnType = oldFunction.returnType
                 isInline = oldFunction.isInline
                 isSuspend = oldFunction.isSuspend
             }
-            else -> error("Unknown kind of IrFunction: $oldFunction")
         }
 
         res.parent = oldFunction.parent
         res.copyAnnotationsFrom(oldFunction)
         res.copyTypeParametersFrom(oldFunction)
-        res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
-        res.extensionReceiverParameter = oldFunction.extensionReceiverParameter?.copyTo(res)
-        res.valueParameters += res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect)
+        res.parameters += res.generateNewParameters(oldFunction, numDefaultParametersToExpect)
         return res
     }
 
-    private fun IrFunction.generateNewValueParameters(
+    private fun IrFunction.generateNewParameters(
         oldFunction: IrFunction,
         numDefaultParametersToExpect: Int
     ): List<IrValueParameter> {
-        var parametersCopied = 0
         var defaultParametersCopied = 0
-        val result = mutableListOf<IrValueParameter>()
-        for (oldValueParameter in oldFunction.valueParameters) {
-            if (oldValueParameter.defaultValue != null &&
-                defaultParametersCopied < numDefaultParametersToExpect
-            ) {
-                defaultParametersCopied++
-                result.add(
-                    oldValueParameter.copyTo(
+        return oldFunction.parameters.mapNotNull { oldParameter ->
+            when (oldParameter.defaultValue) {
+                null -> oldParameter.copyTo(this)
+                else if defaultParametersCopied < numDefaultParametersToExpect -> {
+                    defaultParametersCopied++
+                    oldParameter.copyTo(
                         this,
-                        index = parametersCopied++,
                         defaultValue = null,
-                        isCrossinline = oldValueParameter.isCrossinline,
-                        isNoinline = oldValueParameter.isNoinline
+                        isCrossinline = oldParameter.isCrossinline,
+                        isNoinline = oldParameter.isNoinline
                     )
-                )
-            } else if (oldValueParameter.defaultValue == null) {
-                result.add(oldValueParameter.copyTo(this, index = parametersCopied++))
+                }
+                else -> null
             }
         }
-        return result
     }
 }

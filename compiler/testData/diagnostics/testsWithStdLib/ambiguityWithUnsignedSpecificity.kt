@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57568
 
@@ -10,3 +11,5 @@ fun of(size: ULong) {
 fun of(size: Int) {}
 
 fun of(size: Long) {}
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, nullableType, typeParameter */

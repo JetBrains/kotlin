@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<Any><!>> f1() {}
 fun <T, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<out T><!>> f2() {}
@@ -17,3 +18,6 @@ fun foo() {
         fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<Any><!>, <!UPPER_BOUND_CANNOT_BE_ARRAY!>B : Array<Any><!>, C : A> f() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, localClass, nullableType,
+outProjection, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeConstraint, typeParameter */

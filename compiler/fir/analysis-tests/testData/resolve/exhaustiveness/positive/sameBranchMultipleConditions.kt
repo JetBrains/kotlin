@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-46301
 
 sealed interface A
@@ -18,3 +19,7 @@ fun problem(a: A): B {
         is X, is Y -> a
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, disjunctionExpression, functionDeclaration, interfaceDeclaration,
+intersectionType, isExpression, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression,
+whenWithSubject */

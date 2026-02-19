@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.jvm
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 /**
  * With JVM compilation
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
  *    `kotlin.Throwable` does not require `override` keyword.
  */
 object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatibilityHelper() {
-    override fun additionalCheck(member: FirCallableDeclaration): Boolean? {
+    override fun additionalCheck(member: FirCallableSymbol<*>): Boolean? {
+        if (member.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) return true
+
         if (!member.isJavaOrEnhancement) return false
         val containingClassName = member.containingClassLookupTag()?.classId?.asSingleFqName()?.toUnsafe() ?: return false
         // If the super class is mapped to a Kotlin built-in class, then we don't require `override` keyword.

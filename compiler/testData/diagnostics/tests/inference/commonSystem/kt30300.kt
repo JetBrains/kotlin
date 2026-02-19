@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // Issue: KT-30300
 
 class Inv<T>
@@ -18,3 +19,5 @@ fun test(s: Sample, b: InvOut<Inv<*>, Any?>) {
     )<!>
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, out, outProjection, starProjection,
+typeParameter */

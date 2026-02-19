@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 final class FinalProperty {
     inline val valProp: Int
@@ -37,3 +38,5 @@ interface AbstractProperty {
     <!DECLARATION_CANT_BE_INLINED!>inline<!> abstract val valProp: Int
     <!DECLARATION_CANT_BE_INLINED!>inline<!> abstract var varProp: Int
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, propertyDeclaration, setter */

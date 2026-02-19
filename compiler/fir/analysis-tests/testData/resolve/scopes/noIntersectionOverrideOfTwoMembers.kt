@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: C:foo;x, Explicit:foo;x, Implicit:foo;x
 
 interface A {
@@ -23,3 +24,5 @@ interface Explicit : C, D {
 }
 
 interface Implicit : C, D
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

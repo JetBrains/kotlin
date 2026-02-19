@@ -1,0 +1,2 @@
+expression: !x
+type: kotlin.Boolean

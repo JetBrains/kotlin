@@ -8,10 +8,10 @@
 namespace kotlin {
 namespace internal {
 
-inline constexpr int FILE_NOT_INITIALIZED = 0;
-inline constexpr int FILE_BEING_INITIALIZED = 1;
-inline constexpr int FILE_INITIALIZED = 2;
-inline constexpr int FILE_FAILED_TO_INITIALIZE = 3;
+inline constexpr uintptr_t FILE_NOT_INITIALIZED = 0;
+inline constexpr uintptr_t FILE_BEING_INITIALIZED = 1;
+inline constexpr uintptr_t FILE_INITIALIZED = 2;
+inline constexpr uintptr_t FILE_FAILED_TO_INITIALIZE = 3;
 
 } // namespace internal
 } // namespace kotlin

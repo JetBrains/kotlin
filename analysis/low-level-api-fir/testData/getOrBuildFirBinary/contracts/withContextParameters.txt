@@ -1,0 +1,13 @@
+KT element: KtNamedFunction
+KT element text:
+context(a: kotlin.Boolean?) public fun conditionInContext(): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+FIR element: FirNamedFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+context([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Boolean?|)
+public final [ResolvedTo(BODY_RESOLVE)] fun conditionInContext(): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> a != null
+    >

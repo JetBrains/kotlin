@@ -1,6 +1,8 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 project.updateJvmTarget("1.8")
@@ -19,32 +21,32 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    allTestsRuntime(commonDependency("junit"))
-    testApi(kotlinStdlib("jdk8"))
-    testApi(project(":kotlin-scripting-ide-services-unshaded"))
-    testApi(project(":kotlin-scripting-compiler"))
-    testApi(project(":kotlin-scripting-dependencies-maven"))
-    testApi(project(":compiler:cli"))
+    allTestsRuntime(libs.junit4)
+    testImplementation(kotlinStdlib("jdk8"))
+    testImplementation(project(":kotlin-scripting-ide-services-unshaded"))
+    testImplementation(project(":kotlin-scripting-compiler"))
+    testImplementation(project(":kotlin-scripting-dependencies-maven"))
+    testImplementation(project(":compiler:cli"))
 
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
+    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(intellijCore())
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
+    embeddableTestRuntime(project(":compiler:tests-mutes:mutes-junit4"))
     embeddableTestRuntime(project(":kotlin-scripting-ide-services"))
     embeddableTestRuntime(project(":kotlin-scripting-compiler-impl-embeddable"))
     embeddableTestRuntime(project(":kotlin-scripting-dependencies"))
     embeddableTestRuntime(project(":kotlin-scripting-dependencies-maven-all"))
     embeddableTestRuntime(kotlinStdlib("jdk8"))
     embeddableTestRuntime(testSourceSet.output)
-    embeddableTestRuntime(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    embeddableTestRuntime(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
+    embeddableTestRuntime(libs.kotlinx.coroutines.core)
+    embeddableTestRuntime(libs.kotlinx.coroutines.core.jvm)
 }
 
 sourceSets {
@@ -52,21 +54,29 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
-    dependsOn(":kotlin-compiler:distKotlinc")
-    workingDir = rootDir
-}
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":kotlin-compiler:distKotlinc")
+        workingDir = rootDir
+        doFirst {
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        }
+    }
 
-// This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
-// To make it work, the dependencies to the intellij sdk should be eliminated
-projectTest(taskName = "embeddableTest", parallel = true) {
-    workingDir = rootDir
-    dependsOn(embeddableTestRuntime)
-    classpath = embeddableTestRuntime
+    // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
+    // To make it work, the dependencies to the intellij sdk should be eliminated
+    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
+        workingDir = rootDir
+        dependsOn(embeddableTestRuntime)
+        classpath = embeddableTestRuntime
 
-    exclude("**/JvmReplIdeTest.class")
+        exclude("**/JvmReplIdeTest.class")
+        doFirst {
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        }
+    }
 }

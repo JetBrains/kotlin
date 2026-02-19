@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.jvm.codegen.materialize
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
@@ -23,8 +22,9 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object GetJavaObjectType : IntrinsicMethod() {
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
-        when (val receiver = expression.extensionReceiver) {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val receiver = expression.arguments[0]
+        return when (receiver) {
             is IrClassReference -> {
                 val symbol = receiver.symbol
                 if (symbol is IrTypeParameterSymbol) {
@@ -65,4 +65,5 @@ object GetJavaObjectType : IntrinsicMethod() {
             else ->
                 null
         }
+    }
 }

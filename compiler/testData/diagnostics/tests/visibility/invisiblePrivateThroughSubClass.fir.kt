@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 abstract class A {
@@ -9,3 +10,5 @@ abstract class A {
 }
 
 abstract class B : A()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

@@ -1,3 +1,4 @@
+
 class A {
     private var foo = 1
         get() {
@@ -49,4 +50,3 @@ fun box(): String {
     D().foo()
     return "OK"
 }
-

@@ -20,7 +20,7 @@ FILE: main.kt
 
     }
     public final fun test_1(b: R|B<kotlin/Int>|, x: R|kotlin/Int|, inv: R|Inv<kotlin/Int>|): R|kotlin/Unit| {
-        R|<local>/b|.<Ambiguity: take, [/B.take, /B.take]>#(R|<local>/x|)
-        R|<local>/b|.<Ambiguity: take, [/B.take, /B.take]>#(Null(null))
+        R|<local>/b|.R|SubstitutionOverride</B.take: R|kotlin/String|>|(R|<local>/x|)
+        R|<local>/b|.R|SubstitutionOverride</B.take: R|kotlin/String|><Inapplicable(INAPPLICABLE): /B.take>#|(Null(null))
         R|<local>/b|.<Ambiguity: takeInv, [/B.takeInv, /B.takeInv]>#(R|<local>/inv|)
     }

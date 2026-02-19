@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // https://youtrack.jetbrains.com/issue/KT-49289
 
@@ -18,3 +19,6 @@ fun bar(arg: Boolean): Int {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral,
+nullableType, typeParameter */

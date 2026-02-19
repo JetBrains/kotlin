@@ -6,12 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.getBasicBlocks
-import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
-import org.jetbrains.kotlin.backend.konan.llvm.getInstructions
-import org.jetbrains.kotlin.backend.konan.logMultiple
 
 /**
  * Removes all Kotlin_mm_safePointFunctionPrologue from basic block except the first one.

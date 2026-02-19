@@ -1,11 +1,8 @@
-// EXPECTED_REACHABLE_NODES: 1293
 // CHECK_CONTAINS_NO_CALLS: testRangeTo
 // CHECK_CONTAINS_NO_CALLS: testRangeToFunction
 // CHECK_CONTAINS_NO_CALLS: testUntil
 // CHECK_CONTAINS_NO_CALLS: testDownTo
-// CHECK_CONTAINS_NO_CALLS: testStep TARGET_BACKENDS=JS
 // CHECK_CONTAINS_NO_CALLS: testEmptyRange
-// CHECK_CONTAINS_NO_CALLS: testRangeToParams except=from;to TARGET_BACKENDS=JS
 
 fun testRangeTo(): String {
     var result = ""

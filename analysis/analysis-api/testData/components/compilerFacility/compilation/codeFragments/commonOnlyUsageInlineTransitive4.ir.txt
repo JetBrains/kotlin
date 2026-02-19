@@ -1,0 +1,13 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary,expect] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.String
+        EXPRESSION_BODY
+          BLOCK type=kotlin.String origin=null
+            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [expect,operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+              ARG <this>: CALL 'public final fun lib (): kotlin.String [inline] declared in test.JvmKt' type=kotlin.String origin=null
+              ARG other: CALL 'public final fun root (): kotlin.String [inline] declared in root.RootKt' type=kotlin.String origin=null

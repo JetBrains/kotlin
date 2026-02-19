@@ -28,7 +28,9 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     CONFIGURATION_API_COUNT(SUM, RANDOM_10_PERCENT),
     CONFIGURATION_IMPLEMENTATION_COUNT(SUM, RANDOM_10_PERCENT),
     CONFIGURATION_COMPILE_COUNT(SUM, RANDOM_10_PERCENT),
+    CONFIGURATION_COMPILE_ONLY_COUNT(SUM, RANDOM_10_PERCENT),
     CONFIGURATION_RUNTIME_COUNT(SUM, RANDOM_10_PERCENT),
+    CONFIGURATION_RUNTIME_ONLY_COUNT(SUM, RANDOM_10_PERCENT),
 
     // gradle task types
     GRADLE_NUMBER_OF_TASKS(SUM, RANDOM_10_PERCENT),
@@ -54,6 +56,7 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     ANALYSIS_LINES_PER_SECOND(AVERAGE, SAFE),
     CODE_GENERATION_LINES_PER_SECOND(AVERAGE, SAFE),
 
+    //only Kotlin subprojects are counted
     NUMBER_OF_SUBPROJECTS(SUM, RANDOM_10_PERCENT),
 
     STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD(SUM, RANDOM_10_PERCENT),
@@ -65,6 +68,6 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     BUILD_FINISH_TIME(OVERRIDE, SAFE);
 
     companion object {
-        const val VERSION = 1
+        const val VERSION = 2
     }
 }

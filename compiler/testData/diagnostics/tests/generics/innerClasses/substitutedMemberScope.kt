@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class Outer<E> {
     inner class Inner<F> {
@@ -47,3 +48,7 @@ fun foo() {
     Outer<String>().setInner(strInt)
     Outer<CharSequence>().setInner(<!TYPE_MISMATCH!>strInt<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression,
+typeParameter, typeWithExtension */

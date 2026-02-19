@@ -6,18 +6,17 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -25,6 +24,10 @@ import org.jetbrains.kotlin.name.FqName
 
 private val JS_CLASS_GETTER = FqName("kotlin.js.<get-js>")
 
+/**
+ * Optimization: eliminates [IrClassReference] and [IrGetClass] usages in a simple case of usage of a raw JS constructor.
+ */
+@PhasePrerequisites(FunctionInlining::class)
 class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -33,7 +36,7 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
                     return super.visitCall(expression)
                 }
 
-                return when (val extensionReceiver = expression.extensionReceiver) {
+                return when (val extensionReceiver = expression.arguments[0]) {
                     is IrClassReference -> extensionReceiver.generateDirectValueUsage() ?: super.visitCall(expression)
                     is IrGetClass -> extensionReceiver.generateDirectConstructorUsage()
                     else -> super.visitCall(expression)
@@ -48,16 +51,8 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
             when (val classSymbol = symbol as? IrClassSymbol ?: return null) {
                 irBuiltIns.nothingClass -> null
                 irBuiltIns.anyClass ->
-                    JsIrBuilder.buildCall(intrinsics.jsCode).apply {
-                        putValueArgument(
-                            0,
-                            IrConstImpl.string(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                irBuiltIns.stringType,
-                         "Object"
-                            )
-                        )
+                    JsIrBuilder.buildCall(symbols.jsCode).apply {
+                        arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "Object")
                     }
 
                 else -> classSymbol.owner.jsConstructorReference(backendContext)

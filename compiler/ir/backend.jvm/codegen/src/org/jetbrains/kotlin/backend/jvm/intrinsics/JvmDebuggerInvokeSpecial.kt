@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.getBooleanConstArgument
 import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -27,14 +29,31 @@ import org.jetbrains.org.objectweb.asm.Type
 // lowerings in between.
 object JvmDebuggerInvokeSpecial : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val owner = expression.getStringConstArgument(0)
-        val name = expression.getStringConstArgument(1)
-        val descriptor = expression.getStringConstArgument(2)
-        val isInterface = expression.getBooleanConstArgument(3)
+        val owner = expression.getStringConstArgument(1)
+        val name = expression.getStringConstArgument(2)
+        val descriptor = expression.getStringConstArgument(3)
+        val isInterface = expression.getBooleanConstArgument(4)
+        val argsArray = expression.arguments[5] as? IrBlock
 
         expression.dispatchReceiver!!.accept(codegen, data).materialize()
+        argsArray?.let { generateArgs(it, codegen, data) }
         codegen.mv.invokespecial(owner, name, descriptor, isInterface)
 
         return MaterialValue(codegen, Type.getReturnType(descriptor), expression.type)
+    }
+
+    // statements:
+    // val arr = arrayOfNulls<Any?>(N)
+    // arr[0] = expr1
+    // arr[1] = expr2
+    // ...
+    // arr[N-1] = exprN
+    // arr
+    private fun generateArgs(array: IrBlock, codegen: ExpressionCodegen, data: BlockInfo) {
+        // ignore first and last statements
+        for (i in 1..<array.statements.size - 1) {
+            // generate bytecode for expr1, expr2, ..., exprN
+            (array.statements[i] as IrCall).arguments[2]!!.accept(codegen, data).materialize()
+        }
     }
 }

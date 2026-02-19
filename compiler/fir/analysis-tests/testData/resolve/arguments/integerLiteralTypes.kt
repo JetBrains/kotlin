@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun takeInt(x: Int) {}
 fun takeLong(x: Long) {}
 fun takeByte(x: Byte) {}
@@ -46,3 +47,6 @@ fun test_6() {
     @Ann(<!ARGUMENT_TYPE_MISMATCH!>300<!>)
     val x = ""
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral */

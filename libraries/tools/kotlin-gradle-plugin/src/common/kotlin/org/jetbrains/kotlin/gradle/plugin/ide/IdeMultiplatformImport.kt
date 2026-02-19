@@ -7,8 +7,10 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -17,16 +19,21 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationE
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.high
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.low
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.normal
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.veryHigh
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.metadata.isMultipleKotlinTargetSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSingleKotlinTargetSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSinglePlatformTypeSourceSet
-import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
@@ -118,6 +125,23 @@ interface IdeMultiplatformImport {
     fun registerExtrasSerializationExtension(
         extension: IdeaKotlinExtrasSerializationExtension,
     )
+
+    /**
+     * Registers a [IdeMultiplatformImportAction] which will be invoked only if an IDE/Gradle sync (import) is running.
+     * This action is guaranteed to run before the Kotlin Multiplatform Model is being built.
+     * There is no 'guarantee' whether this action will be running during configuration phase or as a first step
+     * of model building. This is considered an implementation detail.
+     * For further details please read [IdeMultiplatformImportAction]
+     */
+    @ExternalKotlinTargetApi
+    fun registerImportAction(action: IdeMultiplatformImportAction)
+
+    /**
+     * Adds [Task.dependsOn] relation on all registered resolvers for given [task].
+     */
+    @ExperimentalKotlinGradlePluginApi
+    @ExternalKotlinTargetApi
+    fun addDependencyOnResolvers(task: Task)
 
     /**
      * Any [IdeDependencyResolver] has to be registered for a given dependency resolution phase in which it participates
@@ -283,6 +307,11 @@ interface IdeMultiplatformImport {
             val isSingleKotlinTarget = SourceSetConstraint { isSingleKotlinTargetSourceSet(it) }
 
             /**
+             * Matches SourceSets which participate in compilations of multiple [KotlinTarget]
+             */
+            val isMultipleKotlinTarget = SourceSetConstraint { isMultipleKotlinTargetSourceSet(it) }
+
+            /**
              * Matches SourceSets that do not have any other SourceSets that declare a 'dependsOn' this SourceSet
              */
             val isLeaf = SourceSetConstraint { sourceSet ->
@@ -317,14 +346,19 @@ interface IdeMultiplatformImport {
 
         @JvmStatic
         fun instance(project: Project): IdeMultiplatformImport {
-            return project.extraProperties.getOrPut(IdeMultiplatformImport::class.java.name) {
-                IdeMultiplatformImport(project.kotlinExtension)
-            }
+            return project.kotlinIdeMultiplatformImport
         }
     }
 }
 
-internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport get() = IdeMultiplatformImport.instance(project)
+internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport by projectStoredProperty {
+    IdeMultiplatformImport(kotlinExtension)
+}
+
+internal val IdeMultiplatformImportSetupAction = KotlinProjectSetupAction {
+    /* Ensure instance is created */
+    kotlinIdeMultiplatformImport
+}
 
 /**
  * Convenience shortcut method for

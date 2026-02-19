@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -33,3 +34,6 @@ class UnstableReceiver {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+propertyDeclaration, smartcast, thisExpression */

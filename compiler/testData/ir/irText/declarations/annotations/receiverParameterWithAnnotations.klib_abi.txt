@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val p // /A.p|@kotlin.String?{}p[0]
+        final fun (kotlin/String?).<get-p>(): kotlin/String // /A.p.<get-p>|<get-p>@kotlin.String?(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun (kotlin/String).f(): kotlin/String // /A.f|f@kotlin.String(){}[0]
+}
+open annotation class /Ann : kotlin/Annotation { // /Ann|null[0]
+    constructor <init>() // /Ann.<init>|<init>(){}[0]
+}
+final val /topLevelP // /topLevelP|@kotlin.String{}topLevelP[0]
+    final fun (kotlin/String).<get-topLevelP>(): kotlin/String // /topLevelP.<get-topLevelP>|<get-topLevelP>@kotlin.String(){}[0]
+final fun (kotlin/String?)./topLevelF(): kotlin/String // /topLevelF|topLevelF@kotlin.String?(){}[0]

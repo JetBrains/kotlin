@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -30,3 +32,6 @@ actual annotation class A3(actual val x: Int = 42, actual val y: String = "OK")
 actual annotation class A4(actual val x: Int, actual val y: String = "OK")
 
 actual annotation class A5(actual val x: Int = <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>239<!>, actual val y: String = "OK")
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

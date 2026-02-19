@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-31679
 
 import kotlin.reflect.KProperty
@@ -17,3 +18,7 @@ private val privateObj by MyDelegate {
 fun test() {
     privateObj.x
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection,
+typeParameter */

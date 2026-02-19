@@ -5,94 +5,100 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.FirEmptyOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
+import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.PlatformConflictDeclarationsDiagnosticDispatcher
+import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeCastChecker
+import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeConflictDeclarationsDiagnosticDispatcher
+import org.jetbrains.kotlin.fir.backend.native.FirNativeClassMapper
+import org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker
+import org.jetbrains.kotlin.fir.checkers.registerExtraNativeCheckers
 import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
+import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
 
-object FirNativeSessionFactory : FirAbstractSessionFactory() {
-    fun createLibrarySession(
-        mainModuleName: Name,
-        resolvedLibraries: List<KotlinResolvedLibrary>,
-        sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
-    ): FirSession {
-        return createLibrarySession(
-            mainModuleName,
-            sessionProvider,
-            moduleDataProvider,
-            languageVersionSettings,
-            extensionRegistrars,
-            registerExtraComponents = { session ->
-                registerExtraComponents(session)
-            },
-            createKotlinScopeProvider = { FirKotlinScopeProvider() },
-            createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-                val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
-                    Name.special("<forward declarations>"),
-                    moduleDataProvider.platform,
-                    moduleDataProvider.analyzerServices,
-                ).apply {
-                    bindSession(session)
-                }
-                val kotlinLibraries = resolvedLibraries.map { it.library }
-                listOfNotNull(
-                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kotlinLibraries),
-                    NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, kotlinLibraries),
-                    FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    syntheticFunctionInterfaceProvider,
-                )
-            })
+@OptIn(SessionConfiguration::class)
+abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
+    companion object : FirNativeSessionFactory()
+
+    object ForMetadata : FirNativeSessionFactory() {
+        override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+            get() = false
     }
 
-    @OptIn(SessionConfiguration::class)
-    fun createModuleBasedSession(
-        moduleData: FirModuleData,
-        sessionProvider: FirProjectSessionProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
-        init: FirSessionConfigurator.() -> Unit,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
-    ): FirSession {
-        return createModuleBasedSession(
-            moduleData,
-            sessionProvider,
-            extensionRegistrars,
-            languageVersionSettings,
-            null,
-            null,
-            null,
-            init,
-            registerExtraComponents = {
-                it.register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-                it.register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-                it.register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-                it.register(FirOverridesBackwardCompatibilityHelper::class, FirEmptyOverridesBackwardCompatibilityHelper)
-                registerExtraComponents(it)
-            },
-            registerExtraCheckers = { it.registerNativeCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider() },
-            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
-                listOfNotNull(
-                    symbolProvider,
-                    generatedSymbolsProvider,
-                    *dependencies.toTypedArray(),
-                )
+
+    // ==================================== Library session ====================================
+
+    override fun createLibraryContext(configuration: CompilerConfiguration): Nothing? {
+        return null
+    }
+
+    override fun createAdditionalDependencyProviders(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        resolvedLibraries: List<KotlinLibrary>,
+    ): List<FirSymbolProvider> {
+        val forwardDeclarationsModuleData =
+            FirBinaryDependenciesModuleData(FORWARD_DECLARATIONS_MODULE_NAME).apply {
+                bindSession(session)
             }
+        val provider = NativeForwardDeclarationsSymbolProvider(
+            session,
+            forwardDeclarationsModuleData,
+            kotlinScopeProvider,
+            resolvedLibraries
         )
+        return listOf(provider)
+    }
+
+    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+        registerComponents()
+    }
+
+    // ==================================== Platform session ====================================
+
+    override fun FirSessionConfigurator.registerPlatformCheckers() {
+        registerNativeCheckers()
+    }
+
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {
+        registerExtraNativeCheckers()
+    }
+
+    override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
+        registerComponents()
+    }
+
+    override fun createSourceContext(configuration: CompilerConfiguration): Nothing? {
+        return null
+    }
+
+    // ==================================== Common parts ====================================
+
+    private fun FirSession.registerComponents() {
+        registerNativeComponents()
+    }
+
+    // ==================================== Utilities ====================================
+
+    fun FirSession.registerNativeComponents() {
+        register(FirEnumEntriesSupport(this))
+        register(FirPlatformClassMapper::class, FirNativeClassMapper())
+        register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
+        register(PlatformConflictDeclarationsDiagnosticDispatcher::class, NativeConflictDeclarationsDiagnosticDispatcher)
+        register(FirOverrideChecker::class, FirNativeOverrideChecker(this))
+        register(FirDefaultImportsProviderHolder.of(NativeDefaultImportsProvider))
     }
 }

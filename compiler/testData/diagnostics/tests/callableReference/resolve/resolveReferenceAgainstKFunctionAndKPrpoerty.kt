@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T, R> foo(x: kotlin.reflect.KFunction1<T, R>) {}
 fun <T, R> foo(x: kotlin.reflect.KProperty1<T, R>) {}
@@ -21,3 +22,6 @@ fun test() {
 
     foo<A, String>(A::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

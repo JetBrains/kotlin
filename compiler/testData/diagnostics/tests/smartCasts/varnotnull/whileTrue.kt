@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun x(): Boolean { return true }
 
 public fun foo(pp: String?): Int {
@@ -11,3 +12,6 @@ public fun foo(pp: String?): Int {
     // (we could provide it but p = null makes it much harder)
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, whileLoop */

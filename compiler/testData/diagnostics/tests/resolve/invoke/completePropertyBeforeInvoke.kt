@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-58142
 interface XTrackableLoading {
@@ -19,3 +20,7 @@ fun XTrackableLoading.foo(fooBar: Property<LoadingValue<AsyncModule>>) {
         bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, getter, interfaceDeclaration,
+lambdaLiteral, nullableType, operator, propertyDeclaration, propertyWithExtensionReceiver, typeConstraint, typeParameter,
+typeWithExtension */

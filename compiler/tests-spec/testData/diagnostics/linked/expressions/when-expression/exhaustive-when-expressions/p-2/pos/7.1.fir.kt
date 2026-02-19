@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -62,7 +62,7 @@ fun case_6(value_1: SealedClassMixed): String = when (value_1) {
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: SealedClassEmpty): String = when (value_1) {
-    else -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*
@@ -81,5 +81,5 @@ fun case_8(value: SealedClass?): String = when (value) {
  */
 fun case_9(value: SealedClass?): String = when (value) {
     is SealedChild1, !is SealedChild3 -> ""
-    <!USELESS_IS_CHECK!>is SealedChild3?<!> -> ""
+    is SealedChild3? -> ""
 }

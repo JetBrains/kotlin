@@ -1,0 +1,125 @@
+KtFile: 'simple.kt'
+  null
+
+KtPackageDirective(15,27): 'package main'
+  null
+
+KtNameReferenceExpression(23,27): 'main'
+  null
+
+KtImportList(47,247): 'import kotlin.collections.MutableList'
+  null
+
+KtImportDirective(47,84): 'import kotlin.collections.MutableList'
+  null
+
+KtDotQualifiedExpression(54,84): 'kotlin.collections.MutableList'
+  null
+
+KtDotQualifiedExpression(54,72): 'kotlin.collections'
+  null
+
+KtNameReferenceExpression(54,60): 'kotlin'
+  null
+
+KtNameReferenceExpression(61,72): 'collections'
+  null
+
+KtNameReferenceExpression(73,84): 'MutableList'
+  null
+
+KtImportDirective(85,124): 'import kotlin.collections.mutableListOf'
+  null
+
+KtDotQualifiedExpression(92,124): 'kotlin.collections.mutableListOf'
+  null
+
+KtDotQualifiedExpression(92,110): 'kotlin.collections'
+  null
+
+KtNameReferenceExpression(92,98): 'kotlin'
+  null
+
+KtNameReferenceExpression(99,110): 'collections'
+  null
+
+KtNameReferenceExpression(111,124): 'mutableListOf'
+  null
+
+KtImportDirective(125,152): 'import kotlin.text.toString'
+  null
+
+KtDotQualifiedExpression(132,152): 'kotlin.text.toString'
+  null
+
+KtDotQualifiedExpression(132,143): 'kotlin.text'
+  null
+
+KtNameReferenceExpression(132,138): 'kotlin'
+  null
+
+KtNameReferenceExpression(139,143): 'text'
+  null
+
+KtNameReferenceExpression(144,152): 'toString'
+  null
+
+KtImportDirective(170,196): 'import java.util.ArrayList'
+  null
+
+KtDotQualifiedExpression(177,196): 'java.util.ArrayList'
+  null
+
+KtDotQualifiedExpression(177,186): 'java.util'
+  null
+
+KtNameReferenceExpression(177,181): 'java'
+  null
+
+KtNameReferenceExpression(182,186): 'util'
+  null
+
+KtNameReferenceExpression(187,196): 'ArrayList'
+  null
+
+KtImportDirective(197,221): 'import java.util.HashMap'
+  null
+
+KtDotQualifiedExpression(204,221): 'java.util.HashMap'
+  null
+
+KtDotQualifiedExpression(204,213): 'java.util'
+  null
+
+KtNameReferenceExpression(204,208): 'java'
+  null
+
+KtNameReferenceExpression(209,213): 'util'
+  null
+
+KtNameReferenceExpression(214,221): 'HashMap'
+  null
+
+KtImportDirective(222,247): 'import java.lang.Math.sin'
+  null
+
+KtDotQualifiedExpression(229,247): 'java.lang.Math.sin'
+  null
+
+KtDotQualifiedExpression(229,243): 'java.lang.Math'
+  null
+
+KtDotQualifiedExpression(229,238): 'java.lang'
+  null
+
+KtNameReferenceExpression(229,233): 'java'
+  null
+
+KtNameReferenceExpression(234,238): 'lang'
+  null
+
+KtNameReferenceExpression(239,243): 'Math'
+  null
+
+KtNameReferenceExpression(244,247): 'sin'
+  null

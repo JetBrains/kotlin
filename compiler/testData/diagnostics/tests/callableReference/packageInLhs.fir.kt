@@ -1,10 +1,12 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // FILE: simpleName.kt
 
 package foo
 
 fun test() {
-    foo::test
+    <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!>::test
+    <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!>::class
 }
 
 // FILE: qualifiedName.kt
@@ -12,5 +14,8 @@ fun test() {
 package foo.bar
 
 fun test() {
-    foo.bar::test
+    foo.<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>bar<!>::test
+    foo.<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>bar<!>::class
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classReference, functionDeclaration */

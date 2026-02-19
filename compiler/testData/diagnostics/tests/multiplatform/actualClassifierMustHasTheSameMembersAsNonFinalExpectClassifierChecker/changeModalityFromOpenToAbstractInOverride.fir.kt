@@ -1,14 +1,19 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 interface Base {
-    <!INCOMPATIBLE_MATCHING{JVM}!>fun foo() {}<!>
+    fun foo() {}
 }
-<!INCOMPATIBLE_MATCHING{JVM}!>expect abstract class Foo() : Base<!>
+expect abstract class Foo() : Base
 
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual abstract class Foo : Base {
-    abstract override fun foo()
+    abstract override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+primaryConstructor */

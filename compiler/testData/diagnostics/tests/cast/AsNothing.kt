@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Nothing can be cast to Nothing
 fun foo(x: String) {
@@ -13,3 +14,5 @@ fun bar(x: String, y: String?) {
     x <!CAST_NEVER_SUCCEEDS!>as<!> Nothing?
     y as Nothing?
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, nullableType */

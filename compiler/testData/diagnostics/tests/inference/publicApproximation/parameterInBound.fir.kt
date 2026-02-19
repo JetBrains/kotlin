@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Bound1
 interface Bound2
@@ -22,3 +23,6 @@ fun topLevel() = combineParams(
 fun test() {
     topLevel()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, nullableType,
+objectDeclaration, out, typeConstraint, typeParameter, vararg */

@@ -1,4 +1,7 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+
 class Foo {
     fun foo(a: Foo): Foo = a
     var f: Foo? = null
@@ -39,3 +42,6 @@ fun main() {
     <!SMARTCAST_IMPOSSIBLE!>w.f<!>.f = z
     w.f!!.f = z
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, smartcast */

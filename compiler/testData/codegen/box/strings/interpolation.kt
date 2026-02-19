@@ -1,26 +1,26 @@
 // CHECK_STRING_LITERAL_COUNT: function=foo count=1
 fun foo(x: Int) = "foo $x"
 
-// CHECK_STRING_LITERAL_COUNT: function=bar count=2 IGNORED_BACKENDS=JS
+// CHECK_STRING_LITERAL_COUNT: function=bar count=2
 fun bar(x: Int) = "$x bar"
 
 // CHECK_STRING_LITERAL_COUNT: function=baz count=1
 fun baz(x: Int) = "${x.toString()} baz"
 
-// CHECK_STRING_LITERAL_COUNT: function=beer count=2 IGNORED_BACKENDS=JS
+// CHECK_STRING_LITERAL_COUNT: function=beer count=2
 fun beer(x: Int?) = "$x beer"
 
-// CHECK_STRING_LITERAL_COUNT: function=quux count=2 IGNORED_BACKENDS=JS
+// CHECK_STRING_LITERAL_COUNT: function=quux count=2
 fun quux(x: Int?) = "${x?.toString()} quux"
 
-// CHECK_STRING_LITERAL_COUNT: function=test count=2
-fun test(p: String?): String {
+// CHECK_STRING_LITERAL_COUNT: function=mytest count=2
+fun mytest(p: String?): String {
     return "${p ?: "Default"} test"
 }
 
 fun box(): String {
-    if (test(null) != "Default test") return "fail 1: ${test(null)}"
-    if (test("Good") != "Good test") return "fail 2: ${test("Good")}"
+    if (mytest(null) != "Default test") return "fail 1: ${mytest(null)}"
+    if (mytest("Good") != "Good test") return "fail 2: ${mytest("Good")}"
     if (foo(3) != "foo 3") return "fail 3: ${foo(3)}"
     if (bar(4) != "4 bar") return "fail 4: ${bar(4)}"
     if (baz(5) != "5 baz") return "fail 5: ${baz(5)}"

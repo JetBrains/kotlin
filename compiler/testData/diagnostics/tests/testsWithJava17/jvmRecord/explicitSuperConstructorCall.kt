@@ -1,4 +1,4 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // ISSUE: KT-54573
@@ -12,3 +12,5 @@ data class A constructor(val x: Int, val s: String) {
     constructor(s: String) : this(s.length, s)
     constructor(s: CharSequence) : this(s.length, s.<!UNRESOLVED_REFERENCE!>unresolved<!>())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration, secondaryConstructor */

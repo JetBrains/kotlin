@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -7,7 +8,7 @@ public interface JavaInterface {
     public void foo(int javaName);
 }
 
-// FILE: JavaClass.java
+// FILE: JavaSuperClass.java
 
 public class JavaSuperClass implements JavaInterface {
     @Override
@@ -22,3 +23,6 @@ fun test() {
     val ktInstance = KtClass()
     ktInstance.foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>javaName<!> = 1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, integerLiteral, javaFunction,
+javaType, localProperty, propertyDeclaration */

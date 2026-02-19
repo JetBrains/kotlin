@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface T {
     fun foo() {}
     fun buzz() {}
@@ -6,12 +7,12 @@ interface T {
 
 fun T.bar() {}
 
-fun T.buzz() {}
+fun T.<!EXTENSION_SHADOWED_BY_MEMBER!>buzz<!>() {}
 fun T.buzz1() {}
 
 class C : T {
     fun test() {
-        fun T.buzz() {}
+        fun T.<!EXTENSION_SHADOWED_BY_MEMBER!>buzz<!>() {}
         fun T.buzz1() {}
         super.foo() // OK
         super.<!UNRESOLVED_REFERENCE!>bar<!>() // Error
@@ -20,3 +21,6 @@ class C : T {
         super.buzz1(<!ARGUMENT_TYPE_MISMATCH!>""<!>) // Resolved to a member
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+localFunction, stringLiteral, superExpression */

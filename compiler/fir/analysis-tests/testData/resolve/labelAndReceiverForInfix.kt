@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A {
     fun bar() {}
 }
@@ -12,3 +13,6 @@ fun main() {
         return@foo
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, typeWithExtension */

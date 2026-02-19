@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Please make sure that this test is consistent with the blackbox test "annotationsOnLateinitAccessors.kt"
 
 import kotlin.reflect.KProperty
@@ -12,3 +13,6 @@ class LateinitProperties {
     @get:Ann
     private lateinit var y1: String
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration, lateinit,
+propertyDeclaration */

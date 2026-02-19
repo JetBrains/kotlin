@@ -1,11 +1,11 @@
 FILE: annotation.kt
-    @Target(AnnotationTarget#.CLASS#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.LOCAL_VARIABLE#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.CONSTRUCTOR#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.TYPE#) public? final? annotation class base : R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.CLASS#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.LOCAL_VARIABLE#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.CONSTRUCTOR#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.TYPE#) public final? annotation class base : R|kotlin/Annotation| {
         public? [ContainingClassKey=base] constructor(): R|base| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @base() public? final? class correct : R|kotlin/Any| {
+    @base() public final? class correct : R|kotlin/Any| {
         public? [ContainingClassKey=correct] constructor([CorrespondingProperty=/correct.x] @base() x: Int): R|correct| {
             super<R|kotlin/Any|>()
         }
@@ -17,8 +17,11 @@ FILE: annotation.kt
             this<R|correct|>(IntegerLiteral(0))
         }
 
+        @base() init {
+        }
+
     }
-    @base() public? final? enum class My : R|kotlin/Enum<My>| {
+    @base() public final? enum class My : R|kotlin/Enum<My>| {
         private [ContainingClassKey=My] constructor(): R|My| {
             super<R|kotlin/Enum<My>|>()
         }
@@ -47,7 +50,7 @@ FILE: annotation.kt
             public get(): R|kotlin/enums/EnumEntries<My>|
 
     }
-    @base() public? final? fun foo(@base() y: @base() Int): Int {
+    @base() public? final? fun foo(@base() y: @base() Int): @base() Int {
         @base() local final? fun bar(@base() z: @base() Int): <implicit> {
             ^bar z#.plus#(IntegerLiteral(1))
         }
@@ -59,7 +62,7 @@ FILE: annotation.kt
         public? get(): <implicit>
     @base() public? final? val x: Map<@base() Int, List<@base() Int>> = mapOf#()
         public? get(): Map<@base() Int, List<@base() Int>>
-    @Target(AnnotationTarget#.CLASS#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.LOCAL_VARIABLE#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.CONSTRUCTOR#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.TYPE#) @base() public? final? annotation class derived : base, R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.CLASS#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.LOCAL_VARIABLE#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.CONSTRUCTOR#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.TYPE#) @base() public final? annotation class derived : base, R|kotlin/Annotation| {
         public? [ContainingClassKey=derived] constructor([CorrespondingProperty=/derived.x] x: Int): R|derived| {
             super<R|kotlin/Any|>()
         }
@@ -68,20 +71,20 @@ FILE: annotation.kt
             public? [ContainingClassKey=derived] get(): Int
 
     }
-    @derived(IntegerLiteral(1)) public? final? class correctDerived : R|kotlin/Any| {
-        public? [ContainingClassKey=correctDerived] constructor([CorrespondingProperty=/correctDerived.x] @derived(IntegerLiteral(1)) x: Int): R|correctDerived| {
+    @derived(IntegerLiteral(1)) public final? class correctDerived : R|kotlin/Any| {
+        public? [ContainingClassKey=correctDerived] constructor([CorrespondingProperty=/correctDerived.x] @derived(IntegerLiteral(1)) x: @derived(IntegerLiteral(1)) Int): R|correctDerived| {
             super<R|kotlin/Any|>()
         }
 
-        @derived(IntegerLiteral(1)) public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
-            public? [ContainingClassKey=correctDerived] get(): Int
+        @derived(IntegerLiteral(1)) public? final? [IsFromPrimaryConstructor=true] val x: @derived(IntegerLiteral(1)) Int = R|<local>/x|
+            public? [ContainingClassKey=correctDerived] get(): @derived(IntegerLiteral(1)) Int
 
         @base() public? [ContainingClassKey=correctDerived] constructor(): R|correctDerived| {
             this<R|correctDerived|>(IntegerLiteral(0))
         }
 
     }
-    @derived(IntegerLiteral(1)) public? final? enum class MyDerived : R|kotlin/Enum<MyDerived>| {
+    @derived(IntegerLiteral(1)) public final? enum class MyDerived : R|kotlin/Enum<MyDerived>| {
         private [ContainingClassKey=MyDerived] constructor(): R|MyDerived| {
             super<R|kotlin/Enum<MyDerived>|>()
         }
@@ -110,7 +113,7 @@ FILE: annotation.kt
             public get(): R|kotlin/enums/EnumEntries<MyDerived>|
 
     }
-    @derived(IntegerLiteral(1)) public? final? fun fooDerived(@derived(IntegerLiteral(1)) y: @derived(IntegerLiteral(1)) Int): Int {
+    @derived(IntegerLiteral(1)) public? final? fun fooDerived(@derived(IntegerLiteral(1)) y: @derived(IntegerLiteral(1)) Int): @derived(IntegerLiteral(1)) Int {
         @derived(IntegerLiteral(1)) local final? fun bar(@derived(IntegerLiteral(1)) z: @derived(IntegerLiteral(1)) Int): <implicit> {
             ^bar z#.plus#(IntegerLiteral(1))
         }

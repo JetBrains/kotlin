@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val that: Number
     field = 239
 
@@ -20,3 +21,7 @@ val A.cc: Number
 fun A.cc() {
     val it = <!UNRESOLVED_REFERENCE!>a<!> + 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, explicitBackingField, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, propertyDelegate,
+propertyWithExtensionReceiver */

@@ -1,103 +1,85 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.inline.*
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
+import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
+import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.*
 
-internal class InlineFunctionsSupport(mapping: NativeMapping) {
-    // Inline functions lowered up to just before the inliner.
-    private val partiallyLoweredInlineFunctions = mapping.partiallyLoweredInlineFunctions
+private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 
-    fun savePartiallyLoweredInlineFunction(function: IrFunction) =
-            function.deepCopyWithVariables().also {
-                it.patchDeclarationParents(function.parent)
-                partiallyLoweredInlineFunctions[function.symbol] = it
+internal class NativeInlineFunctionResolver(
+        val generationState: NativeGenerationState,
+        inlineMode: InlineMode,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(
+        context = generationState.context,
+        inlineMode = inlineMode,
+) {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol) ?: return null
+
+        if (function.isExternal && function.body == null) return null
+        if (function.body != null) {
+            // TODO this `if` check can be dropped after KT-72441
+            if (function.wasLowered != true) {
+                lower(function)
+                function.wasLowered = true
             }
+            return function
+        }
 
-    fun getPartiallyLoweredInlineFunction(function: IrFunction) =
-            partiallyLoweredInlineFunctions[function.symbol]
+        context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
+        lower(function)
+        function.wasLowered = true
+
+        return function
+    }
+
+    private fun lower(function: IrFunction) {
+        if (function.body == null) return
+
+        UpgradeCallableReferences(context).lower(function)
+
+        NativeAssertionWrapperLowering(context).lower(function)
+
+        LateinitLowering(context).run { function.runOnAllBodies { lower(it) }}
+
+        SharedVariablesLowering(context).lower(function)
+
+        LocalClassesInInlineLambdasLowering(context).lower(function)
+
+        ArrayConstructorLowering(context).lower(function)
+
+        NativePrivateFunctionInlining(generationState).lower(function)
+
+        OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
+        SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
+    }
 }
 
-// TODO: This is a bit hacky. Think about adopting persistent IR ideas.
-internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : DefaultInlineFunctionResolver(context) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val function = super.getFunctionDeclaration(symbol)
-
-        generationState.inlineFunctionOrigins[function]?.let { return it.irFunction }
-
-        val packageFragment = function.getPackageFragment()
-        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
-        val irFile: IrFile
-        val (possiblyLoweredFunction, shouldLower) = if (moduleDeserializer != null) {
-            // The function is cached, get its body from the IR linker.
-            val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
-            generationState.inlineFunctionOrigins[function] = deserializedInlineFunction
-            irFile = deserializedInlineFunction.irFile
-            function to firstAccess
-        } else {
-            irFile = packageFragment as IrFile
-            val partiallyLoweredFunction = context.inlineFunctionsSupport.getPartiallyLoweredInlineFunction(function)
-            if (partiallyLoweredFunction == null)
-                function to true
-            else {
-                generationState.inlineFunctionOrigins[function] =
-                        InlineFunctionOriginInfo(partiallyLoweredFunction, irFile, function.startOffset, function.endOffset)
-                partiallyLoweredFunction to false
-            }
-        }
-
-        if (shouldLower) {
-            val functionIsCached = moduleDeserializer != null
-            lower(possiblyLoweredFunction, irFile, functionIsCached)
-            if (!functionIsCached) {
-                generationState.inlineFunctionOrigins[function] =
-                        InlineFunctionOriginInfo(context.inlineFunctionsSupport.savePartiallyLoweredInlineFunction(possiblyLoweredFunction),
-                                irFile, function.startOffset, function.endOffset)
-            }
-        }
-        return possiblyLoweredFunction
+private inline fun IrFunction.runOnAllBodies(fn: (IrBody) -> Unit) {
+    body?.let { fn(it) }
+    for (p in parameters) {
+        p.defaultValue?.let { fn(it) }
     }
+}
 
-    private fun lower(function: IrFunction, irFile: IrFile, functionIsCached: Boolean) {
-        val body = function.body ?: return
-
-        PreInlineLowering(context).lower(body, function, irFile)
-
-        ArrayConstructorLowering(context).lower(body, function)
-
-        NullableFieldsForLateinitCreationLowering(context).lowerWithLocalDeclarations(function)
-        NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
-        LateinitUsageLowering(context).lower(body, function)
-
-        SharedVariablesLowering(context).lower(body, function)
-
-        OuterThisLowering(context).lower(function)
-
-        LocalClassesInInlineLambdasLowering(context).lower(body, function)
-
-        if (!(context.config.produce.isCache || functionIsCached)) {
-            // Do not extract local classes off of inline functions from cached libraries.
-            LocalClassesInInlineFunctionsLowering(context).lower(body, function)
-            LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
-        }
-
-        WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
-    }
-
-    private fun DeclarationTransformer.lowerWithLocalDeclarations(function: IrFunction) {
-        if (transformFlat(function) != null)
-            error("Unexpected transformation of function ${function.dump()}")
-    }
+private fun BodyLoweringPass.lower(function: IrFunction) {
+    function.runOnAllBodies { lower(it, function)}
 }

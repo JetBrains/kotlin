@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: A.java
@@ -23,7 +23,7 @@ fun main(a: A) {
     // foo is platform
     a.foo("", "", null)?.length
     a.foo("", "", null).length
-    a.foo(null, <!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
+    a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length

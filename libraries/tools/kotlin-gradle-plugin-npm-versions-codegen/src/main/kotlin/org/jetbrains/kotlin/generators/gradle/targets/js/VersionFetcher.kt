@@ -60,13 +60,14 @@ class VersionFetcher : AutoCloseable {
     private suspend fun fetchPackageInformationAsync(
         packageName: String,
     ): String {
+        val namespacePrefix = "@"
         val packagePath =
-            if (packageName.startsWith("@"))
-                "@" + encodeURIComponent(packageName)
+            if (packageName.startsWith(namespacePrefix))
+                namespacePrefix + encodeURIComponent(packageName.removePrefix(namespacePrefix))
             else
                 encodeURIComponent(packageName)
 
-        return client.get("http://registry.npmjs.org/$packagePath").bodyAsText()
+        return client.get("https://registry.npmjs.org/$packagePath").bodyAsText()
     }
 
     override fun close() {
@@ -87,6 +88,7 @@ fun encodeURIComponent(s: String): String {
             .replace("%28", "(")
             .replace("%29", ")")
             .replace("%7E", "~")
+            .replace("%2F", "/")
     } catch (e: UnsupportedEncodingException) {
         s
     }

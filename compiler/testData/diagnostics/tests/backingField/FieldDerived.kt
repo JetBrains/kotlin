@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 open class Base {
     open val x: Int = 1
@@ -17,3 +18,5 @@ class NoBackingField: Base() {
     override val x: Int
         get() = 5
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, getter, integerLiteral, override, propertyDeclaration */

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -21,11 +20,9 @@ import java.util.List;
 
 public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
 
-    private final List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<>();
+    private final List<Type> kotlinParameterTypes = new ArrayList<>();
 
     private Type jvmReturnType;
-
-    private JvmMethodParameterKind currentParameterKind;
 
     private int currentSignatureSize = 0;
 
@@ -98,16 +95,26 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
         clearCurrentType();
     }
 
-    public void writeParameterType(JvmMethodParameterKind parameterKind) {
-        currentParameterKind = parameterKind;
+    public void writeParameterType(@NotNull JvmMethodParameterKind parameterKind) {
+        if (parameterKind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL) {
+            writeParameterType(WritingParameterToGenericSignatureMode.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER);
+            return;
+        }
+        if (parameterKind == JvmMethodParameterKind.OUTER) {
+            writeParameterType(WritingParameterToGenericSignatureMode.OUTER_THIS);
+            return;
+        }
+        writeParameterType(WritingParameterToGenericSignatureMode.REGULAR);
+    }
+
+    public void writeParameterType(WritingParameterToGenericSignatureMode mode) {
     }
 
     public void writeParameterTypeEnd() {
         //noinspection ConstantConditions
-        kotlinParameterTypes.add(new JvmMethodParameterSignature(getJvmCurrentType(), currentParameterKind));
+        kotlinParameterTypes.add(getJvmCurrentType());
         currentSignatureSize += getJvmCurrentType().getSize();
 
-        currentParameterKind = null;
         clearCurrentType();
     }
 
@@ -140,7 +147,7 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
     public JvmMethodGenericSignature makeJvmMethodSignature(@NotNull String name) {
         Type[] types = new Type[kotlinParameterTypes.size()];
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
-            types[i] = kotlinParameterTypes.get(i).getAsmType();
+            types[i] = kotlinParameterTypes.get(i);
         }
         Method asmMethod = new Method(name, jvmReturnType, types);
         return new JvmMethodGenericSignature(asmMethod, kotlinParameterTypes, makeJavaGenericSignature());

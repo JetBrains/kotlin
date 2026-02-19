@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// WITH_EXTENDED_CHECKERS
 // KT-716 Type inference failed
 
 class TypeInfo<T>
@@ -16,3 +16,7 @@ fun <T> getJavaClass() = typeinfo<T>().getJavaClass()
 fun main() {
     System.out.println(getJavaClass<String>())
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+javaFunction, javaProperty, localProperty, nullableType, propertyDeclaration, starProjection, thisExpression,
+typeParameter */

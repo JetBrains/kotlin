@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo {
     fun Foo.bar() {}
 
@@ -5,3 +6,5 @@ class Foo {
         bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

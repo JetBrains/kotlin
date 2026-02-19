@@ -1,15 +1,19 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
 // SKIP_JAVAC
 
-// FILE: A.java
+// FILE: MyTypeQualifier.java
 
-import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @javax.annotation.meta.TypeQualifier
 public @interface MyTypeQualifier {}
+
+// FILE: A.java
+
+import org.jetbrains.annotations.NotNull;
 
 @An
 public interface A {
@@ -27,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 annotation class An
 
 class B : A {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; @NotNull() @An() @MyTypeQualifier() fun foo(): @EnhancedNullability String")!>String?<!> = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("fun foo(): String?; 'fun foo(): String' defined in 'A'")!>String?<!> = null
 }
 
 @An
@@ -38,5 +42,8 @@ public interface C {
 }
 
 class D : C {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; @NotNull() @An() fun foo(): String")!>String?<!> = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("fun foo(): String?; 'fun foo(): String' defined in 'C'")!>String?<!> = null
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, javaType,
+nullableType, override */

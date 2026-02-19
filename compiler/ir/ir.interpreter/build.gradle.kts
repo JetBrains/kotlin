@@ -1,14 +1,18 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+
+    implementation(project(":core:compiler.common.js"))
+    implementation(project(":compiler:ir.serialization.common"))
+
+    compileOnly(intellijCore())
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

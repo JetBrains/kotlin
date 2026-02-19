@@ -1,0 +1,8 @@
+STEP 0:
+    modifications:
+        U : ObjectB.0.kt -> ObjectB.kt
+    added file: ObjectB.kt
+STEP 1:
+    modifications:
+        U : ObjectB.1.kt -> ObjectB.kt
+    modified ir: ObjectB.kt

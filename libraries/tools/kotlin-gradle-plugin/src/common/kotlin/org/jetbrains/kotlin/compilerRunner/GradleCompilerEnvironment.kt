@@ -16,12 +16,13 @@ internal class GradleCompilerEnvironment(
     outputItemsCollector: OutputItemsCollector,
     val outputFiles: List<File>,
     val reportingSettings: ReportingSettings,
+    val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null,
-    val kotlinScriptExtensions: Array<String> = emptyArray()
+    val kotlinScriptExtensions: Array<String> = emptyArray(),
 ) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
 
     fun compilerFullClasspath(
         toolsJar: File?
-    ): List<File> = if (toolsJar != null ) compilerClasspath + toolsJar else compilerClasspath.toList()
+    ): List<File> = if (toolsJar != null) compilerClasspath + toolsJar else compilerClasspath.toList()
 }
 

@@ -10,37 +10,38 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.isElseBranch
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
-private object OPTIMISED_WHEN_SUBJECT : IrDeclarationOriginImpl("OPTIMISED_WHEN_SUBJECT")
+private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl.Regular
 
+/**
+ * Replaces `when` with constant string cases to binary search by string hashcodes.
+ */
 class WasmStringSwitchOptimizerLowering(
     private val context: WasmBackendContext
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    private val symbols = context.wasmSymbols
-
     private val stringHashCode by lazy {
-        symbols.irBuiltIns.stringClass.getSimpleFunction("hashCode")!!
+        context.irBuiltIns.stringClass.getSimpleFunction("hashCode")!!
     }
 
-    private val intType: IrType = symbols.irBuiltIns.intType
-    private val booleanType: IrType = symbols.irBuiltIns.booleanType
+    private val intType: IrType = context.irBuiltIns.intType
+    private val booleanType: IrType = context.irBuiltIns.booleanType
 
     private fun IrBlockBuilder.createEqEqForIntVariable(tempIntVariable: IrVariable, value: Int) =
         irCall(context.irBuiltIns.eqeqSymbol, booleanType).also {
-            it.putValueArgument(0, irGet(tempIntVariable))
-            it.putValueArgument(1, value.toIrConst(intType))
+            it.arguments[0] = irGet(tempIntVariable)
+            it.arguments[1] = value.toIrConst(intType)
         }
 
     private fun asEqCall(expression: IrExpression): IrCall? =
@@ -49,16 +50,22 @@ class WasmStringSwitchOptimizerLowering(
     private class MatchedCase(val condition: IrCall, val branchIndex: Int)
     private class BucketSelector(val hashCode: Int, val selector: IrExpression)
 
+    override fun lower(irModule: IrModuleFragment) {
+        val isDebugFriendlyCompilation = context.configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
+        if (isDebugFriendlyCompilation) return
+        super.lower(irModule)
+    }
+
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
 
-    private fun tryMatchCaseToNullableStringConstant(condition: IrExpression): IrConst<*>? {
+    private fun tryMatchCaseToNullableStringConstant(condition: IrExpression): IrConst? {
         val eqCall = asEqCall(condition) ?: return null
-        if (eqCall.valueArgumentsCount < 2) return null
+        if (eqCall.arguments.size < 2) return null
         val constantReceiver =
-            eqCall.getValueArgument(0) as? IrConst<*>
-                ?: eqCall.getValueArgument(1) as? IrConst<*>
+            eqCall.arguments[0] as? IrConst
+                ?: eqCall.arguments[1] as? IrConst
                 ?: return null
         return when (constantReceiver.kind) {
             IrConstKind.String, IrConstKind.Null -> constantReceiver
@@ -66,33 +73,7 @@ class WasmStringSwitchOptimizerLowering(
         }
     }
 
-    private fun IrBlockBuilder.addHashCodeVariable(firstEqCall: IrCall): IrVariable {
-        val subject: IrExpression
-        val subjectArgumentIndex: Int
-        val firstArgument = firstEqCall.getValueArgument(0)!!
-        if (firstArgument is IrConst<*>) {
-            subject = firstEqCall.getValueArgument(1)!!
-            subjectArgumentIndex = 1
-        } else {
-            subject = firstArgument
-            subjectArgumentIndex = 0
-        }
-
-        val subjectType = subject.type
-
-        val whenSubject = buildVariable(
-            scope.getLocalDeclarationParent(),
-            startOffset,
-            endOffset,
-            OPTIMISED_WHEN_SUBJECT,
-            Name.identifier("tmp_when_subject"),
-            subjectType,
-        )
-
-        whenSubject.initializer = subject
-        +whenSubject
-        firstEqCall.putValueArgument(subjectArgumentIndex, irGet(whenSubject))
-
+    private fun IrBlockBuilder.addHashCodeVariable(subject: IrValueDeclaration): IrVariable {
         val tmpIntWhenSubject = buildVariable(
             scope.getLocalDeclarationParent(),
             startOffset,
@@ -103,13 +84,14 @@ class WasmStringSwitchOptimizerLowering(
         )
 
         val getHashCode = irCall(stringHashCode, intType).also {
-            it.dispatchReceiver = irGet(whenSubject)
+            it.dispatchReceiver = irGet(subject)
         }
 
+        val subjectType = subject.type
         val hashCode: IrExpression = if (subjectType.isNullable()) {
             val stringIsNull = irCall(context.irBuiltIns.eqeqeqSymbol, booleanType).also {
-                it.putValueArgument(0, irGet(whenSubject))
-                it.putValueArgument(1, irNull(subjectType))
+                it.arguments[0] = irGet(subject)
+                it.arguments[1] = irNull(subjectType)
             }
             irIfThenElse(intType, stringIsNull, 0.toIrConst(intType), getHashCode)
         } else {
@@ -230,25 +212,38 @@ class WasmStringSwitchOptimizerLowering(
         return irWhen(transformedWhen.type, mainResultsBranches)
     }
 
+    private fun extractGetValue(condition: IrCall): IrGetValue? {
+        val op1 = condition.arguments[0]!!
+        val op2 = condition.arguments[1]!!
+
+        return op1 as? IrGetValue ?: op2 as? IrGetValue
+    }
+
     override fun visitWhen(expression: IrWhen): IrExpression {
         val visitedWhen = super.visitWhen(expression) as IrWhen
         if (visitedWhen.branches.size <= 2) return visitedWhen
 
-        var firstEqCall: IrCall? = null
+        var irGetValueSymbol: IrGetValue? = null // check if the same variable appears in all branches
         var isSimpleWhen = true //simple when is when without else block and commas
         val stringConstantToMatchedCase = mutableMapOf<String?, MatchedCase>()
         visitedWhen.branches.forEachIndexed { branchIndex, branch ->
             if (!isElseBranch(branch)) {
-                val conditions = IrWhenUtils.matchConditions(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
+                val conditions = IrWhenUtils.matchConditions<IrCall>(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
                 if (conditions.isEmpty()) return visitedWhen
 
                 isSimpleWhen = isSimpleWhen && conditions.size == 1
                 for (condition in conditions) {
                     val matchedStringConstant = tryMatchCaseToNullableStringConstant(condition) ?: return visitedWhen
                     val matchedString = matchedStringConstant.value as? String
+
+                    val extractedSymbol = extractGetValue(condition) ?: return visitedWhen
+                    if (irGetValueSymbol != null && extractedSymbol.symbol != irGetValueSymbol.symbol) {
+                        return visitedWhen
+                    }
+                    irGetValueSymbol = irGetValueSymbol ?: extractedSymbol
+
                     if (matchedString !in stringConstantToMatchedCase) {
                         stringConstantToMatchedCase[matchedString] = MatchedCase(condition, branchIndex)
-                        firstEqCall = firstEqCall ?: asEqCall(condition)
                     }
                 }
             } else {
@@ -256,11 +251,11 @@ class WasmStringSwitchOptimizerLowering(
             }
         }
 
-        if (firstEqCall == null || stringConstantToMatchedCase.size < 2) return visitedWhen
+        if (irGetValueSymbol == null || stringConstantToMatchedCase.size < 2) return visitedWhen
 
         val convertedBlock = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             irBlock(resultType = visitedWhen.type) {
-                val tempIntVariable = addHashCodeVariable(firstEqCall!!)
+                val tempIntVariable = addHashCodeVariable(irGetValueSymbol.symbol.owner)
 
                 val buckets = stringConstantToMatchedCase.keys.groupBy { it.hashCode() }
 

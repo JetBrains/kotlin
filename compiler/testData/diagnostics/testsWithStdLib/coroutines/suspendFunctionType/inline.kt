@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 inline fun foo1(<!INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED!>x: suspend () -> Unit<!>) {}
 inline fun foo2(crossinline x: suspend () -> Unit) {}
@@ -43,3 +44,5 @@ suspend fun baz() {
         <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, noinline, suspend */

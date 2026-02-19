@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Owner.java
 
 public class Owner {
@@ -13,3 +14,5 @@ class User : Owner() {
 
     override fun getText() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, override, stringLiteral */

@@ -1,4 +1,6 @@
-// !API_VERSION: 1.0
+// RUN_PIPELINE_TILL: FRONTEND
+// API_VERSION: 1.0
+// ISSUE: KT-63065
 // MODULE: m1
 // FILE: a.kt
 
@@ -36,3 +38,5 @@ fun test(a: <!API_NOT_AVAILABLE!>A<!>) {
     a.m1()
     a.<!UNRESOLVED_REFERENCE!>m2<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

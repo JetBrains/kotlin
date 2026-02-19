@@ -1,4 +1,5 @@
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -20,3 +21,6 @@ fun test() {
 
     A.Companion.entries
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

@@ -1,11 +1,11 @@
 public final class PrivateInClass /* PrivateInClass*/ {
-  private  PrivateInClass(java.lang.String);//  .ctor(java.lang.String)
+  private  PrivateInClass(@org.jetbrains.annotations.Nullable() java.lang.String);//  .ctor(@org.jetbrains.annotations.Nullable() java.lang.String)
 
-  private final java.lang.String bar(java.lang.String, java.lang.String);//  bar(java.lang.String, java.lang.String)
+  private final @org.jetbrains.annotations.NotNull() java.lang.String getNn();//  getNn()
 
-  private final java.lang.String getN();//  getN()
+  private final @org.jetbrains.annotations.Nullable() java.lang.String bar(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.String);//  bar(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.String)
 
-  private final java.lang.String getNn();//  getNn()
+  private final @org.jetbrains.annotations.Nullable() java.lang.String getN();//  getN()
 
-  private final void setNn(java.lang.String);//  setNn(java.lang.String)
+  private final void setNn(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNn(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

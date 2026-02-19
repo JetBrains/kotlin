@@ -1,5 +1,6 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm
@@ -33,3 +34,6 @@ value class Z(val data: Int) {
     val testValBySingleton <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>by ValObject<!>
     var testVarBySingleton <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>by VarObject<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter, value */

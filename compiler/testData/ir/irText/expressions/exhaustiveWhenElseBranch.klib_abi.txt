@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final enum class /A : kotlin/Enum</A> { // /A|null[0]
+    final val entries // /A.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</A> // /A.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /A // /A.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</A> // /A.values|values#static(){}[0]
+    enum entry V1 // /A.V1|null[0]
+}
+final fun /testAnnotated_throwsJvm(/A) // /testAnnotated_throwsJvm|testAnnotated_throwsJvm(A){}[0]
+final fun /testExpression_throws(/A): kotlin/Int // /testExpression_throws|testExpression_throws(A){}[0]
+final fun /testIfTheElseAnnotated_throwsJvm(/A, kotlin/Boolean) // /testIfTheElseAnnotated_throwsJvm|testIfTheElseAnnotated_throwsJvm(A;kotlin.Boolean){}[0]
+final fun /testIfTheElseParenthesized_throwsJvm(/A, kotlin/Boolean) // /testIfTheElseParenthesized_throwsJvm|testIfTheElseParenthesized_throwsJvm(A;kotlin.Boolean){}[0]
+final fun /testIfTheElseStatement_empty(/A, kotlin/Boolean) // /testIfTheElseStatement_empty|testIfTheElseStatement_empty(A;kotlin.Boolean){}[0]
+final fun /testLambdaResultExpression_throws(/A) // /testLambdaResultExpression_throws|testLambdaResultExpression_throws(A){}[0]
+final fun /testParenthesized_throwsJvm(/A) // /testParenthesized_throwsJvm|testParenthesized_throwsJvm(A){}[0]
+final fun /testStatement_empty(/A) // /testStatement_empty|testStatement_empty(A){}[0]
+final fun /testVariableAssignment_throws(/A) // /testVariableAssignment_throws|testVariableAssignment_throws(A){}[0]

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun interface MyRunnable {
     fun foo(x: Int): Boolean
 }
@@ -23,3 +24,6 @@ fun main() {
 
     bar(PrivateRunnable { s -> s.length > 0 })
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, propertyDeclaration */

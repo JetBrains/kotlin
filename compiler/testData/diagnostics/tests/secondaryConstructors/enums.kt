@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 enum class A {
     W(1), X(1, 2), Y(3.0), Z(""), E();
 
@@ -38,3 +39,6 @@ enum class D(val prop: Int) {
 
     abstract fun f(): Int
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, enumDeclaration, enumEntry, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, secondaryConstructor */

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi2ir.transformations
@@ -29,18 +18,17 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -86,7 +74,7 @@ internal class InsertImplicitCasts(
 
     private fun postprocessReturnExpressions(element: IrElement) {
         // We need to re-create type parameter context for casts of postprocessed return values.
-        element.acceptChildrenVoid(object : IrElementVisitorVoid {
+        element.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitReturn(expression: IrReturn) {
                 super.visitReturn(expression)
                 val expectedReturnType = expectedFunctionExpressionReturnType[expression.returnTargetSymbol.descriptor] ?: return
@@ -128,10 +116,19 @@ internal class InsertImplicitCasts(
     }
 
     private fun IrMemberAccessExpression<*>.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
-        dispatchReceiver = dispatchReceiver?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
+        val callableDescriptor = symbol.descriptor as? CallableDescriptor ?: return
+        val hasDispatchReceiver = callableDescriptor.dispatchReceiverParameter != null
+        if (hasDispatchReceiver) {
+            arguments[0] = arguments[0]?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
+        }
         val extensionReceiverType = substitutedDescriptor.extensionReceiverParameter?.type
         val originalExtensionReceiverType = substitutedDescriptor.original.extensionReceiverParameter?.type
-        extensionReceiver = extensionReceiver?.cast(extensionReceiverType, originalExtensionReceiverType)
+        val hasExtensionReceiver = callableDescriptor.extensionReceiverParameter != null
+        if (hasExtensionReceiver) {
+            val extensionReceiverIndex = callableDescriptor.contextReceiverParameters.size + if (hasDispatchReceiver) 1 else 0
+            arguments[extensionReceiverIndex] =
+                arguments[extensionReceiverIndex]?.cast(extensionReceiverType, originalExtensionReceiverType)
+        }
     }
 
     private fun getEffectiveDispatchReceiverType(descriptor: CallableDescriptor): KotlinType? =
@@ -156,8 +153,13 @@ internal class InsertImplicitCasts(
         return expression.transformPostfix {
             transformReceiverArguments(substitutedDescriptor)
             for (index in substitutedDescriptor.valueParameters.indices) {
-                val irIndex = index + substitutedDescriptor.contextReceiverParameters.size
-                val argument = getValueArgument(irIndex) ?: continue
+                val dispatchReceiverOffset =
+                    if ((expression.symbol.descriptor as? CallableDescriptor)?.dispatchReceiverParameter != null) 1 else 0
+                val extensionReceiverOffset =
+                    if ((expression.symbol.descriptor as? CallableDescriptor)?.extensionReceiverParameter != null) 1 else 0
+                val irIndex =
+                    index + substitutedDescriptor.contextReceiverParameters.size + dispatchReceiverOffset + extensionReceiverOffset
+                val argument = arguments[irIndex] ?: continue
                 val parameterType = substitutedDescriptor.valueParameters[index].type
                 val originalParameterType = substitutedDescriptor.original.valueParameters[index].type
 
@@ -169,7 +171,7 @@ internal class InsertImplicitCasts(
                     else
                         parameterType
 
-                putValueArgument(irIndex, argument.cast(expectedType, originalExpectedType = originalParameterType))
+                arguments[irIndex] = argument.cast(expectedType, originalExpectedType = originalParameterType)
             }
         }
     }
@@ -244,7 +246,7 @@ internal class InsertImplicitCasts(
     override fun visitFunction(declaration: IrFunction): IrStatement =
         typeTranslator.buildWithScope(declaration) {
             declaration.transformPostfix {
-                valueParameters.forEach {
+                parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.forEach {
                     it.defaultValue?.coerceInnerExpression(it.descriptor.type)
                 }
             }
@@ -417,7 +419,7 @@ internal class InsertImplicitCasts(
             this is IrCall && preventDeprecatedIntegerValueTypeLiteralConversion()
         ) return this
 
-        return if (this is IrConst<*>) {
+        return if (this is IrConst) {
             val value = this.value as Int
             val irType = targetType.toIrType()
             when {
@@ -469,13 +471,17 @@ internal class InsertImplicitCasts(
 
     private fun IrExpression.invokeIntegerCoercionFunction(targetType: KotlinType, coercionFunName: String): IrExpression {
         val coercionFunction = irBuiltIns.intClass.descriptor.unsubstitutedMemberScope.findSingleFunction(Name.identifier(coercionFunName))
-        return IrCallImpl(
+        return IrCallImplWithShape(
             startOffset, endOffset,
             targetType.toIrType(),
             symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
-            typeArgumentsCount = 0, valueArgumentsCount = 0
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = true,
+            hasExtensionReceiver = false,
         ).also { irCall ->
-            irCall.dispatchReceiver = this
+            irCall.arguments[0] = this
         }
     }
 
@@ -491,13 +497,17 @@ internal class InsertImplicitCasts(
                 extensionReceiver != null && extensionReceiver.type.isInt()
             }
             ?: throw AssertionError("Coercion function '$coercionFunName' not found")
-        return IrCallImpl(
+        return IrCallImplWithShape(
             startOffset, endOffset,
             targetType.toIrType(),
             symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
-            typeArgumentsCount = 0, valueArgumentsCount = 0
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = true,
         ).also { irCall ->
-            irCall.extensionReceiver = this
+            irCall.arguments[0] = this
         }
     }
 

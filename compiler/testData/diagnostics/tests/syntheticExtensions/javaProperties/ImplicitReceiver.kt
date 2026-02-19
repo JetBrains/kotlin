@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: KotlinFile.kt
 fun JavaClass.foo() {
@@ -11,3 +12,5 @@ fun useInt(i: Int) {}
 public class JavaClass {
     public int getSomething() { return 1; }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, javaFunction, javaProperty, javaType */

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -38,7 +37,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         // It is therefore safe to deep-copy as it does not contain any functions or classes.
         get() = field.shallowCopyOrNull() ?: field.deepCopyWithSymbols()
 
-    protected val symbols = context.ir.symbols
+    protected val symbols = context.symbols
 
     init {
         with(builder) {
@@ -53,12 +52,13 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 // In the above example, if first() is a Long and last() is an Int, this creates a
                 // LongProgression so last() should be cast to a Long.
                 inductionVariable =
-                    scope.createTmpVariable(
+                    scope.createTemporaryVariable(
                         headerInfo.first.asElementType(),
                         nameHint = inductionVariableName,
                         isMutable = true,
                         origin = this@NumericForLoopHeader.context.inductionVariableOrigin,
-                        irType = elementClass.defaultType
+                        irType = elementClass.defaultType,
+                        inventUniqueName = false,
                     )
 
                 // Due to features of PSI2IR we can obtain nullable arguments here while actually
@@ -104,8 +104,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             val stepType = stepClass.defaultType
             val plusFun = elementClass.defaultType.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.PLUS &&
-                        it.valueParameters.size == 1 &&
-                        it.valueParameters[0].type == stepType
+                        it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, stepType))
             }
             irSet(
                 inductionVariable.symbol, irCallOp(
@@ -133,8 +132,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 val unsignedCompareToFun = if (this is UnsignedProgressionType) {
                     unsignedType.getClass()!!.functions.single {
                         it.name == OperatorNameConventions.COMPARE_TO &&
-                                it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
-                                it.valueParameters.size == 1 && it.valueParameters[0].type == unsignedType
+                                it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, unsignedType))
                     }
                 } else null
 
@@ -149,16 +147,16 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                     // last <= inductionVar (use `<` if last is exclusive)
                     if (this is UnsignedProgressionType) {
                         irCall(intCompFun).apply {
-                            putValueArgument(0, irCall(unsignedCompareToFun!!).apply {
-                                dispatchReceiver = lastExpression.asUnsigned()
-                                putValueArgument(0, irGet(inductionVariable).asUnsigned())
-                            })
-                            putValueArgument(1, irInt(0))
+                            arguments[0] = irCall(unsignedCompareToFun!!).apply {
+                                arguments[0] = lastExpression.asUnsigned()
+                                arguments[1] = irGet(inductionVariable).asUnsigned()
+                            }
+                            arguments[1] = irInt(0)
                         }
                     } else {
                         irCall(elementCompFun!!).apply {
-                            putValueArgument(0, lastExpression)
-                            putValueArgument(1, irGet(inductionVariable))
+                            arguments[0] = lastExpression
+                            arguments[1] = irGet(inductionVariable)
                         }
                     }
 
@@ -166,16 +164,16 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                     // inductionVar <= last (use `<` if last is exclusive)
                     if (this is UnsignedProgressionType) {
                         irCall(intCompFun).apply {
-                            putValueArgument(0, irCall(unsignedCompareToFun!!).apply {
-                                dispatchReceiver = irGet(inductionVariable).asUnsigned()
-                                putValueArgument(0, lastExpression.asUnsigned())
-                            })
-                            putValueArgument(1, irInt(0))
+                            arguments[0] = irCall(unsignedCompareToFun!!).apply {
+                                arguments[0] = irGet(inductionVariable).asUnsigned()
+                                arguments[1] = lastExpression.asUnsigned()
+                            }
+                            arguments[1] = irInt(0)
                         }
                     } else {
                         irCall(elementCompFun!!).apply {
-                            putValueArgument(0, irGet(inductionVariable))
-                            putValueArgument(1, lastExpression)
+                            arguments[0] = irGet(inductionVariable)
+                            arguments[1] = lastExpression
                         }
                     }
 
@@ -190,15 +188,15 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                         context.oror(
                             context.andand(
                                 irCall(builtIns.greaterFunByOperandType.getValue(stepClass.symbol)).apply {
-                                    putValueArgument(0, stepExpression.shallowCopy())
-                                    putValueArgument(1, zeroStepExpression())
+                                    arguments[0] = stepExpression.shallowCopy()
+                                    arguments[1] = zeroStepExpression()
                                 },
                                 conditionForIncreasing()
                             ),
                             context.andand(
                                 irCall(builtIns.lessFunByOperandType.getValue(stepClass.symbol)).apply {
-                                    putValueArgument(0, stepExpression.shallowCopy())
-                                    putValueArgument(1, zeroStepExpression())
+                                    arguments[0] = stepExpression.shallowCopy()
+                                    arguments[1] = zeroStepExpression()
                                 },
                                 conditionForDecreasing()
                             )

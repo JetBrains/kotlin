@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.cfa
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
-abstract class FirControlFlowChecker {
-    abstract fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext)
+abstract class FirControlFlowChecker(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    abstract fun analyze(graph: ControlFlowGraph)
 }

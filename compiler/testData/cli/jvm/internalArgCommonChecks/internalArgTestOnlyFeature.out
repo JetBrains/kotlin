@@ -1,0 +1,11 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+IntrinsicConstEvaluation
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+error: language feature 'IntrinsicConstEvaluation' is test-only and cannot be enabled from command line
+COMPILATION_ERROR

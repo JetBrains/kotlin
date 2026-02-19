@@ -1,8 +1,9 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ALLOW_KOTLIN_PACKAGE
-// !SKIP_JAVAC
+// SKIP_JAVAC
 // SKIP_TXT
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 package kotlin.jvm
 
@@ -32,3 +33,6 @@ value class BarNullable(val u: Unit?)
 value class Baz(val u: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Nothing<!>)
 @JvmInline
 value class BazNullable(val u: Nothing?)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+starProjection, typeParameter, value */

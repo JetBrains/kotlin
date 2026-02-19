@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.build.report.statistics
 
-import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import java.text.SimpleDateFormat
 import java.util.*
 
 //Sensitive data. This object is used directly for statistic via http
-private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
+internal val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
 
-interface CompileStatisticsData<B : BuildTime, P : BuildPerformanceMetric> {
+interface CompileStatisticsData<B : BuildTimeMetric, P : BuildPerformanceMetric> {
     fun getVersion(): Int = 4
     fun getProjectName(): String?
     fun getLabel(): String?

@@ -1,9 +1,5 @@
 expression: 42u
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: 42u
-constantValueKind: UInt
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: 42u
-constantLikeValueKind: UInt
+constantValueKind: UIntValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 42u

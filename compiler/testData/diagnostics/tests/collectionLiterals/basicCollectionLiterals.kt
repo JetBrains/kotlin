@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
 
 fun test() {
     val a = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>[]<!>
@@ -21,3 +22,7 @@ fun check() {
 
     [1, ""] checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<Any>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, intersectionType, lambdaLiteral, localProperty, nullableType, outProjection,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

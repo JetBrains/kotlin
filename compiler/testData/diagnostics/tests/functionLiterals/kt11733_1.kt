@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 // FILE: Predicate.java
 import org.jetbrains.annotations.NotNull;
@@ -15,3 +16,6 @@ fun main() {
         true
     })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, javaType,
+lambdaLiteral, nullableType, typeParameter, typeWithExtension */

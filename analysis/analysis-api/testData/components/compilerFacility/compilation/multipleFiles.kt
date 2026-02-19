@@ -13,6 +13,6 @@ import lib.Foo
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        Foo().foo()
+        <caret>Foo().foo()
     }
 }

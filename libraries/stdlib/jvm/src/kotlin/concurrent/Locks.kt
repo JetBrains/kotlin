@@ -15,6 +15,7 @@ import kotlin.contracts.*
  * @return the return value of the action.
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <T> Lock.withLock(action: () -> T): T {
     contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
     lock()
@@ -30,6 +31,7 @@ public inline fun <T> Lock.withLock(action: () -> T): T {
  * @return the return value of the action.
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <T> ReentrantReadWriteLock.read(action: () -> T): T {
     contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
     val rl = readLock()
@@ -55,6 +57,7 @@ public inline fun <T> ReentrantReadWriteLock.read(action: () -> T): T {
  * @return the return value of the action.
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {
     contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
     val rl = readLock()

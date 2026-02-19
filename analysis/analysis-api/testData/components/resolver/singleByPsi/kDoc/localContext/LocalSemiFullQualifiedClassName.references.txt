@@ -1,0 +1,7 @@
+KDocName(164,168): 'X.YY'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: f.C.X) class YY

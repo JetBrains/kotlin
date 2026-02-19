@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -20,30 +19,20 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.isStrictSubtypeOfClass
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.hasEqualFqName
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-val forLoopsPhase = makeIrFilePhase(
-    ::ForLoopsLowering,
-    name = "ForLoopsLowering",
-    description = "For loops lowering"
-)
-
 /**
  * This lowering pass optimizes for-loops.
  *
- * Replace iteration over progressions (e.g., X.indices, a..b) and arrays with
+ * Replace iteration over progressions (e.g., `X.indices`, `a..b`) and arrays with
  * a simple while loop over primitive induction variable.
  *
  * For example, this loop:
  * ```
- *   for (loopVar in A..B) { // Loop body }
+ *   for (loopVar in A..B) { /* Loop body */ }
  * ```
  * is represented in IR in such a manner:
  * ```
@@ -104,10 +93,9 @@ val forLoopsPhase = makeIrFilePhase(
  *   }
  * ```
  */
-class ForLoopsLowering(
-    val context: CommonBackendContext,
-    private val loopBodyTransformer: ForLoopBodyTransformer? = null
-) : BodyLoweringPass {
+open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    open val loopBodyTransformer: ForLoopBodyTransformer?
+        get() = null
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
@@ -134,7 +122,7 @@ abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
         loopBody: IrExpression,
         loopVariable: IrVariable,
         forLoopHeader: ForLoopHeader,
-        loopComponents: Map<Int, IrVariable>
+        loopComponents: Map<Int, List<IrVariable>>
     )
 }
 
@@ -224,7 +212,7 @@ private class RangeLoopTransformer(
     private fun lowerWhileLoop(loop: IrWhileLoop, loopHeader: ForLoopHeader): LoopReplacement? {
         val loopBodyStatements = (loop.body as? IrContainerExpression)?.statements ?: return null
         val (mainLoopVariable, mainLoopVariableIndex, loopVariableComponents, loopVariableComponentIndices) =
-            gatherLoopVariableInfo(loopBodyStatements)
+            gatherLoopVariableInfo(loopBodyStatements) ?: return null
 
         if (loopHeader.consumesLoopVariableComponents && mainLoopVariable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) {
             // We determine if there is a destructuring declaration by checking if the main loop variable is temporary.
@@ -272,7 +260,7 @@ private class RangeLoopTransformer(
                 mainLoopVariable.endOffset,
                 context.irBuiltIns.unitType,
                 IrStatementOrigin.FOR_LOOP_NEXT,
-                loopHeader.initializeIteration(mainLoopVariable, loopVariableComponents, this, this@RangeLoopTransformer.context)
+                loopHeader.initializeIteration(listOf(mainLoopVariable), loopVariableComponents, this, this@RangeLoopTransformer.context)
             )
         }
 
@@ -324,20 +312,18 @@ private class RangeLoopTransformer(
         val initializer = iterator.initializer as? IrCall ?: return
         if (!initializer.symbol.owner.hasEqualFqName(STDLIB_ITERATOR_FUNCTION_FQ_NAME)) return
 
-        val receiverType = initializer.extensionReceiver?.type ?: return
+        val receiverType = initializer.arguments[0]?.type ?: return
         if (!receiverType.isStrictSubtypeOfClass(context.irBuiltIns.iteratorClass)) return
 
         val receiverClass = receiverType.getClass() ?: return
         val next = receiverClass.functions.singleOrNull {
             it.name == OperatorNameConventions.NEXT &&
-                    it.dispatchReceiverParameter != null &&
-                    it.extensionReceiverParameter == null &&
-                    it.valueParameters.isEmpty()
+                    it.hasShape(dispatchReceiver = true)
         } ?: return
 
         iterator.apply {
             this.type = receiverType
-            this.initializer = initializer.extensionReceiver
+            this.initializer = initializer.arguments[0]
         }
 
         val loop = statements[1] as IrWhileLoop
@@ -355,11 +341,11 @@ private class RangeLoopTransformer(
     private data class LoopVariableInfo(
         val mainLoopVariable: IrVariable,
         val mainLoopVariableIndex: Int,
-        val loopVariableComponents: Map<Int, IrVariable>,
+        val loopVariableComponents: Map<Int, List<IrVariable>>,
         val loopVariableComponentIndices: List<Int>
     )
 
-    private class FindInitializerCallVisitor(private val mainLoopVariable: IrVariable?) : IrElementVisitorVoid {
+    private class FindInitializerCallVisitor(private val mainLoopVariable: IrVariable?) : IrVisitorVoid() {
         var initializerCall: IrCall? = null
 
         override fun visitElement(element: IrElement) {
@@ -371,6 +357,12 @@ private class RangeLoopTransformer(
                 IrStatementOrigin.FOR_LOOP_NEXT -> expression
                 is IrStatementOrigin.COMPONENT_N ->
                     if (mainLoopVariable != null && (expression.dispatchReceiver as? IrGetValue)?.symbol == mainLoopVariable.symbol) {
+                        expression
+                    } else {
+                        null
+                    }
+                IrStatementOrigin.GET_PROPERTY ->
+                    if (mainLoopVariable != null && (expression.arguments.firstOrNull() as? IrGetValue)?.symbol == mainLoopVariable.symbol) {
                         expression
                     } else {
                         null
@@ -388,7 +380,7 @@ private class RangeLoopTransformer(
         }
     }
 
-    private fun gatherLoopVariableInfo(statements: MutableList<IrStatement>): LoopVariableInfo {
+    private fun gatherLoopVariableInfo(statements: MutableList<IrStatement>): LoopVariableInfo? {
         // The "next" statement (at the top of the loop) looks something like:
         //
         //   val i = it.next()
@@ -403,7 +395,7 @@ private class RangeLoopTransformer(
         // We find the main loop variable and all the component variables that are used to initialize the iteration.
         var mainLoopVariable: IrVariable? = null
         var mainLoopVariableIndex = -1
-        val loopVariableComponents = mutableMapOf<Int, IrVariable>()
+        val loopVariableComponents = mutableMapOf<Int, MutableList<IrVariable>>()
         val loopVariableComponentIndices = mutableListOf<Int>()
         for ((i, stmt) in statements.withIndex()) {
             if (stmt !is IrVariable) continue
@@ -457,7 +449,16 @@ private class RangeLoopTransformer(
                     mainLoopVariableIndex = i
                 }
                 is IrStatementOrigin.COMPONENT_N -> {
-                    loopVariableComponents[origin.index] = stmt
+                    loopVariableComponents.getOrPut(origin.index) { mutableListOf() }.add(stmt)
+                    loopVariableComponentIndices.add(i)
+                }
+                IrStatementOrigin.GET_PROPERTY -> {
+                    when {
+                        initializer.symbol.owner.hasEqualFqName(STDLIB_INDEXED_VALUE_GET_INDEX_NAME) ->
+                            loopVariableComponents.getOrPut(1) { mutableListOf() }.add(stmt)
+                        initializer.symbol.owner.hasEqualFqName(STDLIB_INDEXED_VALUE_GET_VALUE_NAME) ->
+                            loopVariableComponents.getOrPut(2) { mutableListOf() }.add(stmt)
+                    }
                     loopVariableComponentIndices.add(i)
                 }
             }
@@ -471,5 +472,7 @@ private class RangeLoopTransformer(
 
     companion object {
         val STDLIB_ITERATOR_FUNCTION_FQ_NAME = FqName("kotlin.collections.CollectionsKt.iterator")
+        val STDLIB_INDEXED_VALUE_GET_INDEX_NAME = FqName("kotlin.collections.IndexedValue.<get-index>")
+        val STDLIB_INDEXED_VALUE_GET_VALUE_NAME = FqName("kotlin.collections.IndexedValue.<get-value>")
     }
 }

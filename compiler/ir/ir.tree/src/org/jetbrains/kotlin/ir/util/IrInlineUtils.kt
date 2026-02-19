@@ -5,38 +5,69 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.types.IrType
 
-val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner
-        is IrPropertyReference -> element.symbol.owner
-        else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
-    }
-private val IrInlinedFunctionBlock.inlineFunction: IrFunction?
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner.takeIf { it.isInline }
-        else -> null
-    }
+/**
+ * If this was a local declaration in an inline function, marks which file it was originally defined in.
+ * In other words, to which file do [IrElement.startOffset] and [IrElement.endOffset] of elements in this
+ * IR subtree point to.
+ *
+ * It is an analogy of [IrInlinedFunctionBlock.inlinedFunctionFileEntry], but for declarations instead of expressions.
+ */
+var IrDeclaration.sourceFileWhenInlined: IrFileEntry? by irAttribute(copyByDefault = true)
 
-fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
-    return this.inlinedElement is IrFunction
+/**
+ * Find the file entry where this declaration was originally defined.
+ *
+ * ### Limitations:
+ * * Returns null for declarations from other modules, expect for inlined functions.
+ * * Does not work for local declarations before they are extracted by [LocalDeclarationsLowering].
+ */
+tailrec fun IrDeclaration.getSourceFile(): IrFileEntry? {
+    sourceFileWhenInlined?.let {
+        return it
+    }
+    return when (val parent = parent) {
+        is IrFile -> parent.fileEntry
+        is IrExternalPackageFragment -> null
+        else -> (parent as IrDeclaration).getSourceFile()
+    }
 }
 
-fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
-    return !isFunctionInlining()
+var IrModuleFragment.preparedInlineFunctionCopies: List<IrSimpleFunction>? by irAttribute(copyByDefault = true)
+var IrSimpleFunction.preparedInlineFunctionCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+var IrSimpleFunction.originalOfPreparedInlineFunctionCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+
+fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
+    return this.inlinedFunctionSymbol != null
 }
 
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
-val IrReturnableBlock.inlineFunction: IrFunction?
-    get() = (this.statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlineFunction
-val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunction?.fileOrNull?.symbol
+
+fun IrType.isInlinableParameterType() = !isNullable() && (isFunction() || isSuspendFunction())
+
+fun IrValueParameter.isInlineParameter() =
+    kind == IrParameterKind.Regular
+            && !isNoinline
+            && type.isInlinableParameterType()
+            && parent.isInlineFunction()
+
+fun IrValueParameter.isInlineSuspendParameter() =
+    kind == IrParameterKind.Regular
+            && !isNoinline
+            && !type.isNullable() && type.isSuspendFunction()
+            && parent.isInlineFunction()
+
+private fun IrDeclarationParent.isInlineFunction(): Boolean {
+    if (this !is IrFunction) return false
+    return this.isInline || this.isInlineArrayConstructor()
+}
+
+fun IrExpression.isLambdaBlock() =
+    this is IrBlock && this.origin == IrStatementOrigin.LAMBDA

@@ -12,6 +12,7 @@ idePluginDependency {
         val distTaskName = "distKotlinc"
 
         dependsOn("$compilerProjectName:$distTaskName")
+        dependsOn(":kotlin-compiler:dist")
 
         from {
             val distKotlincTask = project(compilerProjectName).tasks.getByName(distTaskName)

@@ -51,9 +51,9 @@ abstract class AbstractNode implements JsNode, HasMetadata {
     @SuppressWarnings("unchecked")
     public <T extends HasMetadata & JsNode> T withMetadataFrom(T other) {
         this.copyMetadataFrom(other);
-        Object otherSource = other.getSource();
+        JsLocationWithSource otherSource = other.getSource();
         if (otherSource != null) {
-            source(otherSource);
+            setSource(otherSource);
         }
         setCommentsBeforeNode(other.getCommentsBeforeNode());
         setCommentsAfterNode(other.getCommentsAfterNode());

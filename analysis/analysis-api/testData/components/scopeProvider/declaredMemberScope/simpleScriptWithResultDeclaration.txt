@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,106 +17,133 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: action
       origin: SOURCE
       receiverParameter: null
-      returnType: KtFunctionalType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Int
         ]
-        type: kotlin/Function0<kotlin/Int>
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+        type: () -> kotlin/Int
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
+      getContainingJvmClassName: null
+      getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
       deprecationStatus: null
+      importableFqName: null
   ]
-  visibility: Public
-  getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
+  getContainingJvmClassName: null
+  canBeOperator: false
+  getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: foo
 
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: null
+  callableId: /$$result
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
-    isDefault: true
+    isActual: false
+    isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
+    isNotDefault: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: PLUGIN
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
-    getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
+    getContainingJvmClassName: null
+    getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(foo { ...)
+  initializer: KaNonConstantInitializerValue(foo { ...)
   isActual: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: $$result
   origin: PLUGIN
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
-  getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
+  getContainingJvmClassName: null
+  getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: get$$result
   javaSetterName: null
-  setterDeprecationStatus: null
+  isInline: false
+  importableFqName: $$result

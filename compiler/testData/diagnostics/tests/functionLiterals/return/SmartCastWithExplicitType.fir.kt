@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-6822 Smart cast doesn't work inside local returned expression in lambda
 
 val a : (Int?) -> Int = l@ {
@@ -15,3 +16,6 @@ val b: Int = let {
 val c: Int = let {
     if (it != null) it else 5
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, smartcast, typeParameter */

@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -32,3 +35,5 @@ open class WithFinal {
 }
 
 actual open class Foo3 : WithFinal()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, override, propertyDeclaration, stringLiteral, superExpression */

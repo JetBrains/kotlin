@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.daemon
@@ -21,15 +10,17 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
-import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.RemoteReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.build.report.reportPerformanceData
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -40,9 +31,8 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
@@ -52,22 +42,31 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
-import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
-import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.util.PerformanceManager.DumpFormat
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.Time
+import org.jetbrains.kotlin.util.forEachPhaseMeasurement
+import org.jetbrains.kotlin.util.getLinesPerSecond
 import java.io.File
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
+import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -77,6 +76,9 @@ import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
 
 const val REMOTE_STREAM_BUFFER_SIZE = 4096
 
@@ -106,8 +108,9 @@ abstract class CompileServiceImplBase(
     val daemonOptions: DaemonOptions,
     val compilerId: CompilerId,
     val port: Int,
-    val timer: Timer
-) {
+    val timer: Timer,
+    val onShutdown: () -> Unit,
+) : CompileService {
     protected val log by lazy { Logger.getLogger("compiler") }
 
     init {
@@ -118,7 +121,7 @@ abstract class CompileServiceImplBase(
     protected class ClientOrSessionProxy<out T : Any>(
         val aliveFlagPath: String?,
         val data: T? = null,
-        private var disposable: Disposable? = null
+        private var disposable: Disposable? = null,
     ) {
         val isAlive: Boolean
             get() = aliveFlagPath?.let { File(it).exists() } ?: true // assuming that if no file was given, the client is alive
@@ -211,7 +214,7 @@ abstract class CompileServiceImplBase(
         private inline fun <T> Iterable<T>.cleanMatching(
             lock: ReentrantReadWriteLock,
             crossinline pred: (T) -> Boolean,
-            crossinline clean: (T) -> Unit
+            crossinline clean: (T) -> Unit,
         ): Boolean {
             var anyDead = false
             lock.read {
@@ -234,7 +237,7 @@ abstract class CompileServiceImplBase(
 
     protected fun Int.toAlivenessName(): String =
         try {
-            Aliveness.values()[this].name
+            Aliveness.entries[this].name
         } catch (_: Throwable) {
             "invalid($this)"
         }
@@ -285,10 +288,62 @@ abstract class CompileServiceImplBase(
             System.err.println("Exception in timer thread: " + e.message)
             e.printStackTrace(System.err)
             log.log(Level.SEVERE, "Exception in timer thread", e)
+            if (e is LinkageError) {
+                onShutdown()
+            }
         }
     }
 
-    protected inline fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
+    protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
+        val performanceMetrics = ArrayList<BuildMetricsValue>()
+        val performanceManager = compiler.defaultPerformanceManager
+        val moduleStats = performanceManager.unitStats
+        if (moduleStats.linesCount > 0) {
+            performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong()))
+        }
+
+        var codegenTime = Time.ZERO
+
+        fun reportLps(lpsMetrics: CompilationPerformanceMetrics, time: Time) {
+            if (time != Time.ZERO) {
+                performanceMetrics.add(BuildMetricsValue(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong()))
+            }
+        }
+
+        moduleStats.forEachPhaseMeasurement { phaseType, time ->
+            if (time == null) return@forEachPhaseMeasurement
+
+            val metrics = when (phaseType) {
+                PhaseType.Initialization -> CompilationPerformanceMetrics.COMPILER_INITIALIZATION
+                PhaseType.Analysis -> CompilationPerformanceMetrics.CODE_ANALYSIS
+                // TODO: Report `IrGeneration` (FIR2IR) time
+                PhaseType.IrLowering -> {
+                    codegenTime += time
+                    null
+                }
+                PhaseType.Backend -> {
+                    codegenTime += time
+                    null
+                }
+                else -> null
+            }
+            if (metrics != null) {
+                performanceMetrics.add(BuildMetricsValue(metrics, time.millis))
+                if (phaseType == PhaseType.Analysis) {
+                    reportLps(CompilationPerformanceMetrics.ANALYSIS_LPS, time)
+                }
+            }
+        }
+
+        if (codegenTime != Time.ZERO) {
+            performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, codegenTime.millis))
+            reportLps(CompilationPerformanceMetrics.CODE_GENERATION_LPS, codegenTime)
+        }
+
+        return performanceMetrics
+    }
+
+    protected inline fun <ServicesFacadeT : CompilerServicesFacadeBase, JpsServicesFacadeT, CompilationResultsT> compileImpl(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
@@ -298,8 +353,10 @@ abstract class CompileServiceImplBase(
         createMessageCollector: (ServicesFacadeT, CompilationOptions) -> MessageCollector,
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
-        getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+        getICReporter: (ServicesFacadeT, CompilationResultsT & Any, CompilationOptions) -> RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        compilationId: Int? = null,
     ) = kotlin.run {
+        maybeWaitForTestStart()
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
@@ -309,40 +366,74 @@ abstract class CompileServiceImplBase(
         val compiler = when (targetPlatform) {
             CompileService.TargetPlatform.JVM -> K2JVMCompiler()
             CompileService.TargetPlatform.JS -> K2JSCompiler()
-            CompileService.TargetPlatform.METADATA -> K2MetadataCompiler()
+            CompileService.TargetPlatform.METADATA -> KotlinMetadataCompiler()
         } as CLICompiler<CommonCompilerArguments>
 
         val k2PlatformArgs = compiler.createArguments()
         parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
-        val argumentParseError = validateArguments(k2PlatformArgs.errors)
+        val argumentParseError = validateArgumentsAllErrors(k2PlatformArgs.errors)
 
-        if (argumentParseError != null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)
+        if (argumentParseError.isNotEmpty()) {
+            argumentParseError.forEach {
+                messageCollector.report(CompilerMessageSeverity.ERROR, it)
+            }
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {
                 @Suppress("UNCHECKED_CAST")
                 servicesFacade as JpsServicesFacadeT
                 withIncrementalCompilation(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
-                    doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
+                    doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { eventManger, profiler, _ ->
                         val services = createServices(servicesFacade, eventManger, profiler)
-                        compiler.exec(messageCollector, services, k2PlatformArgs)
+                        val exitCode = compiler.exec(messageCollector, services, k2PlatformArgs)
+
+                        compilationResults.also {
+                            val compilationResult = it as CompilationResults
+                            getPerformanceMetrics(compiler).forEach {
+                                compilationResult.add(CompilationResultCategory.BUILD_METRICS.code, it)
+                            }
+                        }
+
+                        exitCode
                     }
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                    val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
-
-                    val perfString = compiler.defaultPerformanceManager.renderCompilerPerformance()
-                    compilationResults?.also {
-                        (it as CompilationResults).add(
-                            CompilationResultCategory.BUILD_REPORT_LINES.code,
-                            arrayListOf(perfString)
-                        )
+                doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
+                    val lookupTracker = if (ReportCategory.COMPILER_LOOKUP.code in compilationOptions.reportCategories) {
+                        RemoteLookupTracker(servicesFacade)
+                    } else null
+                    val icReporter = if (compilationResults != null) {
+                        getICReporter(servicesFacade, compilationResults, compilationOptions)
+                    } else {
+                        DoNothingBuildReporter
                     }
-
-                    exitCode
+                    try {
+                        icReporter.startMeasureGc()
+                        val exitCode = compiler.exec(
+                            messageCollector,
+                            Services.Builder().apply {
+                                compilationCanceled?.let { register(CompilationCanceledStatus::class.java, it) }
+                                lookupTracker?.let { register(LookupTracker::class.java, lookupTracker) }
+                            }.build(),
+                            k2PlatformArgs
+                        )
+                        icReporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
+                        val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
+                        compilationResults?.also {
+                            (it as CompilationResults).add(
+                                CompilationResultCategory.BUILD_REPORT_LINES.code,
+                                ArrayList(perfString.split("\n"))
+                            )
+                        }
+                        icReporter.addMetric(COMPILE_ITERATION, 1) // in non-IC case there's always 1 iteration
+                        icReporter.endMeasureGc()
+                        exitCode
+                    } finally {
+                        if (icReporter is RemoteReporter) {
+                            icReporter.flush()
+                        }
+                    }
                 }
             }
             CompilerMode.INCREMENTAL_COMPILER -> {
@@ -351,7 +442,10 @@ abstract class CompileServiceImplBase(
 
                 when (targetPlatform) {
                     CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
-                        doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                        doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
+                            val lookupTracker = if (ReportCategory.COMPILER_LOOKUP.code in compilationOptions.reportCategories) {
+                                RemoteLookupTracker(servicesFacade)
+                            } else null
                             execIncrementalCompiler(
                                 k2PlatformArgs as K2JVMCompilerArguments,
                                 gradleIncrementalArgs,
@@ -360,12 +454,14 @@ abstract class CompileServiceImplBase(
                                     gradleIncrementalServicesFacade,
                                     compilationResults!!,
                                     gradleIncrementalArgs
-                                )
+                                ),
+                                compilationCanceled,
+                                lookupTracker
                             )
                         }
                     }
                     CompileService.TargetPlatform.JS -> withJsIC(k2PlatformArgs) {
-                        doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                        doCompile(sessionId, daemonReporter, tracer = null, compilationId = null) { _, _, _ ->
                             execJsIncrementalCompiler(
                                 k2PlatformArgs as K2JSCompilerArguments,
                                 gradleIncrementalArgs,
@@ -382,29 +478,55 @@ abstract class CompileServiceImplBase(
 
                 }
             }
-            else -> throw IllegalStateException("Unknown compilation mode ${compilationOptions.compilerMode}")
         }
     }
 
+    @PublishedApi
+    internal fun maybeWaitForTestStart() {
+        if (CompilerSystemProperties.COMPILE_WAIT_BEFORE_COMPILATION_FOR_TESTS.value == "true") {
+            val daemonStartFile = Path(daemonOptions.runFilesPathOrDefault, "daemon-test-start")
+            log.info("Waiting for file ${daemonStartFile.absolutePathString()} to appear...")
+            repeat(10) {
+                if (daemonStartFile.exists()) {
+                    log.info("Found ${daemonStartFile.absolutePathString()}. Starting compilation.")
+                    return@repeat
+                }
+                Thread.sleep(500)
+            }
+            log.info("Didn't find ${daemonStartFile.absolutePathString()} after 5000ms, starting compilation anyway.")
+        }
+    }
 
     protected inline fun doCompile(
         sessionId: Int,
         daemonMessageReporter: DaemonMessageReporter,
         tracer: RemoteOperationsTracer?,
-        body: (EventManager, Profiler) -> ExitCode
+        compilationId: Int?,
+        body: (EventManager, Profiler, CompilationCanceledStatus?) -> ExitCode,
     ): CompileService.CallResult<Int> = run {
         log.fine("alive!")
-        withValidClientOrSessionProxy(sessionId) {
+        withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
+            val runningCompilations = compilationId?.let { compilationId ->
+                (session?.data as? RunningCompilations)?.also { runningCompilations ->
+                    runningCompilations.add(compilationId)
+                }
+            }
+
+            val compilationCanceledStatus = runningCompilations?.getCompilationCanceledStatus(compilationId)
+
             tracer?.before("compile")
             val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
             val eventManager = EventManagerImpl()
             try {
                 log.fine("trying get exitCode")
                 val exitCode = checkedCompile(daemonMessageReporter, rpcProfiler) {
-                    body(eventManager, rpcProfiler).code
+                    body(eventManager, rpcProfiler, compilationCanceledStatus).code
                 }
                 CompileService.CallResult.Good(exitCode)
             } finally {
+                runningCompilations?.remove(compilationId)
+                // the compiler doesn't clean up the ThreadLocal inside ProgressIndicatorAndCompilationCanceledStatus, so let's do it here
+                ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(null)
                 eventManager.fireCompilationFinished()
                 tracer?.after("compile")
             }
@@ -417,7 +539,7 @@ abstract class CompileServiceImplBase(
     protected inline fun <R> checkedCompile(
         daemonMessageReporter: DaemonMessageReporter,
         rpcProfiler: Profiler,
-        body: () -> R
+        body: () -> R,
     ): R {
         try {
             val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
@@ -432,9 +554,11 @@ abstract class CompileServiceImplBase(
                 val pc = profiler.getTotalCounters()
                 val rpc = rpcProfiler.getTotalCounters()
 
-                "PERF: Compile on daemon: ${pc.time.ms()} ms; thread: user ${pc.threadUserTime.ms()} ms, sys ${(pc.threadTime - pc.threadUserTime).ms()} ms; rpc: ${rpc.count} calls, ${rpc.time.ms()} ms, thread ${rpc.threadTime.ms()} ms; memory: ${endMem.kb()} kb (${"%+d".format(
-                    pc.memory.kb()
-                )} kb)".let {
+                "PERF: Compile on daemon: ${pc.time.ms()} ms; thread: user ${pc.threadUserTime.ms()} ms, sys ${(pc.threadTime - pc.threadUserTime).ms()} ms; rpc: ${rpc.count} calls, ${rpc.time.ms()} ms, thread ${rpc.threadTime.ms()} ms; memory: ${endMem.kb()} kb (${
+                    "%+d".format(
+                        pc.memory.kb()
+                    )
+                } kb)".let {
                     daemonMessageReporter.report(ReportSeverity.INFO, it)
                     log.info(it)
                 }
@@ -454,9 +578,9 @@ abstract class CompileServiceImplBase(
             log.log(
                 Level.SEVERE,
                 "Exception: $e\n  ${e.stackTrace.joinToString("\n  ")}${
-                if (e.cause != null && e.cause != e) {
-                    "\nCaused by: ${e.cause}\n  ${e.cause!!.stackTrace.joinToString("\n  ")}"
-                } else ""
+                    if (e.cause != null && e.cause != e) {
+                        "\nCaused by: ${e.cause}\n  ${e.cause!!.stackTrace.joinToString("\n  ")}"
+                    } else ""
                 }"
             )
             throw e
@@ -487,6 +611,7 @@ abstract class CompileServiceImplBase(
     }
 
     fun configurePeriodicActivities() {
+        log.info("Periodic liveness check activities configured")
         timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
             exceptionLoggingTimerThread { periodicAndAfterSessionCheck() }
         }
@@ -495,15 +620,24 @@ abstract class CompileServiceImplBase(
         }
     }
 
-
     protected inline fun <R> ifAliveChecksImpl(
         minAliveness: Aliveness = Aliveness.LastSession,
-        body: () -> CompileService.CallResult<R>
+        body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> {
         val curState = state.alive.get()
         return when {
             curState < minAliveness.ordinal -> {
-                log.info("Cannot perform operation, requested state: ${minAliveness.name} > actual: ${curState.toAlivenessName()}")
+                val stackTrace = Thread.currentThread().stackTrace
+                // the depth to extract stacktrace element like `org.jetbrains.kotlin.daemon.CompileServiceImpl.registerClient`
+                val rmiBusinessCallDepth = 1
+                val callSource = stackTrace.getOrNull(rmiBusinessCallDepth)?.let { " Operation: $it" }
+                    ?: Thread.currentThread().stackTrace.joinToString(prefix = " at ", separator = "\n at ")
+                log.info(
+                    """
+                    |Cannot perform operation, requested state: ${minAliveness.name} > actual: ${curState.toAlivenessName()}
+                    |$callSource
+                    """.trimMargin()
+                )
                 CompileService.CallResult.Dying()
             }
             else -> {
@@ -519,7 +653,7 @@ abstract class CompileServiceImplBase(
 
     protected inline fun <R> withValidClientOrSessionProxy(
         sessionId: Int,
-        body: (ClientOrSessionProxy<Any>?) -> CompileService.CallResult<R>
+        body: (ClientOrSessionProxy<Any>?) -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> {
         val session: ClientOrSessionProxy<Any>? =
             if (sessionId == CompileService.NO_SESSION) null
@@ -536,25 +670,11 @@ abstract class CompileServiceImplBase(
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+        reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     ): ExitCode {
         reporter.startMeasureGc()
-        val allKotlinFiles = arrayListOf<File>()
-        val freeArgsWithoutKotlinFiles = arrayListOf<String>()
-        args.freeArgs.forEach {
-            if (it.endsWith(".kt") && File(it).exists()) {
-                allKotlinFiles.add(File(it))
-            } else {
-                freeArgsWithoutKotlinFiles.add(it)
-            }
-        }
-        args.freeArgs = freeArgsWithoutKotlinFiles
-
-        val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
-            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
-        } else {
-            ChangedFiles.Unknown()
-        }
+        @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
+        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"), includeJavaSources = false)
 
         val workingDir = incrementalCompilationOptions.workingDir
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
@@ -569,93 +689,80 @@ abstract class CompileServiceImplBase(
             workingDir = workingDir,
             reporter = reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
-            scopeExpansion = if (args.isIrBackendEnabled()) CompileScopeExpansionMode.ALWAYS else CompileScopeExpansionMode.NEVER,
+            scopeExpansion = CompileScopeExpansionMode.ALWAYS,
             modulesApiHistory = modulesApiHistory,
-            withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot,
-            preciseCompilationResultsBackup = incrementalCompilationOptions.preciseCompilationResultsBackup,
-            keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
+            icFeatures = incrementalCompilationOptions.icFeatures,
         )
         return try {
-            compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
+            compiler.compile(allKotlinFiles, args, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles())
         } finally {
             reporter.endMeasureGc()
             reporter.flush()
         }
     }
 
+    private fun SourcesChanges.toChangedFiles(): ChangedFiles = when (this) {
+        is SourcesChanges.Unknown -> ChangedFiles.Unknown
+        is SourcesChanges.ToBeCalculated -> ChangedFiles.DeterminableFiles.ToBeComputed
+        is SourcesChanges.Known -> ChangedFiles.DeterminableFiles.Known(modifiedFiles, removedFiles)
+    }
+
     protected fun execIncrementalCompiler(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+        reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        compilationCanceledStatus: CompilationCanceledStatus? = null,
+        lookupTracker: LookupTracker? = null,
     ): ExitCode {
         reporter.startMeasureGc()
-        val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
-                (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).distinct()
-        val dotExtensions = allKotlinExtensions.map { ".$it" }
-        val freeArgs = arrayListOf<String>()
-        val allKotlinFiles = arrayListOf<File>()
-        for (arg in k2jvmArgs.freeArgs) {
-            val file = File(arg)
-            if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
-                allKotlinFiles.add(file)
-            } else {
-                freeArgs.add(arg)
-            }
-        }
-        k2jvmArgs.freeArgs = freeArgs
+        val allKotlinJvmExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
+                (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).toSet()
 
-        val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
-            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
-        } else {
-            ChangedFiles.Unknown()
-        }
+        @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
+        val allSourceFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinJvmExtensions, includeJavaSources = true)
 
         val workingDir = incrementalCompilationOptions.workingDir
 
         val rootProjectDir = incrementalCompilationOptions.rootProjectDir
         val buildDir = incrementalCompilationOptions.buildDir
 
-        val modulesApiHistory = if (incrementalCompilationOptions.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-            EmptyModulesApiHistory
-        } else {
-            incrementalCompilationOptions.multiModuleICSettings?.run {
-                reporter.info { "Use module detection: $useModuleDetection" }
-                val modulesInfo = incrementalCompilationOptions.modulesInfo
-                    ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
-                check(rootProjectDir != null) {
-                    "rootProjectDir is expected to be non null when the history-file based IC approach is used"
-                }
-
-                if (!useModuleDetection) {
-                    ModulesApiHistoryJvm(rootProjectDir, modulesInfo)
-                } else {
-                    ModulesApiHistoryAndroid(rootProjectDir, modulesInfo)
-                }
-            } ?: EmptyModulesApiHistory
-        }
-
-        val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
-        // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).
-        //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
-        val usePreciseJavaTracking = if (useK2) false else incrementalCompilationOptions.usePreciseJavaTracking
-
-        val compiler = IncrementalJvmCompilerRunner(
-            workingDir,
-            reporter,
-            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
-            outputDirs = incrementalCompilationOptions.outputFiles,
-            usePreciseJavaTracking = usePreciseJavaTracking,
-            modulesApiHistory = modulesApiHistory,
-            kotlinSourceFilesExtensions = allKotlinExtensions,
-            classpathChanges = incrementalCompilationOptions.classpathChanges,
-            withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot,
-            preciseCompilationResultsBackup = incrementalCompilationOptions.preciseCompilationResultsBackup,
-            keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
+        val verifiedPreciseJavaTracking = k2jvmArgs.disablePreciseJavaTrackingIfK2(
+            usePreciseJavaTrackingByDefault = incrementalCompilationOptions.icFeatures.usePreciseJavaTracking
         )
+
+        val compiler = if (incrementalCompilationOptions.useJvmFirRunner) {
+            IncrementalFirJvmCompilerRunner(
+                workingDir,
+                reporter,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
+                outputDirs = incrementalCompilationOptions.outputFiles,
+                classpathChanges = incrementalCompilationOptions.classpathChanges,
+                icFeatures = incrementalCompilationOptions.icFeatures.copy(
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                ),
+                compilationCanceledStatus = compilationCanceledStatus,
+                generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
+                lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+            )
+        } else {
+            IncrementalJvmCompilerRunner(
+                workingDir,
+                reporter,
+                outputDirs = incrementalCompilationOptions.outputFiles,
+                classpathChanges = incrementalCompilationOptions.classpathChanges,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
+                icFeatures = incrementalCompilationOptions.icFeatures.copy(
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                ),
+                compilationCanceledStatus = compilationCanceledStatus,
+                generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
+                lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+            )
+        }
         return try {
             compiler.compile(
-                allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles,
+                allSourceFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),
                 fileLocations = if (rootProjectDir != null && buildDir != null) {
                     FileLocations(rootProjectDir, buildDir)
                 } else null
@@ -668,13 +775,12 @@ abstract class CompileServiceImplBase(
 
     protected inline fun <R, KotlinJvmReplServiceT> withValidReplImpl(
         sessionId: Int,
-        body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>
+        body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> =
         withValidClientOrSessionProxy(sessionId) { session ->
             @Suppress("UNCHECKED_CAST")
             (session?.data as? KotlinJvmReplServiceT?)?.body() ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
         }
-
 }
 
 class CompileServiceImpl(
@@ -685,16 +791,17 @@ class CompileServiceImpl(
     val daemonJVMOptions: DaemonJVMOptions,
     port: Int,
     timer: Timer,
-    val onShutdown: () -> Unit
-) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer) {
+    onShutdown: () -> Unit,
+) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer, onShutdown) {
 
     private inline fun <R> withValidRepl(
         sessionId: Int,
-        body: KotlinJvmReplService.() -> CompileService.CallResult<R>
+        body: KotlinJvmReplService.() -> CompileService.CallResult<R>,
     ) = withValidReplImpl(sessionId, body)
 
-    override val lastUsedSeconds: Long get() =
-        if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
+    override val lastUsedSeconds: Long
+        get() =
+            if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
 
     private val rwlock = ReentrantReadWriteLock()
 
@@ -735,7 +842,15 @@ class CompileServiceImpl(
     // TODO: consider tying a session to a client and use this info to cleanup
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         CompileService.CallResult.Good(
-            state.sessions.leaseSession(ClientOrSessionProxy<Any>(aliveFlagPath)).apply {
+            state.sessions.leaseSession(run {
+                val runningCompilations = RunningCompilations()
+                @Suppress("ObjectLiteralToLambda")
+                ClientOrSessionProxy(aliveFlagPath, runningCompilations, object : Disposable {
+                    override fun dispose() {
+                        runningCompilations.cancelAll()
+                    }
+                })
+            }).apply {
                 log.info("leased a new session $this, session alive file: $aliveFlagPath")
             })
     }
@@ -744,9 +859,7 @@ class CompileServiceImpl(
     override fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = Aliveness.LastSession) {
         state.sessions.remove(sessionId)
         log.info("cleaning after session $sessionId")
-        rwlock.write {
-            clearJarCache()
-        }
+        clearJarCache()
         postReleaseCompileSession()
     }
 
@@ -775,7 +888,7 @@ class CompileServiceImpl(
     }
 
     override fun classesFqNamesByFiles(
-        sessionId: Int, sourceFiles: Set<File>
+        sessionId: Int, sourceFiles: Set<File>,
     ): CompileService.CallResult<Set<String>> =
         ifAlive {
             withValidClientOrSessionProxy(sessionId) {
@@ -788,7 +901,16 @@ class CompileServiceImpl(
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
-        compilationResults: CompilationResults?
+        compilationResults: CompilationResults?,
+    ) = compile(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults, null)
+
+    override fun compile(
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        compilationResults: CompilationResults?,
+        compilationId: Int?,
     ) = ifAlive {
         compileImpl(
             sessionId,
@@ -800,8 +922,16 @@ class CompileServiceImpl(
             createMessageCollector = ::CompileServicesFacadeMessageCollector,
             createReporter = ::DaemonMessageReporter,
             createServices = this::createCompileServices,
-            getICReporter = { a, b, c -> getBuildReporter(a, b!!, c)}
+            getICReporter = { a, b, c -> getBuildReporter(a, b, c) },
+            compilationId,
         )
+    }
+
+    override fun cancelCompilation(sessionId: Int, compilationId: Int): CompileService.CallResult<Nothing> = ifAlive {
+        withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
+            (session?.data as? RunningCompilations)?.remove(compilationId)
+            CompileService.CallResult.Ok()
+        }
     }
 
 
@@ -811,7 +941,7 @@ class CompileServiceImpl(
     private fun createCompileServices(
         @Suppress("DEPRECATION") facade: CompilerCallbackServicesFacade,
         eventManager: EventManager,
-        rpcProfiler: Profiler
+        rpcProfiler: Profiler,
     ): Services {
         val builder = Services.Builder()
         if (facade.hasIncrementalCaches()) {
@@ -836,7 +966,7 @@ class CompileServiceImpl(
             builder.register(EnumWhenTracker::class.java, RemoteEnumWhenTracker(facade, rpcProfiler))
         }
         if (facade.hasIncrementalResultsConsumer()) {
-            builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, eventManager, rpcProfiler))
+            builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, rpcProfiler))
         }
         if (facade.hasIncrementalDataProvider()) {
             builder.register(IncrementalDataProvider::class.java, RemoteIncrementalDataProvider(facade, rpcProfiler))
@@ -851,12 +981,12 @@ class CompileServiceImpl(
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
         templateClasspath: List<File>,
-        templateClassName: String
+        templateClassName: String,
     ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
         else {
-            val disposable = Disposer.newDisposable()
+            val disposable = Disposer.newDisposable("Disposable for ${CompileServiceImpl::class.simpleName}.leaseReplSession")
             val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
             val repl = KotlinJvmReplService(
                 disposable, port, compilerId, templateClasspath, templateClassName,
@@ -1060,14 +1190,16 @@ class CompileServiceImpl(
 
     private fun gracefulShutdown(onAnotherThread: Boolean): Boolean {
 
-        fun shutdownIfIdle() = when {
-            state.sessions.isEmpty() -> shutdownWithDelay()
-            else -> {
-                daemonOptions.autoshutdownIdleSeconds =
+        fun shutdownIfIdle() = ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession) {
+            when {
+                state.sessions.isEmpty() -> shutdownWithDelay()
+                else -> {
+                    daemonOptions.autoshutdownIdleSeconds =
                         TimeUnit.MILLISECONDS.toSeconds(daemonOptions.forceShutdownTimeoutMilliseconds).toInt()
-                daemonOptions.autoshutdownUnusedSeconds = daemonOptions.autoshutdownIdleSeconds
-                log.info("Some sessions are active, waiting for them to finish")
-                log.info("Unused/idle timeouts are set to ${daemonOptions.autoshutdownUnusedSeconds}/${daemonOptions.autoshutdownIdleSeconds}s")
+                    daemonOptions.autoshutdownUnusedSeconds = daemonOptions.autoshutdownIdleSeconds
+                    log.info("Some sessions are active, waiting for them to finish")
+                    log.info("Unused/idle timeouts are set to ${daemonOptions.autoshutdownUnusedSeconds}/${daemonOptions.autoshutdownIdleSeconds}s")
+                }
             }
         }
 
@@ -1081,9 +1213,7 @@ class CompileServiceImpl(
             shutdownIfIdle()
         } else {
             timer.schedule(1) {
-                ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession) {
-                    shutdownIfIdle()
-                }
+                shutdownIfIdle()
             }
         }
         return true
@@ -1118,7 +1248,7 @@ class CompileServiceImpl(
 
     private inline fun <R> ifAlive(
         minAliveness: Aliveness = Aliveness.LastSession,
-        body: () -> CompileService.CallResult<R>
+        body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> = rwlock.read {
         ifAliveChecksImpl(minAliveness, body)
     }
@@ -1132,7 +1262,7 @@ class CompileServiceImpl(
 
     private inline fun <R> ifAliveExclusive(
         minAliveness: Aliveness = Aliveness.LastSession,
-        body: () -> CompileService.CallResult<R>
+        body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> = rwlock.write {
         ifAliveChecksImpl(minAliveness, body)
     }
@@ -1142,5 +1272,61 @@ class CompileServiceImpl(
             body()
             CompileService.CallResult.Ok()
         }
+    }
+}
+
+@PublishedApi
+internal class RunningCompilations() {
+    private val compilations = ConcurrentSkipListSet<Int>()
+
+    fun remove(compilationId: Int) {
+        compilations.remove(compilationId)
+    }
+
+    fun add(compilationId: Int) {
+        compilations.add(compilationId)
+    }
+
+    fun getCompilationCanceledStatus(compilationId: Int) = object : CompilationCanceledStatus {
+        override fun checkCanceled() {
+            if (!compilations.contains(compilationId)) {
+                throw CompilationCanceledException()
+            }
+        }
+    }
+
+    fun cancelAll() {
+        compilations.clear()
+    }
+}
+
+
+@PublishedApi
+internal class RemoteLookupTracker(private val servicesFacade: CompilerServicesFacadeBase) : LookupTracker {
+    override val requiresPosition: Boolean
+        get() = false
+
+    override fun record(
+        filePath: String,
+        position: Position,
+        scopeFqName: String,
+        scopeKind: ScopeKind,
+        name: String,
+    ) {
+        servicesFacade.report(
+            category = ReportCategory.COMPILER_LOOKUP,
+            severity = ReportSeverity.INFO,
+            message = null,
+            attachment = LookupInfo(filePath, position, scopeFqName, scopeKind, name)
+        )
+    }
+
+    override fun clear() {
+        servicesFacade.report(
+            category = ReportCategory.COMPILER_LOOKUP,
+            severity = ReportSeverity.INFO,
+            message = null,
+            attachment = null
+        )
     }
 }

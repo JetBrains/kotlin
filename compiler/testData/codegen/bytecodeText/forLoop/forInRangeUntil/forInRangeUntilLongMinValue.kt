@@ -1,5 +1,4 @@
-// !OPT_IN: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JVM
+// OPT_IN: kotlin.ExperimentalStdlibApi
 
 // IMPORTANT!
 // Please, when your changes cause failures in bytecodeText tests for 'for' loops,
@@ -30,7 +29,6 @@ fun f(a: Long): Int {
 // 1 IFGE
 // 1 IF
 
-// JVM_IR_TEMPLATES
 // 1 ILOAD
 // 1 ISTORE
 // 0 IADD

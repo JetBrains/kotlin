@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun withLambda(block : Int.(String) -> Unit) {
 }
@@ -16,3 +17,5 @@ fun test() {
         x.length + y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, lambdaLiteral, typeWithExtension */

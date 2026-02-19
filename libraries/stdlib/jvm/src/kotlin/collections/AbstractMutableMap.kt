@@ -16,7 +16,6 @@ import java.util.AbstractMap
  * @param V the type of map values. The map is invariant in its value type.
  */
 @SinceKotlin("1.1")
-@AllowDifferentMembersInActual // New 'AbstractMap` supertype is added compared to the expect declaration
 public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : MutableMap<K, V>, AbstractMap<K, V>() {
     /**
      * Associates the specified [value] with the specified [key] in the map.
@@ -26,5 +25,6 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
+    @IgnorableReturnValue
     actual abstract override fun put(key: K, value: V): V?
 }

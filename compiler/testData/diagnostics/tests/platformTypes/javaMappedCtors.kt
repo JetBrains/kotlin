@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // TARGET_BACKEND: JVM_IR
 
 typealias ABoolean = Boolean
@@ -34,3 +35,5 @@ fun main() {
     <!INVISIBLE_MEMBER!>ADouble<!>(<!TOO_MANY_ARGUMENTS!>4.2<!>)
     <!INVISIBLE_MEMBER!>Double<!>(<!TOO_MANY_ARGUMENTS!>4.2<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, typeAliasDeclaration */

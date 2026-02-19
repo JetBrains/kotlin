@@ -2,54 +2,58 @@ import kotlin.io.path.createTempDirectory
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("project-tests-convention")
+    id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":kotlin-scripting-compiler"))
-    testApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(project(":kotlin-scripting-compiler"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
+    testFixturesImplementation(intellijCore())
     testImplementation(intellijCore())
-    testApi(projectTests(":generators:test-generator"))
+    testFixturesApi(platform(libs.junit.bom))
+    testCompileOnly(libs.junit4)
+    testFixturesImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
+    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
     testRuntimeOnly(toolsJar())
 }
 
 sourceSets {
     "main" {}
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
-projectTest(parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-}
+projectTests {
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/loadJava8")
+    testData(project(":compiler").isolated, "testData/resolvedCalls/enhancedSignatures")
+    testData(project(":compiler").isolated, "testData/builtin-classes")
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
-val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withScriptingPlugin()
+    withTestJar()
+    withAnnotations()
+    withMockJdkAnnotationsJar()
+    withThirdPartyJava8Annotations()
 
-task<Exec>("downloadJspecifyTests") {
-    val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
-    doFirst {
-        executable("git")
-        args("clone", "https://github.com/jspecify/jspecify/", tmpDirPath)
+    testTask(
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0),
+        jUnitMode = JUnitMode.JUnit5
+    ) {
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
-    doLast {
-        copy {
-            from("$tmpDirPath/samples")
-            into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
-        }
-    }
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt", generateTestsInBuildDirectory = true)
 }
 
-val test: Test by tasks
 
-test.apply {
-    exclude("**/*JspecifyAnnotationsTestGenerated*")
-}
-
-task<Test>("jspecifyTests") {
-    workingDir(project.rootDir)
-    include("**/*JspecifyAnnotationsTestGenerated*")
-}
+optInToK1Deprecation()
 
 testsJar()

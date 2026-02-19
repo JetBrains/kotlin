@@ -1,4 +1,5 @@
-// FILE: BaseJava.java
+// RUN_PIPELINE_TILL: FRONTEND
+// FILE: base/BaseJava.java
 
 package base;
 
@@ -7,6 +8,10 @@ public class BaseJava {
 
     String b = "";
 }
+
+// FILE: base/DerivedJava.java
+
+package base;
 
 class DerivedJava extends BaseKotlin {
     protected String a = "";
@@ -92,3 +97,7 @@ class DirectlyDerived : BaseJava() {
 fun test(d: Derived) {
     d::<!INVISIBLE_MEMBER!>a<!> // Field is also invisible
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, getter,
+javaCallableReference, javaProperty, javaType, localClass, propertyDeclaration, stringLiteral, thisExpression,
+typeAliasDeclaration */

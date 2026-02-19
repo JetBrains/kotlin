@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 

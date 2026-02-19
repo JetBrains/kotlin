@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// WITH_EXTENDED_CHECKERS
+// DIAGNOSTICS: -UNUSED_VARIABLE
 //KT-2606 Filter java.util.* import
 package n
 
@@ -12,3 +12,5 @@ fun bar() : Iterator<Int>? {
     val a : Annotation
     return null
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

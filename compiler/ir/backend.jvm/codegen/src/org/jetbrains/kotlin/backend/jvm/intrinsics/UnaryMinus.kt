@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-object UnaryMinus : IntrinsicMethod() {
+object UnaryMinus : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 open class Base {
     open fun foo() {}
 

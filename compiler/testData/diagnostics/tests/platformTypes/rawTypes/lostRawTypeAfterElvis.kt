@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FIR_IDENTICAL
 // FILE: Generic.java
@@ -20,3 +22,6 @@ fun main(w: ML<String>) {
     // `generic2` does have just non-raw type `Generic<Any!>..Generic<*>?`
     generic2.foo(w).length // OK in K1, fails in K2 after KT-41794 is done
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration */

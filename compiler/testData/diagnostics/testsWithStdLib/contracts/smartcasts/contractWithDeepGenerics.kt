@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// RUN_PIPELINE_TILL: BACKEND
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // ISSUE: KT-43260
 
 import kotlin.contracts.ExperimentalContracts
@@ -29,3 +30,8 @@ fun test() {
         val cause = <!DEBUG_INFO_SMARTCAST!>result<!>.leftValue.cause
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, data, funWithExtensionReceiver,
+functionDeclaration, ifExpression, inline, isExpression, lambdaLiteral, localProperty, nestedClass, nullableType,
+primaryConstructor, propertyDeclaration, reified, sealed, smartcast, stringLiteral, thisExpression, typeConstraint,
+typeParameter */

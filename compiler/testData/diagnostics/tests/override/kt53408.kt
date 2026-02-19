@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface A {
     fun f() { }
@@ -16,3 +17,5 @@ class D : C(), A, B {
         super.f() // Resolves to super<B>.f call, but should be error
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression */

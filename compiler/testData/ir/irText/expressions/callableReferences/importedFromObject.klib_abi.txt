@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object test/Foo { // test/Foo|null[0]
+    final val a // test/Foo.a|{}a[0]
+        final fun <get-a>(): kotlin/String // test/Foo.a.<get-a>|<get-a>(){}[0]
+    final fun foo(): kotlin/String // test/Foo.foo|foo(){}[0]
+}
+final val test/test1 // test/test1|{}test1[0]
+    final fun <get-test1>(): kotlin.reflect/KProperty0<kotlin/String> // test/test1.<get-test1>|<get-test1>(){}[0]
+final val test/test1a // test/test1a|{}test1a[0]
+    final fun <get-test1a>(): kotlin.reflect/KProperty0<kotlin/String> // test/test1a.<get-test1a>|<get-test1a>(){}[0]
+final val test/test2 // test/test2|{}test2[0]
+    final fun <get-test2>(): kotlin.reflect/KFunction0<kotlin/String> // test/test2.<get-test2>|<get-test2>(){}[0]
+final val test/test2a // test/test2a|{}test2a[0]
+    final fun <get-test2a>(): kotlin.reflect/KFunction0<kotlin/String> // test/test2a.<get-test2a>|<get-test2a>(){}[0]

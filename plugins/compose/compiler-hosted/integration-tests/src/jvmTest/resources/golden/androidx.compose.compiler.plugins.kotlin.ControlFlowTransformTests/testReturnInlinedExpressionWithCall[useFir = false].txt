@@ -1,0 +1,49 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.State
+
+@Composable
+fun Test(x: Int): Int {
+    return x.let {
+        A()
+        123
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(x: Int, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(Test):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = <block>{
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<A()>")
+    val tmp1_group = x.let { it: Int ->
+      A(%composer, 0)
+      val tmp0_return = 123
+      tmp0_return
+    }
+    %composer.endReplaceGroup()
+    tmp1_group
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

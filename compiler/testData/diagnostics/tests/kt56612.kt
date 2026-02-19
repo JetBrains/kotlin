@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 interface FlameGraphModel<T>
@@ -27,3 +28,7 @@ fun bar(model: FlameGraphModel<CallUsageNode>) {
     // K1: Ok
     val afterCast = model as CallUsageNodeFlameGraphModelWithTypealiasedSupertypeArgument
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, localProperty,
+nullableType, out, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

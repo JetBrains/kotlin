@@ -1,6 +1,16 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun testAssignment() {
-    var <!UNUSED_VARIABLE!>a<!> = 1
+    var <!VARIABLE_NEVER_READ!>a<!> = 1
     <!UNREACHABLE_CODE!><!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> =<!> todo()
+}
+
+class Foo {
+    var property: Int = 0
+}
+
+fun testClassPropertyAssignment(foo: Foo) {
+    foo.property = 1
+    foo<!UNREACHABLE_CODE!>.property =<!> todo()
 }
 
 fun testVariableDeclaration() {
@@ -14,5 +24,13 @@ fun testPlusAssign() {
     a <!UNREACHABLE_CODE!>+=<!> todo()
 }
 
+fun testClassPropertyPlusAssign(foo: Foo) {
+    foo.property += 1
+    foo<!UNREACHABLE_CODE!>.property<!> += todo() as Int
+}
+
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localFunction, localProperty, operator, propertyDeclaration */

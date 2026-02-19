@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION, -UNUSED_VARIABLE
-// !LANGUAGE: +InlineClasses -AllowResultInReturnType, -JvmInlineValueClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION, -UNUSED_VARIABLE, -INLINE_CLASS_DEPRECATED
+// LANGUAGE: +InlineClasses
 
 typealias ResultAlias<T> = Result<T>
 
@@ -123,3 +124,7 @@ fun <T> resultInGenericFun(r: Result<Int>): T = r <!UNCHECKED_CAST!>as T<!>
 
 val asFunPublic: () -> Result<Int> = TODO()
 private val asFun: () -> Result<Int>? = TODO()
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, functionalType, getter,
+ifExpression, localClass, localFunction, localProperty, nullableType, objectDeclaration, out, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, vararg */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KMutableProperty1
@@ -20,3 +21,7 @@ fun main(intDTO: DTO<Int>?) {
         intDTO[DTO<Int>::q] = intDTO[DTO<Int>::test]!!.size
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, checkNotNullCall, classDeclaration, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, nullableType, operator, propertyDeclaration, smartcast,
+starProjection, typeParameter */

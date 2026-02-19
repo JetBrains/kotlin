@@ -8,21 +8,24 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.analysis.js.checkers.getJsName
-import org.jetbrains.kotlin.fir.analysis.js.checkers.getStableNameInJavaScript
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.isEnabled
 
-object FirJsNameCharsChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
+object FirJsNameCharsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
+        if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) {
             return
         }
 
@@ -39,9 +42,9 @@ object FirJsNameCharsChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        val stableName = declaration.symbol.getStableNameInJavaScript(context.session) ?: return
-        if ((sanitizeName(stableName) != stableName)) {
-            reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS, context)
+        val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol) ?: return
+        if ((sanitizeName(stableName.name) != stableName.name)) {
+            reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS)
         }
     }
 }

@@ -7,31 +7,34 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
+import org.jetbrains.kotlin.backend.jvm.lower.JvmArgumentNullabilityAssertionsLowering.AssertionScope
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-val jvmArgumentNullabilityAssertions = makeIrFilePhase(
-    ::JvmArgumentNullabilityAssertionsLowering,
-    name = "ArgumentNullabilityAssertions",
-    description = "Transform nullability assertions on arguments according to the compiler settings",
-    // jvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
-    prerequisite = setOf(jvmStringConcatenationLowering)
+/**
+ * Transforms nullability assertions on arguments according to the compiler settings.
+ */
+@PhasePrerequisites(
+    // JvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
+    JvmStringConcatenationLowering::class,
 )
+internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
+    IrTransformer<AssertionScope>() {
 
-private enum class AssertionScope {
-    Enabled, Disabled
-}
-
-private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformer<AssertionScope> {
+    enum class AssertionScope {
+        Enabled, Disabled
+    }
 
     private val isWithUnifiedNullChecks = context.config.unifiedNullChecks
     private val isCallAssertionsDisabled = context.config.isCallAssertionsDisabled
@@ -59,21 +62,26 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
         // NB there are some members in Kotlin built-in classes which are NOT implemented as platform method calls,
         // and thus break this assertion - e.g., 'Array<T>.iterator()' and similar functions.
         // See KT-30908 for more details.
-        expression.dispatchReceiver = expression.dispatchReceiver?.transform(this, AssertionScope.Disabled)
+        val dispatchReceiverAssertionScope = AssertionScope.Disabled
 
-        val receiverAssertionScope = if (
+        val extensionReceiverAssertionScope = if (
             isReceiverAssertionsDisabled ||
             !isWithUnifiedNullChecks && expression.origin.isOperatorWithNoNullabilityAssertionsOnExtensionReceiver
         ) AssertionScope.Disabled else AssertionScope.Enabled
 
-        expression.extensionReceiver = expression.extensionReceiver?.transform(this, receiverAssertionScope)
-
         val parameterAssertionScope =
             if (isCallToMethodWithTypeCheckBarrier(expression)) AssertionScope.Disabled else AssertionScope.Enabled
-        for (i in 0 until expression.valueArgumentsCount) {
-            expression.getValueArgument(i)?.let { irArgument ->
-                expression.putValueArgument(i, irArgument.transform(this, parameterAssertionScope))
+
+        val contextAssertionScope = AssertionScope.Enabled
+
+        expression.arguments.assignFrom(expression.getAllArgumentsWithIr()) { (parameter, argument) ->
+            val assertionScope = when (parameter.kind) {
+                IrParameterKind.DispatchReceiver -> dispatchReceiverAssertionScope
+                IrParameterKind.ExtensionReceiver -> extensionReceiverAssertionScope
+                IrParameterKind.Regular -> parameterAssertionScope
+                IrParameterKind.Context -> contextAssertionScope
             }
+            argument?.transform(this, assertionScope)
         }
 
         return expression

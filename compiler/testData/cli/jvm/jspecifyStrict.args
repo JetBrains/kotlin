@@ -1,7 +1,0 @@
--Xjspecify-annotations=strict
-$TESTDATA_DIR$/jspecifyUsage.kt
-$TESTDATA_DIR$/jspecify
-$FOREIGN_ANNOTATIONS_DIR$
-$JSR_305_DECLARATIONS$
--d
-$TEMP_DIR$

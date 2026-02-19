@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package d
 
 class T {
@@ -14,3 +15,6 @@ fun foo(t: T) {
 
     zzz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+override */

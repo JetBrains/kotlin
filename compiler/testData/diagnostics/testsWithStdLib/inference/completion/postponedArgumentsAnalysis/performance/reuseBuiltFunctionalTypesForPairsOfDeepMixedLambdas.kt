@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 
 fun <T> id(x: T) = x
 
@@ -46,3 +47,6 @@ class A {
             to(Inv(take({ a, b, c, d -> }, { a, b, c, d -> })), Inv { a, b, c, d -> }),
         )
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, out, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, vararg */

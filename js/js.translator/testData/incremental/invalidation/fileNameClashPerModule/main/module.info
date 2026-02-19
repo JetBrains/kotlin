@@ -1,0 +1,17 @@
+STEP 0:
+    dependencies: lib
+    added file: m.kt
+    expected dts: m.0.d.ts
+STEP 1:
+    dependencies: lib
+    expected dts: m.0.d.ts
+STEP 2:
+    dependencies: lib
+    expected dts: m.2.d.ts
+STEP 3:
+    dependencies: lib
+    updated imports: m.kt
+    expected dts: m.3.d.ts
+STEP 4:
+    dependencies: lib
+    expected dts: m.4.d.ts

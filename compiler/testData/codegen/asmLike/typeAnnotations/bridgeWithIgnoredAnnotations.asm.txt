@@ -1,0 +1,54 @@
+Ljava/lang/Object;Lmain/I<Ljava/lang/Integer;>;
+public final class main/C : java/lang/Object, main/I {
+    public void <init>()
+
+    public java.lang.String foo(int a, int b)
+      @Lmain/FunAnno;([])
+      @Lmain/IgnoredFunAnno;([])
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+      @Lmain/TypeAnno;([]) : METHOD_RETURN, null
+      @Lmain/IgnoredTypeAnno;([]) : METHOD_RETURN, null
+      @Lmain/TypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lmain/IgnoredTypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lmain/ParamAnno;([]) // parameter 1
+        @Lmain/IgnoredParamAnno;([]) // parameter 1
+
+    public java.lang.Object foo(java.lang.Object p1, java.lang.Object p2)
+      @Lmain/FunAnno;([])
+      @Lmain/TypeAnno;([]) : METHOD_RETURN, null
+      @Lmain/TypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lmain/ParamAnno;([]) // parameter 1
+}
+
+public abstract interface main/FunAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface main/I : java/lang/Object {
+    (TT;TT;)Ljava/lang/Object;
+    public java.lang.Object foo(java.lang.Object p1, java.lang.Object p2)
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 1
+}
+
+public abstract interface main/IgnoredFunAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/IgnoredParamAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/IgnoredTypeAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/ParamAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/TypeAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}

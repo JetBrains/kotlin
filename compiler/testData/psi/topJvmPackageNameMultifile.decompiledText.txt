@@ -1,0 +1,15 @@
+OtherKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package some.other
+
+  @kotlin.SinceKotlin public fun foo(): kotlin.Unit { /* compiled code */ }
+
+OtherKt__TopJvmPackageNameMultifileKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package some.other
+
+  @kotlin.SinceKotlin public fun foo(): kotlin.Unit { /* compiled code */ }

@@ -1,0 +1,10 @@
+fun test(): Long {
+  return try { // BLOCK
+    42L
+  }
+  catch (e: Throwable){ // BLOCK
+    -1L
+  }
+
+}
+

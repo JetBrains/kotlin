@@ -17,9 +17,11 @@ kotlin {
         compileSdk = 33
         namespace = "org.jetbrains.sample"
 
-        withAndroidTestOnJvm()
-        sourceSets.getByName("androidTestOnJvm").dependencies {
-            implementation("junit:junit:4.13.2")
-        }
+        <host-test-dsl>
+    }
+
+    val androidTestSourceSetName = "<host-test-source-set-name>"
+    sourceSets.getByName(androidTestSourceSetName).dependencies {
+        implementation("junit:junit:4.13.2")
     }
 }

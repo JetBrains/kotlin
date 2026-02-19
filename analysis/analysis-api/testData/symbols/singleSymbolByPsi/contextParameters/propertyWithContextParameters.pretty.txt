@@ -1,0 +1,3 @@
+context(parameter1@@Anno(position = "12") kotlin.String, parameter2@kotlin.collections.List<@Anno(position = "str") kotlin.Int>)
+val foo: kotlin.Int
+  get()

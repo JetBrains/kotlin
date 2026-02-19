@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.jvm" version "$kotlin_version"
+        id "org.jetbrains.kotlin.test.fixes.android" version "$test_fixes_version"
+    }
+
+    includeBuild("build-logic")
+}

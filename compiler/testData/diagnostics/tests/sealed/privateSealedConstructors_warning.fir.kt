@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -UseConsistentRulesForPrivateConstructorsOfSealedClasses
 // ISSUE: KT-44866, KT-49729
 
@@ -19,3 +20,5 @@ class RegularOuter : <!INVISIBLE_REFERENCE!>RegularBase<!>("outer")
 // FILE: derived.kt
 
 class SealedOuterInDifferentFile : <!INVISIBLE_REFERENCE!>SealedBase<!>("other file")
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, primaryConstructor, sealed, secondaryConstructor, stringLiteral */

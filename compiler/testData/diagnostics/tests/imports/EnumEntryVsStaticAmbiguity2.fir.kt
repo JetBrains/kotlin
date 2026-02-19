@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-49200
 // FILE: first/KtNodeTypes.java
 
@@ -35,3 +36,6 @@ fun test(arg: String): Boolean {
         else -> false
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, whenExpression,
+whenWithSubject */

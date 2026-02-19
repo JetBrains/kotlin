@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.Getter
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.UnboxFunction
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
@@ -22,8 +21,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 typealias TypeArguments = Map<IrTypeParameterSymbol, IrType>
 
@@ -219,7 +220,7 @@ sealed class MfvcNodeWithSubnodes(val subnodes: List<NameableMfvcNode>) : MfvcNo
 
     val leaves: List<LeafMfvcNode> = subnodes.leaves
 
-    val fields: List<IrField>? = subnodes.fields
+    val fields: List<IrField?> = subnodes.fields
 
     val allInnerUnboxMethods: List<IrSimpleFunction> = subnodes.flatMap { subnode ->
         when (subnode) {
@@ -246,11 +247,9 @@ fun MfvcNodeWithSubnodes.makeBoxedExpression(
     val resultType = type.substitute(typeArguments) as IrSimpleType
     require(resultType.erasedUpperBound == type.erasedUpperBound) { "Substitution of $type led to $resultType" }
     for ((index, typeArgument) in resultType.arguments.withIndex()) {
-        putTypeArgument(index, typeArgument.typeOrNull ?: resultType.erasedUpperBound.typeParameters[index].defaultType)
+        this.typeArguments[index] = typeArgument.typeOrNull ?: resultType.erasedUpperBound.typeParameters[index].defaultType
     }
-    for ((index, valueArgument) in valueArguments.withIndex()) {
-        putValueArgument(index, valueArgument)
-    }
+    arguments.assignFrom(valueArguments)
     registerPossibleExtraBoxCreation()
 }
 
@@ -270,14 +269,7 @@ private fun List<Any>.allEqual() = all { it == first() }
 val List<NameableMfvcNode>.leaves get() = this.mapLeaves { it }
 
 val List<NameableMfvcNode>.fields
-    get() = mapLeaves { it.field }.run {
-        @Suppress("UNCHECKED_CAST")
-        when {
-            all { it == null } -> null
-            all { it != null } -> this as List<IrField>
-            else -> error("IrFields can either exist all or none for MFVC property")
-        }
-    }
+    get() = mapLeaves { it.field }
 
 val List<NameableMfvcNode>.subnodeIndices: Map<NameableMfvcNode, IntRange>
     get() = buildMap {
@@ -323,9 +315,9 @@ private fun requireSameSizes(vararg sizes: Int?) {
 }
 
 private fun validateGettingAccessorParameters(function: IrSimpleFunction) {
-    require(function.valueParameters.isEmpty()) { "Value parameters are not expected for ${function.render()}" }
-    require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }
-    require(function.contextReceiverParametersCount == 0) { "Context receivers is not expected for ${function.render()}" }
+    require(function.nonDispatchParameters.isEmpty()) {
+        "Parameters other than dispatch receiver are not expected for ${function.render()}"
+    }
     require(function.typeParameters.isEmpty()) { "Type parameters are not expected for ${function.render()}" }
 }
 
@@ -363,16 +355,16 @@ class LeafMfvcNode(
         accessType: AccessType,
         saveVariable: (IrVariable) -> Unit,
     ) = ReceiverBasedMfvcNodeInstance(
-        scope, this, typeArguments, receiver, field?.let(::listOf), unboxMethod, accessType, saveVariable
+        scope, this, typeArguments, receiver, listOf(field), unboxMethod, accessType, saveVariable
     )
 
     override fun toString(): String = "$fullFieldName: ${type.render()}"
 }
 
-val MfvcNode.fields
+val MfvcNode.fields: List<IrField?>
     get() = when (this) {
         is MfvcNodeWithSubnodes -> this.fields
-        is LeafMfvcNode -> field?.let(::listOf)
+        is LeafMfvcNode -> listOf(field)
     }
 
 /**
@@ -496,19 +488,21 @@ class RootMfvcNode internal constructor(
         require(specializedEqualsMethod.typeParameters.isEmpty()) {
             "Specialized equals method must not contain type parameters but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
         }
-        oldPrimaryConstructor?.let { requireSameSizes(it.valueParameters.size, subnodes.size) }
+        oldPrimaryConstructor?.let { requireSameSizes(it.parameters.size, subnodes.size) }
         requireSameSizes(
             leavesCount,
-            newPrimaryConstructor?.valueParameters?.size,
-            primaryConstructorImpl?.valueParameters?.size,
-            boxMethod.valueParameters.size,
+            newPrimaryConstructor?.parameters?.size,
+            primaryConstructorImpl?.parameters?.size,
+            boxMethod.parameters.size,
         )
-        require(specializedEqualsMethod.valueParameters.size == 1) {
-            "Specialized equals method must contain single value parameter but has\n${specializedEqualsMethod.valueParameters.joinToString("\n") { it.dump() }}"
+        specializedEqualsMethod.parameters.filterNot { it.kind == IrParameterKind.DispatchReceiver }.let { regularParameters ->
+            require(regularParameters.size == 1) {
+                "Specialized equals method must contain single value parameter but has\n${regularParameters.joinToString("\n") { it.dump() }}"
+            }
         }
         for (function in listOfNotNull(oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod)) {
-            require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }
-            require(function.contextReceiverParametersCount == 0) { "Context receivers are not expected for ${function.render()}" }
+            require(function.parameters.none { it.kind == IrParameterKind.ExtensionReceiver }) { "Extension receiver is not expected for ${function.render()}" }
+            require(function.parameters.none { it.kind == IrParameterKind.Context }) { "Context receivers are not expected for ${function.render()}" }
         }
     }
 

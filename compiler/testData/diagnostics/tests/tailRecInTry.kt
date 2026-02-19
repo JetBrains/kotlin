@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
     try {
@@ -62,3 +63,5 @@
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localProperty, propertyDeclaration, tailrec, tryExpression */

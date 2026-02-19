@@ -17,6 +17,7 @@
 #ifndef RUNTIME_PORTING_H
 #define RUNTIME_PORTING_H
 
+#include <cstdint>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -38,17 +39,16 @@ void consoleFlush();
 // Thread control.
 void onThreadExit(void (*destructor)(void*), void* destructorParameter);
 bool isOnThreadExitNotSetOrAlreadyStarted();
-int currentThreadId();
-
-// String/byte operations.
-// memcpy/memmove/memcmp are not here intentionally, as frequently implemented/optimized
-// by C compiler.
-void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen);
+uintptr_t currentThreadId();
 
 // Time operations.
 uint64_t getTimeMillis();
 uint64_t getTimeMicros();
 uint64_t getTimeNanos();
+uint64_t getSystemTimeNanos();
+
+// Endianness
+bool isLittleEndian();
 
 }  // namespace konan
 

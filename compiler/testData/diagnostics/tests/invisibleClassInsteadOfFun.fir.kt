@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-58719
 
 // MODULE: a
@@ -20,3 +21,5 @@ fun test() {
     QueryPagingSource<Int>(10)
     <!INVISIBLE_REFERENCE!>QueryPagingSource<!><Int, String>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, typeConstraint, typeParameter */

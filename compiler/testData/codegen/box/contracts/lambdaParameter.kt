@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 
 import kotlin.contracts.*
@@ -12,7 +13,7 @@ fun runOnce(action: () -> Unit) {
 
 fun o(): String {
     var res = "FAIL1 "
-    ("O" to "").let { (a, _) ->
+    ("O" to "").let { [a, _] ->
         runOnce {
             res = a
         }

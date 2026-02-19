@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.firClassLike
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
-import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 
@@ -34,7 +34,7 @@ abstract class FirExportCheckerVisitor : FirVisitor<Boolean, SpecialDeclarationT
     }
 
     private fun <D> D.isExported(): Boolean where D : FirCallableDeclaration {
-        val classId = symbol.callableId.classId ?: return globalMemberIsExported()
+        val classId = symbol.callableId?.classId ?: return globalMemberIsExported()
         return visibility !== Visibilities.Local &&
                 classId.toSymbol(moduleData.session)!!.fir.accept(this@FirExportCheckerVisitor, SpecialDeclarationType.REGULAR)
     }
@@ -45,8 +45,8 @@ abstract class FirExportCheckerVisitor : FirVisitor<Boolean, SpecialDeclarationT
                 containingDeclaration.accept(this@FirExportCheckerVisitor, SpecialDeclarationType.REGULAR)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: SpecialDeclarationType): Boolean =
-        !simpleFunction.name.isAnonymous && simpleFunction.isExported()
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: SpecialDeclarationType): Boolean =
+        !namedFunction.name.isAnonymous && namedFunction.isExported()
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: SpecialDeclarationType): Boolean {
         if (data == SpecialDeclarationType.ANON_INIT) return false

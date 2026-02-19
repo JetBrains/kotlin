@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 class A {
     fun foo() {}
 }
@@ -34,15 +35,15 @@ fun Any?.test_2() {
 }
 
 fun test_3(a: Any, b: Any, c: Any) {
-    with(a) wa@{
-        with(b) wb@{
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(a) wa@{
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(b) wb@{
             with(c) wc@{
                 this@wb as A
                 this@wb.foo()
                 foo()
             }
-            this.foo()
-            foo()
+            this.<!UNRESOLVED_REFERENCE!>foo<!>()
+            <!UNRESOLVED_REFERENCE!>foo<!>()
         }
     }
 }
@@ -53,7 +54,7 @@ fun Any?.test_4() {
         <!UNRESOLVED_REFERENCE!>foo<!>()
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
         <!UNRESOLVED_REFERENCE!>bar<!>()
-    } else if (this !is B) {
+    } else if (<!USELESS_IS_CHECK!>this !is B<!>) {
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
         <!UNRESOLVED_REFERENCE!>bar<!>()
         this.foo()
@@ -79,6 +80,10 @@ fun Any.test_5(): Int = when {
 fun Any.test_6() {
     this as List<*>
     size
-    this as String
+    this <!CAST_NEVER_SUCCEEDS!>as<!> String
     length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, integerLiteral, intersectionType, isExpression, lambdaLiteral, nullableType, smartcast, starProjection,
+thisExpression, typeParameter, typeWithExtension, whenExpression */

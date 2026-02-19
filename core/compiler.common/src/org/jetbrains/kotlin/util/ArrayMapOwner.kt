@@ -46,7 +46,7 @@ class ArrayMapAccessor<K : Any, V : Any, T : V>(
     private val keyQualifiedName: String,
     id: Int,
     val default: T? = null
-) : AbstractArrayMapOwner.AbstractArrayMapAccessor<K, V, T>(id), ReadOnlyProperty<AbstractArrayMapOwner<K, V>, V> {
+) : AbstractArrayMapOwner.AbstractArrayMapAccessor<K, V, T>(id), ReadOnlyProperty<AbstractArrayMapOwner<K, V>, T> {
     override fun getValue(thisRef: AbstractArrayMapOwner<K, V>, property: KProperty<*>): T {
         return extractValue(thisRef)
             ?: default

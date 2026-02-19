@@ -7,7 +7,7 @@ FILE: typeAliasWithGeneric.kt
     }
     public abstract interface B<S, T : R|A|> : R|kotlin/Any| {
     }
-    public final class D : R|C<A>| {
+    public final class D : R|{C<A>=} B<A, A>| {
         public constructor(): R|D| {
             super<R|kotlin/Any|>()
         }

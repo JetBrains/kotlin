@@ -1,0 +1,3 @@
+@Anno()
+owner -> FirRegularClassSymbol <local>/Annotated
+context -> FirRegularClassSymbol <local>/Annotated from FirNamedFunctionSymbol /foo

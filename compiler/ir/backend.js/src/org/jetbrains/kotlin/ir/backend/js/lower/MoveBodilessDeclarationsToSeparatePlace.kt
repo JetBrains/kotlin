@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
@@ -40,18 +41,19 @@ private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.Function"
 ).map { FqName(it) }.toSet()
 
-fun isBuiltInClass(declaration: IrDeclaration): Boolean =
+internal fun isBuiltInClass(declaration: IrDeclaration): Boolean =
     declaration is IrClass && declaration.fqNameWhenAvailable in BODILESS_BUILTIN_CLASSES
 
-fun isStdLibClass(declaration: IrDeclaration): Boolean =
-    declaration is IrClass && declaration.fqNameWhenAvailable?.isChildOf(JsPackage) != false
+internal fun isJsStdLibClass(declaration: IrDeclaration): Boolean =
+    declaration is IrClass && declaration.fqNameWhenAvailable?.isChildOf(StandardClassIds.BASE_JS_PACKAGE) != false
 
-private val JsPackage = FqName("kotlin.js")
+internal fun isStdLibClass(declaration: IrDeclaration): Boolean =
+    declaration is IrClass && declaration.fqNameWhenAvailable?.isChildOf(StandardClassIds.BASE_KOTLIN_PACKAGE) != false
 
 private val JsIntrinsicFqName = FqName("kotlin.js.JsIntrinsic")
 
 private fun IrDeclaration.isPlacedInsideInternalPackage() =
-    (parent as? IrPackageFragment)?.packageFqName == JsPackage
+    (parent as? IrPackageFragment)?.packageFqName == StandardClassIds.BASE_JS_PACKAGE
 
 private fun isIntrinsic(declaration: IrDeclaration): Boolean =
     declaration is IrSimpleFunction && declaration.isPlacedInsideInternalPackage() &&
@@ -79,7 +81,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
             }
         }
 
-        if (irFile.getJsModule() != null || irFile.getJsQualifier() != null) {
+        if (declaration.isEffectivelyExternal() && (irFile.getJsModule() != null || irFile.getJsQualifier() != null)) {
             externalPackageFragment.declarations += declaration
             declaration.parent = externalPackageFragment
 
@@ -94,9 +96,6 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
 
                 return emptyList()
             } else if (d.isEffectivelyExternal()) {
-                if (d.getJsModule() != null)
-                    context.declarationLevelJsModules.add(d)
-
                 externalPackageFragment.declarations += d
                 d.parent = externalPackageFragment
 

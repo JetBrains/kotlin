@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -78,3 +80,7 @@ fun useJava(): String {
         else -> "FAIL" // no warning
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, flexibleType,
+functionDeclaration, integerLiteral, isExpression, javaFunction, javaProperty, javaType, localProperty, nestedClass,
+nullableType, propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

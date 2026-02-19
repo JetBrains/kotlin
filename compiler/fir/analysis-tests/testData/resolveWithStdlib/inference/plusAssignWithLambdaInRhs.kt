@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-39005
-// !DUMP_CFG
+// DUMP_CFG
 
 fun test() {
     val list: MutableList<(String) -> String> = null!!
@@ -17,3 +18,6 @@ fun <T> postpone(computation: () -> T): A<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

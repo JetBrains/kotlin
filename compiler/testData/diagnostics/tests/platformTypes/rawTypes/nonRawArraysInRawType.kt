@@ -1,6 +1,8 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: Generic.java
 
 import java.util.List;
@@ -25,3 +27,6 @@ fun main() {
         x.length // Arrays don't become raw
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, forLoop, functionDeclaration, javaFunction, javaProperty, localProperty,
+propertyDeclaration */

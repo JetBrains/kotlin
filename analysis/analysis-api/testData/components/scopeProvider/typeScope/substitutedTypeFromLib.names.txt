@@ -1,0 +1,27 @@
+KaTypeScope:
+  Classifier names:
+
+  Callable names:
+    <init>
+    component1
+    component2
+    copy
+    equals
+    first
+    hashCode
+    second
+    toString
+
+Declaration Scope:
+  Classifier names:
+
+  Callable names:
+    <init>
+    component1
+    component2
+    copy
+    equals
+    first
+    hashCode
+    second
+    toString

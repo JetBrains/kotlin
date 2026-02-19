@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Inv<T>
 interface Out<out T>
 interface In<in T>
@@ -30,3 +31,6 @@ class Test10 : <!EXPANDED_TYPE_CANNOT_BE_INHERITED!>InStar<!>
 class Test11 : <!EXPANDED_TYPE_CANNOT_BE_INHERITED!>InIn<!>
 class Test12 : InT<Int>
 class Test13 : InT<<!PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE!>in<!> Int>
+
+/* GENERATED_FIR_TAGS: classDeclaration, in, inProjection, interfaceDeclaration, nullableType, out, outProjection,
+starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
@@ -36,3 +37,6 @@ fun use() {
     <!OPT_IN_USAGE!>c<!>.<!OPT_IN_USAGE!>property<!>
     <!OPT_IN_USAGE!>C<!>.<!OPT_IN_USAGE!>Nested<!>().<!OPT_IN_USAGE!>nestedFunction<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, localProperty, nestedClass,
+propertyDeclaration, stringLiteral */

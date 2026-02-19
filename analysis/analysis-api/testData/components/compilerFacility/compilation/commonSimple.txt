@@ -1,0 +1,14 @@
+public final class app/MainKt {
+    // source: 'main.kt'
+    public final static method main(): void
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+public final class app/Shared {
+    // source: 'main.kt'
+    public final static field INSTANCE: app.Shared
+    private final static field text: java.lang.String
+    static method <clinit>(): void
+    private method <init>(): void
+    public final method getText(): java.lang.String
+}

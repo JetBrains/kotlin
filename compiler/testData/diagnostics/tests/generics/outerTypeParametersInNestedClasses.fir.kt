@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 class Foo<T> {
@@ -37,3 +38,6 @@ class Foo<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, enumDeclaration,
+functionDeclaration, inner, localClass, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

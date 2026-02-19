@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testArrayAccess1(array: Array<Any>) {
     array<!UNREACHABLE_CODE!>[<!>todo()<!UNREACHABLE_CODE!>]<!>
@@ -38,3 +39,6 @@ fun testArrayPlusAssign(array: Array<Any>) {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+operator, stringLiteral */

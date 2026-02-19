@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 fun <T> listOf(): List<T> = null!!
 
 fun test(a: (Int) -> Int) {
@@ -17,3 +18,7 @@ fun test2(a: () -> List<Int>) {
 val a: (Int) -> Unit = fun(x) { checkSubtype<Int>(x) }
 
 val b: (Int) -> Unit = <!TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>) {}<!>
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

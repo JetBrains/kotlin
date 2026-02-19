@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 <!UNSUPPORTED_SEALED_FUN_INTERFACE!>sealed<!> fun interface A { // error
     fun foo()
@@ -14,3 +15,5 @@ sealed interface IBase {
         fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, nestedClass, sealed */

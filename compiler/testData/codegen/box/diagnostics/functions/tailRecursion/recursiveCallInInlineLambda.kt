@@ -1,6 +1,4 @@
-// KT-16549
-// IGNORE_BACKEND: JVM, JS
-
+// FILE: lib.kt
 class TailInline {
     private inline fun act(action: () -> Unit) {
         return action()
@@ -21,6 +19,7 @@ class TailInline {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val result = TailInline().test()
     return if (result == 4) "OK" else "Fail: $result"

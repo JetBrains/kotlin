@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.BackendSymbols
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 enum class ProgressionDirection {
     DECREASING {
@@ -135,6 +136,7 @@ class ProgressionHeaderInfo(
         if (progressionType is UnsignedProgressionType) {
             // "step" is still signed for unsigned progressions.
             val lastValueAsULong = last.constLongValue?.toULong() ?: return@lazy true  // If "last" is not a const Number or Char.
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             when (direction) {
                 ProgressionDirection.DECREASING -> {
                     val constLimitAsULong = progressionType.minValueAsLong.toULong()
@@ -148,6 +150,7 @@ class ProgressionHeaderInfo(
             }
         } else {
             val lastValueAsLong = last.constLongValue ?: return@lazy true  // If "last" is not a const Number or Char.
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             when (direction) {
                 ProgressionDirection.DECREASING -> {
                     val constLimitAsLong = progressionType.minValueAsLong
@@ -186,7 +189,8 @@ class ProgressionHeaderInfo(
  * The internal induction variable used is an Int.
  */
 class IndexedGetHeaderInfo(
-    symbols: Symbols,
+    irBuiltIns: IrBuiltIns,
+    symbols: BackendSymbols,
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
@@ -194,7 +198,7 @@ class IndexedGetHeaderInfo(
     val objectVariable: IrVariable,
     val expressionHandler: IndexedGetIterationHandler
 ) : NumericHeaderInfo(
-    IntProgressionType(symbols), first, last, step,
+    IntProgressionType(irBuiltIns, symbols), first, last, step,
     isLastInclusive = false,
     canCacheLast = canCacheLast,
     isReversed = false,
@@ -258,8 +262,9 @@ internal abstract class HeaderInfoBuilder(
     context: CommonBackendContext,
     private val scopeOwnerSymbol: () -> IrSymbol,
     private val allowUnsignedBounds: Boolean = false
-) : IrElementVisitor<HeaderInfo?, IrCall?> {
-    private val symbols = context.ir.symbols
+) : IrVisitor<HeaderInfo?, IrCall?>() {
+    private val irBuiltIns = context.irBuiltIns
+    private val symbols = context.symbols
 
     protected open val progressionHandlers = listOf(
         CollectionIndicesHandler(context),
@@ -286,7 +291,7 @@ internal abstract class HeaderInfoBuilder(
             return callHeaderInfo
 
         // Try to match a call to build a progression (e.g., `.indices`, `downTo`).
-        val progressionType = ProgressionType.fromIrType(expression.type, symbols, allowUnsignedBounds)
+        val progressionType = ProgressionType.fromIrType(expression.type, irBuiltIns, symbols, allowUnsignedBounds)
         val progressionHeaderInfo =
             progressionType?.run { progressionHandlers.firstNotNullOfOrNull { it.handle(expression, data, this, scopeOwnerSymbol()) } }
 

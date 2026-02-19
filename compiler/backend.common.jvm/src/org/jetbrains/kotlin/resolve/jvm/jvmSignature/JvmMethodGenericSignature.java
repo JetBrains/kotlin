@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.jvm.jvmSignature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class JvmMethodGenericSignature extends JvmMethodSignature {
 
     public JvmMethodGenericSignature(
             @NotNull Method asmMethod,
-            @NotNull List<JvmMethodParameterSignature> valueParameters,
+            @NotNull List<Type> valueParameters,
             @Nullable String genericsSignature
     ) {
         super(asmMethod, valueParameters);

@@ -1,9 +1,7 @@
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE, WASM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-56329
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect class S

@@ -1,0 +1,10 @@
+Classifier names:
+  Nested
+
+Callable names:
+  <init>
+  equals
+  hashCode
+  idWithDefault
+  materialize
+  toString

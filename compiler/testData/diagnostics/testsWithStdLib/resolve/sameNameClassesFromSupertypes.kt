@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -20,3 +21,6 @@ class A : Base() {
         m[""]!![0].res
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, functionDeclaration, inner, integerLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral */

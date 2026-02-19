@@ -1,4 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitImplementingVarByInheritedVal
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 interface IVal {
     val a: String
@@ -26,3 +28,6 @@ class C5 : CVar(), IVar
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C6<!> : CVar(), IVarDefault
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C7<!> : CVar(), IVar, IVarDefault
 <!VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION!>class C8<!>(ival: IVal) : IVar, IVal by ival
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, inheritanceDelegation, interfaceDeclaration, primaryConstructor,
+propertyDeclaration, setter, stringLiteral */

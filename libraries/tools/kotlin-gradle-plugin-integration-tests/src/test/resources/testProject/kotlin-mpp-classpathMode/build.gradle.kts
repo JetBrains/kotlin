@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.provider.ClassPathModeExceptionCollector
 
@@ -8,11 +6,12 @@ plugins {
 }
 
 tasks.create("listCollectedErrors") {
+    val exceptions = provider { serviceOf<ClassPathModeExceptionCollector>().exceptions }
     doFirst {
-        val exceptionCollector = serviceOf<ClassPathModeExceptionCollector>()
-        logger.quiet("Collected ${exceptionCollector.exceptions.size} exception(s)")
-        exceptionCollector.exceptions.forEach { e ->
-            logger.log(LogLevel.ERROR, "Exception: ${e.message}", e)
+        val exceptions = exceptions.get()
+        logger.quiet("Collected ${exceptions.size} exception(s)")
+        exceptions.forEach { e ->
+            logger.error("Exception: ${e.message}", e)
         }
     }
 }

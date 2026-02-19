@@ -18,7 +18,11 @@ import java.util.logging.Logger
 class ConsoleReplCommandReader : ReplCommandReader {
     private val lineReader = LineReaderBuilder.builder()
         .appName("kotlin")
-        .terminal(TerminalBuilder.terminal())
+        .terminal(
+            TerminalBuilder.builder()
+                .system(true)
+                .build()
+        )
         .variable(LineReader.HISTORY_FILE, File(File(System.getProperty("user.home")), ".kotlinc_history").absolutePath)
         .build()
         .apply {

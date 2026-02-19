@@ -1,12 +1,11 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
-// TARGET_BACKEND: NATIVE
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND_K1: ANY
+// Reason: break/continue in inline lambdas unsupported
 
+// FILE: lib.kt
 inline fun foo(block: () -> Int): Int  = block()
 
+// FILE: main.kt
 fun box(): String {
     var sum = 0
 
@@ -14,5 +13,5 @@ fun box(): String {
         sum += foo { if (i == 3) break else i }
     }
 
-    return if (sum == 3) "OK" else "FAIL"
+    return if (sum == 3) "OK" else "FAIL: $sum"
 }

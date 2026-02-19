@@ -1,0 +1,97 @@
+CONTRACTS:
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=Deferred for Enhancement (Overriddens with Implicit Types)] fun defaultMethod(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun defaultMethod(): <implicit> { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod(): R|@EnhancedNullability kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod(): R|kotlin/String| {
+            ^defaultMethod String()
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(CONSTANT_EVALUATION)] fun defaultMethod(): R|@EnhancedNullability kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod(): R|kotlin/String| {
+            ^defaultMethod String()
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun defaultMethod(): R|@EnhancedNullability kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod(): R|kotlin/String| {
+            ^defaultMethod String()
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+BODY_RESOLVE:
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(BODY_RESOLVE)] fun defaultMethod(): R|@EnhancedNullability kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod(): R|kotlin/String| {
+            ^defaultMethod String()
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface BaseKotlinInterface : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun defaultMethod(): R|kotlin/String| {
+            ^defaultMethod String()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class LeafKotlinClass : R|JavaExtension| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -46,3 +47,6 @@ public open class ClassWithOpen {
     @B
     <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>open fun openAnnotatedMethod<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, secondaryConstructor */

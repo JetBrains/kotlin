@@ -104,3 +104,4 @@ public final class B : A {
     public open override /*1*/ /*fake_override*/ fun trimToSize(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ s: java.io.ObjectOutputStream!): kotlin.Unit
 }
+

@@ -116,6 +116,9 @@ object SetOps : TemplateGroupBase() {
             Those elements of the [other] collection that are unique are iterated in the end
             in the order of the [other] collection.
             
+            The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+            structurally equal, but otherwise different elements in it.
+            
             To get a set containing all elements that are contained in both collections use [intersect].
             """
         }
@@ -133,22 +136,46 @@ object SetOps : TemplateGroupBase() {
         include(Family.defaultFamilies - Sequences)
     } builder {
         infix()
+
         doc {
             """
-            Returns a set containing all elements that are contained by both this ${f.collection} and the specified collection.
+            Returns a set containing elements of this ${f.collection} that are also contained in the specified [other] ${f.collection}.
 
             The returned set preserves the element iteration order of the original ${f.collection}.
             
+            The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+            structurally equal, but otherwise different elements in it.
+
             To get a set containing all elements that are contained at least in one of these collections use [union].
             """
         }
         returns("Set<T>")
         body {
             """
-            val set = this.toMutableSet()
-            set.retainAll(other)
+            val otherCollection = other.convertToListIfNotCollection()
+            val set = mutableSetOf<T>()
+            for (e in this) {
+                if (otherCollection.contains(e)) {
+                    set.add(e)
+                }
+            }
             return set
             """
+        }
+        specialFor(ArraysOfPrimitives) {
+            // In general, converting receiver to a set may lead to function's contract not being obeyed.
+            // However, primitive values will end up being auto-boxed no matter what.
+            // On some platforms (namely, on JVM), some auto-boxed instances could be taken from a cache,
+            // others will be allocated. Either way, the order of operations won't make any difference even
+            // if `other.contains` use referential equality (newly allocated instance won't be contained by `other`,
+            // for pooled instances the order of operation won't matter).
+            body {
+                """
+                val set = this.toMutableSet()
+                set.retainAll(other)
+                return set
+                """
+            }
         }
     }
 
@@ -161,15 +188,38 @@ object SetOps : TemplateGroupBase() {
             Returns a set containing all elements that are contained by this ${f.collection} and not contained by the specified collection.
 
             The returned set preserves the element iteration order of the original ${f.collection}.
+            
+            The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+            structurally equal, but otherwise different elements in it.
             """
         }
         returns("Set<T>")
         body {
             """
-            val set = this.toMutableSet()
-            set.removeAll(other)
-            return set
+            val otherCollection = other.convertToListIfNotCollection()
+            val result = mutableSetOf<T>()
+            for (e in this) {
+                if (!otherCollection.contains(e)) {
+                    result.add(e)
+                }
+            }
+            return result
             """
+        }
+        specialFor(ArraysOfPrimitives) {
+            // In general, converting receiver to a set may lead to function's contract not being obeyed.
+            // However, primitive values will end up being auto-boxed no matter what.
+            // On some platforms (namely, on JVM), some auto-boxed instances could be taken from a cache,
+            // others will be allocated. Either way, the order of operations won't make any difference even
+            // if `other.contains` use referential equality (newly allocated instance won't be contained by `other`,
+            // for pooled instances the order of operation won't matter).
+            body {
+                """
+                val set = this.toMutableSet()
+                set.removeAll(other)
+                return set
+                """
+            }
         }
     }
 

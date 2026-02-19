@@ -1,6 +1,9 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// FIR_IDENTICAL
+// IGNORE_BACKEND: JS_IR, WASM_JS
 // ISSUE: KT-48708
+
+// KT-61141: throws kotlin.Exception instead of java.lang.Exception
+// IGNORE_BACKEND: NATIVE
 
 fun test(b: Boolean) {
     val x = if (b) {

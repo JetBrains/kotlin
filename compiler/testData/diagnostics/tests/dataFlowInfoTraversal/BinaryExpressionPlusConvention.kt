@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 interface A
 
@@ -16,3 +17,7 @@ fun bar(a: A, b: B): B {
     checkSubtype<B>(<!DEBUG_INFO_SMARTCAST!>a<!>)
     return result
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, interfaceDeclaration, localProperty, nullableType, operator,
+propertyDeclaration, smartcast, thisExpression, typeParameter, typeWithExtension */

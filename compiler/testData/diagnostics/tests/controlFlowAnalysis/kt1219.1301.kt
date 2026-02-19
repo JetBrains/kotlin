@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-1219 Incorrect 'unused value' error in closures
 
@@ -24,3 +25,7 @@ fun <T> Iterable<T>.foreach(operation: (element: T) -> Unit) {
   for (elem in this)
     operation(elem)
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, forLoop, funWithExtensionReceiver, functionDeclaration, functionalType,
+integerLiteral, javaFunction, javaProperty, lambdaLiteral, localFunction, localProperty, nullableType,
+propertyDeclaration, thisExpression, typeParameter */

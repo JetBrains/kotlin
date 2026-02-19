@@ -3,13 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
+package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirCacheWithInvalidation
+import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPutWithNullableValue
+import org.jetbrains.kotlin.analysis.api.platform.caches.nullValueToNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -20,7 +22,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.concurrent.ConcurrentHashMap
 
 internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
-    private val map: ConcurrentHashMap<K, Any> = ConcurrentHashMap<K, Any>(),
+    private val map: ConcurrentHashMap<K, Any> = ConcurrentHashMap(),
     private val createValue: (K, CONTEXT) -> V,
 ) : FirCache<K, V, CONTEXT>(), FirCacheWithInvalidation<K, V, CONTEXT> {
     override fun getValue(key: K, context: CONTEXT): V = map.getOrPutWithNullableValue(key) {
@@ -29,11 +31,16 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
 
     override fun getValueIfComputed(key: K): V? = map[key]?.nullValueToNull()
 
+    @FirCacheInternals
+    override val cachedValues: Collection<V>
+        get() = map.values.mapNotNull { it.nullValueToNull() }
+
     override fun fixInconsistentValue(
         key: K,
         context: CONTEXT & Any,
-        inconsistencyMessage: String,
         mapping: (oldValue: V, newValue: V & Any) -> V & Any,
+        inconsistencyMessage: String,
+        buildAdditionalAttachments: (ExceptionAttachmentBuilder.(K, CONTEXT) -> Unit)?,
     ): V & Any {
         val newValue = createValue(key, context)
         checkWithAttachment(
@@ -45,6 +52,9 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
 
         LOG.logErrorWithAttachment(inconsistencyMessage) {
             buildAttachments(key, context, newValue)
+            if (buildAdditionalAttachments != null) {
+                buildAdditionalAttachments(key, context)
+            }
         }
 
         val result = map.merge(key, newValue) { old, _ ->

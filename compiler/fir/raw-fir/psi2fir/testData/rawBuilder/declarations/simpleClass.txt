@@ -1,12 +1,12 @@
 FILE: simpleClass.kt
-    public? final? interface SomeInterface : R|kotlin/Any| {
+    public final? interface SomeInterface : R|kotlin/Any| {
         public? final? fun foo(x: Int, y: String): String
 
         public? final? val bar: Boolean
             public? [ContainingClassKey=SomeInterface] get(): Boolean
 
     }
-    public? final? class SomeClass : SomeInterface {
+    public final? class SomeClass : SomeInterface {
         public? [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             super<<implicit>>()
         }
@@ -30,7 +30,7 @@ FILE: simpleClass.kt
             public? [ContainingClassKey=SomeClass] set(value: Double): R|kotlin/Unit|
 
     }
-    public? final? inline class InlineClass : R|kotlin/Any| {
+    public final? inline class InlineClass : R|kotlin/Any| {
         public? [ContainingClassKey=InlineClass] constructor(): R|InlineClass| {
             super<R|kotlin/Any|>()
         }

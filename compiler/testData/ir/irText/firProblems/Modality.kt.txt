@@ -1,4 +1,26 @@
-interface Substitutable<out T : DeclarationDescriptorNonRoot> {
+class Atom {
+  val candidateDescriptor: CallableDescriptor
+    field = candidateDescriptor
+    get
+
+  constructor(candidateDescriptor: CallableDescriptor) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class KotlinResolutionCandidate {
+  val resolvedCall: Atom
+    field = resolvedCall
+    get
+
+  constructor(resolvedCall: Atom) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -13,29 +35,15 @@ abstract class ResolutionPart {
 
 }
 
-class KotlinResolutionCandidate {
-  constructor(resolvedCall: Atom) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val resolvedCall: Atom
-    field = resolvedCall
-    get
-
+interface Substitutable<out T : DeclarationDescriptorNonRoot> {
 }
 
-class Atom {
-  constructor(candidateDescriptor: CallableDescriptor) /* primary */ {
+object Final : Modality {
+  private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val candidateDescriptor: CallableDescriptor
-    field = candidateDescriptor
-    get
 
 }
 
@@ -61,11 +69,3 @@ object Owner : ResolutionPart {
 
 }
 
-object Final : Modality {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}

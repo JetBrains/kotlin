@@ -1,5 +1,6 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;
@@ -40,3 +41,6 @@ fun <V : Any> SLRUMap<V>.getOrPutNN(value: V, l: List<V>) {
     takeEList(l)
     takeE(id(value))
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration,
+ifExpression, javaType, nullableType, smartcast, typeConstraint, typeParameter */

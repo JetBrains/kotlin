@@ -1,8 +1,4 @@
 // FIR_IDENTICAL
-// DUMP_LOCAL_DECLARATION_SIGNATURES
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57434
 
 fun <TT> outer() {
     fun <T> test1(i: Int, j: T) {}

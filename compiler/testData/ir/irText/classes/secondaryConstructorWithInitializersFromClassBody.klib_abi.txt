@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /Base { // /Base|null[0]
+    constructor <init>() // /Base.<init>|<init>(){}[0]
+}
+final class /TestInitBlock : /Base { // /TestInitBlock|null[0]
+    final val x // /TestInitBlock.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitBlock.x.<get-x>|<get-x>(){}[0]
+    constructor <init>() // /TestInitBlock.<init>|<init>(){}[0]
+    constructor <init>(kotlin/Any) // /TestInitBlock.<init>|<init>(kotlin.Any){}[0]
+    constructor <init>(kotlin/Int) // /TestInitBlock.<init>|<init>(kotlin.Int){}[0]
+}
+final class /TestProperty : /Base { // /TestProperty|null[0]
+    final val x // /TestProperty.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestProperty.x.<get-x>|<get-x>(){}[0]
+    constructor <init>() // /TestProperty.<init>|<init>(){}[0]
+}

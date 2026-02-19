@@ -20,7 +20,7 @@ if not "%JAVA_HOME%"=="" (
 )
 
 rem We use the value of the JAVA_OPTS environment variable if defined
-if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx256M -Xms128M
+if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx512M -Xms128M
 
 rem Iterate through arguments and split them into java and kotlin ones
 :loop
@@ -47,9 +47,13 @@ goto loop
 setlocal EnableDelayedExpansion
 
 call :set_java_version
-if !_java_major_version! geq 9 (
-  rem Workaround the illegal reflective access warning from ReflectionUtil to ResourceBundle.setParent, see IDEA-248785.
-  set JAVA_OPTS=!JAVA_OPTS! "--add-opens" "java.base/java.util=ALL-UNNAMED"
+
+if !_java_major_version! geq 24 (
+  rem Allow JNI access for all compiler code. In particular, this is needed for jansi (see `PlainTextMessageRenderer`).
+  set JAVA_OPTS=!JAVA_OPTS! "--enable-native-access=ALL-UNNAMED"
+
+  rem Suppress unsafe deprecation warnings, see KT-76799 and IDEA-370928.
+  set JAVA_OPTS=!JAVA_OPTS! "--sun-misc-unsafe-memory-access=allow"
 )
 
 if "!_KOTLIN_RUNNER!"=="1" (

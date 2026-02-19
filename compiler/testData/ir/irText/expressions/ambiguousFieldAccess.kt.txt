@@ -1,9 +1,5 @@
 package test
 
-fun <T : Any?> eval(f: Function0<T>): T {
-  return f.invoke()
-}
-
 class C : B {
   constructor() /* primary */ {
     super/*B*/()
@@ -25,5 +21,9 @@ class C : B {
 )
   }
 
+}
+
+fun <T : Any?> eval(f: Function0<T>): T {
+  return f.invoke()
 }
 

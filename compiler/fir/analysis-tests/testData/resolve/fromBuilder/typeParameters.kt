@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface List<out T : Any> {
     operator fun get(index: Int): T
 
@@ -14,3 +15,6 @@ class SomeList : AbstractList<Int>() {
 
     override fun concat(other: List<Int>): List<Int> = this
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, infix, integerLiteral, interfaceDeclaration, operator, out,
+outProjection, override, starProjection, thisExpression, typeAliasDeclaration, typeConstraint, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -8,3 +9,5 @@ expect enum class Bar { X, Y, Z }
 // FILE: jvm.kt
 actual enum class Foo { A, B, C, D, E }
 actual enum class Bar { V, X, W, Y, Z }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect */

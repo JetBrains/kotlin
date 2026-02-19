@@ -41,6 +41,40 @@ enum class EventOccurrencesRange(private val left: Int, private val right: Int) 
     infix fun or(other: EventOccurrencesRange): EventOccurrencesRange = Companion.or(this, other)
     operator fun plus(other: EventOccurrencesRange): EventOccurrencesRange = Companion.plus(this, other)
     operator fun contains(other: EventOccurrencesRange): Boolean = left <= other.left && other.right <= right
+
+    fun <D : Any> at(marker: D?): MarkedEventOccurrencesRange<D> =
+        when (this) {
+            ZERO -> MarkedEventOccurrencesRange.Zero
+            AT_MOST_ONCE -> MarkedEventOccurrencesRange.AtMostOnce(marker ?: throw AssertionError("AT_MOST_ONCE event requires location"))
+            EXACTLY_ONCE -> MarkedEventOccurrencesRange.ExactlyOnce(marker ?: throw AssertionError("EXACTLY_ONCE event requires location"))
+            AT_LEAST_ONCE -> MarkedEventOccurrencesRange.AtLeastOnce
+            MORE_THAN_ONCE -> MarkedEventOccurrencesRange.MoreThanOnce
+            UNKNOWN -> MarkedEventOccurrencesRange.Unknown
+        }
+}
+
+// Extended version of `EventOccurrencesRange` that, for events that can only happen once,
+// also carries the event location.
+sealed class MarkedEventOccurrencesRange<out D : Any> {
+    open val location: D?
+        get() = null
+
+    data object Zero : MarkedEventOccurrencesRange<Nothing>()
+    data class AtMostOnce<out D : Any>(override val location: D) : MarkedEventOccurrencesRange<D>()
+    data class ExactlyOnce<out D : Any>(override val location: D) : MarkedEventOccurrencesRange<D>()
+    data object AtLeastOnce : MarkedEventOccurrencesRange<Nothing>()
+    data object MoreThanOnce : MarkedEventOccurrencesRange<Nothing>()
+    data object Unknown : MarkedEventOccurrencesRange<Nothing>()
+
+    val withoutMarker: EventOccurrencesRange
+        get() = when (this) {
+            Zero -> EventOccurrencesRange.ZERO
+            is AtMostOnce -> EventOccurrencesRange.AT_MOST_ONCE
+            is ExactlyOnce -> EventOccurrencesRange.EXACTLY_ONCE
+            AtLeastOnce -> EventOccurrencesRange.AT_LEAST_ONCE
+            MoreThanOnce -> EventOccurrencesRange.MORE_THAN_ONCE
+            Unknown -> EventOccurrencesRange.UNKNOWN
+        }
 }
 
 fun EventOccurrencesRange.isDefinitelyVisited(): Boolean =
@@ -51,6 +85,15 @@ fun EventOccurrencesRange.canBeVisited(): Boolean =
 
 fun EventOccurrencesRange.canBeRevisited(): Boolean =
     this == EventOccurrencesRange.UNKNOWN || this == EventOccurrencesRange.AT_LEAST_ONCE || this == EventOccurrencesRange.MORE_THAN_ONCE
+
+fun MarkedEventOccurrencesRange<*>.isDefinitelyVisited(): Boolean =
+    withoutMarker.isDefinitelyVisited()
+
+fun MarkedEventOccurrencesRange<*>.canBeVisited(): Boolean =
+    withoutMarker.canBeVisited()
+
+fun MarkedEventOccurrencesRange<*>.canBeRevisited(): Boolean =
+    withoutMarker.canBeRevisited()
 
 val EventOccurrencesRange?.isInPlace: Boolean
     get() = this != null

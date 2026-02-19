@@ -1,3 +1,4 @@
+
 // MODULE: lib
 // FILE: l1.kt
 package ann

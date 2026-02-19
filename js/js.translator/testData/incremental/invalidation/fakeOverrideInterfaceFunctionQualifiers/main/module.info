@@ -10,6 +10,7 @@ STEP 1:
     modified ir: m.kt
 STEP 2..3:
     dependencies: lib1, lib2
+    updated imports <wasm>: m.kt
 STEP 4:
     dependencies: lib1, lib2
     modifications:
@@ -24,6 +25,7 @@ STEP 6:
     modified ir: m.kt
 STEP 7:
     dependencies: lib1, lib2
+    updated imports <wasm>: m.kt
 STEP 8:
     dependencies: lib1, lib2
     modifications:

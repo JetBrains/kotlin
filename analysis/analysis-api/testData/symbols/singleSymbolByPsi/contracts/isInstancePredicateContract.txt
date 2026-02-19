@@ -1,45 +1,58 @@
-KtFunctionSymbol:
-  annotationsList: [
+KaNamedFunctionSymbol:
+  annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /isInstancePredicateContract
+  callableId: /isInstancePredicateContract
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSuccessfullyEffectDeclaration:
+        KaContractReturnsSuccessfullyEffectDeclaration:
       condition:
-        KtContractIsInstancePredicateExpression:
+        KaContractIsInstancePredicateExpression:
           argument:
-            KtContractParameterValue:
-              parameterSymbol:
-                KtValueParameterSymbol:
-                  annotationsList: []
-                  callableIdIfNonLocal: null
+            KaContractExplicitParameterValue:
+              symbol:
+                KaValueParameterSymbol:
+                  annotations: []
+                  callableId: null
+                  compilerVisibility: Public
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
+                  hasDeclaredDefaultValue: false
                   hasDefaultValue: false
+                  hasSynthesizedName: false
+                  isActual: false
                   isCrossinline: false
+                  isExpect: false
                   isExtension: false
+                  isExternal: false
                   isImplicitLambdaParameter: false
                   isNoinline: false
+                  isVal: true
                   isVararg: false
+                  location: LOCAL
+                  modality: FINAL
                   name: value
                   origin: SOURCE
                   receiverParameter: null
-                  returnType: KtUsualClassType:
-                    annotationsList: []
-                    ownTypeArguments: []
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
                     type: kotlin/Any
-                  symbolKind: LOCAL
-                  typeParameters: []
-                  getContainingModule: KtSourceModule "Sources of main"
+                  visibility: PUBLIC
+                  getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
+                  getContainingJvmClassName: IsInstancePredicateContractKt
+                  getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
+                  importableFqName: null
           type:
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
               type: Foo
           isNegated: false
   ]
@@ -55,40 +68,57 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: isInstancePredicateContract
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtSourceModule "Sources of main"
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
+      getContainingJvmClassName: IsInstancePredicateContractKt
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
+  getContainingJvmClassName: IsInstancePredicateContractKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: isInstancePredicateContract

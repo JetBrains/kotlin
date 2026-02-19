@@ -16,7 +16,7 @@ The following environment variables must be set:
 export DEPLOY_VERSION=1.8.0-Beta
 export BUILD_NUMBER=1.8.0-Beta-release-224
 export KOTLIN_NATIVE_VERSION=1.8.0-Beta
-export DOCKER_CONTAINER_URL=kotlin.registry.jetbrains.space/p/kotlin/containers/kotlin-build-env:v5
+export DOCKER_CONTAINER_URL=registry.jetbrains.team/p/kt/containers-public/kotlin-build-env:v5
 ```
 ## Clone Kotlin repository
 

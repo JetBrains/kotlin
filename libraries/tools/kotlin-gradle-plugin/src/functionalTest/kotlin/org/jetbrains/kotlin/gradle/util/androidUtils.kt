@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.CommonExtension
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
 import java.io.File
 import kotlin.test.assertTrue
@@ -17,9 +20,19 @@ fun assertAndroidSdkAvailable() {
 }
 
 fun setAndroidSdkDirProperty(project: Project) {
-    val localPropertiesFile = File(project.rootDir.canonicalPath).resolve("local.properties")
+    val localPropertiesFile = File(project.rootDir.absolutePath).resolve("local.properties")
     if (!localPropertiesFile.exists()) {
         localPropertiesFile.createNewFile()
     }
     localPropertiesFile.writeText("sdk.dir = $androidSdk")
+}
+
+fun BaseExtension.configureDefaults() {
+    compileSdkVersion(33)
+    namespace = "org.jetbrains.kotlin.testSample"
+}
+
+fun ApplicationExtension.configureDefaults() {
+    compileSdk = 33
+    namespace = "org.jetbrains.kotlin.testSample"
 }

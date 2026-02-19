@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     companion <!REDECLARATION!>object<!> {
 
@@ -17,3 +18,5 @@ class B {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration */

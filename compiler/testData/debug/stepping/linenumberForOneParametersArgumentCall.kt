@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 
 // FILE: test.kt
 
@@ -13,7 +13,7 @@ inline fun lookAtMe(f: (String) -> Unit) {
     f(a)
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box
 // test.kt:12 box
 // test.kt:13 box
@@ -23,7 +23,25 @@ inline fun lookAtMe(f: (String) -> Unit) {
 // test.kt:14 box
 // test.kt:9 box
 
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test.kt:12 box
+// test.kt:13 box
+// test.kt:7 box
+// test.kt:8 box
+// test.kt:14 box
+// test.kt:9 box
+
 // EXPECTATIONS JS_IR
 // test.kt:12 box
 // test.kt:7 box
 // test.kt:9 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box (4)
+// test.kt:12 $box (12)
+// test.kt:13 $box (6, 4)
+// test.kt:7 $box (16)
+// test.kt:8 $box (5)
+// test.kt:14 $box (1)
+// test.kt:9 $box (1)

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 // Single line comment
@@ -32,7 +32,7 @@ class A {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box
 // test.kt:16 <init>
 // test.kt:6 box
@@ -40,6 +40,22 @@ class A {
 // test.kt:7 box
 // test.kt:16 <init>
 // test.kt:7 box
+// test.kt:32 bar
+// test.kt:8 box
+
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test.kt:16 <init>
+// test.kt:33 <init>
+// test.kt:6 box
+// test.kt:23 foo
+// test.kt:25 foo
+// test.kt:6 box
+// test.kt:7 box
+// test.kt:16 <init>
+// test.kt:33 <init>
+// test.kt:7 box
+// test.kt:30 bar
 // test.kt:32 bar
 // test.kt:8 box
 
@@ -53,3 +69,14 @@ class A {
 // test.kt:7 box
 // test.kt:32 bar
 // test.kt:8 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box (4)
+// test.kt:33 $A.<init> (1)
+// test.kt:6 $box (8)
+// test.kt:25 $A.foo (5)
+// test.kt:7 $box (4)
+// test.kt:33 $A.<init> (1)
+// test.kt:7 $box (8)
+// test.kt:32 $A.bar (5)
+// test.kt:8 $box (1)

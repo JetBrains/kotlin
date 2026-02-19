@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // From KT-10753
 object My : <!EXPOSED_SUPER_CLASS!>Inter<!>() {
     fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>(<!EXPOSED_PARAMETER_TYPE!>arg: Inter<!>): Inter = arg
@@ -28,3 +29,6 @@ open class Test {
         fun <!EXPOSED_FUNCTION_RETURN_TYPE!>create<!>(<!EXPOSED_PARAMETER_TYPE!>x: Protected<!>) = x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nestedClass,
+nullableType, objectDeclaration, propertyDeclaration */

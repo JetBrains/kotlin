@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 fun <T, R> with2(receiver: T, block: T.() -> R): R {
     return receiver.block()
 }

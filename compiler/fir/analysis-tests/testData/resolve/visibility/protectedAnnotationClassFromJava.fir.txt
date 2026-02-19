@@ -6,7 +6,7 @@ FILE: samePackage.kt
             super<R|example/JavaSuper|>()
         }
 
-        @R|example/JavaSuper.Foo|(value = String(should work)) public final fun usesFoo(): R|kotlin/String| {
+        @R|example/JavaSuper.Foo|(value = String(should work) [evaluated = String(should work)]) public final fun usesFoo(): R|kotlin/String| {
             ^usesFoo String()
         }
 
@@ -17,7 +17,7 @@ FILE: otherPackage.kt
             super<R|example/JavaSuper|>()
         }
 
-        @R|example/JavaSuper.Foo|(value = String(should work)) public final fun usesFoo(): R|kotlin/String| {
+        @R|example/JavaSuper.Foo|(value = String(should work) [evaluated = String(should work)]) public final fun usesFoo(): R|kotlin/String| {
             ^usesFoo String()
         }
 

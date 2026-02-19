@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun test(condition: Boolean) {
     val list1 =
@@ -16,3 +17,6 @@ fun test(condition: Boolean) {
 
 fun <T> mutableListOf(): MutableList<T> = TODO()
 fun <T> emptyList(): List<T> = TODO()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration,
+typeParameter */

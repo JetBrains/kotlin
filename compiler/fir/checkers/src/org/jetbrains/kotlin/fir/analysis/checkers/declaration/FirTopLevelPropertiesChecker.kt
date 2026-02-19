@@ -13,174 +13,229 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.checkPropertyAccesses
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationCheckProcessor
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
+import org.jetbrains.kotlin.fir.scopes.impl.FirScriptDeclarationsScope
+import org.jetbrains.kotlin.fir.scopes.processAllCallables
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelPropertiesChecker : FirFileChecker() {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
-        val info = declaration.collectionInitializationInfo(context, reporter)
-        for (innerDeclaration in declaration.declarations) {
-            if (innerDeclaration is FirProperty) {
-                val symbol = innerDeclaration.symbol
-                val isDefinitelyAssigned = info?.get(symbol)?.isDefinitelyVisited() == true
-                checkProperty(containingDeclaration = null, innerDeclaration, isDefinitelyAssigned, context, reporter, reachable = true)
-            }
-        }
-    }
-
-    private fun FirFile.collectionInitializationInfo(
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ): PropertyInitializationInfo? {
-        val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
-
-        // Scripts are nested as a single declaration under FirFiles and contain their own statements. To properly check all "top-level"
-        // properties, script statements need to be unwrapped.
-        val topLevelProperties = when (val script = declarations.singleOrNull()) {
-            is FirScript -> script.statements.filterIsInstance<FirProperty>()
-            else -> declarations.filterIsInstance<FirProperty>()
-        }
-
-        val propertySymbols = topLevelProperties.mapNotNullTo(mutableSetOf()) { declaration ->
-            (declaration.symbol as? FirPropertySymbol)?.takeIf { it.requiresInitialization(false) }
-        }
-        if (propertySymbols.isEmpty()) return null
-
-        // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
-        val data = PropertyInitializationInfoData(propertySymbols, receiver = null, graph)
-        data.checkPropertyAccesses(isForClassInitialization = false, context, reporter)
-        return data.getValue(graph.exitNode)[NormalPath]
+object FirTopLevelPropertiesChecker : FirFileChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
+        @OptIn(DirectDeclarationsAccess::class)
+        val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
+        checkFileLikeDeclaration(declaration, topLevelProperties.map { it.symbol })
     }
 }
 
+object FirScriptPropertiesChecker : FirScriptChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirScript) {
+        val topLevelPropertySymbols = mutableListOf<FirPropertySymbol>()
+        FirScriptDeclarationsScope(context.session, declaration).processAllCallables { callable ->
+            if (callable is FirPropertySymbol) {
+                topLevelPropertySymbols += callable
+            }
+        }
+        checkFileLikeDeclaration(declaration, topLevelPropertySymbols)
+    }
+}
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkFileLikeDeclaration(
+    declaration: FirDeclaration,
+    topLevelPropertySymbols: List<FirPropertySymbol>,
+) {
+    val info = declaration.collectionInitializationInfo(topLevelPropertySymbols)
+    for (topLevelPropertySymbol in topLevelPropertySymbols) {
+        val rangeInfo = info?.get(topLevelPropertySymbol)
+        val isDefinitelyAssigned = rangeInfo?.range?.isDefinitelyVisited() == true
+                && (!topLevelPropertySymbol.isLateInit || !rangeInfo.mustBeLateinit)
+        checkProperty(containingDeclaration = null, topLevelPropertySymbol, isDefinitelyAssigned, reachable = true)
+    }
+}
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun FirDeclaration.collectionInitializationInfo(
+    topLevelPropertySymbols: List<FirPropertySymbol>,
+): VariableInitializationInfo? {
+    val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
+
+    val propertySymbols = topLevelPropertySymbols.mapNotNullTo(mutableSetOf()) { propertySymbol ->
+        propertySymbol.takeIf { it.requiresInitialization(isForInitialization = true) }
+    }
+    if (propertySymbols.isEmpty()) return null
+
+    // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
+    val data = PropertyInitializationInfoData(propertySymbols, conditionallyInitializedProperties = emptySet(), receiver = null, graph)
+    PropertyInitializationCheckProcessor.check(data, isForInitialization = true)
+    return data.getValue(graph.exitNode)[NormalPath]
+}
+
+context(reporter: DiagnosticReporter, context: CheckerContext)
 // Matched FE 1.0's [DeclarationsChecker#checkPropertyInitializer].
 internal fun checkPropertyInitializer(
     containingClass: FirClass?,
-    property: FirProperty,
+    propertySymbol: FirPropertySymbol,
     modifierList: FirModifierList?,
     isDefinitelyAssigned: Boolean,
-    reporter: DiagnosticReporter,
-    context: CheckerContext,
     reachable: Boolean = true,
 ) {
     val inInterface = containingClass?.isInterface == true
     val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
-    val isAbstract = property.isAbstract || hasAbstractModifier
+    val isAbstract = propertySymbol.isAbstract || hasAbstractModifier
     if (isAbstract) {
-        val returnTypeRef = property.returnTypeRef
-        if (property.initializer == null &&
-            property.delegate == null &&
-            returnTypeRef is FirErrorTypeRef && returnTypeRef.diagnostic is ConeLocalVariableNoTypeOrInitializer
+        val returnTypeRef = propertySymbol.resolvedReturnTypeRef
+        if (!propertySymbol.hasInitializer &&
+            propertySymbol.delegate == null &&
+            returnTypeRef.noExplicitType()
         ) {
-            property.source?.let {
-                reporter.reportOn(it, FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, context)
+            propertySymbol.source?.let {
+                reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITHOUT_TYPE)
             }
         }
         return
     }
 
-    val backingFieldRequired = property.hasBackingField
-    if (inInterface && backingFieldRequired && property.hasAnyAccessorImplementation) {
-        property.source?.let {
-            reporter.reportOn(it, FirErrors.BACKING_FIELD_IN_INTERFACE, context)
+    val backingFieldRequired = propertySymbol.hasBackingField
+    if (inInterface && backingFieldRequired && propertySymbol.hasAnyAccessorImplementation) {
+        propertySymbol.source?.let {
+            reporter.reportOn(it, FirErrors.BACKING_FIELD_IN_INTERFACE)
         }
     }
 
-    val isExpect = property.isEffectivelyExpect(containingClass, context)
+    val isExpect = propertySymbol.isEffectivelyExpect(containingClass?.symbol)
 
     when {
-        property.initializer != null -> {
-            property.initializer?.source?.let {
+        propertySymbol.hasInitializer -> {
+            propertySymbol.initializerSource?.let {
                 when {
                     inInterface -> {
-                        reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE, context)
+                        reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE)
                     }
                     isExpect -> {
-                        reporter.reportOn(it, FirErrors.EXPECTED_PROPERTY_INITIALIZER, context)
+                        reporter.reportOn(it, FirErrors.EXPECTED_PROPERTY_INITIALIZER)
                     }
                     !backingFieldRequired -> {
-                        reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD, context)
+                        reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD)
                     }
-                    property.receiverParameter != null -> {
-                        reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD, context)
+                    propertySymbol.receiverParameterSymbol != null -> {
+                        reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD)
                     }
                 }
             }
         }
-        property.delegate != null -> {
-            property.delegate?.source?.let {
+        propertySymbol.delegate != null -> {
+            propertySymbol.delegate?.source?.let {
                 when {
                     inInterface -> {
-                        reporter.reportOn(it, FirErrors.DELEGATED_PROPERTY_IN_INTERFACE, context)
+                        reporter.reportOn(it, FirErrors.DELEGATED_PROPERTY_IN_INTERFACE)
                     }
                     isExpect -> {
-                        reporter.reportOn(it, FirErrors.EXPECTED_DELEGATED_PROPERTY, context)
+                        reporter.reportOn(it, FirErrors.EXPECTED_DELEGATED_PROPERTY)
                     }
                 }
             }
         }
         else -> {
-            val propertySource = property.source ?: return
-            val isExternal = property.isEffectivelyExternal(containingClass, context)
+            val propertySource = propertySymbol.source ?: return
+            val isExternal = propertySymbol.isEffectivelyExternal(containingClass?.symbol)
+            val noExplicitType =
+                propertySymbol.resolvedReturnTypeRef.noExplicitType() &&
+                        !propertySymbol.hasExplicitBackingField &&
+                        (propertySymbol.getterSymbol?.isDefault == true || (propertySymbol.getterSymbol?.hasBody == true && propertySymbol.getterSymbol?.resolvedReturnTypeRef?.noExplicitType() == true))
             val isCorrectlyInitialized =
-                property.initializer != null || isDefinitelyAssigned && !property.hasSetterAccessorImplementation &&
-                        property.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.OPEN
+                propertySymbol.hasInitializer
+                        || propertySymbol.hasExplicitBackingField && propertySymbol.backingFieldSymbol?.resolvedInitializer != null
+                        || isDefinitelyAssigned && !propertySymbol.hasSetterAccessorImplementation &&
+                        (propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.OPEN ||
+                                // Drop this workaround after KT-64980 is fixed
+                                propertySymbol.effectiveVisibility == org.jetbrains.kotlin.descriptors.EffectiveVisibility.PrivateInClass)
+
+            var initializationError = false
             if (
                 backingFieldRequired &&
                 !inInterface &&
-                !property.isLateInit &&
+                !propertySymbol.isLateInit &&
+                propertySymbol.backingFieldSymbol?.isLateInit != true &&
                 !isExpect &&
-                !isCorrectlyInitialized &&
-                !isExternal &&
-                !property.hasExplicitBackingField
+                !isExternal
             ) {
-                if (property.receiverParameter != null && !property.hasAllAccessorImplementation) {
-                    reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
-                } else if (reachable) {
+                if (
+                    propertySymbol.receiverParameterSymbol != null &&
+                    !propertySymbol.hasAllAccessorImplementation &&
+                    !propertySymbol.hasExplicitBackingField
+                ) {
+                    reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT)
+                    initializationError = true
+                } else if (!isCorrectlyInitialized && reachable) {
                     val isOpenValDeferredInitDeprecationWarning =
-                        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
-                                property.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN && property.isVal &&
+                        !LanguageFeature.ProhibitOpenValDeferredInitialization.isEnabled() &&
+                                propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN &&
+                                propertySymbol.isVal &&
                                 isDefinitelyAssigned
                     // KT-61228
                     val isFalsePositiveDeferredInitDeprecationWarning = isOpenValDeferredInitDeprecationWarning &&
-                            property.getEffectiveModality(containingClass) == Modality.FINAL
+                            propertySymbol.getEffectiveModality(containingClass) == Modality.FINAL
                     if (!isFalsePositiveDeferredInitDeprecationWarning) {
+                        val source = propertySymbol.backingFieldSymbol.takeIf { propertySymbol.hasExplicitBackingField }?.source
+                            ?: propertySource
                         reportMustBeInitialized(
-                            property,
+                            propertySymbol,
                             isDefinitelyAssigned,
                             containingClass,
-                            propertySource,
-                            isOpenValDeferredInitDeprecationWarning,
-                            reporter,
-                            context
+                            source,
+                            isOpenValDeferredInitDeprecationWarning
                         )
+                        initializationError = true
                     }
                 }
             }
-            if (property.isLateInit) {
+
+            if (!initializationError && noExplicitType) {
+                reporter.reportOn(
+                    propertySource,
+                    if (propertySymbol.isLateInit) FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE else FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER
+                )
+            }
+
+            if (propertySymbol.isLateInit) {
                 if (isExpect) {
-                    reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY, context)
+                    reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY)
                 }
                 // TODO, KT-59807: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
-                if (backingFieldRequired && !inInterface && isCorrectlyInitialized) {
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                        reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT, context)
+                if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+                    if (
+                        backingFieldRequired &&
+                        !propertySymbol.hasExplicitBackingField &&
+                        !inInterface &&
+                        isCorrectlyInitialized &&
+                        propertySymbol.backingFieldSymbol?.hasAnnotation(StandardClassIds.Annotations.Transient, context.session) != true &&
+                        !propertySymbol.hasAnnotation(KOTLINX_SERIALIZATION_TRANSIENT, context.session)
+                    ) {
+                        reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT)
                     }
                 }
             }
@@ -188,30 +243,35 @@ internal fun checkPropertyInitializer(
     }
 }
 
+private fun FirTypeRef.noExplicitType(): Boolean {
+    return this is FirErrorTypeRef && diagnostic is ConeLocalVariableNoTypeOrInitializer
+}
+
+context(reporter: DiagnosticReporter, context: CheckerContext)
 private fun reportMustBeInitialized(
-    property: FirProperty,
+    propertySymbol: FirPropertySymbol,
     isDefinitelyAssigned: Boolean,
     containingClass: FirClass?,
     propertySource: KtSourceElement,
     isOpenValDeferredInitDeprecationWarning: Boolean,
-    reporter: DiagnosticReporter,
-    context: CheckerContext,
 ) {
-    check(!property.isAbstract) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
+    check(!propertySymbol.isAbstract) { "reportMustBeInitialized isn't called for abstract properties" }
     val suggestMakingItFinal = containingClass != null &&
-            !property.hasSetterAccessorImplementation &&
-            property.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.FINAL &&
+            !propertySymbol.hasSetterAccessorImplementation &&
+            propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.FINAL &&
             isDefinitelyAssigned
-    val suggestMakingItAbstract = containingClass != null && !property.hasAnyAccessorImplementation
+    val suggestMakingItAbstract = containingClass != null && !propertySymbol.hasAnyAccessorImplementation
+            && !propertySymbol.hasExplicitBackingField
     if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
         error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
     }
     val isMissedMustBeInitializedDeprecationWarning =
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor) &&
+        !LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor.isEnabled() &&
                 containingClass != null &&
                 containingClass.primaryConstructorIfAny(context.session) == null &&
                 isDefinitelyAssigned
     val factory = when {
+        propertySymbol.hasExplicitBackingField -> FirErrors.EXPLICIT_FIELD_MUST_BE_INITIALIZED
         suggestMakingItFinal && suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
         suggestMakingItFinal -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
         suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
@@ -222,8 +282,7 @@ private fun reportMustBeInitialized(
         when (isMissedMustBeInitializedDeprecationWarning || isOpenValDeferredInitDeprecationWarning) {
             true -> factory.deprecationWarning
             false -> factory
-        },
-        context
+        }
     )
 }
 
@@ -236,24 +295,32 @@ private val KtDiagnosticFactory0.deprecationWarning
         else -> error("Only MUST_BE_INITIALIZED is supported")
     }
 
-private val FirPropertyAccessor?.hasImplementation: Boolean
-    get() = (this !is FirDefaultPropertyAccessor && this?.hasBody == true)
-private val FirProperty.hasSetterAccessorImplementation: Boolean
-    get() = setter.hasImplementation
-private val FirProperty.hasAnyAccessorImplementation: Boolean
-    get() = getter.hasImplementation || setter.hasImplementation
+private val FirPropertyAccessorSymbol?.hasImplementation: Boolean
+    get() = (this?.isDefault != true && this?.hasBody == true)
+private val FirPropertySymbol.hasSetterAccessorImplementation: Boolean
+    get() = setterSymbol.hasImplementation
+private val FirPropertySymbol.hasAnyAccessorImplementation: Boolean
+    get() = getterSymbol.hasImplementation || setterSymbol.hasImplementation
 
-private val FirProperty.hasAllAccessorImplementation: Boolean
-    get() = getter.hasImplementation && (isVal || setter.hasImplementation)
+private val FirPropertySymbol.hasAllAccessorImplementation: Boolean
+    get() = getterSymbol.hasImplementation && (isVal || setterSymbol.hasImplementation)
 
-private fun FirProperty.getEffectiveModality(containingClass: FirClass?): Modality? =
-    when (status.modality == Modality.OPEN && containingClass?.status?.modality == Modality.FINAL) {
+private fun FirPropertySymbol.getEffectiveModality(containingClass: FirClass?): Modality? =
+    when (resolvedStatus.modality == Modality.OPEN && containingClass?.status?.modality == Modality.FINAL) {
         true -> Modality.FINAL
-        false -> status.modality
+        false -> resolvedStatus.modality
     }
 
-private fun FirProperty.getEffectiveModality(containingClass: FirClass?, languageVersionSettings: LanguageVersionSettings): Modality? =
+private fun FirPropertySymbol.getEffectiveModality(
+    containingClass: FirClass?,
+    languageVersionSettings: LanguageVersionSettings
+): Modality? =
     when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck)) {
         true -> getEffectiveModality(containingClass)
-        false -> status.modality
+        false -> resolvedStatus.modality
     }
+
+private val KOTLINX_SERIALIZATION_TRANSIENT = ClassId(
+    FqName.fromSegments("kotlinx.serialization".split(".")),
+    Name.identifier("Transient")
+)

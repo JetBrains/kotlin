@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: main.kt
 
 fun foo() {
@@ -15,3 +16,6 @@ public interface Processor<T extends CharSequence> {
 public class RawType {
     public static void bar(Processor x) {}
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+lambdaLiteral, samConversion */

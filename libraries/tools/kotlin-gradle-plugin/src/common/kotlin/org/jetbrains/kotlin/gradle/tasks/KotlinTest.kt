@@ -5,31 +5,47 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.AbstractTestTask
-import org.gradle.process.internal.ExecHandleFactory
+import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class KotlinTest : AbstractTestTask(), UsesVariantImplementationFactories {
+abstract class KotlinTest
+@Inject
+internal constructor(
+    private val execOps: ExecOperations,
+) : AbstractTestTask() {
+
+    @Deprecated(
+        message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Suppress("UNREACHABLE_CODE")
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    constructor() : this(
+        execOps = throw UnsupportedOperationException(),
+    )
+
     @Input
     @Optional
     var targetName: String? = null
 
     @Internal // Taken into account by excludePatterns.
-    @Deprecated("Use filter.excludePatterns instead.", ReplaceWith("filter.excludePatterns"))
+    @Deprecated(
+        "Use filter.excludePatterns instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("filter.excludePatterns"),
+        level = DeprecationLevel.ERROR
+    )
     var excludes = mutableSetOf<String>()
 
     protected val filterExt: DefaultTestFilter
@@ -42,16 +58,28 @@ abstract class KotlinTest : AbstractTestTask(), UsesVariantImplementationFactori
     val includePatterns: Set<String>
         @Input get() = filterExt.includePatterns + filterExt.commandLineIncludePatterns
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val excludePatterns: Set<String>
         @Input get() = excludes + filterExt.excludePatterns
 
-    @get:Inject
-    open val fileResolver: FileResolver
+    @get:Internal
+    @Deprecated(
+        "FileResolver is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property. Scheduled for removal in Kotlin 2.4.",
+        ReplaceWith("TODO(\"FileResolver is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+        DeprecationLevel.ERROR,
+    )
+    @Suppress("unused")
+    open val fileResolver: Nothing
         get() = injected
 
-    @get:Inject
-    open val execHandleFactory: ExecHandleFactory
+    @get:Internal
+    @Deprecated(
+        "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property. Scheduled for removal in Kotlin 2.4.",
+        ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+        DeprecationLevel.ERROR,
+    )
+    @Suppress("unused")
+    open val execHandleFactory: Nothing
         get() = injected
 
     private val runListeners = mutableListOf<KotlinTestRunnerListener>()
@@ -63,20 +91,15 @@ abstract class KotlinTest : AbstractTestTask(), UsesVariantImplementationFactori
         runListeners.add(listener)
     }
 
-    private val ignoreTcsmOverflow by lazy {
-        PropertiesProvider(project).ignoreTcsmOverflow
-    }
+    private val ignoreTcsmOverflow = PropertiesProvider(project).ignoreTcsmOverflow
 
-    private val testReporter = project
-        .variantImplementationFactoryProvider<MppTestReportHelper.MppTestReportHelperVariantFactory>()
-        .map { it.getInstance() }
-
-    override fun createTestExecuter() = TCServiceMessagesTestExecutor(
-        execHandleFactory,
-        buildOperationExecutor,
-        runListeners,
-        ignoreTcsmOverflow,
-        ignoreRunFailures,
-        testReporter.get(),
-    )
+    // This method is called on execution time
+    override fun createTestExecuter(): TestExecuter<*> =
+        TCServiceMessagesTestExecutor(
+            description = path,
+            runListeners = runListeners,
+            ignoreTcsmOverflow = ignoreTcsmOverflow.get(),
+            ignoreRunFailures = ignoreRunFailures,
+            execOps = execOps,
+        )
 }

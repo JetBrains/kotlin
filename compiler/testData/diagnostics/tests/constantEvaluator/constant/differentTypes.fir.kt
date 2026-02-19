@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 // val prop1: 1
@@ -39,7 +40,9 @@ val prop14: <!UNRESOLVED_REFERENCE!>aaa<!>? = 1
 class A
 
 // val prop15: null
-val prop15: A = <!INITIALIZER_TYPE_MISMATCH!>1<!>
+val prop15: A <!INITIALIZER_TYPE_MISMATCH!>=<!> 1
 
 // val prop16: 1
-val prop16: A? = <!INITIALIZER_TYPE_MISMATCH!>1<!>
+val prop16: A? <!INITIALIZER_TYPE_MISMATCH!>=<!> 1
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, propertyDeclaration, stringLiteral */

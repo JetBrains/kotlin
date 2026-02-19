@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 abstract class Foo<T>
 
@@ -37,3 +38,6 @@ object GoodOldCandidate {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, intersectionType, nestedClass, nullableType,
+objectDeclaration, typeConstraint, typeParameter */

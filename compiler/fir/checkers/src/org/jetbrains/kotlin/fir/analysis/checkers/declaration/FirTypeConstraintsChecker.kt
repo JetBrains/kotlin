@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.utils.getDanglingTypeConstraintsOrEmpty
 
-object FirTypeConstraintsChecker : FirBasicDeclarationChecker() {
+object FirTypeConstraintsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirTypeParameterRefsOwner) return
 
         //basically we transfer errors, which were discovered in ast parsers
@@ -24,8 +26,7 @@ object FirTypeConstraintsChecker : FirBasicDeclarationChecker() {
                 constraint.source,
                 FirErrors.NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER,
                 constraint.name,
-                declaration.symbol,
-                context
+                declaration.symbol
             )
         }
     }

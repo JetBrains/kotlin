@@ -7,14 +7,21 @@
 
 #include <atomic>
 #include <cstdint>
+#include <memory>
 
 #include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
-#include "Memory.h"
+#include "concurrent/Mutex.hpp"
+#include "ReferenceOps.hpp"
+#include "RunLoopFinalizerProcessor.hpp"
+#include "TypeLayout.hpp"
 #include "Utils.hpp"
-#include "std_support/Memory.hpp"
 
 namespace kotlin {
+
+namespace alloc {
+class Allocator;
+}
 
 namespace mm {
 class ThreadData;
@@ -35,22 +42,16 @@ public:
 
         Impl& impl() noexcept { return *impl_; }
 
-        void PublishObjectFactory() noexcept;
-        void ClearForTests() noexcept;
-
-        ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
-        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
-        mm::ExtraObjectData& CreateExtraObjectDataForObject(ObjHeader* object, const TypeInfo* typeInfo) noexcept;
-        void DestroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
-
         void OnSuspendForGC() noexcept;
 
         void safePoint() noexcept;
 
         void onThreadRegistration() noexcept;
 
+        void onAllocation(ObjHeader* object) noexcept;
+
     private:
-        std_support::unique_ptr<Impl> impl_;
+        std::unique_ptr<Impl> impl_;
     };
 
     // Header to be placed before each heap object. GC will use this to keep its data if needed.
@@ -61,40 +62,59 @@ public:
     //       the destructor is a trivial one.
     class ObjectData;
 
-    explicit GC(gcScheduler::GCScheduler& gcScheduler) noexcept;
+    GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
     ~GC();
 
     Impl& impl() noexcept { return *impl_; }
 
     void ClearForTests() noexcept;
 
-    void StartFinalizerThreadIfNeeded() noexcept;
-    void StopFinalizerThreadIfRunning() noexcept;
-    bool FinalizersThreadIsRunning() noexcept;
-
     static void processObjectInMark(void* state, ObjHeader* object) noexcept;
     static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
-    static void processFieldInMark(void* state, ObjHeader* field) noexcept;
 
     // TODO: These should exist only in the scheduler.
     int64_t Schedule() noexcept;
     void WaitFinished(int64_t epoch) noexcept;
     void WaitFinalizers(int64_t epoch) noexcept;
 
-    static void DestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
+    auto gcLock() noexcept {
+        return std::unique_lock{gcLock_};
+    }
+
+    void onEpochFinalized(int64_t epoch) noexcept;
 
 private:
-    std_support::unique_ptr<Impl> impl_;
+    std::unique_ptr<Impl> impl_;
+    ThreadStateAware<std::mutex> gcLock_{};
 };
 
+void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
+OBJ_GETTER(weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
+
 bool isMarked(ObjHeader* object) noexcept;
-OBJ_GETTER(tryRef, std::atomic<ObjHeader*>& object) noexcept;
 
 // This will drop the mark bit if it was set and return `true`.
 // If the mark bit was unset, this will return `false`.
 bool tryResetMark(GC::ObjectData& objectData) noexcept;
 
-inline constexpr bool kSupportsMultipleMutators = true;
+namespace barriers {
+
+class ExternalRCRefReleaseGuard : MoveOnly {
+    class Impl;
+public:
+    static bool isNoop();
+
+    ExternalRCRefReleaseGuard(mm::DirectRefAccessor ref) noexcept;
+    ExternalRCRefReleaseGuard(ExternalRCRefReleaseGuard&& other) noexcept;
+    ~ExternalRCRefReleaseGuard() noexcept;
+
+    ExternalRCRefReleaseGuard& operator=(ExternalRCRefReleaseGuard&& other) noexcept;
+
+private:
+    FlatPImpl<Impl, 32> impl_;
+};
+
+} // namespace barriers
 
 } // namespace gc
 

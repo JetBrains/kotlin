@@ -1,13 +1,16 @@
-// IGNORE_BACKEND: JS
 // WITH_STDLIB
 // WITH_COROUTINES
-import helpers.*
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 
 inline fun callAction(aux: Int, action: () -> String): String {
     return action()
 }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun get() = "OK"
 

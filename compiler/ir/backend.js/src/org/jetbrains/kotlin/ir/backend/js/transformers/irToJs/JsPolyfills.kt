@@ -33,11 +33,10 @@ class JsPolyfills {
     private fun Iterable<IrDeclaration>.asImplementationList() =
         asSequence().asImplementationList()
 
-    @Suppress("UNCHECKED_CAST")
     private fun Sequence<IrDeclaration>.asImplementationList(): List<JsStatement> {
-        return map { it to it.getAnnotation(JsAnnotations.JsPolyfillFqn)!!.getValueArgument(0)!! }
-            .distinctBy { (it.second as IrConst<String>).value }
-            .flatMap { (container, polyfill) -> translateJsCodeIntoStatementList(polyfill, null, container).orEmpty() }
+        return map { it to it.getAnnotation(JsAnnotations.JsPolyfillFqn)!!.arguments[0]!! }
+            .distinctBy { (it.second as IrConst).value as String }
+            .flatMap { (container, polyfill) -> translateJsCodeIntoStatementList(polyfill, container).orEmpty() }
             .toList()
     }
 }

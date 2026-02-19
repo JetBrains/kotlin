@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class Ann
 
 val a: <!WRONG_ANNOTATION_TARGET!>@Ann<!> String? = ""
@@ -8,3 +9,5 @@ annotation class TypeAnn
 
 val c: @TypeAnn String? = ""
 val d: (@TypeAnn String)? = ""
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, nullableType, propertyDeclaration, stringLiteral */

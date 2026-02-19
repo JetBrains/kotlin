@@ -1,8 +1,10 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
-// !CHECK_TYPE
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
+// CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
-    typealias Alias<W> = Map<W, X>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias Alias<W> = Map<W, X>
 }
 
 open class BaseDerived1<E, F> : Outer<F, E>()
@@ -17,3 +19,7 @@ fun foo() {
     Derived().foo() checkType { _<Outer<Int, String>.Inner<Char>>() }
     Derived().baz() checkType { _<Map<Char, Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter,
+typeWithExtension */

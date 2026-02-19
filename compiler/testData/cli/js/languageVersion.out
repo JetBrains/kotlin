@@ -1,5 +1,4 @@
-warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/js/languageVersion.kt:3:1: error: the feature "sealed interfaces" is only available since language version 1.5
-sealed interface Polygon
-^
+compiler/testData/cli/js/languageVersion.kt:6:13: error: the feature "break continue in inline lambdas" is only available since language version 2.2
+            break
+            ^^^^^
 COMPILATION_ERROR

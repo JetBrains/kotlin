@@ -1,0 +1,19 @@
+// WITH_STDLIB
+
+// FILE: lib.kt
+@Suppress("NOTHING_TO_INLINE")
+inline fun foo(i1: Int, j1: Int): Int {
+    return i1 + j1
+}
+
+// FILE: main.kt
+import kotlin.test.*
+
+fun bar(i: Int, j: Int): Int {
+    return i + foo(i, j)
+}
+
+fun box(): String {
+    assertEquals(84, bar(41, 2))
+    return "OK"
+}

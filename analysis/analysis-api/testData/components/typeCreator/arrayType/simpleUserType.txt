@@ -1,0 +1,4 @@
+ARRAY_TYPE
+   KaType: kotlin.Array<out A>?
+VARARG_ARRAY_TYPE
+   KaType: kotlin.Array<out A>

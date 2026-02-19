@@ -1,11 +1,13 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
 open class Base {
-    <!INCOMPATIBLE_MATCHING{JVM}!>open fun foo(param: Int) {}<!>
+    open fun foo(param: Int) {}
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo1 : Base<!>
+expect open class Foo1 : Base
 expect open class Foo2 : Base
 expect open class Foo3 {
     open fun foo(param: Int)
@@ -15,7 +17,7 @@ expect open class Foo3 {
 // FILE: jvm.kt
 
 actual open class Foo1 : Base() {
-    override fun foo(paramNameChanged: Int) {}
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES!>foo<!>(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>paramNameChanged<!>: Int) {}
 }
 
 actual typealias Foo2 = Foo2Java
@@ -32,3 +34,5 @@ public class Foo2Java extends Base {
 public class Foo3Java {
     public void foo(int paramNameChanged) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, override, typeAliasDeclaration */

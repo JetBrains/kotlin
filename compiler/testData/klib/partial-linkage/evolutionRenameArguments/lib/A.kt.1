@@ -1,0 +1,41 @@
+fun foo_a(a1: String) = a1
+fun foo_b(b1: String = "foo_b default") = b1
+fun foo_c(vararg c1: String) = c1.joinToString(", ")
+
+// swap order
+fun foo_d(b: String, a: String) = b + a
+fun foo_e(b: String = "foo_e default a", a: String = "foo_e default b") = b + a
+fun foo_f(vararg b: String, a: String) = b.joinToString(", ") + a
+
+class X() {
+    fun bar_a(a1: String) = a1
+    fun bar_b(b1: String = "foo_b default") = b1
+    fun bar_c(vararg c1: String) = c1.joinToString(", ")
+
+    fun bar_d(b: String, a: String) = b + a
+    fun bar_e(b: String = "foo_e default a", a: String = "foo_e default b") = b + a
+    fun bar_f(vararg b: String, a: String) = b.joinToString(", ") + a
+}
+
+class qux_a(a1: String) {
+    val x = a1
+}
+class qux_b(b1: String = "foo_b default") {
+    val x = b1
+}
+class qux_c(vararg c1: String) {
+    val x = c1.joinToString(", ")
+}
+
+// swap order
+class qux_d(b: String, a: String) {
+    val x = b + a
+}
+
+class qux_e(b: String = "foo_e default a", a: String = "foo_e default b") {
+    val x = b + a
+}
+class qux_f(vararg b: String, a: String) {
+    val x= b.joinToString(", ") + a
+}
+

@@ -12,26 +12,43 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.commonizer.CliCommonizer
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.gradle.utils.*
 
 private const val KOTLIN_KLIB_COMMONIZER_EMBEDDABLE = "kotlin-klib-commonizer-embeddable"
 
-internal fun GradleCliCommonizer(commonizerToolRunner: KotlinNativeCommonizerToolRunner): CliCommonizer {
-    return CliCommonizer(CliCommonizer.Executor { arguments ->
-        commonizerToolRunner.run(arguments)
-    })
+internal fun GradleCliCommonizer(
+    commonizerToolRunner: KotlinNativeToolRunner,
+    compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel
+): CliCommonizer {
+    return CliCommonizer { arguments ->
+        commonizerToolRunner.runTool(
+            KotlinNativeToolRunner.ToolArguments(
+                shouldRunInProcessMode = false,
+                compilerArgumentsLogLevel = compilerArgumentsLogLevel,
+                arguments = arguments,
+            )
+        )
+    }
 }
 
 internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuration {
-    return configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
-        ?: project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
-            .markResolvable()
+    return configurations.findResolvable(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
+        ?: project.configurations.createResolvable(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
             .run {
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
                 attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
@@ -43,3 +60,32 @@ internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuratio
                 }
             }
 }
+
+internal fun ObjectFactory.KotlinNativeCommonizerToolRunner(
+    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
+    classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
+    toolClasspath: FileCollection,
+    toolJvmArgs: ListProperty<String>,
+): KotlinNativeToolRunner = newInstance(
+    metricsReporter,
+    classLoadersCachingBuildService,
+    kotlinNativeCommonizerToolSpec(
+        toolClasspath,
+        toolJvmArgs,
+    ),
+    property(BuildFusService::class.java)
+)
+
+private fun ObjectFactory.kotlinNativeCommonizerToolSpec(
+    toolClasspath: FileCollection,
+    toolJvmArgs: ListProperty<String>,
+) = KotlinNativeToolRunner.ToolSpec(
+    displayName = property("Kotlin/Native KLIB commonizer"),
+    optionalToolName = property(),
+    mainClass = property("org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"),
+    daemonEntryPoint = property("main"),
+    classpath = toolClasspath,
+    jvmArgs = listProperty<String>().value(toolJvmArgs),
+    shouldPassArgumentsViaArgFile = property<Boolean>().value(true),
+    collectNativeCompilerMetrics = property<Boolean>().value(false),
+).disableC2().enableAssertions().configureDefaultMaxHeapSize()

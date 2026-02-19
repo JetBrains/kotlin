@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun x(): Boolean { return true }
 
 public fun foo(p: String?): Int {
@@ -9,3 +10,6 @@ public fun foo(p: String?): Int {
     // p should be smart casted despite of continue
     return p.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast, stringLiteral */

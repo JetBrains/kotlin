@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: annotations.kt
 
 package annotations
@@ -44,3 +45,7 @@ class Second(val y: Char) : <!WRONG_ANNOTATION_TARGET!>@WithInt(0)<!> First() {
 <!WRONG_ANNOTATION_TARGET!>@WithInt(24)<!>
 <!WRONG_ANNOTATION_TARGET!>@VeryComplex(3.14f, 6.67e-11, false, 123456789012345L, null)<!>
 typealias Third = @Simple Second
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, functionDeclaration, getter,
+integerLiteral, nullableType, override, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral,
+typeAliasDeclaration */

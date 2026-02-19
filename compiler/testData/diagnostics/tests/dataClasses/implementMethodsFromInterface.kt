@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-11306 ABSTRACT_MEMBER_NOT_IMPLEMENTED for data class should inheriting interfaces requiring equals(), hashCode(), or toString()
 
@@ -24,3 +25,6 @@ data class WrongSignatures(val num: Int) : Foo {
     <!NOTHING_TO_OVERRIDE!>override<!> fun equals(other: WrongSignatures) = false
     override fun hashCode(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Boolean<!> = true
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+operator, override, primaryConstructor, propertyDeclaration, stringLiteral */

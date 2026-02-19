@@ -1,3 +1,5 @@
+// JVM_DEFAULT_MODE: enable
+
 abstract class A1<Q> : MutableCollection<Q> {
     override fun contains(o: Q): Boolean {
         throw UnsupportedOperationException()

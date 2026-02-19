@@ -1,0 +1,6 @@
+STEP 0:
+    dependencies: stdlib, base, child
+STEP 1:
+    dependencies: stdlib, base, child
+    modifications:
+        U : D.kt.1 -> D.kt

@@ -1,0 +1,19 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/Regular.Regular|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] explicitArgument.kt
+    public final [ResolvedTo(STATUS)] class Regular : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Regular] constructor(): R|Regular| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun named([ResolvedTo(CONTRACTS)] regular: R|Regular|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|/named|(R|/Regular.Regular|())
+    }

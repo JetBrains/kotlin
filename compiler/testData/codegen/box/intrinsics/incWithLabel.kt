@@ -1,3 +1,5 @@
+// LANGUAGE: -ForbidParenthesizedLhsInAssignments
+
 fun box(): String {
     var x = 1
     (foo@ x)++

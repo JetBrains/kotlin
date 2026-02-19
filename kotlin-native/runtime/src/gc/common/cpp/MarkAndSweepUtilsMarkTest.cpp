@@ -6,25 +6,25 @@
 #include "MarkAndSweepUtils.hpp"
 
 #include <functional>
-#include <TestSupport.hpp>
+#include <unordered_set>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "FinalizerHooks.hpp"
 #include "ObjectTestSupport.hpp"
+#include "TestSupport.hpp"
 #include "Utils.hpp"
-#include "std_support/UnorderedSet.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
 namespace {
 
 struct Payload {
-    ObjHeader* field1;
-    ObjHeader* field2;
-    ObjHeader* field3;
+    mm::RefField field1;
+    mm::RefField field2;
+    mm::RefField field3;
 
     static constexpr std::array kFields = {
             &Payload::field1,
@@ -73,7 +73,9 @@ public:
 
 class ScopedMarkTraits : private Pinned {
 public:
-    using MarkQueue = std_support::vector<ObjHeader*>;
+    using MarkQueue = std::vector<ObjHeader*>;
+
+    static constexpr auto kAllowHeapToStackRefs = true;
 
     ScopedMarkTraits() {
         RuntimeAssert(instance_ == nullptr, "Only one ScopedMarkTraits is allowed");
@@ -85,7 +87,7 @@ public:
         instance_ = nullptr;
     }
 
-    const std_support::unordered_set<ObjHeader*>& marked() const { return marked_; }
+    const std::unordered_set<ObjHeader*>& marked() const { return marked_; }
 
     static void clear(MarkQueue& queue) noexcept {
         queue.clear();
@@ -122,7 +124,7 @@ public:
 private:
     static ScopedMarkTraits* instance_;
 
-    std_support::unordered_set<ObjHeader*> marked_;
+    std::unordered_set<ObjHeader*> marked_;
 };
 
 // static
@@ -130,10 +132,10 @@ ScopedMarkTraits* ScopedMarkTraits::instance_ = nullptr;
 
 class MarkAndSweepUtilsMarkTest : public ::testing::Test {
 public:
-    const std_support::unordered_set<ObjHeader*>& marked() const { return markTraits_.marked(); }
+    const std::unordered_set<ObjHeader*>& marked() const { return markTraits_.marked(); }
 
     auto MarkedMatcher(std::initializer_list<std::reference_wrapper<test_support::Any>> expected) {
-        std_support::vector<ObjHeader*> objects;
+        std::vector<ObjHeader*> objects;
         for (auto& object : expected) {
             objects.push_back(object.get().header());
         }
@@ -141,7 +143,7 @@ public:
     }
 
     gc::MarkStats Mark(std::initializer_list<std::reference_wrapper<test_support::Any>> graySet) {
-        std_support::vector<ObjHeader*> objects;
+        std::vector<ObjHeader*> objects;
         for (auto& object : graySet) ScopedMarkTraits::tryEnqueue(objects, object.get().header());
         auto handle = gc::GCHandle::create(epoch_++);
         gc::Mark<ScopedMarkTraits>(handle, objects);
@@ -149,7 +151,10 @@ public:
         return handle.getMarked();
     }
 
-    ~MarkAndSweepUtilsMarkTest() { mm::GlobalData::Instance().gc().ClearForTests(); }
+    ~MarkAndSweepUtilsMarkTest() {
+        mm::GlobalData::Instance().gc().ClearForTests();
+        mm::GlobalData::Instance().allocator().clearForTests();
+    }
 
 private:
     uint64_t epoch_ = 0;

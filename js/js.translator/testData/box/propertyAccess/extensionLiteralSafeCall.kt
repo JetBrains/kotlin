@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1283
 package foo
 
 fun f(a: Int?, b: Int.(Int) -> Int) = a?.b(2)

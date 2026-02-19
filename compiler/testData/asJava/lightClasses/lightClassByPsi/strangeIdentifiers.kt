@@ -36,3 +36,4 @@ class `A()B()`
 class `A B` {
     class C
 }
+// LIGHT_ELEMENTS_NO_DECLARATION: StrangeEnum.class[getEntries;valueOf;values]

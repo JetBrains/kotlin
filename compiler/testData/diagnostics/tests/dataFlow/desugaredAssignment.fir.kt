@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 package usage
 
@@ -9,9 +10,12 @@ open class ABC {
         val l: List<Any> = listOf(1)
         for (b in l) {
             when (b) {
-                is Int -> <!ASSIGNMENT_TYPE_MISMATCH!><!VAL_REASSIGNMENT!>nestedBlocks<!> += b<!>
+                is Int -> <!VAL_REASSIGNMENT!>nestedBlocks<!> <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> b
                 else -> {}
             }
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, forLoop, functionDeclaration, integerLiteral,
+isExpression, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

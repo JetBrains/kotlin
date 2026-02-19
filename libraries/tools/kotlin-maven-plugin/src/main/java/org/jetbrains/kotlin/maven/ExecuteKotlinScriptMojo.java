@@ -1,23 +1,10 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import kotlin.script.experimental.jvm.JvmScriptingHostConfigurationKt;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -34,6 +21,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
+import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -44,6 +32,8 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.com.intellij.openapi.Disposable;
+import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer;
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -127,6 +117,8 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().warn("Executing scripts in maven build files is deprecated and will be removed in further release.");
+
         if (scriptFile != null && script == null) {
             executeScriptFile(scriptFile);
         } else if (scriptFile == null && script != null) {
@@ -163,14 +155,14 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
     private void executeScriptFile(File scriptFile) throws MojoExecutionException {
         initCompiler();
 
-        Disposable rootDisposable = Disposer.newDisposable();
+        Disposable rootDisposable = Disposer.newDisposable("Disposable for ExecuteKotlinScriptMojo.executeScriptFile");
 
         try {
             MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
 
-            CompilerConfiguration configuration = new CompilerConfiguration();
+            CompilerConfiguration configuration = CompilerConfigurationCreationKt.create(CompilerConfiguration.Companion);
 
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
+            configuration.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             configuration.put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true);
 
             configuration.add(ComponentRegistrar.Companion.getPLUGIN_COMPONENT_REGISTRARS(),

@@ -1,3 +1,3 @@
-fun someFun(vararg values: )
+fun someFun(vararg values)
 
 // COMPILATION_ERRORS

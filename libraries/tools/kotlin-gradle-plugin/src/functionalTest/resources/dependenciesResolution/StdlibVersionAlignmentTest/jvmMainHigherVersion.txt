@@ -1,0 +1,8 @@
+main
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains:annotations
+  test:lib:2.0
+test
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains:annotations
+  test:lib:2.0

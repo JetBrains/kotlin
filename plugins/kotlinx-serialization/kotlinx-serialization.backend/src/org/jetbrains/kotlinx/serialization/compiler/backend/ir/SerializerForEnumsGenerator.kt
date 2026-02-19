@@ -11,15 +11,11 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.CallingConventions
@@ -40,8 +36,8 @@ class SerializerForEnumsGenerator(
 
         val serializableIrClass = requireNotNull(serializableIrClass) { "Enums do not support external serialization" }
         val ordinalProp = serializableIrClass.properties.single { it.name == Name.identifier("ordinal") }.getter!!
-        val getOrdinal = irInvoke(irGet(saveFunc.valueParameters[1]), ordinalProp.symbol)
-        val call = irInvoke(irGet(saveFunc.valueParameters[0]), encodeEnum, serialDescGetter, getOrdinal)
+        val getOrdinal = irInvoke(ordinalProp.symbol, irGet(saveFunc.parameters[2]))
+        val call = irInvoke(encodeEnum, irGet(saveFunc.parameters[1]), serialDescGetter, getOrdinal)
         +call
     }
 
@@ -55,7 +51,7 @@ class SerializerForEnumsGenerator(
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
         val valuesF = this@SerializerForEnumsGenerator.serializableIrClass.functions.single { it.name == StandardNames.ENUM_VALUES }
-        val getValues = irInvoke(dispatchReceiver = null, callee = valuesF.symbol)
+        val getValues = irInvoke(valuesF.symbol)
 
 
         val arrayGet = compilerContext.irBuiltIns.arrayClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
@@ -63,10 +59,10 @@ class SerializerForEnumsGenerator(
 
         val getValueByOrdinal =
             irInvoke(
-                getValues,
                 arrayGet.symbol,
-                irInvoke(irGet(loadFunc.valueParameters[0]), decode, serialDescGetter),
-                typeHint = this@SerializerForEnumsGenerator.serializableIrClass.defaultType
+                getValues,
+                irInvoke(decode, irGet(loadFunc.parameters[1]), serialDescGetter),
+                returnTypeHint = this@SerializerForEnumsGenerator.serializableIrClass.defaultType
             )
         +irReturn(getValueByOrdinal)
     }
@@ -76,7 +72,7 @@ class SerializerForEnumsGenerator(
     override fun IrBlockBodyBuilder.instantiateNewDescriptor(serialDescImplClass: IrClassSymbol, correctThis: IrExpression): IrExpression {
         val ctor = serialDescImplClass.constructors.single { it.owner.isPrimary }
         return irInvoke(
-            null, ctor,
+            ctor,
             irString(serialName),
             irInt(serializableIrClass.enumEntries().size)
         )
@@ -92,16 +88,16 @@ class SerializerForEnumsGenerator(
             // regular .serialName() produces fqName here, which is kinda inconvenient for enum entry
             val serialName = entry.annotations.serialNameValue ?: entry.name.toString()
             val call = irInvoke(
-                irGet(localDescriptor),
                 addFunction,
+                irGet(localDescriptor),
                 irString(serialName),
                 irBoolean(false),
-                typeHint = compilerContext.irBuiltIns.unitType
+                returnTypeHint = compilerContext.irBuiltIns.unitType
             )
             +call
             // serialDesc.pushAnnotation(...)
             copySerialInfoAnnotationsToDescriptor(
-                entry.annotations.map {it.deepCopyWithVariables()},
+                entry.copyAnnotations(),
                 localDescriptor,
                 serialDescImplClass.functionByName(CallingConventions.addAnnotation)
             )

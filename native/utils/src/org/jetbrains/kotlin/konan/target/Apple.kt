@@ -19,25 +19,31 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.util.InternalServer
+import org.jetbrains.kotlin.konan.util.ProgressCallback
 
 class AppleConfigurablesImpl(
     target: KonanTarget,
     properties: Properties,
-    dependenciesDir: String?
-) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir) {
+    dependenciesDir: String?,
+    progressCallback: ProgressCallback,
+) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir, progressCallback = progressCallback) {
 
     private val sdkDependency = this.targetSysRoot!!
     private val toolchainDependency = this.targetToolchain!!
     private val xcodeAddonDependency = this.additionalToolsDir!!
 
     override val absoluteTargetSysRoot: String get() = when (val provider = xcodePartsProvider) {
-        is XcodePartsProvider.Local -> provider.xcode.pathToPlatformSdk(platformName())
+        is XcodePartsProvider.Local -> {
+            // In the case of Mac Catalyst, we use sysroot from macOS.
+            val platformName = if (targetTriple.isMacabi) "MacOSX" else platformName()
+            provider.xcode.pathToPlatformSdk(platformName)
+        }
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)
     }
 
     override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.toolchain
-        XcodePartsProvider.InternalServer -> absolute(toolchainDependency)
+        XcodePartsProvider.InternalServer -> "${absolute(toolchainDependency)}/usr"
     }
 
     override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {
@@ -45,10 +51,13 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
     }
 
-    override val dependencies get() = super.dependencies + when (xcodePartsProvider) {
-        is XcodePartsProvider.Local -> emptyList()
-        XcodePartsProvider.InternalServer -> listOf(sdkDependency, toolchainDependency, xcodeAddonDependency)
-    }
+    override val dependencies
+        get() = super.dependencies +
+                if (InternalServer.isAvailable) listOf(
+                    sdkDependency,
+                    toolchainDependency,
+                    xcodeAddonDependency
+                ) else emptyList()
 
     private val xcodePartsProvider by lazy {
         if (InternalServer.isAvailable) {

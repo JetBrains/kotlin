@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A1 {
     constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>()
 }
@@ -37,3 +38,5 @@ class A : B {
     constructor(x1: Double, x2: Double, x3: Double): this(x1, x2, x3, 1.0)
     constructor(x1: Double, x2: Double, x3: Double, x4: Double): super(1.toByte())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, secondaryConstructor, stringLiteral */

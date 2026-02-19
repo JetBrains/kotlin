@@ -7,6 +7,8 @@ package kotlin.coroutines
 
 import kotlin.coroutines.CoroutineContext.Element
 import kotlin.coroutines.CoroutineContext.Key
+import kotlin.internal.ReadObjectParameterType
+import kotlin.internal.throwReadObjectNotSupported
 
 /**
  * Base class for [CoroutineContext.Element] implementations.
@@ -184,6 +186,8 @@ internal class CombinedContext(
         @Suppress("UNCHECKED_CAST")
         return Serialized(elements as Array<CoroutineContext>)
     }
+
+    private fun readObject(input: ReadObjectParameterType): Unit = throwReadObjectNotSupported()
 
     private class Serialized(val elements: Array<CoroutineContext>) : Serializable {
         companion object {

@@ -91,13 +91,13 @@ DISubprogramRef DICreateFunction(DIBuilderRef builder, DIScopeOpaqueRef scope,
                                  const char* name, const char *linkageName,
                                  DIFileRef file, unsigned lineNo,
                                  DISubroutineTypeRef type, int isLocal,
-                                 int isDefinition, unsigned scopeLine);
+                                 int isDefinition, unsigned scopeLine, int isTransparentStepping);
 
 DISubprogramRef DICreateBridgeFunction(DIBuilderRef builder, DIScopeOpaqueRef scope,
                                        LLVMValueRef function,
                                        DIFileRef file, unsigned lineNo,
                                        DISubroutineTypeRef type, int isLocal,
-                                       int isDefinition, unsigned scopeLine);
+                                       int isDefinition, unsigned scopeLine, int isTransparentStepping);
 
 DISubroutineTypeRef DICreateSubroutineType(DIBuilderRef builder,
                                            DITypeOpaqueRef* types,

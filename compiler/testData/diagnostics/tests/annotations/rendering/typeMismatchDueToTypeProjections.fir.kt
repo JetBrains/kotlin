@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class A
@@ -13,5 +14,8 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a + <!ARGUMENT_TYPE_MISMATCH("Out<@R|A|()  CapturedType(out kotlin/CharSequence)>; Out<kotlin/CharSequence>")!>y<!>
+    a + <!ARGUMENT_TYPE_MISMATCH("Out<CharSequence>; Out<CapturedType(out CharSequence)>")!>y<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, capturedType, classDeclaration, functionDeclaration,
+nullableType, operator, out, outProjection, thisExpression, typeParameter */

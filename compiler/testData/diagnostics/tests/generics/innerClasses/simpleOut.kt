@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class Outer<out E> {
     inner class Inner {
@@ -8,9 +8,8 @@ class Outer<out E> {
         fun baz(): Inner = this
     }
 
-    fun bar() = Inner()
+    fun bar(): Inner = Inner()
 
-    // Should be unsafe variance error here
     fun set(inner: Inner) {}
 }
 
@@ -36,3 +35,7 @@ fun main() {
     val x: Outer<String>.Inner = factoryString()
     outer.set(x)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, localProperty, nullableType, out, propertyDeclaration, starProjection, stringLiteral, thisExpression,
+typeParameter, typeWithExtension */

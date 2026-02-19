@@ -1,6 +1,6 @@
-// !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)

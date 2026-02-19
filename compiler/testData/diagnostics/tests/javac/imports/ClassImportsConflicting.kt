@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_JAVAC
 // FILE: b.kt
@@ -30,3 +32,5 @@ import a.a
 class A : a()
 
 fun test() = A().getO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, objectDeclaration */

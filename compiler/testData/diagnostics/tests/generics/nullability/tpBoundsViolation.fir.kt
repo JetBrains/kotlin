@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class A<F> {
     fun <E : F> foo1(x: E) = x
@@ -16,8 +17,8 @@ class A<F> {
         val x2 = foo2(x)
         x2.checkType { _<F>() }
 
-        foo1<<!UPPER_BOUND_VIOLATED!>F?<!>>(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
-        foo1(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
+        <!INAPPLICABLE_CANDIDATE!>foo1<!><<!UPPER_BOUND_VIOLATED!>F?<!>>(y)
+        <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
         foo2<F?>(y)
 
         val x3 = foo2(y)
@@ -36,13 +37,16 @@ class A<F> {
         val x5 = foo2(z)
         x4.checkType { _<Z>() }
 
-        foo1<<!UPPER_BOUND_VIOLATED!>W<!>>(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
-        foo1(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
+        <!INAPPLICABLE_CANDIDATE!>foo1<!><<!UPPER_BOUND_VIOLATED!>W<!>>(w)
+        <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
         foo2<W>(w)
 
         val x6 = foo2(w)
         x6.checkType { _<W>() }
 
-        foo1<<!UPPER_BOUND_VIOLATED!>W<!>>(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
+        <!INAPPLICABLE_CANDIDATE!>foo1<!><<!UPPER_BOUND_VIOLATED!>W<!>>(w)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

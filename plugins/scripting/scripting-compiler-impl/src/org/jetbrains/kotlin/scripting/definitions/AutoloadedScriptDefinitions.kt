@@ -10,6 +10,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
 import kotlin.script.experimental.jvm.util.matchMaybeVersionedFile
 
+@Suppress("DEPRECATION") //KT-82551
 class AutoloadedScriptDefinitions(
     private val hostConfiguration: ScriptingHostConfiguration,
     private val baseClassloader: ClassLoader,

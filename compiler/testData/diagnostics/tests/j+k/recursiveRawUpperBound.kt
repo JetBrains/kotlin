@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Bad.java
 
@@ -12,3 +13,5 @@ public class X {
 // FILE: Usage.kt
 
 fun foo(p: X) = p.foo()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, starProjection */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.ir.util.render as newRender
 
 /**
  * [IdSignature] is a unique key that corresponds to each Kotlin Declaration. It is used to reference declarations in klib.
@@ -249,13 +248,7 @@ sealed class IdSignature {
 
     open fun asPublic(): CommonSignature? = null
 
-    @Deprecated(
-        "Rendering of signatures has been extracted to IdSignatureRenderer.render()",
-        replaceWith = ReplaceWith("render()", "org.jetbrains.kotlin.ir.util.render"),
-        level = DeprecationLevel.HIDDEN
-    )
-    fun render(): String = newRender()
-    final override fun toString() = newRender()
+    final override fun toString() = render()
 
     fun Flags.test(): Boolean = decode(flags())
 
@@ -281,31 +274,20 @@ sealed class IdSignature {
         val mask: Long,
         val description: String?,
     ) : IdSignature() {
-
-        @Deprecated(
-            "When constructing 'CommonSignature', you need to set 'description' to the mangled name from which 'id' was " +
-                    "computed, or to null if it's not applicable",
-            level = DeprecationLevel.WARNING,
-        )
-        constructor(
-            packageFqName: String,
-            declarationFqName: String,
-            id: Long?,
-            mask: Long,
-        ) : this(packageFqName, declarationFqName, id, mask, null)
-
         override val isPubliclyVisible: Boolean get() = true
 
-        override fun packageFqName(): FqName = FqName(packageFqName)
+        private val packageFqNameObject = FqName(packageFqName)
 
-        val shortName: String get() = declarationFqName.substringAfterLast('.')
+        override fun packageFqName(): FqName = packageFqNameObject
 
-        val firstNameSegment: String get() = declarationFqName.substringBefore('.')
+        val shortName: String = declarationFqName.substringAfterLast('.')
 
-        val nameSegments: List<String> get() = declarationFqName.split('.')
+        val firstNameSegment: String = declarationFqName.substringBefore('.')
+
+        val nameSegments: List<String> = declarationFqName.split('.')
 
         private fun adaptMask(old: Long): Long =
-            old xor Flags.values().fold(0L) { a, f ->
+            old xor Flags.entries.fold(0L) { a, f ->
                 if (!f.recursive) a or (old and (1L shl f.ordinal))
                 else a
             }
@@ -317,7 +299,6 @@ sealed class IdSignature {
                 return this
             }
 
-            val nameSegments = nameSegments
             val adaptedMask = adaptMask(mask)
             if (nameSegments.size == 1 && mask == adaptedMask) return this
 
@@ -403,8 +384,7 @@ sealed class IdSignature {
         override fun asPublic(): CommonSignature = accessorSignature
 
         override fun equals(other: Any?): Boolean =
-            if (other is AccessorSignature) accessorSignature == other.accessorSignature
-            else accessorSignature == other
+            other is AccessorSignature && accessorSignature == other.accessorSignature
 
         private val hashCode = accessorSignature.hashCode()
 
@@ -460,7 +440,7 @@ sealed class IdSignature {
      *
      * This signature is not navigatable through files.
      */
-    class LocalSignature(val localFqn: String, val hashSig: Long?, val description: String?) : IdSignature() {
+    class LocalSignature(val localFqn: String, val hashSig: Long?) : IdSignature() {
         override val isPubliclyVisible: Boolean
             get() = false
 
@@ -551,14 +531,14 @@ sealed class IdSignature {
     }
 
     /**
-     * A deprecated signature used for local classes and their members to make it possible to build fake overridden declarations for such
-     * local classes.
+     * A signature used for local declarations such as functions, properties, classes with their members, etc.
      *
      * This signature is not navigatable through files.
      *
-     * @property id A hash of the member’s signature, not an ordered index, because it has to be stable.
+     * @property id An ordered index of the declaration inside the file.
+     *   **Important**: For fake overrides, this is the hash of the mangle name.
      */
-    class FileLocalSignature(val container: IdSignature, val id: Long, val description: String? = null) : IdSignature() {
+    class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = false
 
         override fun packageFqName(): FqName = container.packageFqName()
@@ -589,10 +569,11 @@ sealed class IdSignature {
 
     /**
      * Used to reference local declarations like a variable, value parameters, or anonymous initializers.
+     * Also used as a signature for [org.jetbrains.kotlin.ir.expressions.IrReturnableBlock].
      *
      * This signature is not navigatable through files.
      */
-    class ScopeLocalDeclaration(val id: Int, val description: String? = null) : IdSignature() {
+    data class ScopeLocalDeclaration(val id: Int) : IdSignature() {
 
         override val isPubliclyVisible: Boolean get() = false
 
@@ -606,11 +587,6 @@ sealed class IdSignature {
         override fun nearestPublicSig(): IdSignature = error("Is not supported for Local ID")
 
         override fun packageFqName(): FqName = error("Is not supported for Local ID")
-
-        override fun equals(other: Any?): Boolean =
-            other is ScopeLocalDeclaration && id == other.id
-
-        override fun hashCode(): Int = id
     }
 
     /**

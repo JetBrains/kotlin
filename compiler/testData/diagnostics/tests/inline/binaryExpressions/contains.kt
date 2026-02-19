@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -RECURSION_IN_INLINE
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -RECURSION_IN_INLINE
 operator inline fun <T, U> Function1<T, U>.contains(p: Function1<T, U>): Boolean {
     this in <!USAGE_IS_NOT_INLINABLE!>p<!>
     p in this
@@ -24,3 +25,6 @@ inline fun <T, U, V> inlineFunWithInvoke(s: (p: T, l: U) -> U, ext: T.(p: U, l: 
     <!USAGE_IS_NOT_INLINABLE!>ext<!> in <!USAGE_IS_NOT_INLINABLE!>ext<!>
     <!USAGE_IS_NOT_INLINABLE!>ext<!> !in <!USAGE_IS_NOT_INLINABLE!>ext<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, nullableType, operator,
+thisExpression, typeParameter, typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-53460
 
 fun test(a: String?, b: String?) {
@@ -12,3 +13,6 @@ fun test(a: String?, b: String?) {
         <!DEBUG_INFO_SMARTCAST!>a<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, ifExpression, nullableType,
+smartcast, stringLiteral, whenExpression, whenWithSubject */

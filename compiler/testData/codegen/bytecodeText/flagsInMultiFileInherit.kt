@@ -1,4 +1,4 @@
-// !INHERIT_MULTIFILE_PARTS
+// INHERIT_MULTIFILE_PARTS
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("Test")
 

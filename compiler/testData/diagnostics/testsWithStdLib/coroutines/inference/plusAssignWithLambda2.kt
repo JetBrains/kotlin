@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 open class A
 
@@ -18,3 +19,6 @@ fun main() {
     newValue += id(fun(total): A { return A() })
     newValue += id(::foo)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+localProperty, nullableType, operator, propertyDeclaration, typeParameter */

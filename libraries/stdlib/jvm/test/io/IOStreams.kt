@@ -8,11 +8,12 @@ package test.io
 import kotlin.test.*
 import java.io.Writer
 import java.io.BufferedReader
+import kotlin.io.path.createTempFile
 import kotlin.random.Random
 
 class IOStreamsTest {
     @Test fun testGetStreamOfFile() {
-        val tmpFile = @Suppress("DEPRECATION") createTempFile()
+        val tmpFile = createTempFile().toFile()
         var writer: Writer? = null
         try {
             writer = tmpFile.outputStream().writer()
@@ -46,7 +47,7 @@ class IOStreamsTest {
     }
 
     @Test fun readWriteBytes() {
-        val file = @Suppress("DEPRECATION") createTempFile("temp", Random.nextLong().toString())
+        val file = createTempFile("temp", Random.nextLong().toString()).toFile()
         try {
             val bytes = Random.nextBytes(256_000)
 

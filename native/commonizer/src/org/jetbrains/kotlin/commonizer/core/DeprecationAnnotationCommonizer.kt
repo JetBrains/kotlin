@@ -32,14 +32,14 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
             val firstReplaceWithExpression = firstReplaceWith.getReplaceWithExpression().orEmpty()
             val secondReplaceWithExpression = secondReplaceWith.getReplaceWithExpression().orEmpty()
 
-            val firstReplaceWithImports = firstReplaceWith.getReplaceWithImports().orEmpty()
-            val secondReplaceWithImports = secondReplaceWith.getReplaceWithImports().orEmpty()
+            val firstReplaceWithImports = firstReplaceWith.getReplaceWithImports()
+            val secondReplaceWithImports = secondReplaceWith.getReplaceWithImports()
 
             if (
                 firstReplaceWithExpression == secondReplaceWithExpression &&
                 firstReplaceWithImports == secondReplaceWithImports &&
                 /* Empty replace with */
-                (firstReplaceWithExpression.isNotEmpty() || firstReplaceWithImports.isNotEmpty())
+                (firstReplaceWithExpression.isNotEmpty() || firstReplaceWithImports.orEmpty().isNotEmpty())
             ) firstReplaceWithExpression.toReplaceWithValue(firstReplaceWithImports) else null
         }
 
@@ -87,7 +87,8 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
     private val DEPRECATION_LEVEL_CLASS_ID = CirEntityId.create("kotlin/DeprecationLevel")
 
     // Optimization: Keep DeprecationLevel enum constants.
-    private val DEPRECATION_LEVEL_ENUM_ENTRY_VALUES: Map<String, CirConstantValue.EnumValue> = DeprecationLevel.entries.associate {
+    // TODO: replace with `entries` when KT-62702 will be fixed
+    private val DEPRECATION_LEVEL_ENUM_ENTRY_VALUES: Map<String, CirConstantValue.EnumValue> = DeprecationLevel.values().associate {
         it.name to CirConstantValue.EnumValue(DEPRECATION_LEVEL_CLASS_ID, CirName.create(it.name))
     }
 
@@ -108,7 +109,8 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
 
     private fun CirAnnotation.getDeprecationLevel(): DeprecationLevel? {
         val enumEntryName = constantValueArguments.getEnumEntryName(PROPERTY_NAME_LEVEL) ?: return null
-        return DeprecationLevel.entries.firstOrNull { it.name == enumEntryName }
+        // TODO: replace with `entries` when KT-62702 will be fixed
+        return DeprecationLevel.values().firstOrNull { it.name == enumEntryName }
     }
 
     private fun DeprecationLevel.toDeprecationLevelValue(): CirConstantValue.EnumValue =
@@ -123,7 +125,7 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
     private fun CirAnnotation.getReplaceWithImports(): List<String>? =
         constantValueArguments.getStringArray(PROPERTY_NAME_IMPORTS)
 
-    private fun String.toReplaceWithValue(imports: List<String>): CirAnnotation =
+    private fun String.toReplaceWithValue(imports: List<String>?): CirAnnotation =
         createReplaceWithAnnotation(this, imports)
 
     private inline fun Map<CirName, CirConstantValue>.getString(name: CirName): String? =
@@ -150,13 +152,21 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
         return result
     }
 
-    private inline fun createReplaceWithAnnotation(expression: String, imports: List<String>): CirAnnotation =
-        CirAnnotation.createInterned(
-            type = REPLACE_WITH_ANNOTATION_TYPE,
-            constantValueArguments = compactMapOf(
+    private inline fun createReplaceWithAnnotation(expression: String, imports: List<String>?): CirAnnotation {
+        val constantValueArguments = when (imports) {
+            null -> compactMapOf(
+                PROPERTY_NAME_EXPRESSION, CirConstantValue.StringValue(expression),
+            )
+            else -> compactMapOf(
                 PROPERTY_NAME_EXPRESSION, CirConstantValue.StringValue(expression),
                 PROPERTY_NAME_IMPORTS, CirConstantValue.ArrayValue(imports.compactMap(CirConstantValue::StringValue))
-            ),
+            )
+        }
+
+        return CirAnnotation.createInterned(
+            type = REPLACE_WITH_ANNOTATION_TYPE,
+            constantValueArguments = constantValueArguments,
             annotationValueArguments = emptyMap()
         )
+    }
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: GoBuildingRunningState.java
 public abstract class GoBuildingRunningState<T extends GoBuildingRunConfiguration<? extends GoBuildingRunningState<T>>> implements RunProfileState {
     public String getBuildingWorkingDirectory() {
@@ -36,3 +37,7 @@ fun box(): String {
     }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression, isExpression,
+javaFunction, javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+stringLiteral */

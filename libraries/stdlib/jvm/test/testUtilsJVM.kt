@@ -8,6 +8,21 @@ package test
 import java.util.*
 import kotlin.test.assertEquals
 
+private val isJava8 = System.getProperty("java.version").startsWith("1.8.")
+
+internal fun testOnJvm8(f: () -> Unit) {
+    if (isJava8) {
+        f()
+    }
+}
+
+internal fun testOnJvm9AndAbove(f: () -> Unit) {
+    if (!isJava8) {
+        f()
+    }
+}
+
+
 public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     assertEquals(expected?.javaClass, actual?.javaClass)
 }

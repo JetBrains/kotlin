@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(block: () -> Unit) {}
 fun bar(block: () -> String) {}
 fun itIs(block: (String) -> String) {}
@@ -17,3 +18,5 @@ fun main() {
     val empty: () -> Unit = { }
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, propertyDeclaration,
+stringLiteral */

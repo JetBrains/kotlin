@@ -1,0 +1,3 @@
+error: specify the module name via -Xir-module-name or -ir-output-name
+error: IR: Specify output name via -ir-output-name
+COMPILATION_ERROR

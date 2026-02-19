@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 interface A {
     fun foo()
 }
@@ -36,3 +37,6 @@ fun test_3(x: A?, y: A?) {
         y.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+smartcast */

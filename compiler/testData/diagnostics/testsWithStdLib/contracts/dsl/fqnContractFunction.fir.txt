@@ -1,0 +1,24 @@
+FILE: fqnContractFunction.kt
+    public final inline fun foo(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+         {
+            Q|kotlin/contracts|.R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/block|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int|
+        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/x| = Int(42)
+        }
+        )
+        R|kotlin/io/println|(R|<local>/x|)
+    }

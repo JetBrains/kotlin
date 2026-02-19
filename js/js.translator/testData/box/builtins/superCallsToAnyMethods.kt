@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1117
-// IGNORE_BACKEND: JS
 package foo
 
 class C {

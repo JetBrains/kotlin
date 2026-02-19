@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeEnhancement
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -120,7 +120,7 @@ class DeserializationComponentsForJava(
             val deserializationComponentsForJava =
                 makeDeserializationComponentsForJava(
                     module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
-                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter, JvmMetadataVersion.INSTANCE
+                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter, MetadataVersion.INSTANCE
                 )
 
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
@@ -158,14 +158,19 @@ fun makeLazyJavaPackageFragmentProvider(
     singleModuleClassResolver: ModuleClassResolver,
     packagePartProvider: PackagePartProvider = PackagePartProvider.Empty
 ): LazyJavaPackageFragmentProvider {
+    val javaTypeEnhancementState = JavaTypeEnhancementState.getDefault(
+        // Last K1 version
+        KotlinVersion(1, 9)
+    )
     val javaResolverComponents = JavaResolverComponents(
         storageManager, javaClassFinder, reflectKotlinClassFinder, deserializedDescriptorResolver,
         SignaturePropagator.DO_NOTHING, errorReporter, JavaResolverCache.EMPTY,
         JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolverImpl(storageManager, emptyList()), javaSourceElementFactory,
         singleModuleClassResolver, packagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
-        ReflectionTypes(module, notFoundClasses), AnnotationTypeQualifierResolver(JavaTypeEnhancementState.DEFAULT),
+        ReflectionTypes(module, notFoundClasses), AnnotationTypeQualifierResolver(javaTypeEnhancementState),
         SignatureEnhancement(JavaTypeEnhancement(JavaResolverSettings.Default)),
-        JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default, JavaTypeEnhancementState.DEFAULT,
+        JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default,
+        javaTypeEnhancementState,
         object : JavaModuleAnnotationsProvider {
             override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? = null
         }
@@ -182,11 +187,11 @@ fun makeDeserializationComponentsForJava(
     reflectKotlinClassFinder: KotlinClassFinder,
     deserializedDescriptorResolver: DeserializedDescriptorResolver,
     errorReporter: ErrorReporter,
-    jvmMetadataVersion: JvmMetadataVersion
+    metadataVersion: MetadataVersion
 ): DeserializationComponentsForJava {
     val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
     val binaryClassAnnotationAndConstantLoader = createBinaryClassAnnotationAndConstantLoader(
-        module, notFoundClasses, storageManager, reflectKotlinClassFinder, jvmMetadataVersion
+        module, notFoundClasses, storageManager, reflectKotlinClassFinder, metadataVersion
     )
     return DeserializationComponentsForJava(
         storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,

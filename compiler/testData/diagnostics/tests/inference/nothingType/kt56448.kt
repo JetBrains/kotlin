@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // WITH_STDLIB
 // ISSUE: KT-56448
@@ -41,3 +42,8 @@ internal fun updateVotesForDuplicates(issue: XdIssue) {
         toRecount.add(<!DEBUG_INFO_SMARTCAST!>oldDup<!>.duplicatesRootSearch())
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, checkNotNullCall, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, javaFunction,
+localProperty, nullableType, propertyDeclaration, smartcast, starProjection, thisExpression, tryExpression,
+typeConstraint, typeParameter, unnamedLocalVariable */

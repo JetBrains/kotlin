@@ -1,5 +1,6 @@
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -NOTHING_TO_INLINE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -NOTHING_TO_INLINE
 // SKIP_TXT
 // WITH_COROUTINES
 import kotlin.coroutines.*
@@ -21,10 +22,10 @@ suspend inline fun test(c: suspend () -> Unit) {
     c()
     val o = object: SuspendRunnable {
         override suspend fun run() {
-            c()
+            <!NON_LOCAL_RETURN_NOT_ALLOWED!>c<!>()
         }
     }
-    val l: suspend () -> Unit = { c() }
+    val l: suspend () -> Unit = { <!NON_LOCAL_RETURN_NOT_ALLOWED!>c<!>() }
     <!USAGE_IS_NOT_INLINABLE!>c<!>.startCoroutine(EmptyContinuation)
 }
 
@@ -40,3 +41,7 @@ fun box() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, companionObject, functionDeclaration,
+functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, safeCall, stringLiteral, suspend, thisExpression, typeParameter */

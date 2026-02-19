@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FILE: JavaClass.java
 
 public class JavaClass<T> {
@@ -11,3 +13,5 @@ public class Derived : JavaClass<String>() {
         myHost.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType */

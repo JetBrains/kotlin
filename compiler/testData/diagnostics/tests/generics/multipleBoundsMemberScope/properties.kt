@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 interface A {
     val foo: Any?
@@ -18,3 +19,7 @@ fun <T> test(a: T) where T : B, T : C {
 
     a.foo.checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, lambdaLiteral, nullableType, override, propertyDeclaration, stringLiteral, typeConstraint,
+typeParameter, typeWithExtension */

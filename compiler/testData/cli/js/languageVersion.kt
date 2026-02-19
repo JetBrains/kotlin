@@ -1,4 +1,9 @@
 package test
 
-sealed interface Polygon
-
+fun test(a: Any) {
+    while (true) {
+        run {
+            break
+        }
+    }
+}

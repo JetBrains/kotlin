@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface A {
     fun foo()
 }
@@ -10,3 +11,5 @@ fun test(a: Any) {
         a.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, interfaceDeclaration, smartcast */

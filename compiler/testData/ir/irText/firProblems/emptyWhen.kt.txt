@@ -3,14 +3,14 @@ fun foo() {
   }
   val x: Int = 0
   { // BLOCK
-    val tmp0_subject: Int = x
+    val tmp_0: Int = x
     when {
       else -> { // BLOCK
       }
     }
   }
   val z: Unit = { // BLOCK
-    val tmp1_subject: Int = x
+    val tmp_1: Int = x
     when {
       else -> { // BLOCK
       }

@@ -26,3 +26,4 @@ public abstract class MyMap : java.util.AbstractMap<kotlin.Double!, kotlin.CharS
     // Static members
     invisible_fake open override /*1*/ /*fake_override*/ fun eq(/*0*/ o1: kotlin.Any!, /*1*/ o2: kotlin.Any!): kotlin.Boolean
 }
+

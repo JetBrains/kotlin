@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T, S : T> test(x: T?, y: S, z: T) {
     x is <!CANNOT_CHECK_FOR_ERASED!>T<!>
     <!USELESS_IS_CHECK!>x is T?<!>
@@ -28,7 +29,7 @@ inline fun <reified T> test(x: T?, a: Any) {
     a is <!CANNOT_CHECK_FOR_ERASED!>Box<T><!>
     a is <!CANNOT_CHECK_FOR_ERASED!>Array<T><!>
     a <!UNCHECKED_CAST!>as Box<T><!>
-    a <!UNCHECKED_CAST!>as Array<T><!>
+    a <!CAST_NEVER_SUCCEEDS!>as<!> Array<T>
 
     a is <!CANNOT_CHECK_FOR_ERASED!>Box<List<T>><!>
     a is <!CANNOT_CHECK_FOR_ERASED!>Array<List<T>><!>
@@ -40,3 +41,6 @@ fun <T> foo(x: List<T>, y: List<T>?) {
     <!USELESS_IS_CHECK!>x is List<T><!>
     y is List<T>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, functionDeclaration, inline, intersectionType,
+isExpression, nullableType, reified, smartcast, typeConstraint, typeParameter */

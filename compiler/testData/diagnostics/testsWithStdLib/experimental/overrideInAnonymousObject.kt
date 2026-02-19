@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
@@ -21,3 +22,6 @@ val field = object : MyInterface {
     @OptIn(MyAnn::class)
     override fun bar() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classReference, functionDeclaration,
+interfaceDeclaration, override, propertyDeclaration */

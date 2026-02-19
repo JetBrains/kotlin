@@ -1,0 +1,8 @@
+Classifier names:
+  Itr
+  ListItr
+  SubList
+
+Callable names:
+  add
+  removeAt

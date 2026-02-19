@@ -1,3 +1,4 @@
+
 // FILE: Dummy.kt
 // Empty body to trigger multifile test mode
 

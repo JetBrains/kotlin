@@ -1,0 +1,7 @@
+MODULES: base, lib, mainLib, main
+
+STEP 0:
+    libs: base, lib, mainLib, main
+
+STEP 1:
+    libs: base, lib

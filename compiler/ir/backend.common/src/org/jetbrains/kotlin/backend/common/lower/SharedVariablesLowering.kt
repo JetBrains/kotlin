@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,18 +26,34 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-val sharedVariablesPhase = makeIrFilePhase(
-    ::SharedVariablesLowering,
-    name = "SharedVariables",
-    description = "Transform shared variables"
-)
-
-class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
-
+/**
+ * Transforms declarations and usages of variables captured in lambdas ("shared variables") to `ObjectRef`/`IntRef`/...
+ *
+ * For example:
+ *
+ *     var x = "a"
+ *     run {
+ *         x = "b"
+ *         println(x)
+ *     }
+ *
+ * becomes
+ *
+ *     var x = ObjectRef<String>()
+ *     x.element = "a"
+ *     run {
+ *         x.element = "b"
+ *         println(x.element)
+ *     }
+ */
+@PhasePrerequisites(LateinitLowering::class)
+open class SharedVariablesLowering(val context: LoweringContext, val skipRichCallables: Boolean = true) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         SharedVariablesTransformer(irBody, container).lowerSharedVariables()
     }
@@ -55,7 +70,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
         private fun collectSharedVariables() {
             val skippedFunctionsParents = mutableMapOf<IrFunction, IrDeclarationParent>()
-            irBody.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
+            irBody.accept(object : IrVisitor<Unit, IrDeclarationParent?>() {
                 val relevantVars = HashSet<IrVariable>()
                 val relevantVals = HashSet<IrVariable>()
 
@@ -69,27 +84,24 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                         super.visitCall(expression, data)
                         return
                     }
-                    expression.dispatchReceiver?.accept(this, data)
-                    expression.extensionReceiver?.accept(this, data)
-                    for (param in callee.valueParameters) {
-                        val arg = expression.getValueArgument(param.index) ?: continue
-                        if (param.isInlineParameter()
-                            // This is somewhat conservative but simple.
-                            // If a user put redundant <crossinline> modifier on a parameter,
-                            // may be it's their fault?
-                            && !param.isCrossinline
-                            && arg is IrFunctionExpression
-                        ) {
-                            skippedFunctionsParents[arg.function] = data!!
-                            arg.function.acceptChildren(this, data)
-                            skippedFunctionsParents.remove(arg.function)
-                        } else
-                            arg.accept(this, data)
+                    for (param in callee.parameters) {
+                        val arg = expression.arguments[param] ?: continue
+                        val toSkip = runIf(param.isInlineParameter() && !param.isCrossinline) {
+                            when (arg) {
+                                is IrFunctionExpression -> arg.function
+                                is IrRichFunctionReference if skipRichCallables -> arg.invokeFunction
+                                is IrRichPropertyReference if skipRichCallables -> arg.getterFunction
+                                else -> null
+                            }
+                        }
+                        if (toSkip != null) { skippedFunctionsParents[toSkip] = data!! }
+                        arg.accept(this, data)
+                        if (toSkip != null) { skippedFunctionsParents.remove(toSkip) }
                     }
                 }
 
                 override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
-                    super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+                    super.visitDeclaration(declaration, declaration.takeIf { it !in skippedFunctionsParents } as? IrDeclarationParent ?: data)
                 }
 
                 override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {

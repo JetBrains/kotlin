@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-53441
 // FILE: foo/Base.java
@@ -38,3 +39,5 @@ import foo.Derived.baz
 fun test() {
     baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

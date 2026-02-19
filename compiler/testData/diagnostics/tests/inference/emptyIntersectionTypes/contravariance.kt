@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 
@@ -8,3 +9,5 @@ fun main(x: List<Int>, y: Int) {
         x.mapTo(mutableSetOf()) { y }
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral */

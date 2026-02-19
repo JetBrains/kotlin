@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: common
-// TARGET_PLATFORM: Common
 expect annotation class Test()
 
 @Test
@@ -20,3 +20,5 @@ actual fun unexpandedOnActual() {}
 @JunitTestInLib
 actual fun expandedOnActual() {}
 
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+typeAliasDeclaration */

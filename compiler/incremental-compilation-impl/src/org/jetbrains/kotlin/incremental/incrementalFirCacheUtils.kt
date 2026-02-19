@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.makeLocalFirMetadataSerializerForMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 internal fun collectNewDirtySources(
-    analysisResults: FirResult,
+    frontendOutput: AllModulesFrontendOutput,
     targetId: TargetId,
     configuration: CompilerConfiguration,
     caches: IncrementalJvmCachesManager,
@@ -37,9 +37,9 @@ internal fun collectNewDirtySources(
     val changesCollector = ChangesCollector()
     val globalSerializationBindings = JvmSerializationBindings()
 
-    fun visitFirFiles(analyzedOutput: ModuleCompilerAnalyzedOutput) {
-        analyzedOutput.fir.forEach {
-            it.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
+    fun visitFirFiles(analyzedOutput: SingleModuleFrontendOutput) {
+        for (file in analyzedOutput.fir) {
+            file.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
                 inline fun withMetadataSerializer(
                     metadata: FirMetadataSource,
                     data: MutableList<MetadataSerializer>,
@@ -53,7 +53,7 @@ internal fun collectNewDirtySources(
                         data.lastOrNull(),
                         targetId,
                         configuration,
-                        irActualizedResult = null
+                        actualizedExpectDeclarations = null
                     )
                     data.push(serializer)
                     body(serializer)
@@ -73,19 +73,19 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitFile(file: FirFile, data: MutableList<MetadataSerializer>) {
-                    val metadata = FirMetadataSource.File(listOf(file))
+                    val metadata = FirMetadataSource.File(file)
                     withMetadataSerializer(metadata, data) {
                         file.acceptChildren(this, data)
                         // TODO: compare package fragments?
                     }
                 }
 
-                override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableList<MetadataSerializer>) {
+                override fun visitNamedFunction(namedFunction: FirNamedFunction, data: MutableList<MetadataSerializer>) {
                     data.firstOrNull()?.let { serializer ->
-                        super.visitFunction(simpleFunction, data)
+                        super.visitFunction(namedFunction, data)
                         serializer.bindMethodMetadata(
-                            FirMetadataSource.Function(simpleFunction),
-                            Method(simpleFunction.name.asString(), simpleFunction.computeJvmDescriptor())
+                            FirMetadataSource.Function(namedFunction),
+                            Method(namedFunction.name.asString(), namedFunction.computeJvmDescriptor())
                         )
                     }
                 }
@@ -114,7 +114,7 @@ internal fun collectNewDirtySources(
                     val metadata = FirMetadataSource.Class(klass)
                     withMetadataSerializer(metadata, data) { serializer ->
                         klass.acceptChildren(this, data)
-                        serializer.serialize(metadata)?.let { (classProto, nameTable) ->
+                        serializer.serialize(metadata, FirMetadataSource.File(file))?.let { (classProto, nameTable) ->
                             caches.platformCache.saveFrontendClassToCache(
                                 klass.classId,
                                 classProto as ProtoBuf.Class,
@@ -129,7 +129,7 @@ internal fun collectNewDirtySources(
         }
     }
 
-    for (output in analysisResults.outputs) {
+    for (output in frontendOutput.outputs) {
         visitFirFiles(output)
     }
 

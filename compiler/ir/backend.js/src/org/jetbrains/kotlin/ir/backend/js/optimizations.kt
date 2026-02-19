@@ -5,33 +5,43 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.utils.JsStaticContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.JsClass
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.inline.clean.ClassPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 
 fun optimizeProgramByIr(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
+    moduleKind: ModuleKind,
     removeUnusedAssociatedObjects: Boolean
 ) {
     val dceDumpNameCache = DceDumpNameCache() // in JS mode only DCE Graph could be dumped
-    eliminateDeadDeclarations(modules, context, removeUnusedAssociatedObjects, dceDumpNameCache)
-    jsOptimizationPhases.invokeToplevel(PhaseConfig(jsOptimizationPhases), context, modules)
+    eliminateDeadDeclarations(modules, context, moduleKind, removeUnusedAssociatedObjects, dceDumpNameCache)
+
+    val phaserState = PhaserState()
+    optimizationLoweringList.forEachIndexed { _, lowering ->
+        modules.forEach { module ->
+            lowering.invoke(context.phaseConfig, phaserState, context, module)
+        }
+    }
 }
 
-fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment) {
+fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment, context: JsStaticContext) {
+    val voidName = context.backendContext.symbols.void.owner.backingField?.let(context::getNameForField)
+
     val optimizer = object : RecursiveJsVisitor() {
         override fun visitFunction(x: JsFunction) {
             super.visitFunction(x)
-            FunctionPostProcessor(x).apply()
+            FunctionPostProcessor(x, voidName).apply()
         }
 
         override fun visitClass(x: JsClass) {

@@ -1,0 +1,20 @@
+FILE: aliasedAnnotation.ll.kt
+    public final typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/AllOpen|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/AllOpen|() public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/AllOpen|() public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+    }

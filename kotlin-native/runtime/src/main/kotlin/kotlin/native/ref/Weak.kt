@@ -18,7 +18,7 @@ public class WeakReference<T : Any> {
      * Creates a weak reference object pointing to an object. Weak reference doesn't prevent
      * removing object, and is nullified once object is collected.
      */
-    constructor(referred: T) {
+    public constructor(referred: T) {
         pointer = getWeakReferenceImpl(referred)
     }
 

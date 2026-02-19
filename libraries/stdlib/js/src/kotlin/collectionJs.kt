@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,7 @@ import kotlin.js.arrayBufferIsView
 public actual inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
 /**
- * Returns a *typed* array containing all of the elements of this collection.
+ * Returns a *typed* array containing all the elements of this collection.
  *
  * Allocates an array of runtime type `T` having its size equal to the size of this collection
  * and populates the array with the elements of this collection.
@@ -46,7 +46,14 @@ internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: A
  *
  * @sample samples.collections.Collections.Lists.singletonReadOnlyList
  */
-public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)
+public actual fun <T> listOf(element: T): List<T> = ArrayList(arrayOf(element))
+
+/**
+ * Returns a new [ArrayList] from the given Array.
+ */
+@kotlin.internal.InlineOnly
+internal actual inline fun <T> Array<out T>.asArrayList(): ArrayList<T> =
+    ArrayList(this.unsafeCast<Array<Any?>>())
 
 @PublishedApi
 @SinceKotlin("1.3")
@@ -98,7 +105,6 @@ internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction:
     return LinkedHashMap<K, V>(capacity).apply(builderAction).build()
 }
 
-
 /**
  * Fills the list with the provided [value].
  *
@@ -112,15 +118,15 @@ public actual fun <T> MutableList<T>.fill(value: T): Unit {
 }
 
 /**
- * Randomly shuffles elements in this list.
+ * Randomly shuffles elements in this list in-place.
  *
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.2")
 public actual fun <T> MutableList<T>.shuffle(): Unit = shuffle(Random)
 
 /**
- * Returns a new list with the elements of this list randomly shuffled.
+ * Returns a new list with the elements of this collection randomly shuffled.
  */
 @SinceKotlin("1.2")
 public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
@@ -193,7 +199,6 @@ internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = 
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
     if (isVarargs)
@@ -202,8 +207,7 @@ internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean)
     else
         this.copyOf()
 
-
-
+@IgnorableReturnValue
 @PublishedApi
 internal actual fun checkIndexOverflow(index: Int): Int {
     if (index < 0) {
@@ -212,6 +216,7 @@ internal actual fun checkIndexOverflow(index: Int): Int {
     return index
 }
 
+@IgnorableReturnValue
 @PublishedApi
 internal actual fun checkCountOverflow(count: Int): Int {
     if (count < 0) {
@@ -220,12 +225,11 @@ internal actual fun checkCountOverflow(count: Int): Int {
     return count
 }
 
-
 /**
  * JS map and set implementations do not make use of capacities or load factors.
  */
 @PublishedApi
-internal actual fun mapCapacity(expectedSize: Int) = expectedSize
+internal actual fun mapCapacity(expectedSize: Int): Int = expectedSize
 
 /**
  * Checks a collection builder function capacity argument.

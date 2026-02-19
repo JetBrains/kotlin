@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class RedefinePropertyInFunction() {
 
@@ -9,3 +10,6 @@ class RedefinePropertyInFunction() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration */

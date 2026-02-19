@@ -1,0 +1,10 @@
+interface X {
+    fun foo(): String = "default method"
+    val bar: String get() = "default property"
+    fun qux(): String = "ubdated default method"
+}
+
+interface Z {
+    fun qux(): String = "alternative default method"
+}
+

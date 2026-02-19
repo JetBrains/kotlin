@@ -1,0 +1,43 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: /SimpleClass> /ClassBound { // /ClassBound|null[0]
+    constructor <init>() // /ClassBound.<init>|<init>(){}[0]
+}
+final class <#A: /GenericClass</SimpleClass>> /ClassBoundGeneric { // /ClassBoundGeneric|null[0]
+    constructor <init>() // /ClassBoundGeneric.<init>|<init>(){}[0]
+}
+abstract interface <#A: kotlin/Any?> /Generic // /Generic|null[0]
+final class <#A: kotlin/Any?> /GenericClass { // /GenericClass|null[0]
+    constructor <init>() // /GenericClass.<init>|<init>(){}[0]
+}
+final class <#A: /Simple> /InterfaceBound { // /InterfaceBound|null[0]
+    constructor <init>() // /InterfaceBound.<init>|<init>(){}[0]
+}
+final class <#A: /Generic</Simple>> /InterfaceBoundGeneric { // /InterfaceBoundGeneric|null[0]
+    constructor <init>() // /InterfaceBoundGeneric.<init>|<init>(){}[0]
+}
+abstract interface /Simple // /Simple|null[0]
+final class /SimpleClass { // /SimpleClass|null[0]
+    constructor <init>() // /SimpleClass.<init>|<init>(){}[0]
+}
+final class <#A: kotlin/Any?> /SimpleParameter { // /SimpleParameter|null[0]
+    constructor <init>() // /SimpleParameter.<init>|<init>(){}[0]
+}
+open annotation class /TypeAnn : kotlin/Annotation { // /TypeAnn|null[0]
+    final val name // /TypeAnn.name|{}name[0]
+        final fun <get-name>(): kotlin/String // /TypeAnn.name.<get-name>|<get-name>(){}[0]
+    constructor <init>(kotlin/String) // /TypeAnn.<init>|<init>(kotlin.String){}[0]
+}
+open annotation class /TypeParameterAnn : kotlin/Annotation { // /TypeParameterAnn|null[0]
+    constructor <init>() // /TypeParameterAnn.<init>|<init>(){}[0]
+}
+open annotation class /TypeParameterAnnBinary : kotlin/Annotation { // /TypeParameterAnnBinary|null[0]
+    constructor <init>() // /TypeParameterAnnBinary.<init>|<init>(){}[0]
+}
+final class <#A: kotlin/Any?, #B: #A> /TypeParameterAsBound { // /TypeParameterAsBound|null[0]
+    constructor <init>() // /TypeParameterAsBound.<init>|<init>(){}[0]
+}

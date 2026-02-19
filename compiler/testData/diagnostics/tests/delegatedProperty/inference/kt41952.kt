@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-41952
 
@@ -21,3 +22,7 @@ class Delegate<R, T> {
 
     operator fun setValue(thisRef: R, property: KProperty<*>, value: T) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, operator, outProjection, propertyDeclaration, propertyDelegate,
+starProjection, typeConstraint, typeParameter */

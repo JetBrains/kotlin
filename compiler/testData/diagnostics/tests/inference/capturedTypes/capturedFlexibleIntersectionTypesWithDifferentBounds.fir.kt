@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 // FILE: Bar.java
 
@@ -21,3 +22,6 @@ fun main(x: Foo<*>?) {
     if (x != y) return
     takeFoo(x) // Here we capture `{Bar<Any!, Any!> & Foo<*>}..Foo<*>?`
 }
+
+/* GENERATED_FIR_TAGS: capturedType, equalityExpression, flexibleType, functionDeclaration, ifExpression, isExpression,
+javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, starProjection, typeParameter */

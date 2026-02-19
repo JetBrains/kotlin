@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-47750
 
@@ -44,3 +45,6 @@ fun test_2(x: Any) {
         is I2.C -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, intersectionType, isExpression,
+localProperty, nestedClass, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

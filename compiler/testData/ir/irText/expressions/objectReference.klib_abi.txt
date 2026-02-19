@@ -1,0 +1,24 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /Z { // /Z|null[0]
+    final val aLambda // /Z.aLambda|{}aLambda[0]
+        final fun <get-aLambda>(): kotlin/Function0<kotlin/Unit> // /Z.aLambda.<get-aLambda>|<get-aLambda>(){}[0]
+    final val anObject // /Z.anObject|{}anObject[0]
+        final fun <get-anObject>(): kotlin/Any // /Z.anObject.<get-anObject>|<get-anObject>(){}[0]
+    final var counter // /Z.counter|{}counter[0]
+        final fun <get-counter>(): kotlin/Int // /Z.counter.<get-counter>|<get-counter>(){}[0]
+        final fun <set-counter>(kotlin/Int) // /Z.counter.<set-counter>|<set-counter>(kotlin.Int){}[0]
+    final fun aFun() // /Z.aFun|aFun(){}[0]
+    final fun bar() // /Z.bar|bar(){}[0]
+    final fun foo() // /Z.foo|foo(){}[0]
+    final class Nested { // /Z.Nested|null[0]
+        constructor <init>() // /Z.Nested.<init>|<init>(){}[0]
+        final fun test() // /Z.Nested.test|test(){}[0]
+    }
+}
+final fun (/Z)./test() // /test|test@Z(){}[0]
+final fun /withLambda(kotlin/Function0<kotlin/Unit>) // /withLambda|withLambda(kotlin.Function0<kotlin.Unit>){}[0]

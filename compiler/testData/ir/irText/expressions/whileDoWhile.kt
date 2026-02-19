@@ -4,6 +4,7 @@ fun test() {
     while (x < 5) x++
     while (x < 10) { x++ }
     do while (x < 0)
+    do {} while (x < 7)
     do x++ while (x < 15)
     do { x ++ } while (x < 20)
 }

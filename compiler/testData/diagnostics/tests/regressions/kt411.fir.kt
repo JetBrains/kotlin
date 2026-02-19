@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //kt-411 Wrong type expected when returning from a function literal
 
 package kt411
@@ -67,3 +68,6 @@ fun t4() : Int {
 
     return 12
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction,
+localProperty, propertyDeclaration, stringLiteral */

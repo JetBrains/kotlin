@@ -1,0 +1,1 @@
+@MyAnno[Unresolved](LAZY_EXPRESSION) @JvmName[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): String

@@ -5,58 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.jvm
 
-import org.gradle.api.Task
-import org.gradle.api.plugins.JavaBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
-import org.jetbrains.kotlin.gradle.testing.testTaskName
 
 open class KotlinJvmTargetConfigurator :
-    KotlinOnlyTargetConfigurator<KotlinJvmCompilation, KotlinJvmTarget>(true),
-    KotlinTargetWithTestsConfigurator<KotlinJvmTestRun, KotlinJvmTarget> {
-
-    override fun configurePlatformSpecificModel(target: KotlinJvmTarget) {
-        super<KotlinOnlyTargetConfigurator>.configurePlatformSpecificModel(target)
-        super<KotlinTargetWithTestsConfigurator>.configurePlatformSpecificModel(target)
-    }
-
-    override val testRunClass: Class<KotlinJvmTestRun>
-        get() = KotlinJvmTestRun::class.java
-
-    override fun createTestRun(
-        name: String,
-        target: KotlinJvmTarget,
-    ): KotlinJvmTestRun = KotlinJvmTestRun(name, target).apply {
-        val testTaskOrProvider = target.project.registerTask<KotlinJvmTest>(testTaskName) { testTask ->
-            testTask.targetName = target.disambiguationClassifier
-        }
-        target.project.locateTask<Task>(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(testTaskOrProvider)
-
-        executionTask = testTaskOrProvider
-
-        val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
-
-        setExecutionSourceFrom(testCompilation)
-
-        target.project.whenEvaluated {
-            // use afterEvaluate to override the JavaPlugin defaults for Test tasks
-            testTaskOrProvider.configure { testTask ->
-                testTask.description = "Runs the tests of the $name test run."
-                testTask.group = JavaBasePlugin.VERIFICATION_GROUP
-            }
-        }
-
-        target.project.kotlinTestRegistry.registerTestTask(testTaskOrProvider)
-    }
-
-    override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
-        val tasksProvider = KotlinTasksProvider()
-        return Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
-    }
+    KotlinOnlyTargetConfigurator<KotlinJvmCompilation, KotlinJvmTarget>(true) {
 }

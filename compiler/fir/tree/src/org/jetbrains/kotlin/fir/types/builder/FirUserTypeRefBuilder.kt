@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
 
 @FirBuilderDsl
 open class FirUserTypeRefBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    lateinit var source: KtSourceElement
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull()
     val qualifier: MutableList<FirQualifierPart> = mutableListOf()

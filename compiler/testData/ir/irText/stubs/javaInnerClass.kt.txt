@@ -1,12 +1,13 @@
 class Test1 : J {
+  val test: JInner
+    field = <this>.JInner()
+    get
+
   constructor() /* primary */ {
     super/*J*/()
     /* <init>() */
 
   }
 
-  val test: JInner
-    field = <this>.JInner()
-    get
-
 }
+

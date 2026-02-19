@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun main(d : D) {
     d.from("")
@@ -8,3 +9,5 @@ class D {
     fun from(vararg a : Any){}
     fun from(vararg a : String){}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, stringLiteral, vararg */

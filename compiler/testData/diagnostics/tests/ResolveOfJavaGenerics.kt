@@ -1,6 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// WITH_EXTENDED_CHECKERS
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // Fixpoint generic in Java: Enum<T extends Enum<T>>
 fun test(a : java.lang.annotation.RetentionPolicy) {
 
@@ -22,3 +21,5 @@ fun test(a : java.util.ArrayList<Int>) {
 fun test(a : java.lang.Class<Int>) {
 
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration */

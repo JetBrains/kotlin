@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KProperty
 import kotlin.properties.ReadWriteProperty
 
@@ -22,3 +23,6 @@ abstract class Some : BaseState() {
 
     val hideBySeverityBase: MutableSet<Int> by propertyBase(mutableSetOf())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, starProjection, thisExpression, typeParameter */

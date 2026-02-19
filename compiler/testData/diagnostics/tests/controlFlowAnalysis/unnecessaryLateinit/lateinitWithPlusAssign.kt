@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 class Foo {
     lateinit var bar: String
 
@@ -6,3 +8,6 @@ class Foo {
         bar += baz
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, lateinit, propertyDeclaration,
+secondaryConstructor */

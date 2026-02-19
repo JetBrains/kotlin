@@ -9,7 +9,7 @@ public final class InlineMap {
     public static method containsKey-impl(p0: java.util.Map, p1: java.lang.Object): boolean
     public method containsValue(p0: java.lang.Object): boolean
     public static method containsValue-impl(p0: java.util.Map, p1: java.lang.Object): boolean
-    public bridge final method entrySet(): java.util.Set
+    public synthetic bridge method entrySet(): java.util.Set
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.util.Map, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.util.Map, p1: java.util.Map): boolean
@@ -27,13 +27,14 @@ public final class InlineMap {
     public static method hashCode-impl(p0: java.util.Map): int
     public method isEmpty(): boolean
     public static method isEmpty-impl(p0: java.util.Map): boolean
-    public bridge final method keySet(): java.util.Set
+    public synthetic bridge method keySet(): java.util.Set
     public method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method putAll(p0: java.util.Map): void
     public method remove(p0: java.lang.Object): java.lang.Object
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.util.Map): java.lang.String
     public synthetic final method unbox-impl(): java.util.Map
-    public bridge final method values(): java.util.Collection
+    public synthetic bridge method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }

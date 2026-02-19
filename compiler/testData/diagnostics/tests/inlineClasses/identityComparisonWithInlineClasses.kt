@@ -1,5 +1,6 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -UNUSED_VARIABLE, -INLINE_CLASS_DEPRECATED
 
 inline class Foo(val x: Int)
 inline class Bar(val y: String)
@@ -20,3 +21,6 @@ fun test(f1: Foo, f2: Foo, b1: Bar, fn1: Foo?, fn2: Foo?) {
     val d3 = <!FORBIDDEN_IDENTITY_EQUALS!>any === fn1<!> || <!FORBIDDEN_IDENTITY_EQUALS!>any !== fn1<!>
     val d4 = <!FORBIDDEN_IDENTITY_EQUALS!>fn1 === any<!> || <!FORBIDDEN_IDENTITY_EQUALS!>fn1 !== any<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, disjunctionExpression, equalityExpression, functionDeclaration, localProperty,
+nullableType, primaryConstructor, propertyDeclaration */

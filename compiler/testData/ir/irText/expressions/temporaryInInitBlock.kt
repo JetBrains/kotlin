@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class C(x: Any?) {
     val s: String?
     init {

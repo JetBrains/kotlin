@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 // WITH_STDLIB
@@ -34,3 +36,6 @@ fun test() {
     val collection: Collection<Int> = listOf(1, 2, 3)
     Foo(collection)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType, localProperty,
+propertyDeclaration */

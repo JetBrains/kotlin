@@ -1,4 +1,5 @@
-// !LANGUAGE: +ProhibitTypeParametersForLocalVariables
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitTypeParametersForLocalVariables
 
 annotation class A1
 annotation class A2(val some: Int = 12)
@@ -12,3 +13,7 @@ class SomeClass {
         val <!LOCAL_VARIABLE_WITH_TYPE_PARAMETERS!><<!WRONG_ANNOTATION_TARGET!>@A1<!> <!WRONG_ANNOTATION_TARGET!>@A2(3)<!> <!REPEATED_ANNOTATION, WRONG_ANNOTATION_TARGET!>@A2<!> <!REPEATED_ANNOTATION, WRONG_ANNOTATION_TARGET!>@A1(<!TOO_MANY_ARGUMENTS!>12<!>)<!> <!REPEATED_ANNOTATION, WRONG_ANNOTATION_TARGET!>@A2(<!ARGUMENT_TYPE_MISMATCH!>"Test"<!>)<!> T><!> localVal = 12
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, integerLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral,
+typeParameter */

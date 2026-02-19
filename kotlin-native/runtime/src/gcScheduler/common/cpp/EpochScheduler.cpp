@@ -14,7 +14,7 @@ using namespace kotlin;
 
 using Epoch = gcScheduler::internal::EpochScheduler::Epoch;
 
-Epoch gcScheduler::internal::EpochScheduler::scheduleNextEpoch() noexcept {
+Epoch gcScheduler::internal::EpochScheduler::scheduleNextEpoch(ScheduleReason reason) noexcept {
     // The locks here are always short-lived,
     // so we ignore thread state switching to avoid recursive safe points.
     CallsCheckerIgnoreGuard ignoreGuard;
@@ -25,10 +25,11 @@ Epoch gcScheduler::internal::EpochScheduler::scheduleNextEpoch() noexcept {
                 *scheduled <= epoch, "Scheduled epoch %" PRId64 " which is somehow less previously scheduled %" PRId64, epoch, *scheduled);
     }
     scheduledEpoch_ = epoch;
+    reason.log();
     return epoch;
 }
 
-Epoch gcScheduler::internal::EpochScheduler::scheduleNextEpochIfNotInProgress() noexcept {
+Epoch gcScheduler::internal::EpochScheduler::scheduleNextEpochIfNotInProgress(ScheduleReason reason) noexcept {
     // The locks here are always short-lived,
     // so we ignore thread state switching to avoid recursive safe points.
     CallsCheckerIgnoreGuard ignoreGuard;
@@ -38,6 +39,7 @@ Epoch gcScheduler::internal::EpochScheduler::scheduleNextEpochIfNotInProgress() 
     }
     auto epoch = scheduleGC_();
     scheduledEpoch_ = epoch;
+    reason.log();
     return epoch;
 }
 

@@ -6,39 +6,40 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.util.inlineFunction
-import org.jetbrains.kotlin.ir.util.innerInlinedBlockOrThis
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isNullableNothing
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.innerInlinedBlockOrThis
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+/**
+ * Generates [IrReturn]s for `Unit`-returning functions.
+ */
 internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
-            override fun visitFunction(declaration: IrFunction) {
+            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                 declaration.acceptChildrenVoid(this)
 
                 val body = declaration.body ?: return
                 body as IrBlockBody
                 context.createIrBuilder(declaration.symbol, declaration.endOffset, declaration.endOffset).run {
-                    if (declaration is IrConstructor || declaration.returnType == context.irBuiltIns.unitType) {
+                    if (declaration.returnType == context.irBuiltIns.unitType) {
                         body.statements += irReturn(irCall(symbols.theUnitInstance, context.irBuiltIns.unitType))
                     } else if (declaration.returnType.isNullable()) {
                         // this is a workaround for KT-42832
@@ -47,18 +48,6 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
                                 && typeOperatorCall.argument.type.isNullableNothing()) {
                             body.statements[body.statements.lastIndex] = irReturn(typeOperatorCall.argument)
                         }
-                    }
-                }
-            }
-
-            override fun visitBlock(expression: IrBlock) {
-                expression.acceptChildrenVoid(this)
-                if (expression !is IrReturnableBlock) return
-                if (expression.inlineFunction?.returnType == context.irBuiltIns.unitType) {
-                    val container = expression.innerInlinedBlockOrThis.statements
-                    val offset = (container.lastOrNull() ?: expression).endOffset
-                    context.createIrBuilder(expression.symbol, offset, offset).run {
-                        container += irReturn(irCall(symbols.theUnitInstance, context.irBuiltIns.unitType))
                     }
                 }
             }

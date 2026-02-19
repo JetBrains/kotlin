@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -SENSELESS_COMPARISON
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -SENSELESS_COMPARISON
 
 import kotlin.contracts.*
 
@@ -39,3 +40,6 @@ class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, inner, interfaceDeclaration, lambdaLiteral, nullableType, thisExpression */

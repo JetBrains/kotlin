@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolv
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.optimization.FirAggressivePruningProcessor
 
 class FirTotalResolveProcessor(private val session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()
@@ -63,9 +66,10 @@ private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
 ): List<T> {
     @Suppress("NAME_SHADOWING")
     val scopeSession = scopeSession ?: ScopeSession()
-    val phases = FirResolvePhase.values().filter {
+    val phases = FirResolvePhase.entries.filter {
         !it.noProcessor
     }
+
     return phases.map { it.creator(scopeSession) }
 }
 
@@ -82,11 +86,18 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
         TYPES -> FirTypeResolveProcessor(session, scopeSession)
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
-        ARGUMENTS_OF_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
-        ANNOTATIONS_ARGUMENTS_MAPPING -> FirAnnotationArgumentsMappingProcessor(session, scopeSession)
-        BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
+        CONSTANT_EVALUATION -> FirConstantEvaluationProcessor(session, scopeSession)
+        ANNOTATION_ARGUMENTS -> FirAnnotationArgumentsProcessor(session, scopeSession)
+        BODY_RESOLVE -> {
+            val processor = FirBodyResolveProcessor(session, scopeSession)
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+                FirAggressivePruningProcessor(processor)
+            } else {
+                processor
+            }
+        }
         EXPECT_ACTUAL_MATCHING -> FirExpectActualMatcherProcessor(session, scopeSession)
     }
 }

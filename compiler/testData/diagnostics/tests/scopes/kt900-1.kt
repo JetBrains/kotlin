@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // import all members from companion object
 package c
 
@@ -23,3 +23,6 @@ object M {
     fun foo() {}
     class R() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration */

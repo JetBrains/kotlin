@@ -19,7 +19,13 @@ object AnnotationTargetLists {
         onlyWithUseSiteTarget(PROPERTY_SETTER, VALUE_PARAMETER)
     }
 
+    val T_CATCH_PARAMETER = targetList(LOCAL_VARIABLE, VALUE_PARAMETER)
+
     val T_DESTRUCTURING_DECLARATION = targetList(DESTRUCTURING_DECLARATION)
+
+    val T_DESTRUCTURING_DECLARATION_NEW = targetList(DESTRUCTURING_DECLARATION) {
+        extraTargets(LOCAL_VARIABLE)
+    }
 
     private fun TargetListBuilder.propertyTargets(backingField: Boolean, delegate: Boolean) {
         if (backingField) extraTargets(FIELD)
@@ -41,6 +47,9 @@ object AnnotationTargetLists {
             propertyTargets(backingField, delegate)
         }
 
+    @AnnotationTargetListForDeprecation
+    val T_MEMBER_PROPERTY_IN_ANNOTATION = T_MEMBER_PROPERTY(backingField = false, delegate = false)
+
     fun T_TOP_LEVEL_PROPERTY(backingField: Boolean, delegate: Boolean) =
         targetList(
             when {
@@ -60,7 +69,7 @@ object AnnotationTargetLists {
 
     val T_VALUE_PARAMETER_WITHOUT_VAL = targetList(VALUE_PARAMETER)
 
-    val T_VALUE_PARAMETER_WITH_VAL = targetList(VALUE_PARAMETER, PROPERTY, MEMBER_PROPERTY) {
+    val T_VALUE_PARAMETER_WITH_VAL = targetList(VALUE_PARAMETER, PROPERTY, MEMBER_PROPERTY, PROPERTY_PARAMETER) {
         extraTargets(FIELD)
         onlyWithUseSiteTarget(PROPERTY_GETTER, PROPERTY_SETTER)
     }
@@ -125,11 +134,27 @@ object AnnotationTargetLists {
     }
 }
 
+/**
+ * This class represents possible target lists for a given annotation.
+ *
+ * Note: not intended for a structural comparison. Referential comparison can be used in exceptional cases,
+ * see [AnnotationTargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION] as an example.
+ */
 class AnnotationTargetList(
     val defaultTargets: List<KotlinTarget>,
     val canBeSubstituted: List<KotlinTarget> = emptyList(),
     val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList()
-)
+) {
+    @Suppress("POTENTIALLY_NON_REPORTED_ANNOTATION")
+    @Deprecated(level = DeprecationLevel.ERROR, message = "These lists are not intended to compare them")
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+}
 
 object UseSiteTargetsList {
     val T_CONSTRUCTOR_PARAMETER = listOf(
@@ -143,3 +168,6 @@ object UseSiteTargetsList {
         AnnotationUseSiteTarget.FIELD
     )
 }
+
+@RequiresOptIn(message = "This target list is for deprecation reporting only and not intended to be widely used.")
+annotation class AnnotationTargetListForDeprecation

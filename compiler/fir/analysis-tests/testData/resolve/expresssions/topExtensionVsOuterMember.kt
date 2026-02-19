@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun Outer.Inner.foo() = 42
 
 class Outer {
@@ -8,3 +9,6 @@ class Outer {
         val x = foo() // Should be Int
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inner, integerLiteral,
+propertyDeclaration, stringLiteral */

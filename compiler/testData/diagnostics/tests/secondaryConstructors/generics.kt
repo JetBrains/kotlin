@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
 open class B<T>(x: T, y: T) {
     constructor(x: T): this(x, x)
     constructor(): this(null!!, null!!)
@@ -19,3 +20,6 @@ class A1<R> : B<R> {
 class A2<R> {
     constructor(t: R, i: Int) : this(<!TYPE_MISMATCH!>i<!>, 1)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, integerLiteral, nullableType, primaryConstructor,
+secondaryConstructor, typeParameter */

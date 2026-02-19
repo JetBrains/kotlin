@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // FILE: MyInterface.java
@@ -28,3 +29,5 @@ fun test_3(mr: MyRecord<*>) {
     takeAny(mr.x)
     takeAny(mr.x())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, starProjection */

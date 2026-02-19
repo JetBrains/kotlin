@@ -8,40 +8,41 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
-object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirPropertyAccessor) return
-        checkInternal(declaration, null, null, context, reporter)
+        checkInternal(declaration, null, null)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkInternal(
         declaration: FirDeclaration,
         reportSource: KtSourceElement?,
         modality: Modality?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (declaration !is FirMemberDeclaration) return
 
         if (declaration is FirProperty) {
             declaration.getter?.let {
-                checkInternal(it, declaration.source, declaration.modality, context, reporter)
+                checkInternal(it, declaration.source, declaration.modality)
             }
         }
 
@@ -58,26 +59,26 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
             }
             val externalModifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD)
             externalModifier?.let {
-                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target, context)
+                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target)
             }
             return
         }
 
-        val containingClassSymbol = declaration.symbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
+        val containingClassSymbol = declaration.symbol.containingClassLookupTag()?.toRegularClassSymbol()
         if (containingClassSymbol != null) {
             if (containingClassSymbol.isInterface) {
-                reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE, context)
+                reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE)
             } else if ((modality ?: declaration.modality) == Modality.ABSTRACT) {
-                reporter.reportOn(reportSource ?: declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, context)
+                reporter.reportOn(reportSource ?: declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT)
             }
         }
 
         if (declaration !is FirConstructor && declaration.body != null) {
-            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, context)
+            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY)
         }
 
         if (declaration.isInline) {
-            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_INLINED, context)
+            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_INLINED)
         }
     }
 }

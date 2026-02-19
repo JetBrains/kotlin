@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !LANGUAGE: -ProhibitProtectedCallFromInline
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// CHECK_TYPE
 // FILE: module1/AbstractModule.java
 package module1;
 
@@ -18,8 +19,12 @@ fun <T> javaClass(): Class<T> = null!!
 
 public class AppServiceModule : AbstractModule<String>() {
     inline fun <reified T> AbstractModule<Int>.bind() {
-        val x = <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>bind<!>(javaClass<T>())
+        val x = <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>bind<!>(javaClass<T>())
 
         x checkType { _<String>() } // check that Class receiver is used instead of extension one
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inline, javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified,
+typeParameter, typeWithExtension */

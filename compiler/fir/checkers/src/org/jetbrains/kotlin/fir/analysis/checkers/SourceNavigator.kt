@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,15 +10,18 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.getAncestors
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
 import org.jetbrains.kotlin.util.getChildren
@@ -41,6 +44,27 @@ interface SourceNavigator {
 
     fun FirTypeRef.isRedundantNullable(): Boolean
 
+    /**
+     * Returns whether this [FirEnumEntry] has a body in source, or `null` if the entry does not have a source.
+     *
+     * Returns `false` if entry has a constructor call, but doesn't have a body:
+     * ```kotlin
+     * enum class E(i: Int) { FOO(42) }
+     * ```
+     *
+     * We have to go down to source level, since this cannot be checked only by FIR element. This is because in FIR all enum entries
+     * with constructor calls have a fake [FirEnumEntry.initializer] with an anonymous object, regardless of whether the entry had
+     * body originally.
+     */
+    fun FirEnumEntry.hasBody(): Boolean?
+
+    /**
+     * Returns whether this [FirEnumEntry] has an initializer in source, or `null` if the entry does not have a source.
+     *
+     * Reason of implementing this in [SourceNavigator] and not in FIR is same as in [hasBody] method.
+     */
+    fun FirEnumEntry.hasInitializer(): Boolean?
+
     companion object {
 
         private val lightTreeInstance = LightTreeSourceNavigator()
@@ -57,7 +81,7 @@ interface SourceNavigator {
     }
 }
 
-open class LightTreeSourceNavigator : SourceNavigator {
+private open class LightTreeSourceNavigator : SourceNavigator {
 
     private fun <T> FirElement.withSource(f: (KtSourceElement) -> T): T? =
         source?.let { f(it) }
@@ -74,11 +98,17 @@ open class LightTreeSourceNavigator : SourceNavigator {
     }
 
     override fun KtSourceElement.getRawIdentifier(): CharSequence? {
-        return when (elementType) {
-            is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> lighterASTNode.toString()
-            is KtTypeProjectionElementType -> lighterASTNode.getChildren(treeStructure).last().toString()
-            else -> null
-        }
+        val astNode = lighterASTNode
+        return astNode.getRawIdentifier(treeStructure)
+    }
+
+    private fun LighterASTNode.getRawIdentifier(
+        treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
+    ): CharSequence? = when (tokenType) {
+        is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> toString()
+        is KtTypeProjectionElementType -> getChildren(treeStructure).last().toString()
+        is KtDotQualifiedExpressionElementType, KtTokens.SAFE_ACCESS -> getChildren(treeStructure).last().getRawIdentifier(treeStructure)
+        else -> null
     }
 
     override fun FirDeclaration.getRawName(): String? {
@@ -108,10 +138,22 @@ open class LightTreeSourceNavigator : SourceNavigator {
         parent?.let { parent = source.treeStructure.getParent(it) }
         return parent
     }
+
+    override fun FirEnumEntry.hasBody(): Boolean? {
+        val source = source ?: return null
+        val childNodes = source.lighterASTNode.getChildren(source.treeStructure)
+        return childNodes.any { it.tokenType == KtNodeTypes.CLASS_BODY }
+    }
+
+    override fun FirEnumEntry.hasInitializer(): Boolean? {
+        val source = source ?: return null
+        val childNodes = source.lighterASTNode.getChildren(source.treeStructure)
+        return childNodes.any { it.tokenType == KtNodeTypes.INITIALIZER_LIST }
+    }
 }
 
 //by default psi tree can reuse light tree manipulations
-object PsiSourceNavigator : LightTreeSourceNavigator() {
+private object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     //Swallows incorrect casts!!!
     private inline fun <reified P : PsiElement> FirElement.psi(): P? = source?.psi()
@@ -123,17 +165,15 @@ object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     override fun FirTypeRef.isInConstructorCallee(): Boolean = psi<KtTypeReference>()?.parent is KtConstructorCalleeExpression
 
-    override fun KtSourceElement.getRawIdentifier(): CharSequence? {
-        val psi = psi<PsiElement>()
-        return if (psi is KtNameReferenceExpression) {
-            psi.getReferencedNameElement().node.chars
-        } else if (psi is KtTypeProjection) {
-            psi.typeReference?.typeElement?.text
-        } else if (psi is LeafPsiElement && psi.elementType == KtTokens.IDENTIFIER) {
-            psi.chars
-        } else {
-            null
-        }
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? = psi<PsiElement>()?.getRawIdentifier()
+
+    private fun PsiElement.getRawIdentifier(): CharSequence? = when (this) {
+        is KtNameReferenceExpression -> getReferencedNameElement().node.chars
+        is KtTypeProjection -> typeReference?.typeElement?.text
+        is LeafPsiElement if elementType == KtTokens.IDENTIFIER -> chars
+        is KtQualifiedExpression -> selectorExpression?.getRawIdentifier()
+        is KtImportAlias -> name
+        else -> null
     }
 
     override fun FirDeclaration.getRawName(): String? {
@@ -149,5 +189,15 @@ object PsiSourceNavigator : LightTreeSourceNavigator() {
         val typeReference = (source.psi as? KtTypeReference) ?: return false
         val typeElement = typeReference.typeElement as? KtNullableType ?: return false
         return typeElement.innerType is KtNullableType
+    }
+
+    override fun FirEnumEntry.hasBody(): Boolean? {
+        val enumEntryPsi = source?.psi as? KtEnumEntry ?: return null
+        return enumEntryPsi.body != null
+    }
+
+    override fun FirEnumEntry.hasInitializer(): Boolean? {
+        val enumEntryPsi = source?.psi as? KtEnumEntry ?: return null
+        return enumEntryPsi.initializerList != null
     }
 }

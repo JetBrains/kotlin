@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A
 interface B
 
@@ -12,3 +13,6 @@ fun main(a: A) {
     val anonymousA: A = object : C() {}
     foo(anonymousA)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+localProperty, propertyDeclaration */

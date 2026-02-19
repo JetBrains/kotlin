@@ -7,8 +7,4 @@ fun foo(captured: String) {
     }
 }
 
-// JVM_TEMPLATES
-// 1 final synthetic Ljava/lang/String; \$captured
-
-// JVM_IR_TEMPLATES
 // 0 final synthetic Ljava/lang/String; \$captured

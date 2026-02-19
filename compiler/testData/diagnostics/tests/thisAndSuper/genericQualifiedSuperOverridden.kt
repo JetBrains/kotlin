@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
 interface IBase<T> {
     fun foo() {}
     fun bar() {}
@@ -19,3 +20,6 @@ class Test : IDerived<String>, IBase<String> {
         super<IDerived>.qux()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,
+superExpression, typeParameter */

@@ -1,9 +1,9 @@
 final class PrivateObject /* one.PrivateObject*/ {
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String privateProperty = "" /* initializer type: java.lang.String */;
+  private static @org.jetbrains.annotations.NotNull() java.lang.String privateProperty = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  public static final one.PrivateObject INSTANCE;
+  public static final @org.jetbrains.annotations.NotNull() one.PrivateObject INSTANCE;
 
   private static boolean internalProperty = false /* initializer type: boolean */;
 

@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : js/l2js.0.kt -> js/l2js.kt
+        U : common/l2common.0.kt -> common/l2common.kt
+    added file: l2js.kt, l2common.kt
+STEP 1:
+    dependencies: lib1
+    modified ir: l2js.kt
+STEP 2:
+    dependencies: lib1
+    modified ir: l2common.kt

@@ -1,0 +1,3 @@
+warning: flag is not supported by this version of the compiler: -X"double /' quote ' escaped /" sequence //"
+warning: flag is not supported by this version of the compiler: -X'single /" quote " escaped /' sequence //'
+OK

@@ -18,6 +18,6 @@ FILE: incorrectReferenceOnInnerClassMember.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|foo/Outer|.<Resolution to classifier>#(Int(42))
-        Q|foo/Outer|.<Resolution to classifier>#(Int(42))::<Unresolved reference: method>#
+        Q|foo/Outer|<R|kotlin/Int|>.<Resolution to classifier>#(Int(42))
+        Q|foo/Outer|<R|kotlin/Int|>.<Resolution to classifier>#(Int(42))::<Unresolved reference: method>#
     }

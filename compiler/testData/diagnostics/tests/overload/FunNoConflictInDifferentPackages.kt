@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: pkg1.kt
 // check no error in overload in different packages
@@ -12,3 +13,5 @@ fun e() = 1
 // FILE: pkg3pkg1.kt
 package pkg3.pkg1
 fun e() = 1
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

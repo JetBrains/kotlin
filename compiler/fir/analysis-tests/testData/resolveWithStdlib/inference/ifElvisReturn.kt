@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-39074
 
 interface A
@@ -16,3 +17,6 @@ fun foo(b: B, cond: Boolean) {
 
     x.bar()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

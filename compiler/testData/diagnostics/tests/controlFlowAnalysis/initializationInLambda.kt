@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
 fun ignoreIt(<!UNUSED_PARAMETER!>f<!>: () -> Unit) {}
 
@@ -75,3 +76,7 @@ val z = if (true) {
     42
 }
 else 0
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, ifExpression, init,
+integerLiteral, lambdaLiteral, localFunction, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

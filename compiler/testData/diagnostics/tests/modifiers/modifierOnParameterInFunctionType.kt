@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun f(vararg x: Int) {}
 
@@ -51,3 +52,6 @@ val allProhibited: (<!UNSUPPORTED!>abstract<!>
 
 val valProhibited: (<!UNSUPPORTED!>val<!> x: Int)->Unit = {}
 val varProhibited: (<!UNSUPPORTED!>var<!> x: Int)->Unit = {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, localProperty,
+operator, override, propertyDeclaration, vararg */

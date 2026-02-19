@@ -1,0 +1,3 @@
+@Repeatable
+annotation class RepeatableAnnotationClass
+

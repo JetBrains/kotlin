@@ -1,5 +1,6 @@
-// !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
-// !DIAGNOSTICS: -UNUSED_VALUE
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
+// DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 
 fun testArrayCapturedInLocalFun() {
@@ -101,3 +102,7 @@ fun testCapturedInNonChangingClosure() {
         lambda()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, forLoop, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, localClass, localFunction, localProperty, operator, override,
+propertyDeclaration, stringLiteral */

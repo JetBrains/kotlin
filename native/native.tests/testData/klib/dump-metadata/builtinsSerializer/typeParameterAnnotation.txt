@@ -1,4 +1,24 @@
-    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) annotation class Ann constructor(value: String) : Annotation {
-        val value: String
+library {
+  // module name: <typeParameterAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Ann
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      public constructor(value: kotlin/String)
+
+      public final val value: kotlin/String
+        public final get
     }
-    inline fun <reified @Ann(value = "abc") T> foo()
+
+    package {
+
+      public final inline fun <reified @test/Ann(value = "abc") T#0 /* T */> foo(): kotlin/Unit
+    }
+  }
+}

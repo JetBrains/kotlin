@@ -1,0 +1,34 @@
+FILE: typealiasedFunInterface.kt
+    package pack
+
+    public final class AliasedA : R|kotlin/Any| {
+        public constructor(): R|pack/AliasedA| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class AliasedB : R|kotlin/Any| {
+        public constructor(): R|pack/AliasedB| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun interface AliasedC : R|kotlin/Any| {
+        public abstract fun single(): R|kotlin/Unit|
+
+    }
+    public final typealias TA = R|pack/AliasedA|
+    public final typealias TB = R|pack/AliasedB|
+    public final typealias TC = R|pack/AliasedC|
+    public final var ta: R|{pack/TA?=} pack/AliasedA?| = Null(null)
+        public get(): R|{pack/TA?=} pack/AliasedA?|
+        public set(value: R|{pack/TA?=} pack/AliasedA?|): R|kotlin/Unit|
+    public final var tb: R|{pack/TB=} pack/AliasedB| = R|pack/AliasedB.AliasedB|()
+        public get(): R|{pack/TB=} pack/AliasedB|
+        public set(value: R|{pack/TB=} pack/AliasedB|): R|kotlin/Unit|
+    public final var tc: R|{pack/TC=} pack/AliasedC| = R|pack/TC|(<L> = TC@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^@TC Unit
+    }
+    )
+        public get(): R|{pack/TC=} pack/AliasedC|
+        public set(value: R|{pack/TC=} pack/AliasedC|): R|kotlin/Unit|

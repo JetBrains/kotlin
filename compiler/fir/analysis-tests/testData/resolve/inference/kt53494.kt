@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-53494
 
 open class C<out T>
@@ -12,3 +13,7 @@ inline fun <reified T> test_1(t: T?): C<T> {
 inline fun <reified T> test_2(t: T?): C<T> {
     return if (t != null) Wrapped(t) else if (t is T) Wrapped(t) else Default
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, dnnType, equalityExpression, functionDeclaration, ifExpression, inline,
+intersectionType, isExpression, nullableType, objectDeclaration, out, primaryConstructor, propertyDeclaration, reified,
+smartcast, typeParameter */

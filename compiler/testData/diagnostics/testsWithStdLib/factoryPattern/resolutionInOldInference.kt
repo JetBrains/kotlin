@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
 // FILE: OverloadResolutionByLambdaReturnType.kt
@@ -23,3 +24,6 @@ fun test_1() {
     val x = create { "" }
     takeString("")
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

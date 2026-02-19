@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A<T> {
     fun foo(): Int
@@ -23,3 +24,6 @@ fun <T> boo(t: T): A<T> = AImpl()
 class E : A<Int> by <!TYPE_MISMATCH!>boo("")<!>
 
 class F : A<Int> by <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>AImpl<String>()<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, inheritanceDelegation,
+integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, override, stringLiteral, typeParameter */

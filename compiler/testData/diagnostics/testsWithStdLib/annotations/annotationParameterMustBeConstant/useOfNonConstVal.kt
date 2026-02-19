@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val nonConst = 1
 
 const val constConst = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConst * nonConst + 2<!>
@@ -14,3 +15,6 @@ annotation class ArrayAnn(val x: IntArray)
 
 @ArrayAnn(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>intArrayOf(1, constConst, <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConst<!>)<!>)
 fun foo3() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, collectionLiteral, const, functionDeclaration,
+integerLiteral, multiplicativeExpression, primaryConstructor, propertyDeclaration */

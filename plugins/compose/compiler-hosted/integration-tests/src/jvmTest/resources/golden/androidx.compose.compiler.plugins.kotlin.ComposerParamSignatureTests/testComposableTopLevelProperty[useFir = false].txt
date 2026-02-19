@@ -1,0 +1,13 @@
+//
+// Source
+// ------------------------------------------
+
+val foo: Int @Composable get() { return 123 }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static getFoo(Landroidx/compose/runtime/Composer;I)I
+}

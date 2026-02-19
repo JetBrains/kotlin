@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55358
 
 fun test_0() = 1 + 2
@@ -17,3 +18,6 @@ fun test_6() = runWithByte { <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMAT
 
 fun <R> run(block: () -> R): R = block()
 fun runWithByte(block: () -> Byte): Byte = block()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+typeParameter */

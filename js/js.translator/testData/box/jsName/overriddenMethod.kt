@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1295
-
 open class A {
     @JsName("js_f") open fun f(x: Int) = "A.f($x)"
 }

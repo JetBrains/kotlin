@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // FILE: p/Foo.java
 package p;
 
@@ -17,3 +19,5 @@ class Bar : Foo() {
 
 private fun foo(): <!INVISIBLE_REFERENCE!>Nested<!>? = null
 private fun bar(): p.Foo.<!INVISIBLE_REFERENCE!>Nested<!>? = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType */

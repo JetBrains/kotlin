@@ -41,7 +41,7 @@ public fun <T> emptySet(): Set<T> = EmptySet
  * The returned set is serializable (JVM).
  * @sample samples.collections.Collections.Sets.readOnlySet
  */
-public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
+public fun <T> setOf(vararg elements: T): Set<T> = elements.toSet()
 
 /**
  * Returns a new read-only set containing only the specified object [element].
@@ -133,9 +133,8 @@ public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
  * @sample samples.collections.Builders.Sets.buildSetSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-@Suppress("DEPRECATION")
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND", "DEPRECATION")
 public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildSetInternal(builderAction)
@@ -164,9 +163,8 @@ internal expect inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() 
  * @sample samples.collections.Builders.Sets.buildSetSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-@Suppress("DEPRECATION")
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND", "DEPRECATION")
 public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildSetInternal(capacity, builderAction)
@@ -178,7 +176,10 @@ public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: M
 internal expect inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E>
 
 
-/** Returns this Set if it's not `null` and the empty set otherwise. */
+/**
+ * Returns this Set if it's not `null` and the empty set otherwise.
+ * @sample samples.collections.Collections.Sets.setOrEmpty
+ */
 @kotlin.internal.InlineOnly
 public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 

@@ -1,5 +1,6 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !LANGUAGE: +UseReturnsEffect
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +UseReturnsEffect
 // Issue: KT-26386
 
 import kotlin.contracts.*
@@ -23,3 +24,5 @@ fun case_4(): Boolean {
     kotlin.contracts.contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION!>case_1()<!> }
     return true
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, lambdaLiteral, nullableType */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun nonlocals(b : Boolean) {
     a@{
@@ -10,3 +11,5 @@ fun nonlocals(b : Boolean) {
         return@a 5
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, localFunction */

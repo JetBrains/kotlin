@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -11,7 +12,7 @@
 
 fun foo(x: Int) {
     r {
-        <!ARGUMENT_TYPE_MISMATCH!>when (x) {
+        <!RETURN_TYPE_MISMATCH!>when (x) {
             2 -> 0
         }<!>
     }
@@ -20,3 +21,6 @@ fun foo(x: Int) {
 fun r(f: () -> Int) {
     f()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+whenExpression, whenWithSubject */

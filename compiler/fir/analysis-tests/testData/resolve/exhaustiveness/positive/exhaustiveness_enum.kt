@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class Enum {
     A, B, C
 }
@@ -11,7 +12,7 @@ fun test_1(e: Enum) {
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         Enum.A -> 1
         Enum.B -> 2
-        is String -> 3
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 3
     }
 
     val c = when (e) {
@@ -54,3 +55,7 @@ fun test_3(e: Enum) {
         Enum.C -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 
 @MppGradlePluginTests
 class WasmConfigurationCacheIT : KGPBaseTest() {
-    override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(
-            configurationCache = true,
-        )
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("configuration cache is working for wasm")
     @GradleTest
@@ -30,14 +31,23 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
 
     @DisplayName("D8 run correctly works with configuration cache")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     fun testD8Run(gradleVersion: GradleVersion) {
-        project("wasm-d8-simple-project", gradleVersion) {
-            build("wasmJsD8Run", buildOptions = buildOptions) {
-                assertTasksExecuted(":wasmJsD8Run")
-                assertOutputContains(
-                    "Calculating task graph as no configuration cache is available for tasks: wasmJsD8Run"
-                )
+        project(
+            "wasm-d8-simple-project",
+            gradleVersion,
+            dependencyManagement = DependencyManagement.DisabledDependencyManagement // :d8Download adds custom ivy repository during build
+        ) {
+            build("wasmJsD8DevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":wasmJsD8DevelopmentRun")
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+                    assertOutputContains(
+                        "Calculating task graph as no configuration cache is available for tasks: wasmJsD8DevelopmentRun"
+                    )
+                } else {
+                    assertOutputContains(
+                        "Calculating task graph as no cached configuration is available for tasks: wasmJsD8DevelopmentRun"
+                    )
+                }
 
                 assertConfigurationCacheStored()
             }
@@ -45,10 +55,22 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
             build("clean", buildOptions = buildOptions)
 
             // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-            build("wasmJsD8Run", buildOptions = buildOptions) {
-                assertTasksExecuted(":wasmJsD8Run")
+            build("wasmJsD8DevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":wasmJsD8DevelopmentRun")
                 assertConfigurationCacheReused()
             }
+        }
+    }
+
+    @DisplayName("Browser case works correctly with configuration cache")
+    @GradleTest
+    fun testBrowser(gradleVersion: GradleVersion) {
+        project("wasm-browser-simple-project", gradleVersion) {
+            assertSimpleConfigurationCacheScenarioWorks(
+                "assemble",
+                buildOptions = defaultBuildOptions,
+                executedTaskNames = listOf(":compileKotlinWasmJs", ":wasmJsBrowserDistribution")
+            )
         }
     }
 }

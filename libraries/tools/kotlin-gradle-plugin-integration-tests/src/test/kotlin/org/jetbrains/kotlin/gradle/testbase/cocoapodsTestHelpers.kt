@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
+import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -21,9 +21,6 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
-
-val String.normalizeCocoapadsFrameworkName: String
-    get() = replace('-', '_')
 
 enum class ImportMode(val directive: String) {
     FRAMEWORKS("use_frameworks!"),
@@ -46,7 +43,7 @@ fun TestProject.useCustomCocoapodsFrameworkName(
             .resolve(iosAppLocation)
             .resolve("ios-app/ViewController.swift")
             .replaceText(
-                "import ${subprojectName.normalizeCocoapadsFrameworkName}",
+                "import ${subprojectName.asValidFrameworkName}",
                 "import $frameworkName"
             )
     }
@@ -121,7 +118,7 @@ fun Path.removePod(podName: String) {
     require(begin != -1) {
         """
         Pod doesn't exist in file. File content is:
-        ${text}
+        $text
         """.trimIndent()
     }
     var index = begin + """pod("$podName")""".length - 1
@@ -254,7 +251,7 @@ private fun isCocoapodsInstalled(): Boolean {
             File("."),
         )
         result.isSuccessful
-    } catch (e: IOException) {
+    } catch (_: IOException) {
         false
     }
 }
@@ -262,7 +259,7 @@ private fun isCocoapodsInstalled(): Boolean {
 private fun gem(vararg args: String): String {
     val command = listOf("gem", *args)
     println("Run command: ${command.joinToString(separator = " ")}")
-    val result = runProcess(command, File("."), options = BaseGradleIT.BuildOptions(forceOutputToStdout = true))
+    val result = runProcess(command, File("."))
 
     assertProcessRunResult(result) {
         assertTrue(

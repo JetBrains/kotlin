@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun UInt.fUInt() {}
 fun UByte.fUByte() {}
 fun UShort.fUShort() {}
@@ -12,3 +13,5 @@ fun test() {
     3000000000 until <!ARGUMENT_TYPE_MISMATCH!>3000000004UL<!>
     0 until <!ARGUMENT_TYPE_MISMATCH!>10u<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, unsignedLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: this.kt
 
@@ -8,3 +9,5 @@ import bar.* // Must not be an error
 
 // FILE: other.kt
 package bar
+
+/* GENERATED_FIR_TAGS:  */

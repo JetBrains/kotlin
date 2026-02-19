@@ -38,6 +38,12 @@ class ContractDescriptionRenderer(private val builder: StringBuilder) : Contract
 
     }
 
+    override fun visitReturnsResultOfEffectDeclaration(returnsResultOfEffect: ReturnsResultOfEffectDeclaration, data: Unit) {
+        builder.append("ReturnsResultOf(")
+        returnsResultOfEffect.variableReference.accept(this, data)
+        builder.append(")")
+    }
+
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit) {
         inBracketsIfNecessary(logicalOr, logicalOr.left) { logicalOr.left.accept(this, data) }
         builder.append(" || ")

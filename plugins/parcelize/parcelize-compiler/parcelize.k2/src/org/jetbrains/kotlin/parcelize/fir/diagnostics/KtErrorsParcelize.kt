@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DELEG
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.INNER_MODIFIER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.NAME_IDENTIFIER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.OVERRIDE_MODIFIER
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-object KtErrorsParcelize {
+object KtErrorsParcelize : KtDiagnosticsContainer() {
     val PARCELABLE_SHOULD_BE_CLASS by error0<PsiElement>(NAME_IDENTIFIER)
     val PARCELABLE_DELEGATE_IS_NOT_ALLOWED by error0<PsiElement>(DELEGATED_SUPERTYPE_BY_KEYWORD)
     val PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS by error0<PsiElement>()
@@ -41,6 +42,7 @@ object KtErrorsParcelize {
     val OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED by error0<PsiElement>(OVERRIDE_MODIFIER)
     val CREATOR_DEFINITION_IS_NOT_ALLOWED by error0<PsiElement>(NAME_IDENTIFIER)
     val PARCELABLE_TYPE_NOT_SUPPORTED by error0<PsiElement>()
+    val PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED by error1<PsiElement, ConeKotlinType>()
     val PARCELER_SHOULD_BE_OBJECT by error0<PsiElement>()
     val PARCELER_TYPE_INCOMPATIBLE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val DUPLICATING_TYPE_PARCELERS by error0<PsiElement>()
@@ -51,8 +53,7 @@ object KtErrorsParcelize {
     val DEPRECATED_PARCELER by error0<PsiElement>()
     val INAPPLICABLE_IGNORED_ON_PARCEL by warning0<PsiElement>()
     val INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY by warning0<PsiElement>()
+    val VALUE_PARAMETER_USED_IN_CLASS_BODY by error0<PsiElement>()
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultErrorMessagesParcelize)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultErrorMessagesParcelize
 }

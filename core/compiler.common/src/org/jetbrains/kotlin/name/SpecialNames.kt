@@ -38,6 +38,9 @@ object SpecialNames {
     val ANONYMOUS = Name.special(ANONYMOUS_STRING)
 
     @JvmField
+    val ANONYMOUS_FQ_NAME = FqName.topLevel(Name.special(ANONYMOUS_STRING))
+
+    @JvmField
     val UNARY = Name.special("<unary>")
 
     @JvmField
@@ -45,6 +48,9 @@ object SpecialNames {
 
     @JvmField
     val INIT = Name.special("<init>")
+
+    @JvmField
+    val WHEN_SUBJECT = Name.special("<when-subject>")
 
     @JvmField
     val ITERATOR = Name.special("<iterator>")
@@ -83,6 +89,18 @@ object SpecialNames {
         require(idx >= 0) { "Index should be non-negative, but was $idx" }
 
         return Name.special("<index_$idx>")
+    }
+
+    private const val ANONYMOUS_PARAMETER_NAME_PREFIX = "anonymous parameter"
+
+    @JvmStatic
+    fun anonymousParameterName(index: Int): Name {
+        return Name.special("<$ANONYMOUS_PARAMETER_NAME_PREFIX $index>")
+    }
+
+    @JvmStatic
+    fun isAnonymousParameterName(name: Name): Boolean {
+        return name.isSpecial && name.asStringStripSpecialMarkers().startsWith(ANONYMOUS_PARAMETER_NAME_PREFIX)
     }
 
     @JvmStatic

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -25,3 +26,6 @@ fun test() {
 
     fun foo1(p: J? = platformNN, p1: J? = platformN, p2: J? = platformJ) {}
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, localFunction, localProperty,
+nullableType, propertyDeclaration */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass
+// LANGUAGE: +ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass
 // MODULE: m1
 // FILE: A.kt
 
@@ -23,3 +24,6 @@ internal fun bar(i: Internal) {
         <!SMARTCAST_IMPOSSIBLE!>i.x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, primaryConstructor,
+propertyDeclaration, smartcast, stringLiteral */

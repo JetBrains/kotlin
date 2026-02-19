@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /Host { // /Host|null[0]
+    final val ok // /Host.ok|{}ok[0]
+        final fun <get-ok>(): kotlin/String // /Host.ok.<get-ok>|<get-ok>(){}[0]
+    final val plusK // /Host.plusK|@kotlin.String{}plusK[0]
+        final fun (kotlin/String).<get-plusK>(): kotlin/String // /Host.plusK.<get-plusK>|<get-plusK>@kotlin.String(){}[0]
+    final fun (kotlin/String).provideDelegate(kotlin/Any?, kotlin/Any): /Host.StringDelegate // /Host.provideDelegate|provideDelegate@kotlin.String(kotlin.Any?;kotlin.Any){}[0]
+    final class StringDelegate { // /Host.StringDelegate|null[0]
+        final val s // /Host.StringDelegate.s|{}s[0]
+            final fun <get-s>(): kotlin/String // /Host.StringDelegate.s.<get-s>|<get-s>(){}[0]
+        constructor <init>(kotlin/String) // /Host.StringDelegate.<init>|<init>(kotlin.String){}[0]
+        final fun getValue(kotlin/String, kotlin/Any): kotlin/String // /Host.StringDelegate.getValue|getValue(kotlin.String;kotlin.Any){}[0]
+    }
+}

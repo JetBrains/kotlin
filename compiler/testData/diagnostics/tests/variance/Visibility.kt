@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface Test<in I, out O> {
     val internal_val: <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>
@@ -19,3 +20,6 @@ interface Test<in I, out O> {
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun protected_fun(i: <!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>) : <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>
     <!PRIVATE_FUNCTION_WITH_NO_BODY!>private<!> fun private_fun(i: O) : I
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, interfaceDeclaration, nullableType, out, propertyDeclaration,
+typeParameter */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun foo() {
     <!WRONG_MODIFIER_TARGET!>enum<!> class A {
@@ -18,3 +19,6 @@ fun foo() {
 
     <!WRONG_MODIFIER_TARGET!>enum<!> class<!SYNTAX!><!> {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry, functionDeclaration,
+lambdaLiteral, localClass, localProperty, nestedClass, propertyDeclaration */

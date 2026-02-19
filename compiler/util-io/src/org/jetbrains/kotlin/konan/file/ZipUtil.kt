@@ -7,9 +7,16 @@ package org.jetbrains.kotlin.konan.file
 
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributeView
+import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
 import java.nio.file.spi.FileSystemProvider
+import java.util.stream.Collectors
+import java.util.zip.ZipEntry
 import java.util.zip.ZipException
+import java.util.zip.ZipOutputStream
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.outputStream
+import kotlin.io.path.relativeTo
 
 // Zip filesystem provider doesn't allow creating several instances of ZipFileSystem from the same URI,
 // so newFileSystem(URI, ...) throws a FileSystemAlreadyExistsException in this case.
@@ -22,17 +29,21 @@ internal fun File.zipFileSystem(create: Boolean = false): FileSystem {
 
     // There is no FileSystems.newFileSystem overload accepting the attribute map.
     // So we have to manually iterate over the filesystem providers.
-    return FileSystemProvider.installedProviders().filter { it.scheme == "jar" }.mapNotNull {
+    return FileSystemProvider.installedProviders().firstNotNullOfOrNull { fileSystemProvider ->
+        if (fileSystemProvider.scheme != "jar") return@firstNotNullOfOrNull null
+
         try {
-            it.newFileSystem(this.toPath(), attributes)
-        } catch(e: Exception) {
-            when(e) {
-                is UnsupportedOperationException,
-                is IllegalArgumentException -> null
+            fileSystemProvider.newFileSystem(this.toPath(), attributes)
+        } catch (e: Exception) {
+            when (e) {
+                is UnsupportedOperationException, is IllegalArgumentException -> null
                 else -> throw e
             }
         }
-    }.first()
+    } ?: throw ZipException(
+        "Cannot create a virtual file system to read KLIB archive file. " +
+                "Probably the file is a malformed archive or does not exist: $this"
+    )
 }
 
 fun FileSystem.file(file: File) = File(this.getPath(file.path))
@@ -41,12 +52,86 @@ fun FileSystem.file(path: String) = File(this.getPath(path))
 
 private fun File.toPath() = Paths.get(this.path)
 
-fun File.zipDirAs(unixFile: File) {
-    unixFile.withZipFileSystem(create = true) {
-        // Time attributes are not preserved to ensure that the output zip file bytes deterministic for a fixed set of
-        // input files.
-        this.recursiveCopyTo(it.file("/"), resetTimeAttributes = true)
+fun File.zipDirAs(zipFile: File): Unit = zipDirAsInternal(dirPath = this.javaPath, zipFilePath = zipFile.javaPath)
+
+internal inline fun zipDirAsInternal(dirPath: Path, zipFilePath: Path, shuffle: (MutableList<Path>) -> Unit = {}) {
+    val dirPathWithExpandedSymlinks: Path = dirPath.expandSymlinks()
+
+    zipFilePath.outputStream().use { outputStream ->
+        ZipOutputStream(outputStream).use { zipOutputStream ->
+            zipOutputStream.setLevel(5) // Set the medium compression level.
+
+            val paths: MutableList<Path> = Files.walk(dirPathWithExpandedSymlinks).collect(Collectors.toList())
+            shuffle(paths)
+            paths.sort()
+
+            paths.forEach { path: Path ->
+                val pathWithExpandedSymlinks: Path = path.expandSymlinks()
+
+                if (!pathWithExpandedSymlinks.startsWith(dirPathWithExpandedSymlinks)) {
+                    throw ZipException("An attempt to escape the source directory $dirPath in symlink $path")
+                } else if (pathWithExpandedSymlinks == dirPathWithExpandedSymlinks) {
+                    // Don't need to keep the root "/" directory in the archive.
+                    return@forEach
+                }
+
+                val relativePath: String = path.relativeTo(dirPathWithExpandedSymlinks).invariantSeparatorsPathString
+
+                val attributes = Files.readAttributes(pathWithExpandedSymlinks, BasicFileAttributes::class.java, LinkOption.NOFOLLOW_LINKS)
+                when {
+                    attributes.isRegularFile -> zipOutputStream.newEntry(relativePath, isDir = false) {
+                        Files.copy(pathWithExpandedSymlinks, zipOutputStream)
+                    }
+
+                    attributes.isDirectory -> zipOutputStream.newEntry(relativePath, isDir = true)
+
+                    else -> error("Unsupported file type encountered: $path")
+                }
+            }
+        }
     }
+}
+
+private val DEFAULT_ZIP_ENTRY_TIME = FileTime.fromMillis(0)
+
+private inline fun ZipOutputStream.newEntry(relativePath: String, isDir: Boolean, block: (ZipEntry) -> Unit = {}) {
+    val entry = if (isDir) {
+        ZipEntry("$relativePath/").also {
+            it.setMethod(ZipOutputStream.STORED)
+            it.size = 0
+            it.crc = 0
+        }
+    } else {
+        ZipEntry(relativePath).also {
+            it.setMethod(ZipOutputStream.DEFLATED) // Default method.
+        }
+    }
+
+    // Reset all times.
+    entry.creationTime = DEFAULT_ZIP_ENTRY_TIME
+    entry.lastModifiedTime = DEFAULT_ZIP_ENTRY_TIME
+    entry.lastAccessTime = DEFAULT_ZIP_ENTRY_TIME
+    entry.extra = null
+
+    putNextEntry(entry)
+
+    // Customize the entry.
+    block(entry)
+
+    closeEntry()
+}
+
+private fun Path.expandSymlinks(): Path {
+    val correctedPath: Path = if (System.getProperty("os.name").contains("Windows")) {
+        val rawPath = this.toString()
+        if (rawPath.startsWith("/"))
+            Paths.get(rawPath.removePrefix("/"))
+        else
+            this
+    } else
+        this
+
+    return correctedPath.toRealPath()
 }
 
 /**

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 external fun foo(): Int = definedExternally
 
 external fun bar(): Unit {

@@ -1,6 +1,8 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FULL_JDK
-// !LANGUAGE: -ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve
+// LANGUAGE: -ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve
 // This test is not K1/K2 identical due to KT-58789 not implemented yet
 
 // FILE: JavaSmartList.java
@@ -53,3 +55,6 @@ fun main() {
 
     JavaSmartList.takes(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+rangeExpression, stringLiteral */

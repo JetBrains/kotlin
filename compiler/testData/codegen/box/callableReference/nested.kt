@@ -1,5 +1,7 @@
+// FILE: lib.kt
 inline fun String.takeRef(ref: () -> Unit) = this
 
+// FILE: main.kt
 fun f1() {}
 fun String.f2() {}
 

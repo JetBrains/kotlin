@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testDestructuring(kotlin.collections/List<kotlin/Pair<kotlin/Int, kotlin/String>>) // /testDestructuring|testDestructuring(kotlin.collections.List<kotlin.Pair<kotlin.Int,kotlin.String>>){}[0]
+final fun /testEmpty(kotlin.collections/List<kotlin/String>) // /testEmpty|testEmpty(kotlin.collections.List<kotlin.String>){}[0]
+final fun /testIterable(kotlin.collections/List<kotlin/String>) // /testIterable|testIterable(kotlin.collections.List<kotlin.String>){}[0]
+final fun /testRange() // /testRange|testRange(){}[0]

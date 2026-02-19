@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 <!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface First
 // Now inspection
@@ -9,3 +10,5 @@ final enum class Third {
 }
 // Now inspection
 final object Sixth
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, interfaceDeclaration, objectDeclaration */

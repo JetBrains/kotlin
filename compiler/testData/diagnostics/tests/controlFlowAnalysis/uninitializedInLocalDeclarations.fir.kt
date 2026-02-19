@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
     fun bar() {
         var i : Int
@@ -48,3 +49,6 @@ fun test5() {
 }
 
 fun doSmth(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, lambdaLiteral, localFunction, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object T3 {
     interface Foo<T>
@@ -11,3 +12,6 @@ object T3 {
 
     val test1: String by delegate()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nestedClass, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, typeParameter */

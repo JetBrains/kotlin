@@ -5,24 +5,34 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.types.FirPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-object FirProjectionsOnNonClassTypeArgumentChecker : FirQualifiedAccessExpressionChecker() {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirProjectionsOnNonClassTypeArgumentChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         for (it in expression.typeArguments) {
             when (it) {
-                is FirStarProjection -> reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, context)
+                is FirStarProjection -> reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT)
                 is FirTypeProjectionWithVariance -> {
                     if (it.variance != Variance.INVARIANT) {
-                        reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, context)
+                        val modifierSource = it.source.getModifierList()?.modifiers?.firstOrNull()?.source
+                        reporter.reportOn(modifierSource ?: it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT)
                     }
+                }
+                is FirPlaceholderProjection -> errorWithAttachment("Placeholder projection shouldn't exist during checker phase.") {
+                    withFirEntry("expression", expression)
                 }
             }
         }

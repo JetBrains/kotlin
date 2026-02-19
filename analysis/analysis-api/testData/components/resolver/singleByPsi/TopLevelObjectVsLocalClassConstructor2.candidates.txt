@@ -1,0 +1,37 @@
+KtNameReferenceExpression(104,112): 'Conflict'
+  KaApplicableCallCandidateInfo:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Conflict
+        isSafeNavigation = false
+        type = test.Conflict
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/Conflict.invoke(<dispatch receiver>: test.Conflict): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/Conflict.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = <local>.Conflict
+        symbol = <constructor>(): <local>.Conflict
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true

@@ -1,0 +1,31 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructor_superCallArgument.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|kotlin/Int| = Int(10)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Child| {
+            super<R|test/Base|>(R|test/property|)
+        }
+
+    }

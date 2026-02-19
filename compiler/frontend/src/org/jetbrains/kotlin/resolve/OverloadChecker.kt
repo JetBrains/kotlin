@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResol
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     /**
@@ -55,12 +54,12 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
         val aSignature = FlatSignature.createFromCallableDescriptor(a)
         val bSignature = FlatSignature.createFromCallableDescriptor(b)
 
-        val aIsNotLessSpecificThanB = ConstraintSystemBuilderImpl.forSpecificity()
-            .isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
-        val bIsNotLessSpecificThanA = ConstraintSystemBuilderImpl.forSpecificity()
-            .isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
+        val aIsEquallyOrMoreSpecificThanB = ConstraintSystemBuilderImpl.forSpecificity()
+            .isSignatureEquallyOrMoreSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
+        val bIsEquallyOrMoreSpecificThanA = ConstraintSystemBuilderImpl.forSpecificity()
+            .isSignatureEquallyOrMoreSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
 
-        return !(aIsNotLessSpecificThanB && bIsNotLessSpecificThanA)
+        return !(aIsEquallyOrMoreSpecificThanB && bIsEquallyOrMoreSpecificThanA)
     }
 
     private enum class DeclarationCategory {

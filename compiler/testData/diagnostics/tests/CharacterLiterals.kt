@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(c : Char) {
   test(<!EMPTY_CHARACTER_LITERAL!>''<!>)
   test('a')
@@ -11,3 +12,5 @@ fun test(c : Char) {
   test('\'')
   test('\"')
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

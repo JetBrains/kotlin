@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun v(x : Int, y : String, vararg f : Long) {}
 fun v1(vararg f :  (Int) -> Unit) {}
 
@@ -15,3 +16,5 @@ fun test() {
     v1({}) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
     v1 <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral, vararg */

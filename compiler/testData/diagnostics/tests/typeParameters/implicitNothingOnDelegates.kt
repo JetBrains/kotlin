@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 // WITH_REFLECT
 // SKIP_TXT
@@ -20,3 +21,7 @@ private object Scope {
         val p: Int by <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>Scope.Delegate(i)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, inProjection, localProperty, nestedClass,
+nullableType, objectDeclaration, operator, outProjection, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, typeParameter */

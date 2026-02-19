@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FILE: Foo.java
 public abstract class Foo<K extends Bar<? extends Foo<K>>> {
@@ -60,3 +61,6 @@ fun box(foo: Foo<*>) {
 
     foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>test<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, funWithExtensionReceiver, functionDeclaration, javaProperty, javaType,
+outProjection, starProjection, typeConstraint, typeParameter */

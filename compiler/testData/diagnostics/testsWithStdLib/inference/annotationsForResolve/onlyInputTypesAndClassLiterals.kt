@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // WITH_REFLECT
 // FULL_JDK
@@ -12,3 +13,6 @@ fun test(field: Field) {
         <!DEBUG_INFO_EXPRESSION_TYPE("java.lang.Class<kotlin.Long>?")!>Long::class.javaPrimitiveType<!>
     )<!>
 }
+
+/* GENERATED_FIR_TAGS: classReference, flexibleType, functionDeclaration, javaProperty, nullableType, outProjection,
+starProjection, stringLiteral, typeParameter */

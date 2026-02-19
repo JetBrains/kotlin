@@ -1,19 +1,24 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +LocalTypeAliases
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 fun <T> emptyList(): List<T> = null!!
 
 fun <T> foo() {
-    typealias LT = List<T>
+    typealias LT = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>List<T><!>
 
-    val a: <!UNRESOLVED_REFERENCE!>LT<!> = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+    val a: LT = emptyList()
 
-    fun localFun(): <!UNRESOLVED_REFERENCE!>LT<!> {
-        typealias LLT = List<T>
+    fun localFun(): LT {
+        typealias LLT = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>List<T><!>
 
-        val b: <!UNRESOLVED_REFERENCE!>LLT<!> = a
+        val b: LLT = a
 
         return b
     }
 
     localFun()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, localFunction, localProperty, nullableType,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

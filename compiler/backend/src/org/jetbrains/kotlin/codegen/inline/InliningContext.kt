@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 
 class RootInliningContext(
     state: GenerationState,
@@ -14,9 +15,12 @@ class RootInliningContext(
     val sourceCompilerForInline: SourceCompilerForInline,
     override val callSiteInfo: InlineCallSiteInfo,
     val inlineMethodReifier: ReifiedTypeInliner<*>,
-    typeParameterMappings: TypeParameterMappings<*>
+    typeParameterMappings: TypeParameterMappings<*>,
+    inlineScopesGenerator: InlineScopesGenerator?,
+    typeMapper: KotlinTypeMapperBase,
 ) : InliningContext(
-    null, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), null, false
+    null, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings),
+    null, false, inlineScopesGenerator, typeMapper,
 )
 
 class RegeneratedClassContext(
@@ -28,7 +32,7 @@ class RegeneratedClassContext(
     override val callSiteInfo: InlineCallSiteInfo,
     override val transformationInfo: TransformationInfo
 ) : InliningContext(
-    parent, state, nameGenerator, typeRemapper, lambdaInfo, true
+    parent, state, nameGenerator, typeRemapper, lambdaInfo, true, null, parent.typeMapper,
 ) {
     val continuationBuilders: MutableMap<String, ClassBuilder> = hashMapOf()
 }
@@ -39,7 +43,9 @@ open class InliningContext(
     val nameGenerator: NameGenerator,
     val typeRemapper: TypeRemapper,
     val lambdaInfo: LambdaInfo?,
-    val classRegeneration: Boolean
+    val classRegeneration: Boolean,
+    val inlineScopesGenerator: InlineScopesGenerator?,
+    val typeMapper: KotlinTypeMapperBase,
 ) {
     val isInliningLambda
         get() = lambdaInfo != null
@@ -80,12 +86,9 @@ open class InliningContext(
             //mark lambda inlined
             hashMapOf(lambdaInfo.lambdaClassType.internalName to null),
             lambdaInfo,
-            // TODO we also want this for the old backend (KT-28064), but this changes EnclosingMethod of objects
-            //      in inline lambdas, so use a language version flag.
-            if (state.isIrBackend)
-                false // Do not regenerate objects in lambdas inlined into regenerated objects unless needed for some other reason.
-            else
-                classRegeneration
+            // Do not regenerate objects in lambdas inlined into regenerated objects unless needed for some other reason.
+            classRegeneration = false,
+            inlineScopesGenerator,
         )
 
     fun subInlineWithClassRegeneration(
@@ -103,7 +106,8 @@ open class InliningContext(
         generator: NameGenerator,
         additionalTypeMappings: Map<String, String?> = emptyMap(),
         lambdaInfo: LambdaInfo? = this.lambdaInfo,
-        classRegeneration: Boolean = this.classRegeneration
+        classRegeneration: Boolean = this.classRegeneration,
+        inlineScopesGenerator: InlineScopesGenerator? = null
     ): InliningContext {
         val isInliningLambda = lambdaInfo != null
         return InliningContext(
@@ -114,7 +118,7 @@ open class InliningContext(
                 //root inline lambda
                 isInliningLambda && !this.isInliningLambda
             ),
-            lambdaInfo, classRegeneration
+            lambdaInfo, classRegeneration, inlineScopesGenerator, typeMapper,
         )
     }
 

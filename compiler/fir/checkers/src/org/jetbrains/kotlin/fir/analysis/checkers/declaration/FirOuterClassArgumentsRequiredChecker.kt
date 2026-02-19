@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -17,29 +18,29 @@ import org.jetbrains.kotlin.fir.resolve.toTypeProjections
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
         for (superTypeRef in declaration.superTypeRefs) {
-            checkOuterClassArgumentsRequired(superTypeRef, declaration, context, reporter)
+            checkOuterClassArgumentsRequired(superTypeRef, declaration)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkOuterClassArgumentsRequired(
         typeRef: FirTypeRef,
         declaration: FirRegularClass?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (typeRef !is FirResolvedTypeRef || typeRef is FirErrorTypeRef) {
             return
         }
 
-        val type: ConeKotlinType = typeRef.type
+        val type: ConeKotlinType = typeRef.coneType.abbreviatedTypeOrSelf
         val delegatedTypeRef = typeRef.delegatedTypeRef
 
         if (delegatedTypeRef is FirUserTypeRef && type is ConeClassLikeType) {
-            val symbol = type.lookupTag.toSymbol(context.session)
+            val symbol = type.lookupTag.toSymbol()
 
             if (symbol is FirRegularClassSymbol) {
                 val typeArguments = delegatedTypeRef.qualifier.toTypeProjections()
@@ -49,7 +50,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
                     val typeParameter = typeParameters[index]
                     if (!isValidTypeParameterFromOuterDeclaration(typeParameter, declaration, context.session)) {
                         val outerClass = typeParameter.containingDeclarationSymbol as? FirRegularClassSymbol ?: break
-                        reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass, context)
+                        reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass)
                         break
                     }
                 }
@@ -58,7 +59,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
 
         val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
         for (firTypeRefSource in typeRefAndSourcesForArguments) {
-            firTypeRefSource.typeRef?.let { checkOuterClassArgumentsRequired(it, declaration, context, reporter) }
+            firTypeRefSource.typeRef?.let { checkOuterClassArgumentsRequired(it, declaration) }
         }
     }
 }

@@ -24,6 +24,7 @@ workspace.xml
 build/
 !**/src/**/build
 !**/test/**/build
+!**/tests-gen/**/build
 *.iml
 !**/testData/**/*.iml
 .idea/artifacts
@@ -33,7 +34,6 @@ build/
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
 .idea/runConfigurations/_JPS_*.xml
-.idea/runConfigurations/PILL_*.xml
 .idea/runConfigurations/_FP_*.xml
 .idea/runConfigurations/_MT_*.xml
 .idea/libraries
@@ -47,9 +47,10 @@ build/
 .idea/libraries-with-intellij-classes.xml
 .idea/misc.xml
 .idea/protoeditor.xml
+.idea/uiDesigner.xml
+.idea/copilot.data.migration.*.xml
 node_modules/
 .rpt2_cache/
-libraries/tools/kotlin-test-js-runner/lib/
 local.properties
 buildSrcTmp/
 distTmp/
@@ -57,3 +58,10 @@ outTmp/
 /test.output
 /kotlin-native/dist
 kotlin-ide/
+.kotlin/
+.teamcity/
+.npmrc
+/.idea/AndroidProjectSystem.xml
+**/.junie/memory/
+.claude/local.md
+.claude/CLAUDE.md

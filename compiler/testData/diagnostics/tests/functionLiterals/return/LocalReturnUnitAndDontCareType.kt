@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // NI_EXPECTED_FILE
 val flag = true
 
@@ -18,3 +20,5 @@ val c = run {
 
     return@run <!RETURN_TYPE_MISMATCH!>4<!>
 }
+
+/* GENERATED_FIR_TAGS: ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

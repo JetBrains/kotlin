@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
 
 suspend fun <V> await(f: V): V = f
 
@@ -14,3 +15,6 @@ fun foo() {
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, suspend, tryExpression, typeParameter */

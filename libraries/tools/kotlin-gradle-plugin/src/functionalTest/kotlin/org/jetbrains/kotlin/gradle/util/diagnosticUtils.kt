@@ -6,21 +6,24 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
+import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.test.TestDataAssertions
 import java.io.File
 import java.nio.file.Path
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-internal fun checkDiagnosticsWithMppProject(projectName: String, projectConfiguration: Project.() -> Unit) {
+internal fun checkDiagnosticsWithMppProject(expectedDiagnosticsFile: String, projectConfiguration: Project.() -> Unit) {
+    val projectName = File(expectedDiagnosticsFile).name
     val project = buildProjectWithMPP(projectBuilder = { withName(projectName) })
     project.setMultiplatformAndroidSourceSetLayoutVersion(2)
     project.projectConfiguration()
     project.evaluate()
-    project.checkDiagnostics(projectName)
+    project.checkDiagnostics(expectedDiagnosticsFile)
 }
 
 internal fun ToolingDiagnostic.equals(that: ToolingDiagnostic, ignoreThrowable: Boolean) = if (ignoreThrowable) {
@@ -33,7 +36,13 @@ internal fun ToolingDiagnostic.equals(that: ToolingDiagnostic, ignoreThrowable: 
  * [compactRendering] == true will omit projects with no diagnostics from the report, as well as
  * name of the project if it's a single one with diagnostics (useful for small one-project tests)
  */
-internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Boolean = true) {
+internal fun Project.checkDiagnostics(
+    testDataName: String,
+    compactRendering: Boolean = true,
+    // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
+    // Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
+    filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic),
+) {
     val diagnosticsPerProject = rootProject.allprojects.mapNotNull {
         val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(it)
         if (diagnostics.isEmpty() && compactRendering)
@@ -43,17 +52,20 @@ internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Bo
     }.toMap()
     val expectedDiagnostics = expectedDiagnosticsFile(testDataName)
 
-    if (diagnosticsPerProject.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
+    val filteredDiagnostics =
+        diagnosticsPerProject.mapValues { (_, diagnostics) -> diagnostics.filterNot { it.id in filterDiagnosticIds.map { it.id } } }
+
+    if (filteredDiagnostics.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
         if (expectedDiagnostics.exists())
-            error("Expected to have some diagnostics in file://${expectedDiagnostics.canonicalPath}, but none were actually reported")
+            error("Expected to have some diagnostics in file://${expectedDiagnostics.absolutePath}, but none were actually reported")
         else
             return // do not create empty file
     }
 
-    val actualRenderedText = if (diagnosticsPerProject.size == 1 && compactRendering) {
-        diagnosticsPerProject.entries.single().value.render()
+    val actualRenderedText = if (filteredDiagnostics.size == 1 && compactRendering) {
+        filteredDiagnostics.entries.single().value.render()
     } else {
-        diagnosticsPerProject
+        filteredDiagnostics
             .entries
             .joinToString(separator = "\n\n") { (projectName, diagnostics) ->
                 val nameSanitized = if (projectName == "test") "<root>" else projectName
@@ -63,11 +75,16 @@ internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Bo
 
     val sanitizedTest = actualRenderedText.replace(File.separator, "/")
 
-    KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, sanitizedTest)
+    TestDataAssertions.assertEqualsToFile(expectedDiagnostics, sanitizedTest)
 }
 
-internal fun Project.assertNoDiagnostics() {
-    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+// An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
+// Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
+internal val defaultFilteredDiagnostics = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic)
+
+internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = defaultFilteredDiagnostics) {
+    val actualDiagnostics =
+        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
     assertTrue(
         actualDiagnostics.isEmpty(), "Expected to have no diagnostics, but some were reported:\n ${actualDiagnostics.render()}"
     )
@@ -77,8 +94,8 @@ internal fun Project.assertNoDiagnostics() {
  * Checks that diagnostic with [factory.id] is reported. The exact parameters (if any)
  * are ignored. If you need to compare the parameters, refer to the overload accepting [ToolingDiagnostic]
  */
-internal fun Project.assertContainsDiagnostic(factory: ToolingDiagnosticFactory) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(factory)
+internal fun Project.assertContainsDiagnostic(factory: ToolingDiagnosticFactory, idSuffix: String = "") {
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(factory, idSuffix)
 }
 
 internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
@@ -88,15 +105,26 @@ internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ign
 
 private fun Any.withIndent() = this.toString().prependIndent("    ")
 
-internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(factory: ToolingDiagnosticFactory) {
-    if (!any { it.id == factory.id }) failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
+internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(
+    factory: ToolingDiagnosticFactory,
+    idSuffix: String = "",
+): ToolingDiagnostic {
+    val found = firstOrNull { it.id == if (idSuffix.isNotBlank()) "${factory.id}_$idSuffix" else factory.id }
+    if (found == null) {
+        failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
+    } else {
+        return found
+    }
 }
 
 internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
     if (none { it.equals(diagnostic, ignoreThrowable) }) failDiagnosticNotFound("diagnostic $diagnostic\n", this)
 }
 
-private fun failDiagnosticNotFound(diagnosticDescription: String, notFoundInCollection: Collection<ToolingDiagnostic>) {
+private fun failDiagnosticNotFound(
+    diagnosticDescription: String,
+    notFoundInCollection: Collection<ToolingDiagnostic>,
+): Nothing {
     fail("Missing ${diagnosticDescription}in:\n${notFoundInCollection.render().withIndent()}")
 }
 
@@ -128,12 +156,44 @@ internal fun Project.assertNoDiagnostics(factory: ToolingDiagnosticFactory) {
 internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(id: String) {
     val unexpectedDiagnostics = filter { it.id == id }
     if (unexpectedDiagnostics.isNotEmpty()) {
-        fail("Expected to have no diagnostics with id '$id', but some were reported:\n${unexpectedDiagnostics.render()}")
+        fail("Expected to have no diagnostics with id '$id', but ${unexpectedDiagnostics.size} were reported:\n${unexpectedDiagnostics.render()}")
     }
 }
 
 internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(factory: ToolingDiagnosticFactory) {
     assertNoDiagnostics(factory.id)
+}
+
+/**
+ * Asserts that [this] contains a single diagnostic that matches [factory]'s ID.
+ * @returns the [ToolingDiagnostic] with the same ID as [factory].
+ */
+internal fun Collection<ToolingDiagnostic>.assertContainsSingleDiagnostic(
+    factory: ToolingDiagnosticFactory,
+): ToolingDiagnostic {
+    val matches = filter { it.id == factory.id }
+    if (matches.size != 1) {
+        fail("Expected to have 1 diagnostic with id '${factory.id}', but ${matches.size} were reported:\n${matches.render()}")
+    }
+    return matches.single()
+}
+
+internal abstract class TestsProblemsReporter : ProblemsReporter {
+    private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
+
+    override fun reportProblemDiagnostic(
+        diagnostic: ToolingDiagnostic,
+        options: ToolingDiagnosticRenderingOptions,
+    ) {
+        val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
+        if (renderedDiagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
+            throw diagnostic.createAnExceptionForFatalDiagnostic(options)
+        }
+    }
+
+    class Factory : ProblemsReporter.Factory {
+        override fun getInstance(objects: ObjectFactory): ProblemsReporter = objects.newInstance<TestsProblemsReporter>()
+    }
 }
 
 private fun Collection<ToolingDiagnostic>.render(): String = joinToString(separator = "\n----\n")

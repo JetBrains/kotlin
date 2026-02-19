@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
+// DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
 // MODULE: m1-common
 // FILE: common.kt
 expect class A {
@@ -47,3 +49,6 @@ class WithIncompatibilityImpl {
 }
 
 <!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias WithIncompatibility = WithIncompatibilityImpl<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+stringLiteral, typeAliasDeclaration */

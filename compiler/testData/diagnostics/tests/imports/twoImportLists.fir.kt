@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE:a.kt
 package a
 
@@ -84,7 +85,7 @@ object C {
 }
 
 fun foo() {
-    if (<!UNRESOLVED_REFERENCE!>i<!> == 3) <!UNRESOLVED_REFERENCE!>f<!>()
+    if (i == 3) f()
 }
 
 //FILE:d.kt
@@ -102,3 +103,7 @@ class A() {
         object C : B() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

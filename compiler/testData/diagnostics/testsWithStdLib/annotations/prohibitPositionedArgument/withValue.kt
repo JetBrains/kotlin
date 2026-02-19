@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 public @interface A {
@@ -16,3 +17,5 @@ public @interface A {
 
 @A("v2", x = true, b = 3.0, a = 4) fun foo3() {}
 @A(value = "v2", x = true, b = 3.0, a = 4) fun foo4() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaType, stringLiteral */

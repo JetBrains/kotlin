@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1
 // FILE: a.kt
 package a
@@ -14,15 +15,14 @@ class b {
 
 // MODULE: m2(m1)
 // FILE: b.kt
-package test
+package test1
 
 class a
 
 val x = a.<!UNRESOLVED_REFERENCE!>b<!>()
 
-// MODULE: m3(m1)
 // FILE: c.kt
-package test
+package test2
 
 import a.a
 
@@ -32,3 +32,5 @@ fun foo(i: a) {
     a.<!UNRESOLVED_REFERENCE!>a<!>
     a.<!UNRESOLVED_REFERENCE!>a<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.<!DEPRECATION!>something1<!>
@@ -46,3 +47,6 @@ public class JavaClass {
      */
     public void setSomething5(int value) { }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, integerLiteral, javaProperty,
+javaType */

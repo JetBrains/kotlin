@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 //KT-1193 Check enum entry supertype / initialization
 
 package kt1193
@@ -11,3 +12,6 @@ enum class MyEnum(val i: Int) {
 open class A(x: Int = 1)
 
 val x: MyEnum = MyEnum.A
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, integerLiteral, primaryConstructor,
+propertyDeclaration */

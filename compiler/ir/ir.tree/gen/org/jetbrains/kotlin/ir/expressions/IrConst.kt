@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,18 +8,16 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.const]
  */
-abstract class IrConst<T> : IrExpression() {
-    abstract var kind: IrConstKind<T>
+abstract class IrConst : IrExpression() {
+    abstract var kind: IrConstKind
 
-    abstract var value: T
+    abstract var value: Any?
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitConst(this, data)
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-2585 Code in try-finally is incorrectly marked as unreachable
 
 fun foo(x: String): String {
@@ -10,3 +11,5 @@ fun foo(x: String): String {
         return x     // <- Wrong UNREACHABLE_CODE
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, tryExpression */

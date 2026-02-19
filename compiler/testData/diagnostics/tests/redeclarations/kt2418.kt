@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-2418 Front-end allows enum constants with same name
 
@@ -26,3 +27,5 @@ enum class D {
     class <!REDECLARATION!>FOO<!> {}
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral, nestedClass,
+propertyDeclaration */

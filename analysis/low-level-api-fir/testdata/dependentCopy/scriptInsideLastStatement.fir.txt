@@ -1,6 +1,0 @@
-KT element: KtNameReferenceExpression
-FIR element: FirResolvedNamedReferenceImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|/scriptFunction|

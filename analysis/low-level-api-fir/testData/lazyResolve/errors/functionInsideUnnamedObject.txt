@@ -1,0 +1,351 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] functionInsideUnnamedObject.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(SUPER_TYPES)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(SUPER_TYPES)] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(TYPES)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(TYPES)] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] functionInsideUnnamedObject.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] object <no name provided> : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<no name provided>] constructor(): R|Foo.<no name provided>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class Bar : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bar] constructor(): R|Foo.<no name provided>.Bar| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+    }

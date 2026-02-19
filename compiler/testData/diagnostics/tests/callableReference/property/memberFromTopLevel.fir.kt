@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 import kotlin.reflect.*
 
@@ -23,3 +24,7 @@ fun test() {
     checkSubtype<String>(q.get(A()))
     q.set(A(), "q")
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

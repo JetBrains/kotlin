@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     fun bar() {
         <!UNRESOLVED_REFERENCE!>div<!> {
@@ -58,3 +59,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, lambdaLiteral, stringLiteral,
+unaryExpression */

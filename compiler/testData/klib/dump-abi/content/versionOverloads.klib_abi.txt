@@ -1,0 +1,53 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <versionOverloads_library>
+open class /A { // /A|null[0]
+    final val a // /A.a|{}a[0]
+        final fun <get-a>(): kotlin/Int // /A.a.<get-a>|<get-a>(){}[0]
+    final val b // /A.b|{}b[0]
+        final fun <get-b>(): kotlin/String // /A.b.<get-b>|<get-b>(){}[0]
+    final val c // /A.c|{}c[0]
+        final fun <get-c>(): kotlin/Float // /A.c.<get-c>|<get-c>(){}[0]
+    constructor <init>(kotlin/Int = ...) // /A.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ...) // /A.<init>|<init>(kotlin.Int;kotlin.String){}[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ..., kotlin/Float = ...) // /A.<init>|<init>(kotlin.Int;kotlin.String;kotlin.Float){}[0]
+}
+final class /B : /A { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    constructor <init>(kotlin/Boolean) // /B.<init>|<init>(kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Int) // /B.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/String = ...) // /B.<init>|<init>(kotlin.String){}[0]
+    constructor <init>(kotlin/Int, kotlin/String = ...) // /B.<init>|<init>(kotlin.Int;kotlin.String){}[0]
+}
+final class /C { // /C|null[0]
+    final val a // /C.a|{}a[0]
+        final fun <get-a>(): kotlin/Int // /C.a.<get-a>|<get-a>(){}[0]
+    final val b // /C.b|{}b[0]
+        final fun <get-b>(): kotlin/String // /C.b.<get-b>|<get-b>(){}[0]
+    final val c // /C.c|{}c[0]
+        final fun <get-c>(): kotlin/Float // /C.c.<get-c>|<get-c>(){}[0]
+    constructor <init>(kotlin/Int = ...) // /C.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ...) // /C.<init>|<init>(kotlin.Int;kotlin.String;kotlin.String){}[0]
+    constructor <init>(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ..., kotlin/Float = ...) // /C.<init>|<init>(kotlin.Int;kotlin.String;kotlin.String;kotlin.Float){}[0]
+    final fun component1(): kotlin/Int // /C.component1|component1(){}[0]
+    final fun component2(): kotlin/String // /C.component2|component2(){}[0]
+    final fun component4(): kotlin/Float // /C.component4|component4(){}[0]
+    final fun copy(kotlin/Int = ...): /C // /C.copy|copy(kotlin.Int){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ...): /C // /C.copy|copy(kotlin.Int;kotlin.String;kotlin.String){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/String = ..., kotlin/String = ..., kotlin/Float = ...): /C // /C.copy|copy(kotlin.Int;kotlin.String;kotlin.String;kotlin.Float){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /C.equals|equals(kotlin.Any?){}[0]
+    final fun (kotlin/Int).extensionFn(): kotlin/String // /C.extensionFn|extensionFn@kotlin.Int(){}[0]
+    final fun (kotlin/Int).extensionFn(kotlin/String = ...): kotlin/String // /C.extensionFn|extensionFn@kotlin.Int(kotlin.String){}[0]
+    final fun (kotlin/Int).extensionFn(kotlin/String = ..., kotlin/Boolean = ...): kotlin/String // /C.extensionFn|extensionFn@kotlin.Int(kotlin.String;kotlin.Boolean){}[0]
+    final fun hashCode(): kotlin/Int // /C.hashCode|hashCode(){}[0]
+    final suspend fun suspendFn(kotlin/Int = ...): kotlin/String // /C.suspendFn|suspendFn(kotlin.Int){}[0]
+    final suspend fun suspendFn(kotlin/Int = ..., kotlin/String = ...): kotlin/String // /C.suspendFn|suspendFn(kotlin.Int;kotlin.String){}[0]
+    final suspend fun suspendFn(kotlin/Int = ..., kotlin/String = ..., kotlin/Boolean = ...): kotlin/String // /C.suspendFn|suspendFn(kotlin.Int;kotlin.String;kotlin.Boolean){}[0]
+    final fun toString(): kotlin/String // /C.toString|toString(){}[0]
+    final fun trailingLambda(kotlin/Int = ..., kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /C.trailingLambda|trailingLambda(kotlin.Int;kotlin.Function1<kotlin.String,kotlin.String>){}[0]
+    final fun trailingLambda(kotlin/Int = ..., kotlin/String = ..., kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /C.trailingLambda|trailingLambda(kotlin.Int;kotlin.String;kotlin.Function1<kotlin.String,kotlin.String>){}[0]
+    final fun trailingLambda(kotlin/Int = ..., kotlin/String = ..., kotlin/Boolean = ..., kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /C.trailingLambda|trailingLambda(kotlin.Int;kotlin.String;kotlin.Boolean;kotlin.Function1<kotlin.String,kotlin.String>){}[0]
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: Base.java
@@ -18,3 +19,5 @@ public class Derived<E extends CharSequence> extends Base<E> {
 fun main(d: Derived<CharSequence>) {
     d.foo("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, stringLiteral */

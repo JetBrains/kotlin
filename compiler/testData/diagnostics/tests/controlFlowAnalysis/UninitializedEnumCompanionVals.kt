@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 
 enum class A(val z: Any) {
@@ -15,3 +16,6 @@ enum class B(val z: Any) {
         val x = B.Y.ordinal
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, objectDeclaration, primaryConstructor,
+propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class My {
     val x: Int
@@ -6,3 +7,5 @@ class My {
         this.x = x
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, propertyDeclaration, secondaryConstructor, thisExpression */

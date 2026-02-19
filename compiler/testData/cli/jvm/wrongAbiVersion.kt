@@ -5,3 +5,5 @@ fun foo(x: ClassWithWrongAbiVersion) {
 
     1.replaceIndent(2, 3)
 }
+
+

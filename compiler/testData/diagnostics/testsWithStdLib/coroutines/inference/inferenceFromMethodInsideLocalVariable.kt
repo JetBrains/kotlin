@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -16,3 +17,6 @@ fun test(i: Int) {
         val p = send(i)
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object A {
     operator fun set(x: Int, y: String = "y", z: Double) {
@@ -40,3 +41,6 @@ fun test() {
 
     W[0] = 1
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, objectDeclaration, operator, stringLiteral,
+vararg */

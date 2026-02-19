@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1285
 // MODULE: lib
 // FILE: lib.kt
 
@@ -21,8 +20,6 @@ inline fun Baz.call(a: Int) = "Baz.call($a)"
 
 // MODULE: main(lib)
 // FILE: main.kt
-
-// CHECK_CONTAINS_NO_CALLS: box except=equals TARGET_BACKENDS=JS
 
 fun box(): String {
     var result = call(1)

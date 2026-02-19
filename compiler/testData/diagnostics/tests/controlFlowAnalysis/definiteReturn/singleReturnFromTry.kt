@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DUMP_CFG
 // DIAGNOSTICS: -UNUSED_EXPRESSION
@@ -44,3 +45,6 @@ fun test_5(): Int { // should be an error about missing return
         "hello"
     } finally {}
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, tryExpression, typeParameter */

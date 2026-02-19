@@ -1,12 +1,11 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
-// TARGET_BACKEND: NATIVE
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND_K1: ANY
+// Reason: break/continue in inline lambdas unsupported
 
+// FILE: lib.kt
 inline fun foo(block: () -> Unit) { block() }
 
+// FILE: main.kt
 fun box(): String {
     while (true) {
         foo { break }

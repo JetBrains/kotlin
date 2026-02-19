@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.jps.statistic
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
+import org.jetbrains.kotlin.build.report.metrics.JpsBuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 
@@ -27,7 +27,7 @@ class JpsCompileStatisticsData(
     private val finishTime: Long,
     private val compilerArguments: List<String>,
     private val nonIncrementalAttributes: Set<BuildAttribute>,
-    private val buildTimesMetrics: Map<JpsBuildTime, Long>,
+    private val buildTimesMetrics: Map<JpsBuildTimeMetric, Long>,
     private val performanceMetrics: Map<JpsBuildPerformanceMetric, Long>,
     private val gcTimeMetrics: Map<String, Long>?,
     private val gcCountMetrics: Map<String, Long>?,
@@ -36,7 +36,7 @@ class JpsCompileStatisticsData(
     private val compiledSources: List<String> = emptyList(),
     private val skipMessage: String?,
     private val icLogLines: List<String>,
-) : CompileStatisticsData<JpsBuildTime, JpsBuildPerformanceMetric> {
+) : CompileStatisticsData<JpsBuildTimeMetric, JpsBuildPerformanceMetric> {
     override fun getProjectName(): String? = projectName
     override fun getLabel(): String? = label
 
@@ -62,7 +62,7 @@ class JpsCompileStatisticsData(
 
     override fun getNonIncrementalAttributes(): Set<BuildAttribute> = nonIncrementalAttributes
 
-    override fun getBuildTimesMetrics(): Map<JpsBuildTime, Long> = buildTimesMetrics
+    override fun getBuildTimesMetrics(): Map<JpsBuildTimeMetric, Long> = buildTimesMetrics
 
     override fun getPerformanceMetrics(): Map<JpsBuildPerformanceMetric, Long> = performanceMetrics
 

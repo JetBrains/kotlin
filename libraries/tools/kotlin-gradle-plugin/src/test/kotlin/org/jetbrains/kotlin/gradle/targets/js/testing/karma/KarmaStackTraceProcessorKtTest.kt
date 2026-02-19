@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.Test
 
 class KarmaStackTraceProcessorKtTest {
 

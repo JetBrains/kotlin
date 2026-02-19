@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public fun foo(xx: Any): Int {
     var x = xx
     do {
@@ -13,3 +14,6 @@ public fun foo(xx: Any): Int {
     } while (!(x is String))
     return <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, doWhileLoop, functionDeclaration, ifExpression, isExpression, localProperty,
+propertyDeclaration, smartcast, stringLiteral */

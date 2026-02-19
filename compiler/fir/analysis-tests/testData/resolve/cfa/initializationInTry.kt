@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DUMP_CFG
 
 fun getNullableString(): String? = null
@@ -28,3 +29,6 @@ fun test_2() {
 
     takeNullableString(x)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, tryExpression */

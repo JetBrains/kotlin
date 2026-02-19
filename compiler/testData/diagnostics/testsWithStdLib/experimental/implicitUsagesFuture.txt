@@ -3,6 +3,8 @@ package
 public val x: kotlin.String
 public fun main(): kotlin.Unit
 public fun my(/*0*/ my: My /* = Some */): kotlin.Unit
+public fun my2(/*0*/ my: MyList /* = java.util.ArrayList<I> */): kotlin.Unit
+public fun my3(/*0*/ my: YourList /* = java.util.ArrayList<kotlin.String> */): kotlin.Unit
 public fun operatorContainerUsage(/*0*/ s: kotlin.String, /*1*/ a: AnotherContainer): kotlin.Unit
 public fun use(/*0*/ arg: NotExperimentalExtension): kotlin.Unit
 public fun useDataClass(/*0*/ d: DataClass): kotlin.Unit
@@ -111,6 +113,8 @@ public abstract class User {
     public final fun withSome(/*0*/ some: Some? = ...): kotlin.Unit
     public final fun Some?.onSome(): kotlin.Unit
 }
+@Marker public typealias AList = kotlin.collections.ArrayList<I>
 public typealias My = Some
 @kotlin.OptIn(markerClass = {Marker::class}) public typealias MyList = kotlin.collections.ArrayList<I>
 @Marker public typealias YourList = kotlin.collections.ArrayList<kotlin.String>
+

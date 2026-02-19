@@ -1,9 +1,5 @@
 expression: 42
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: 42
-constantValueKind: Int
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: 42
-constantLikeValueKind: Int
+constantValueKind: IntValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 42

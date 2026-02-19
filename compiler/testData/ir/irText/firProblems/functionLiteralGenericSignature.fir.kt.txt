@@ -1,0 +1,53 @@
+val unitFun: Function0<Unit>
+  field = local fun <anonymous>() {
+    return Unit
+  }
+
+  get
+
+val intFun: Function0<Int>
+  field = local fun <anonymous>(): Int {
+    return 42
+  }
+
+  get
+
+val stringParamFun: Function1<String, Unit>
+  field = local fun <anonymous>(x: String) {
+    return Unit
+  }
+
+  get
+
+val listFun: Function1<List<String>, List<String>>
+  field = local fun <anonymous>(l: List<String>): List<String> {
+    return l
+  }
+
+  get
+
+val mutableListFun: Function1<MutableList<Double>, MutableList<Int>>
+  field = local fun <no name provided>(l: MutableList<Double>): MutableList<Int> {
+    return CHECK_NOT_NULL<Nothing>(arg0 = null)
+  }
+
+  get
+
+val funWithIn: Function1<Comparable<String>, Unit>
+  field = local fun <no name provided>(x: Comparable<String>) {
+  }
+
+  get
+
+val extensionFun: @ExtensionFunctionType Function1<Any, Unit>
+  field = local fun Any.<no name provided>() {
+  }
+
+  get
+
+val extensionWithArgFun: @ExtensionFunctionType Function2<Long, Any, Date>
+  field = local fun Long.<no name provided>(x: Any): Date {
+    return Date()
+  }
+
+  get

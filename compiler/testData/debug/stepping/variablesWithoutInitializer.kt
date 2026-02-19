@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun box() {
@@ -12,12 +12,7 @@ fun box() {
     }
 }
 
-// The JVM IR backend does generate line number information for the
-// declaration of local variables without initializer.
-// Stepping through those is useful for breakpoinnts.
-// The JVM backend does generate these line numbers as well.
-
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // test.kt:6 box
 // test.kt:7 box
@@ -27,9 +22,25 @@ fun box() {
 // test.kt:11 box
 // test.kt:13 box
 
+// EXPECTATIONS NATIVE
+// test.kt:8 box
+// test.kt:9 box
+// test.kt:10 box
+// test.kt:11 box
+// test.kt:11 box
+// test.kt:11 box
+// test.kt:13 box
+
 // EXPECTATIONS JS_IR
 // test.kt:8 box
 // test.kt:9 box
 // test.kt:10 box
 // test.kt:11 box
 // test.kt:13 box
+
+// EXPECTATIONS WASM
+// test.kt:8 $box (8, 4)
+// test.kt:9 $box (8, 4)
+// test.kt:10 $box (9, 8)
+// test.kt:11 $box (12, 14, 8)
+// test.kt:13 $box (1)

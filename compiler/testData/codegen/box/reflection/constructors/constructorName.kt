@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 // WITH_REFLECT
 
 import kotlin.test.assertEquals

@@ -1,12 +1,16 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 // ---------------------- callables with status ----------------------
 
@@ -22,7 +26,7 @@ inline val FirCallableSymbol<*>.isActual: Boolean get() = rawStatus.isActual
 inline val FirCallableSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirCallableSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirCallableSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
-inline val FirCallableSymbol<*>.isOverride: Boolean get() = rawStatus.isOverride
+inline val FirCallableSymbol<*>.isOverride: Boolean get() = resolvedStatus.isOverride
 inline val FirCallableSymbol<*>.isOperator: Boolean get() = resolvedStatus.isOperator
 inline val FirCallableSymbol<*>.isInfix: Boolean get() = resolvedStatus.isInfix
 inline val FirCallableSymbol<*>.isInline: Boolean get() = rawStatus.isInline
@@ -41,14 +45,23 @@ inline val FirClassLikeSymbol<*>.modality: Modality get() = resolvedStatus.modal
 inline val FirClassLikeSymbol<*>.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
 inline val FirClassLikeSymbol<*>.isFinal: Boolean get() = resolvedStatus.modality == Modality.FINAL
 
-inline val FirClassLikeSymbol<*>.visibility: Visibility get() = resolvedStatus.visibility
+inline val FirClassLikeSymbol<*>.visibility: Visibility get() = rawStatus.visibility
 inline val FirClassLikeSymbol<*>.effectiveVisibility: EffectiveVisibility get() = resolvedStatus.effectiveVisibility
 
 inline val FirClassLikeSymbol<*>.isActual: Boolean get() = rawStatus.isActual
 inline val FirClassLikeSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirClassLikeSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirClassLikeSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
+
+@SuspiciousValueClassCheck
 inline val FirClassLikeSymbol<*>.isInline: Boolean get() = rawStatus.isInline
+
+@SuspiciousValueClassCheck
+inline val FirClassLikeSymbol<*>.isValue: Boolean get() = rawStatus.isValue
+
+@OptIn(SuspiciousValueClassCheck::class)
+inline val FirClassLikeSymbol<*>.isInlineOrValue: Boolean get() = isInline || isValue
+
 inline val FirClassLikeSymbol<*>.isExternal: Boolean get() = rawStatus.isExternal
 inline val FirClassLikeSymbol<*>.isFromSealedClass: Boolean get() = rawStatus.isFromSealedClass
 inline val FirClassLikeSymbol<*>.isFromEnumClass: Boolean get() = rawStatus.isFromEnumClass
@@ -59,17 +72,23 @@ inline val FirClassLikeSymbol<*>.isSealed: Boolean get() = resolvedStatus.modali
 
 // ---------------------- common classes ----------------------
 
-inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = classId.isLocal
+/**
+ * As a rule of thumb, a class / typealias is considered local if its parent is another local class,
+ * or if its parent is a callable declaration of any kind (function, property, constructor, enum entry, etc.).
+ * A local class / typealias always has Local visibility, and vice versa.
+ */
+inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = fir.isLocal
 
-inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
-    get() = classId.isLocal || this is FirAnonymousObjectSymbol
-
+val FirBasedSymbol<*>?.isLocalClassLike: Boolean get() = (this as? FirClassLikeSymbol<*>)?.isLocal == true
 
 inline val FirClassSymbol<*>.isClass: Boolean
     get() = classKind.isClass
 
 inline val FirClassSymbol<*>.isInterface: Boolean
     get() = classKind.isInterface
+
+inline val FirClassSymbol<*>.isAnnotationClass: Boolean
+    get() = classKind.isAnnotationClass
 
 inline val FirClassSymbol<*>.isEnumClass: Boolean
     get() = classKind.isEnumClass
@@ -78,5 +97,3 @@ inline val FirClassSymbol<*>.isEnumEntry: Boolean
     get() = classKind.isEnumEntry
 
 // ---------------------- specific callables ----------------------
-
-inline val FirNamedFunctionSymbol.isLocal: Boolean get() = rawStatus.visibility == Visibilities.Local

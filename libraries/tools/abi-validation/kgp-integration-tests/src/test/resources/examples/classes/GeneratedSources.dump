@@ -1,0 +1,5 @@
+public final class Generated {
+	public fun <init> ()V
+	public final fun helloCreator ()I
+}
+

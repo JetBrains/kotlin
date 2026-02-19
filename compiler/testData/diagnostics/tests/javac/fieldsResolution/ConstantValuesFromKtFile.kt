@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: test.kt
 package a
@@ -25,3 +26,6 @@ public class x {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, integerLiteral, objectDeclaration, propertyDeclaration,
+stringLiteral */

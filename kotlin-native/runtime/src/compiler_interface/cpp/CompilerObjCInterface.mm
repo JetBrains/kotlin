@@ -10,8 +10,9 @@
 #include "ObjCExport.h"
 #include "ObjCExportErrors.h"
 #include "ObjCExportCoroutines.h"
+#include "WritableTypeInfoPrivate.hpp"
 
-#define touchType(type) void touch##type(type*) {}
+#define touchType(type) type touch##type;
 #define touchFunction(function) void* touch##function() { return reinterpret_cast<void*>(&::function); }
 
 // Types and functions used by the compiler (at Runtime.kt and ContextUtils.kt)
@@ -36,6 +37,7 @@ touchFunction(GetObjCKotlinTypeInfo)
 touchFunction(MissingInitImp)
 
 touchFunction(Kotlin_Interop_DoesObjectConformToProtocol)
+touchFunction(Kotlin_Interop_DoesObjectConformToProtocolByName)
 touchFunction(Kotlin_Interop_IsObjectKindOfClass)
 
 touchFunction(Kotlin_ObjCExport_refToLocalObjC)

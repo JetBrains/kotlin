@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
 
@@ -14,3 +15,6 @@ fun <T : Any> foo(x: T?, func: (T) -> T?) {}
 fun test(a: A<*>) {
     foo(a) { it.superA }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, inProjection, javaProperty, javaType,
+lambdaLiteral, nullableType, starProjection, typeConstraint, typeParameter */

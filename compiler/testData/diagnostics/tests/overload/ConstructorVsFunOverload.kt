@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // constructor vs. fun overload
 
-// FILE: J.java
+// FILE: constructorVsFun/J.java
 package constructorVsFun;
 
 public class J {
@@ -37,3 +38,6 @@ class Rtyu {
 }
 
 fun J(s: String) { }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, primaryConstructor */

@@ -11,14 +11,18 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getArrayElementType
+import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -37,16 +41,16 @@ internal class WasmVarargExpressionLowering(
             arrayType.getClass() ?: throw IllegalArgumentException("Argument ${arrayType.render()} must have a class")
 
         init {
-            check(arrayClass.symbol in context.wasmSymbols.arrays) { "Argument ${ir2string(arrayClass)} must be an array" }
+            check(arrayClass.symbol in context.irBuiltIns.arrays) { "Argument ${ir2string(arrayClass)} must be an array" }
         }
 
         val isUnsigned
-            get() = arrayClass.symbol in context.wasmSymbols.unsignedTypesToUnsignedArrays.values
+            get() = arrayClass.symbol in context.irBuiltIns.unsignedTypesToUnsignedArrays.values
 
         val primaryConstructor: IrConstructor
             get() =
                 if (isUnsigned)
-                    arrayClass.constructors.find { it.valueParameters.singleOrNull()?.type == context.irBuiltIns.intType }!!
+                    arrayClass.constructors.find { it.parameters.singleOrNull()?.type == context.irBuiltIns.intType }!!
                 else arrayClass.primaryConstructor!!
 
         val constructors
@@ -68,8 +72,11 @@ internal class WasmVarargExpressionLowering(
 
         val copyInto: IrSimpleFunction
             get() {
-                val func = context.wasmSymbols.arraysCopyInto.find {
-                    it.owner.extensionReceiverParameter?.type?.classOrNull?.owner == arrayClass
+                val func = context.wasmSymbols.arraysCopyInto.find { symbol ->
+                    symbol.owner.let {
+                        it.hasShape(extensionReceiver = true, regularParameters = 4) &&
+                                it.parameters[0].type.classOrNull?.owner == arrayClass
+                    }
                 }
 
                 return func?.owner ?: throw IllegalArgumentException("copyInto is not found for ${arrayType.render()}")
@@ -78,10 +85,10 @@ internal class WasmVarargExpressionLowering(
 
     private fun IrBlockBuilder.irCreateArray(size: IrExpression, arrDescr: ArrayDescr) =
         irCall(arrDescr.primaryConstructor).apply {
-            putValueArgument(0, size)
-            if (typeArgumentsCount >= 1) {
-                check(typeArgumentsCount == 1 && arrDescr.arrayClass.typeParameters.size == 1)
-                putTypeArgument(0, arrDescr.elementType)
+            arguments[0] = size
+            if (typeArguments.isNotEmpty()) {
+                check(typeArguments.size == 1 && arrDescr.arrayClass.typeParameters.size == 1)
+                typeArguments[0] = arrDescr.elementType
             }
             type = arrDescr.arrayType
         }
@@ -115,8 +122,8 @@ internal class WasmVarargExpressionLowering(
                 for ((element, index) in exprs.asSequence().zip(indexes)) {
                     +irCall(destArrDescr.setMethod).apply {
                         dispatchReceiver = irGet(destArr)
-                        putValueArgument(0, index)
-                        putValueArgument(1, irGet(element))
+                        arguments[1] = index
+                        arguments[2] = irGet(element)
                     }
                 }
             }
@@ -138,15 +145,15 @@ internal class WasmVarargExpressionLowering(
                 val destIdx = indexVar?.let { irGet(it) } ?: irInt(0)
 
                 +irCall(srcArrDescr.copyInto).apply {
-                    if (typeArgumentsCount >= 1) {
-                        check(typeArgumentsCount == 1 && srcArrDescr.arrayClass.typeParameters.size == 1)
-                        putTypeArgument(0, srcArrDescr.elementType)
+                    if (typeArguments.isNotEmpty()) {
+                        check(typeArguments.size == 1 && srcArrDescr.arrayClass.typeParameters.size == 1)
+                        typeArguments[0] = srcArrDescr.elementType
                     }
-                    extensionReceiver = irGet(exprVar)  // source
-                    putValueArgument(0, irGet(destArr)) // destination
-                    putValueArgument(1, destIdx)        // destinationOffset
-                    putValueArgument(2, irInt(0))       // startIndex
-                    putValueArgument(3, irSize())       // endIndex
+                    arguments[0] = irGet(exprVar) // source
+                    arguments[1] = irGet(destArr) // destination
+                    arguments[2] = destIdx        // destinationOffset
+                    arguments[3] = irInt(0)       // startIndex
+                    arguments[4] = irSize()       // endIndex
                 }
             }
         }
@@ -168,13 +175,13 @@ internal class WasmVarargExpressionLowering(
         if (!irVarargType.isUnsignedArray()) return irVararg
 
         val unsignedConstructor = irVarargType.getClass()!!.primaryConstructor!!
-        val constructorParameterType = unsignedConstructor.valueParameters[0].type
+        val constructorParameterType = unsignedConstructor.parameters[0].type
         val signedElementType = constructorParameterType.getArrayElementType(context.irBuiltIns)
 
         irVararg.type = constructorParameterType
         irVararg.varargElementType = signedElementType
         return builder.irCall(unsignedConstructor.symbol, irVarargType).also {
-            it.putValueArgument(0, irVararg)
+            it.arguments[0] = irVararg
         }
     }
 
@@ -252,29 +259,20 @@ internal class WasmVarargExpressionLowering(
         transformFunctionAccessExpression(expression)
 
     private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression): IrExpression {
-        expression.transformChildrenVoid()
-        val builder by lazy { context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol) }
-
-        // Replace empty vararg arguments with empty array construction
-        for (argumentIdx in 0 until expression.valueArgumentsCount) {
-            val argument = expression.getValueArgument(argumentIdx)
-            val parameter = expression.symbol.owner.valueParameters[argumentIdx]
-            val varargElementType = parameter.varargElementType
-            if (argument == null && varargElementType != null) {
-                val arrayClass = parameter.type.classOrNull!!.owner
-                val primaryConstructor = arrayClass.primaryConstructor!!
-                val emptyArrayCall = with(builder) {
-                    irCall(primaryConstructor).apply {
-                        putValueArgument(0, irInt(0))
-                        if (primaryConstructor.typeParameters.isNotEmpty()) {
-                            check(primaryConstructor.typeParameters.size == 1)
-                            putTypeArgument(0, parameter.varargElementType)
-                        }
-                    }
+        // Replace not-existing vararg arguments with vararg arguments without elements
+        for (argumentIdx in expression.arguments.indices) {
+            if (expression.arguments[argumentIdx] == null) {
+                val parameter = expression.symbol.owner.parameters[argumentIdx]
+                val varargElementType = parameter.varargElementType
+                if (varargElementType != null) {
+                    expression.arguments[argumentIdx] =
+                        IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type, varargElementType)
+                    break //There is only a single vararg can be for a function
                 }
-                expression.putValueArgument(argumentIdx, emptyArrayCall)
             }
         }
+
+        expression.transformChildrenVoid()
         return expression
     }
 
@@ -285,7 +283,7 @@ internal class WasmVarargExpressionLowering(
         when (expr) {
             is IrFunctionAccessExpression -> {
                 val arrDescr = ArrayDescr(expr.type, context)
-                expr.symbol.owner in arrDescr.constructors || expr.symbol == context.wasmSymbols.arrayOfNulls
+                expr.symbol.owner in arrDescr.constructors || expr.symbol == context.irBuiltIns.arrayOfNulls
             }
             is IrTypeOperatorCall -> isImmediatelyCreatedArray(expr.argument)
             is IrComposite ->
@@ -298,12 +296,10 @@ internal class WasmVarargExpressionLowering(
 }
 
 private fun IrBlockBuilder.irIntPlus(rhs: IrExpression, lhs: IrExpression, wasmContext: WasmBackendContext): IrExpression {
-    val plusOp = wasmContext.wasmSymbols.getBinaryOperator(
-        OperatorNameConventions.PLUS, context.irBuiltIns.intType, context.irBuiltIns.intType
-    ).owner
+    val plusOp = wasmContext.irBuiltIns.intPlusSymbol
 
     return irCall(plusOp).apply {
         dispatchReceiver = rhs
-        putValueArgument(0, lhs)
+        arguments[1] = lhs
     }
 }

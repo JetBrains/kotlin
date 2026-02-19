@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.text
 
 fun String?.nameAsSafeName(defaultName: String = ""): Name {
     return when {
@@ -35,6 +36,7 @@ fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>):
 }
 
 inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
+    if (classNode.getParent()?.getParent()?.tokenType == SCRIPT) return false
     var currentNode: LighterASTNode? = classNode
     while (currentNode != null) {
         val tokenType = currentNode.tokenType
@@ -44,7 +46,7 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
             val grandParent = parent?.getParent()
             when {
                 parentTokenType == KT_FILE -> return true
-                parentTokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent?.getParent()?.tokenType == OBJECT_LITERAL) -> return true
+                parentTokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent.getParent()?.tokenType == OBJECT_LITERAL) -> return true
                 parentTokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
             }
         }
@@ -60,4 +62,14 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
     return false
 }
 
-val FirUserTypeRef.isUnderscored get() = qualifier.lastOrNull()?.name?.asString() == "_"
+fun isCallableLocal(callableNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
+    val parentNode = callableNode.getParent()
+    return when (parentNode?.tokenType) {
+        KT_FILE, CLASS_BODY -> false
+        BLOCK -> when (parentNode.getParent()?.tokenType) {
+            SCRIPT -> false
+            else -> true
+        }
+        else -> true
+    }
+}

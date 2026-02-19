@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ManagedSettings
+
+modules = ManagedSettings
+compilerOpts = -framework ManagedSettings
+linkerOpts = -framework ManagedSettings
+#Disabled: Not officially available for watchos

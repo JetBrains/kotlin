@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 // SKIP_TXT
 
 // FILE: Test.java
@@ -28,3 +29,6 @@ fun main() {
      */
     foo(values, Test.bar())
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, javaFunction, localProperty,
+nullableType, outProjection, propertyDeclaration, typeParameter */

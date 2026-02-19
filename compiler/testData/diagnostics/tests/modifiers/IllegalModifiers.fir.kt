@@ -1,4 +1,5 @@
-@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> public
+// RUN_PIPELINE_TILL: FRONTEND
+@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!>
 package illegal_modifiers
 
 abstract class A() {
@@ -6,7 +7,7 @@ abstract class A() {
     abstract <!REDUNDANT_MODIFIER!>open<!> fun g()
     <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun h() {}
 
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open var r: String<!>
+    open <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var r: String<!>
         get
         <!WRONG_MODIFIER_TARGET!>abstract<!> protected set
 }
@@ -28,7 +29,7 @@ class FinalClass() {
 annotation class annotated(val text: String = "not given")
 
 //Check legal modifiers in constructor
-class LegalModifier(val a: Int, @annotated private var b: String, @annotated vararg v: Int)
+class LegalModifier(val a: Int, <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@annotated<!> private var b: String, @annotated vararg v: Int)
 
 //Check illegal modifier in constructor parameters
 class IllegalModifiers1(
@@ -85,9 +86,9 @@ abstract class IllegalModifiers6() {
     <!WRONG_MODIFIER_TARGET!>open<!> init {}
     <!WRONG_MODIFIER_TARGET!>final<!> init {}
 
-    <!WRONG_MODIFIER_TARGET!>public<!> @annotated init {}
+    <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_ANNOTATION_TARGET!>@annotated<!> init {}
 
-    <!WRONG_MODIFIER_TARGET!>private<!> @IllegalModifiers6() init {}
+    <!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_ANNOTATION_TARGET!>@<!NOT_AN_ANNOTATION_CLASS!>IllegalModifiers6<!>()<!> init {}
 }
 
 // strange inappropriate modifiers usages
@@ -161,3 +162,7 @@ class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MOD
 class Outer {
     <!INCOMPATIBLE_MODIFIERS!>inner<!> <!INCOMPATIBLE_MODIFIERS!>sealed<!> class Inner
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, functionDeclaration, getter, init,
+inner, integerLiteral, interfaceDeclaration, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration,
+sealed, secondaryConstructor, setter, stringLiteral, tryExpression, vararg */

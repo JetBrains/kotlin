@@ -3,7 +3,7 @@ FILE: propertyWithBackingField.kt
         receive#(property#)
     }
     public? final? val property: Int
-        private <explicit backing field>: Int = IntegerLiteral(10)
+        private final? backing field field: Int = IntegerLiteral(10)
         public? get(): Int
     public? final? fun receive(s: Int): R|kotlin/Unit| {
     }

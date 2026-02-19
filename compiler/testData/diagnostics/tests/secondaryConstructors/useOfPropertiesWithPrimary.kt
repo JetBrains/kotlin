@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A(val w: Int) {
     val x: Int
     val useUnitialized = <!UNINITIALIZED_VARIABLE!>x<!> +
@@ -28,3 +29,6 @@ class A(val w: Int) {
         x + y + v + <!UNINITIALIZED_VARIABLE!>uninitialized<!> + w
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, init, integerLiteral, primaryConstructor,
+propertyDeclaration, secondaryConstructor */

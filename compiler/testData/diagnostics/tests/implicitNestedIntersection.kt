@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 
 interface In<in E>
@@ -22,3 +23,6 @@ open class H : In<H>
 fun <S> select8(a: S, b: S, c: S, d: S, e: S, f: S, g: S, h: S) = a
 
 fun foo8() = select8(A(), B(), C(), D(), E(), F(), G(), H())
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, intersectionType, nullableType,
+typeParameter */

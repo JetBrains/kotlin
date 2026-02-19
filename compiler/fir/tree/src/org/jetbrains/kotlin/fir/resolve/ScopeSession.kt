@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class ScopeSession {
-    private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, Any>>()
+    private val scopes: HashMap<Any, HashMap<ScopeSessionKey<*, *>, Any>> = hashMapOf()
 
     @PrivateForInline
-    fun scopes() = scopes
+    fun scopes(): HashMap<Any, HashMap<ScopeSessionKey<*, *>, Any>> = scopes
 
     @OptIn(PrivateForInline::class)
     inline fun <reified ID : Any, reified FS : Any> getOrBuild(id: ID, key: ScopeSessionKey<ID, FS>, build: () -> FS): FS {

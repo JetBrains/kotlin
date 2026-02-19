@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface D {
   fun foo(): String = ""
 }
@@ -16,3 +17,5 @@ fun test(d: Any?) {
   }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+localClass, nullableType, smartcast, stringLiteral */

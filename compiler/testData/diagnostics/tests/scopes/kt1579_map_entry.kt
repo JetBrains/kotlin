@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:a.kt
 //+JDK
@@ -18,3 +19,5 @@ fun bar(b : Entry<String, String>) = b
 package c
 
 fun fff(b: Map.Entry<String, String>) = b
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // FILE: A.java
 
 public class A<E> {
@@ -17,3 +18,6 @@ fun test(x: List<Int>, y: List<String>) {
     z = A<Double, String>("", y)
     z = A<Double, CharSequence>("", y)
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration, stringLiteral */

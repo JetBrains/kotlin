@@ -26,7 +26,7 @@ interface SourceCode {
     val name: String?
 
     /**
-     * The path or other script location identifier
+     * The path or another script location identifier; it should be unique, if not null
      */
     val locationId: String?
 
@@ -54,8 +54,8 @@ interface SourceCode {
 
     /**
      * The source code location including the path to the file
-     * @param codeLocationId the file path or other script location identifier (see [SourceCode.locationId])
-     * @param locationInText concrete location of the source code in file
+     * @param codeLocationId the file path or another script location identifier (see [SourceCode.locationId])
+     * @param locationInText concrete location of the source code in a file
      */
     data class LocationWithId(val codeLocationId: String, val locationInText: Location) : Serializable
 }
@@ -86,7 +86,7 @@ interface ExternalSourceCode : SourceCode {
 }
 
 /**
- * The source code [range] with the the optional [name]
+ * The source code [range] with the optional [name]
  */
 data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range) : Serializable {
     companion object { private const val serialVersionUID: Long = 1L }
@@ -111,14 +111,15 @@ class ScriptCollectedData(properties: Map<PropertiesCollection.Key<*>, Any>) : P
 /**
  * The script file-level annotations found during script source parsing
  */
-val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
+@Deprecated("Use collectedAnnotations instead", ReplaceWith("collectedAnnotations"))
+val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>(getDefaultValue = {
+    get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation }
+})
 
 /**
  * The script file-level annotations and their locations found during script source parsing
  */
-val ScriptCollectedDataKeys.collectedAnnotations by PropertiesCollection.key<List<ScriptSourceAnnotation<*>>>(getDefaultValue = {
-    get(ScriptCollectedData.foundAnnotations)?.map { ScriptSourceAnnotation(it, null) }
-})
+val ScriptCollectedDataKeys.collectedAnnotations by PropertiesCollection.key<List<ScriptSourceAnnotation<*>>>()
 
 /**
  * The facade to the script data for compilation configuration refinement callbacks
@@ -168,7 +169,7 @@ fun merge(vararg contexts: ScriptEvaluationContextData?): ScriptEvaluationContex
 }
 
 /**
- * Command line arguments of the current process, could be provided by an evaluation host
+ * Command line arguments of the current process; could be provided by an evaluation host
  */
 val ScriptEvaluationContextDataKeys.commandLineArgs by PropertiesCollection.key<List<String>>()
 

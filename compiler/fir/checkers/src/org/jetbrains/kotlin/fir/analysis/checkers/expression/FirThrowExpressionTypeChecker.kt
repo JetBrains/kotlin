@@ -7,24 +7,25 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.types.*
 
-object FirThrowExpressionTypeChecker : FirThrowExpressionChecker() {
-    override fun check(expression: FirThrowExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirThrowExpressionTypeChecker : FirThrowExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirThrowExpression) {
         val expectedType = context.session.builtinTypes.throwableType.coneType
         val actualType = expression.exception.resolvedType
 
         if (!actualType.isSubtypeOf(expectedType, context.session)) {
             reporter.reportOn(
-                expression.exception.source,
+                expression.exception.source ?: expression.source,
                 FirErrors.TYPE_MISMATCH,
                 expectedType,
                 actualType,
-                context.session.typeContext.isTypeMismatchDueToNullability(expectedType, actualType),
-                context,
+                context.session.typeContext.isTypeMismatchDueToNullability(expectedType, actualType)
             )
         }
     }

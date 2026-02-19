@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun trans(n: Int, f: () -> Boolean) = if (f()) n else null
 
 fun foo() {
@@ -13,3 +14,6 @@ fun foo() {
         <!SMARTCAST_IMPOSSIBLE!>i<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, equalityExpression, functionDeclaration, functionalType,
+ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

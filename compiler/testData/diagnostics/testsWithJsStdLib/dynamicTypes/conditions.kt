@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 fun test(d: dynamic, b: Boolean?) {
     if (d) {}
     while (d) {}

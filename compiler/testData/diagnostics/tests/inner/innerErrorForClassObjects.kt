@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class SomeClass<T>
 class TestSome<P> {
     companion object : SomeClass<<!UNRESOLVED_REFERENCE!>P<!>>() {
@@ -24,3 +25,6 @@ class Test {
 
     open inner class InnerClass
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, inner,
+integerLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

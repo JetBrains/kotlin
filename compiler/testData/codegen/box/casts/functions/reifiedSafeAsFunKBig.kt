@@ -1,11 +1,12 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
 
 // This is a big, ugly, semi-auto generated test.
 // Use corresponding 'Small' test for debug.
 
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 fun fn0() {}
 fun fn1(x0: Any) {}
 fun fn2(x0: Any, x1: Any) {}
@@ -58,6 +59,7 @@ inline fun <reified T> reifiedSafeAsReturnsNull(x: Any?, operation: String) {
     }
 }
 
+// FILE: main.kt
 interface TestFnBase {
     fun testGood(x: Any)
     fun testBad(x: Any)

@@ -13,12 +13,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.calls.tower.TowerLevelsKt;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -31,7 +30,8 @@ import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import java.util.Collection;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.AMBIGUOUS_LABEL;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
+import static org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 
 public class BindingContextUtils {
     private BindingContextUtils() {
@@ -195,14 +195,6 @@ public class BindingContextUtils {
         }
 
         return new Pair<>(containingFunctionDescriptor, containingFunction);
-    }
-
-    @Nullable
-    public static ResolvedCall<ConstructorDescriptor> getDelegationConstructorCall(
-            @NotNull BindingContext bindingContext,
-            @NotNull ConstructorDescriptor constructorDescriptor
-    ) {
-        return bindingContext.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructorDescriptor);
     }
 
     @SuppressWarnings("unchecked")

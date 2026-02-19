@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-7186: False "Type mismatch" error
 
 fun indexOfMax(a: IntArray): Int? {
@@ -12,3 +13,6 @@ fun indexOfMax(a: IntArray): Int? {
     }
     return maxI
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration */

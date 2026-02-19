@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // SKIP_TXT
 
 // FILE: Foo.java
@@ -60,3 +61,7 @@ fun <T> bar(n: Number?, d: T, e: T) {
     var x13 = e
     x13 = Foo.simpleId(d)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, dnnType, equalityExpression, flexibleType, functionDeclaration,
+ifExpression, integerLiteral, javaFunction, javaType, localProperty, nullableType, propertyDeclaration, smartcast,
+typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class AHolder(val a: Int)
 class E {
     object foo { // (1)
@@ -22,3 +23,6 @@ fun main() {
 
     EE.foo.<!UNRESOLVED_REFERENCE!>a<!> // (1) !!! in old FE and FIR
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, lambdaLiteral,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration */

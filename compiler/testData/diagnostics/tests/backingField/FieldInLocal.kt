@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
 fun foo() {
@@ -10,3 +11,6 @@ fun foo() {
             get() = field
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, getter, integerLiteral,
+localClass, localProperty, propertyDeclaration */

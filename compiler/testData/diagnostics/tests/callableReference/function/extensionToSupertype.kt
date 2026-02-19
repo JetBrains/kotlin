@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.*
 
@@ -17,3 +17,6 @@ fun test() {
 
     <!NONE_APPLICABLE!>take<!>(B::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, interfaceDeclaration, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

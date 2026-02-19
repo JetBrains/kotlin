@@ -1,7 +1,6 @@
 // IGNORE_BACKEND_K2: JVM_IR
 // FIR_STATUS: FIR+JVM_IR generates TABLESWITCH for nested 'when' only, doesn't look critical.
 
-// JVM_IR_TEMPLATES
 // 2 (TABLE|LOOKUP)SWITCH
 
 enum class ABCD {

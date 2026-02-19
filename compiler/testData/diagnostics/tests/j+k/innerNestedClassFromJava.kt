@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // FILE: a/M.java
 package a;
 
@@ -29,3 +31,5 @@ fun f() {
   val c4: a.M.<!INVISIBLE_REFERENCE!>PrNested<!>
 
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, localProperty, propertyDeclaration */

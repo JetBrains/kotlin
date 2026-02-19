@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @file:Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 
@@ -9,3 +10,6 @@ fun <T> foo(i: Inv<in T>, o: Out<T>) {
 }
 
 fun <@kotlin.internal.OnlyInputTypes K> bar(r: Inv<out K>, o: Out<K>): K = TODO()
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, inProjection, nullableType,
+out, outProjection, stringLiteral, typeParameter */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST
 
 interface ISample
 
@@ -36,3 +37,7 @@ fun test(nullableSample: ISample, any: Any) {
         a ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>a?.materialize()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, elvisExpression, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast, stringLiteral, typeConstraint, typeParameter */

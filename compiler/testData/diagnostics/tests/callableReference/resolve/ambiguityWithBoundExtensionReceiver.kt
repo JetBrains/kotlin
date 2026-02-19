@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 
 fun <R> bar(f: () -> R): R = TODO()
 
@@ -13,3 +14,6 @@ class A {
         bar(::foo) checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension */

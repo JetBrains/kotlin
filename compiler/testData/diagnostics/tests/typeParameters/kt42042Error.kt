@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperTypeInferenceConstraintsProcessing
+// RUN_PIPELINE_TILL: FRONTEND
 
 sealed class Subtype<A1, B1> {
     abstract fun cast(value: A1): B1
@@ -11,3 +11,6 @@ fun <A, B> unsafeCast(value: A): B {
     val proof: Subtype<A, B> = Subtype.<!TYPE_MISMATCH!>Trivial()<!>
     return proof.cast(value)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, nullableType, override,
+propertyDeclaration, sealed, typeConstraint, typeParameter */

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -16,8 +17,9 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirJsDynamicDeclarationChecker : FirClassChecker() {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJsDynamicDeclarationChecker : FirClassChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val delegatedFields = declaration.delegateFieldsMap ?: return
 
         for ((_, delegate) in delegatedFields) {
@@ -28,7 +30,7 @@ object FirJsDynamicDeclarationChecker : FirClassChecker() {
             val initializer = delegate.fir.initializer ?: continue
 
             if (initializer.resolvedType is ConeDynamicType) {
-                reporter.reportOn(initializer.source, FirJsErrors.DELEGATION_BY_DYNAMIC, context)
+                reporter.reportOn(initializer.source, FirJsErrors.DELEGATION_BY_DYNAMIC)
             }
         }
     }

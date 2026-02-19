@@ -1,12 +1,14 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // WITH_STDLIB
 
 // MODULE: m1-common
 // FILE: common.kt
 
-import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
+import kotlin.<!UNRESOLVED_REFERENCE!>jvm<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DEPRECATION_ERROR{JVM}!>ImplicitlyActualizedByJvmDeclaration<!>
 
-@OptIn(ExperimentalMultiplatform::class)
-@ImplicitlyActualizedByJvmDeclaration
+<!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
+@<!DEPRECATION_ERROR{JVM}, UNRESOLVED_REFERENCE!>ImplicitlyActualizedByJvmDeclaration<!>
 expect class Foo() {
     fun foo()
 }
@@ -18,3 +20,5 @@ public class Foo {
     public void foo() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, expect, functionDeclaration, primaryConstructor */

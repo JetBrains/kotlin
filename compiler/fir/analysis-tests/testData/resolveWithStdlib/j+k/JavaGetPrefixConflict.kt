@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -20,3 +21,6 @@ fun test() {
 fun otherTest(jc: JavaClass) {
     val result = jc.text
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, localProperty,
+propertyDeclaration */

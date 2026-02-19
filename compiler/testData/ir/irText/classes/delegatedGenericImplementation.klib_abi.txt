@@ -1,0 +1,35 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface <#A: kotlin/Any?> /IBase { // /IBase|null[0]
+    abstract val id // /IBase.id|@0:0{0§<kotlin.Any?>}id[0]
+        abstract fun <#A2: kotlin/Any?> (#A2).<get-id>(): kotlin.collections/Map<#A, #A2>? // /IBase.id.<get-id>|<get-id>@0:0(){0§<kotlin.Any?>}[0]
+    abstract var x // /IBase.x|@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x[0]
+        abstract fun <#A2: kotlin/Any?> (kotlin.collections/List<#A2>).<get-x>(): #A2? // /IBase.x.<get-x>|<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]
+        abstract fun <#A2: kotlin/Any?> (kotlin.collections/List<#A2>).<set-x>(#A2?) // /IBase.x.<set-x>|<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}[0]
+    abstract fun <#A1: kotlin/Any?> foo(#A, #A1) // /IBase.foo|foo(1:0;0:0){0§<kotlin.Any?>}[0]
+}
+final class <#A: kotlin/Any?> /Test1 : /IBase<#A> { // /Test1|null[0]
+    final val id // /Test1.id|@0:0{0§<kotlin.Any?>}id[0]
+        final fun <#A2: kotlin/Any?> (#A2).<get-id>(): kotlin.collections/Map<#A, #A2>? // /Test1.id.<get-id>|<get-id>@0:0(){0§<kotlin.Any?>}[0]
+    final var x // /Test1.x|@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x[0]
+        final fun <#A2: kotlin/Any?> (kotlin.collections/List<#A2>).<get-x>(): #A2? // /Test1.x.<get-x>|<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]
+        final fun <#A2: kotlin/Any?> (kotlin.collections/List<#A2>).<set-x>(#A2?) // /Test1.x.<set-x>|<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}[0]
+    constructor <init>(/IBase<#A>) // /Test1.<init>|<init>(IBase<1:0>){}[0]
+    final fun <#A1: kotlin/Any?> foo(#A, #A1) // /Test1.foo|foo(1:0;0:0){0§<kotlin.Any?>}[0]
+}
+final class /Test2 : /IBase<kotlin/String> { // /Test2|null[0]
+    final val id // /Test2.id|@0:0{0§<kotlin.Any?>}id[0]
+        final fun <#A2: kotlin/Any?> (#A2).<get-id>(): kotlin.collections/Map<kotlin/String, #A2>? // /Test2.id.<get-id>|<get-id>@0:0(){0§<kotlin.Any?>}[0]
+    final var j // /Test2.j|{}j[0]
+        final fun <get-j>(): /IBase<kotlin/String> // /Test2.j.<get-j>|<get-j>(){}[0]
+        final fun <set-j>(/IBase<kotlin/String>) // /Test2.j.<set-j>|<set-j>(IBase<kotlin.String>){}[0]
+    final var x // /Test2.x|@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x[0]
+        final fun <#A2: kotlin/Any?> (kotlin.collections/List<#A2>).<get-x>(): #A2? // /Test2.x.<get-x>|<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]
+        final fun <#A2: kotlin/Any?> (kotlin.collections/List<#A2>).<set-x>(#A2?) // /Test2.x.<set-x>|<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}[0]
+    constructor <init>(/IBase<kotlin/String>) // /Test2.<init>|<init>(IBase<kotlin.String>){}[0]
+    final fun <#A1: kotlin/Any?> foo(kotlin/String, #A1) // /Test2.foo|foo(kotlin.String;0:0){0§<kotlin.Any?>}[0]
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin
@@ -9,3 +10,5 @@ fun foo() {}
 fun test() {
     <!DEPRECATION("foo(): Unit; foo test")!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

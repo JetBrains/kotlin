@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // FILE: AnnRaw.java
@@ -26,3 +27,5 @@ fun test() {
     Utils.foo(X::class.java)
     Utils.fooRaw(X::class.java)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, javaFunction, javaType */

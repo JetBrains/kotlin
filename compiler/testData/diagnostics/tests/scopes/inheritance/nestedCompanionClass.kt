@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 open class A {
     companion object {
@@ -37,3 +38,6 @@ class C: A() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, init, inner, nestedClass, objectDeclaration,
+propertyDeclaration */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
+// LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 
 fun test(lock: Any) {
     val x: Int
@@ -10,3 +11,6 @@ fun test(lock: Any) {
 
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration */

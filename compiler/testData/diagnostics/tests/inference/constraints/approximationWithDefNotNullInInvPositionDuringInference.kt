@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // Issues: KT-36816
 
 interface Parent<T>
@@ -21,3 +22,6 @@ class Inv<T>(x: T?) {}
 fun <K> foo(x: K) {
     test { <!DEBUG_INFO_EXPRESSION_TYPE("Inv<K>")!>Inv(x)<!> }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, functionalType, inline, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, outProjection, primaryConstructor, typeParameter, vararg */

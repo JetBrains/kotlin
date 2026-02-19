@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun TODO(): Nothing = throw java.lang.IllegalStateException()
 
@@ -29,3 +30,6 @@ fun c() = TODO() as OpenClass
 fun d() = TODO() as FinalClass
 fun e() = TODO() as AbstractClass
 fun f() = TODO() as Interface
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, javaFunction,
+localProperty, nullableType, propertyDeclaration */

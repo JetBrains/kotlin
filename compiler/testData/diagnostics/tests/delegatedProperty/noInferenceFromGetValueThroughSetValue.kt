@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KProperty
 
 // Definitions
@@ -22,3 +23,7 @@ fun main() {
     takeString(b)
     b = "b"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection,
+nullableType, operator, outProjection, propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral,
+typeParameter */

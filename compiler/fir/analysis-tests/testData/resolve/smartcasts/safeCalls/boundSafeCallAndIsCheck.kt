@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A {
     val b: B
 }
@@ -15,3 +16,6 @@ fun main(a: A?) {
 
     a.foo().length
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral */

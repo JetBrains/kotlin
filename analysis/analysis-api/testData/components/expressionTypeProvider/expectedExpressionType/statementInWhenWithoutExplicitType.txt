@@ -1,5 +1,4 @@
 expression: av
-expected type: KtUsualClassType:
-  annotationsList: []
-  ownTypeArguments: []
-  type: kotlin/Any
+expected type: KaIntersectionType:
+  annotations: []
+  type: it(kotlin/Int & kotlin/String)

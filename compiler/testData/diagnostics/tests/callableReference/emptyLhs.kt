@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION, -EXTENSION_SHADOWED_BY_MEMBER
-// !LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
+// DIAGNOSTICS: -UNUSED_EXPRESSION, -EXTENSION_SHADOWED_BY_MEMBER
+// LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
 
 val topLevelVal = 1
 fun topLevelFun() = 2
@@ -40,3 +41,6 @@ fun A.fail2() {
     ::memberVal
     ::memberFun
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+integerLiteral, propertyDeclaration, propertyWithExtensionReceiver */

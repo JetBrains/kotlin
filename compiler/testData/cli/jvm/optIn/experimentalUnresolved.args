@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/experimentalUnresolved.kt
+-d
+$TEMP_DIR$
+-opt-in
+org.test.Unresolved1
+-opt-in
+org.test.Unresolved2

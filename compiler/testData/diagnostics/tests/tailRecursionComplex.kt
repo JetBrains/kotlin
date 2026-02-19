@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 object O {
     // tailrec since `O` is a singleton
@@ -15,3 +16,6 @@ class A {
 class B {
     <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo(i: Int) = if (i < 0) 0 else O.foo(i - 1)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, comparisonExpression, functionDeclaration,
+ifExpression, integerLiteral, objectDeclaration, tailrec */

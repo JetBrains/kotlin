@@ -22,7 +22,9 @@ import kotlin.system.exitProcess
 //       make
 //       make install
 // * macOS:
-//     curl -L https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb > protobuf261.rb
+//     FORMULA_TAP="$(brew --repository)/Library/Taps/udalov/homebrew-protobuf/Formula"
+//     mkdir -p "FORMULA_TAP"
+//     curl -L https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb > "$FORMULA_TAP/protobuf261.rb"
 //     brew install protobuf261.rb
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
@@ -47,12 +49,12 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata/src/metadata.proto"),
     ProtoPath("core/metadata/src/builtins.proto"),
     ProtoPath("core/metadata/src/properties_order_extension.proto", generateDebug = false),
-    ProtoPath("js/js.serializer/src/js.proto"),
-    ProtoPath("js/js.serializer/src/js-ast.proto", false),
+    ProtoPath("js/js.config/src/js.proto"),
+    ProtoPath("js/js.config/src/js-ast.proto", false),
     ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
     ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
     ProtoPath("build-common/src/java_descriptors.proto"),
-    ProtoPath("compiler/util-klib-metadata/src/KlibMetadataProtoBuf.proto"),
+    ProtoPath("compiler/util-klib/src/KlibMetadataProtoBuf.proto"),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false),
     ProtoPath("compiler/ir/serialization.jvm/src/JvmIr.proto", false),
 )
@@ -164,7 +166,7 @@ private fun modifyAndExecProtoc(protoPath: ProtoPath) {
         debugProtoFile.writeText(modifyForDebug(protoPath))
         debugProtoFile.deleteOnExit()
 
-        val outPath = "build-common/test"
+        val outPath = "build-common/testFixtures"
         execProtoc(debugProtoFile.path, outPath)
         renamePackages(debugProtoFile.path, outPath)
     }

@@ -1,10 +1,10 @@
-inline fun foo(block: Function0<Unit>) {
-  block.invoke()
-}
-
 inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>) {
   block1.invoke()
   block2.invoke()
+}
+
+inline fun foo(block: Function0<Unit>) {
+  block.invoke()
 }
 
 fun test1() {
@@ -58,3 +58,4 @@ fun test2() {
 )
   }
 }
+

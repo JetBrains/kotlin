@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.idea.KotlinFileType
-import java.net.URI
 import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -24,14 +21,10 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
 
     private val cachedDefinitionsLock = ReentrantLock()
 
-    protected abstract val currentDefinitions: Sequence<ScriptDefinition>
-
     protected open fun getScriptingHostConfiguration(): ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration
 
     override fun getDefaultDefinition(): ScriptDefinition =
         ScriptDefinition.getDefault(getScriptingHostConfiguration())
-
-    protected val fixedDefinitions: HashMap<URI, ScriptDefinition> = HashMap()
 
     @Volatile
     private var _cachedDefinitions: Sequence<ScriptDefinition>? = null
@@ -78,25 +71,14 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
             cachedDefinitions.firstOrNull { it.isScript(script) }
         }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? =
-        if (nonScriptId(fileName)) {
-            null
-        } else {
-            cachedDefinitions.map { it.legacyDefinition }.firstOrNull { it.isScript(fileName) }
-        }
-
     override fun isScript(script: SourceCode): Boolean = findDefinition(script) != null
 
     override fun getKnownFilenameExtensions(): Sequence<String> =
         cachedDefinitions.map { it.fileExtension }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun getDefaultScriptDefinition(): KotlinScriptDefinition = getDefaultDefinition().legacyDefinition
-
     companion object {
         // TODO: find a common place for storing kotlin-related extensions and reuse values from it everywhere
-        protected val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
+        protected val nonScriptFilenameSuffixes = arrayOf(".kt", ".java")
     }
 }
 

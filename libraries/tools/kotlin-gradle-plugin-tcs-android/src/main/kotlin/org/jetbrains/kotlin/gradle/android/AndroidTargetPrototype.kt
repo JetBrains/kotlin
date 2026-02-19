@@ -52,8 +52,14 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         In this example we hardcoded AGP version 7.4.0-beta02 as demo
         */
         apiElements.configure { _, configuration ->
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+            )
+            configuration.attributes.attributeProvider(
+                AgpVersionAttr.ATTRIBUTE,
+                project.provider { project.objects.named("7.4.0-beta02") } /* For demo */
+            )
         }
 
         /*
@@ -61,8 +67,14 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         In this example we hardcoded AGP version 7.4.0-beta02 as demo
         */
         runtimeElements.configure { _, configuration ->
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+            )
+            configuration.attributes.attributeProvider(
+                AgpVersionAttr.ATTRIBUTE,
+                project.provider { project.objects.named("7.4.0-beta02") } /* For demo */
+            )
         }
 
         /*
@@ -70,8 +82,16 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         In this example we hardcoded AGP version 7.4.0-beta02 as demo
         */
         sourcesElements.configure { _, configuration ->
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+            )
+            configuration.attributes.attributeProvider(
+                AgpVersionAttr.ATTRIBUTE,
+                project.provider {
+                    project.objects.named("7.4.0-beta02") /* For demo */
+                }
+            )
         }
 
         /*
@@ -80,14 +100,30 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
          */
         apiElementsPublished.configure { _, configuration ->
             /* TODO w/ Google: Find a way to deprecate this attribute */
-            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+            configuration.attributes.attributeProvider(
+                KotlinPlatformType.attribute,
+                project.provider { KotlinPlatformType.androidJvm }
+            )
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider {
+                    project.objects.named(TargetJvmEnvironment.ANDROID)
+                }
+            )
         }
 
         runtimeElementsPublished.configure { _, configuration ->
             /* TODO w/ Google: Find a way to deprecate this attribute */
-            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+            configuration.attributes.attributeProvider(
+                KotlinPlatformType.attribute,
+                project.provider { KotlinPlatformType.androidJvm }
+            )
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider {
+                    project.objects.named(TargetJvmEnvironment.ANDROID)
+                }
+            )
         }
 
         configureIdeImport {
@@ -165,7 +201,10 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
                 artifactType: CLASSES_JAR
          */
         androidTarget.apiElementsConfiguration.outgoing.variants.create("classes").let { variant ->
-            variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+            variant.attributes.attributeProvider(
+                AndroidArtifacts.ARTIFACT_TYPE,
+                project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+            )
             variant.artifact(mainCompilation.output.classesDirs.singleFile) {
                 it.builtBy(mainCompilation.output.classesDirs)
             }
@@ -178,7 +217,10 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
                 artifactType: CLASSES_JAR
          */
         androidTarget.runtimeElementsConfiguration.outgoing.variants.create("classes").let { variant ->
-            variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+            variant.attributes.attributeProvider(
+                AndroidArtifacts.ARTIFACT_TYPE,
+                project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+            )
             variant.artifact(mainCompilation.output.classesDirs.singleFile) {
                 it.builtBy(mainCompilation.output.classesDirs)
             }

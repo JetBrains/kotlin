@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class B<E>
 
 fun <T> B<T>.foo(f: (T) -> Unit) {}
@@ -40,3 +41,6 @@ fun test(b: B<out Number>) {
         <!NAME_SHADOWING!>b<!> -> b checkType { _<B<out Number>>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, nullableType, outProjection, typeParameter, typeWithExtension */

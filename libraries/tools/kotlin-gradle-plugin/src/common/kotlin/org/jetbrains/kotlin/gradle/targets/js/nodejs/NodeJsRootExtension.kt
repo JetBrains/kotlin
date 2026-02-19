@@ -6,139 +6,27 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
-import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
-import org.jetbrains.kotlin.gradle.utils.property
-import java.io.File
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 
-open class NodeJsRootExtension(
-    val project: Project,
-) : ConfigurationPhaseAware<NodeJsEnv>() {
-
-    init {
-        check(project.rootProject == project)
-
-        val projectProperties = PropertiesProvider(project)
-
-        if (projectProperties.errorJsGenerateExternals != null) {
-            project.logger.warn(
-                """
-                |
-                |==========
-                |Please note, Dukat integration in Gradle plugin does not work now, it was removed.
-                |We rethink how we can integrate properly.
-                |==========
-                |
-                """.trimMargin()
-            )
-        }
-    }
-
-    val rootProjectDir
-        get() = project.rootDir
-
-    private val gradleHome = project.gradle.gradleUserHomeDir.also {
-        project.logger.kotlinInfo("Storing cached files in $it")
-    }
-
-    var installationDir by Property(gradleHome.resolve("nodejs"))
-
-    var download by Property(true)
-
-    var nodeDownloadBaseUrl by Property("https://nodejs.org/dist")
-
-    // Release schedule: https://github.com/nodejs/Release
-    // Actual LTS and Current versions: https://nodejs.org/en/download/
-    // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
-    var nodeVersion by Property("18.12.1")
-
-    var nodeCommand by Property("node")
-
-    var packageManager: NpmApi by Property(Yarn())
-
-    val taskRequirements: TasksRequirements
-        get() = resolver.tasksRequirements
-
-    lateinit var resolver: KotlinRootNpmResolver
-
-    val rootPackageDir: File = project.buildDir.resolve("js")
-
-    val projectPackagesDir: File
-        get() = rootPackageDir.resolve("packages")
-
-    val nodeModulesGradleCacheDir: File
-        get() = rootPackageDir.resolve("packages_imported")
-
-    internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property<Platform>()
-
-    val versions = NpmVersions()
-
-    override fun finalizeConfiguration(): NodeJsEnv {
-        val name = platform.get().name
-        val architecture = platform.get().arch
-
-        val nodeDirName = "node-v$nodeVersion-$name-$architecture"
-        val cleanableStore = CleanableStore[installationDir.absolutePath]
-        val nodeDir = cleanableStore[nodeDirName].use()
-        val isWindows = platform.get().isWindows()
-        val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
-
-        fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
-            val finalCommand = if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
-            return if (download) File(nodeBinDir, finalCommand).absolutePath else finalCommand
-        }
-
-        fun getIvyDependency(): String {
-            val type = if (isWindows) "zip" else "tar.gz"
-            return "org.nodejs:node:$nodeVersion:$name-$architecture@$type"
-        }
-
-        return NodeJsEnv(
-            cleanableStore = cleanableStore,
-            rootPackageDir = rootPackageDir,
-            nodeDir = nodeDir,
-            nodeBinDir = nodeBinDir,
-            nodeExecutable = getExecutable("node", nodeCommand, "exe"),
-            platformName = name,
-            architectureName = architecture,
-            ivyDependency = getIvyDependency(),
-            downloadBaseUrl = nodeDownloadBaseUrl,
-            packageManager = packageManager
-        )
-    }
-
-    val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
-        get() = project.tasks.withType(NodeJsSetupTask::class.java).named(NodeJsSetupTask.NAME)
-
-    val npmInstallTaskProvider: TaskProvider<out KotlinNpmInstallTask>
-        get() = project.tasks.withType(KotlinNpmInstallTask::class.java).named(KotlinNpmInstallTask.NAME)
-
-    val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
-        get() = project.tasks.withType(RootPackageJsonTask::class.java).named(RootPackageJsonTask.NAME)
-
-    val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
-        get() = project.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
-
-    val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>
-        get() = project.tasks.withType(KotlinNpmCachesSetup::class.java).named(KotlinNpmCachesSetup.NAME)
-
-    val storeYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>
-        get() = project.tasks.withType(YarnLockCopyTask::class.java).named(YarnLockCopyTask.STORE_YARN_LOCK_NAME)
-
-    companion object {
-        const val EXTENSION_NAME: String = "kotlinNodeJs"
+/**
+ * Extension for configuring Node.js-related settings at the root level in a Kotlin/JS project.
+ *
+ * The primary purpose of this extension is to assist in managing tasks, configurations, and settings
+ * required for Node.js-based workflows in Kotlin/JS projects, while bridging with the `NodeJsEnvSpec`.
+ *
+ */
+abstract class NodeJsRootExtension internal constructor(
+    project: Project,
+    nodeJs: () -> NodeJsEnvSpec,
+    rootDir: String,
+) : BaseNodeJsRootExtension(
+    project,
+    nodeJs,
+    rootDir
+), HasPlatformDisambiguator by JsPlatformDisambiguator {
+    companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
+        val EXTENSION_NAME: String
+            get() = extensionName("nodeJs")
     }
 }

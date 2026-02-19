@@ -1,0 +1,65 @@
+KtFile: 'star.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(15,27): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(23,27): 'main'
+  NO_CANDIDATES
+
+KtImportList(47,155): 'import kotlin.collections.*'
+  NO_CANDIDATES
+
+KtImportDirective(47,74): 'import kotlin.collections.*'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(54,72): 'kotlin.collections'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(54,60): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(61,72): 'collections'
+  NO_CANDIDATES
+
+KtImportDirective(75,95): 'import kotlin.text.*'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(82,93): 'kotlin.text'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(82,88): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(89,93): 'text'
+  NO_CANDIDATES
+
+KtImportDirective(113,131): 'import java.util.*'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(120,129): 'java.util'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(120,124): 'java'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(125,129): 'util'
+  NO_CANDIDATES
+
+KtImportDirective(132,155): 'import java.lang.Math.*'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(139,153): 'java.lang.Math'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(139,148): 'java.lang'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(139,143): 'java'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(144,148): 'lang'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(149,153): 'Math'
+  NO_CANDIDATES

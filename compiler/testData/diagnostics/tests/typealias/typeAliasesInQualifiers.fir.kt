@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 // FILE: foo.kt
 
@@ -73,3 +74,6 @@ fun foo(
     test.EnumSample.Nested::func
     test.EnumAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::func
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass,
+objectDeclaration, typeAliasDeclaration */

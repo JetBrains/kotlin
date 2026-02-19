@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: a
 // FILE: A.kt
@@ -19,3 +19,5 @@ annotation class ConfigField()
 annotation class ConfigField()
 
 class ConfigurationTarget(@ConfigField val target: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration */

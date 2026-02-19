@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun readLine() = "x"
 
@@ -14,3 +15,6 @@ fun foo() {
 }
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, localProperty,
+propertyDeclaration, stringLiteral, whileLoop */

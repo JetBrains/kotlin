@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public class X {
     public val x : String? = null
     public fun fn(): Int {
@@ -10,3 +11,5 @@ public class X {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, propertyDeclaration, smartcast */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface B
 
 fun equalityNotApplicable(a: Int, b: B) {
@@ -85,6 +86,11 @@ fun incompatibleIdentityRegardlessNullabilitySmartCast(a: Any?, b: Any?) {
     }
 }
 
+fun incompatibleIdentityRegardlessNullabilityWithNull(a: Int?) {
+    a == null
+    a === null
+}
+
 fun incompatibleIdentityRegardlessNullabilityWithValueClasses(c: C?, d: D?) {
     <!EQUALITY_NOT_APPLICABLE!>c == d<!>
     <!EQUALITY_NOT_APPLICABLE, FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
@@ -96,3 +102,24 @@ fun incompatibleIdentityRegardlessNullabilityWithValueClassesSmartCast(c: Any?, 
         c === d
     }
 }
+
+enum class F
+
+fun <T: E, K: F> incompatibleEnumComparisonWithTypeParameters(e: T, f: K) {
+    e == f
+}
+
+interface A
+enum class G : B
+
+fun <I : A> incompatibleEnumAndUnrelatedInterfaceThroughTypeParameter(x: G?, i: I?) {
+    x == i
+}
+
+fun incompatibleEnumAndUnrelatedInterface(x: G?, i: A?) {
+    x == i
+}
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression, nullableType, primaryConstructor,
+propertyDeclaration, smartcast, typeConstraint, typeParameter, value, whenExpression, whenWithSubject */

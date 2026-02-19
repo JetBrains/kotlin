@@ -1,15 +1,19 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
 open class Base<T> {
-    <!INCOMPATIBLE_MATCHING{JVM}!>open fun foo(t: T) {}<!>
+    open fun foo(t: T) {}
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo : Base<String><!>
+expect open class Foo : Base<String>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual open class Foo : Base<String>() {
-    final override fun foo(t: String) {}
+    final override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>(t: String) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, override, typeParameter */

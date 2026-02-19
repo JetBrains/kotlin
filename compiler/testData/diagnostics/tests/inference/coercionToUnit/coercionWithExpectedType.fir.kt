@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun <T> materialize(): T = TODO()
 
@@ -10,16 +11,19 @@ val a: () -> Unit = l@{
     if (true) 42
 }
 
-val b: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>l@{
+val b: () -> Unit = l@{
     // Error, coercion can't be applied at this position!
-    if (true) return@l "hello"
+    if (true) return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>"hello"<!>
 
     // However, this is OK, because here coercion is applied
     "hello"
-}<!>
+}
 
 val c: () -> Unit = {
     // Interesting enough, for such expessions we use expected type Unit
     // (compare that with the previous case, where we didn't used expected type Unit for "hello")
     materialize()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

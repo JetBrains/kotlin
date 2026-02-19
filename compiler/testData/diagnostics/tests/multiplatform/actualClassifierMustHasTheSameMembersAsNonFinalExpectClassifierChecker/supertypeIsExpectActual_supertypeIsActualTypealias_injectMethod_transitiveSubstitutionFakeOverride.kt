@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
@@ -17,8 +18,6 @@ expect open class Foo : Transitive {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual typealias Base<T> = BaseImpl<T>
 
 open class BaseImpl<T> {
@@ -30,3 +29,6 @@ actual open class Foo : Transitive() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nullableType,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

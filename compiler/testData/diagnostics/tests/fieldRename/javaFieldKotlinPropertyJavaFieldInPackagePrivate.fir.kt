@@ -1,4 +1,5 @@
-// FILE: A.java
+// RUN_PIPELINE_TILL: FRONTEND
+// FILE: base/A.java
 
 package base;
 
@@ -11,7 +12,7 @@ class A {
 package base
 
 open class B : <!EXPOSED_SUPER_CLASS!>A<!>() {
-    private val f = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>f<!> = "FAIL"
 }
 
 // FILE: C.java
@@ -23,5 +24,8 @@ public class C extends B {}
 // FILE: test.kt
 
 fun box(): String {
-    return C().f
+    return C().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>f<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+propertyDeclaration, stringLiteral */

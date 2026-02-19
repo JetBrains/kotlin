@@ -1,6 +1,5 @@
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
-    id("java")
     id("java-test-fixtures")
 }
 

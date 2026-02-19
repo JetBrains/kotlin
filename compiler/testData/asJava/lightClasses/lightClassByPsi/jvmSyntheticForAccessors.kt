@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 class X {
     @get:JvmSynthetic
     var v = 1

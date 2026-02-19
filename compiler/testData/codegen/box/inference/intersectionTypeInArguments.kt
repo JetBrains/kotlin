@@ -13,7 +13,7 @@ fun convertPrimitivesArray(type: KType, args: Sequence<String?>): Any? {
     }
     val b = a?.toList()
     val c = b?.takeUnless { null in it }
-    val d = c?.toTypedArray()
+    val d = c?.toTypedArray<Any?>()
     return d
 }
 

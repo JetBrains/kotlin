@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 infix fun Any?.foo(a: Any) {}
 operator fun Any?.contains(a: Any): Boolean = true
@@ -38,3 +40,6 @@ fun test(a: Any) {
     a <!UNSUPPORTED!>foo<!>""<!SYNTAX, UNSUPPORTED!>1<!>
     a <!UNSUPPORTED!>foo<!>""<!SYNTAX, UNSUPPORTED!>1.0<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, infix, isExpression,
+nullableType, operator, stringLiteral */

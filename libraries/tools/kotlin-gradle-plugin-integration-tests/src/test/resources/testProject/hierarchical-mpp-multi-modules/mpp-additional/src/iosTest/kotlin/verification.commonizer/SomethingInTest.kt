@@ -1,4 +1,4 @@
-// !CHECK_HIGHLIGHTING
+// CHECK_HIGHLIGHTING
 package verification.commonizer
 
 import platform.Foundation.NSArgumentDomain

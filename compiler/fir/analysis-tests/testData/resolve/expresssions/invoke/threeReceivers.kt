@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 
 class Bar {
@@ -20,3 +21,6 @@ class Foo {
         buz.<!FUNCTION_EXPECTED!>foobar<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression */

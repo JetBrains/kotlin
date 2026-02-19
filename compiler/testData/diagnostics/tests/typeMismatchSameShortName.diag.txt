@@ -1,0 +1,7 @@
+/b.kt:16:17: error: type mismatch: inferred type is b.Foo but a.Foo was expected
+    a.acceptFoo(Foo())
+                ^^^^^
+/b.kt:20:17: error: type mismatch: inferred type is Foo#1 (type parameter of b.test2) but a.Foo was expected
+    a.acceptFoo(f)
+                ^
+

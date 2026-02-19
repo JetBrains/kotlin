@@ -16,7 +16,7 @@
 #include "ObjectTraversal.hpp"
 #include "RootSet.hpp"
 #include "Runtime.h"
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 
@@ -26,27 +26,32 @@ namespace gc {
 namespace internal {
 
 template <typename Traits>
-void processFieldInMark(void* state, ObjHeader* field) noexcept {
+void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexcept {
     auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
     if (field->heap()) {
         Traits::tryEnqueue(markQueue, field);
+    }
+    if constexpr (!Traits::kAllowHeapToStackRefs) {
+        if (object->heap()) {
+            RuntimeAssert(!field->stack(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
+        }
     }
 }
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    traverseClassObjectFields(object, [state] (ObjHeader** fieldLocation) noexcept {
-        if (auto field = *fieldLocation) {
-            processFieldInMark<Traits>(state, field);
+    traverseClassObjectFields(object, [=] (auto fieldAccessor) noexcept {
+        if (ObjHeader* field = fieldAccessor.direct()) {
+            processFieldInMark<Traits>(state, object, field);
         }
     });
 }
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    traverseArrayOfObjectsElements(array, [state] (ObjHeader** elemLocation) noexcept {
-        if (auto elem = *elemLocation) {
-            processFieldInMark<Traits>(state, elem);
+    traverseArrayOfObjectsElements(array, [=] (auto elemAccessor) noexcept {
+        if (ObjHeader* elem = elemAccessor.direct()) {
+            processFieldInMark<Traits>(state, array->obj(), elem);
         }
     });
 }
@@ -71,8 +76,8 @@ template <typename Traits>
 void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
     if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
-                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d local=%d", object,
-                weakReference, weakReference->permanent(), weakReference->local());
+                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d stack=%d", object,
+                weakReference, weakReference->permanent(), weakReference->stack());
         // Do not schedule RegularWeakReferenceImpl but process it right away.
         // This will skip markQueue interaction.
         if (Traits::tryMark(weakReference)) {
@@ -155,9 +160,9 @@ void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& 
 }
 
 template <typename Traits>
-void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
+void processWeaks(GCHandle gcHandle, mm::ExternalRCRefRegistry& registry) noexcept {
     auto handle = gcHandle.processWeaks();
-    for (auto& object : registry.lockForIter()) {
+    for (auto object : registry.lockForIter()) { // FIXME rename
         auto* obj = object.load(std::memory_order_relaxed);
         if (!obj) {
             // We already processed it at some point.
@@ -180,11 +185,11 @@ struct DefaultProcessWeaksTraits {
     static bool IsMarked(ObjHeader* obj) noexcept { return gc::isMarked(obj); }
 };
 
-void stopTheWorld(GCHandle gcHandle) noexcept;
+void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
 void resumeTheWorld(GCHandle gcHandle) noexcept;
 
 [[nodiscard]] inline auto stopTheWorldInScope(GCHandle gcHandle) noexcept {
-    return ScopeGuard([=]() { stopTheWorld(gcHandle); }, [=]() { resumeTheWorld(gcHandle); });
+    return ScopeGuard([=]() { stopTheWorld(gcHandle, "GC stop the world"); }, [=]() { resumeTheWorld(gcHandle); });
 }
 
 } // namespace gc

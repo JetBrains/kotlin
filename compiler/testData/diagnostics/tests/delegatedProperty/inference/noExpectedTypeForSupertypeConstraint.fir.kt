@@ -1,8 +1,9 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 import kotlin.reflect.KProperty
 
 class A {
-    var a by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyProperty<!>()
+    var a <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>MyProperty<!>()
 }
 
 class MyProperty<T, R> {
@@ -15,3 +16,6 @@ class MyProperty<T, R> {
         throw Exception("$thisRef $desc $t")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

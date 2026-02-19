@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val xs = listOf("a", "b", "c", "d")
@@ -5,7 +6,7 @@ val xs = listOf("a", "b", "c", "d")
 fun <T : Iterable<*>> test(iterable: T): String {
     val s = StringBuilder()
 
-    for ((index, x) in iterable.withIndex()) {
+    for ([index, x] in iterable.withIndex()) {
         s.append("$index:$x;")
     }
 

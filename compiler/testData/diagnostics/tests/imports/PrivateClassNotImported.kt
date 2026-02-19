@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: File1.kt
 package pack1
@@ -20,3 +21,5 @@ import pack2.*
 
 class X : N()
 class Y : PublicNested()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

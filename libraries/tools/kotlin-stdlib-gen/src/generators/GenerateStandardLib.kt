@@ -43,7 +43,6 @@ fun main(args: Array<String>) {
             targetBaseDirs[KotlinTarget.Common] = baseDir.resolveExistingDir("libraries/stdlib/common/src/generated")
             targetBaseDirs[KotlinTarget.JVM] = baseDir.resolveExistingDir("libraries/stdlib/jvm/src/generated")
             targetBaseDirs[KotlinTarget.JS] = baseDir.resolveExistingDir("libraries/stdlib/js/src/generated")
-            targetBaseDirs[KotlinTarget.JS_IR] = baseDir.resolveExistingDir("libraries/stdlib/js-ir/src/generated")
             targetBaseDirs[KotlinTarget.WASM] = baseDir.resolveExistingDir("libraries/stdlib/wasm/src/generated")
             targetBaseDirs[KotlinTarget.Native] = baseDir.resolveExistingDir("kotlin-native/runtime/src/main/kotlin/generated")
         }

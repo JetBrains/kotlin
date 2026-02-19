@@ -1,5 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.List;
@@ -26,3 +28,6 @@ fun main() {
     B().foo(Runnable { println() }, B.bar())
     B().foo({ println() }, { it: Any? -> it == null } )
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral,
+localFunction, nullableType, samConversion */

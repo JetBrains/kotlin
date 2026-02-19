@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:mainFile.kt
 //----------------------------------------------------------------------------------
@@ -21,3 +22,5 @@ class TestFun
 package testing.other
 
 fun TestFun() = 12
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

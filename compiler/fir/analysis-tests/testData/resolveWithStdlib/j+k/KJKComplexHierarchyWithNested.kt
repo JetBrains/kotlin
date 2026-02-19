@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: K1.kt
 class KSub : J1()
 
@@ -35,3 +36,6 @@ interface SuperI<E> {
         fun nestedI(f: F) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, integerLiteral, interfaceDeclaration,
+javaFunction, javaType, nestedClass, nullableType, stringLiteral, typeParameter */

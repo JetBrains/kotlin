@@ -13,3 +13,15 @@ fun functionWithBody() {
         // All's right
     }
 }
+
+@example.ExampleAnnotation
+fun funGetsInputParams() {
+    val input = "This is a non-test string"
+    val output = ArrayList<String>()
+    input.split("\\s+".toRegex())
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .forEach { word ->
+            output.add(word)
+        }
+}

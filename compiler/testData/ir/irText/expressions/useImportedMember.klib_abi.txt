@@ -1,0 +1,29 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /BaseClass { // /BaseClass|null[0]
+    final val fromClass // /BaseClass.fromClass|@0:0{0§<kotlin.Any?>}fromClass[0]
+        final fun <#A2: kotlin/Any?> (#A2).<get-fromClass>(): #A2 // /BaseClass.fromClass.<get-fromClass>|<get-fromClass>@0:0(){0§<kotlin.Any?>}[0]
+    constructor <init>() // /BaseClass.<init>|<init>(){}[0]
+}
+final object /C : /BaseClass, /I<kotlin/String> { // /C|null[0]
+    final val ext // /C.ext|@kotlin.Int{}ext[0]
+        final fun (kotlin/Int).<get-ext>(): kotlin/Int // /C.ext.<get-ext>|<get-ext>@kotlin.Int(){}[0]
+    final val g2 // /C.g2|@0:0{0§<kotlin.Any?>}g2[0]
+        final fun <#A2: kotlin/Any?> (#A2).<get-g2>(): #A2 // /C.g2.<get-g2>|<get-g2>@0:0(){0§<kotlin.Any?>}[0]
+    final var p // /C.p|{}p[0]
+        final fun <get-p>(): kotlin/Int // /C.p.<get-p>|<get-p>(){}[0]
+        final fun <set-p>(kotlin/Int) // /C.p.<set-p>|<set-p>(kotlin.Int){}[0]
+    final fun f(kotlin/Int): kotlin/Int // /C.f|f(kotlin.Int){}[0]
+    final fun f(kotlin/String): kotlin/Int // /C.f|f(kotlin.String){}[0]
+    final fun (kotlin/Boolean).f(): kotlin/Int // /C.f|f@kotlin.Boolean(){}[0]
+    final fun <#A1: kotlin/Any?> g1(#A1): #A1 // /C.g1|g1(0:0){0§<kotlin.Any?>}[0]
+}
+abstract interface <#A: kotlin/Any?> /I { // /I|null[0]
+    open fun <#A1: kotlin/Any?> (#A1).fromInterface(): #A1 // /I.fromInterface|fromInterface@0:0(){0§<kotlin.Any?>}[0]
+    open fun genericFromSuper(#A): #A // /I.genericFromSuper|genericFromSuper(1:0){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]

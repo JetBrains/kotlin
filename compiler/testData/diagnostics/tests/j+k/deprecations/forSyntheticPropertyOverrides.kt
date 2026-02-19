@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: -StopPropagatingDeprecationThroughOverrides
 // FILE: JavaClass.java
@@ -38,3 +39,6 @@ fun main(kotlinClass: KotlinClass, kotlinSubClass: KotlinSubClass) {
     kotlinSubClass.foo
     kotlinSubClass.bar
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+override, stringLiteral, superExpression */

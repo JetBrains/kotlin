@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
+// LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 
 import kotlin.reflect.KProperty

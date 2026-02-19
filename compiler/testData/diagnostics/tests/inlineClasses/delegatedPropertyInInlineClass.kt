@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 class Val {
     operator fun getValue(thisRef: Any?, kProp: Any?) = 1
@@ -26,3 +28,6 @@ inline class Z(val data: Int) {
     val testValBySingleton <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>by ValObject<!>
     var testVarBySingleton <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>by VarObject<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, objectDeclaration, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, setter */

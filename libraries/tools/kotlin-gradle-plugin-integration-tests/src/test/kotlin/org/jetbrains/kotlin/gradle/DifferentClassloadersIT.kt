@@ -21,7 +21,11 @@ class DifferentClassloadersIT : KGPBaseTest() {
     @DisplayName("Different classloaders message is not displayed")
     @GradleTest
     fun testDifferentClassloadersNotDisplayed(gradleVersion: GradleVersion) {
-        project("differentClassloaders", gradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
             build("publish", "-PmppProjectDependency=true") {
                 assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
                 assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
@@ -32,15 +36,16 @@ class DifferentClassloadersIT : KGPBaseTest() {
     @DisplayName("Different classloader message is displayed on different plugin versions")
     @GradleTest
     fun testDetectingDifferentClassLoaders(gradleVersion: GradleVersion) {
-        project("differentClassloaders", gradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
             setupDifferentClassloadersProject()
 
-            buildAndFail("publish", "-PmppProjectDependency=true") {
-                assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
-            }
-
-            // check that the message is also printed on subsequent builds
-            buildAndFail("publish", "-PmppProjectDependency=true") {
+            // after enabling isolated projects support by default we should not fail the build
+            build("publish", "-PmppProjectDependency=true") {
                 assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
             }
         }
@@ -49,7 +54,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
     @DisplayName("KT-50598: Different classloaders message can be disabled")
     @GradleTest
     fun differentClassloadersWarningCanBeDisabled(gradleVersion: GradleVersion) {
-        project("differentClassloaders", gradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            // CC should be explicitly disabled because it hides the warning on subsequent builds
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             setupDifferentClassloadersProject()
 
             fun checkThatWarningIsShown() {
@@ -59,7 +69,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
                     val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
                         .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
 
-                    assertEquals(setOf(":mpp-lib", ":jvm-app", ":js-app"), specificProjectsReported)
+                    assertEquals(setOf(":mpp-lib", ":jvm-app"), specificProjectsReported)
                 }
             }
 
@@ -92,12 +102,6 @@ class DifferentClassloadersIT : KGPBaseTest() {
             it.checkedReplace(
                 "id \"org.jetbrains.kotlin.jvm\"",
                 "id \"org.jetbrains.kotlin.jvm\" version \"${TestVersions.Kotlin.CURRENT}\""
-            )
-        }
-        subProject("js-app").buildGradle.modify {
-            it.checkedReplace(
-                "id \"org.jetbrains.kotlin.js\"",
-                "id \"org.jetbrains.kotlin.js\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
 

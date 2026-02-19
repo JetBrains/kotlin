@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.listIterator
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/List.listIterator
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,36 +17,44 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/ListIterator<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/List<E>
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.collections.List
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  returnValueStatus: MustUse
+  importableFqName: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.listIterator
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/List.listIterator
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -59,52 +69,69 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/ListIterator<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin.collections.List
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/List<E>
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.collections.List
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  returnValueStatus: MustUse
+  importableFqName: null

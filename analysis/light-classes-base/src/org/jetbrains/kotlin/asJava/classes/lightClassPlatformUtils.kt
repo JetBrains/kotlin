@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.impl.light.LightClass
 import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.impl.light.LightMethod
@@ -19,10 +18,6 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
-
-internal fun <Psi : PsiElement> collectAugments(element: PsiElement, type: Class<out Psi>): List<Psi> {
-    return PsiAugmentProvider.collectAugments(element, type, null)
-}
 
 fun getParentForLocalDeclaration(classOrObject: KtClassOrObject): PsiElement? {
     fun <T : PsiMember> wrapMember(member: T, forceWrapping: Boolean, wrapper: (T, PsiClass) -> T): T? {

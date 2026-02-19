@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package c
 
 fun test() {
@@ -10,3 +11,5 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localFunction, localProperty, propertyDeclaration */

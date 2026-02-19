@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 fun <V: U, U> foo(v: V, u: U) = u
@@ -20,3 +21,6 @@ fun test(a: Any, s: MutableSet<String>) {
 
 //from standard library
 fun <T> arrayListOf(vararg t: T): MutableList<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, typeConstraint,
+typeParameter, vararg */

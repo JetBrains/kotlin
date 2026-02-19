@@ -1,0 +1,152 @@
+{
+  "projectStructure": {
+    "formatVersion": "0.3.3",
+    "isPublishedAsRoot": "true",
+    "variants": [
+      {
+        "name": "jsApiElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "jsRuntimeElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "jvmApiElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "jvmRuntimeElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "jvmJUnitApiElements",
+        "sourceSet": [
+          "annotationsCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmJUnitRuntimeElements",
+        "sourceSet": [
+          "annotationsCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmJUnit5ApiElements",
+        "sourceSet": [
+          "annotationsCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmJUnit5RuntimeElements",
+        "sourceSet": [
+          "annotationsCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmTestNGApiElements",
+        "sourceSet": [
+          "annotationsCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmTestNGRuntimeElements",
+        "sourceSet": [
+          "annotationsCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "nativeApiElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "wasmJsApiElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "wasmJsRuntimeElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "wasmWasiApiElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "wasmWasiRuntimeElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      }
+    ],
+    "sourceSets": [
+      {
+        "name": "annotationsCommonMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "assertionsCommonMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "commonMain",
+        "dependsOn": [],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib"
+        ],
+        "binaryLayout": "klib"
+      }
+    ]
+  }
+}

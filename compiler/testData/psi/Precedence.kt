@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
   b().x
   x++ . 4

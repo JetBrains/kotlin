@@ -1,4 +1,4 @@
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// RUN_PIPELINE_TILL: BACKEND
 
 // FILE: JavaBuilder.java
 public class JavaBuilder<B extends JavaBuilder<B>> {
@@ -13,7 +13,10 @@ class Builder<B : Builder<B>> {
     fun <T : B> test(): T = TODO()
 
     fun foo() {}
+    fun bar(block: () -> Out<B>) {}
 }
+
+class Out<out T>
 
 fun testStar(builder: Builder<*>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("Builder<*>")!>builder.test()<!>
@@ -21,6 +24,10 @@ fun testStar(builder: Builder<*>) {
     builder
         .test()
         .foo()
+
+    builder
+        .test()
+        .bar { Out() }
 }
 
 fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
@@ -29,6 +36,10 @@ fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
     builder
         .test()
         .foo()
+
+    builder
+        .test()
+        .bar { Out() }
 }
 
 fun testStarJava(builder: JavaBuilder<*>) {
@@ -46,3 +57,6 @@ fun <K : JavaBuilder<K>> testTypeParamJava(builder: JavaBuilder<K>) {
         .test()
         .foo()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, functionDeclaration, functionalType, javaType,
+lambdaLiteral, nullableType, out, starProjection, typeConstraint, typeParameter */

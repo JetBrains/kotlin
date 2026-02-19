@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /IC1 { // /IC1|null[0]
+    abstract fun component1(): kotlin/Int // /IC1.component1|component1(){}[0]
+}
+abstract interface /IC2 { // /IC2|null[0]
+    abstract fun component2(): kotlin/String // /IC2.component2|component2(){}[0]
+}
+final fun /test(kotlin/Any) // /test|test(kotlin.Any){}[0]

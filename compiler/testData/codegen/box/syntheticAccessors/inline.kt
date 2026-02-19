@@ -1,3 +1,4 @@
+// FILE: lib.kt
 class A {
     fun foo() = o_plus_f_plus_k {""}
 
@@ -11,6 +12,7 @@ class A {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     return A().foo()
 }

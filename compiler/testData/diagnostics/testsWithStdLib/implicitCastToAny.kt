@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 var longWords = 0
 val smallWords = hashSetOf<String>()
 
@@ -30,3 +31,7 @@ fun test3(word: String) =
                 System.out?.println(word) // Unit?
             }
         }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, flexibleType, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, intersectionType, javaFunction, javaProperty, lambdaLiteral, nullableType,
+propertyDeclaration, safeCall, stringLiteral */

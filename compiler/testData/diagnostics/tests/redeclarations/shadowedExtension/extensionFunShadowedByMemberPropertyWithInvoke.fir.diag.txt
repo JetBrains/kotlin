@@ -1,0 +1,5 @@
+/extensionFunShadowedByMemberPropertyWithInvoke.fir.kt:(306,311): warning: This extension function is shadowed by a member property 'val test1: WithInvoke' defined in 'Test1' with 'fun invoke(): Unit' defined in 'WithInvoke'.
+
+/extensionFunShadowedByMemberPropertyWithInvoke.fir.kt:(327,332): warning: This extension function is shadowed by a member property 'val test1: WithInvoke' defined in 'Test1' with 'fun invoke(s: String): Unit' defined in 'WithInvoke'.
+
+/extensionFunShadowedByMemberPropertyWithInvoke.fir.kt:(432,437): warning: This extension function is shadowed by a member property 'val test1: WithInvoke' defined in 'Test1' with 'fun <T> invoke(x: T, y: Int): Unit' defined in 'WithInvoke'.

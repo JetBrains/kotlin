@@ -1,4 +1,5 @@
-fun <T> simpleRun(f: (T) -> Unit): Unit = f(<!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!>)
+// RUN_PIPELINE_TILL: FRONTEND
+fun <T> simpleRun(f: (T) -> Unit): Unit = f(return)
 
 fun <T, R> List<T>.simpleMap(f: (T) -> R): R {
 
@@ -14,3 +15,5 @@ interface KProperty<out R>
 
 interface KMutableProperty<R>
 
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+out, typeParameter, typeWithExtension */

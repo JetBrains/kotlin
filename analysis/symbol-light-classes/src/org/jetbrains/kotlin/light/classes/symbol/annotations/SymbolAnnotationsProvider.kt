@@ -1,50 +1,50 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
-    private val ktModule: KtModule,
-    private val annotatedSymbolPointer: KtSymbolPointer<T>,
-    private val annotationUseSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
+    private val ktModule: KaModule,
+    private val annotatedSymbolPointer: KaSymbolPointer<T>,
 ) : AnnotationsProvider {
-    private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
+    private inline fun <T> withAnnotatedSymbol(crossinline action: KaSession.(KaAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
-    override fun annotationInfos(): List<KtAnnotationApplicationInfo> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationInfos.filter {
-            annotationUseSiteTargetFilter.isAllowed(it.useSiteTarget)
+    override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
+        val indices = mutableMapOf<ClassId?, Int>()
+        annotatedSymbol.annotations.map { annotation ->
+            // to preserve the initial annotations order
+            val index = indices.merge(annotation.classId, 0) { old, _ -> old + 1 }!!
+            annotation.toDumbLightClassAnnotationApplication(index)
         }
     }
 
-    override fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationsByClassId(classId, annotationUseSiteTargetFilter)
+    override fun get(classId: ClassId): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
+        annotatedSymbol.annotations[classId].mapIndexed { index, annotation -> annotation.toLightClassAnnotationApplication(index) }
     }
 
     override fun contains(classId: ClassId): Boolean = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.hasAnnotation(classId, annotationUseSiteTargetFilter)
+        classId in annotatedSymbol.annotations
     }
 
     override fun equals(other: Any?): Boolean = other === this ||
             other is SymbolAnnotationsProvider<*> &&
             other.ktModule == ktModule &&
-            other.annotationUseSiteTargetFilter == annotationUseSiteTargetFilter &&
             annotatedSymbolPointer.pointsToTheSameSymbolAs(other.annotatedSymbolPointer)
 
     override fun hashCode(): Int = annotatedSymbolPointer.hashCode()
 
     override fun ownerClassId(): ClassId? = withAnnotatedSymbol { annotatedSymbol ->
-        (annotatedSymbol as? KtClassLikeSymbol)?.classIdIfNonLocal
+        (annotatedSymbol as? KaClassLikeSymbol)?.classId
     }
 }

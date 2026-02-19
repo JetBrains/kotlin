@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 class A {
     fun foo(i: A) {}
@@ -36,3 +37,6 @@ fun test() {
 }
 
 inline fun <T, R> myWith(receiver: T, block: T.() -> R): R = TODO()
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

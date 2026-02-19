@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class <#A: /IBar & /IFoo> /Box : /IBar, /IFoo { // /Box|null[0]
+    constructor <init>() // /Box.<init>|<init>(){}[0]
+    final fun bar(kotlin/Array<out /I<*>>...): /I<*> // /Box.bar|bar(kotlin.Array<out|I<*>>...){}[0]
+    abstract fun <#A1: /IBar & /IFoo> foo(/I<#A1>): /I</Box<#A1>> // /Box.foo|foo(I<0:0>){0§<IFoo&IBar>}[0]
+}
+abstract interface <#A: /IBar & /IFoo> /I // /I|null[0]
+abstract interface /IBar : /IBase // /IBar|null[0]
+abstract interface /IBase // /IBase|null[0]
+abstract interface /IFoo : /IBase // /IFoo|null[0]

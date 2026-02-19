@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 interface A
 interface B: A
@@ -13,3 +14,7 @@ fun test(a: C, b: B) {
     }
     checkSubtype<A>(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, typeWithExtension */

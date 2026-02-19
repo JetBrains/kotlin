@@ -6,28 +6,58 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+import kotlin.collections.plus
+
+private var IrClass.outerThisAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrProperty.lateinitPropertyAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrField.topLevelFieldAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrSimpleFunction.fakeOverrideAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+private val IrSimpleFunction.isPrivateOrBelongsToPrivateClass: Boolean
+    get() {
+        if (DescriptorVisibilities.isPrivate(this.visibility)) return true
+        val owner = this.correspondingPropertySymbol?.owner?.parent ?: this.parent
+        if (owner !is IrClass) return false
+        return DescriptorVisibilities.isPrivate(owner.visibility) || owner.isOriginallyLocal
+    }
+
+private val IrSimpleFunction.needsFakeOverrideAccessor: Boolean
+    get() {
+        if (this.isPrivateOrBelongsToPrivateClass) return false
+        if (!this.isFakeOverride) return false
+        return this.allOverriddenFunctions.any {
+            !it.isFakeOverride && it.modality != Modality.ABSTRACT
+                    && it.isPrivateOrBelongsToPrivateClass
+        }
+    }
 
 /**
  * Allows to distinguish external declarations to internal ABI.
  */
-internal object INTERNAL_ABI_ORIGIN : IrDeclarationOriginImpl("INTERNAL_ABI")
+internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
 
 /**
  * Sometimes we need to reference symbols that are not declared in metadata.
@@ -35,15 +65,10 @@ internal object INTERNAL_ABI_ORIGIN : IrDeclarationOriginImpl("INTERNAL_ABI")
  * In case of compiler caches, this means that it is not accessible as Lazy IR
  * and we have to explicitly add an external declaration.
  */
-internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: IrFactory) {
-    private val outerThisAccessors = mapping.outerThisCacheAccessors
-    private val lateinitPropertyAccessors = mapping.lateinitPropertyCacheAccessors
-    private val lateInitFieldToNullableField = mapping.lateInitFieldToNullableField
-
-
+internal class CachesAbiSupport(private val irFactory: IrFactory) {
     fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
         require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
-        return outerThisAccessors.getOrPut(irClass) {
+        return irClass::outerThisAccessor.getOrSetIfNull {
             irFactory.buildFun {
                 name = getMangledNameFor("outerThis", irClass)
                 origin = INTERNAL_ABI_ORIGIN
@@ -61,16 +86,29 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
         }
     }
 
+    // This is workaround for KT-68797, should be dropped in KT-68916
+    fun getTopLevelFieldAccessor(irField: IrField): IrSimpleFunction {
+        require(irField.isTopLevel)
+        return irField::topLevelFieldAccessor.getOrSetIfNull {
+            irFactory.buildFun {
+                name = getMangledNameFor("${irField.name}_get", irField.parent)
+                origin = INTERNAL_ABI_ORIGIN
+                returnType = irField.type
+            }.apply {
+                parent = irField.parent
+            }
+        }
+    }
+
     fun getLateinitPropertyAccessor(irProperty: IrProperty): IrSimpleFunction {
         require(irProperty.isLateinit) { "Expected a lateinit property but was: ${irProperty.render()}" }
-        return lateinitPropertyAccessors.getOrPut(irProperty) {
+        return irProperty::lateinitPropertyAccessor.getOrSetIfNull {
             val backingField = irProperty.backingField ?: error("Lateinit property ${irProperty.render()} should have a backing field")
-            val actualField = lateInitFieldToNullableField[backingField] ?: backingField
             val owner = irProperty.parent
             irFactory.buildFun {
                 name = getMangledNameFor("${irProperty.name}_field", owner)
                 origin = INTERNAL_ABI_ORIGIN
-                returnType = actualField.type
+                returnType = backingField.type
             }.apply {
                 parent = irProperty.getPackageFragment()
                 attributeOwnerId = irProperty // To be able to get the file.
@@ -86,105 +124,227 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
         }
     }
 
+    fun getFakeOverrideAccessor(irFunction: IrSimpleFunction): IrSimpleFunction {
+        return irFunction::fakeOverrideAccessor.getOrSetIfNull {
+            val owner = irFunction.correspondingPropertySymbol?.owner?.parent ?: irFunction.parent
+            owner as? IrClass ?: error("An instance method expected: ${irFunction.render()}")
+            irFactory.buildFun {
+                name = getMangledNameFor("${irFunction.name}_accessor", owner)
+                origin = INTERNAL_ABI_ORIGIN
+            }.apply {
+                parent = irFunction.getPackageFragment()
+                attributeOwnerId = irFunction // To be able to get the file.
+
+                addValueParameter {
+                    name = Name.identifier("inst")
+                    origin = INTERNAL_ABI_ORIGIN
+                    type = owner.defaultType
+                }
+
+                typeParameters = irFunction.typeParameters.map { parameter -> parameter.copyToWithoutSuperTypes(this) }
+
+                val typeSubstitutor = IrTypeSubstitutor(
+                        irFunction.typeParameters.map { it.symbol },
+                        typeParameters.map { it.defaultType },
+                        allowEmptySubstitution = true
+                )
+                irFunction.typeParameters.forEachIndexed { index, parameter ->
+                    typeParameters[index].superTypes = parameter.superTypes.map { typeSubstitutor.substitute(it) }
+                }
+                returnType = typeSubstitutor.substitute(irFunction.returnType)
+
+                parameters += irFunction.nonDispatchParameters.map { parameter ->
+                    parameter.copyTo(
+                            this,
+                            type = typeSubstitutor.substitute(parameter.type),
+                            defaultValue = null,
+                    )
+                }
+            }
+        }
+    }
+
     /**
      * Generate name for declaration that will be a part of internal ABI.
      */
     private fun getMangledNameFor(declarationName: String, parent: IrDeclarationParent): Name {
-        val prefix = parent.fqNameForIrSerialization
+        val prefix = (parent as? IrFile)?.path ?: parent.fqNameForIrSerialization
         return "$prefix.$declarationName".synthesizedName
     }
 }
 
-internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>> {
+/**
+ * Adds accessors to private entities.
+ */
+internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass {
     private val cachesAbiSupport = context.cachesAbiSupport
 
     override fun lower(irFile: IrFile) {
-        val addedFunctions = mutableListOf<IrFunction>()
-        irFile.acceptChildren(this, addedFunctions)
-        irFile.addChildren(addedFunctions)
+        irFile.acceptChildrenVoid(visitor)
+        irFile.addChildren(visitor.addedFunctions)
     }
 
-    override fun visitElement(element: IrElement, data: MutableList<IrFunction>) {
-        element.acceptChildren(this, data)
-    }
+    private val visitor = object : IrVisitorVoid() {
+        val addedFunctions = mutableListOf<IrSimpleFunction>()
+        val handledFakeOverrides = mutableSetOf<IrSimpleFunction>()
 
-    override fun visitClass(declaration: IrClass, data: MutableList<IrFunction>) {
-        declaration.acceptChildren(this, data)
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
 
-        if (declaration.isLocal) return
+        override fun visitClass(declaration: IrClass) {
+            declaration.acceptChildrenVoid(this)
+
+            if (declaration.isOriginallyLocal) return
 
 
-        if (declaration.isInner) {
-            val function = cachesAbiSupport.getOuterThisAccessor(declaration)
+            if (declaration.isInner) {
+                val function = cachesAbiSupport.getOuterThisAccessor(declaration)
+                context.createIrBuilder(function.symbol).apply {
+                    function.body = irBlockBody {
+                        +irReturn(irGetField(
+                                irGet(function.parameters[0]),
+                                this@ExportCachesAbiVisitor.context.innerClassesSupport.getOuterThisField(declaration))
+                        )
+                    }
+                }
+                addedFunctions.add(function)
+            }
+
+            if (DescriptorVisibilities.isPrivate(declaration.visibility)) return
+            for (irFunction in declaration.simpleFunctions()) {
+                if (!irFunction.needsFakeOverrideAccessor) continue
+
+                // Check if the base function has default values. If it does, then at the [irFunction] call sites a special generated
+                // $default function will be called, but it will be generated for the base function rather than for [irFunction].
+                // So in that case an accessor should be to the base function.
+                val baseFunction = irFunction.resolveFakeOverrideMaybeAbstract()
+                val hasDefaultValues = baseFunction?.parameters?.any { it.defaultValue != null } == true
+                val accessorTarget = if (hasDefaultValues) baseFunction else irFunction
+                if (accessorTarget in handledFakeOverrides) return
+
+                val accessor = cachesAbiSupport.getFakeOverrideAccessor(accessorTarget)
+                context.createIrBuilder(accessor.symbol).apply {
+                    accessor.body = irBlockBody {
+                        +irReturn(
+                                irCall(accessorTarget.symbol, accessor.returnType, accessor.typeParameters.map { it.defaultType })
+                                        .apply {
+                                            accessor.parameters.forEachIndexed { idx, param -> arguments[idx] = irGet(param) }
+                                        }
+                        )
+                    }
+                }
+                handledFakeOverrides.add(accessorTarget)
+                addedFunctions.add(accessor)
+            }
+        }
+
+        override fun visitProperty(declaration: IrProperty) {
+            declaration.acceptChildrenVoid(this)
+
+            if (!declaration.isLateinit || declaration.isFakeOverride
+                    || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isOriginallyLocal)
+                return
+
+            val backingField = declaration.backingField ?: error("Lateinit property ${declaration.render()} should have a backing field")
+            val ownerClass = declaration.parentClassOrNull
+            val function = cachesAbiSupport.getLateinitPropertyAccessor(declaration)
             context.createIrBuilder(function.symbol).apply {
                 function.body = irBlockBody {
-                    +irReturn(irGetField(
-                            irGet(function.valueParameters[0]),
-                            this@ExportCachesAbiVisitor.context.innerClassesSupport.getOuterThisField(declaration))
-                    )
+                    +irReturn(irGetField(ownerClass?.let { irGet(function.parameters[0]) }, backingField))
                 }
             }
-            data.add(function)
+            addedFunctions.add(function)
         }
-    }
 
-    override fun visitProperty(declaration: IrProperty, data: MutableList<IrFunction>) {
-        declaration.acceptChildren(this, data)
+        // This is workaround for KT-68797, should be dropped in KT-68916
+        override fun visitField(declaration: IrField) {
+            declaration.acceptChildrenVoid(this)
 
-        if (!declaration.isLateinit || declaration.isFakeOverride
-                || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isLocal)
-            return
+            if (!declaration.isTopLevel || DescriptorVisibilities.isPrivate(declaration.visibility)) return
 
-        val backingField = declaration.backingField ?: error("Lateinit property ${declaration.render()} should have a backing field")
-        val ownerClass = declaration.parentClassOrNull
-        val function = cachesAbiSupport.getLateinitPropertyAccessor(declaration)
-        context.createIrBuilder(function.symbol).apply {
-            function.body = irBlockBody {
-                +irReturn(irGetField(ownerClass?.let { irGet(function.valueParameters[0]) }, backingField))
+            val getter = cachesAbiSupport.getTopLevelFieldAccessor(declaration)
+            context.createIrBuilder(getter.symbol).apply {
+                getter.body = irBlockBody {
+                    +irReturn(irGetField(null, declaration))
+                }
             }
+            addedFunctions.add(getter)
         }
-        data.add(function)
     }
 }
 
-internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
-    private val cachesAbiSupport = generationState.context.cachesAbiSupport
-    private val innerClassesSupport = generationState.context.innerClassesSupport
-    private val dependenciesTracker = generationState.dependenciesTracker
-
+internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
+        irFile.transformChildrenVoid(Transformer(irFile))
     }
 
+    private inner class Transformer(val irFile: IrFile) : IrElementTransformerVoid() {
+        private val cachesAbiSupport = generationState.context.cachesAbiSupport
+        private val innerClassesSupport = generationState.context.innerClassesSupport
+        private val dependenciesTracker = generationState.dependenciesTracker
 
-    override fun visitGetField(expression: IrGetField): IrExpression {
-        expression.transformChildrenVoid(this)
+        override fun visitCall(expression: IrCall): IrExpression {
+            expression.transformChildrenVoid(this)
 
-        val field = expression.symbol.owner
-        val irClass = field.parentClassOrNull
-        val property = field.correspondingPropertySymbol?.owner
-
-        return when {
-            generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
-
-            irClass?.isInner == true && innerClassesSupport.getOuterThisField(irClass) == field -> {
-                val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
-                dependenciesTracker.add(irClass)
-                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
-                    putValueArgument(0, expression.receiver)
-                }
+            val callee = expression.symbol.owner
+            if (!callee.needsFakeOverrideAccessor) {
+                val owner = callee.parentClassOrNull ?: return expression
+                val receiverType = expression.dispatchReceiver?.type?.erasedUpperBound ?: return expression
+                if (!callee.isPrivateOrBelongsToPrivateClass || owner == receiverType)
+                    return expression
             }
+            val accessor = cachesAbiSupport.getFakeOverrideAccessor(callee)
+            if (accessor.fileOrNull == irFile || generationState.llvmModuleSpecification.containsDeclaration(callee))
+                return expression
+            return irCall(expression, accessor)
+        }
 
-            property?.isLateinit == true -> {
-                val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
-                dependenciesTracker.add(property)
-                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
-                    if (irClass != null)
-                        putValueArgument(0, expression.receiver)
+        override fun visitGetField(expression: IrGetField): IrExpression {
+            expression.transformChildrenVoid(this)
+
+            val field = expression.symbol.owner
+            val irClass = field.parentClassOrNull
+            val property = field.correspondingPropertySymbol?.owner
+
+            // Actual scope for builder is the current function that we don't have access to. So we put a new symbol as scope here,
+            // but it will not affect the result because we are not creating any declarations here.
+            fun createIrBuilder() = generationState.context.irBuiltIns.createIrBuilder(
+                    IrSimpleFunctionSymbolImpl(), expression.startOffset, expression.endOffset
+            )
+
+            return when {
+                generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
+
+                irClass?.isInner == true && innerClassesSupport.getOuterThisField(irClass) == field -> {
+                    val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
+                    dependenciesTracker.add(irClass)
+                    createIrBuilder().run {
+                        irCall(accessor).apply {
+                            arguments[0] = expression.receiver
+                        }
+                    }
                 }
-            }
 
-            else -> expression
+                property?.isLateinit == true -> {
+                    val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
+                    dependenciesTracker.add(property)
+                    createIrBuilder().run {
+                        irCall(accessor).apply {
+                            if (irClass != null)
+                                arguments[0] = expression.receiver
+                        }
+                    }
+                }
+
+                field.isTopLevel -> {
+                    val accessor = cachesAbiSupport.getTopLevelFieldAccessor(field)
+                    dependenciesTracker.add(field)
+                    createIrBuilder().irCall(accessor)
+                }
+
+                else -> expression
+            }
         }
     }
 }

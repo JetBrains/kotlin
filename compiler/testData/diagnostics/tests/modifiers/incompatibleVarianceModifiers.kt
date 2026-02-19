@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface Foo<T>
 interface Foo2<in <!REPEATED_MODIFIER!>in<!> T>
@@ -20,3 +22,6 @@ class A {
 fun test4(a: A) {
     a.bar<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>out<!> <!REPEATED_MODIFIER!>out<!> Int>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, interfaceDeclaration, localClass,
+localProperty, nullableType, out, outProjection, propertyDeclaration, typeParameter */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 val bar = fun() {}
 val bas = fun() {}
@@ -17,3 +18,6 @@ fun outer() {
     gar(fun() {})
     gar(fun() {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, localFunction, localProperty, nullableType,
+propertyDeclaration */

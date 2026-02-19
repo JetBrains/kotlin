@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final val /p // /p|{}p[0]
+    final fun <get-p>(): /A // /p.<get-p>|<get-p>(){}[0]
+final fun (/A)./divAssign(kotlin/String) // /divAssign|divAssign@A(kotlin.String){}[0]
+final fun (/A)./minusAssign(kotlin/String) // /minusAssign|minusAssign@A(kotlin.String){}[0]
+final fun (/A)./plusAssign(kotlin/String) // /plusAssign|plusAssign@A(kotlin.String){}[0]
+final fun (/A)./remAssign(kotlin/String) // /remAssign|remAssign@A(kotlin.String){}[0]
+final fun /testProperty() // /testProperty|testProperty(){}[0]
+final fun /testVariable() // /testVariable|testVariable(){}[0]
+final fun (/A)./timesAssign(kotlin/String) // /timesAssign|timesAssign@A(kotlin.String){}[0]

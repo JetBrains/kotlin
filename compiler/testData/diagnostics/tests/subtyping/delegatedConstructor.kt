@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // MODULE: lib
@@ -27,3 +28,5 @@ import lib.Base
 class Bar {
     private inner class BarImpl : Base<Any?>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, in, inner, nullableType, typeParameter */

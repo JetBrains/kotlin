@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes +ProhibitNonExhaustiveWhenOnAlgebraicTypes
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes +ProhibitNonExhaustiveWhenOnAlgebraicTypes
 
 enum class SomeEnum {
     A, B
@@ -153,3 +154,7 @@ fun test_16(x: Boolean?) {
         null -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+interfaceDeclaration, isExpression, nestedClass, nullableType, sealed, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

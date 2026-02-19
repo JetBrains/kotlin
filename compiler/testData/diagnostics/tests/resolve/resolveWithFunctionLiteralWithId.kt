@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //If this test hangs, it means something is broken.
 object A {
@@ -31,3 +32,6 @@ fun test() {
         })
     })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, objectDeclaration, propertyDeclaration, typeParameter */

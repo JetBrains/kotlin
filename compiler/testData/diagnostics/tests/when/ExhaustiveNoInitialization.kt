@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -21,3 +22,6 @@ fun foo(b: Boolean): Int {
     x = 3
     return x + y
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

@@ -1,0 +1,15 @@
+FILE: whenWithNothingInBranch.kt
+    public final fun <T> R|kotlin/Any?|.unsafeCast(): R|T| {
+        ^unsafeCast (this@R|/unsafeCast| as R|T|)
+    }
+    public final fun <R> foo(returnType: R|kotlin/String|): R|R| {
+        ^foo when () {
+            ==(R|<local>/returnType|, String(Nothing)) ->  {
+                throw R|java/lang/Exception.Exception|()
+            }
+            else ->  {
+                Null(null).R|/unsafeCast|<R|R|>()
+            }
+        }
+
+    }

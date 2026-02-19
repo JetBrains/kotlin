@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    open fun foo(kotlin/IntArray...): kotlin/Int // /A.foo|foo(kotlin.IntArray...){}[0]
+}
+final object /Obj : /A { // /Obj|null[0]
+    final fun foo(kotlin/IntArray...): kotlin/Int // /Obj.foo|foo(kotlin.IntArray...){}[0]
+}
+final fun /testBound(/A) // /testBound|testBound(A){}[0]
+final fun /testObject() // /testObject|testObject(){}[0]
+final fun /testUnbound() // /testUnbound|testUnbound(){}[0]
+final fun /use1(kotlin/Function2</A, kotlin/Int, kotlin/Unit>) // /use1|use1(kotlin.Function2<A,kotlin.Int,kotlin.Unit>){}[0]
+final fun /use2(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /use2|use2(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]

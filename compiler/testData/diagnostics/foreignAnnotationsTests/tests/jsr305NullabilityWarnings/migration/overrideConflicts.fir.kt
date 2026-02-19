@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: warn
 // JSR305_MIGRATION_REPORT: strict
 
@@ -66,7 +66,7 @@ fun main(b: B, c: C) {
     b.foo2()?.length
     b.foo3()<!UNSAFE_CALL!>.<!>length
     b.foo3()?.length
-    b.foo4().length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo4()<!>.length
     b.foo4()?.length
 
     b.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
@@ -75,7 +75,7 @@ fun main(b: B, c: C) {
     b.bar2("")
     b.bar3(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     b.bar3("")
-    b.bar4(null)
+    b.bar4(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     b.bar4("")
 
     c.foo4()<!UNSAFE_CALL!>.<!>length

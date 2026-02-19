@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 fun test_1(b: Boolean) {
     if (b || false) {
         1
@@ -46,3 +47,5 @@ fun test_8(b: Boolean) {
         1
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, functionDeclaration, ifExpression, integerLiteral */

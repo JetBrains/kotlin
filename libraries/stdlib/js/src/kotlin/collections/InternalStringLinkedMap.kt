@@ -164,9 +164,7 @@ internal class InternalStringLinkedMap<K, V> : InternalStringMap<K, V>() {
         BaseLinkedItr<K, V>(map) {
         override fun next(): MutableMap.MutableEntry<K, V> {
             goNext()
-            val key = map.keys.getElement(lastIndex)
-            val value = map.values.getElement(lastIndex)
-            return EntryRef(key, value, map)
+            return EntryRef(map, lastIndex)
         }
     }
 }

@@ -1,23 +1,15 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Should be consistent with [org.jetbrains.kotlin.types.expressions.OperatorConventions]
+ */
 object OperatorNameConventions {
     @JvmField val GET_VALUE = Name.identifier("getValue")
     @JvmField val SET_VALUE = Name.identifier("setValue")
@@ -33,6 +25,7 @@ object OperatorNameConventions {
     @JvmField val SET = Name.identifier("set")
     @JvmField val NEXT = Name.identifier("next")
     @JvmField val HAS_NEXT = Name.identifier("hasNext")
+    @JvmField val OF = Name.identifier("of")
 
     @JvmField val TO_STRING = Name.identifier("toString")
 
@@ -58,17 +51,27 @@ object OperatorNameConventions {
 
     @JvmField val TIMES = Name.identifier("times")
     @JvmField val DIV = Name.identifier("div")
-    @JvmField val MOD = Name.identifier("mod")
     @JvmField val REM = Name.identifier("rem")
     @JvmField val RANGE_TO = Name.identifier("rangeTo")
     @JvmField val RANGE_UNTIL = Name.identifier("rangeUntil")
 
     @JvmField val TIMES_ASSIGN = Name.identifier("timesAssign")
     @JvmField val DIV_ASSIGN = Name.identifier("divAssign")
-    @JvmField val MOD_ASSIGN = Name.identifier("modAssign")
     @JvmField val REM_ASSIGN = Name.identifier("remAssign")
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
+
+    @JvmField val TO_DOUBLE = Name.identifier("toDouble")
+    @JvmField val TO_FLOAT = Name.identifier("toFloat")
+    @JvmField val TO_LONG = Name.identifier("toLong")
+    @JvmField val TO_INT = Name.identifier("toInt")
+    @JvmField val TO_CHAR = Name.identifier("toChar")
+    @JvmField val TO_SHORT = Name.identifier("toShort")
+    @JvmField val TO_BYTE = Name.identifier("toByte")
+    @JvmField val TO_ULONG = Name.identifier("toULong")
+    @JvmField val TO_UINT = Name.identifier("toUInt")
+    @JvmField val TO_USHORT = Name.identifier("toUShort")
+    @JvmField val TO_UBYTE = Name.identifier("toUByte")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
@@ -79,25 +82,34 @@ object OperatorNameConventions {
     val SIMPLE_UNARY_OPERATION_NAMES = setOf(UNARY_PLUS, UNARY_MINUS, NOT, INV)
 
     @JvmField
-    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO, RANGE_UNTIL)
+    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, REM, RANGE_TO, RANGE_UNTIL)
+
+    @JvmField
+    val SIMPLE_BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, REM)
 
     @JvmField
     val BITWISE_OPERATION_NAMES = setOf(AND, OR, XOR, INV, SHL, SHR, USHR)
 
     @JvmField
+    val SIMPLE_BITWISE_OPERATION_NAMES = setOf(AND, OR, XOR, SHL, SHR, USHR)
+
+    @JvmField
     val ALL_BINARY_OPERATION_NAMES = BINARY_OPERATION_NAMES + BITWISE_OPERATION_NAMES + setOf(EQUALS, CONTAINS, COMPARE_TO)
 
     @JvmField
-    val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
+    val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
 
     @JvmField
     val DELEGATED_PROPERTY_OPERATORS = setOf(GET_VALUE, SET_VALUE, PROVIDE_DELEGATE)
 
     @JvmField
-    val MOD_OPERATORS_REPLACEMENT = mapOf(MOD to REM, MOD_ASSIGN to REM_ASSIGN)
+    val STATEMENT_LIKE_OPERATORS = setOf(SET) + ASSIGNMENT_OPERATIONS
 
     @JvmField
-    val STATEMENT_LIKE_OPERATORS = setOf(SET) + ASSIGNMENT_OPERATIONS
+    val NUMBER_CONVERSIONS = setOf(TO_DOUBLE, TO_FLOAT, TO_LONG, TO_INT, TO_SHORT, TO_BYTE, TO_CHAR)
+
+    @JvmField
+    val UNSIGNED_CONVERSIONS = setOf(TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE)
 
     val TOKENS_BY_OPERATOR_NAME = mapOf(
         INC to "++",
@@ -113,4 +125,9 @@ object OperatorNameConventions {
         RANGE_TO to "..",
         RANGE_UNTIL to "..<",
     )
+
+    fun isComponentN(name: Name): Boolean {
+        val identifier = name.identifierOrNullIfSpecial ?: return false
+        return COMPONENT_REGEX.matches(identifier)
+    }
 }

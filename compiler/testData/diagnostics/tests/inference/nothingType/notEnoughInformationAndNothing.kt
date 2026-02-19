@@ -1,5 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// CHECK_TYPE
+// COMPARE_WITH_LIGHT_TREE
 
 class Inv<I>
 fun <T> materialize(): Inv<T> = TODO()
@@ -35,3 +37,7 @@ fun test2() {
         null
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+typeParameter, typeWithExtension, vararg, whenExpression, whenWithSubject */

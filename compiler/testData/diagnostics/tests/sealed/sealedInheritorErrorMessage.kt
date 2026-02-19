@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-46285
 
@@ -14,3 +15,6 @@ sealed interface SealedInterface {
         class Local : <!SEALED_SUPERTYPE_IN_LOCAL_CLASS("Local class; interface")!>SealedInterface<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+localClass, localProperty, propertyDeclaration, sealed */

@@ -1,5 +1,8 @@
 package
 
+public var platformJ: kotlin.Int!
+public var platformN: kotlin.Int!
+public var platformNN: kotlin.Int!
 public fun test(): kotlin.Unit
 
 public open class J {

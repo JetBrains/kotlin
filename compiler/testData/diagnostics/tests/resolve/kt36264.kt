@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A
 class B : A
@@ -17,3 +18,6 @@ class Cls {
 }
 
 fun take(arg: Any) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, ifExpression, interfaceDeclaration, isExpression,
+propertyDeclaration, propertyWithExtensionReceiver, smartcast */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 
 sealed class Base
@@ -48,3 +49,6 @@ fun test_3(base: Base) {
         is A -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+localProperty, nullableType, objectDeclaration, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

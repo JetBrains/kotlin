@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo() {
     val x = object {
         fun sss() = abc()
@@ -5,3 +6,6 @@ fun foo() {
     }
     val g = x.sss()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FIR_IDENTICAL
 // FULL_JDK
@@ -16,3 +17,6 @@ fun findComparisonNegationOperators(x: PyTokenTypes?): Pair<String, String>? {
     return comparisonStrings.getValue(x) to
             comparisonStrings.getValue(x)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, nullableType, propertyDeclaration,
+stringLiteral */

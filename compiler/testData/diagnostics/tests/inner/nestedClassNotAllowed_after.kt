@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
+// LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
 
 class A {
     inner class B {
@@ -25,3 +26,5 @@ enum class E {
         <!NESTED_CLASS_NOT_ALLOWED!>class D<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, inner, localClass, nestedClass */

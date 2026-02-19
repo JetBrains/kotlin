@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
@@ -15,8 +16,6 @@ expect open class Foo : Base {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual open class Base {
     actual fun existingMethodInBase() {}
     fun injected() {}
@@ -26,3 +25,5 @@ actual open class Foo : Base() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration */

@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 package m
 
@@ -29,3 +30,7 @@ fun test(i: Int?) {
 fun foo(i: Int) = i
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, localProperty, nullableType, outProjection, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, typeWithExtension, vararg */

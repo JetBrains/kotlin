@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 typealias f = (((S).() -> S).() -> S)
 typealias f = ((T.() -> S).() -> S)
 typealias f = ((T.T.() -> S).() -> S)

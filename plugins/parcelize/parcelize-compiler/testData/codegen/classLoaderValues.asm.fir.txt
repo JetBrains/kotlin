@@ -1,0 +1,85 @@
+public final class A$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final A createFromParcel(android.os.Parcel parcel) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW (A)
+          DUP
+          ALOAD (1)
+          LDC (LA;)
+          INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
+          INVOKEVIRTUAL (android/os/Parcel, readValue, (Ljava/lang/ClassLoader;)Ljava/lang/Object;)
+          ALOAD (1)
+          LDC (LA;)
+          INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
+          INVOKEVIRTUAL (android/os/Parcel, readBundle, (Ljava/lang/ClassLoader;)Landroid/os/Bundle;)
+          ALOAD (1)
+          LDC (LA;)
+          INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
+          INVOKEVIRTUAL (android/os/Parcel, readPersistableBundle, (Ljava/lang/ClassLoader;)Landroid/os/PersistableBundle;)
+          INVOKESPECIAL (A, <init>, (Ljava/lang/Object;Landroid/os/Bundle;Landroid/os/PersistableBundle;)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (A$Creator, createFromParcel, (Landroid/os/Parcel;)LA;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final A[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class A : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final java.lang.Object a
+
+    private final android.os.Bundle b
+
+    private final android.os.PersistableBundle c
+
+    static void <clinit>()
+
+    public void <init>(java.lang.Object a, android.os.Bundle b, android.os.PersistableBundle c)
+
+    public final int describeContents()
+
+    public final java.lang.Object getA()
+
+    public final android.os.Bundle getB()
+
+    public final android.os.PersistableBundle getC()
+
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (A, a, Ljava/lang/Object;)
+          INVOKEVIRTUAL (android/os/Parcel, writeValue, (Ljava/lang/Object;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (A, b, Landroid/os/Bundle;)
+          INVOKEVIRTUAL (android/os/Parcel, writeBundle, (Landroid/os/Bundle;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (A, c, Landroid/os/PersistableBundle;)
+          INVOKEVIRTUAL (android/os/Parcel, writePersistableBundle, (Landroid/os/PersistableBundle;)V)
+        LABEL (L1)
+        LINENUMBER (15)
+          RETURN
+        LABEL (L2)
+    }
+}

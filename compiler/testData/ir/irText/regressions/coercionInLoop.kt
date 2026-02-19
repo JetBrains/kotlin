@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun box(): String {
     val a = DoubleArray(5)
     val x = a.iterator()

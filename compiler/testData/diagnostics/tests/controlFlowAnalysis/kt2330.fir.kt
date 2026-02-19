@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2330 Check visibility of getters and setters correspondingly
 package a
 
@@ -51,3 +52,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter, init,
+integerLiteral, localFunction, localProperty, propertyDeclaration */

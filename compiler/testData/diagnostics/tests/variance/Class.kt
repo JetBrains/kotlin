@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface In<in T>
 interface Out<out T>
@@ -22,3 +23,5 @@ class SubClass4<in I, out O, P> : In<I>
 class SubClass5<in I, out O, P> : In<<!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>
 class SubClass6<in I, out O, P> : Inv<<!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>
 class SubClass7<in I, out O, P> : Inv<<!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>
+
+/* GENERATED_FIR_TAGS: classDeclaration, in, interfaceDeclaration, nullableType, out, typeConstraint, typeParameter */

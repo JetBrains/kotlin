@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Pair(x : Int, y : Int) {
   companion object {
     fun copy(from : Pair, x : Int = from.x, y : Int = from.y) = Pair(x, y)

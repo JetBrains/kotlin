@@ -4,12 +4,17 @@ description = "ABI generation for Kotlin/JVM"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
+    "testFixtures" { projectDefault() }
 }
 
 val embedded by configurations
@@ -26,23 +31,23 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":kotlin-build-common"))
 
-    // Include kotlinx.metadata for metadata stripping.
-    // Note that kotlinx-metadata-jvm already includes kotlinx-metadata, core:metadata, core:metadata.jvm,
-    // and protobuf-lite, so we only need to include kotlinx-metadata-jvm in the shadow jar.
-    compileOnly(project(":kotlinx-metadata"))
-    embedded(project(":kotlinx-metadata-jvm"))
+    // Include kotlin.metadata for metadata stripping.
+    // Note that kotlin-metadata-jvm already includes kotlin-metadata, core:metadata, core:metadata.jvm,
+    // and protobuf-lite, so we only need to include kotlin-metadata-jvm in the shadow jar.
+    compileOnly(project(":kotlin-metadata"))
+    embedded(project(":kotlin-metadata-jvm"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
-    testImplementation(commonDependency("junit:junit"))
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:incremental-compilation-impl"))
+    testFixturesApi(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 }
 
 optInToExperimentalCompilerApi()
@@ -59,9 +64,15 @@ sourcesJar()
 
 javadocJar()
 
-projectTest(parallel = true) {
-    workingDir = rootDir
-    dependsOn(":dist")
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+        dependsOn(":dist")
+    }
+
+    testGenerator("org.jetbrains.kotlin.jvm.abi.TestGeneratorKt")
+
+    withJvmStdlibAndReflect()
 }
 
 testsJar()

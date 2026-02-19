@@ -10,21 +10,8 @@ fun foo1(vararg xs: Int): Int {
   return 1
 }
 
-fun use(r: KRunnable) {
-}
-
 fun testSamConstructor(): KRunnable {
   return ::foo0 /*-> KRunnable */
-}
-
-fun testSamCosntructorOnAdapted(): KRunnable {
-  return { // BLOCK
-    local fun foo1() {
-      foo1() /*~> Unit */
-    }
-
-    ::foo1
-  } /*-> KRunnable */
 }
 
 fun testSamConversion() {
@@ -40,3 +27,17 @@ fun testSamConversionOnAdapted() {
     ::foo1 /*-> KRunnable */
   })
 }
+
+fun testSamCosntructorOnAdapted(): KRunnable {
+  return { // BLOCK
+    local fun foo1() {
+      foo1() /*~> Unit */
+    }
+
+    ::foo1
+  } /*-> KRunnable */
+}
+
+fun use(r: KRunnable) {
+}
+

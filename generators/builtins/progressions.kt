@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.*
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
-class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out, annotateAsBuiltinWithBytecode = true) {
 
     override fun getPackage() = "kotlin.ranges"
     private fun generateDiscreteBody(kind: ProgressionKind) {
@@ -46,7 +46,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             INT ->
                 "        if (isEmpty()) -1 else (31 * (31 * first + last) + step)"
             LONG ->
-                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("step")}).toInt()"
+                "        if (isEmpty()) -1 else (31 * (31 * first.hashCode() + last.hashCode()) + step.hashCode())"
         }
         val elementToIncrement = when (kind) {
             CHAR -> ".code"
@@ -106,7 +106,7 @@ public open class $progression
 
     override fun toString(): String = ${"if (step > 0) \"\$first..\$last step \$step\" else \"\$first downTo \$last step \${-step}\""}
 
-    companion object {
+    public companion object {
         /**
          * Creates $progression within the specified bounds of a closed range.
          *

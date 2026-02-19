@@ -1,4 +1,4 @@
-actual class <error descr="[ACTUAL_WITHOUT_EXPECT] Actual class 'Your' has no corresponding expected declaration">Your</error> {
+actual class <error descr="[ACTUAL_WITHOUT_EXPECT] 'actual class Your : Any' has no corresponding expected declaration">Your</error> {
 
 }
 
@@ -11,6 +11,6 @@ expect class Their {
 
 }
 
-actual class Their {
+actual class <error descr="[ACTUAL_WITHOUT_EXPECT] 'actual class Your : Any' has no corresponding expected declaration">Their</error> {
 
 }

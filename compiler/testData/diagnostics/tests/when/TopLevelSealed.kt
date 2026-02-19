@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -31,3 +32,6 @@ fun test(a: A) {
         is D -> "D"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, localProperty, nestedClass,
+propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

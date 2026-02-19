@@ -16,12 +16,22 @@ internal interface Caller<out M : Member?> {
     val parameterTypes: List<Type>
 
     fun checkArguments(args: Array<*>) {
-        if (arity != args.size) {
-            throw IllegalArgumentException("Callable expects $arity arguments, but ${args.size} were provided.")
+        checkArguments(args.size)
+    }
+
+    fun checkArguments(argsCount: Int) {
+        if (arity != argsCount) {
+            throw IllegalArgumentException("Callable expects $arity arguments, but $argsCount were provided.")
         }
     }
 
     fun call(args: Array<*>): Any?
+
+    /**
+     * @see [CallerImpl.Method.BoundStatic.isCallByToValueClassMangledMethod]
+     */
+    val isBoundInstanceCallWithValueClasses: Boolean
+        get() = false
 }
 
 internal val Caller<*>.arity: Int

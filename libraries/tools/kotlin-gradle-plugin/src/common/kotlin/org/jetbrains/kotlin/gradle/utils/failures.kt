@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 
 /**
  * Returns *all* failures that have already happened during project configuration.
@@ -51,7 +49,6 @@ private val Project.ideaSyncClasspathModeUtil
             get() = runCatching {
                 providers
                     .systemProperty(KotlinDslModelsParameters.PROVIDER_MODE_SYSTEM_PROPERTY_NAME)
-                    .usedAtConfigurationTime(configurationTimePropertiesAccessor)
                     .orNull == KotlinDslModelsParameters.CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE
             }.getOrElse { failure ->
                 logger.error("Failed to access '${KotlinDslModelsParameters.PROVIDER_MODE_SYSTEM_PROPERTY_NAME}'", failure)

@@ -99,6 +99,30 @@ class Maps {
         }
 
         @Sample
+        fun getOrElseIfNull() {
+            val map = mutableMapOf<String, Int?>()
+            assertPrints(map.getOrElseIfNull("x") { 1 }, "1")
+
+            map["x"] = 3
+            assertPrints(map.getOrElseIfNull("x") { 1 }, "3")
+
+            map["x"] = null
+            assertPrints(map.getOrElseIfNull("x") { 1 }, "1")
+        }
+
+        @Sample
+        fun getOrElseIfMissing() {
+            val map = mutableMapOf<String, Int?>()
+            assertPrints(map.getOrElseIfMissing("x") { 1 }, "1")
+
+            map["x"] = 3
+            assertPrints(map.getOrElseIfMissing("x") { 1 }, "3")
+
+            map["x"] = null
+            assertPrints(map.getOrElseIfMissing("x") { 1 }, "null")
+        }
+
+        @Sample
         fun getOrPut() {
             val map = mutableMapOf<String, Int?>()
 
@@ -107,10 +131,39 @@ class Maps {
             // since the first getOrPut has already stored value 2 in the map
             assertPrints(map.getOrPut("x") { 3 }, "2")
 
-            // however null value mapped to a key is treated the same as the missing value
+            // however, null value mapped to a key is treated the same as the missing value
             assertPrints(map.getOrPut("y") { null }, "null")
             // so in that case the default value is evaluated
             assertPrints(map.getOrPut("y") { 42 }, "42")
+        }
+
+        @Sample
+        fun getOrPutIfNull() {
+            val map = mutableMapOf<String, Int?>()
+
+            assertPrints(map.getOrPutIfNull("x") { 2 }, "2")
+            // subsequent calls to getOrPutIfNull do not evaluate the default value
+            // since the first getOrPutIfNull has already stored value 2 in the map
+            assertPrints(map.getOrPutIfNull("x") { 3 }, "2")
+
+            // however, null value mapped to a key is treated the same as the missing value
+            assertPrints(map.getOrPutIfNull("y") { null }, "null")
+            // so in that case the default value is evaluated
+            assertPrints(map.getOrPutIfNull("y") { 42 }, "42")
+        }
+
+        @Sample
+        fun getOrPutIfMissing() {
+            val map = mutableMapOf<String, Int?>()
+
+            assertPrints(map.getOrPutIfMissing("x") { 2 }, "2")
+            // subsequent calls to getOrPutIfMissing do not evaluate the default value
+            // since the first getOrPutIfMissing has already stored value 2 in the map
+            assertPrints(map.getOrPutIfMissing("x") { 3 }, "2")
+
+            map["x"] = null
+            // if a key is mapped to null value, getOrPutIfMissing does not overwrite it
+            assertPrints(map.getOrPutIfMissing("x") { 4 }, "null")
         }
 
         @Sample
@@ -204,6 +257,44 @@ class Maps {
 
             val stats: Map<String, Int> = mapOf("Store #1" to 1247, "Store #2" to 540)
             assertPrints(totalValue(stats), "Total: [1787]")
+        }
+
+        @Sample
+        fun getValueWithoutDefault() {
+            val map = mapOf(1 to "One", 2 to "Two")
+            assertFailsWith<NoSuchElementException> { map.getValue(3) }
+            assertPrints(map.getValue(1), "One")
+        }
+
+        @Sample
+        fun getValueWithDefault() {
+            val mapWithDefault = mapOf(1 to "One", 2 to "Two").withDefault { key ->
+                when {
+                    key == 0 -> "Zero"
+                    key > 0 -> "Positive"
+                    else -> "Negative"
+                }
+            }
+            val actual = (-1..3).associateWith { mapWithDefault.getValue(it) }
+            assertPrints(actual, "{-1=Negative, 0=Zero, 1=One, 2=Two, 3=Positive}")
+        }
+
+        @Sample
+        fun getValueWithReplacedDefault() {
+            val mapWithDefault = mapOf(1 to "One", 2 to "Two").withDefault { _ -> "Other" }
+            assertPrints(mapWithDefault.getValue(0), "Other")
+            val mapWithReplacedDefault = mapWithDefault.withDefault { _ -> "Unknown" }
+            assertPrints(mapWithReplacedDefault.getValue(0), "Unknown")
+        }
+
+        @Sample
+        fun changesToMutableMapWithDefaultPropagateToUnderlyingMap() {
+            val mutableMap = mutableMapOf(1 to "One", 2 to "Two")
+            val mutableMapWithDefault = mutableMap.withDefault { _ -> "Other" }
+            assertPrints(mutableMapWithDefault.getValue(0), "Other")
+            mutableMapWithDefault[0] = "Zero"
+            assertPrints(mutableMapWithDefault.getValue(0), "Zero")
+            assertPrints(mutableMap.getValue(0), "Zero")
         }
 
     }
@@ -372,6 +463,164 @@ class Maps {
         fun flatMap() {
             val map = mapOf("122" to 2, "3455" to 3)
             assertPrints(map.flatMap { (key, value) -> key.take(value).toList() }, "[1, 2, 3, 4, 5]")
+        }
+    }
+
+    class CoreApi {
+        @Sample
+        fun size() {
+            assertPrints(emptyMap<Int, Int>().size, "0")
+
+            val mutableMap = mutableMapOf(1 to "one", 2 to "two")
+            assertPrints(mutableMap.size, "2")
+
+            mutableMap[3] = "three"
+            assertPrints(mutableMap.size, "3")
+        }
+
+        @Sample
+        fun isEmpty() {
+            assertTrue(emptyMap<Int, Int>().isEmpty())
+            assertFalse(mapOf(1 to 2).isEmpty())
+        }
+
+        @Sample
+        fun get() {
+            val map = mapOf(1 to "one", 2 to "two")
+
+            assertPrints(map[2], "two")
+            assertTrue(map[3] == null)
+        }
+
+        @Sample
+        fun put() {
+            val map = mutableMapOf(1 to "one", 2 to "two")
+            map[1] = "*ONE*"
+            assertPrints(map, "{1=*ONE*, 2=two}")
+
+            map[3] = "tree"
+            assertPrints(map, "{1=*ONE*, 2=two, 3=tree}")
+
+            assertPrints(map.put(3, "three"), "tree")
+            assertPrints(map.put(4, "four"), "null")
+        }
+
+        @Sample
+        fun putAll() {
+            val map = mutableMapOf(1 to "one", 2 to "two")
+            map.putAll(mapOf(3 to "three", 4 to "four", 1 to "_ONE_"))
+
+            assertPrints(map, "{1=_ONE_, 2=two, 3=three, 4=four}")
+        }
+
+        @Sample
+        fun clear() {
+            val map = mutableMapOf(1 to "one", 2 to "two")
+            assertPrints(map, "{1=one, 2=two}")
+
+            map.clear()
+            assertPrints(map, "{}")
+        }
+
+        @Sample
+        fun remove() {
+            val map = mutableMapOf(1 to "one", 2 to "two")
+
+            assertPrints(map.remove(1), "one")
+            assertPrints(map, "{2=two}")
+
+            // There's no value for key=1 anymore
+            assertTrue(map.remove(1) == null)
+        }
+
+        @Sample
+        fun containsKey() {
+            val map = mapOf(1 to "one", 2 to "two")
+            assertTrue(map.containsKey(1))
+            assertFalse(map.containsKey(-1))
+        }
+
+        @Sample
+        fun containsValue() {
+            val map = mapOf(1 to "one", 2 to "two")
+            assertTrue(map.containsValue("one"))
+            assertFalse(map.containsValue("1"))
+        }
+
+        @Sample
+        fun keySet() {
+            val map = mapOf(1 to "one", 2 to "two")
+            assertPrints(map.keys, "[1, 2]")
+        }
+
+        @Sample
+        fun keySetMutable() {
+            val map = mutableMapOf(1 to "one", 2 to "two")
+            val keys = map.keys
+            assertPrints(keys, "[1, 2]")
+
+            keys.remove(1)
+            assertPrints(keys, "[2]")
+            assertPrints(map, "{2=two}")
+
+            assertFailsWith<UnsupportedOperationException> { keys.add(3) }
+        }
+
+        @Sample
+        fun valueSet() {
+            val map = mapOf(1 to "one", 2 to "two", -2 to "two")
+            val values = map.values
+            assertPrints(values, "[one, two, two]")
+        }
+
+        @Sample
+        fun valueSetMutable() {
+            val map = mutableMapOf(1 to "one", 2 to "two", -2 to "two")
+            val values = map.values
+            assertPrints(values, "[one, two, two]")
+
+            values.removeAll { it == "two" }
+            assertPrints(values, "[one]")
+            assertPrints(map, "{1=one}")
+
+            assertFailsWith<UnsupportedOperationException> { values.add("v") }
+        }
+
+        @Sample
+        fun entrySet() {
+            val map = mapOf(1 to "one", 2 to "two")
+            assertPrints(map.entries, "[1=one, 2=two]")
+        }
+
+        @Sample
+        fun entrySetMutable() {
+            val map = mutableMapOf(1 to "one", 2 to "two")
+            val entries = map.entries
+            assertPrints(entries, "[1=one, 2=two]")
+
+            entries.first().setValue("*ONE*")
+            assertPrints(entries, "[1=*ONE*, 2=two]")
+
+            entries.clear()
+            assertTrue(map.isEmpty())
+        }
+
+        @Sample
+        fun entryCopy() {
+            val map = mutableMapOf(1 to "a", 2 to "b", 3 to "c", 4 to "d")
+            val selectedEntries = map.entries.filter { it.key % 2 == 0 }
+            assertPrints(selectedEntries, "[2=b, 4=d]")
+            // This may throw: "The backing map has been modified after this entry was obtained."
+            // because the map is structurally modified as soon as the first one entry is removed
+            // map.entries.removeAll(selectedEntries)
+
+            val selectedEntriesCopy = selectedEntries.map { it.copy() }
+            map.entries.removeAll(selectedEntriesCopy)
+            assertPrints(map, "{1=a, 3=c}")
+
+            // Copied entries continue to be valid even after the original map is cleared
+            map.clear()
+            assertPrints(selectedEntriesCopy, "[2=b, 4=d]")
         }
     }
 }

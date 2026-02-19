@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirNameAwareCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -22,27 +23,42 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Caches [declared member scopes][FirContainingNamesAwareScope] and [nested classifier scopes][FirNestedClassifierScope] for [FirClass]es.
+ *
+ * ### Caching strategy
+ *
+ * The provider uses caches with suggested limits. In the compiler, the cache will simply be an unlimited cache. In the Analysis API,
+ * however, these limits will be applied.
+ *
+ * Scope values are expired after they haven't been accessed for a few seconds. This keeps the cache lean and avoids accumulation of unused
+ * scopes. Because this expiration is only checked when the cache is accessed, scope values are additionally held on soft references so that
+ * they can be collected under memory pressure.
+ */
 @ThreadSafeMutableState
 class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessionComponent {
     private val declaredMemberCache: FirCache<FirClass, FirContainingNamesAwareScope, DeclaredMemberScopeContext> =
-        useSiteSession.firCachesFactory.createCache { klass, context ->
-            createDeclaredMemberScope(
-                klass = klass,
-                useLazyNestedClassifierScope = context.useLazyNestedClassifierScope,
-                existingNames = context.existingNames,
-                symbolProvider = context.symbolProvider,
-            )
+        useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
+            expirationAfterAccess = 5.seconds,
+            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
+        ) { klass, context ->
+            createDeclaredMemberScope(klass = klass, existingNamesForLazyNestedClassifierScope = context.existingNames)
         }
 
     private val nestedClassifierCache: FirCache<FirClass, FirNestedClassifierScope?, Nothing?> =
-        useSiteSession.firCachesFactory.createCache { klass, _ -> createNestedClassifierScope(klass) }
+        useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
+            expirationAfterAccess = 5.seconds,
+            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
+        ) { klass, _ ->
+            createNestedClassifierScope(klass)
+        }
 
     fun declaredMemberScope(
         klass: FirClass,
         useLazyNestedClassifierScope: Boolean,
         existingNames: List<Name>?,
-        symbolProvider: FirSymbolProvider?,
         memberRequiredPhase: FirResolvePhase?,
     ): FirContainingNamesAwareScope {
         memberRequiredPhase?.let {
@@ -54,7 +70,6 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             DeclaredMemberScopeContext(
                 useLazyNestedClassifierScope,
                 existingNames,
-                symbolProvider,
             )
         )
     }
@@ -62,14 +77,11 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     private data class DeclaredMemberScopeContext(
         val useLazyNestedClassifierScope: Boolean,
         val existingNames: List<Name>?,
-        val symbolProvider: FirSymbolProvider?,
     )
 
     private fun createDeclaredMemberScope(
         klass: FirClass,
-        useLazyNestedClassifierScope: Boolean,
-        existingNames: List<Name>?,
-        symbolProvider: FirSymbolProvider?,
+        existingNamesForLazyNestedClassifierScope: List<Name>?,
     ): FirContainingNamesAwareScope {
         val origin = klass.origin
         return when {
@@ -82,14 +94,8 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
                 ) ?: FirTypeScope.Empty
             }
             else -> {
-                val baseScope = FirClassDeclaredMemberScopeImpl(
-                    useSiteSession,
-                    klass,
-                    useLazyNestedClassifierScope,
-                    existingNames,
-                    symbolProvider
-                )
-                val generatedScope = runIf(origin.fromSource || origin.generated) {
+                val baseScope = FirClassDeclaredMemberScopeImpl(useSiteSession, klass, existingNamesForLazyNestedClassifierScope)
+                val generatedScope = runIf(origin.fromSource) {
                     FirGeneratedClassDeclaredMemberScope.create(
                         useSiteSession,
                         klass.symbol,
@@ -128,7 +134,11 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             } else {
                 baseScope
             }
-        }?.takeUnless { it.isEmpty() }
+        }?.takeIf {
+            // For Java declarations `isEmpty` check may trigger expensive and recursive iteration
+            // through declarations which might end up with SOE
+            origin == FirDeclarationOrigin.Java.Source || !it.isEmpty()
+        }
     }
 }
 
@@ -137,7 +147,6 @@ fun FirSession.declaredMemberScope(klass: FirClass, memberRequiredPhase: FirReso
         klass = klass,
         useLazyNestedClassifierScope = false,
         existingNames = null,
-        symbolProvider = null,
         memberRequiredPhase = memberRequiredPhase,
     )
 }
@@ -153,27 +162,24 @@ fun FirClassSymbol<*>.declaredMemberScope(session: FirSession, memberRequiredPha
 fun FirSession.declaredMemberScopeWithLazyNestedScope(
     klass: FirClass,
     existingNames: List<Name>,
-    symbolProvider: FirSymbolProvider
 ): FirContainingNamesAwareScope = declaredMemberScopeProvider.declaredMemberScope(
     klass = klass,
     useLazyNestedClassifierScope = true,
     existingNames = existingNames,
-    symbolProvider = symbolProvider,
     memberRequiredPhase = null,
 )
 
 fun FirSession.nestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {
-    return declaredMemberScopeProvider
-        .nestedClassifierScope(klass)
+    return declaredMemberScopeProvider.nestedClassifierScope(klass)
 }
 
 fun lazyNestedClassifierScope(
+    session: FirSession,
     classId: ClassId,
     existingNames: List<Name>,
-    symbolProvider: FirSymbolProvider
 ): FirLazyNestedClassifierScope? {
     if (existingNames.isEmpty()) return null
-    return FirLazyNestedClassifierScope(classId, existingNames, symbolProvider)
+    return FirLazyNestedClassifierScope(session, classId, existingNames)
 }
 
 val FirSession.declaredMemberScopeProvider: FirDeclaredMemberScopeProvider by FirSession.sessionComponentAccessor()

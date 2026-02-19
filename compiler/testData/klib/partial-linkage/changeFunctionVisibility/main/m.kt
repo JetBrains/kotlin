@@ -7,7 +7,7 @@ fun box() = abiTest {
 
     success("publicToInternalTopLevelFunction.v2") { publicToInternalTopLevelFunction() } // Signature remains the same.
     success("publicToInternalPATopLevelFunction.v2") { publicToInternalPATopLevelFunction() } // Signature remains the same.
-    unlinkedTopLevelPrivateSymbol("/publicToPrivateTopLevelFunction") { publicToPrivateTopLevelFunction() } // Signature changed.
+    unlinkedSymbol("/publicToPrivateTopLevelFunction") { publicToPrivateTopLevelFunction() } // Signature changed.
 
     success("Container.publicToProtectedFunction.v2") { c.publicToProtectedFunction() } // Signature remains the same.
     success("Container.publicToProtectedFunction.v2") { ci.publicToProtectedFunction() } // Signature remains the same.
@@ -57,14 +57,6 @@ private fun TestBuilder.success(expectedOutcome: String, block: () -> String) =
 private fun TestBuilder.unlinkedSymbol(signature: String, block: () -> Unit) {
     val functionName = signature.removePrefix("/").substringAfterLast(".")
     expectFailure(linkage("Function '$functionName' can not be called: No function found for symbol '$signature'"), block)
-}
-
-private fun TestBuilder.unlinkedTopLevelPrivateSymbol(signature: String, block: () -> Unit) {
-    if (testMode.lazyIr.usedEverywhere) {
-        val functionName = signature.removePrefix("/").substringAfterLast(".")
-        expectFailure(linkage("Function '$functionName' can not be called: Private function declared in module <lib1> can not be accessed in module <main>"), block)
-    } else
-        unlinkedSymbol(signature, block)
 }
 
 private fun TestBuilder.inaccessible(functionName: String, block: () -> Unit) = expectFailure(

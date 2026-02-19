@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun case1(a: A?) {
     val test = a?.let {
 
@@ -30,3 +31,6 @@ class Case2 {
 }
 
 class A()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, objectDeclaration, operator, primaryConstructor, propertyDeclaration, safeCall, stringLiteral */

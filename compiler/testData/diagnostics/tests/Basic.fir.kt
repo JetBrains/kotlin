@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(u : Unit) : Int = 1
 
 fun test() : Int {
@@ -9,7 +10,10 @@ fun test() : Int {
 }
 
 class A() {
-    val x : Int = <!INITIALIZER_TYPE_MISMATCH!>foo1(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)<!>
+    val x : Int <!INITIALIZER_TYPE_MISMATCH!>=<!> foo1(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
 }
 
 fun foo1() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

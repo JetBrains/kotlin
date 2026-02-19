@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A {
     fun foo()
 }
@@ -12,3 +13,6 @@ fun main(c: C) {
     if (c !is B) return
     c.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, override, smartcast */

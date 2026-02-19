@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.kt
 
 class A {
@@ -17,10 +18,12 @@ public class B {
 
 // FILE: C.kt
 
-import A.Nested.*
+import A.<!INVISIBLE_REFERENCE!>Nested<!>.*
 import B.<!INVISIBLE_REFERENCE!>JC<!>.JC1
 
 fun test() {
     <!INVISIBLE_REFERENCE!>O1<!>
     <!INVISIBLE_REFERENCE!>JC1<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nestedClass, objectDeclaration */

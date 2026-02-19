@@ -1,6 +1,9 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_DUMP
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// ISSUE: KT-64823 (K2/PCLA difference)
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -18,3 +21,6 @@ fun main() {
         serialize { it.toString() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, typeConstraint, typeParameter, typeWithExtension */

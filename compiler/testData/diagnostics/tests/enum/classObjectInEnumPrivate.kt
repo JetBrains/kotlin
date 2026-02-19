@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class E {
     ENTRY;
 
@@ -8,3 +9,6 @@ fun foo() = E.values()
 fun bar() = E.valueOf("ENTRY")
 fun baz() = E.ENTRY
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>quux<!>() = <!INVISIBLE_MEMBER!>E<!>
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration,
+stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1806 accessing private member in object class/anonymous object is not highlighted as error
 package kt1806
 
@@ -22,3 +23,6 @@ class Test {
 }
 
 fun doSmth(s: String) = s
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral */

@@ -1,4 +1,4 @@
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 

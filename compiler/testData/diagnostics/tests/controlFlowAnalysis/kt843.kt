@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-843 Don't highlight incomplete variables as unused
 
@@ -7,3 +8,5 @@ fun main() {
     // Integer type
     val<!SYNTAX!><!> // this word is grey, which looks strange
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

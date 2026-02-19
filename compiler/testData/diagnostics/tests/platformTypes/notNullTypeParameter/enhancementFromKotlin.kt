@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.kt
 
@@ -27,3 +28,6 @@ fun test() {
     C<String?>().foo(null)
     C<String?>().foo("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType, nullableType,
+stringLiteral, typeParameter */

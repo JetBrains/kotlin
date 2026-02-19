@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Base(val s: String)
 
 class Outer {
@@ -5,3 +6,6 @@ class Outer {
 
     object Obj : Base("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

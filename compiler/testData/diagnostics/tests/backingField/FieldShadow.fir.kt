@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My {
     // No initialization needed because no backing field
     val two: Int
@@ -6,3 +7,5 @@ class My {
             return field
         }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, localProperty, propertyDeclaration */

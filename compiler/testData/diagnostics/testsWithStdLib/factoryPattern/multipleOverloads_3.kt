@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +OverloadResolutionByLambdaReturnType
+// LANGUAGE: +OverloadResolutionByLambdaReturnType
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -OPT_IN_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -OPT_IN_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
 // ISSUE: KT-11265
 
 // FILE: OverloadResolutionByLambdaReturnType.kt
@@ -54,3 +55,7 @@ fun test_3(name: Name, toplevelDescriptors: List<DeclarationDescriptor>): List<D
     }
     return candidates
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, elvisExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

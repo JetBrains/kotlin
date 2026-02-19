@@ -2,10 +2,10 @@ FILE: test.kt
     public final fun foo(): R|kotlin/Unit| {
         lval externalsMap: R|kotlin/collections/MutableMap<java/io/File, kotlin/String?>| = R|kotlin/collections/mutableMapOf|<R|java/io/File|, R|kotlin/String?|>()
         local final fun test(file: R|java/io/File|): R|kotlin/Unit| {
-            lval base: R|java/io/File!| = Q|your/ContainerUtil|.R|your/ContainerUtil.find*s|<R|java/io/File!|>(R|<local>/externalsMap|.R|SubstitutionOverride<kotlin/collections/MutableMap.keys: R|kotlin/collections/MutableSet<java/io/File>|>|, <L> = find@fun <anonymous>(it: R|java/io/File!|): R|kotlin/Boolean| <inline=NoInline>  {
+            lval base: R|java/io/File!| = Q|your/ContainerUtil|.R|your/ContainerUtil.find*s|<R|java/io/File!|>(R|<local>/externalsMap|.R|SubstitutionOverride<kotlin/collections/MutableMap.keys: R|kotlin/collections/MutableSet<java/io/File>|>|, <L> = SAM(find@fun <anonymous>(it: R|java/io/File!|): R|kotlin/Boolean| <inline=NoInline>  {
                 ^ Q|my/FileUtil|.R|my/FileUtil.isAncestor*s|(R|<local>/it|, R|<local>/file|, Boolean(false))
             }
-            )
+            ))
         }
 
     }

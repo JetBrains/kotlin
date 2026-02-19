@@ -1,13 +1,13 @@
 // TARGET_BACKEND: JVM_IR
 // MODULE: lib
-// FILE: I.java
+// FILE: test/I.java
 package test;
 
 public interface I {
     String foo();
 }
 
-// FILE: J.java
+// FILE: test/J.java
 package test;
 
 class JBase<T> {
@@ -16,7 +16,7 @@ class JBase<T> {
 
 public class J extends JBase<String> {}
 
-// FILE: JImpl.java
+// FILE: test/JImpl.java
 package test;
 
 public class JImpl {

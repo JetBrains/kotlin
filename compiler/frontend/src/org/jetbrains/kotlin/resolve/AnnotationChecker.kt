@@ -302,11 +302,15 @@ class AnnotationChecker(
         }
 
         if (useSiteTarget != null) {
-            trace.report(
-                Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(
-                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName
+            if (useSiteTarget != AnnotationUseSiteTarget.ALL) {
+                trace.report(
+                    Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(
+                        entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName
+                    )
                 )
-            )
+            } else {
+                // Reported as UNSUPPORTED_FEATURE already
+            }
         } else {
             trace.report(
                 Errors.WRONG_ANNOTATION_TARGET.on(

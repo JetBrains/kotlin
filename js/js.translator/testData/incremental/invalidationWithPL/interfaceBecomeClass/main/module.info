@@ -11,6 +11,7 @@ STEP 1..2:
 STEP 3:
     dependencies: lib1, lib2
     rebuild klib: false
+    updated imports <wasm>: test.kt, klass.kt
 STEP 4:
     dependencies: lib1, lib2
     modifications:

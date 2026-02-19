@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
+
+// FILE: javapackage/PackagePrivateGrandparentInterface.java
 
 package javapackage;
 
@@ -26,3 +28,5 @@ class Child : PublicParentClass() {
         return publicStaticField                                          // Ok!
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType */

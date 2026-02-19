@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
+import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -41,14 +42,18 @@ internal class KParameterState(
     override fun toString(): String {
         return buildString {
             when (kind) {
-                KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.INSTANCE -> append("instance parameter")
+                // Can't use `@OptIn(ExperimentalContextParameters::class)` as long as the project is compiled with API version 2.1.
+                @Suppress("OPT_IN_USAGE_ERROR")
+                KParameter.Kind.CONTEXT,
+                    -> append("context parameter ${irParameter.name}")
+                KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.VALUE -> append("parameter #$index ${irParameter.name}")
             }
 
             append(" of ")
             when (val parent = irParameter.parent) {
-                is IrSimpleFunction -> parent.correspondingPropertySymbol?.owner?.let { append(renderProperty(it)) }
+                is IrSimpleFunction -> parent.property?.let { append(renderProperty(it)) }
                     ?: append(renderFunction(parent))
                 is IrFunction -> append(renderFunction(parent))
                 is IrProperty -> append(renderProperty(parent))

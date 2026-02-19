@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// DIAGNOSTICS: -UNREACHABLE_CODE
 package kt770_351_735
 
 
@@ -157,3 +159,8 @@ fun testStatementInExpressionContext() {
 fun testStatementInExpressionContext2() {
     val a2: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, equalityExpression, flexibleType,
+forLoop, functionDeclaration, functionalType, ifExpression, incrementDecrementExpression, integerLiteral,
+intersectionType, javaFunction, javaProperty, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+rangeExpression, stringLiteral, whenExpression, whenWithSubject, whileLoop */

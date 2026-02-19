@@ -5,7 +5,6 @@
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -16,13 +15,14 @@ dependencies {
     implementation(project(":compiler:fir:providers"))
     implementation(project(":compiler:fir:semantics"))
     implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:java"))
+    implementation(project(":compiler:fir:fir-jvm"))
     implementation(project(":compiler:cli"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("commons-lang:commons-lang"))
+    compileOnly(commonDependency("org.apache.commons:commons-lang3"))
+    compileOnly(libs.apache.commons.text)
 }
 
 sourceSets {

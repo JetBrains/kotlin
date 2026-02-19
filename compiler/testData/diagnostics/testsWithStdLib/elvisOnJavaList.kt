@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: P.java
 
 import java.util.ArrayList;
@@ -15,3 +16,5 @@ fun foo(c: P): MutableList<Int> {
     // Error should be here: see KT-8168 Typechecker fails for platform collection type
     return <!TYPE_MISMATCH!>c.getList() ?: listOf()<!>
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaFunction, javaType */

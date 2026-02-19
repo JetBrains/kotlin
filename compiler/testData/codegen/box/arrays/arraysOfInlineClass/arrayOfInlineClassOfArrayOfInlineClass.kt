@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // WITH_STDLIB
 
 inline class Data(val data: Array<UInt>)

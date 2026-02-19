@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 class C : CharSequence {
@@ -25,7 +26,7 @@ fun box(): String {
             result += c[i]
         }
     }
-    for ((i, x) in c.withIndex()) {
+    for ([i, x] in c.withIndex()) {
         if (i == 1) {
             result += x
         }

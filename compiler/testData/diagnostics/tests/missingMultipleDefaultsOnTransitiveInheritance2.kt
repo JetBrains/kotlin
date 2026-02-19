@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-60269
 // WITH_STDLIB
@@ -20,3 +21,6 @@ fun main() {
     Baz().foo()
     (Baz() as Foo).foo()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+override */

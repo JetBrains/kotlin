@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface /Foo { // /Foo|null[0]
+    abstract fun invoke(): kotlin/String // /Foo.invoke|invoke(){}[0]
+}
+final fun /foo(/Foo): kotlin/String // /foo|foo(Foo){}[0]
+final fun /test(): kotlin/String // /test|test(){}[0]

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class NoPrimary {
     val x: String
 
@@ -7,3 +8,6 @@ class NoPrimary {
 
     constructor(): this("")
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, propertyDeclaration, secondaryConstructor, stringLiteral,
+thisExpression */

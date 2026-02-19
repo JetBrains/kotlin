@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
@@ -10,9 +9,10 @@ javadocJar()
 configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
-    api(platform(project(":kotlin-gradle-plugins-bom")))
-    compileOnly(kotlinStdlib())
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+    testImplementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
 }
 
 tasks {

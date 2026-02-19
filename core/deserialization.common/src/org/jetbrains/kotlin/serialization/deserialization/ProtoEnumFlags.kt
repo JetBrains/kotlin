@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.Variance
 
 object ProtoEnumFlags {
@@ -44,6 +45,18 @@ object ProtoEnumFlags {
         Visibilities.Protected -> ProtoBuf.Visibility.PROTECTED
         Visibilities.Local -> ProtoBuf.Visibility.LOCAL
         else -> throw IllegalArgumentException("Unknown visibility: $visibility")
+    }
+
+    fun returnValueStatus(returnValueStatus: ReturnValueStatus?): ProtoBuf.ReturnValueStatus = when (returnValueStatus) {
+        ReturnValueStatus.MustUse -> ProtoBuf.ReturnValueStatus.MUST_USE
+        ReturnValueStatus.ExplicitlyIgnorable -> ProtoBuf.ReturnValueStatus.EXPLICITLY_IGNORABLE
+        ReturnValueStatus.Unspecified, null -> ProtoBuf.ReturnValueStatus.UNSPECIFIED
+    }
+
+    fun returnValueStatus(returnValueStatus: ProtoBuf.ReturnValueStatus?): ReturnValueStatus = when (returnValueStatus) {
+        ProtoBuf.ReturnValueStatus.MUST_USE -> ReturnValueStatus.MustUse
+        ProtoBuf.ReturnValueStatus.EXPLICITLY_IGNORABLE -> ReturnValueStatus.ExplicitlyIgnorable
+        ProtoBuf.ReturnValueStatus.UNSPECIFIED, null -> ReturnValueStatus.Unspecified
     }
 
     fun classKind(kind: ProtoBuf.Class.Kind?): ClassKind = when (kind) {

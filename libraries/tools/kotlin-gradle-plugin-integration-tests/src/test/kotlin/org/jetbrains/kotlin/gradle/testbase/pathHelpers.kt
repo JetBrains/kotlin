@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
@@ -68,7 +67,7 @@ internal fun Iterable<Path>.relativizeTo(basePath: Path): Iterable<Path> = map {
 internal fun String.normalizePath() = replace("\\", "/")
 
 internal fun Path.copyRecursively(dest: Path) {
-    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
+    Files.walkFileTree(this, setOf(FileVisitOption.FOLLOW_LINKS), Int.MAX_VALUE, object : SimpleFileVisitor<Path>() {
         override fun preVisitDirectory(
             dir: Path,
             attrs: BasicFileAttributes
@@ -113,11 +112,30 @@ fun TestProject.sourceFilesRelativeToProject(
 /**
  * Returns a single file located in the [relativePath] subdirectory. If no file or more than one file is found an assertion error will be thrown.
  */
-fun Path.getSingleFileInDir(relativePath: String): Path {
-    val path = resolve(relativePath)
+fun Path.getSingleFileInDir(relativePath: String? = null): Path {
+    val path = if (relativePath != null) resolve(relativePath) else this
     return Files.list(path).use {
         val files = it.asSequence().toList()
         files.singleOrNull() ?: fail("The directory must contain a single file, but got: $files")
     }
 }
 
+/**
+ * Get Gradle project Kotlin persistent cache.
+ *
+ * **Note**: if a test project is using composite build - [GradleProject] should point to the root project in this composite build.
+ */
+val GradleProject.projectPersistentCache: Path
+    get() = projectPath.resolve(".kotlin")
+
+/**
+ * Create a new file plus required directories under given [relativeFilePath] and writes
+ * [content] in it.
+ */
+fun Path.source(relativeFilePath: String, content: () -> String) {
+    val sourceFile = resolve(relativeFilePath)
+    sourceFile.parent.createDirectories()
+    sourceFile.writeText(
+        text = content()
+    )
+}

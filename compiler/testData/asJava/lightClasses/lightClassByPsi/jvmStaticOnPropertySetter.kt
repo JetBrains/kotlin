@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 class MyClass {
     companion object {
         var prop: Int = 4

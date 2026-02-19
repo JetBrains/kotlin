@@ -11,6 +11,6 @@ class FirDeclarationRendererWithFilteredAttributes : FirDeclarationRendererWithA
     }
 
     private companion object {
-        private val IGNORED_ATTRIBUTES = setOf("FirVersionRequirementsTableKey", "SourceElementKey")
+        private val IGNORED_ATTRIBUTES = setOf("FirVersionRequirementsTableKey", "SourceElementKey", "KlibSourceFile")
     }
 }

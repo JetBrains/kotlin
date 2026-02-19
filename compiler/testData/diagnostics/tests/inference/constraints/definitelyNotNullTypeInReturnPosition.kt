@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -CAST_NEVER_SUCCEEDS -UNUSED_VARIABLE -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -CAST_NEVER_SUCCEEDS -UNUSED_VARIABLE -UNCHECKED_CAST
 
 class Foo<T>(x: T)
 class Bar<S>
@@ -277,3 +278,9 @@ class Inv1<T>
 class Inv2<T>
 fun <K : Comparable<K>> Inv1<K>.assertStableSorted() {}
 fun <K : Comparable<K>> Inv2<K>.assertStableSorted() = Inv1<K>().assertStableSorted()
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, checkNotNullCall, classDeclaration, dnnType, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, getter, ifExpression, in, inProjection, init,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, smartcast, stringLiteral, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

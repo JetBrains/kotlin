@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-39012
 
 interface A
@@ -16,3 +17,6 @@ fun bar2(): List<CharSequence>? {
         container.add("")
     } ?: listOf()
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

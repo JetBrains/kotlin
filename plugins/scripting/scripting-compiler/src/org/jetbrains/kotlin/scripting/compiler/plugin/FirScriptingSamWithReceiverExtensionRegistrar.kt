@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.scriptConfigurators
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.functionTypeService
@@ -37,8 +37,8 @@ class FirScriptingSamWithReceiverExtensionRegistrar() : FirExtensionRegistrar() 
             }
         }
 
-        override fun getCustomFunctionTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType? {
-            val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
+        override fun getCustomFunctionTypeForSamConversion(function: FirNamedFunction): ConeLookupTagBasedType? {
+            val containingClassSymbol = function.containingClassLookupTag()?.toRegularClassSymbol(session) ?: return null
             return runIf(containingClassSymbol.resolvedAnnotationClassIds.any { it.asSingleFqName().asString() in knownAnnotations }) {
                 val parameterTypes = function.valueParameters.map { it.returnTypeRef.coneType }
                 if (parameterTypes.isEmpty()) return null

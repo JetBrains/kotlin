@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: +UNUSED_PARAMETER
 var y: Int = 1
 
@@ -7,3 +8,5 @@ var y: Int = 1
     set(<!ACCESSOR_PARAMETER_NAME_SHADOWING, UNUSED_PARAMETER!>field<!>) {
         y = field
     }
+
+/* GENERATED_FIR_TAGS: assignment, getter, integerLiteral, propertyDeclaration, setter */

@@ -1,4 +1,5 @@
-// !LANGUAGE: +IntrinsicConstEvaluation
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +IntrinsicConstEvaluation
 
 class SomeClassWithName(val property: Int) {
     val anotherProperty: String = ""
@@ -18,3 +19,6 @@ const val lengthPropName = String::length.name
 
 const val errorAccess = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>SomeClassWithName(1)::property.name<!>
 const val errorPlus = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"" + SomeClassWithName(1)::property<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, callableReference, classDeclaration, const, functionDeclaration,
+integerLiteral, primaryConstructor, propertyDeclaration, stringLiteral */

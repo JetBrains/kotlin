@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 
@@ -17,4 +18,5 @@ fun isString(x: Any?): Boolean {
     return x is String
 }
 
-
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression,
+lambdaLiteral, nullableType, smartcast */

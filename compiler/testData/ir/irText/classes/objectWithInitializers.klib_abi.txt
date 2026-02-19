@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class /Base { // /Base|null[0]
+    constructor <init>() // /Base.<init>|<init>(){}[0]
+}
+final object /Test : /Base { // /Test|null[0]
+    final val x // /Test.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Test.x.<get-x>|<get-x>(){}[0]
+    final val y // /Test.y|{}y[0]
+        final fun <get-y>(): kotlin/Int // /Test.y.<get-y>|<get-y>(){}[0]
+}

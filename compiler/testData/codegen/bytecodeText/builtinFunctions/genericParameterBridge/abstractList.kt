@@ -21,7 +21,8 @@ abstract class A6 : java.util.AbstractList<String>() {
 }
 
 // 0 signature \(TW;\)Z
-// 2 signature \(Ljava/util/Collection<\+Ljava/lang/Object;>;\)Z
+// 0 signature \(Ljava/util/Collection<\+Ljava/lang/Object;>;\)Z
+// 2 signature \(Ljava/util/Collection<\*>;\)Z
 // 2 public final bridge contains\(Ljava/lang/Object;\)Z
 // 2 public final bridge remove\(Ljava/lang/Object;\)Z
 // 2 public final bridge indexOf\(Ljava/lang/Object;\)I

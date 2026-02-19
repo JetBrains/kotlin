@@ -7,59 +7,16 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
-
-/**
- * Will propagate "original"/"platform" cinterops to intermediate source sets
- * and 'shared native' compilations if necessary.
- *
- * cinterops will be forwarded when a source set/ compilation has just a single platform
- * dependee
- *
- * e.g.
- *
- * ```
- * kotlin {
- *      sourceSets {
- *          val nativeMain by sourceSets.creating
- *          val linuxX64Main by sourceSets.getting
- *          linuxX64Main.dependsOn(nativeMain)
- *      }
- * }
- * ```
- *
- * In this example 'nativeMain' has only a single native
- * target and a single native source set depending on it.
- * All cinterops defined on linuxX64's main compilation shall be propagated
- * to the 'nativeMain' source set (and its 'shared native' compilation) if it exists.
- */
-internal fun Project.setupCInteropPropagatedDependencies() {
-    val kotlin = this.multiplatformExtensionOrNull ?: return
-
-    kotlin.forAllSharedNativeCompilations { compilation ->
-        compilation.compileDependencyFiles += getPropagatedCInteropDependenciesOrEmpty(compilation)
-    }
-
-    kotlin.forAllDefaultKotlinSourceSets { sourceSet ->
-        addIntransitiveMetadataDependencyIfPossible(
-            sourceSet, getPropagatedCInteropDependenciesOrEmpty(sourceSet)
-        )
-    }
-}
-
-internal fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultKotlinSourceSet): FileCollection =
-    getPlatformCinteropDependenciesOrEmpty(sourceSet) { relevantCompilation ->
-        /* Source Set is directly included in compilation -> No need to add dependency again (when looking for propagated dependencies) */
-        sourceSet !in relevantCompilation.kotlinSourceSets
-    }
 
 internal fun Project.getPlatformCinteropDependenciesOrEmpty(
     sourceSet: DefaultKotlinSourceSet,
@@ -76,6 +33,9 @@ internal fun Project.getPlatformCinteropDependenciesOrEmpty(
         /* Participating in multiple compilations? -> can't propagate -> should be commonized */
         val compilation = compilations.singleOrNull() as? KotlinNativeCompilation ?: return@files emptySet<File>()
 
+        /* Apple-specific cinterops can't be produced on non-MacOs machines, so just return an empty dependencies collection */
+        if (!compilation.target.crossCompilationOnCurrentHostSupported.getOrThrow()) return@files emptySet<File>()
+
         (compilation.associatedCompilations + compilation)
             .filterIsInstance<KotlinNativeCompilation>()
             .filter(compilationFilter)
@@ -83,16 +43,25 @@ internal fun Project.getPlatformCinteropDependenciesOrEmpty(
     }
 }
 
-private fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: KotlinSharedNativeCompilation) = filesProvider files@{
-    val compilations = compilation.getImplicitlyDependingNativeCompilations()
-    val platformCompilation = compilations.singleOrNull() ?: return@files emptySet<File>()
-    getAllCInteropOutputFiles(platformCompilation)
-}
-
 private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
-        .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
+        .mapNotNull { taskName ->
+            if (taskName in tasks.names) {
+                tasks.named<CInteropProcess>(taskName)
+            } else null
+        }
 
-    return project.filesProvider { cinteropTasks.map { it.outputFile } }
+    if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+        // this part of import isn't ready for working with unpackaged klibs: KTIJ-31053
+        return project.filesProvider {
+            cinteropTasks.map { interopTask ->
+                compilation.maybeCreateKlibPackingTask(
+                    interopTask.get().settings.classifier,
+                    interopTask.map { it.klibDirectory.get() },
+                )
+            }
+        }
+    }
+    return project.filesProvider { cinteropTasks.map { it.get().klibFile } }
         .builtBy(*cinteropTasks.toTypedArray())
 }

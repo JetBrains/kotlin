@@ -6,23 +6,25 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.name.SpecialNames
 
-object FirFunctionNameChecker : FirSimpleFunctionChecker() {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirFunctionNameChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirNamedFunction) {
         val source = declaration.source
         if (source == null || source.kind is KtFakeSourceElementKind) return
         val containingDeclaration = context.containingDeclarations.lastOrNull()
-        val isNonLocal = containingDeclaration is FirFile || containingDeclaration is FirClass
+        val isNonLocal = containingDeclaration is FirFileSymbol || containingDeclaration is FirClassSymbol<*>
         if (declaration.name == SpecialNames.NO_NAME_PROVIDED && isNonLocal) {
-            reporter.reportOn(source, FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME, context)
+            reporter.reportOn(source, FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME)
         }
     }
 }

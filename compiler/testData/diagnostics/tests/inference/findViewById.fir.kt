@@ -1,5 +1,7 @@
-// !LANGUAGE: +ExpectedTypeFromCast
-// !DIAGNOSTICS: -UNUSED_VARIABLE -DEBUG_INFO_LEAKING_THIS
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ExpectedTypeFromCast
+// DIAGNOSTICS: -UNUSED_VARIABLE -DEBUG_INFO_LEAKING_THIS
 
 // FILE: a/View.java
 package a;
@@ -27,7 +29,7 @@ val xExplicit: X = Test().findViewById(0)
 val xCast = Test().findViewById(0) as X
 
 val xCastExplicitType = Test().findViewById<X>(0) as X
-val xSafeCastExplicitType = Test().findViewById<X>(0) <!USELESS_CAST!>as? X<!>
+val xSafeCastExplicitType = Test().findViewById<X>(0) as? X
 
 val yExplicit: Y<String> = Test().findViewById(0)
 val yCast = Test().findViewById(0) as Y<String>
@@ -56,3 +58,6 @@ fun test2(t: Test?) {
     val xSafeCallCast = t?.findViewById(0) as X
     val xSafeCallCastExplicitType = t<!UNNECESSARY_SAFE_CALL!>?.<!>findViewById<X>(0) as X
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+javaType, localProperty, nullableType, propertyDeclaration, safeCall, smartcast, typeParameter */

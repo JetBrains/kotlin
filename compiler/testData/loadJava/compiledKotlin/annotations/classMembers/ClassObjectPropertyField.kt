@@ -1,4 +1,3 @@
-// PLATFORM_DEPENDANT_METADATA
 package test
 
 annotation class Anno

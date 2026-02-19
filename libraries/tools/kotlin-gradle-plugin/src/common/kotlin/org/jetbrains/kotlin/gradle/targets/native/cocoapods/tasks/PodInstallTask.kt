@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.SpecRepos
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingCocoapodsMessage
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingSpecReposMessage
+import org.jetbrains.kotlin.gradle.utils.RunProcessResult
 import java.io.File
 
 @DisableCachingByDefault
 abstract class PodInstallTask : AbstractPodInstallTask() {
 
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:Optional
-    @get:InputFile
+    @Deprecated("Use PodspecTask#outputFile")
+    @get:Internal
     abstract val podspec: Property<File?>
 
     @get:Input
@@ -37,14 +37,14 @@ abstract class PodInstallTask : AbstractPodInstallTask() {
     @get:Nested
     abstract val pods: ListProperty<CocoapodsDependency>
 
-    override fun handleError(retCode: Int, error: String, process: Process): String? {
+    override fun handleError(result: RunProcessResult): String? {
         val specReposMessages = MissingSpecReposMessage(specRepos.get()).missingMessage
         val cocoapodsMessages = pods.get().map { MissingCocoapodsMessage(it).missingMessage }
 
         return listOfNotNull(
-            "'pod install' command failed with code $retCode.",
+            "'pod install' command failed with code ${result.retCode}.",
             "Error message:",
-            error.lines().filter { it.isNotBlank() }.joinToString("\n"),
+            result.stdErr.lines().filter { it.isNotBlank() }.joinToString("\n"),
             """
             |        Please, check that podfile contains following lines in header:
             |        $specReposMessages

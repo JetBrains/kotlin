@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class My(val x: My?, val z: My? = null)
 
 fun baseTest() {
@@ -39,3 +40,6 @@ fun severalMembersTest() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast */

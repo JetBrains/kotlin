@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun go1(f: () -> String) = f()
 inline suspend fun go2(f: () -> String) = f()
@@ -14,3 +15,6 @@ fun box() {
         go2(<!TYPE_MISMATCH!>x::id<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, suspend, thisExpression */

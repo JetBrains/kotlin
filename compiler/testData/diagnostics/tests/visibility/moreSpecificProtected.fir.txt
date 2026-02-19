@@ -98,7 +98,7 @@ FILE: moreSpecificProtected.fir.kt
                 this@R|special/anonymous|.R|/_|<R|M6|>()
             }
             )
-            when (R|<local>/a|) {
+            when (lval <when-subject>: R|A| = R|<local>/a|) {
                 ($subj$ is R|C|) ->  {
                     R|<local>/a|.R|/C.fromC|
                     R|<local>/a|.R|/B.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M2Sub|>(checkType@fun R|CheckTypeInv<M2Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
@@ -123,7 +123,7 @@ FILE: moreSpecificProtected.fir.kt
                 }
             }
 
-            when (R|<local>/b|) {
+            when (lval <when-subject>: R|B| = R|<local>/b|) {
                 ($subj$ is R|C|) ->  {
                     R|<local>/b|.R|/C.fromC|
                     R|<local>/b|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M3|>(checkType@fun R|CheckTypeInv<M3>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {

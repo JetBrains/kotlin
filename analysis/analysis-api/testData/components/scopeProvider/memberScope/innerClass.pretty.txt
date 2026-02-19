@@ -1,0 +1,15 @@
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+class ClassInB
+
+inner class InnerClassInB
+
+class ClassInA
+
+inner class InnerClassInA
+
+constructor()

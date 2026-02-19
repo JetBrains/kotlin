@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -ABSTRACT_SUPER_CALL
+// DIAGNOSTICS: -UNUSED_PARAMETER -ABSTRACT_SUPER_CALL
 
 abstract class A {
     open fun foo(a: String = "default") {
@@ -27,3 +28,5 @@ open class B : A() {
         throw UnsupportedOperationException()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override, stringLiteral, superExpression */

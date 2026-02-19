@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: J.java
 public interface J {
@@ -42,3 +43,5 @@ interface Test9 : IMLNS, J, ILS
 interface Test10 : IMLNS, ILS, J
 
 <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>interface Test11<!> : IMLNS, ILS
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType */

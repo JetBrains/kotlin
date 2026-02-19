@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +ProhibitRepeatedUseSiteTargetAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ProhibitRepeatedUseSiteTargetAnnotations
 
 // Ann is not repeatable
 annotation class Ann(val x: Int)
@@ -20,3 +21,7 @@ var c = " "
 <!REPEATED_ANNOTATION!>@get:Ann(20)<!>
 val d: String
     @Ann(30) <!REPEATED_ANNOTATION!>@Ann(40)<!> get() = "foo"
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, annotationUseSiteTargetSetterParameter, assignment, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, setter, stringLiteral */

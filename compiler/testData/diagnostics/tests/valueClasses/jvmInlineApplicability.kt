@@ -1,5 +1,7 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm
@@ -23,3 +25,6 @@ object O
 
 <!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
 data class DC(val a: Any)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, interfaceDeclaration, objectDeclaration,
+primaryConstructor, propertyDeclaration, value */

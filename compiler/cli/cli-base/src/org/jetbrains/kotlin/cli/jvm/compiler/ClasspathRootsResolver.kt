@@ -56,11 +56,16 @@ class ClasspathRootsResolver(
     private val requireStdlibModule: Boolean,
     private val outputDirectory: VirtualFile?,
     private val javaFileManager: KotlinCliJavaFileManager,
-    private val jdkRelease: Int?
+    private val jdkRelease: Int?,
+    hasKotlinSources: Boolean,
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
     private val searchScope = GlobalSearchScope.allScope(psiManager.project)
+
+    // Only report Java module-related errors if there's at least one Kotlin source file in the module. Otherwise the compiler would only
+    // report those errors and not the more important "no source files" error which is handled later, after the roots have been computed.
+    private val reportErrors = hasKotlinSources
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
 
@@ -300,6 +305,7 @@ class ClasspathRootsResolver(
         if (messageCollector == null) {
             throw IllegalStateException("${if (file != null) file.path + ":" else ""}$severity: $message (no MessageCollector configured)")
         }
+        if (severity == ERROR && !reportErrors) return
         messageCollector.report(
             severity, message,
             if (file == null) null else CompilerMessageLocation.create(MessageUtil.virtualFileToPath(file))

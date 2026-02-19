@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Common {
     fun <T, R> foo(value: T, producer: (T) -> R): R
 }
@@ -13,3 +14,6 @@ interface A : Common {
 interface B : Common {
     override fun <T, R> foo(value: T, producer: (T) -> R) = producer(value)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+nullableType, override, typeParameter */

@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -57,10 +59,6 @@ private fun runControllers(controller1: Controller, controller2: Controller) {
     if (controller2.result != "OK") throw RuntimeException("fail 4")
 }
 
-inline fun run(b: () -> Unit) {
-    b()
-}
-
 fun box(): String {
     // with capture and params
 
@@ -89,4 +87,9 @@ fun box(): String {
     }
 
     return "OK"
+}
+
+// FILE: lib.kt
+inline fun run(b: () -> Unit) {
+    b()
 }

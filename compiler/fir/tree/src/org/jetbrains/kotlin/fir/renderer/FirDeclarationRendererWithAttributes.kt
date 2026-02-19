@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
@@ -15,7 +15,13 @@ open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
     override fun FirDeclaration.renderDeclarationAttributes() {
         if (attributes.isNotEmpty()) {
             val attributes = getAttributesWithValues()
-                .mapNotNull { (klass, value) -> value?.let { klass to value.renderAsDeclarationAttributeValue() } }
+                .mapNotNull { (klass, value) ->
+                    val unwrappedValue = when (value) {
+                        is Lazy<*> -> value.value
+                        else -> value
+                    } ?: return@mapNotNull null
+                    klass to unwrappedValue.renderAsDeclarationAttributeValue()
+                }
                 .ifEmpty { return }
                 .joinToString { (name, value) -> "$name=$value" }
             printer.print("[$attributes] ")
@@ -35,10 +41,9 @@ open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
     }
 
     private fun Any.renderAsDeclarationAttributeValue() = when (this) {
-        is FirCallableSymbol<*> -> callableId.toString()
+        is FirCallableSymbol<*> -> callableIdAsString()
         is FirClassLikeSymbol<*> -> classId.asString()
-        is FirProperty -> symbol.callableId.toString()
-        is Lazy<*> -> value.toString()
+        is FirCallableDeclaration -> symbol.callableIdAsString()
         else -> toString()
     }
 }

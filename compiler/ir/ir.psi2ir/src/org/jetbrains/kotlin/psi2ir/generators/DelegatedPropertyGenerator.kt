@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.KtProperty
@@ -272,6 +273,7 @@ internal class DelegatedPropertyGenerator(
         }
 
         val irDelegate = irLocalDelegatedProperty.delegate
+        requireNotNull(irDelegate) { "Local delegated property ${irLocalDelegatedProperty.render()} has no delegate" }
 
         val getterDescriptor = variableDescriptor.getter!!
         val delegateReceiverValue = createVariableValueForDelegate(irDelegate.symbol, ktDelegate)
@@ -468,7 +470,8 @@ internal class DelegatedPropertyGenerator(
                 conventionMethodCall.setExplicitReceiverValue(delegateReceiverValue)
                 updateNullThisRefValue(conventionMethodCall)
                 conventionMethodCall.irValueArgumentsByIndex[1] = irPropertyReference
-                val irSetterParameter = irSetter.valueParameters[0]
+                val irSetterParameter =
+                    irSetter.parameters.first { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
                 conventionMethodCall.irValueArgumentsByIndex[2] = irGet(irSetterParameter)
                 +irReturn(CallGenerator(statementGenerator).generateCall(startOffset, endOffset, conventionMethodCall))
             }
@@ -476,7 +479,7 @@ internal class DelegatedPropertyGenerator(
 
     private fun updateNullThisRefValue(conventionMethodCall: CallBuilder) {
         val arg0 = conventionMethodCall.irValueArgumentsByIndex[0]
-        if (arg0 is IrConstImpl<*> && arg0.kind == IrConstKind.Null) {
+        if (arg0 is IrConstImpl && arg0.kind == IrConstKind.Null) {
             conventionMethodCall.irValueArgumentsByIndex[0] =
                 IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType)
         }

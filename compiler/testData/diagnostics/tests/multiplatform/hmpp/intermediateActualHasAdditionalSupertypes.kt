@@ -1,17 +1,16 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-57369
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 interface CompletionHandler {
     fun foo()
 }
 
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class CompletionHandlerBase<!>()
+expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class CompletionHandlerBase<!>()
 
 fun invokeOnCompletion(handler: CompletionHandler) {}
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 // actual has an additional super type
 actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class CompletionHandlerBase<!> : CompletionHandler {
     override fun foo() {}
@@ -28,3 +27,6 @@ fun cancelFutureOnCompletion(handlerBase: CompletionHandlerBase) {
     invokeOnCompletion(handlerBase)
     handlerBase.foo()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+primaryConstructor */

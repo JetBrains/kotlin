@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.java
 
 public class A<T> {
@@ -17,3 +18,4 @@ class B : A<Some>() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType */

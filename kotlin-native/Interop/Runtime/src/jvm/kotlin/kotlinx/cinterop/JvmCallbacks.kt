@@ -16,8 +16,8 @@
 
 package kotlinx.cinterop
 
-import org.jetbrains.kotlin.konan.util.NativeMemoryAllocator
-import org.jetbrains.kotlin.konan.util.ThreadSafeDisposableHelper
+import org.jetbrains.kotlin.utils.NativeMemoryAllocator
+import org.jetbrains.kotlin.utils.ThreadSafeDisposableHelper
 import sun.misc.Unsafe
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.LongConsumer
@@ -259,7 +259,7 @@ internal fun <F : Function<*>> staticCFunctionImpl(function: F, returnType: KTyp
 
 private val invokeMethods = (0 .. 22).map { arity ->
     Class.forName("kotlin.jvm.functions.Function$arity").getMethod("invoke",
-            *Array<Class<*>>(arity) { java.lang.Object::class.java })
+            *Array<Class<*>>(arity) { Any::class.java })
 }
 
 private fun createStaticCFunctionImpl(

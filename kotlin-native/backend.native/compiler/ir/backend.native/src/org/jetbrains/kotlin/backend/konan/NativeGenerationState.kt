@@ -1,34 +1,32 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
+import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
-
-internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
+import org.jetbrains.kotlin.util.PerformanceManager
 
 internal class FileLowerState {
     private var functionReferenceCount = 0
     private var coroutineCount = 0
     private var cStubCount = 0
-
-    fun getFunctionReferenceImplUniqueName(targetFunction: IrFunction): String =
-            getFunctionReferenceImplUniqueName("${targetFunction.name}\$FUNCTION_REFERENCE\$")
 
     fun getCoroutineImplUniqueName(function: IrFunction): String =
             "${function.name}COROUTINE\$${coroutineCount++}"
@@ -36,25 +34,24 @@ internal class FileLowerState {
     fun getFunctionReferenceImplUniqueName(prefix: String) =
             "$prefix${functionReferenceCount++}"
 
-    fun getCStubUniqueName(prefix: String) =
-            "$prefix${cStubCount++}"
+    fun getCStubIndex() = cStubCount++
 }
 
-internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder {
+internal interface BitcodePostProcessingContext : NativeBackendPhaseContext, LlvmIrHolder {
     val llvm: BasicLlvmHelpers
     val llvmContext: LLVMContextRef
 }
 
 internal class BitcodePostProcessingContextImpl(
-        config: KonanConfig,
+        config: NativeSecondStageCompilationConfig,
         override val llvmModule: LLVMModuleRef,
         override val llvmContext: LLVMContextRef
-) : BitcodePostProcessingContext, BasicPhaseContext(config) {
+) : BitcodePostProcessingContext, BasicNativeBackendPhaseContext(config) {
     override val llvm: BasicLlvmHelpers = BasicLlvmHelpers(this, llvmModule)
 }
 
 internal class NativeGenerationState(
-        config: KonanConfig,
+        config: NativeSecondStageCompilationConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
@@ -63,7 +60,8 @@ internal class NativeGenerationState(
         val llvmModuleSpecification: LlvmModuleSpecification,
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
-) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder, BitcodePostProcessingContext {
+        override val performanceManager: PerformanceManager?,
+) : BasicNativeBackendPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))
@@ -71,24 +69,15 @@ internal class NativeGenerationState(
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
     val classFields = mutableListOf<SerializedClassFields>()
     val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
-    val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
-    val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
-    val inlineFunctionOrigins = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
-
-    private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
-    fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]
-    fun putLocalClassName(container: IrAttributeContainer, name: String) {
-        localClassNames[container.attributeOwnerId] = name
-    }
-    fun copyLocalClassName(source: IrAttributeContainer, destination: IrAttributeContainer) {
-        getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
-    }
+    var coroutinesLivenessAnalysisPhasePerformed = false
 
     lateinit var fileLowerState: FileLowerState
 
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
-    private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
+    internal val runtimeModulesConfig = RuntimeModulesConfig(config)
+
+    private val runtimeDelegate = lazy { Runtime(this, llvmContext, runtimeModulesConfig.absolutePathFor(RuntimeModule.COMPILER_INTERFACE)) }
     private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 
@@ -100,8 +89,6 @@ internal class NativeGenerationState(
     lateinit var llvmDeclarations: LlvmDeclarations
 
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
-
-    val coverage by lazy { CoverageManager(this) }
 
     lateinit var objCExport: ObjCExport
 
@@ -139,7 +126,7 @@ internal class NativeGenerationState(
         isDisposed = true
     }
 
-    override val backendContext: Context
+    override val heldBackendContext: Context
         get() = context
 
     override val llvmModule: LLVMModuleRef

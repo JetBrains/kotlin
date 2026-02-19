@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -30,3 +31,6 @@ public class FooImpl {
 // FILE: jvm.kt
 
 actual typealias Foo = FooImpl
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, nullableType,
+secondaryConstructor, typeAliasDeclaration, typeConstraint, typeParameter */

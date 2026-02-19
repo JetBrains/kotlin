@@ -1,4 +1,5 @@
-// !LANGUAGE: -ReferencesToSyntheticJavaProperties
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ReferencesToSyntheticJavaProperties
 // FIR_IDENTICAL
 
 // FILE: Foo.java
@@ -11,3 +12,5 @@ open class Base {
 }
 
 val prop = Foo::foo
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, integerLiteral, javaType, propertyDeclaration */

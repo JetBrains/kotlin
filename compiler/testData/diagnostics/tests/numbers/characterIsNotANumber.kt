@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(n: Number) = n
 
 fun test() {
@@ -9,3 +10,5 @@ fun test() {
     val d: Char? = 'd'
     foo(<!TYPE_MISMATCH!>d!!<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, localProperty, nullableType, propertyDeclaration */

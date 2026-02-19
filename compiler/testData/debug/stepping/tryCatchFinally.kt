@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun foo() {
@@ -38,7 +38,7 @@ fun box() {
     foo()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:34 box
 // test.kt:5 foo
 // test.kt:6 foo
@@ -92,6 +92,47 @@ fun box() {
 // test.kt:20 foo
 // test.kt:39 box
 
+// EXPECTATIONS NATIVE
+// test.kt:34 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:25 mightThrow
+// test.kt:26 mightThrow
+// test.kt:22 <get-throw1>
+// test.kt:26 mightThrow
+// test.kt:27 mightThrow
+// test.kt:6 foo
+// test.kt:11 foo
+// test.kt:14 foo
+// test.kt:29 mightThrow2
+// test.kt:30 mightThrow2
+// test.kt:23 <get-throw2>
+// test.kt:30 mightThrow2
+// test.kt:31 mightThrow2
+// test.kt:14 foo
+// test.kt:19 foo
+// test.kt:18 foo
+// test.kt:20 foo
+// test.kt:34 box
+// test.kt:35 box
+// test.kt:23 <set-throw2>
+// test.kt:36 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:25 mightThrow
+// test.kt:26 mightThrow
+// test.kt:22 <get-throw1>
+// test.kt:26 mightThrow
+// test.kt:27 mightThrow
+// test.kt:6 foo
+// test.kt:11 foo
+// test.kt:14 foo
+// test.kt:29 mightThrow2
+// test.kt:30 mightThrow2
+// test.kt:23 <get-throw2>
+// test.kt:30 mightThrow2
+// test.kt:30 mightThrow2
+
 // EXPECTATIONS JS_IR
 // test.kt:34 box
 // test.kt:6 foo
@@ -129,3 +170,41 @@ fun box() {
 // test.kt:13 foo
 // test.kt:20 foo
 // test.kt:39 box
+
+// EXPECTATIONS WASM
+// test.kt:34 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:26 $mightThrow (8)
+// test.kt:27 $mightThrow (1)
+// test.kt:6 $foo (8)
+// test.kt:10 $foo (8)
+// test.kt:14 $foo (8)
+// test.kt:30 $mightThrow2 (8)
+// test.kt:31 $mightThrow2 (1)
+// test.kt:14 $foo (8)
+// test.kt:18 $foo (8)
+// test.kt:20 $foo (1)
+// test.kt:35 $box (13, 4)
+// test.kt:36 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:26 $mightThrow (8)
+// test.kt:27 $mightThrow (1)
+// test.kt:6 $foo (8)
+// test.kt:10 $foo (8)
+// test.kt:14 $foo (8)
+// test.kt:30 $mightThrow2 (8, 22, 16)
+// test.kt:16 $foo (8)
+// test.kt:18 $foo (8)
+// test.kt:20 $foo (1)
+// test.kt:37 $box (13, 4)
+// test.kt:38 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:26 $mightThrow (8, 22, 16)
+// test.kt:8 $foo (8)
+// test.kt:10 $foo (8)
+// test.kt:14 $foo (8)
+// test.kt:30 $mightThrow2 (8, 22, 16)
+// test.kt:16 $foo (8)
+// test.kt:18 $foo (8)
+// test.kt:20 $foo (1)
+// test.kt:39 $box (1)

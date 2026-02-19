@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun <V, R, M : MutableMap<in R, out V>> mapKeysTo(destination: M): Inv3<R, V, M> {
     val foo = associateByTo(destination)
@@ -8,3 +9,6 @@ fun <V, R, M : MutableMap<in R, out V>> mapKeysTo(destination: M): Inv3<R, V, M>
 fun < Y, Z, T : MutableMap<in Y, out Z>> associateByTo(destination: T): Inv3<Y, Z, T> = TODO()
 
 interface Inv3<A, B, C>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inProjection, interfaceDeclaration, localProperty, nullableType,
+outProjection, propertyDeclaration, typeConstraint, typeParameter */

@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces +SamConversionForKotlinFunctions +SamConversionPerArgument
-// !CHECK_TYPE
+// LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces +SamConversionForKotlinFunctions +SamConversionPerArgument
+// CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {
     R apply(T t);
@@ -28,3 +29,7 @@ fun test(k: K) {
 
     k.bar { it checkType { _<String>() }; "" } checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, javaType, lambdaLiteral, nullableType, samConversion, stringLiteral, typeParameter,
+typeWithExtension */

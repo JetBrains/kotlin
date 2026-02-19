@@ -2,4 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-publishTestJarsForIde(listOf(":compiler:incremental-compilation-impl"))
+publishTestJarsForIde(
+    projectNames = emptyList(),
+    projectWithFixturesNames = listOf(":compiler:incremental-compilation-impl"),
+)

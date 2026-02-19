@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,16 +12,13 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty]
  */
-abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWithName,
-        IrSymbolOwner, IrMetadataSourceOwner {
+abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWithName, IrSymbolOwner, IrMetadataSourceOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptorWithAccessors
 
@@ -31,23 +28,35 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
 
     abstract var isVar: Boolean
 
-    abstract var delegate: IrVariable
+    /**
+     * Normally, all local delegated properties have non-null value in [delegate].
+     *
+     * The `null` value can happen only in a very special case:
+     * * The local delegated property was used inside an inlinable lambda argument of an inline function.
+     * * A KLIB-based compiler (Kotlin/Native, Kotlin/JS, Kotlin/Wasm) with the enabled IR inliner on
+     *   the first stage pre-processed the call site of the inliner function, so that the [delegate]
+     *   variable was "detached" from the local delegated property and left inside the lambda while
+     *   the property itself was extracted to the same level as the call site.
+     *
+     * This is called a "soft-extraction" of local delegated properties. It was implemented in KT-78856.
+     */
+    abstract var delegate: IrVariable?
 
     abstract var getter: IrSimpleFunction
 
     abstract var setter: IrSimpleFunction?
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedProperty(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        delegate.accept(visitor, data)
+    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        delegate?.accept(visitor, data)
         getter.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        delegate = delegate.transform(transformer, data) as IrVariable
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        delegate = delegate?.transform(transformer, data) as IrVariable?
         getter = getter.transform(transformer, data) as IrSimpleFunction
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
     }

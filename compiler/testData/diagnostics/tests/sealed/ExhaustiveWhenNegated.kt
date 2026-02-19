@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 sealed class Sealed(val x: Int) {
     object First: Sealed(12)
@@ -15,3 +16,5 @@ fun foo(s: Sealed): Int {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

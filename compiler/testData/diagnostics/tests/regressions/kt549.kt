@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-549 type inference failed
 
@@ -16,3 +17,7 @@ fun main(args : Array<String>) {
     System.out.println("Hello, ${a}!")
   }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, flexibleType, forLoop, functionDeclaration, functionalType, ifExpression,
+integerLiteral, javaFunction, javaProperty, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-59789
 // FILE: a/A.java
@@ -21,3 +22,5 @@ interface DependencyAnalyzerDependency : A {
 fun bar(d: DependencyAnalyzerDependency) {
     foo(d)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType, propertyDeclaration */

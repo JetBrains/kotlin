@@ -1,4 +1,5 @@
-// !LANGUAGE: +ApproximateAnonymousReturnTypesInPrivateInlineFunctions
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ApproximateAnonymousReturnTypesInPrivateInlineFunctions
 
 private inline fun foo1(crossinline f: () -> Int) = object {
     fun bar(): Int = f()
@@ -50,3 +51,6 @@ fun test4(b: Boolean) {
     }
     x.bar()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, crossinline, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, propertyDeclaration */

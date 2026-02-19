@@ -1,0 +1,2 @@
+KtNameReferenceExpression(18,28): 'Comparator'
+  null

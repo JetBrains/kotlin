@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
 
 import java.util.*;
@@ -30,3 +31,6 @@ fun foo() {
     val b1: Collection<String?> = x
     val b2: MutableCollection<String?> = <!TYPE_MISMATCH!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

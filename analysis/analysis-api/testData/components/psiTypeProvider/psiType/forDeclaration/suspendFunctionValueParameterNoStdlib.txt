@@ -1,2 +1,0 @@
-KtType: suspend (Int) -> Unit
-PsiType: null

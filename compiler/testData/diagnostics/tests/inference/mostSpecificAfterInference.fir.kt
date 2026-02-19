@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// WITH_EXTENDED_CHECKERS
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 package i
 
@@ -24,3 +24,6 @@ fun test1(list: List<Int>) {
     //check res is not of error type
     checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>res<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

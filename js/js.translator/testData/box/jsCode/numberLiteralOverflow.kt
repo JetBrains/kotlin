@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1280
 fun box(): String {
     val a = js("0xff000000")
     if (a != 4278190080.0) return "fail1: $a"
@@ -8,6 +7,24 @@ fun box(): String {
 
     val c = js("10000000000")
     if (c != 10000000000.0) return "fail3: $c"
+
+    val d = js("037700000000")
+    if (d != 4278190080.0) return "fail4: $d"
+
+    val e = js("-037700000000")
+    if (e != -4278190080.0) return "fail5: $e"
+
+    val f = js("0o37700000000")
+    if (f != 4278190080.0) return "fail6: $f"
+
+    val g = js("-0o37700000000")
+    if (g != -4278190080.0) return "fail7: $g"
+
+    val h = js("0b11111111000000000000000000000000")
+    if (h != 4278190080.0) return "fail8: $h"
+
+    val i = js("-0b11111111000000000000000000000000")
+    if (i != -4278190080.0) return "fail9: $i"
 
     return "OK"
 }

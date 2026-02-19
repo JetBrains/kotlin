@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: JavaClass.java
 
@@ -15,3 +16,5 @@ fun test() {
     JavaClass.testStatic()
     testStatic()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

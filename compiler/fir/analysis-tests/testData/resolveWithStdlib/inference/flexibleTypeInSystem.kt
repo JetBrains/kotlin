@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-37623
 // FULL_JDK
 // FILE: JavaEnum.java
@@ -15,3 +16,5 @@ val enumMap = EnumMap(
         JavaEnum.A to "A"
     )
 )
+
+/* GENERATED_FIR_TAGS: flexibleType, javaFunction, javaProperty, javaType, propertyDeclaration, stringLiteral */

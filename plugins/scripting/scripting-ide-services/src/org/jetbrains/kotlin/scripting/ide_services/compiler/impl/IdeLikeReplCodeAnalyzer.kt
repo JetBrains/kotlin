@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 class IdeLikeReplCodeAnalyzer(
     private val environment: KotlinCoreEnvironment,
     implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter
-) : ReplCodeAnalyzerBase(environment, CliBindingTrace(), implicitsResolutionFilter) {
+) : ReplCodeAnalyzerBase(environment, CliBindingTrace(environment.project), implicitsResolutionFilter) {
     interface ReplLineAnalysisResultWithStateless : ReplLineAnalysisResult {
         // Result of stateless analyse, which may be used for reporting errors
         // without code generation

@@ -1,5 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
-
 // WITH_REFLECT
 
 import kotlin.reflect.KTypeProjection
@@ -29,7 +29,7 @@ fun box(): String {
     assertEquals(listOf(::notNullAny.returnType), NotNullAnyBound::class.typeParameters.single().upperBounds)
 
     TwoBounds::class.typeParameters.single().let {
-        val (cl, cm) = it.upperBounds
+        val [cl, cm] = it.upperBounds
         assertEquals(Cloneable::class, cl.classifier)
         assertEquals(listOf(), cl.arguments)
 
@@ -40,7 +40,7 @@ fun box(): String {
     }
 
     OtherParameterBound::class.typeParameters.let {
-        val (t, u) = it
+        val [t, u] = it
         assertEquals(u, t.upperBounds.single().classifier)
         assertEquals(Number::class, u.upperBounds.single().classifier)
     }

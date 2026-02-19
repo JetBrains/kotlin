@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// ISSUE: KT-56744
 // SKIP_TXT
 
 fun <T> T.myApply(block: T.() -> Unit): T = this
@@ -19,3 +21,7 @@ fun Any.foo() = myApply {
 
     baz() // Smart cast should work
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, thisExpression, typeParameter,
+typeWithExtension, whenExpression, whenWithSubject */

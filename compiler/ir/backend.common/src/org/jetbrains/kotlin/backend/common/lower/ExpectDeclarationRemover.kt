@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.ExpectSymbolTransformer
 import org.jetbrains.kotlin.descriptors.*
@@ -30,8 +29,6 @@ import kotlin.collections.set
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : ExpectSymbolTransformer(),
     FileLoweringPass {
-
-    constructor(context: BackendContext) : this(context.ir.symbols.externalSymbolTable, true)
 
     private val typeParameterSubstitutionMap = mutableMapOf<Pair<IrFunction, IrFunction>, Map<IrTypeParameter, IrTypeParameter>>()
 
@@ -127,12 +124,6 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
 
         if (!function.descriptor.isActual) return
 
-        val index = declaration.index
-
-        if (index < 0) return
-
-        assert(function.valueParameters[index] == declaration)
-
         // If the containing declaration is an `expect class` that matches an `actual typealias`,
         // the `actual fun` or `actual constructor` for this may be in a different module.
         // Nothing we can do with those.
@@ -141,7 +132,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
             (function.descriptor.findExpectForActual() as? FunctionDescriptor)?.let { symbolTable.referenceFunction(it).owner }
                 ?: return
 
-        val defaultValue = expectFunction.valueParameters[index].defaultValue ?: return
+        val defaultValue = expectFunction.parameters[declaration.indexInParameters].defaultValue ?: return
 
         val expectToActual = expectFunction to function
         if (expectToActual !in typeParameterSubstitutionMap) {
@@ -166,15 +157,13 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
         expectActualTypeParametersMap: Map<IrTypeParameter, IrTypeParameter>
     ): IrExpressionBody {
         return this
-            .deepCopyWithSymbols(actualFunction) { symbolRemapper, _ ->
-                DeepCopyIrTreeWithSymbols(symbolRemapper, IrTypeParameterRemapper(expectActualTypeParametersMap))
-            }
+            .deepCopyWithSymbols(actualFunction) { IrTypeParameterRemapper(expectActualTypeParametersMap) }
             .transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid()
-                    return expression.actualize(
-                        classActualizer = { symbolTable.descriptorExtension.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
-                        functionActualizer = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
+                    return expression.remapSymbolParent(
+                        classRemapper = { symbolTable.descriptorExtension.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
+                        functionRemapper = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
                     )
                 }
             }, data = null)

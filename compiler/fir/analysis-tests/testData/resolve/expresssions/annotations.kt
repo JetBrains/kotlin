@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 @Retention(AnnotationRetention.SOURCE)
@@ -21,3 +22,6 @@ fun foo() {
         0
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, functionDeclaration, ifExpression, integerLiteral,
+localProperty, propertyDeclaration, tryExpression */

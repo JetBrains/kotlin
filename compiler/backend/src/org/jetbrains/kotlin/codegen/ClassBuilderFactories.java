@@ -25,41 +25,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class ClassBuilderFactories {
-    @NotNull
-    public static ClassBuilderFactory THROW_EXCEPTION = new ClassBuilderFactory() {
-        @NotNull
-        @Override
-        public ClassBuilderMode getClassBuilderMode() {
-            return ClassBuilderMode.FULL;
-        }
-
-        @NotNull
-        @Override
-        public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public String asText(ClassBuilder builder) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public byte[] asBytes(ClassBuilder builder) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public void close() {
-            throw new IllegalStateException();
-        }
-    };
-    
     public static ClassBuilderFactory TEST = new TestClassBuilderFactory();
 
-    public static class TestClassBuilderFactory implements ClassBuilderFactory {
-        public TestClassBuilderFactory() {}
-
+    private static class TestClassBuilderFactory implements ClassBuilderFactory {
         @NotNull
         @Override
         public ClassBuilderMode getClassBuilderMode() {
@@ -85,11 +53,6 @@ public class ClassBuilderFactories {
         @Override
         public byte[] asBytes(ClassBuilder builder) {
             return ((TraceBuilder) builder).binary.toByteArray();
-        }
-
-        @Override
-        public void close() {
-
         }
     }
     
@@ -117,9 +80,6 @@ public class ClassBuilderFactories {
             ClassWriter visitor = (ClassWriter) builder.getVisitor();
             return visitor.toByteArray();
         }
-
-        @Override
-        public void close() {}
     };
 
     private ClassBuilderFactories() {

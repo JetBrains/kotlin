@@ -1,8 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// IGNORE_BACKEND: JVM
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 package root
 

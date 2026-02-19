@@ -1,0 +1,22 @@
+----------/main(): kotlin.Unit--------------------------------------------------
+null
+
+----------val f: Foo------------------------------------------------------------
+null
+
+----------<constructor>(): Foo--------------------------------------------------
+null
+
+----------/Foo.documented(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Unit
+<primary tag="null" subject="null">
+Actual KDoc
+
+
+<section="null" subject="null">
+Actual KDoc
+
+
+----------a: kotlin.String------------------------------------------------------
+<primary tag="param" subject="a">
+in actual
+

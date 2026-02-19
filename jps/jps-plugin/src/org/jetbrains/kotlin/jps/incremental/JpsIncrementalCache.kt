@@ -22,16 +22,15 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
-import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import java.io.File
 
 interface JpsIncrementalCache : IncrementalCacheCommon, StorageOwner {
     fun addJpsDependentCache(cache: JpsIncrementalCache)
 }
 
+@Suppress("DEPRECATION") // KT-81463
 class JpsIncrementalJvmCache(
     target: ModuleBuildTarget,
     paths: BuildDataPaths,
@@ -48,18 +47,6 @@ class JpsIncrementalJvmCache(
     }
 }
 
-class JpsIncrementalJsCache(
-    target: ModuleBuildTarget,
-    paths: BuildDataPaths,
-    icContext: IncrementalCompilationContext
-) : IncrementalJsCache(paths.getTargetDataRoot(target), icContext, JsSerializerProtocol), JpsIncrementalCache {
-    override fun addJpsDependentCache(cache: JpsIncrementalCache) {
-        if (cache is JpsIncrementalJsCache) {
-            addDependentCache(cache)
-        }
-    }
-}
-
 private class KotlinIncrementalStorageProvider(
     private val target: KotlinModuleBuildTarget<*>,
     private val paths: BuildDataPaths
@@ -72,6 +59,7 @@ private class KotlinIncrementalStorageProvider(
 
     override fun hashCode() = target.hashCode()
 
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION") // KT-81463
     override fun createStorage(targetDataDir: File): JpsIncrementalCache = target.createCacheStorage(paths)
 }
 

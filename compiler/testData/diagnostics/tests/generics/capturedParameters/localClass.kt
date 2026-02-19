@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun <T> magic(): T = null!!
 
@@ -22,3 +23,6 @@ class Q {
         y.prop.checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localClass, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

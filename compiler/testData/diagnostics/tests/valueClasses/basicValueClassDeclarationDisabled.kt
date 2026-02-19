@@ -1,8 +1,9 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !SKIP_JAVAC
-// !API_VERSION: 1.4
-// !LANGUAGE: -InlineClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// SKIP_JAVAC
+// API_VERSION: 1.4
+// LANGUAGE: -InlineClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm
@@ -17,3 +18,6 @@ annotation class JvmInline
 
 @JvmInline
 value class NotVal(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>x: Int<!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, objectDeclaration, primaryConstructor,
+propertyDeclaration, value */

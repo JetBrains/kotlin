@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 <!NON_INTERNAL_PUBLISHED_API!>@kotlin.PublishedApi<!>
 class A
 
@@ -78,3 +79,6 @@ class InConstructor(
 class FalsePositiveInConstructor(
     @PublishedApi internal val extensionPoint: Any
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

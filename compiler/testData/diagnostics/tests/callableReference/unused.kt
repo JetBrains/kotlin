@@ -1,4 +1,7 @@
-// !DIAGNOSTICS: +UNUSED_EXPRESSION
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: +UNUSED_EXPRESSION
+// WITH_EXTRA_CHECKERS
 fun foo() {
 
 }
@@ -22,3 +25,5 @@ fun test() {
     <!UNUSED_EXPRESSION!>A::foo<!>
     <!UNUSED_EXPRESSION!>A::bar<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, nestedClass */

@@ -2,20 +2,17 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.*
-import kotlinx.metadata.Modality as KmModality
-import kotlinx.metadata.ClassKind as KmClassKind
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import kotlin.metadata.*
+import kotlin.metadata.ClassKind as KmClassKind
+import kotlin.metadata.Modality as KmModality
 
 internal fun KmFunction.modifiersFrom(cf: CirFunction, isExpect: Boolean) {
-    hasAnnotations = cf.hasAnnotations
     visibility = cf.kmVisibility
     modality = cf.kmModality
     kind = cf.kind.kmMemberKind
@@ -28,7 +25,6 @@ internal fun KmFunction.modifiersFrom(cf: CirFunction, isExpect: Boolean) {
 }
 
 internal fun KmProperty.modifiersFrom(cp: CirProperty, isExpect: Boolean) {
-    hasAnnotations = cp.hasAnnotations
     visibility = cp.kmVisibility
     modality = cp.kmModality
     kind = cp.kind.kmMemberKind
@@ -44,7 +40,6 @@ internal fun KmPropertyAccessorAttributes.modifiersFrom(
     cp: CirPropertyAccessor, visibilityHolder: CirHasVisibility,
     modalityHolder: CirHasModality,
 ) {
-    hasAnnotations = cp.hasAnnotations
     visibility = visibilityHolder.kmVisibility
     modality = modalityHolder.kmModality
     isNotDefault = !cp.isDefault
@@ -52,7 +47,6 @@ internal fun KmPropertyAccessorAttributes.modifiersFrom(
 }
 
 internal fun KmConstructor.modifiersFrom(cc: CirClassConstructor) {
-    hasAnnotations = cc.hasAnnotations
     visibility = cc.kmVisibility
     isSecondary = !cc.isPrimary
     hasNonStableParameterNames = !cc.hasStableParameterNames
@@ -67,14 +61,12 @@ internal fun CirType.applyTypeFlagsTo(type: KmType) {
 }
 
 internal fun KmValueParameter.modifiersFrom(cv: CirValueParameter) {
-    hasAnnotations = cv.hasAnnotations
     declaresDefaultValue = cv.declaresDefaultValue
     isCrossinline = cv.isCrossinline
     isNoinline = cv.isNoinline
 }
 
 internal fun KmClass.modifiersFrom(cc: CirClass, isExpect: Boolean) {
-    hasAnnotations = cc.hasAnnotations
     visibility = cc.kmVisibility
     modality = cc.kmModality
     kind = cc.kmClassKind
@@ -87,20 +79,8 @@ internal fun KmClass.modifiersFrom(cc: CirClass, isExpect: Boolean) {
 }
 
 internal fun KmTypeAlias.modifiersFrom(ct: CirTypeAlias) {
-    hasAnnotations = ct.hasAnnotations
     visibility = ct.kmVisibility
 }
-
-private inline val CirHasAnnotations.hasAnnotations: Boolean
-    get() = annotations.isNotEmpty()
-
-// Since 1.4.30 a special @JvmInline annotation is generated to distinguish JVM-inline from value classes.
-// This has an effect on class serialization: Every class with isValue == true automatically gets HAS_ANNOTATIONS flag.
-private inline val CirClass.hasAnnotations: Boolean
-    get() = annotations.isNotEmpty() || isValue
-
-private inline val CirProperty.hasAnnotations: Boolean
-    get() = annotations.isNotEmpty() || backingFieldAnnotations.isNotEmpty() || delegateFieldAnnotations.isNotEmpty()
 
 private inline val CirHasVisibility.kmVisibility: Visibility
     get() = when (visibility) {
@@ -119,12 +99,12 @@ private inline val CirHasModality.kmModality: KmModality
         Modality.SEALED -> KmModality.SEALED
     }
 
-private inline val CallableMemberDescriptor.Kind.kmMemberKind: MemberKind
+private inline val CirFunctionOrProperty.Kind.kmMemberKind: MemberKind
     get() = when (this) {
-        CallableMemberDescriptor.Kind.DECLARATION -> MemberKind.DECLARATION
-        CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> MemberKind.FAKE_OVERRIDE
-        CallableMemberDescriptor.Kind.DELEGATION -> MemberKind.DELEGATION
-        CallableMemberDescriptor.Kind.SYNTHESIZED -> MemberKind.SYNTHESIZED
+        CirFunctionOrProperty.Kind.DECLARATION -> MemberKind.DECLARATION
+        CirFunctionOrProperty.Kind.FAKE_OVERRIDE -> MemberKind.FAKE_OVERRIDE
+        CirFunctionOrProperty.Kind.DELEGATION -> MemberKind.DELEGATION
+        CirFunctionOrProperty.Kind.SYNTHESIZED -> MemberKind.SYNTHESIZED
     }
 
 private inline val CirClass.kmClassKind: KmClassKind

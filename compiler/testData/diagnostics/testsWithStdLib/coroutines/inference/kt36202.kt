@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -21,3 +22,6 @@ fun main() {
         foo { listOf(1, 2, 3).firstOrNull() ?: 0 }
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, elvisExpression, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

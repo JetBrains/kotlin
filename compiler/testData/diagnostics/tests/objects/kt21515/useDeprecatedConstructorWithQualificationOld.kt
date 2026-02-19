@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // See KT-21515 for a class diagram and details
 
@@ -99,3 +100,5 @@ class C : O.B() {
     // DEPRECATED: Classifiers from supertypes of our own companion
     val r = Delta.FromDelta()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, propertyDeclaration */

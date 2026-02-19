@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 open class C(val x: Int)
 
 class D : C {
@@ -12,3 +12,6 @@ class D : C {
 
     operator fun String.invoke() { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, operator, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

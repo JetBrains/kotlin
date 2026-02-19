@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My {
     val x: Int
     init {
@@ -10,3 +11,6 @@ class My {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, ifExpression, init, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

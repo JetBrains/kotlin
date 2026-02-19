@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.google.common.collect.MapMaker
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.*
+import org.jetbrains.kotlin.utils.ThreadSafe
 import java.util.concurrent.ConcurrentMap
 
 /**
- * Caches mapping [KtFile] -> [FirFile] of module [KtModule]
+ * Caches the [KtFile] to [FirFile] mapping of a [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule].
  */
 @ThreadSafe
 internal abstract class ModuleFileCache {
@@ -31,6 +31,9 @@ internal abstract class ModuleFileCache {
     abstract fun getContainerFirFile(declaration: FirDeclaration): FirFile?
 
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
+
+    @LLStatisticsOnlyApi
+    abstract fun getAllCachedFirFiles(): Collection<FirFile>
 }
 
 internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleResolveComponents) : ModuleFileCache() {
@@ -44,4 +47,7 @@ internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleRes
         val ktFile = declaration.psi?.containingFile as? KtFile ?: return null
         return getCachedFirFile(ktFile)
     }
+
+    @LLStatisticsOnlyApi
+    override fun getAllCachedFirFiles(): Collection<FirFile> = ktFileToFirFile.values
 }

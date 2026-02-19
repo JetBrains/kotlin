@@ -1,7 +1,6 @@
 @file:Suppress("PropertyName", "HasPlatformType", "UnstableApiUsage")
 
 import org.gradle.internal.os.OperatingSystem
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.Closeable
 import java.io.OutputStreamWriter
 import java.net.URI
@@ -25,8 +24,6 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 project.apply {
     from(rootProject.file("../../gradle/versions.gradle.kts"))
 }
-
-val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
 
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 val intellijReleaseType: String by extra {
@@ -140,6 +137,7 @@ dependencies {
     intellijVersionForIde?.let { intellijCoreForIde("com.jetbrains.intellij.idea:intellij-core:$it") }
 }
 
+@Suppress("DEPRECATION")
 fun prepareDeps(
     intellij: Configuration,
     intellijCore: Configuration,
@@ -152,10 +150,10 @@ fun prepareDeps(
     val makeIntellijAnnotations = tasks.register("makeIntellijAnnotations${intellij.name.replaceFirstChar(Char::uppercase)}", Copy::class) {
         dependsOn(makeIntellijCore)
 
-        val intellijCoreRepo = CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
+        val intellijCoreRepo = org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
         from(intellijCoreRepo.resolve("artifacts/annotations.jar"))
 
-        val annotationsStore = CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath]
+        val annotationsStore = org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath]
         val targetDir = annotationsStore[intellijVersion].use()
         into(targetDir)
 
@@ -180,12 +178,12 @@ fun prepareDeps(
         }
     }
 
-    val mergeSources = tasks.create("mergeSources${intellij.name.replaceFirstChar(Char::uppercase)}", Jar::class.java) {
+    val mergeSources = tasks.register("mergeSources${intellij.name.replaceFirstChar(Char::uppercase)}", Jar::class.java) {
         dependsOn(sources)
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
         isZip64 = true
-        if (!kotlinBuildProperties.isTeamcityBuild) {
+        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             from(provider { sources.map(::zipTree) })
         }
         destinationDirectory.set(File(repoDir, sources.name))
@@ -194,7 +192,7 @@ fun prepareDeps(
         archiveVersion.set(intellijVersion)
     }
 
-    val sourcesFile = mergeSources.outputs.files.singleFile
+    val sourcesFile = mergeSources.map { it.outputs.files.singleFile }
 
     val makeIde = if (androidStudioBuild != null) {
         buildIvyRepositoryTask(
@@ -228,7 +226,7 @@ fun prepareDeps(
     }
 }
 
-when(kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
+when (kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull) {
     null -> {}
     "master" -> {} // for intellij/kt-master, intellij maven artifacts are used instead of manual unpacked dependencies
     else -> {
@@ -248,10 +246,11 @@ fun buildIvyRepositoryTask(
     organization: String,
     repoDirectory: File,
     pathRemap: ((String) -> String)? = null,
-    sources: File? = null
+    sources: Provider<File>? = null
 ): TaskProvider<Task> {
-    fun ResolvedArtifact.storeDirectory(): CleanableStore =
-        CleanableStore[repoDirectory.resolve("$organization/${moduleVersion.id.name}").absolutePath]
+    @Suppress("DEPRECATION")
+    fun ResolvedArtifact.storeDirectory(): org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore =
+        org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore[repoDirectory.resolve("$organization/${moduleVersion.id.name}").absolutePath]
 
     fun ResolvedArtifact.moduleDirectory(): File =
         storeDirectory()[moduleVersion.id.version].use()
@@ -312,7 +311,7 @@ fun buildIvyRepositoryTask(
                     File(artifactsDirectory, "lib"),
                     File(artifactsDirectory, "lib"),
                     File(moduleDirectory, "ivy"),
-                    *listOfNotNull(sources).toTypedArray()
+                    *listOfNotNull(sources?.get()).toTypedArray()
                 )
 
                 val pluginsDirectory = File(artifactsDirectory, "plugins")
@@ -328,7 +327,7 @@ fun buildIvyRepositoryTask(
                                 File(it, "lib"),
                                 File(it, "lib"),
                                 File(moduleDirectory, "ivy"),
-                                *listOfNotNull(sources).toTypedArray()
+                                *listOfNotNull(sources?.get()).toTypedArray()
                             )
                         }
                 }
@@ -339,7 +338,8 @@ fun buildIvyRepositoryTask(
     }
 }
 
-fun CleanableStore.cleanStore() = cleanDir(Instant.now().minus(Duration.ofDays(30)))
+@Suppress("DEPRECATION")
+fun org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.cleanStore() = cleanDir(Instant.now().minus(Duration.ofDays(30)))
 
 fun writeIvyXml(
     organization: String,
@@ -364,7 +364,7 @@ fun writeIvyXml(
         document("UTF-8", "1.0") {
             element("ivy-module") {
                 attribute("version", "2.0")
-                attribute("xmlns:m", "http://ant.apache.org/ivy/maven")
+                attribute("xmlns:m", "https://ant.apache.org/ivy/maven")
 
                 emptyElement("info") {
                     attributes(
@@ -397,7 +397,7 @@ fun writeIvyXml(
                                     "conf" to "default"
                                 )
                             }
-                    }
+                        }
 
                     sourcesJar.forEach { jarFile ->
                         emptyElement("artifact") {
@@ -424,7 +424,7 @@ fun skipToplevelDirectory(path: String) = path.substringAfter('/')
 fun skipContentsDirectory(path: String) = path.substringAfter("Contents/")
 
 fun Project.intellijSdkVersionForIde(): String? {
-    val majorVersion = kotlinBuildProperties.getOrNull("attachedIntellijVersion") as? String ?: return null
+    val majorVersion = kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull ?: return null
     return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
 }
 
@@ -478,5 +478,13 @@ class XMLWriter(private val outputStreamWriter: OutputStreamWriter) : Closeable 
         xmlStreamWriter.flush()
         xmlStreamWriter.close()
         outputStreamWriter.close()
+    }
+}
+
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+        }
     }
 }

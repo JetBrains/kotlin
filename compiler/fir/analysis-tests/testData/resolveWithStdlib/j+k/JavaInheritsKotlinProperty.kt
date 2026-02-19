@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Base.kt
 
 interface Base {
@@ -19,3 +20,6 @@ class Tester : Inheritor() {
         return x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaProperty, javaType,
+propertyDeclaration */

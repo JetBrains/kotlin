@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-5155 Auto-casts do not work with when
 
 fun foo(s: String?) {
@@ -9,3 +10,6 @@ fun foo(s: String?) {
 }
 
 fun String.foo() = true
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+smartcast, whenExpression */

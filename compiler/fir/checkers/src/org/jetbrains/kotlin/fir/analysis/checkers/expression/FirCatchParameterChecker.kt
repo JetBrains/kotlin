@@ -5,57 +5,61 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.defaultValueForParameter
-import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
-import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
-import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.types.*
 
-object FirCatchParameterChecker : FirTryExpressionChecker() {
-    override fun check(expression: FirTryExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirTryExpression) {
         for (catchEntry in expression.catches) {
             val catchParameter = catchEntry.parameter
             val source = catchParameter.source ?: continue
 
             if (catchParameter.source?.defaultValueForParameter != null) {
-                reporter.reportOn(source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE, context)
+                reporter.reportOn(source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE)
             }
 
             source.valOrVarKeyword?.let {
-                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER, it, context)
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER, it)
             }
 
             val coneType = catchParameter.returnTypeRef.coneType
-            if (coneType is ConeTypeParameterType) {
-                val isReified = coneType.lookupTag.typeParameterSymbol.isReified
+            if (coneType is ConeTypeParameterType || coneType is ConeDefinitelyNotNullType) {
+                val isReified = with(context.session.typeContext) {
+                    (coneType.originalIfDefinitelyNotNullable() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.isReified == true
+                }
 
                 if (isReified) {
-                    reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE, context)
+                    catchParameter.requireFeatureSupport(LanguageFeature.AllowReifiedTypeInCatchClause)
                 } else {
-                    reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE, context)
+                    reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE)
                 }
             }
 
             val session = context.session
-            if (!coneType.isSubtypeOfThrowable(session)) {
+            if (!coneType.isSubtypeOfThrowable(session) || isProhibitedNothing(coneType)) {
                 reporter.reportOn(
                     source,
                     FirErrors.THROWABLE_TYPE_MISMATCH,
                     coneType,
                     context.session.typeContext.isTypeMismatchDueToNullability(
                         coneType,
-                        session.builtinTypes.throwableType.type
-                    ),
-                    context
+                        session.builtinTypes.throwableType.coneType
+                    )
                 )
             }
         }
+    }
+
+    context(context: CheckerContext)
+    private fun isProhibitedNothing(coneType: ConeKotlinType): Boolean {
+        return LanguageFeature.ProhibitNothingAsCatchParameter.isEnabled() && coneType.isNothing
     }
 }

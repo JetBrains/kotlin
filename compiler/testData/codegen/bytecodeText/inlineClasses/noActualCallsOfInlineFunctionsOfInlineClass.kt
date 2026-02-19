@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 inline class Foo(val x: Int) {
     inline fun inlineInc(): Foo = Foo(x + 1)

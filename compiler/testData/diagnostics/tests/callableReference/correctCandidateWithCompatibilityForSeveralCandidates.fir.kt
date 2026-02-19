@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun <T> foo(f: () -> T): T = f()
 
@@ -15,7 +16,10 @@ object Scope {
         fun test() {
             // Despite the fact ::bar is resolved with compatibility warning, it's important not to propagate it to the outer call
             val result = <!DEBUG_INFO_CALL("fqName: Scope.foo; typeCall: function")!>foo(::bar)<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>result<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

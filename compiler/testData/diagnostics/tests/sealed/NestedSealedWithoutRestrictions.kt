@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-13495
-// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: base.kt
 
@@ -38,3 +39,6 @@ fun test(base: Container.Base) {
         is BContainer.C -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, isExpression, localProperty,
+nestedClass, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

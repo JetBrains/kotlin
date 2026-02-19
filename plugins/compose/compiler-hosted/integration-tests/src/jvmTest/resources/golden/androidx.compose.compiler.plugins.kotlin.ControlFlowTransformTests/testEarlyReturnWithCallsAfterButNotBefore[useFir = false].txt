@@ -1,0 +1,44 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    // we can just close out the open groups at the return.
+    if (x > 0) {
+        return
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(Example)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (x > 0) {
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return
+  }
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+}

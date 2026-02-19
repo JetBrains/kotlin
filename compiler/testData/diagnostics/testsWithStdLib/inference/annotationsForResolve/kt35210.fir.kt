@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @file:Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 
@@ -9,3 +10,6 @@ fun test(a: List<Class<Anno>>) {
 }
 
 fun <@kotlin.internal.OnlyInputTypes S> strictSelect(arg1: S, arg2: S): S = TODO()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, capturedType, functionDeclaration,
+lambdaLiteral, nullableType, outProjection, stringLiteral, typeParameter */

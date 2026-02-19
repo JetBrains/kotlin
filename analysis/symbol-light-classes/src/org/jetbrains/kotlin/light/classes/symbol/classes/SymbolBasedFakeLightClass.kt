@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClass(kotlinOrigin) {
+internal class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClass(kotlinOrigin) {
     override fun copy(): KtFakeLightClass = SymbolBasedFakeLightClass(kotlinOrigin)
 
     private val _containingClass: KtFakeLightClass? by lazyPub {
@@ -29,7 +29,7 @@ class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClas
 
         val baseClassOrigin = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
         return analyzeForLightClasses(kotlinOrigin) {
-            kotlinOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
+            checkIsInheritor(kotlinOrigin, baseClassOrigin, checkDeep)
         }
     }
 }

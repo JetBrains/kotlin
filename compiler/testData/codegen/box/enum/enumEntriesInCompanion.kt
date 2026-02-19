@@ -1,5 +1,4 @@
-// !LANGUAGE: +EnumEntries
-// IGNORE_BACKEND: JVM, JS
+// LANGUAGE: +EnumEntries
 // WITH_STDLIB
 
 enum class MyEnum {

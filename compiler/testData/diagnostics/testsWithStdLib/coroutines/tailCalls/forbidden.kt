@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -18,3 +19,5 @@ suspend fun unitSuspend() {
 suspend fun baz(): Int = run {
     suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, suspend */

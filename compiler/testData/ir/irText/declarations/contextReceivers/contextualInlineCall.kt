@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
+// FIR_IDENTICAL
+// LANGUAGE: +ContextReceivers
 
 class Context {
     fun c() = 1

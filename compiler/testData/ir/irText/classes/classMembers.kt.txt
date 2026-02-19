@@ -1,10 +1,4 @@
 class C {
-  constructor(x: Int, y: Int, z: Int = 1) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val y: Int
     field = y
     get
@@ -14,34 +8,9 @@ class C {
     get
     set
 
-  constructor() {
-    this/*C*/(x = 0, y = 0, z = 0)
-  }
-
   val property: Int
     field = 0
     get
-
-  val propertyWithGet: Int
-    get(): Int {
-      return 42
-    }
-
-  var propertyWithGetAndSet: Int
-    get(): Int {
-      return <this>.<get-z>()
-    }
-    set(value: Int) {
-      <this>.<set-z>(<set-?> = value)
-    }
-
-  fun function() {
-    println(message = "1")
-  }
-
-  fun Int.memberExtensionFunction() {
-    println(message = "2")
-  }
 
   class NestedClass {
     constructor() /* primary */ {
@@ -61,11 +30,11 @@ class C {
   }
 
   interface NestedInterface {
-    abstract fun foo()
-
     fun bar() {
       return <this>.foo()
     }
+
+    abstract fun foo()
 
   }
 
@@ -78,4 +47,36 @@ class C {
 
   }
 
+  constructor() {
+    this/*C*/(x = 0, y = 0, z = 0)
+  }
+
+  constructor(x: Int, y: Int, z: Int = 1) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun function() {
+    println(message = "1")
+  }
+
+  fun Int.memberExtensionFunction() {
+    println(message = "2")
+  }
+
+  val propertyWithGet: Int
+    get(): Int {
+      return 42
+    }
+
+  var propertyWithGetAndSet: Int
+    get(): Int {
+      return <this>.<get-z>()
+    }
+    set(value: Int) {
+      <this>.<set-z>(<set-?> = value)
+    }
+
 }
+

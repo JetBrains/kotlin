@@ -1,3 +1,4 @@
+
 // FILE: a.kt
 
 package test2

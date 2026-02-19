@@ -1,4 +1,5 @@
-// !WTIH_NEW_INFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_NEW_INFERENCE
 // SKIP_TXT
 
 class MyException : Exception() {
@@ -52,3 +53,6 @@ fun test5() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

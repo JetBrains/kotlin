@@ -1,0 +1,12 @@
+@R|kotlin/annotation/Repeatable|() @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) public final annotation class Ann : R|kotlin/Annotation| {
+    public final val x: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(x: R|kotlin/Int|): R|test/Ann|
+
+}
+
+@R|test/Ann|(x = Int(1)) @R|test/Ann|(x = Int(2)) public final class Some : R|kotlin/Any| {
+    public constructor(): R|test/Some|
+
+}

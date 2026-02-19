@@ -1,12 +1,13 @@
 open annotation class ModuleInfo : Annotation {
+  val keyBind: Int
+    field = keyBind
+    get
+
   constructor(keyBind: Int = 1234) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val keyBind: Int
-    field = keyBind
-    get
-
 }
+

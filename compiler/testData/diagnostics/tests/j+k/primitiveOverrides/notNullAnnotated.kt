@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.java
 import org.jetbrains.annotations.*;
 
@@ -21,3 +21,5 @@ fun foo(b: B) {
     b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1)
     b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(2.0)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaType */

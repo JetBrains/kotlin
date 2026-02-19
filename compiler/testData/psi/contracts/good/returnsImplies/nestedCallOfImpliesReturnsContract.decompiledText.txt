@@ -1,0 +1,6 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun impliesReturn(encoded: kotlin.String?): kotlin.String? { contract { /* compiled contract */ }; /* compiled code */ }
+
+public fun returnNotNullImplies(x: kotlin.Any?): kotlin.String? { contract { /* compiled contract */ }; /* compiled code */ }

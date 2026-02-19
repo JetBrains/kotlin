@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-//!DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Target(AnnotationTarget.TYPE)
 annotation class a
@@ -43,3 +44,6 @@ fun foo3(l: List<<!WRONG_ANNOTATION_TARGET!>@c<!> Int?>) {}
 fun <!WRONG_ANNOTATION_TARGET!>@c<!> Int?.bar3() {}
 
 val baz3: <!WRONG_ANNOTATION_TARGET!>@c<!> Int? = 1
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+nullableType, primaryConstructor, propertyDeclaration */

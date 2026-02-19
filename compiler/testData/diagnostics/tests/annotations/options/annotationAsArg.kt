@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Annotation(val x: Int) {
     fun baz() {}
@@ -13,3 +14,6 @@ fun foo(annotation: Annotation): Int {
         return -1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+primaryConstructor, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 @RequiresOptIn
 annotation class ExperimentalKotlinAnnotation
@@ -19,3 +20,5 @@ fun suppressed() {
     val lambda = StableInterface {}
 }
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, funInterface, functionDeclaration,
+interfaceDeclaration, lambdaLiteral, localProperty, override, propertyDeclaration */

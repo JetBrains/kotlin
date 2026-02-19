@@ -40,22 +40,22 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
     override fun getPresentableName(): String = SettingConstants.KOTLIN_DATA_CONTAINER_ID
 
     override fun computeRootDescriptors(
-        model: JpsModel?,
-        index: ModuleExcludeIndex?,
-        ignoredFileIndex: IgnoredFileIndex?,
-        dataPaths: BuildDataPaths?
+        model: JpsModel,
+        index: ModuleExcludeIndex,
+        ignoredFileIndex: IgnoredFileIndex,
+        dataPaths: BuildDataPaths,
     ): List<BuildRootDescriptor> = listOf()
 
     override fun getOutputRoots(context: CompileContext): Collection<File> {
         val dataManager = context.projectDescriptor.dataManager
-        val storageRoot = dataManager.dataPaths.dataStorageRoot
+        val storageRoot = dataManager.dataPaths.dataStorageDir.toFile()
         return listOf(File(storageRoot, SettingConstants.KOTLIN_DATA_CONTAINER_ID))
     }
 
-    override fun findRootDescriptor(rootId: String?, rootIndex: BuildRootIndex?): BuildRootDescriptor? = null
+    override fun findRootDescriptor(rootId: String, rootIndex: BuildRootIndex): BuildRootDescriptor? = null
 
     override fun computeDependencies(
-        targetRegistry: BuildTargetRegistry?,
-        outputIndex: TargetOutputIndex?
+        targetRegistry: BuildTargetRegistry,
+        outputIndex: TargetOutputIndex,
     ): Collection<BuildTarget<*>> = listOf()
 }

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -CAST_NEVER_SUCCEEDS -CANNOT_CHECK_FOR_ERASED -UNCHECKED_CAST -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -CAST_NEVER_SUCCEEDS -CANNOT_CHECK_FOR_ERASED -UNCHECKED_CAST -UNUSED_ANONYMOUS_PARAMETER
 // SKIP_TXT
 // Issue: KT-31734
 
@@ -44,3 +45,6 @@ fun foo11() {
 fun foo12() {
     val x: @Foo() @Foo () () -> Unit = {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, asExpression, functionDeclaration, functionalType, ifExpression,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration */

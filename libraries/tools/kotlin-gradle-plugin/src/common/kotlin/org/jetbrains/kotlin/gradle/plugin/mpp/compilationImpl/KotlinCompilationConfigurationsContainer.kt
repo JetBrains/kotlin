@@ -35,14 +35,14 @@ internal class DefaultKotlinCompilationConfigurationsContainer(
     override val compileDependencyConfiguration: Configuration,
     override val runtimeDependencyConfiguration: Configuration?,
     override val hostSpecificMetadataConfiguration: Configuration?,
-    override val pluginConfiguration: Configuration
+    override val pluginConfiguration: Configuration,
 ) : KotlinCompilationConfigurationsContainer
 
 internal fun HasKotlinDependencies(
     project: Project, compilationDependencyContainer: KotlinCompilationConfigurationsContainer
 ): HasKotlinDependencies = object : HasKotlinDependencies {
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
+        project.objects.DefaultKotlinDependencyHandler(this, project).run(configure)
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }

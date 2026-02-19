@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -INLINE_CLASS_DEPRECATED
+// LANGUAGE: +InlineClasses
 
 inline class Z(val x: Int)
 
@@ -28,3 +29,6 @@ class C {
     <!OVERLOADS_ANNOTATION_MANGLED_FUNCTION!>@JvmOverloads<!>
     fun testMemberFunction3(x: Int = 0): Z = Z(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

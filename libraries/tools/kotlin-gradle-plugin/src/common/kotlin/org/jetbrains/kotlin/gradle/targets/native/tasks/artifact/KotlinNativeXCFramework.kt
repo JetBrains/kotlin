@@ -2,15 +2,15 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
@@ -28,8 +28,6 @@ abstract class KotlinNativeXCFrameworkConfigImpl @Inject constructor(artifactNam
     override fun targets(vararg targets: KonanTarget) {
         this.targets = targets.toSet()
     }
-
-    override var embedBitcode: BitcodeEmbeddingMode? = null
 
     override fun validate() {
         super.validate()
@@ -55,23 +53,27 @@ abstract class KotlinNativeXCFrameworkConfigImpl @Inject constructor(artifactNam
             toolOptionsConfigure = toolOptionsConfigure,
             binaryOptions = binaryOptions,
             targets = targets,
-            embedBitcode = embedBitcode,
             extensions = extensions
         )
     }
 }
 
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 class KotlinNativeXCFrameworkImpl(
     override val artifactName: String,
     override val modules: Set<Any>,
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = "Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln",
+        level = DeprecationLevel.ERROR,
+    )
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
-    override val embedBitcode: BitcodeEmbeddingMode?,
     extensions: ExtensionAware
 ) : KotlinNativeXCFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "XCFramework")
@@ -84,7 +86,7 @@ class KotlinNativeXCFrameworkImpl(
             it.group = "build"
             it.description = "Assemble all types of registered '$artifactName' XCFramework"
         }
-        project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(parentTask)
+        project.addToAssemble(parentTask)
 
         modes.forEach { buildType ->
             val holder = XCFrameworkTaskHolder.create(project, artifactName, buildType).also {
@@ -102,7 +104,6 @@ class KotlinNativeXCFrameworkImpl(
                     buildType = buildType,
                     librariesConfigurationName = librariesConfigurationName,
                     exportConfigurationName = exportConfigurationName,
-                    embedBitcode = embedBitcode,
                     outDirName = "${artifactName}XCFrameworkTemp",
                     taskNameSuffix = nameSuffix
                 )
@@ -120,7 +121,7 @@ class KotlinNativeXCFrameworkImpl(
             }
             holder.task.configure {
                 it.fromFrameworkDescriptors(frameworkDescriptors)
-                it.outputDir = project.buildDir.resolve(outDir)
+                it.outputDir = project.layout.buildDirectory.dir(outDir).get().asFile
             }
         }
     }

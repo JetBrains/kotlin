@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface Rec<in A: Rec<A, B>, B>
 
@@ -19,3 +20,6 @@ fun testOutOut() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<Obj2 & Obj3, out I1>")!>cst1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<Obj2 & Obj4, out kotlin.Any>")!>cst2<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, interfaceDeclaration, intersectionType, localProperty, nullableType,
+objectDeclaration, outProjection, propertyDeclaration, typeConstraint, typeParameter, vararg */

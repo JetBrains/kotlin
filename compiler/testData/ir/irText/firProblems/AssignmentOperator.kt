@@ -1,4 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 package foo
 
 class A {
@@ -15,7 +14,7 @@ fun <T> id(t: T): T {
     return t
 }
 
-fun main() {
+fun runMe() {
     val a = A()
 
     id(a).prop = 10

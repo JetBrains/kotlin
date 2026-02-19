@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57211
 
@@ -20,3 +21,6 @@ annotation class Ann(
     ulongArrayOf(1u, 1u),
 )
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classReference, collectionLiteral,
+functionDeclaration, primaryConstructor, propertyDeclaration, unsignedLiteral */

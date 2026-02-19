@@ -24,3 +24,4 @@ public open class VcsException : java.lang.Exception {
     // Static members
     invisible_fake const final override /*1*/ /*fake_override*/ val serialVersionUID: kotlin.Long = -3387516993124229948.toLong()
 }
+

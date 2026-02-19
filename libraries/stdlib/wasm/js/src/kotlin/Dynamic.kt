@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+@file:OptIn(ExperimentalWasmJsInterop::class)
 
 package kotlin.js
 
@@ -17,14 +18,14 @@ public external interface Dynamic : JsAny
  * Reinterprets this value as a value of the Dynamic type.
  */
 @Deprecated("If value is a subtype of JsAny, use JsAny instead. Otherwise, use toJsReference", level = DeprecationLevel.ERROR)
-fun Any.asDynamic(): JsAny = this.toJsReference()
+public fun Any.asDynamic(): JsAny = this.toJsReference()
 
 /**
  * Reinterprets this value as a value of the Dynamic type.
  */
 @Deprecated("Use toJsString instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("this.toJsString()"))
 @kotlin.internal.InlineOnly
-fun String.asDynamic(): JsString = this.toJsString()
+public fun String.asDynamic(): JsString = this.toJsString()
 
 private fun jsThrow(e: JsAny) {
     js("throw e;")
@@ -46,11 +47,12 @@ private fun jsCatch(f: () -> Unit): JsAny? {
  * For a Dynamic value caught in JS, returns the corresponding [Throwable]
  * if it was thrown from Kotlin, or null otherwise.
  */
+@ExperimentalWasmJsInterop
 public fun JsAny.toThrowableOrNull(): Throwable? {
     val thisAny: Any = this
     if (thisAny is Throwable) return thisAny
     var result: Throwable? = null
-    jsCatch {
+    val _ = jsCatch {
         try {
             jsThrow(this)
         } catch (e: Throwable) {

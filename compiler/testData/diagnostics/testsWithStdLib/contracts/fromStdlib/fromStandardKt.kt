@@ -1,5 +1,6 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 fun testRunWithUnitReturn() {
     val x: Int
@@ -108,3 +109,6 @@ fun testRepeatOnInitializedVar(x: Int) {
     }
     println(y)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression */

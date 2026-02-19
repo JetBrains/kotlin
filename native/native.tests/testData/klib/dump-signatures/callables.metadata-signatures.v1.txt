@@ -1,0 +1,8 @@
+callables/Foo.<init>|-3340858080906402272[0]
+callables/Foo.list.<get-list>|423251439825877230[0]
+callables/Foo.list|-8464310926974581514[0]
+callables/Foo|null[0]
+callables/funWith1Parameter|-2692397571002661707[0]
+callables/funWith2Parameters|253442693142123504[0]
+callables/funWithLocalMembers|-2046106097692888239[0]
+callables/funWithoutParameters|-1655691975229201033[0]

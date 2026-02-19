@@ -1,7 +1,7 @@
 package test
 
 private interface A {
-    fun foo() = 0
+    fun foo(): Int { if (true) return 1 else return 0 }
     fun bar(): String
 }
 

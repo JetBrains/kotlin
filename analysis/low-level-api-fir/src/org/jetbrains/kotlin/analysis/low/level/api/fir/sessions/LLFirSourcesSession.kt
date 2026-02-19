@@ -6,12 +6,18 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 internal class LLFirSourcesSession @PrivateSessionConstructor constructor(
-    ktModule: KtSourceModule,
+    ktModule: KaSourceModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
-) : LLFirResolvableModuleSession(ktModule, builtinTypes)
+    computeDependencies: () -> List<LLFirSession>,
+) : LLFirResolvableModuleSession(ktModule, builtinTypes) {
+    /**
+     * Dependencies are lazy to support cyclic dependencies between modules.
+     */
+    val dependencies: List<LLFirSession> by lazy(LazyThreadSafetyMode.PUBLICATION, computeDependencies)
+}

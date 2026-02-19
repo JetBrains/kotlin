@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 open class MyClass private constructor(val x: Int) {
@@ -26,3 +27,6 @@ class MyDerived : MyClass(1.0) {
     val test6 = MyAlias(1.0)
     val test6a = MyClass(1.0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, secondaryConstructor,
+stringLiteral, typeAliasDeclaration */

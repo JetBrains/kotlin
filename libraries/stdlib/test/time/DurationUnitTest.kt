@@ -1,20 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.time
 
+import kotlin.math.sign
 import kotlin.test.*
 import kotlin.time.*
-// TODO: Use star import after KT-30983 is fixed
-import kotlin.time.DurationUnit.DAYS
-import kotlin.time.DurationUnit.HOURS
-import kotlin.time.DurationUnit.MINUTES
-import kotlin.time.DurationUnit.SECONDS
-import kotlin.time.DurationUnit.MILLISECONDS
-import kotlin.time.DurationUnit.MICROSECONDS
-import kotlin.time.DurationUnit.NANOSECONDS
+import kotlin.time.DurationUnit.*
 
 class DurationUnitTest {
 
@@ -42,6 +36,17 @@ class DurationUnitTest {
         test(16.0, MILLISECONDS, 0.016, SECONDS)
     }
 
-
-
+    @Test
+    fun unitOrdering() {
+        val units = listOf(NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS)
+        for (i in units.indices) {
+            for (j in units.indices) {
+                assertEquals(
+                    (i compareTo j).sign,
+                    (units[i] compareTo units[j]).sign,
+                    "Units ${units[i]} and ${units[j]} are not in the expected order"
+                )
+            }
+        }
+    }
 }

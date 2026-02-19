@@ -1,23 +1,16 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.gradle.ext.ActionDelegationConfig
-import org.jetbrains.gradle.ext.JUnit
-import org.jetbrains.gradle.ext.RecursiveArtifact
-import org.jetbrains.gradle.ext.TopLevelArtifact
-import org.jetbrains.kotlin.ideaExt.*
-
 
 val distDir: String by extra
 val ideaSandboxDir: File by extra
 val ideaSdkPath: String
-    get() = rootProject.ideaHomePathForTests().absolutePath
+    get() = rootProject.ideaHomePathForTests().get().asFile.absolutePath
 
 fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
     add("-${prefix}fir.bench.prefix=$path")
     add("-${prefix}fir.bench.jps.dir=$path/test-project-model-dump")
     add("-${prefix}fir.bench.passes=1")
-    add("-${prefix}fir.bench.dump=true")
+    add("-${prefix}fir.bench.dump=false")
     for ((name, value) in additionalParameters) {
         add("-$prefix$name=$value")
     }
@@ -158,8 +151,6 @@ for ((path, projectName, additionalParameters) in testDataPathList) {
             "Full $projectName" to null
         )
 
-        val jpsBuildEnabled = kotlinBuildProperties.isInJpsBuildIdeaSync
-
         for ((name, benchFilter) in configurations) {
             if (generateMT) {
                 generateGradleConfiguration(
@@ -178,26 +169,6 @@ for ((path, projectName, additionalParameters) in testDataPathList) {
                     additionalParameters,
                     benchFilter
                 )
-            }
-            if (jpsBuildEnabled) {
-                if (generateMT) {
-                    generateJpsConfiguration(
-                        "[MT-JPS] $name",
-                        "FirResolveModularizedTotalKotlinTest",
-                        path,
-                        additionalParameters,
-                        benchFilter
-                    )
-                }
-                if (generateFP) {
-                    generateJpsConfiguration(
-                        "[FP-JPS] $name",
-                        "FullPipelineModularizedTest",
-                        path,
-                        additionalParameters,
-                        benchFilter
-                    )
-                }
             }
         }
     }

@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
+// FIR_IDENTICAL
 enum class Enum { A }
 object A
 val a = 0

@@ -1,0 +1,95 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : l2.0.kt -> l2.kt
+    added file: l2.kt, l2globalVal.kt
+STEP 1:
+    dependencies: lib1
+STEP 2:
+    dependencies: lib1
+    modified ir: l2.kt, l2globalVal.kt
+STEP 3:
+    dependencies: lib1
+STEP 4:
+    dependencies: lib1
+    modifications:
+        U : l2.4.kt -> l2.kt
+        U : l2inlineGlobalVal.4.kt -> l2inlineGlobalVal.kt
+    modified ir: l2.kt
+    added file: l2inlineGlobalVal.kt
+STEP 5:
+    dependencies: lib1
+    modified ir: l2inlineGlobalVal.kt, l2.kt
+STEP 6:
+    dependencies: lib1
+    modified ir: l2inlineGlobalVal.kt, l2.kt
+STEP 7:
+    dependencies: lib1
+STEP 8:
+    dependencies: lib1
+    modifications:
+        U : l2.8.kt -> l2.kt
+        U : l2globalVar.8.kt -> l2globalVar.kt
+    modified ir: l2.kt
+    added file: l2globalVar.kt
+STEP 9:
+    dependencies: lib1
+    modifications:
+        U : l2globalVar.9.kt -> l2globalVar.kt
+    modified ir: l2globalVar.kt l2.kt
+STEP 10:
+    dependencies: lib1
+    modified ir: l2inlineGlobalVal.kt, l2.kt
+STEP 11:
+    dependencies: lib1
+    modifications:
+        U : l2.11.kt -> l2.kt
+        U : l2inlineGlobalVar.11.kt -> l2inlineGlobalVar.kt
+    modified ir: l2.kt
+    added file: l2inlineGlobalVar.kt
+STEP 12:
+    dependencies: lib1
+    modifications:
+        U : l2inlineGlobalVar.12.kt -> l2inlineGlobalVar.kt
+    modified ir: l2inlineGlobalVar.kt l2.kt
+STEP 13:
+    dependencies: lib1
+STEP 14..15:
+    dependencies: lib1
+    modified ir: l2inlineGlobalVar.kt, l2.kt
+STEP 16:
+    dependencies: lib1
+    modifications:
+        U : l2.16.kt -> l2.kt
+        U : l2inlineExtensionProperty.16.kt -> l2inlineExtensionProperty.kt
+    modified ir: l2.kt
+    added file: l2inlineExtensionProperty.kt
+STEP 17:
+    dependencies: lib1
+    modifications:
+        U : l2inlineExtensionProperty.17.kt -> l2inlineExtensionProperty.kt
+    modified ir: l2inlineExtensionProperty.kt l2.kt
+STEP 18:
+    dependencies: lib1
+    modifications:
+        U : l2.18.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l2globalVal.kt, l2inlineGlobalVal.kt, l2globalVar.kt, l2inlineExtensionProperty.kt, l2inlineGlobalVar.kt
+STEP 19:
+    dependencies: lib1
+    modifications:
+        U : l2.19.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l2globalVal.kt, l2inlineExtensionProperty.kt, l2inlineGlobalVar.kt
+STEP 20:
+    dependencies: lib1
+    modifications:
+        U : l2.20.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l2inlineGlobalVal.kt, l2globalVal.kt, l2inlineGlobalVar.kt
+STEP 21:
+    dependencies: lib1
+    modifications:
+        U : l2.21.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l2globalVal.kt, l2globalVar.kt, l2inlineGlobalVar.kt, l2inlineExtensionProperty.kt

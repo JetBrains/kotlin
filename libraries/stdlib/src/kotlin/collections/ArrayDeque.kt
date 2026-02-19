@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ package kotlin.collections
  * It also implements [MutableList] interface and supports efficient get/set operations by index.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public class ArrayDeque<E> : AbstractMutableList<E> {
     private var head: Int = 0
     private var elementData: Array<Any?>
@@ -121,6 +120,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
      * Prepends the specified [element] to this deque.
      */
     public fun addFirst(element: E) {
+        registerModification()
         ensureCapacity(size + 1)
 
         head = decremented(head)
@@ -132,6 +132,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
      * Appends the specified [element] to this deque.
      */
     public fun addLast(element: E) {
+        registerModification()
         ensureCapacity(size + 1)
 
         elementData[internalIndex(size)] = element
@@ -141,8 +142,10 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the first element from this deque and returns that removed element, or throws [NoSuchElementException] if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeFirst(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
+        registerModification()
 
         val element = internalGet(head)
         elementData[head] = null
@@ -154,13 +157,16 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the first element from this deque and returns that removed element, or returns `null` if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeFirstOrNull(): E? = if (isEmpty()) null else removeFirst()
 
     /**
      * Removes the last element from this deque and returns that removed element, or throws [NoSuchElementException] if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeLast(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
+        registerModification()
 
         val internalLastIndex = internalIndex(lastIndex)
         val element = internalGet(internalLastIndex)
@@ -172,9 +178,11 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the last element from this deque and returns that removed element, or returns `null` if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeLastOrNull(): E? = if (isEmpty()) null else removeLast()
 
     // MutableList, MutableCollection
+    @IgnorableReturnValue
     public override fun add(element: E): Boolean {
         addLast(element)
         return true
@@ -191,6 +199,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             return
         }
 
+        registerModification()
         ensureCapacity(size + 1)
 
         // Elements in circular array lay in 2 ways:
@@ -268,13 +277,17 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         size += elements.size
     }
 
+    @IgnorableReturnValue
     public override fun addAll(elements: Collection<E>): Boolean {
         if (elements.isEmpty()) return false
+
+        registerModification()
         ensureCapacity(this.size + elements.size)
         copyCollectionElements(internalIndex(size), elements)
         return true
     }
 
+    @IgnorableReturnValue
     public override fun addAll(index: Int, elements: Collection<E>): Boolean {
         AbstractList.checkPositionIndex(index, size)
 
@@ -284,6 +297,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             return addAll(elements)
         }
 
+        registerModification()
         ensureCapacity(this.size + elements.size)
 
         val tail = internalIndex(size)
@@ -359,6 +373,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return internalGet(internalIndex(index))
     }
 
+    @IgnorableReturnValue
     public override fun set(index: Int, element: E): E {
         AbstractList.checkElementIndex(index, size)
 
@@ -378,7 +393,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             for (index in head until tail) {
                 if (element == elementData[index]) return index - head
             }
-        } else if (head >= tail) {
+        } else if (isNotEmpty() && head >= tail) {
             for (index in head until elementData.size) {
                 if (element == elementData[index]) return index - head
             }
@@ -397,7 +412,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             for (index in tail - 1 downTo head) {
                 if (element == elementData[index]) return index - head
             }
-        } else if (head > tail) {
+        } else if (isNotEmpty() && head >= tail) {
             for (index in tail - 1 downTo 0) {
                 if (element == elementData[index]) return index + elementData.size - head
             }
@@ -409,6 +424,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return -1
     }
 
+    @IgnorableReturnValue
     public override fun remove(element: E): Boolean {
         val index = indexOf(element)
         if (index == -1) return false
@@ -416,6 +432,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return true
     }
 
+    @IgnorableReturnValue
     public override fun removeAt(index: Int): E {
         AbstractList.checkElementIndex(index, size)
 
@@ -424,6 +441,8 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         } else if (index == 0) {
             return removeFirst()
         }
+
+        registerModification()
 
         val internalIndex = internalIndex(index)
         val element = internalGet(internalIndex)
@@ -459,8 +478,10 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return element
     }
 
+    @IgnorableReturnValue
     public override fun removeAll(elements: Collection<E>): Boolean = filterInPlace { !elements.contains(it) }
 
+    @IgnorableReturnValue
     public override fun retainAll(elements: Collection<E>): Boolean = filterInPlace { elements.contains(it) }
 
     private inline fun filterInPlace(predicate: (E) -> Boolean): Boolean {
@@ -511,25 +532,26 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
                 }
             }
         }
-        if (modified)
+        if (modified) {
+            registerModification()
             size = negativeMod(newTail - head)
+        }
 
         return modified
     }
 
     public override fun clear() {
-        val tail = internalIndex(size)
-        if (head < tail) {
-            elementData.fill(null, head, tail)
-        } else if (isNotEmpty()) {
-            elementData.fill(null, head, elementData.size)
-            elementData.fill(null, 0, tail)
+        if (isNotEmpty()) {
+            registerModification()
+
+            val tail = internalIndex(size)
+            nullifyNonEmpty(head, tail)
         }
         head = 0
         size = 0
     }
 
-    @Suppress("NOTHING_TO_OVERRIDE")
+    @Suppress("NOTHING_TO_OVERRIDE", "NO_EXPLICIT_VISIBILITY_IN_API_MODE") // different visibility inherited from the base class
     override fun <T> toArray(array: Array<T>): Array<T> {
         @Suppress("UNCHECKED_CAST")
         val dest = (if (array.size >= size) array else arrayOfNulls(array, size)) as Array<Any?>
@@ -546,14 +568,95 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return terminateCollectionToArray(size, dest) as Array<T>
     }
 
-    @Suppress("NOTHING_TO_OVERRIDE")
+    @Suppress("NOTHING_TO_OVERRIDE", "NO_EXPLICIT_VISIBILITY_IN_API_MODE") // different visibility inherited from the base class
     override fun toArray(): Array<Any?> {
         return toArray(arrayOfNulls<Any?>(size))
+    }
+
+    override fun removeRange(fromIndex: Int, toIndex: Int) {
+        AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+
+        val length = toIndex - fromIndex
+        when (length) {
+            0 -> return
+            size -> {
+                clear()
+                return
+            }
+            1 -> {
+                removeAt(fromIndex)
+                return
+            }
+        }
+
+        registerModification()
+
+        if (fromIndex < size - toIndex) {
+            // closer to the first element -> shift preceding elements
+            removeRangeShiftPreceding(fromIndex, toIndex)
+
+            val newHead = positiveMod(head + length)
+            nullifyNonEmpty(head, newHead)
+            head = newHead
+        } else {
+            // closer to the last element -> shift succeeding elements
+            removeRangeShiftSucceeding(fromIndex, toIndex)
+
+            val tail = internalIndex(size)
+            nullifyNonEmpty(negativeMod(tail - length), tail)
+        }
+
+        size -= length
+    }
+
+    private fun removeRangeShiftPreceding(fromIndex: Int, toIndex: Int) {
+        var copyFromIndex = internalIndex(fromIndex - 1)    // upper bound of range, inclusive
+        var copyToIndex = internalIndex(toIndex - 1)        // upper bound of range, inclusive
+        var copyCount = fromIndex
+
+        while (copyCount > 0) { // maximum 3 iterations
+            val segmentLength = minOf(copyCount, copyFromIndex + 1, copyToIndex + 1)
+            elementData.copyInto(elementData, copyToIndex - segmentLength + 1, copyFromIndex - segmentLength + 1, copyFromIndex + 1)
+
+            copyFromIndex = negativeMod(copyFromIndex - segmentLength)
+            copyToIndex = negativeMod(copyToIndex - segmentLength)
+            copyCount -= segmentLength
+        }
+    }
+
+    private fun removeRangeShiftSucceeding(fromIndex: Int, toIndex: Int) {
+        var copyFromIndex = internalIndex(toIndex) // lower bound of range, inclusive
+        var copyToIndex = internalIndex(fromIndex) // lower bound of range, inclusive
+        var copyCount = size - toIndex
+
+        while (copyCount > 0) { // maximum 3 iterations
+            val segmentLength = minOf(copyCount, elementData.size - copyFromIndex, elementData.size - copyToIndex)
+            elementData.copyInto(elementData, copyToIndex, copyFromIndex, copyFromIndex + segmentLength)
+
+            copyFromIndex = positiveMod(copyFromIndex + segmentLength)
+            copyToIndex = positiveMod(copyToIndex + segmentLength)
+            copyCount -= segmentLength
+        }
+    }
+
+    /** If `internalFromIndex == internalToIndex`, the buffer is considered full and all elements are nullified. */
+    private fun nullifyNonEmpty(internalFromIndex: Int, internalToIndex: Int) {
+        if (internalFromIndex < internalToIndex) {
+            elementData.fill(null, internalFromIndex, internalToIndex)
+        } else {
+            elementData.fill(null, internalFromIndex, elementData.size)
+            elementData.fill(null, 0, internalToIndex)
+        }
+    }
+
+    private fun registerModification() {
+        modCount += 1
     }
 
     // for testing
     internal fun <T> testToArray(array: Array<T>): Array<T> = toArray(array)
     internal fun testToArray(): Array<Any?> = toArray()
+    internal fun testRemoveRange(fromIndex: Int, toIndex: Int) = removeRange(fromIndex, toIndex)
 
     internal companion object {
         private val emptyElementData = emptyArray<Any?>()

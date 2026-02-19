@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class C {
     fun foo(): Any? {
@@ -6,3 +7,6 @@ class C {
         return v
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -PLATFORM_CLASS_MAPPED_TO_KOTLIN
+// DIAGNOSTICS: -UNUSED_PARAMETER -PLATFORM_CLASS_MAPPED_TO_KOTLIN
 
 
 // Default methods from Java interfaces are NOT overridden by delegation.
@@ -31,3 +32,6 @@ abstract class TestNoDelegationToDefaultMethods2(m: Map<String, String>): WithDe
     // VIRTUAL_MEMBER_HIDDEN: hides member declaration inherited from a Kotlin interface
     fun <!VIRTUAL_MEMBER_HIDDEN!>replace<!>(key: String, value: String): String? = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, nullableType,
+override, primaryConstructor, propertyDeclaration */

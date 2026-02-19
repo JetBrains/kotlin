@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-object IsArrayOf : IntrinsicMethod() {
+object IsArrayOf : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction = IntrinsicFunction.create(expression, signature, classCodegen) { v ->
-        val arrayType = classCodegen.context.irBuiltIns.arrayClass.typeWith(expression.getTypeArgument(0)!!)
+        val arrayType = classCodegen.context.irBuiltIns.arrayClass.typeWith(expression.typeArguments[0]!!)
         v.instanceOf(classCodegen.typeMapper.mapType(arrayType))
     }
 }

@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
@@ -22,20 +23,22 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-object FirDelegatedPropertyChecker : FirPropertyChecker() {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val delegate = declaration.delegate ?: return
         val delegateType = delegate.resolvedType
         val source = delegate.source;
 
         if (delegateType is ConeErrorType) {
             // Implicit recursion type is not reported since the type ref does not have a real source.
-            if (source != null && (delegateType.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.RecursionInImplicitTypes) {
+            if (source != null && delegateType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) {
                 // skip reporting other issues in this case
-                reporter.reportOn(source, FirErrors.RECURSION_IN_IMPLICIT_TYPES, context)
+                reporter.reportOn(source, FirErrors.RECURSION_IN_IMPLICIT_TYPES)
             }
             return
         }
@@ -72,8 +75,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
                         expectedFunctionSignature,
-                        candidates,
-                        context
+                        candidates
                     )
                 }
 
@@ -84,20 +86,18 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
                         expectedFunctionSignature,
                         delegateType,
-                        delegateDescription,
-                        context
+                        delegateDescription
                     )
 
                     is ConeAmbiguityError -> {
+                        @OptIn(ApplicabilityDetail::class)
                         if (diagnostic.applicability.isSuccess) {
                             // Match is successful but there are too many matches! So we report DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.
                             reporter.reportOn(
                                 source,
                                 FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
                                 expectedFunctionSignature,
-                                diagnostic.candidates.map { it.symbol },
-                                context
-                            )
+                                diagnostic.candidates.map { it.symbol })
                         } else {
                             reportInapplicableDiagnostics(diagnostic.candidates.map { it.symbol })
                         }
@@ -108,8 +108,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
                         expectedFunctionSignature,
                         delegateType,
-                        delegateDescription,
-                        context
+                        delegateDescription
                     )
                     is ConeInapplicableCandidateError -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
                     is ConeConstraintSystemHasContradiction -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
@@ -130,8 +129,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
                         "getValue",
                         propertyType,
-                        returnType,
-                        context
+                        returnType
                     )
                 }
             }

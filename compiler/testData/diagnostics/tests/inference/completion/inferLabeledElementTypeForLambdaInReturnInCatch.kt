@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-51009
 
 fun test(b: Boolean, f: () -> String?): () -> String {
@@ -18,3 +19,6 @@ fun test2(b: Boolean, f: () -> String?) = run { // implicit return type
     }
     { "2" }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

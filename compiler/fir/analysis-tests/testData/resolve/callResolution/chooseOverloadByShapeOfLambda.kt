@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-42715
 
 fun foo(x: (a: Int) -> Unit): Int = 1 // (1)
@@ -20,3 +21,6 @@ fun test_3() {
     val res = foo {} // (1)
     takeInt(res)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral */

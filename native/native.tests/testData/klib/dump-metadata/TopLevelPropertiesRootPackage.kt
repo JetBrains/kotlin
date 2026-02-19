@@ -1,0 +1,10 @@
+@file:Suppress("UNUSED_PARAMETER")
+
+typealias MyTransformer = (String) -> Int
+
+// top-level properties
+val v1 = 1
+val v2 = "hello"
+val v3: (String) -> Int = { it.length }
+val v4: MyTransformer = v3
+

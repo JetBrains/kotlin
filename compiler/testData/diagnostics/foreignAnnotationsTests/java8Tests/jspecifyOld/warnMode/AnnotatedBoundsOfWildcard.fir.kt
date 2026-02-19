@@ -43,10 +43,8 @@ fun main(
 
             b: AnnotatedBoundsOfWildcard
 ): Unit {
-    // jspecify_nullness_mismatch
-    b.superAsIs(aAnyNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    b.superAsIs(aAnyNotNullNotNullNull)
+    b.superAsIs(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aAnyNotNullNotNullNotNull<!>)
+    b.superAsIs(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aAnyNotNullNotNullNull<!>)
     b.superAsIs(aAnyNotNullNullNotNull)
     b.superAsIs(aAnyNotNullNullNull)
 
@@ -55,14 +53,10 @@ fun main(
     b.superNotNull(aAnyNotNullNullNotNull)
     b.superNotNull(aAnyNotNullNullNull)
 
-    // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNotNullNull)
-    // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNullNotNull)
-    // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNullNull)
+    b.superNullable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aAnyNotNullNotNullNotNull<!>)
+    b.superNullable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aAnyNotNullNotNullNull<!>)
+    b.superNullable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aAnyNotNullNullNotNull<!>)
+    b.superNullable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aAnyNotNullNullNull<!>)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
     b.extendsAsIs(aNotNullNotNullNull)
@@ -70,12 +64,9 @@ fun main(
     b.extendsAsIs(aNotNullNullNull)
 
     b.extendsNotNull(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    b.extendsNotNull(aNotNullNotNullNull)
-    // jspecify_nullness_mismatch
-    b.extendsNotNull(aNotNullNullNotNull)
-    // jspecify_nullness_mismatch
-    b.extendsNotNull(aNotNullNullNull)
+    b.extendsNotNull(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNotNullNull<!>)
+    b.extendsNotNull(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNullNotNull<!>)
+    b.extendsNotNull(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNullNull<!>)
 
     b.extendsNullable(aNotNullNotNullNotNull)
     b.extendsNullable(aNotNullNotNullNull)

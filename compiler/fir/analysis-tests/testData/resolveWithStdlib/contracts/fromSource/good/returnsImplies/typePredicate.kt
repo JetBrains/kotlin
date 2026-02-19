@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)
@@ -16,3 +17,6 @@ fun test(x: Any) {
         x.<!UNRESOLVED_REFERENCE!>length<!> // Error
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, functionDeclaration, ifExpression,
+isExpression, lambdaLiteral, smartcast */

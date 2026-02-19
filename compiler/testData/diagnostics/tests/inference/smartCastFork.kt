@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface A<E> {
     fun foo(): E
@@ -23,3 +24,6 @@ fun <T> bar(a: A<T>, w: T) {
 }
 
 fun <F> baz(a: A<F>, f: F) {}
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+intersectionType, isExpression, nullableType, smartcast, stringLiteral, typeParameter */

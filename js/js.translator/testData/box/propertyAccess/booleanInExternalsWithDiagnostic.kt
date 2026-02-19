@@ -2,7 +2,7 @@
 // SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: EXCEPTION
 
 @JsName("Error")
-internal open external class JsError(message: String) : Throwable
+open external class JsError(message: String) : Throwable
 
 fun box(): String {
     val interfaceWithBoolean: InterfaceWithBoolean = js("{}")

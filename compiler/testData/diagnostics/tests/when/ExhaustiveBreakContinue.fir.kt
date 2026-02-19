@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -23,3 +24,6 @@ fun foo(arr: Array<Color>): Color {
     }
     return Color.GREEN
 }
+
+/* GENERATED_FIR_TAGS: break, continue, enumDeclaration, enumEntry, equalityExpression, forLoop, functionDeclaration,
+ifExpression, integerLiteral, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

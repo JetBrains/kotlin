@@ -1,6 +1,6 @@
+
 // This test depends on line numbers
 // FILE: 1.kt
-
 package builders
 
 inline fun init(init: () -> Unit) {

@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 
 abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("StatusTransformer")
+        val NAME: FirExtensionPointName = FirExtensionPointName("StatusTransformer")
     }
 
     final override val name: FirExtensionPointName
@@ -43,13 +43,19 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
 
     open fun transformStatus(
         status: FirDeclarationStatus,
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, function)
     }
 
+    /**
+     * This function may change the status (in general, visibility, modality, and modifiers) of a regular class.
+     *
+     * Limitation: it's forbidden for this extension to change the visibility of a regular class in any way,
+     * as this may influence type resolve thus violating our phase contracts.
+     */
     open fun transformStatus(
         status: FirDeclarationStatus,
         regularClass: FirRegularClass,
@@ -59,6 +65,12 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
         return transformStatus(status, regularClass)
     }
 
+    /**
+     * This function may change the status (in general, visibility, modality, and modifiers) of a type alias.
+     *
+     * Limitation: it's forbidden for this extension to change the visibility of a type alias in any way,
+     * as this may influence type resolve thus violating our phase contracts.
+     */
     open fun transformStatus(
         status: FirDeclarationStatus,
         typeAlias: FirTypeAlias,
@@ -132,6 +144,7 @@ inline fun FirDeclarationStatus.transform(
         isOperator = this@transform.isOperator
         isInfix = this@transform.isInfix
         isInline = this@transform.isInline
+        isValue = this@transform.isValue
         isTailRec = this@transform.isTailRec
         isExternal = this@transform.isExternal
         isConst = this@transform.isConst

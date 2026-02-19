@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-57502
@@ -11,3 +12,6 @@ fun test(foo: Any) {
         foo.<!UNRESOLVED_REFERENCE!>length<!> // no smartcast
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, propertyDelegate, setter, starProjection */

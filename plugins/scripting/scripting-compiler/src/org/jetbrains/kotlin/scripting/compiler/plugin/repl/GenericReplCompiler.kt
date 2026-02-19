@@ -7,36 +7,51 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import java.io.File
+import java.net.URL
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 // WARNING: not thread safe, assuming external synchronization
 
 open class GenericReplCompiler(
     disposable: Disposable,
-    scriptDefinition: KotlinScriptDefinition,
+    scriptDefinition: ScriptDefinition,
     private val compilerConfiguration: CompilerConfiguration,
     messageCollector: MessageCollector
 ) : ReplCompiler {
 
     constructor(
-        scriptDefinition: KotlinScriptDefinition,
+        scriptDefinition: ScriptDefinition,
         compilerConfiguration: CompilerConfiguration,
         messageCollector: MessageCollector
-    ) : this(Disposer.newDisposable(), scriptDefinition, compilerConfiguration, messageCollector)
+    ) : this(
+        Disposer.newDisposable("Default disposable for ${GenericReplCompiler::class.simpleName}"),
+        scriptDefinition,
+        compilerConfiguration,
+        messageCollector
+    )
 
     private val checker =
         GenericReplChecker(
@@ -51,14 +66,14 @@ open class GenericReplCompiler(
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = checker.check(state, codeLine)
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class, UnsafeDuringIrConstructionAPI::class, K1SpecificScriptingServiceAccessor::class)
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         state.lock.write {
             val compilerState = state.asState(GenericReplCompilerState::class.java)
 
             val (psiFile, errorHolder) = run {
                 if (compilerState.lastLineState == null || compilerState.lastLineState!!.codeLine != codeLine) {
-                    val res = checker.check(state, codeLine)
-                    when (res) {
+                    when (val res = checker.check(state, codeLine)) {
                         is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete("Code is incomplete")
                         is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
                         is ReplCheckResult.Ok -> {
@@ -68,10 +83,8 @@ open class GenericReplCompiler(
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
-            @Suppress("DEPRECATION")
-            val newDependencies =
-                ScriptDependenciesProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
-                    ?.legacyDependencies
+            val wrapper = ScriptConfigurationsProvider.getInstance(checker.environment.project)?.getScriptCompilationConfiguration(KtFileScriptSource(psiFile))?.valueOrNull()
+            val newDependencies = wrapper?.configuration?.toDependencies(wrapper.dependenciesClassPath)
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {
                 compilerState.lastDependencies = newDependencies
@@ -91,43 +104,71 @@ open class GenericReplCompiler(
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val generationState = GenerationState.Builder(
-                psiFile.project,
-                ClassBuilderFactories.BINARIES,
-                compilerState.analyzerEngine.module,
-                compilerState.analyzerEngine.trace.bindingContext,
-                compilerConfiguration
-            ).build()
+            val generationState = GenerationState(psiFile.project, compilerState.analyzerEngine.module, compilerConfiguration)
 
-            generationState.scriptSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
-            generationState.beforeCompile()
-            generationState.oldBEInitTrace(listOf(psiFile))
-            KotlinCodegenFacade.generatePackage(
-                generationState,
-                psiFile.script!!.containingKtFile.packageFqName,
-                setOf(psiFile.script!!.containingKtFile)
+            val generatorExtensions =
+                object : JvmGeneratorExtensionsImpl(checker.environment.configuration) {
+                    override fun getPreviousScripts() =
+                        compilerState.history.map { compilerState.symbolTable.descriptorExtension.referenceScript(it.item) }
+                }
+            val codegenFactory = JvmIrCodegenFactory(
+                checker.environment.configuration,
+                compilerState.mangler, compilerState.symbolTable, generatorExtensions
             )
+
+            val irBackendInput = codegenFactory.convertToIr(
+                generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
+            )
+
+            codegenFactory.generateModule(generationState, irBackendInput)
 
             compilerState.history.push(LineId(codeLine.no, 0, codeLine.hashCode()), scriptDescriptor)
 
             val classes = generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) }
+
+            val resultType = irBackendInput.irModuleFragment.files.singleOrNull()?.declarations?.singleOrNull()?.let {
+                (it as? IrClass)?.scriptResultFieldDataAttr?.fieldTypeName
+            }
 
             return ReplCompileResult.CompiledClasses(
                 LineId(codeLine.no, 0, codeLine.hashCode()),
                 compilerState.history.map { it.id },
                 scriptDescriptor.name.identifier,
                 classes,
-                generationState.scriptSpecific.resultFieldName != null,
+                resultType != null,
                 classpathAddendum ?: emptyList(),
-                generationState.scriptSpecific.resultType?.let {
-                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
-                },
+                resultType,
                 null
             )
         }
     }
 
-    companion object {
-        private const val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
+    private fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies {
+        val defaultImports = this[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
+
+        return ScriptDependencies(
+            classpath = classpath,
+            sources = this[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
+            imports = defaultImports,
+            scripts = this[ScriptCompilationConfiguration.importScripts].toFilesOrEmpty()
+        )
     }
+
+    private fun List<SourceCode>?.toFilesOrEmpty() = this?.map {
+        val externalSource = it as? ExternalSourceCode
+        externalSource?.externalLocation?.toFileOrNull()
+            ?: throw RuntimeException("Unsupported source in requireSources parameter - only local files are supported now (${externalSource?.externalLocation})")
+    } ?: emptyList()
+
+    private fun URL.toFileOrNull() =
+        try {
+            File(toURI())
+        } catch (e: IllegalArgumentException) {
+            null
+        } catch (e: java.net.URISyntaxException) {
+            null
+        } ?: run {
+            if (protocol != "file") null
+            else File(file)
+        }
 }

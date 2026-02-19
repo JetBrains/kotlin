@@ -16,6 +16,7 @@ object SignatureBuildingComponents {
     fun javaLang(name: String): String = "java/lang/$name"
     fun javaUtil(name: String): String = "java/util/$name"
     fun javaFunction(name: String): String = "java/util/function/$name"
+    fun javaUtilConcurrentAtomic(name: String) = "java/util/concurrent/atomic/$name"
 
     fun constructors(vararg signatures: String): Array<String> = signatures.map { "<init>($it)V" }.toTypedArray()
 

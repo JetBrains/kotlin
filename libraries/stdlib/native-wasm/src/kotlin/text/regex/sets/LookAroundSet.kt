@@ -15,7 +15,7 @@ internal abstract class LookAroundSet(children: List<AbstractSet>, fSet: FSet) :
     /** Returns startIndex+shift, the next position to match */
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.saveState()
-        return tryToMatch(startIndex, testString, matchResult).also { if (it < 0) matchResult.rollbackState() }
+        return tryToMatch(startIndex, testString, matchResult).also { if (it < 0) { val _ = matchResult.rollbackState() } }
     }
 
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true

@@ -131,7 +131,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         p.println(target)
         p.pushIndent()
 
-        val dataRoot = paths.getTargetDataRoot(target).let { if (subdirectory != null) File(it, subdirectory) else it }
+        val dataRoot = paths.getTargetDataRootDir(target).toFile().let { if (subdirectory != null) File(it, subdirectory) else it }
         cacheVersionsFiles
             .filter(File::exists)
             .sortedBy { it.name }

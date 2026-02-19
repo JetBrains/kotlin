@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED, -CONTEXT_CLASS_OR_CONSTRUCTOR
+// LANGUAGE: +ContextReceivers
 
 class A {
     val x = 1
@@ -10,3 +11,6 @@ context(A) class B {
 
     fun f() = x + this@A.x
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration,
+thisExpression */

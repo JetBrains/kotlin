@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface I<F, G>
 
 val aImpl: A.Interface
@@ -9,3 +10,6 @@ object A : <!UNRESOLVED_REFERENCE!>Nested<!>(), <!DELEGATION_NOT_TO_INTERFACE, U
 
     interface Interface
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, getter, inheritanceDelegation, interfaceDeclaration,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

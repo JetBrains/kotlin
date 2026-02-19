@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KotlinFile.kt
 fun foo(o: JavaInterface2): Int {
     if (o is JavaClass) {
@@ -26,3 +27,6 @@ public interface JavaInterface {
 public interface JavaInterface2 {
     int getSomething2();
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, ifExpression, incrementDecrementExpression,
+integerLiteral, intersectionType, isExpression, javaProperty, javaType, smartcast */

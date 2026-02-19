@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 
@@ -11,3 +12,6 @@ class Test(nullable: String?) {
         foo(nullableOptional)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, nullableType, primaryConstructor,
+propertyDeclaration */

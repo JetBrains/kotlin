@@ -5,104 +5,74 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.FirEmptyOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.checkers.registerWasmCheckers
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.checkers.registerWasmJsCheckers
+import org.jetbrains.kotlin.fir.checkers.registerWasmWasiCheckers
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
+import org.jetbrains.kotlin.wasm.resolve.WasmJsDefaultImportsProvider
+import org.jetbrains.kotlin.wasm.resolve.WasmWasiDefaultImportsProvider
 
-object FirWasmSessionFactory : FirAbstractSessionFactory() {
-    fun createModuleBasedSession(
-        moduleData: FirModuleData,
-        sessionProvider: FirProjectSessionProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-        lookupTracker: LookupTracker?,
-        icData: KlibIcData? = null,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
-        init: FirSessionConfigurator.() -> Unit
-    ): FirSession {
-        return createModuleBasedSession(
-            moduleData,
-            sessionProvider,
-            extensionRegistrars,
-            languageVersionSettings,
-            lookupTracker,
-            null,
-            null,
-            init,
-            registerExtraComponents = { session ->
-                session.registerWasmSpecificComponents()
-                registerExtraComponents(session)
-            },
-            registerExtraCheckers = { it.registerWasmCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
-                listOfNotNull(
-                    symbolProvider,
-                    generatedSymbolsProvider,
-                    icData?.let {
-                        KlibIcCacheBasedSymbolProvider(
-                            session,
-                            SingleModuleDataProvider(moduleData),
-                            kotlinScopeProvider,
-                            it,
-                        )
-                    },
-                    *dependencies.toTypedArray(),
-                )
-            }
-        )
+@OptIn(SessionConfiguration::class)
+sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
+    object WasmJs : FirWasmSessionFactory() {
+        override val defaultImportsProvider: DefaultImportsProvider
+            get() = WasmJsDefaultImportsProvider
+
+        override fun FirSessionConfigurator.registerPlatformCheckers() {
+            registerWasmJsCheckers()
+        }
     }
 
-    fun createLibrarySession(
-        mainModuleName: Name,
-        resolvedLibraries: List<KotlinLibrary>,
-        sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-        registerExtraComponents: ((FirSession) -> Unit),
-    ): FirSession = createLibrarySession(
-        mainModuleName,
-        sessionProvider,
-        moduleDataProvider,
-        languageVersionSettings,
-        extensionRegistrars,
-        registerExtraComponents = {
-            it.registerWasmSpecificComponents()
-            registerExtraComponents(it)
-        },
-        createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
-        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-            listOfNotNull(
-                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
-                syntheticFunctionInterfaceProvider,
-            )
+    object WasmWasi : FirWasmSessionFactory() {
+        override val defaultImportsProvider: DefaultImportsProvider
+            get() = WasmWasiDefaultImportsProvider
+
+        override fun FirSessionConfigurator.registerPlatformCheckers() {
+            registerWasmWasiCheckers()
         }
-    )
+    }
+
+    companion object {
+        fun of(wasmTarget: WasmTarget): FirWasmSessionFactory {
+            return when (wasmTarget) {
+                WasmTarget.JS -> WasmJs
+                WasmTarget.WASI -> WasmWasi
+            }
+        }
+    }
+
+    protected abstract val defaultImportsProvider: DefaultImportsProvider
+
+    // ==================================== Library session ====================================
+
+    override fun createLibraryContext(configuration: CompilerConfiguration): Nothing? = null
+
+    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+        registerWasmComponents()
+    }
+
+    // ==================================== Platform session ====================================
+
+    override fun createSourceContext(configuration: CompilerConfiguration): Nothing? = null
+
+    abstract override fun FirSessionConfigurator.registerPlatformCheckers()
+
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {}
+
+    override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
+        registerWasmComponents()
+    }
 
     @OptIn(SessionConfiguration::class)
-    fun FirSession.registerWasmSpecificComponents() {
-        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-        register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirEmptyOverridesBackwardCompatibilityHelper)
+    fun FirSession.registerWasmComponents() {
+        register(FirEnumEntriesSupport(this))
+        register(FirDefaultImportsProviderHolder.of(defaultImportsProvider))
     }
+
+    // ==================================== Utilities ====================================
 }

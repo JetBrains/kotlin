@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -OPT_IN_USAGE_ERROR -OPT_IN_USAGE_FUTURE_ERROR -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -OPT_IN_USAGE_ERROR -OPT_IN_USAGE_FUTURE_ERROR -UNUSED_PARAMETER
 
 import kotlin.contracts.*
 
@@ -18,3 +19,6 @@ fun smartIt(p1: String?, p2: String?) {
     p2 ?: callItContracted { return }
     <!DEBUG_INFO_SMARTCAST!>p2<!>.length
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, elvisExpression, functionDeclaration, functionalType, inline,
+lambdaLiteral, nullableType, smartcast, typeParameter */

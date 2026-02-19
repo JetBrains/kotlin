@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 import some.test.
 
 // Some

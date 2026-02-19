@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1453
-
 // FILE: lib.kt
 // RECOMPILE
 

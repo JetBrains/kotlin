@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 public class A {
@@ -26,3 +27,5 @@ class D: C() {
         D.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaFunction, javaType */

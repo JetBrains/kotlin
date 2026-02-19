@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
-class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
+class BinaryOp(private val opcode: Int) : CallBasedIntrinsicMethod() {
     private fun shift(): Boolean =
         opcode == ISHL || opcode == ISHR || opcode == IUSHR
 
@@ -41,7 +41,7 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
         val argTypes = if (!expression.symbol.owner.parentAsClass.defaultType.isChar()) {
             listOf(intermediateResultType, if (shift()) Type.INT_TYPE else intermediateResultType)
         } else {
-            listOf(Type.CHAR_TYPE, signature.valueParameters[0].asmType)
+            listOf(Type.CHAR_TYPE, signature.parameters[0])
         }
 
         return IntrinsicFunction.create(expression, signature, classCodegen, argTypes) {

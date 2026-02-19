@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // This test exists only to check that we don't accidentally break the buggy behavior of the old JVM backend in JVM IR (KT-42321).
 // Feel free to remove it as soon as there's no language version where such code is allowed (KT-38895).
 
@@ -65,3 +66,5 @@ fun testByteOperatorInfixCall(c6: C<Byte>) {
     c6.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>)
     c6.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 shr 2<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, typeParameter */

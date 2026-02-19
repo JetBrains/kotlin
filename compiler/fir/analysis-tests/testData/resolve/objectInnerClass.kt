@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 /*
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-37120
@@ -147,3 +148,7 @@ class Case3() {
 
 interface A {}
 class B() {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, interfaceDeclaration, localClass, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, typeParameter, typeWithExtension */

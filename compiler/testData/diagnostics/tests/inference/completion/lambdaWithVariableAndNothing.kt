@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <K> id(it: K) = it
 
@@ -49,3 +50,6 @@ fun testNoSmartCast4(s: String?) {
     )
     s<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+nullableType, smartcast, stringLiteral, typeConstraint, typeParameter */

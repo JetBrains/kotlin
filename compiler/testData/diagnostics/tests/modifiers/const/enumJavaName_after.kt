@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: +IntrinsicConstEvaluation
 
 // FILE: CompressionType.java
 public enum CompressionType {
@@ -13,3 +14,5 @@ public enum CompressionType {
 
 // FILE: main.kt
 const val name = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>CompressionType.OK.name<!>
+
+/* GENERATED_FIR_TAGS: const, flexibleType, javaProperty, javaType, propertyDeclaration */

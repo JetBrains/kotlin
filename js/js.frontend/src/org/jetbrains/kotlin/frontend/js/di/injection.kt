@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -77,23 +75,4 @@ fun createContainerForJS(
         )
     }
     return storageComponentContainer
-}
-
-fun createTopDownAnalyzerForJs(
-    moduleContext: ModuleContext,
-    bindingTrace: BindingTrace,
-    declarationProviderFactory: DeclarationProviderFactory,
-    languageVersionSettings: LanguageVersionSettings,
-    lookupTracker: LookupTracker,
-    expectActualTracker: ExpectActualTracker,
-    inlineConstTracker: InlineConstTracker,
-    enumWhenTracker: EnumWhenTracker,
-    additionalPackages: List<PackageFragmentProvider>,
-    targetEnvironment: TargetEnvironment,
-): LazyTopDownAnalyzer {
-    return createContainerForJS(
-        moduleContext, bindingTrace, declarationProviderFactory, languageVersionSettings,
-        lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker, additionalPackages, targetEnvironment,
-        JsPlatformAnalyzerServices, JsPlatforms.defaultJsPlatform
-    ).get<LazyTopDownAnalyzer>()
 }

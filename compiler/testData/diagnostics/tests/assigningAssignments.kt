@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-61067
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
@@ -10,3 +11,6 @@ fun main() {
     val b = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>nonStorages = 20<!>
     nonStorages = 20
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral */

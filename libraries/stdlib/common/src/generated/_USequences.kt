@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("USequencesKt")
+@file:Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 
 package kotlin.sequences
 
@@ -13,6 +14,7 @@ package kotlin.sequences
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 
 /**
@@ -22,7 +24,6 @@ import kotlin.random.*
  */
 @kotlin.jvm.JvmName("sumOfUInt")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<UInt>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -38,7 +39,6 @@ public fun Sequence<UInt>.sum(): UInt {
  */
 @kotlin.jvm.JvmName("sumOfULong")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<ULong>.sum(): ULong {
     var sum: ULong = 0uL
     for (element in this) {
@@ -54,7 +54,6 @@ public fun Sequence<ULong>.sum(): ULong {
  */
 @kotlin.jvm.JvmName("sumOfUByte")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<UByte>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -70,7 +69,6 @@ public fun Sequence<UByte>.sum(): UInt {
  */
 @kotlin.jvm.JvmName("sumOfUShort")
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<UShort>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {

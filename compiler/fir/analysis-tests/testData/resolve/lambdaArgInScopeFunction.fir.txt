@@ -7,8 +7,8 @@ FILE: lambdaArgInScopeFunction.kt
         private final val name: R|kotlin/String| = R|<local>/name|
             private get(): R|kotlin/String|
 
-        public open override operator fun compareTo(that: R|KotlinClass|): R|kotlin/Int| {
-            ^compareTo this@R|/KotlinClass|.R|/KotlinClass.name|.R|kotlin/String.compareTo|(R|<local>/that|.R|/KotlinClass.name|)
+        public open override operator fun compareTo(other: R|KotlinClass|): R|kotlin/Int| {
+            ^compareTo this@R|/KotlinClass|.R|/KotlinClass.name|.R|kotlin/String.compareTo|(R|<local>/other|.R|/KotlinClass.name|)
         }
 
     }
@@ -28,7 +28,7 @@ FILE: lambdaArgInScopeFunction.kt
 
         }
         ) }
-        R|<local>/lambda|.R|/checkType|<R|(() -> KotlinClass)?|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function0<KotlinClass>?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/lambda|.R|/checkType|<R|(() -> KotlinClass)?|>(<L> = checkType@fun R|CheckTypeInv<(() -> KotlinClass)?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Unit) -> KotlinClass?|>()
         }
         )
@@ -49,7 +49,7 @@ FILE: lambdaArgInScopeFunction.kt
 
         }
         )
-        R|<local>/lambda|.R|/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function0<KotlinClass>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/lambda|.R|/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|CheckTypeInv<() -> KotlinClass>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Unit) -> KotlinClass?|>()
         }
         )

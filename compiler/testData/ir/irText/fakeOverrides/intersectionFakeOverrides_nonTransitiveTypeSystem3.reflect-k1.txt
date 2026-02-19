@@ -1,0 +1,40 @@
+KClass: class A : Any
+  members:
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.foo(kotlin.String!): kotlin.Unit
+    public open fun A.hashCode(): kotlin.Int
+    public open fun A.toString(): kotlin.String
+  declaredMembers:
+    public open fun A.foo(kotlin.String!): kotlin.Unit
+KClass: abstract interface B : Any
+  members:
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public open fun B.foo(kotlin.String): kotlin.Unit
+    public open fun B.hashCode(): kotlin.Int
+    public open fun B.toString(): kotlin.String
+  declaredMembers:
+    public open fun B.foo(kotlin.String): kotlin.Unit
+KClass: abstract interface C : Any
+  members:
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun C.foo(kotlin.String?): kotlin.Unit
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun C.foo(kotlin.String?): kotlin.Unit
+KClass: class D : C, B, A
+  members:
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public open fun D.foo(kotlin.String): kotlin.Unit
+    public open fun D.foo(kotlin.String?): kotlin.Unit
+    public open fun D.hashCode(): kotlin.Int
+    public open fun D.toString(): kotlin.String
+  declaredMembers:
+KClass: class E : C, A, B
+  members:
+    public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
+    public open fun E.foo(kotlin.String): kotlin.Unit
+    public open fun E.foo(kotlin.String?): kotlin.Unit
+    public open fun E.hashCode(): kotlin.Int
+    public open fun E.toString(): kotlin.String
+  declaredMembers:

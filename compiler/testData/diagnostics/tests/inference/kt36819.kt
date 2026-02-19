@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -CAST_NEVER_SUCCEEDS
 // ISSUE: KT-36819
 
 // Case 1
@@ -45,3 +46,7 @@ fun bar() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, outProjection, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration, typeParameter, typeWithExtension, vararg, whenExpression */

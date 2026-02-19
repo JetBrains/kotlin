@@ -1,0 +1,2 @@
+KtPrefixExpression(47,58): '++foo.value'
+  null

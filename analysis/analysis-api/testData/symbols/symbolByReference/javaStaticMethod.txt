@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /JavaClass.foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /JavaClass.foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -15,17 +17,23 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: true
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: OPEN
   name: foo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: JavaClass.foo

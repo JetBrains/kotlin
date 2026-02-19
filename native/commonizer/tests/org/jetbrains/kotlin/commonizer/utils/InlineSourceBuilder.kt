@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiersByModules
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
-import java.io.File
 
 interface InlineSourceBuilder {
     annotation class ModuleBuilderDsl
 
-    data class SourceFile(val name: String, @Language("kotlin") val content: String)
+    data class SourceFile(val name: String, @param:Language("kotlin") val content: String)
 
     data class Module(
         val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>
@@ -33,19 +31,16 @@ interface InlineSourceBuilder {
         private var dependencies: List<Module> = emptyList()
 
 
-        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun source(@Language("kotlin") content: String, name: String = "test.kt") {
             sourceFiles = sourceFiles + SourceFile(name, content)
         }
 
-        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun dependency(builder: ModuleBuilder.() -> Unit) {
             dependency(ModuleBuilder().also(builder).build())
         }
 
-        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun dependency(module: Module) {
             this.dependencies += module.copy(name = "${this.name}-dependency-${module.name}-${dependencies.size}")
@@ -67,25 +62,13 @@ interface InlineSourceBuilder {
 
     fun createCirTree(module: Module): CirTreeModule
 
-    fun createModuleDescriptor(module: Module): ModuleDescriptor
-
-    fun createMetadata(module: Module): SerializedMetadata = createModuleDescriptor(module).toMetadata()
+    fun createMetadata(module: Module): NamedMetadata
 }
 
 
 @InlineSourceBuilder.ModuleBuilderDsl
 fun InlineSourceBuilder.createCirTree(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): CirTreeModule {
     return createCirTree(createModule(builder))
-}
-
-@InlineSourceBuilder.ModuleBuilderDsl
-fun InlineSourceBuilder.createModuleDescriptor(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): ModuleDescriptor {
-    return createModuleDescriptor(createModule(builder))
-}
-
-@InlineSourceBuilder.ModuleBuilderDsl
-fun InlineSourceBuilder.createMetadata(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): SerializedMetadata {
-    return createMetadata(createModule(builder))
 }
 
 @InlineSourceBuilder.ModuleBuilderDsl
@@ -107,7 +90,7 @@ fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder
         )
 
         override fun loadModuleMetadata(name: String): SerializedMetadata {
-            if (name == moduleInfos.single().name) return createMetadata(module)
+            if (name == moduleInfos.single().name) return createMetadata(module).metadata
             else error("Unknown Module $name")
         }
     }
@@ -117,9 +100,4 @@ fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder
 @InlineSourceBuilder.ModuleBuilderDsl
 fun InlineSourceBuilder.createCirProvidedClassifiers(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): CirProvidedClassifiers {
     return createCirProvidedClassifiers(createModule { builder() })
-}
-
-@InlineSourceBuilder.ModuleBuilderDsl
-fun InlineSourceBuilder.createCirProvidedClassifiersFromSourceCode(@Language("kotlin") sourceCode: String): CirProvidedClassifiers {
-    return createCirProvidedClassifiers(createModule { source(sourceCode) })
 }

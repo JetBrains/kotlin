@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -NOTHING_TO_INLINE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -NOTHING_TO_INLINE
 
 inline fun <T> foo(t1: T, t2: T) = t1 ?: t2
 
@@ -12,3 +13,6 @@ fun use() {
     // x is nullable at the second argument
     foo(bar { x = null }, x!!)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, elvisExpression, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

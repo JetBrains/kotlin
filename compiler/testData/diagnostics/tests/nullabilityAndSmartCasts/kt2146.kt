@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2146 Nullability casts in when.
 package kt2146
 
@@ -52,3 +53,6 @@ fun f7(s: Int?): Int {
         else -> <!DEBUG_INFO_SMARTCAST!>s<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nullableType, smartcast, whenExpression, whenWithSubject */

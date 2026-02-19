@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -15,8 +16,8 @@ import java.io.DataOutputStream
 import java.io.OutputStream
 import java.util.*
 
-fun List<JsIrProgramFragment>.serializeTo(output: OutputStream) {
-    JsIrAstSerializer().appendAll(this).saveTo(output)
+fun JsIrProgramFragments.serializeTo(output: OutputStream) {
+    JsIrAstSerializer().append(this).saveTo(output)
 }
 
 private class DataWriter {
@@ -89,14 +90,14 @@ private class JsIrAstSerializer {
     private val fileStack: Deque<String> = ArrayDeque()
     private val importedNames = mutableSetOf<JsName>()
 
-    fun appendAll(fragments: List<JsIrProgramFragment>): JsIrAstSerializer {
-        fragmentSerializer.writeInt(fragments.size)
-        fragments.forEach(::append)
+    fun append(fragments: JsIrProgramFragments): JsIrAstSerializer {
+        append(fragments.mainFragment)
+        fragmentSerializer.ifNotNull(fragments.exportFragment, ::append)
         return this
     }
 
     fun append(fragment: JsIrProgramFragment): JsIrAstSerializer {
-        importedNames += fragment.imports.map { fragment.nameBindings[it.key]!! }
+        importedNames += fragment.imports.map { fragment.nameBindings[it.key] ?: error("No binding for tag ${it.key}") }
         fragmentSerializer.writeFragment(fragment)
         return this
     }
@@ -132,6 +133,7 @@ private class JsIrAstSerializer {
 
         writeCompositeBlock(fragment.declarations)
         writeCompositeBlock(fragment.initializers)
+        writeCompositeBlock(fragment.eagerInitializers)
         writeCompositeBlock(fragment.exports)
         writeCompositeBlock(fragment.polyfills)
 
@@ -149,20 +151,17 @@ private class JsIrAstSerializer {
             writeIrIcModel(model)
         }
 
-        ifNotNull(fragment.testFunInvocation) {
-            writeStatement(it)
+        ifNotNull(fragment.mainFunctionTag) {
+            writeString(it)
         }
 
-        ifNotNull(fragment.mainFunction) {
-            writeStatement(it)
+        ifNotNull(fragment.testEnvironment) {
+            writeInt(internalizeString(it.testFunctionTag))
+            writeInt(internalizeString(it.suiteFunctionTag))
         }
 
         ifNotNull(fragment.dts) {
             writeString(it.raw)
-        }
-
-        ifNotNull(fragment.suiteFn) {
-            writeInt(internalizeName(it))
         }
 
         writeCollection(fragment.definitions) {
@@ -288,19 +287,19 @@ private class JsIrAstSerializer {
 
             override fun visitForIn(x: JsForIn) {
                 writeByte(StatementIds.FOR_IN)
-                ifNotNull(x.iterVarName) {
-                    writeInt(internalizeName(it))
-                }
-                ifNotNull(x.iterExpression) { writeExpression(it) }
-                writeExpression(x.objectExpression)
-                writeStatement(x.body)
+                writeIterableLoop(x)
+            }
+
+            override fun visitForOf(x: JsForOf) {
+                writeByte(StatementIds.FOR_OF)
+                writeIterableLoop(x)
             }
 
             override fun visitTry(x: JsTry) {
                 writeByte(StatementIds.TRY)
                 writeBlock(x.tryBlock)
                 writeCollection(x.catches) { c ->
-                    writeInt(internalizeName(c.parameter.name))
+                    writeAssignable(c.parameter.assignable)
                     writeBlock(c.body)
                 }
                 ifNotNull(x.finallyBlock) { writeBlock(it) }
@@ -311,6 +310,10 @@ private class JsIrAstSerializer {
 
                 when (val subject = export.subject) {
                     is JsExport.Subject.All -> writeByte(ExportType.ALL)
+                    is JsExport.Subject.Default -> {
+                        writeByte(ExportType.DEFAULT)
+                        writeInt(internalizeName(subject.name.name!!))
+                    }
                     is JsExport.Subject.Elements -> {
                         writeByte(ExportType.ITEMS)
                         writeCollection(subject.elements) {
@@ -328,6 +331,9 @@ private class JsIrAstSerializer {
                 writeString(import.module)
 
                 when (val target = import.target) {
+                    is JsImport.Target.Effect -> {
+                        writeByte(ImportType.EFFECT)
+                    }
                     is JsImport.Target.All -> {
                         writeByte(ImportType.ALL)
                         writeInt(internalizeName(target.alias.name!!))
@@ -402,6 +408,24 @@ private class JsIrAstSerializer {
                 writeInt(internalizeString(x.value))
             }
 
+            override fun visitTemplateString(x: JsTemplateStringLiteral) {
+                writeByte(ExpressionIds.TEMPLATE_STRING_LITERAL)
+                ifNotNull(x.tag) { writeExpression(it) }
+                writeCollection(x.segments) {
+                    writeExpression(it)
+                }
+            }
+
+            override fun visitTemplateSegmentString(x: JsTemplateStringLiteral.Segment.StringLiteral) {
+                writeByte(ExpressionIds.TEMPLATE_ELEMENT_STRING)
+                writeInt(internalizeString(x.value))
+            }
+
+            override fun visitTemplateSegmentInterpolation(x: JsTemplateStringLiteral.Segment.Interpolation) {
+                writeByte(ExpressionIds.TEMPLATE_ELEMENT_INTERPOLATION)
+                writeExpression(x.expression)
+            }
+
             override fun visitRegExp(x: JsRegExp) {
                 writeByte(ExpressionIds.REG_EXP)
                 writeInt(internalizeString(x.pattern))
@@ -411,6 +435,11 @@ private class JsIrAstSerializer {
             override fun visitInt(x: JsIntLiteral) {
                 writeByte(ExpressionIds.INT_LITERAL)
                 writeInt(x.value)
+            }
+
+            override fun visitBigInt(x: JsBigIntLiteral) {
+                writeByte(ExpressionIds.BIGINT_LITERAL)
+                writeByteArray(x.value.toByteArray())
             }
 
             override fun visitDouble(x: JsDoubleLiteral) {
@@ -428,8 +457,17 @@ private class JsIrAstSerializer {
             override fun visitObjectLiteral(x: JsObjectLiteral) {
                 writeByte(ExpressionIds.OBJECT_LITERAL)
                 writeCollection(x.propertyInitializers) {
-                    writeExpression(it.labelExpr)
-                    writeExpression(it.valueExpr)
+                    when (it) {
+                        is JsPropertyInitializer.KeyValue -> {
+                            writeInt(PropertyInitializerKinds.KEY_VALUE)
+                            writeExpression(it.labelExpr)
+                            writeExpression(it.valueExpr)
+                        }
+                        is JsPropertyInitializer.Spread -> {
+                            writeInt(PropertyInitializerKinds.SPREAD)
+                            writeExpression(it.expression)
+                        }
+                    }
                 }
                 writeBoolean(x.isMultiline)
             }
@@ -535,6 +573,50 @@ private class JsIrAstSerializer {
                 writeExpression(x.constructorExpression)
                 writeCollection(x.arguments) { writeExpression(it) }
             }
+
+            override fun visitYield(x: JsYield) {
+                writeByte(ExpressionIds.YIELD)
+                ifNotNull(x.expression) { writeExpression(it) }
+            }
+
+            override fun visitYieldStar(x: JsYieldStar) {
+                writeByte(ExpressionIds.YIELD_STAR)
+                ifNotNull(x.expression) { writeExpression(it) }
+            }
+
+            override fun visitSpread(spread: JsSpread) {
+                writeByte(ExpressionIds.SPREAD)
+                writeExpression(spread.expression)
+            }
+
+            override fun visitNamedAssignable(assignable: JsAssignable.Named) {
+                writeByte(AssignableIds.NAMED)
+                writeInt(internalizeName(assignable.name))
+            }
+
+            override fun visitArrayPatternAssignable(pattern: JsAssignable.ArrayPattern) {
+                writeByte(AssignableIds.ARRAY_PATTERN)
+                writeCollection(pattern.elements) {
+                    when (it) {
+                        is JsBindingArrayItem.Element -> {
+                            writeByte(ArrayPatternItemKinds.ELEMENT)
+                            writeBindingElement(it.element)
+                        }
+                        is JsBindingArrayItem.Hole ->
+                            writeByte(ArrayPatternItemKinds.HOLE)
+                    }
+                }
+            }
+
+            override fun visitObjectPatternAssignable(pattern: JsAssignable.ObjectPattern) {
+                writeByte(AssignableIds.OBJECT_PATTERN)
+                writeCollection(pattern.properties) {
+                    ifNotNull(it.propertyName) { name ->
+                        writeExpression(name)
+                    }
+                    writeBindingElement(it.element)
+                }
+            }
         }
 
         withComments(expression) {
@@ -554,6 +636,18 @@ private class JsIrAstSerializer {
         ifNotNull(module.plainReference) { writeExpression(it) }
     }
 
+    private fun DataWriter.writeIterableLoop(x: JsIterableLoop) {
+        ifNotNull(x.bindingVarVariant) {
+            writeInt(it.ordinal)
+        }
+        ifNotNull(x.bindingAssignable) {
+            writeAssignable(it)
+        }
+        ifNotNull(x.bindingExpression) { writeExpression(it) }
+        writeExpression(x.iterableExpression)
+        writeStatement(x.body)
+    }
+
     private fun DataWriter.writeFunction(function: JsFunction) {
         writeBlock(function.body)
         writeCollection(function.parameters) { writeParameter(it) }
@@ -561,11 +655,19 @@ private class JsIrAstSerializer {
         ifNotNull(function.name) {
             writeInt(internalizeName(it))
         }
+        ifNotNull(function.computedName) {
+            writeExpression(function.computedName)
+        }
         writeBoolean(function.isLocal)
+        writeBoolean(function.isEs6Arrow)
     }
 
     private fun DataWriter.writeParameter(parameter: JsParameter) {
-        writeInt(internalizeName(parameter.name))
+        writeAssignable(parameter.assignable)
+        ifNotNull(parameter.defaultValue) {
+            writeExpression(it)
+        }
+        writeBoolean(parameter.isRest)
         writeBoolean(parameter.hasDefaultValue)
     }
 
@@ -579,14 +681,52 @@ private class JsIrAstSerializer {
     }
 
     private fun DataWriter.writeVars(vars: JsVars) {
+        writeInt(vars.variant.ordinal)
         writeBoolean(vars.isMultiline)
         writeCollection(vars.vars) { varDecl ->
             withLocation(varDecl) {
-                writeInt(internalizeName(varDecl.name))
+                writeAssignable(varDecl.assignable)
                 ifNotNull(varDecl.initExpression) { writeExpression(it) }
             }
         }
         ifNotNull(vars.exportedPackage) { writeInt(internalizeString(it)) }
+    }
+
+    private fun DataWriter.writeAssignable(assignable: JsAssignable) {
+        when (assignable) {
+            is JsAssignable.Named -> {
+                writeByte(AssignableIds.NAMED)
+                writeInt(internalizeName(assignable.name))
+            }
+            is JsAssignable.ArrayPattern -> {
+                writeByte(AssignableIds.ARRAY_PATTERN)
+                writeCollection(assignable.elements) {
+                    when (it) {
+                        is JsBindingArrayItem.Element -> {
+                            writeByte(ArrayPatternItemKinds.ELEMENT)
+                            writeBindingElement(it.element)
+                        }
+                        is JsBindingArrayItem.Hole ->
+                            writeByte(ArrayPatternItemKinds.HOLE)
+                    }
+                }
+            }
+            is JsAssignable.ObjectPattern -> {
+                writeByte(AssignableIds.OBJECT_PATTERN)
+                writeCollection(assignable.properties) {
+                    ifNotNull(it.propertyName) { name ->
+                        writeExpression(name)
+                    }
+                    writeBindingElement(it.element)
+                }
+            }
+        }
+    }
+
+    private fun DataWriter.writeBindingElement(bindingElement: JsBindingElement) {
+        writeAssignable(bindingElement.target)
+        ifNotNull(bindingElement.defaultValue) { writeExpression(it) }
+        writeBoolean(bindingElement.isSpread)
     }
 
     private fun internalizeName(name: JsName): Int = nameMap.getOrPut(name) {
@@ -598,6 +738,7 @@ private class JsIrAstSerializer {
             writeBoolean(name.isTemporary)
             ifNotNull(name.localAlias) { writeLocalAlias(it) }
             writeBoolean(name.imported && name !in importedNames)
+            writeBoolean(name.constant)
             ifNotNull(name.specialFunction) { writeByte(it.ordinal) }
         }
         nameMap.size

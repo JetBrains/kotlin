@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 //KT-2216 Nullability of a value determined in function parameter computation doesn't pass to code following
 package kt2216
 
@@ -19,3 +20,6 @@ fun foo() {
     baz(<!TYPE_MISMATCH!>y<!>, <!TYPE_MISMATCH!>y<!>, if (y == null) return else y, y)
     baz(y, z!!, z, y)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

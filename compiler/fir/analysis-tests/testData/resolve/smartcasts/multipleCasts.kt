@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 // There would be ambiguities if some expression was smartcasted to (A & B) and foo() was called.
 // There was a bug where 2 variables were "bound" together if they are assigned from the same function call or property.
 interface A {
@@ -27,3 +28,6 @@ fun test_1() {
         b.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, localProperty, nullableType, propertyDeclaration, smartcast */

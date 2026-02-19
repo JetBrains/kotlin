@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -NOTHING_TO_INLINE
+// DIAGNOSTICS: -NOTHING_TO_INLINE
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -17,3 +18,6 @@ actual tailrec fun tailrec(): Unit = if (true) Unit else tailrec()
 actual inline fun inline() {}
 actual operator fun String.unaryMinus(): String = this
 actual infix fun String.and(other: String): String = this + other
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, expect, external, funWithExtensionReceiver, functionDeclaration,
+ifExpression, infix, inline, operator, tailrec, thisExpression */

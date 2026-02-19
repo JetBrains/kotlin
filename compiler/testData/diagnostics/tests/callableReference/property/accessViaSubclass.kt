@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 import kotlin.reflect.KProperty1
 
@@ -14,3 +15,7 @@ fun test() {
     checkSubtype<KProperty1<Base, Int>>(o)
     checkSubtype<Int>(o.get(Derived()))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

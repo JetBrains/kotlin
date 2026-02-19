@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface SomeInterface {
     fun foo(x: Int, y: String): String
 
@@ -17,3 +18,6 @@ class SomeClass : SomeInterface {
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var fau: Double<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, override, propertyDeclaration, setter */

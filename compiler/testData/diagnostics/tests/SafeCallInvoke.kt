@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Rule(val apply:() -> Unit)
 
 fun bar() {}
@@ -21,3 +22,6 @@ fun foo() {
         rule<!UNNECESSARY_SAFE_CALL!>?.<!>apply()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast */

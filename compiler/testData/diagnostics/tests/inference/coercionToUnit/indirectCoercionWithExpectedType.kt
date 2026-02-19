@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun <T> materialize(): T = TODO()
 
@@ -33,3 +34,5 @@ fun e(): Unit = run outer@{
         return@outer materialize()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, stringLiteral, typeParameter */

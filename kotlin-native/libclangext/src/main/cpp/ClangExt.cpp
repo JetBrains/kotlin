@@ -15,6 +15,8 @@
  */
 
 #include <cassert>
+#include <cstdlib>
+#include <cstring>
 
 #include <clang/AST/Attr.h>
 #include <clang/AST/DeclObjC.h>
@@ -71,7 +73,18 @@ static CXTypeAttributes makeCXTypeAttributes() {
 
 #endif // LIBCLANGEXT_ENABLE
 
+static CString createCString(StringRef str) {
+  return CString { strdup(str.str().c_str()) };
+}
+
+static CString nullCString() {
+  return CString { nullptr };
+}
+
 extern "C" {
+  void clang_disposeCString(CString str) {
+    free(str.data);
+  }
 
   const char* clang_Cursor_getAttributeSpelling(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
@@ -139,8 +152,8 @@ extern "C" {
 
     QualType qualType = unwrapCXTypeAttributes(attributes);
 
-    auto kind = qualType->getNullability(astContext);
-    if (!kind.hasValue()) {
+    auto kind = qualType->getNullability();
+    if (!kind) {
       return CXNullabilityKind_Unspecified;
     }
 
@@ -155,30 +168,15 @@ extern "C" {
 #endif
   }
 
-  unsigned clang_Type_getNumProtocols(CXType type) {
+  CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
-    QualType qualType = unwrapCXType(type);
-    if (auto objCObjectPointerType = qualType->getAs<ObjCObjectPointerType>()) {
-      return objCObjectPointerType->getObjectType()->getNumProtocols();
-    }
-#endif
-    return 0;
-  }
-
-  CXCursor clang_Type_getProtocol(CXType type, unsigned index) {
-#if LIBCLANGEXT_ENABLE
-    QualType qualType = unwrapCXType(type);
-    if (auto objCObjectPointerType = qualType->getAs<ObjCObjectPointerType>()) {
-      auto objectType = objCObjectPointerType->getObjectType();
-      unsigned n = objectType->getNumProtocols();
-      if (index < n) {
-        auto protocolDecl = objectType->getProtocol(index);
-        auto kind = CXCursor_ObjCProtocolDecl;
-        return makeObjCProtocolDeclCXCursor(protocolDecl, getTranslationUnit(type));
+    if (cursor.kind == CXCursor_ObjCProtocolDecl) {
+      if (const ObjCProtocolDecl *decl = dyn_cast_or_null<ObjCProtocolDecl>(getCursorDecl(cursor))) {
+        return createCString(decl->getObjCRuntimeNameAsString());
       }
     }
 #endif
-    return clang_getNullCursor();
+    return nullCString();
   }
 
   unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor) {
@@ -215,6 +213,20 @@ extern "C" {
     }
 #endif
     return 0;
+  }
+
+  CString clang_Cursor_getSwiftName(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (clang_isDeclaration(cursor.kind)) {
+      const Decl *decl = getCursorDecl(cursor);
+      if (decl) {
+        if (const auto *attr = decl->getAttr<SwiftNameAttr>()) {
+          return createCString(attr->getName());
+        }
+      }
+    }
+#endif
+    return nullCString();
   }
 
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-24901
 
 fun foo(str: String?): Int {
@@ -8,3 +9,6 @@ fun foo(str: String?): Int {
         return 123
     return 321
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType, smartcast,
+whenExpression */

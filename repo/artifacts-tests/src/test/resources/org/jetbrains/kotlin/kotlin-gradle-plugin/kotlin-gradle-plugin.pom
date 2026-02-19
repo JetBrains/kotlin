@@ -14,7 +14,7 @@
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
@@ -49,60 +49,60 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-gradle-plugin-model</artifactId>
+      <artifactId>fus-statistics-gradle-plugin</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -113,28 +113,28 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -145,28 +145,28 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -177,60 +177,28 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-common</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-build-tools-api</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -241,28 +209,92 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-util-klib-metadata</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-reflect</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-jdk8</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-jdk7</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-script-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>abi-tools-api</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-reflect</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-jdk8</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-jdk7</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-script-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -273,100 +305,32 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-compiler-embeddable</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-build-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>kotlin-stdlib-common</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-util-klib</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-gradle-plugin-compiler-dependencies</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
       </exclusions>
     </dependency>

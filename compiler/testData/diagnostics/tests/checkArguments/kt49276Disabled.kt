@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +DisableCheckingChangedProgressionsResolve
+// LANGUAGE: +DisableCheckingChangedProgressionsResolve
 // WITH_STDLIB
 
 fun <E> SmartList(x: E) {}
@@ -36,3 +37,6 @@ fun main() {
 
     append4(1..10)    // warning
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, in, integerLiteral, nullableType,
+primaryConstructor, rangeExpression, starProjection, stringLiteral, typeConstraint, typeParameter */

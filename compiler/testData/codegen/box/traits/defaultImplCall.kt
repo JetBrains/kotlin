@@ -1,4 +1,4 @@
-// !JVM_DEFAULT_MODE: disable
+// JVM_DEFAULT_MODE: disable
 // TARGET_BACKEND: JVM
 
 // First item on Android is `java.lang.Thread.getStackTrace`

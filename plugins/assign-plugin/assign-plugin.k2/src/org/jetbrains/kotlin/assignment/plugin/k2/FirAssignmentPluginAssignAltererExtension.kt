@@ -8,21 +8,24 @@ package org.jetbrains.kotlin.assignment.plugin.k2
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirAssignExpressionAltererExtension
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirAssignmentPluginAssignAltererExtension(
     session: FirSession
 ) : FirAssignExpressionAltererExtension(session) {
@@ -35,7 +38,7 @@ class FirAssignmentPluginAssignAltererExtension(
 
     private fun FirVariableAssignment.supportsTransformVariableAssignment(): Boolean {
         return when (val lSymbol = calleeReference?.toResolvedVariableSymbol()) {
-            is FirPropertySymbol -> lSymbol.isVal && !lSymbol.isLocal && lSymbol.hasSpecialAnnotation()
+            is FirRegularPropertySymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             is FirBackingFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             is FirFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             else -> false
@@ -46,22 +49,22 @@ class FirAssignmentPluginAssignAltererExtension(
         session.annotationMatchingService.isAnnotated(resolvedReturnType.upperBoundIfFlexible().toRegularClassSymbol(session))
 
     private fun buildFunctionCall(variableAssignment: FirVariableAssignment): FirFunctionCall {
-        val leftArgument = variableAssignment.calleeReference!!
+        val leftArgument = variableAssignment.calleeReference as FirNamedReference
         val leftSymbol = leftArgument.toResolvedVariableSymbol()!!
         val leftResolvedType = leftSymbol.resolvedReturnTypeRef
         val rightArgument = variableAssignment.rValue
         return buildFunctionCall {
-            source = variableAssignment.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            source = variableAssignment.source?.fakeElement(KtFakeSourceElementKind.AssignmentPluginAltered)
             explicitReceiver = buildPropertyAccessExpression {
                 source = leftArgument.source
-                coneTypeOrNull = leftResolvedType.type
+                coneTypeOrNull = leftResolvedType.coneType
                 calleeReference = leftArgument
                 (variableAssignment.lValue as? FirQualifiedAccessExpression)?.typeArguments?.let(typeArguments::addAll)
                 annotations += variableAssignment.annotations
                 explicitReceiver = variableAssignment.explicitReceiver
                 dispatchReceiver = variableAssignment.dispatchReceiver
                 extensionReceiver = variableAssignment.extensionReceiver
-                contextReceiverArguments += variableAssignment.contextReceiverArguments
+                contextArguments += variableAssignment.contextArguments
             }
             argumentList = buildUnaryArgumentList(rightArgument)
             calleeReference = buildSimpleNamedReference {

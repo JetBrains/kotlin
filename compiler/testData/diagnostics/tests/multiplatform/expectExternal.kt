@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -36,3 +38,5 @@ actual class A {
     actual external fun foo()
     actual external fun bar()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, external, functionDeclaration, propertyDeclaration */

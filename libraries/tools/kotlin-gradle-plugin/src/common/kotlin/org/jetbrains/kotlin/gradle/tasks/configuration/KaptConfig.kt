@@ -7,31 +7,28 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import com.intellij.util.lang.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.attributes.Attribute
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.classLoadersCacheSize
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.disableClassloaderCacheForProcessors
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncrementalKapt
+import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
-import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinAndroidPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.toCompilerPluginOptions
-import org.jetbrains.kotlin.gradle.utils.listProperty
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 
 internal open class KaptConfig<TASK : KaptTask>(
     project: Project,
-    protected val ext: KaptExtension,
+    protected val ext: KaptExtensionConfig,
 ) : TaskConfigAction<TASK>(project) {
 
     init {
@@ -41,10 +38,12 @@ internal open class KaptConfig<TASK : KaptTask>(
             taskProvider.configure { task ->
                 task.verbose.set(KaptTask.queryKaptVerboseProperty(project))
 
-                task.isIncremental = project.isIncrementalKapt()
+                task.isIncremental = KaptProperties.isIncrementalKapt(project).get()
                 task.useBuildCache = ext.useBuildCache
 
-                task.includeCompileClasspath.set(ext.includeCompileClasspath ?: project.isIncludeCompileClasspath())
+                task.includeCompileClasspath.set(
+                    project.provider { ext.includeCompileClasspath }.orElse(KaptProperties.isIncludeCompileClasspath(project))
+                )
                 task.classpathStructure.from(kaptClasspathSnapshot)
 
                 task.localStateDirectories.from({ task.incAptCache.orNull })
@@ -59,7 +58,7 @@ internal open class KaptConfig<TASK : KaptTask>(
     internal constructor(
         project: Project,
         kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
-        ext: KaptExtension
+        ext: KaptExtensionConfig,
     ) : this(project, ext) {
         configureTask { task ->
             task.classpath.from(
@@ -88,10 +87,10 @@ internal open class KaptConfig<TASK : KaptTask>(
     }
 
     private fun getKaptClasspathSnapshot(taskProvider: TaskProvider<TASK>): FileCollection? {
-        return if (project.isIncrementalKapt()) {
+        return if (KaptProperties.isIncrementalKapt(project).get()) {
             maybeRegisterTransform(project)
 
-            val classStructureConfiguration = project.configurations.detachedConfiguration().markResolvable()
+            val classStructureConfiguration = project.configurations.detachedResolvable()
 
             // Wrap the `kotlinCompile.classpath` into a file collection, so that, if the classpath is represented by a configuration,
             // the configuration is not extended (via extendsFrom, which normally happens when one configuration is _added_ into another)
@@ -99,27 +98,24 @@ internal open class KaptConfig<TASK : KaptTask>(
             // the attributes that are potentially needed to resolve dependencies on MPP modules, and the classpath configuration does.
             classStructureConfiguration.dependencies.add(project.dependencies.create(project.files(project.provider { taskProvider.get().classpath })))
             classStructureConfiguration.incoming.artifactView { viewConfig ->
-                viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+                viewConfig.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }.files
         } else null
     }
 
     private fun maybeRegisterTransform(project: Project) {
         if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
-            val transformActionClass =
-                if (GradleVersion.current() >= GradleVersion.version("5.4"))
-                    StructureTransformAction::class.java
-                else
-                    StructureTransformLegacyAction::class.java
-            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
-                transformSpec.from.attribute(artifactType, "jar")
-                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-            }
+            project.dependencies.registerTransformForArtifactType(
+                StructureTransformAction::class.java,
+                fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
+                toArtifactType = CLASS_STRUCTURE_ARTIFACT_TYPE,
+            )
 
-            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
-                transformSpec.from.attribute(artifactType, "directory")
-                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-            }
+            project.dependencies.registerTransformForArtifactType(
+                StructureTransformAction::class.java,
+                fromArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
+                toArtifactType = CLASS_STRUCTURE_ARTIFACT_TYPE,
+            )
 
             project.extensions.extraProperties["KaptStructureTransformAdded"] = true
         }
@@ -131,7 +127,7 @@ internal open class KaptConfig<TASK : KaptTask>(
                 if ("-source" in result || "--source" in result || "--release" in result) return@also
 
                 if (defaultJavaSourceCompatibility.isPresent) {
-                    val atLeast12Java = JavaVersion.current().compareTo(JavaVersion.compose(12, 0, 0, 0, false)) >= 0
+                    val atLeast12Java = System.getProperty("java.version").split('.').first().toInt() >= 12
                     val sourceOptionKey = if (atLeast12Java) {
                         "--source"
                     } else {
@@ -160,7 +156,7 @@ private fun isAncestor(dir: File, file: File): Boolean {
     } else if (pathLength == prefixLength) {
         return true
     } else {
-        val lastPrefixChar: Char = prefix.get(prefixLength - 1)
+        val lastPrefixChar: Char = prefix[prefixLength - 1]
         var slashOrSeparatorIdx = prefixLength
         if (lastPrefixChar == '/' || lastPrefixChar == File.separatorChar) {
             slashOrSeparatorIdx = prefixLength - 1
@@ -181,12 +177,14 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
             )
             task.kaptJars.from(project.configurations.getByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME))
             task.mapDiagnosticLocations = ext.mapDiagnosticLocations
-            task.annotationProcessorFqNames.set(providers.provider {
-                @Suppress("DEPRECATION")
-                ext.processors.split(',').filter { it.isNotEmpty() }
-            })
+            if (ext is KaptExtension) {
+                task.annotationProcessorFqNames.set(providers.provider {
+                    @Suppress("DEPRECATION_ERROR")
+                    ext.processors.split(',').filter { it.isNotEmpty() }
+                })
+            }
             task.disableClassloaderCacheForProcessors = project.disableClassloaderCacheForProcessors()
-            task.classLoadersCacheSize = project.classLoadersCacheSize()
+            task.classLoadersCacheSize = KaptProperties.getClassloadersCacheSize(project).get()
             task.javacOptions.set(getJavaOptions(task.defaultJavaSourceCompatibility))
         }
     }
@@ -194,10 +192,10 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
     constructor(
         project: Project,
         kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
-        ext: KaptExtension
+        ext: KaptExtensionConfig,
     ) : super(project, kaptGenerateStubsTask, ext) {
-        project.configurations.findByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
-            ?: project.configurations.create(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
+        project.configurations.findResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
+            ?: project.configurations.createResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
                 dependencies.addAllLater(project.listProperty {
                     val kaptDependency = "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:${project.getKotlinPluginVersion()}"
                     listOf(
@@ -220,13 +218,13 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
         }
     }
 
-    constructor(project: Project, ext: KaptExtension) : super(project, ext) {
+    constructor(project: Project, ext: KaptExtensionConfig) : super(project, ext) {
         configureTask { task ->
             val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesDestinationDir)
-            val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir, null, null)
-            task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
+            if (ext is KaptExtension) {
+                val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir)
+                task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
+            }
         }
     }
 }
-
-private val artifactType = Attribute.of("artifactType", String::class.java)

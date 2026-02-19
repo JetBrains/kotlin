@@ -8,10 +8,10 @@ fun baz(): String? {
 
 fun test(): String {
   return { // BLOCK
-    val tmp0_elvis_lhs: String? = baz()
+    val tmp_0: String? = baz()
     when {
-      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> foo() /*!! String */
-      else -> tmp0_elvis_lhs
+      EQEQ(arg0 = tmp_0, arg1 = null) -> foo() /*!! String */
+      else -> tmp_0
     }
   }
 }

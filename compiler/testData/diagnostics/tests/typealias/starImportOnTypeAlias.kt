@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // FILE: foo.kt
 
 package test
@@ -26,3 +28,6 @@ fun bar() {
     Entry
     EnumAlias.Entry
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration,
+typeAliasDeclaration */

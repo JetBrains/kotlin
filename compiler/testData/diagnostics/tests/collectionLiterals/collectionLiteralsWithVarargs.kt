@@ -1,4 +1,5 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 annotation class Ann1(vararg val a: String = [])
 annotation class Ann2(vararg val a: Int = [1, 2])
@@ -41,3 +42,6 @@ fun testArray() {}
 
 @Ann1(<!TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>)
 fun testVararg() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
+multiplicativeExpression, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, vararg */

@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open enum class /Z : kotlin/Enum</Z> { // /Z|null[0]
+    final val entries // /Z.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</Z> // /Z.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /Z // /Z.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</Z> // /Z.values|values#static(){}[0]
+    enum entry ENTRY // /Z.ENTRY|null[0]
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 fun testPlus() {
     val x = 1 + 2
@@ -33,3 +34,6 @@ fun testWith() {
     val indices = with("") { indices }
     val indicesNoWith = "".indices
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+multiplicativeExpression, nullableType, propertyDeclaration, stringLiteral, typeParameter */

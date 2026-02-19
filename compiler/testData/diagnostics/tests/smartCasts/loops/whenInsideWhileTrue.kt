@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun foo(x: String?): Int {
     loop@ while (true) {
         when (x) {
@@ -10,3 +11,6 @@ public fun foo(x: String?): Int {
     // x is null because of the break
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, equalityExpression, functionDeclaration, integerLiteral, nullableType, smartcast,
+stringLiteral, whenExpression, whenWithSubject, whileLoop */

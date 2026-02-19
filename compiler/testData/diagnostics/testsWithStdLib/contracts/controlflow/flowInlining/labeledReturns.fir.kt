@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -84,3 +85,7 @@ fun threeLevelsReturnWithUnknown(x: Int?): Int? {
     }
     return <!UNINITIALIZED_VARIABLE!>y<!>.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, thisExpression, typeParameter */

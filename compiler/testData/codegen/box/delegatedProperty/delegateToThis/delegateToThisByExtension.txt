@@ -2,9 +2,9 @@
 public final class C {
     // source: 'delegateToThisByExtension.kt'
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
-    private final @org.jetbrains.annotations.NotNull field s$delegate: C
     static method <clinit>(): void
     public method <init>(): void
+    private static method getS$delegate(p0: C): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 

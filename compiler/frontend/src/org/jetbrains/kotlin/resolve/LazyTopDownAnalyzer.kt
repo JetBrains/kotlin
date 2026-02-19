@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -55,6 +56,7 @@ class LazyTopDownAnalyzer(
     private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>,
     private val filePreprocessor: FilePreprocessor
 ) {
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyzeDeclarations(
         topDownAnalysisMode: TopDownAnalysisMode,
         declarations: Collection<PsiElement>,
@@ -100,7 +102,7 @@ class LazyTopDownAnalyzer(
                     assert(file.isScript() || packageDirective != null) { "No package in a non-script file: " + file }
                     packageDirective?.accept(this)
                     c.addFile(file)
-                    topLevelFqNames.put(file.packageFqName, packageDirective)
+                    if (packageDirective != null) topLevelFqNames.put(file.packageFqName, packageDirective)
                 }
 
                 override fun visitPackageDirective(directive: KtPackageDirective) {
@@ -244,10 +246,12 @@ class LazyTopDownAnalyzer(
 
     private fun resolveImportsInAllFiles(c: TopDownAnalysisContext) {
         for (file in c.files + c.scripts.keys.map { it.containingKtFile }) {
+            @Suppress("DEPRECATION_ERROR")
             resolveImportsInFile(file)
         }
     }
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun resolveImportsInFile(file: KtFile) {
         fileScopeProvider.getImportResolver(file).forceResolveNonDefaultImports()
     }

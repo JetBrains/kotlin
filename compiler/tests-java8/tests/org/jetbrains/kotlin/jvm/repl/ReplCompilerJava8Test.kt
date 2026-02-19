@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.jvm.repl
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -25,20 +26,24 @@ import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.GenericReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.KOTLIN_REPL_JVM_TARGET_PROPERTY
-import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.junit.Assert
 import java.io.File
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 private const val library = "inline fun<T> foo(fn: () -> T): T = fn()"
 private const val script = "import foo\nval x = foo { 0 }"
@@ -53,16 +58,23 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
         File(tmpdir, "library.kt").writeText(library)
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
-            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
+            this.messageCollector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
             addKotlinSourceRoot(tmpdir.absolutePath)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir)
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
 
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-        val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
-        Assert.assertTrue(res)
+        // The following environment can be disposed right away since it's only needed to compile the bytecode. The test will use a separate
+        // environment managed by `GenericReplCompiler`.
+        val disposable = Disposer.newDisposable("Disposable for ${ReplCompilerJava8Test::class.simpleName}.setUp")
+        try {
+            val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
+            Assert.assertTrue(res)
+        } finally {
+            disposeRootInWriteAction(disposable)
+            resetApplicationToNull()
+        }
     }
 
     fun testIncompatibleScriptJvmTargetConfig() {
@@ -82,8 +94,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             val result = runTest(configuration)
             Assert.assertTrue(result is ReplCompileResult.Error)
             Assert.assertTrue((result as ReplCompileResult.Error).message.contains("error: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6"))
-        }
-        finally {
+        } finally {
             System.clearProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)
         }
     }
@@ -99,22 +110,25 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
         System.setProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY, "1.8")
         try {
             Assert.assertTrue(runTest(configuration) is ReplCompileResult.CompiledClasses)
-        }
-        finally {
+        } finally {
             System.clearProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)
         }
     }
 
     private fun makeConfiguration() = KotlinTestUtils.newConfiguration(
-        ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
+        ConfigurationKind.ALL, TestJdkKind.FULL_JDK, ForTestCompileRuntime.runtimeJarForTests(), tmpdir
     ).also {
-        loadScriptingPlugin(it)
+        loadScriptingPlugin(it, testRootDisposable)
     }
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
         val collector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
-        val replCompiler = GenericReplCompiler(testRootDisposable,
-                                               StandardScriptDefinition, configuration, collector)
+        val replCompiler = GenericReplCompiler(
+            testRootDisposable,
+            ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptTemplateWithArgs::class),
+            configuration,
+            collector
+        )
         val state = replCompiler.createState()
 
         return replCompiler.compile(state, ReplCodeLine(0, 0, script))

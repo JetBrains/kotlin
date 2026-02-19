@@ -1,4 +1,4 @@
-// IGNORE_PARENTING_CHECK
+// LIBRARY_PLATFORMS: JVM
 
 class Inv<E>
 class Out<out T>
@@ -11,7 +11,6 @@ open class Open
 class Container {
     @JvmSuppressWildcards(true)
     fun deepOpen(x: Out<Out<Out<Open>>>) {}
-
 
     @JvmSuppressWildcards(false)
     fun bar(): Out<Open> = null!!
@@ -27,6 +26,32 @@ class Container {
 
     @JvmSuppressWildcards(true)
     fun bar(x: Boolean, y: In<Long>, z: @JvmSuppressWildcards(false) Long): Int = 1
+
+    @JvmSuppressWildcards(true)
+    fun Out<Out<Out<Open>>>.zoo(z: @JvmSuppressWildcards(false) Out<Open>) {}
+}
+
+class ContainerForPropertyAndAccessors {
+    @JvmSuppressWildcards(true)
+    val deepOpen: Out<Out<Out<Open>>> = TODO()
+
+    @JvmSuppressWildcards(false)
+    var bar: Out<Open> = TODO()
+
+    val simpleOut: Out<@JvmWildcard Final> = TODO()
+
+    val simpleIn: In<@JvmWildcard Any?> = TODO()
+
+    @JvmSuppressWildcards(true)
+    val Out<Out<Out<Open>>>.zoo: @JvmSuppressWildcards(false) Out<Open>
+        get() = TODO()
+}
+
+@JvmSuppressWildcards(true)
+class HasAnnotation {
+    fun doesNot(p: Out<Out<Open>>) {}
+
+    fun parameterDisagrees(p: @JvmSuppressWildcards(false) Out<Int>) {}
 }
 
 interface A<T> {

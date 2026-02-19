@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x : String?, y : String?) {
     if (y != null && x == y) {
         // Both not null
@@ -36,3 +37,6 @@ fun foo(x : String?, y : String?) {
         <!DEBUG_INFO_SMARTCAST!>y<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

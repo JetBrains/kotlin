@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 
 enum class ProjectionKind {
@@ -15,9 +16,21 @@ sealed class ConeTypeProjection : TypeArgumentMarker {
     abstract val kind: ProjectionKind
 
     companion object {
-        val EMPTY_ARRAY = arrayOf<ConeTypeProjection>()
+        val EMPTY_ARRAY: Array<ConeTypeProjection> = arrayOf()
     }
 }
+
+/**
+ * Make a transformation from marker interface to cone-based type
+ *
+ * In K2 frontend context such a transformation is normally safe,
+ * as K1-based types and IR-based types cannot occur here.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun TypeArgumentMarker.asCone(): ConeTypeProjection = this as ConeTypeProjection
+
+@Deprecated(message = "This call is redundant, please just drop it", level = DeprecationLevel.ERROR)
+fun ConeTypeProjection.asCone(): ConeTypeProjection = this
 
 object ConeStarProjection : ConeTypeProjection() {
     override val kind: ProjectionKind
@@ -77,6 +90,7 @@ fun ConeTypeProjection.replaceType(newType: ConeKotlinType?): ConeTypeProjection
 }
 
 fun ConeKotlinTypeProjection.replaceType(newType: ConeKotlinType): ConeKotlinTypeProjection {
+    if (newType === type) return this
     return when (this) {
         is ConeKotlinType -> newType
         is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
@@ -84,3 +98,11 @@ fun ConeKotlinTypeProjection.replaceType(newType: ConeKotlinType): ConeKotlinTyp
         is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
     }
 }
+
+val ConeTypeProjection.variance: Variance
+    get() = when (this.kind) {
+        ProjectionKind.STAR -> Variance.OUT_VARIANCE
+        ProjectionKind.IN -> Variance.IN_VARIANCE
+        ProjectionKind.OUT -> Variance.OUT_VARIANCE
+        ProjectionKind.INVARIANT -> Variance.INVARIANT
+    }

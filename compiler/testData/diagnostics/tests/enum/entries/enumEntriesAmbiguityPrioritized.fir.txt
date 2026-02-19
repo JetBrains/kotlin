@@ -1,0 +1,20 @@
+FILE: enumEntriesAmbiguityPrioritized.fir.kt
+    public final enum class Ambiguous : R|kotlin/Enum<Ambiguous>| {
+        private constructor(): R|Ambiguous| {
+            super<R|kotlin/Enum<Ambiguous>|>()
+        }
+
+        public final static enum entry first: R|Ambiguous|
+        public final static enum entry entries: R|Ambiguous|
+        public final static fun values(): R|kotlin/Array<Ambiguous>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Ambiguous| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Ambiguous>|
+            public get(): R|kotlin/enums/EnumEntries<Ambiguous>|
+
+    }
+    public final val e: <ERROR TYPE REF: Unresolved name: ordinal> = Q|Ambiguous|.<Ambiguity: entries, [/Ambiguous.entries, /Ambiguous.entries]>#.<Unresolved name: ordinal>#
+        public get(): <ERROR TYPE REF: Unresolved name: ordinal>

@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -31,3 +33,6 @@ public class BaseJava {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, flexibleType, functionDeclaration, javaFunction, javaType,
+override, superExpression, typeAliasDeclaration */

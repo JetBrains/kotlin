@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun main() {
     val b: Boolean? = null
     if (b != null) {
@@ -9,3 +10,6 @@ fun main() {
 }
 
 fun foo(a: Boolean) = a
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast */

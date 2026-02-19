@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_EXPRESSION -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_EXPRESSION -UNREACHABLE_CODE
 
 fun <K> materialize(): K = null as K
 fun <K, T> materializeWithGenericArg(x: T): K = null as K
@@ -102,3 +103,7 @@ fun test() {
 
 fun foo1(x: String?) {}
 fun String?.foo2() {}
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+tryExpression, typeParameter, whenExpression, whenWithSubject */

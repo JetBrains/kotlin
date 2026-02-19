@@ -10,21 +10,14 @@ import org.jetbrains.kotlin.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.logging.Logger
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
 
 private fun defaultDeviceId(target: KonanTarget) = when (target.family) {
     Family.TVOS -> "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-4K"
     Family.IOS -> "com.apple.CoreSimulator.SimDeviceType.iPhone-14"
     Family.WATCHOS -> "com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-6-40mm"
     else -> error("Unexpected simulation target: $target")
-}
-
-private fun Executor.run(executableAbsolutePath: String, vararg args: String) = ByteArrayOutputStream().let {
-    this.execute(ExecuteRequest(executableAbsolutePath).apply {
-        this.args.addAll(args)
-        stdout = it
-        workingDirectory = File("").absoluteFile
-    }).assertSuccess()
-    it
 }
 
 /**
@@ -67,19 +60,20 @@ class XcodeSimulatorExecutor(
     }.toTypedArray()
 
     private fun simctl(vararg args: String): String {
-        val out = hostExecutor.run("/usr/bin/xcrun", *arrayOf("simctl", *args))
-        return out.toString("UTF-8").trim()
+        return hostExecutor.runProcess("/usr/bin/xcrun", "simctl", *args).stdout
     }
 
+    @Volatile
     private var deviceChecked: SimulatorDeviceDescriptor? = null
 
+    @Synchronized
     private fun ensureSimulatorExists() {
         // Already ensured that simulator for `deviceId` exists.
         if (deviceId == deviceChecked?.deviceTypeIdentifier) {
             logger.info("Device already exists: ${deviceChecked?.deviceTypeIdentifier} with name ${deviceChecked?.name}")
             return
         }
-        logger.info("Device was not cheked before. Find the device with id: $deviceId")
+        logger.info("Device was not checked before. Find the device with id: $deviceId")
         val simulatorRuntime = getSimulatorRuntime()
         logger.info("Runtime used for the $deviceId is $simulatorRuntime")
 
@@ -138,21 +132,42 @@ class XcodeSimulatorExecutor(
         logger.info("Runtime for the $deviceId is not available. Downloading runtimes for $target with Xcode")
         downloadRuntimeFor(simulatorOsName(target.family))
 
-        return checkNotNull(simulatorRuntimeOrNull()) { "Runtime is not available for the selected $deviceId. Check Xcode installation" }
+        return checkNotNull(simulatorRuntimeOrNull()) {
+            """
+            |Runtime is not available for the selected $deviceId. Check Xcode installation.
+            |osMinVersion = ${configurables.osVersionMin}
+            |$ xcrun simctl list runtimes --json
+            |_____
+            |${simctl("list", "runtimes", "--json")}
+            |-----
+            |$ xcrun simctl list devices --json
+            |_____
+            |${simctl("list", "devices", "--json")}
+            |-----
+            """.trimMargin()
+        }
     }
 
-    private fun downloadRuntimeFor(osName: String) {
+    private val downloadRuntimeResultByOsName = mutableMapOf<String, Result<Unit>>()
+
+    private fun downloadRuntimeFor(osName: String) = downloadRuntimeResultByOsName.getOrPut(osName) {
+        runCatching { downloadRuntimeForImpl(osName) }
+    }.getOrThrow()
+
+    private fun downloadRuntimeForImpl(osName: String) {
         val version = Xcode.findCurrent().version
         check(version.major >= 14) {
             "Was unable to get the required runtimes running on Xcode $version. Check the Xcode installation"
         }
-        if (version.minor >= 1) {
+        val runProcessResult = if (version >= XcodeVersion(14, 1)) {
             // Option -downloadPlatform NAME available only since 14.1
-            hostExecutor.run("/usr/bin/xcrun", "xcodebuild", "-downloadPlatform", osName)
+            hostExecutor.runProcess("/usr/bin/xcrun", "xcodebuild", "-downloadPlatform", osName)
         } else {
             // Have to download all platforms :(
-            hostExecutor.run("/usr/bin/xcrun", "xcodebuild", "-downloadAllPlatforms")
+            hostExecutor.runProcess("/usr/bin/xcrun", "xcodebuild", "-downloadAllPlatforms")
         }
+        logger.info("STDOUT:\n${runProcessResult.stdout}\n-----")
+        logger.info("STDERR:\n${runProcessResult.stderr}\n-----")
     }
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {

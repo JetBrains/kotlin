@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 import kotlin.reflect.KProperty
 
@@ -49,3 +50,7 @@ abstract class Test<in I, out O, P> {
     val <X> X.typeParameter9: Int where X : In<<!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>> get() = 0
     val <X> X.typeParameter0: Int where X : In<O> get() = 0
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, getter, in, integerLiteral,
+interfaceDeclaration, nullableType, operator, out, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver,
+starProjection, typeConstraint, typeParameter */

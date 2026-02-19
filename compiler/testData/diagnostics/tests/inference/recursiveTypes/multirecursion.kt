@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface I1<A : I1<A>>
 interface I2<C : I2<C>>
@@ -17,3 +18,6 @@ fun test(c1: C1<Box<Box<Box<Int>>>>, c2: C2) {
 }
 
 fun <S> select(vararg args: S): S = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty,
+nullableType, propertyDeclaration, typeConstraint, typeParameter, vararg */

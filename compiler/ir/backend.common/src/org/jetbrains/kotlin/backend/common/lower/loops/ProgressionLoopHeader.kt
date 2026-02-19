@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irNotEquals
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.irCastIfNeeded
 
 class ProgressionLoopHeader(
     headerInfo: ProgressionHeaderInfo,
@@ -43,37 +44,42 @@ class ProgressionLoopHeader(
             ) +
             listOfNotNull(stepVariable)
 
-    private var loopVariable: IrVariable? = null
+    private var loopVariables: List<IrVariable> = emptyList()
 
     override fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement> =
         with(builder) {
             // loopVariable is used in the loop condition if it can overflow. If no loopVariable was provided, create one.
-            this@ProgressionLoopHeader.loopVariable = if (headerInfo.canOverflow && loopVariable == null) {
-                scope.createTmpVariable(
-                    irGet(inductionVariable),
-                    nameHint = "loopVariable",
-                    isMutable = true
+            this@ProgressionLoopHeader.loopVariables = if (headerInfo.canOverflow && loopVariables.isEmpty()) {
+                listOf(
+                    scope.createTemporaryVariable(
+                        irGet(inductionVariable),
+                        nameHint = "loopVariable",
+                        isMutable = true,
+                        inventUniqueName = false,
+                    )
                 )
             } else {
-                loopVariable?.initializer = irGet(inductionVariable).let {
-                    headerInfo.progressionType.run {
-                        if (this is UnsignedProgressionType) {
-                            // The induction variable is signed for unsigned progressions but the loop variable should be unsigned.
-                            it.asUnsigned()
-                        } else it
+                for (loopVar in loopVariables) {
+                    loopVar.initializer = irGet(inductionVariable).let {
+                        headerInfo.progressionType.run {
+                            if (this is UnsignedProgressionType) {
+                                // The induction variable is signed for unsigned progressions but the loop variable should be unsigned.
+                                it.asUnsigned()
+                            } else it
+                        }
                     }
                 }
-                loopVariable
+                loopVariables
             }
 
             // loopVariable = inductionVariable
             // inductionVariable = inductionVariable + step
-            listOfNotNull(this@ProgressionLoopHeader.loopVariable, incrementInductionVariable(this))
+            this@ProgressionLoopHeader.loopVariables + incrementInductionVariable(this)
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
@@ -102,12 +108,15 @@ class ProgressionLoopHeader(
                 else
                     oldLoop.origin
                 val newLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, newLoopOrigin).apply {
-                    val loopVariableExpression = irGet(loopVariable!!).let {
-                        headerInfo.progressionType.run {
-                            if (this is UnsignedProgressionType) {
-                                // The loop variable is signed but bounds are signed for unsigned progressions.
-                                it.asSigned()
-                            } else it
+                    // Inliner might erase type of `loopVariable` to `Any`, so loopVariableExpression needs a cast to the known type,
+                    // which is usually `headerInfo.progressionType.elementClass`
+                    val loopVariableExpression = headerInfo.progressionType.run {
+                        if (this is UnsignedProgressionType) {
+                            // The loop variable is signed but bounds are signed for unsigned progressions.
+                            // Also, cannot use unreliable `elementClass` here: it depends on `allowUnsignedBounds`
+                            irCastIfNeeded(irGet(loopVariables.first()), unsignedType).asSigned()
+                        } else {
+                            irCastIfNeeded(irGet(loopVariables.first()), elementClass.defaultType)
                         }
                     }
                     label = oldLoop.label

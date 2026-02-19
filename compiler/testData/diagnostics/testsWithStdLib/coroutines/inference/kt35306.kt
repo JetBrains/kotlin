@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -41,3 +42,7 @@ interface Builder<T> {
 }
 
 data class Wrapped<T>(val value: T)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, data, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

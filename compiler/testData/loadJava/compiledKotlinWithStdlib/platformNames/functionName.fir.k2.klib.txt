@@ -1,6 +1,6 @@
 @R|test/A|(s = String(1)) public final fun foo(): R|kotlin/String|
 
-public final var v: R|kotlin/Int|
+field:@FIELD:R|test/A|(s = String(2)) public final var v: R|kotlin/Int|
     @PROPERTY_GETTER:R|test/A|(s = String(3)) public get(): R|kotlin/Int|
     @PROPERTY_SETTER:R|test/A|(s = String(4)) public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

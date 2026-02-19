@@ -1,2 +1,2 @@
-class My
-fun bar() {}
+actual class My
+actual fun bar() {}

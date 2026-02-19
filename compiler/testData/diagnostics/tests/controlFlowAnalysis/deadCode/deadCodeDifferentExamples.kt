@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun t1() : Int{
   return 0
@@ -167,3 +168,7 @@ fun returnInWhile(a: Int) {
     do {return}
     while (<!UNREACHABLE_CODE!>1 > a<!>)
 }
+
+/* GENERATED_FIR_TAGS: break, comparisonExpression, disjunctionExpression, doWhileLoop, equalityExpression, forLoop,
+functionDeclaration, ifExpression, integerLiteral, javaFunction, localProperty, nullableType, propertyDeclaration,
+rangeExpression, stringLiteral, tryExpression, whileLoop */

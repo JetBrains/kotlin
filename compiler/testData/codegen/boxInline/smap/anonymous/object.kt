@@ -1,6 +1,6 @@
 // NO_CHECK_LAMBDA_INLINING
-// FILE: 1.kt
 
+// FILE: 1.kt
 
 package builders
 

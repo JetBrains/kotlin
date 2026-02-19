@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-52407
@@ -17,3 +18,5 @@ import x.*
 fun main() {
     Throws().test()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

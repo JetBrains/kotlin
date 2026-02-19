@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
@@ -38,3 +39,7 @@ class B {
         consume(x)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, init, integerLiteral,
+interfaceDeclaration, nullableType, operator, propertyDeclaration, propertyDelegate, setter, starProjection,
+typeParameter */

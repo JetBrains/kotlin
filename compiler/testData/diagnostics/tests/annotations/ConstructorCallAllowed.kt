@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // SKIP_TXT
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 import kotlin.reflect.KClass
 
@@ -17,3 +18,6 @@ fun box() {
     val c = C()
     val foo = G(Int::class)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration, integerLiteral, localProperty,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C {
 
     fun f (a : Boolean, b : Boolean) {
@@ -94,3 +95,7 @@ class C {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, classDeclaration, comparisonExpression, continue, equalityExpression, forLoop,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression,
+safeCall, smartcast, stringLiteral, whileLoop */

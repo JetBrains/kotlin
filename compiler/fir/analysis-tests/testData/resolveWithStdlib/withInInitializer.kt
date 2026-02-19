@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class First(val member: Int)
 
 class Second {
@@ -11,3 +12,6 @@ class Second {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, integerLiteral, intersectionType, lambdaLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

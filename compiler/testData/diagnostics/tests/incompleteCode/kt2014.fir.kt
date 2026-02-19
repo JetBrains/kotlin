@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2014 Better diagnostic when using property syntax to call a method
 package c
 
@@ -18,3 +19,5 @@ fun x(f : Foo) {
 }
 
 object R {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, objectDeclaration, propertyDeclaration */

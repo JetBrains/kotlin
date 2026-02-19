@@ -2,7 +2,6 @@ description = "Kotlin metadata manipulation library"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 sourceSets {
@@ -18,4 +17,7 @@ dependencies {
 
 kotlin {
     explicitApi()
+    compilerOptions {
+        freeCompilerArgs.add("-Xallow-kotlin-package")
+    }
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(u : Unit) : Int = 1
 
 fun test() : Int {
@@ -13,3 +14,6 @@ class A() {
 }
 
 fun foo1() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

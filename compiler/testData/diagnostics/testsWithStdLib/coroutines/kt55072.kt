@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-55072
 
@@ -27,3 +28,6 @@ class Player
 
     private fun launch(block: suspend Any.() -> Unit) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, javaFunction, lambdaLiteral, localFunction,
+suspend, typeWithExtension */

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.js.config.ModuleKind
+
 class JsModuleDescriptor<out T>(
     val name: String,
     val kind: ModuleKind,

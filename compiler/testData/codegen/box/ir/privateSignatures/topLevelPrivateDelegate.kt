@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 
 // MODULE: lib
 // FILE: l1.kt

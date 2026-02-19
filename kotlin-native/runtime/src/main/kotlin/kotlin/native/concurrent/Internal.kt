@@ -2,22 +2,18 @@
  * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalForeignApi::class)
+@file:OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.DescribeObjectForDebugging
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.InternalForKotlinNative
-import kotlin.native.internal.debugDescription
 import kotlin.native.identityHashCode
-import kotlin.reflect.KClass
-import kotlinx.cinterop.*
-
-@GCUnsafeCall("Kotlin_Any_isShareable")
-@FreezingIsDeprecated
-external internal fun Any?.isShareable(): Boolean
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.CFunction
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.native.internal.*
+import kotlin.native.internal.ref.*
+import kotlin.native.NoInline
 
 // Implementation details.
 
@@ -25,10 +21,19 @@ external internal fun Any?.isShareable(): Boolean
 @ObsoleteWorkersApi
 external internal fun stateOfFuture(id: Int): Int
 
-@GCUnsafeCall("Kotlin_Worker_consumeFuture")
 @PublishedApi
 @ObsoleteWorkersApi
-external internal fun consumeFuture(id: Int): Any?
+internal fun consumeFuture(id: Int): Any? {
+    val ref = consumeFutureImpl(id)
+    val result = dereferenceExternalRCRef(ref)
+    releaseExternalRCRef(ref)
+    disposeExternalRCRef(ref)
+    return result
+}
+
+@GCUnsafeCall("Kotlin_Worker_consumeFuture")
+@ObsoleteWorkersApi
+external private fun consumeFutureImpl(id: Int): ExternalRCRef
 
 @GCUnsafeCall("Kotlin_Worker_waitForAnyFuture")
 @ObsoleteWorkersApi
@@ -38,15 +43,20 @@ external internal fun waitForAnyFuture(versionToken: Int, millis: Int): Boolean
 @ObsoleteWorkersApi
 external internal fun versionToken(): Int
 
-@kotlin.native.internal.ExportForCompiler
+@PublishedApi
+@ExportForCompiler
 @ObsoleteWorkersApi
+@NoInline
+@UsedFromCompilerGeneratedCode
 internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,
-                         job: CPointer<CFunction<*>>): Future<Any?> =
-        Future<Any?>(executeInternal(worker.id, mode.value, producer, job))
+                         job: CPointer<CFunction<*>>): Future<Any?> {
+    val jobArgument = createRetainedExternalRCRef(producer())
+    return Future<Any?>(executeInternal(worker.id, jobArgument, job))
+}
 
 @GCUnsafeCall("Kotlin_Worker_startInternal")
 @ObsoleteWorkersApi
-external internal fun startInternal(errorReporting: Boolean, name: String?): Int
+external internal fun startInternal(errorReporting: Boolean, name: ExternalRCRef): Int
 
 @GCUnsafeCall("Kotlin_Worker_currentInternal")
 @ObsoleteWorkersApi
@@ -59,11 +69,11 @@ external internal fun requestTerminationInternal(id: Int, processScheduledJobs: 
 @GCUnsafeCall("Kotlin_Worker_executeInternal")
 @ObsoleteWorkersApi
 external internal fun executeInternal(
-        id: Int, mode: Int, producer: () -> Any?, job: CPointer<CFunction<*>>): Int
+        id: Int, jobArgument: ExternalRCRef, job: CPointer<CFunction<*>>): Int
 
 @GCUnsafeCall("Kotlin_Worker_executeAfterInternal")
 @ObsoleteWorkersApi
-external internal fun executeAfterInternal(id: Int, operation: () -> Unit, afterMicroseconds: Long): Unit
+external internal fun executeAfterInternal(id: Int, operation: ExternalRCRef, afterMicroseconds: Long): Unit
 
 @GCUnsafeCall("Kotlin_Worker_processQueueInternal")
 @ObsoleteWorkersApi
@@ -75,7 +85,7 @@ external internal fun parkInternal(id: Int, timeoutMicroseconds: Long, process: 
 
 @GCUnsafeCall("Kotlin_Worker_getNameInternal")
 @ObsoleteWorkersApi
-external internal fun getWorkerNameInternal(id: Int): String?
+external internal fun getWorkerNameInternal(id: Int): ExternalRCRef
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
@@ -89,11 +99,6 @@ internal fun ThrowWrongWorkerOrAlreadyTerminated(): Unit =
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
-internal fun ThrowCannotTransferOwnership(): Unit =
-        throw IllegalStateException("Unable to transfer object: it is still owned elsewhere")
-
-@ExportForCppRuntime
-@ObsoleteWorkersApi
 internal fun ThrowFutureInvalidState(): Unit =
         throw IllegalStateException("Future is in an invalid state")
 
@@ -104,49 +109,42 @@ internal fun ThrowWorkerUnsupported(): Unit =
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
-internal fun WorkerLaunchpad(function: () -> Any?) = function()
-
-@PublishedApi
-@GCUnsafeCall("Kotlin_Worker_detachObjectGraphInternal")
-@ObsoleteWorkersApi
-external internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr
-
-@PublishedApi
-@GCUnsafeCall("Kotlin_Worker_attachObjectGraphInternal")
-@ObsoleteWorkersApi
-external internal fun attachObjectGraphInternal(stable: NativePtr): Any?
-
-@GCUnsafeCall("Kotlin_Worker_freezeInternal")
-@FreezingIsDeprecated
-internal external fun freezeInternal(it: Any?)
-
-@GCUnsafeCall("Kotlin_Worker_isFrozenInternal")
-@FreezingIsDeprecated
-internal external fun isFrozenInternal(it: Any?): Boolean
-
-@ExportForCppRuntime
-@FreezingIsDeprecated
-internal fun ThrowFreezingException(toFreeze: Any, blocker: Any): Nothing =
-        throw FreezingException(toFreeze, blocker)
-
-@ExportForCppRuntime
-@FreezingIsDeprecated
-@OptIn(ExperimentalNativeApi::class)
-internal fun ThrowInvalidMutabilityException(where: Any): Nothing {
-    val description = debugDescription(where::class, where.identityHashCode())
-    throw InvalidMutabilityException("mutation attempt of frozen $description")
+internal fun WorkerExecuteLaunchpad(job: CPointer<CFunction<*>>, jobArgument: ExternalRCRef): ExternalRCRef {
+    val arg = dereferenceExternalRCRef(jobArgument)
+    releaseExternalRCRef(jobArgument)
+    disposeExternalRCRef(jobArgument)
+    val result = invokeCFunction(job, arg)
+    return createRetainedExternalRCRef(result)
 }
 
 @ExportForCppRuntime
-@FreezingIsDeprecated
-internal fun ThrowIllegalObjectSharingException(typeInfo: NativePtr, address: NativePtr) {
-    val description = DescribeObjectForDebugging(typeInfo, address)
-    throw IncorrectDereferenceException("illegal attempt to access non-shared $description from other thread")
+@ObsoleteWorkersApi
+internal fun WorkerExecuteAfterLaunchpad(job: ExternalRCRef) {
+    @Suppress("UNCHECKED_CAST")
+    val func = dereferenceExternalRCRef(job) as () -> Unit
+    releaseExternalRCRef(job)
+    disposeExternalRCRef(job)
+    func()
 }
 
-@GCUnsafeCall("Kotlin_AtomicReference_checkIfFrozen")
-@FreezingIsDeprecated
-external internal fun checkIfFrozen(ref: Any?)
+@GCUnsafeCall("Kotlin_Worker_invokeCFunction")
+@ObsoleteWorkersApi
+external private fun invokeCFunction(job: CPointer<CFunction<*>>, jobArgument: Any?): Any?
+
+@PublishedApi
+@ObsoleteWorkersApi
+internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr {
+    return createRetainedExternalRCRef(producer())
+}
+
+@PublishedApi
+@ObsoleteWorkersApi
+internal fun attachObjectGraphInternal(stable: NativePtr): Any? {
+    val result = dereferenceExternalRCRef(stable)
+    releaseExternalRCRef(stable)
+    disposeExternalRCRef(stable)
+    return result
+}
 
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_Worker_waitTermination")

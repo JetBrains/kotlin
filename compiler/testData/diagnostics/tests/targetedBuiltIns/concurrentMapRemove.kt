@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 
 import java.util.concurrent.*
@@ -19,3 +20,6 @@ fun foo() {
     concurrentHash.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, 1)
     concurrentHash.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, integerLiteral, nullableType, propertyDeclaration,
+stringLiteral */

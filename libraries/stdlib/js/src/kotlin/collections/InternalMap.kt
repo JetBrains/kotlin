@@ -11,6 +11,7 @@ package kotlin.collections
 internal interface InternalMap<K, V> {
     val size: Int
 
+    @IgnorableReturnValue
     fun put(key: K, value: V): V?
     fun putAll(from: Map<out K, V>)
 
@@ -22,6 +23,7 @@ internal interface InternalMap<K, V> {
     fun containsOtherEntry(entry: Map.Entry<*, *>): Boolean
 
     fun remove(key: K): V?
+    fun removeKey(key: K): Boolean
     fun removeValue(value: V): Boolean
     fun removeEntry(entry: Map.Entry<K, V>): Boolean
 

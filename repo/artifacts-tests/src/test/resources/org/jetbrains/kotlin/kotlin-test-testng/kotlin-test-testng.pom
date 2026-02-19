@@ -11,11 +11,11 @@
   <artifactId>kotlin-test-testng</artifactId>
   <version>ArtifactsTest.version</version>
   <name>Kotlin Test Testng</name>
-  <description>Kotlin Test Support for testng</description>
+  <description>Kotlin Test library support for TestNG</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
@@ -41,7 +41,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.13.1</version>
+      <version>7.5.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

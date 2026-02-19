@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 // FILE: Z.kt
 inline class Z(val x: Int) {

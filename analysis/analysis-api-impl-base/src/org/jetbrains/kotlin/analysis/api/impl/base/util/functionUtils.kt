@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@KaImplementationDetail
 val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
     listOf(
         CallableId(StandardNames.getFunctionClassId(arity), OperatorNameConventions.INVOKE),
-        CallableId(StandardNames.getSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE)
+        CallableId(StandardNames.getSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE),
+        CallableId(StandardNames.getKFunctionClassId(arity), OperatorNameConventions.INVOKE),
+        CallableId(StandardNames.getKSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE)
     )
 }

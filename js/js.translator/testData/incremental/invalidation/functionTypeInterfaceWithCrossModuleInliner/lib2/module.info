@@ -1,0 +1,77 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : l2a.0.kt -> l2a.kt
+        U : l2b.0.kt -> l2b.kt
+    added file: l2a.kt, l2b.kt
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : l2a.1.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 2:
+    dependencies: lib1
+    modifications:
+        U : l2a.2.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 3:
+    dependencies: lib1
+    modifications:
+        U : l2a.3.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 4:
+    dependencies: lib1
+    modifications:
+        U : l2a.4.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 5:
+    dependencies: lib1
+    modifications:
+        U : l2b.5.kt -> l2b.kt
+    modified ir: l2b.kt
+STEP 6:
+    dependencies: lib1
+    modifications:
+        U : l2a.6.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 7:
+    dependencies: lib1
+    modifications:
+        U : l2a.7.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 8:
+    dependencies: lib1
+    modifications:
+        U : l2a.8.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 9:
+    dependencies: lib1
+    modified ir: l2a.kt
+STEP 10:
+    dependencies: lib1
+    modifications:
+        U : l2a.10.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 11:
+    dependencies: lib1
+    modified ir: l2a.kt
+STEP 12:
+    dependencies: lib1
+    modifications:
+        U : l2a.12.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 13:
+    dependencies: lib1
+    modifications:
+        U : l2a.13.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 14:
+    dependencies: lib1
+    modifications:
+        U : l2a.14.kt -> l2a.kt
+    modified ir: l2a.kt
+STEP 15:
+    dependencies: lib1
+    modifications:
+        U : l2a.15.kt -> l2a.kt
+    modified ir: l2a.kt

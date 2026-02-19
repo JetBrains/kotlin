@@ -92,4 +92,59 @@ class Ranges {
         assertPrints(ascendingProgression.toList(), "[a, c, e]")
         assertPrints(descendingProgression.toList(), "[f, d, b]")
     }
+
+    @Sample
+    fun downTo() {
+        val descendingProgression = 5 downTo 1
+        assertPrints(descendingProgression.toList(), "[5, 4, 3, 2, 1]")
+        val singleElementProgression = 5 downTo 5
+        assertPrints(singleElementProgression.toList(), "[5]")
+        val emptyProgression = 5 downTo 7
+        assertPrints(emptyProgression.toList(), "[]")
+
+        for (i in 3 downTo 0) {
+            if (i > 0) println("$i...") else println("Launch!")
+        }
+    }
+
+    @Sample
+    fun closedRangeContains() {
+        val range = 1..10
+        assertTrue(5 in range)
+        // Both lower and upper bounds are contained within the range
+        assertTrue(1 in range)
+        assertTrue(10 in range)
+        // Values lying outside bounds are not contained within the range
+        assertFalse(0 in range)
+        assertFalse(11 in range)
+
+        val stringRange = "AA".."ZZ"
+        assertTrue("AA" in stringRange)
+        assertTrue("AB" in stringRange)
+        assertTrue("ZZ" in stringRange)
+        // Note that "contains" relies on "compareTo" implementation, so in some cases results may not be intuitive.
+        // Here, "AAA" is lexicographically greater than "AA", but lower than "ZZ", thus the range contains it.
+        assertTrue("AAA" in stringRange)
+    }
+
+    @Sample
+    fun openEndRangeContains() {
+        val range = 1..<10
+        assertTrue(5 in range)
+        // The range includes the lower bound, but the upper bound is excluded
+        assertTrue(1 in range)
+        assertFalse(10 in range)
+        assertTrue(9 in range)
+        // Values lying outside bounds are not contained within the range
+        assertFalse(0 in range)
+        assertFalse(11 in range)
+
+        val stringRange = "AA"..<"ZZ"
+        assertTrue("AA" in stringRange)
+        assertTrue("AB" in stringRange)
+        assertFalse("ZZ" in stringRange)
+        // Note that "contains" relies on "compareTo" implementation, so in some cases results may not be intuitive.
+        // Here, "ZYX" is lexicographically greater than "AA", but lower than "ZZ", thus the range contains it.
+        assertTrue("ZYX" in stringRange)
+    }
 }

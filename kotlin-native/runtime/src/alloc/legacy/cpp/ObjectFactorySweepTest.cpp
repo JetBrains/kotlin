@@ -15,16 +15,15 @@
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
-#include "WeakRef.hpp"
 
 using namespace kotlin;
 
 namespace {
 
 struct Payload {
-    ObjHeader* field1;
-    ObjHeader* field2;
-    ObjHeader* field3;
+    mm::RefField field1;
+    mm::RefField field2;
+    mm::RefField field3;
 
     static constexpr std::array kFields = {
             &Payload::field1,
@@ -194,28 +193,29 @@ public:
         }
     }
 
-    std_support::vector<ObjHeader*> Sweep() {
-        gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), specialRefRegistry_);
+    std::vector<ObjHeader*> Sweep() {
+        gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), externalRCRefRegistry_);
         alloc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
         auto finalizers = alloc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
-        std_support::vector<ObjHeader*> objects;
-        for (auto node : finalizers.IterForTests()) {
+        finalizers.mergeIntoRegular();
+        std::vector<ObjHeader*> objects;
+        for (auto node : finalizers.regular.IterForTests()) {
             objects.push_back(node.GetObjHeader());
         }
-        finalizers_.push_back(std::move(finalizers));
+        finalizers_.push_back(std::move(finalizers.regular));
         return objects;
     }
 
-    std_support::vector<ObjHeader*> Alive() {
-        std_support::vector<ObjHeader*> objects;
+    std::vector<ObjHeader*> Alive() {
+        std::vector<ObjHeader*> objects;
         for (auto node : objectFactory_.LockForIter()) {
             objects.push_back(node.GetObjHeader());
         }
         return objects;
     }
 
-    std_support::vector<mm::ExtraObjectData*> AliveExtraObjects() {
-        std_support::vector<mm::ExtraObjectData*> objects;
+    std::vector<mm::ExtraObjectData*> AliveExtraObjects() {
+        std::vector<mm::ExtraObjectData*> objects;
         for (auto &node : extraObjectFactory_.LockForIter()) {
             objects.push_back(&node);
         }
@@ -254,9 +254,9 @@ public:
         auto& extraObjectData = InstallExtraData(objHeader);
         auto* setHeader = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
         EXPECT_EQ(setHeader, weakReference.header());
-        weakReference->weakRef = static_cast<mm::RawSpecialRef*>(specialRefRegistryThreadQueue_.createWeakRef(objHeader));
+        weakReference->weakRef = externalRCRefRegistryThreadQueue_.createExternalRCRefImpl(objHeader, 0).toRaw();
         weakReference->referred = objHeader;
-        specialRefRegistryThreadQueue_.publish();
+        externalRCRefRegistryThreadQueue_.publish();
         return weakReference;
     }
 
@@ -270,10 +270,10 @@ private:
     ObjectFactory::ThreadQueue objectFactoryThreadQueue_{objectFactory_, alloc::AllocatorBasic()};
     ExtraObjectsDataFactory extraObjectFactory_;
     ExtraObjectsDataFactory::ThreadQueue extraObjectFactoryThreadQueue_{extraObjectFactory_};
-    mm::SpecialRefRegistry specialRefRegistry_;
-    mm::SpecialRefRegistry::ThreadQueue specialRefRegistryThreadQueue_{specialRefRegistry_};
+    mm::ExternalRCRefRegistry externalRCRefRegistry_;
+    mm::ExternalRCRefRegistry::ThreadQueue externalRCRefRegistryThreadQueue_{externalRCRefRegistry_};
 
-    std_support::vector<ObjectFactory::FinalizerQueue> finalizers_;
+    std::vector<ObjectFactory::FinalizerQueue> finalizers_;
 };
 
 } // namespace

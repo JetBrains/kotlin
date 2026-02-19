@@ -46,9 +46,18 @@ internal class CompileServicesFacadeMessageCollector(
             else -> {
                 val reportSeverity = when (severity) {
                     CompilerMessageSeverity.ERROR -> ReportSeverity.ERROR
-                    CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> ReportSeverity.WARNING
+
+                    CompilerMessageSeverity.WARNING,
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    CompilerMessageSeverity.FIXED_WARNING
+                        -> ReportSeverity.WARNING
+
                     CompilerMessageSeverity.INFO -> ReportSeverity.INFO
-                    else -> ReportSeverity.DEBUG
+
+                    CompilerMessageSeverity.EXCEPTION,
+                    CompilerMessageSeverity.LOGGING,
+                    CompilerMessageSeverity.OUTPUT
+                        -> ReportSeverity.DEBUG
                 }
 
                 if (reportSeverity.code <= mySeverity) {

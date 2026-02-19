@@ -1,0 +1,49 @@
+interface Controller<F : Any?> {
+  abstract fun yield(t: F)
+
+}
+
+interface Intf {
+  abstract fun foo()
+
+}
+
+fun box(b: Boolean) {
+  generate<Unit>(g = local suspend fun Controller<Unit>.<anonymous>() {
+    expectIntf(intf = { // BLOCK
+      local class <no name provided> : Intf {
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        override fun foo() {
+          when {
+            b -> { // BLOCK
+              someUnit()
+            }
+            else -> { // BLOCK
+              $this$generate.yield(t = Unit)
+            }
+          }
+        }
+
+      }
+
+      <no name provided>()
+    })
+    someUnit()
+  }
+)
+}
+
+fun expectIntf(intf: Intf) {
+}
+
+fun <S : Any?> generate(g: @ExtensionFunctionType SuspendFunction1<Controller<S>, Unit>) {
+}
+
+fun someUnit() {
+}
+

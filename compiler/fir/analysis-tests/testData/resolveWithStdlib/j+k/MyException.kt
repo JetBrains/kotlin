@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // FILE: YourException.java
 class YourException extends Exception {
@@ -26,3 +27,6 @@ fun test(e: Exception, stream: PrintStream) {
     e.printStackTrace(stream)
     val result = e.getLocalizedMessage()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration */

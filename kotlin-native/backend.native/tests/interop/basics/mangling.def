@@ -1,6 +1,0 @@
----
-
-// test mangling of special names
-
-enum _Companion {Companion, Any};
-enum _Companion companion = Companion;

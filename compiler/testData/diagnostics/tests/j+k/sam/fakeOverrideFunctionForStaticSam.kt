@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: BehaviorSubject.java
 public class BehaviorSubject<T> extends Observable<T> {
@@ -19,3 +20,6 @@ fun main() {
     BehaviorSubject.create<String>(null)
     BehaviorSubject.create<Int> { }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, nullableType,
+samConversion */

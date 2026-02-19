@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-1185 Support full enumeration check for 'when'
 
@@ -46,3 +47,7 @@ fun bar1(c: Color) = <!NO_ELSE_IN_WHEN!>when<!> (c) {
     Color.RED -> 1
     Color.GREEN -> 2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, integerLiteral, objectDeclaration, primaryConstructor, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 
 const val z = "OK"

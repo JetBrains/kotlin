@@ -1,5 +1,6 @@
 // KT-30629
 
+// FILE: lib.kt
 abstract class BaseFragment<T : BaseViewModel> {
     lateinit var viewModel: T
 
@@ -33,6 +34,7 @@ class DerivedViewModel : BaseViewModel() {
     var property: String? = "OK"
 }
 
+// FILE: main.kt
 fun box(): String {
     return DerivedFragment().onActivityCreated()
 }

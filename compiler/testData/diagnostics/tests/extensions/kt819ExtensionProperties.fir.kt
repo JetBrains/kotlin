@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-819 Redeclaration error for extension properties with the same name and different receivers
 // FULL_JDK
 
@@ -35,3 +36,7 @@ class B() : A() {
         s.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, ifExpression,
+integerLiteral, isExpression, javaFunction, override, primaryConstructor, propertyDeclaration,
+propertyWithExtensionReceiver, smartcast, thisExpression */

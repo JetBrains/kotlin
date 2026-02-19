@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface FirDeclaration
 
 interface FirSymbolOwner<E : FirSymbolOwner<E>> {
@@ -15,3 +16,6 @@ fun test(symbol: AbstractFirBasedSymbol<*>) {
     val firAdaptee = symbol.fir as FirFunction
     foo(firAdaptee)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, functionDeclaration, interfaceDeclaration, localProperty,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

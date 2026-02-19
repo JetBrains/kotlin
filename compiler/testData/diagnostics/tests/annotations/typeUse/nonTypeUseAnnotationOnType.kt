@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
+// LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // ISSUE: KT-28449
 
 @Target(AnnotationTarget.PROPERTY_GETTER)
@@ -21,3 +22,6 @@ fun test_3(a: Any) {
 }
 
 fun <T> test_4() where T : <!WRONG_ANNOTATION_TARGET!>@Ann<!> Any, T : <!WRONG_ANNOTATION_TARGET!>@Ann<!> CharSequence {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, asExpression, classDeclaration,
+functionDeclaration, ifExpression, isExpression, nullableType, propertyDeclaration, typeConstraint, typeParameter */

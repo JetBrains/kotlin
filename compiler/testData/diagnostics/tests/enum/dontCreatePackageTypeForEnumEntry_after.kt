@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
+// LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
 
 enum class E {
     FIRST,
@@ -15,3 +16,6 @@ fun f2() = E.FIRST.(foo)()
 fun f3() = E.SECOND.foo()
 fun f4() = E.SECOND.(foo)()
 fun f5() = E.SECOND.<!UNRESOLVED_REFERENCE!>A<!>()
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, functionalType, lambdaLiteral,
+propertyDeclaration, typeWithExtension */

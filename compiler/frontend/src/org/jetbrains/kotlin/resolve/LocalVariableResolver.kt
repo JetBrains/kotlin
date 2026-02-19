@@ -150,7 +150,7 @@ class LocalVariableResolver(
         modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(ktProperty, descriptor)
         identifierChecker.checkDeclaration(ktProperty, context.trace)
 
-        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(context.trace, ktProperty, descriptor, languageVersionSettings)
+        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(context.trace, ktProperty, descriptor)
     }
 
     private fun resolveLocalVariableDescriptor(

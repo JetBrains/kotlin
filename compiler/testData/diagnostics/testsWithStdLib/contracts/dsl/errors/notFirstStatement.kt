@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -REDUNDANT_LABEL_WARNING -UNUSED_PARAMETER -NOTHING_TO_INLINE -CAST_NEVER_SUCCEEDS
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -REDUNDANT_LABEL_WARNING -UNUSED_PARAMETER -NOTHING_TO_INLINE -CAST_NEVER_SUCCEEDS
 // Issues: KT-26153, KT-26191
 
 import kotlin.contracts.*
@@ -74,3 +75,7 @@ fun case_7(cond: Boolean): Boolean {
     }
     return true
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, contractCallsEffect, contractConditionalEffect, contracts,
+equalityExpression, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localClass,
+localFunction, localProperty, nullableType, propertyDeclaration */

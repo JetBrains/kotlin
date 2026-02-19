@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /AnnotationLoader { // /AnnotationLoader|null[0]
+    constructor <init>() // /AnnotationLoader.<init>|<init>(){}[0]
+    final fun loadAnnotation(): /Visitor? // /AnnotationLoader.loadAnnotation|loadAnnotation(){}[0]
+}
+abstract interface /Visitor { // /Visitor|null[0]
+    abstract fun visit() // /Visitor.visit|visit(){}[0]
+    open fun visitAnnotation(): /Visitor? // /Visitor.visitAnnotation|visitAnnotation(){}[0]
+    open fun visitArray(): /Visitor? // /Visitor.visitArray|visitArray(){}[0]
+}

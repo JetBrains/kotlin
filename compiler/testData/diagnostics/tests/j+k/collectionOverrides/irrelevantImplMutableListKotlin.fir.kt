@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: AImpl.kt
 
 public abstract class AImpl {
@@ -104,3 +105,6 @@ fun main() {
     x.remove("")
     x.remove(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, javaType, localProperty,
+nullableType, propertyDeclaration, starProjection, stringLiteral */

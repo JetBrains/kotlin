@@ -42,11 +42,11 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
     protected val typeParameterContainers = ArrayList<TypeParameterContainer>(4)
 
-    protected open fun FunctionDeclaration.platformSpecificFunctionName(): String? = null
+    protected open fun makePlatformSpecificFunctionNameMangleComputer(
+        function: FunctionDeclaration
+    ): PlatformSpecificFunctionNameMangleComputer<ValueParameter> = PlatformSpecificFunctionNameMangleComputer.Default
 
     protected open fun FunctionDeclaration.platformSpecificSuffix(): String? = null
-
-    protected open fun FunctionDeclaration.specialValueParamPrefix(param: ValueParameter): String = ""
 
     protected open fun addReturnType(): Boolean = false
 
@@ -109,11 +109,11 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         builder.appendName(name)
     }
 
-    protected abstract fun getContextReceiverTypes(function: FunctionDeclaration): List<Type>
+    protected abstract fun getContextParameters(function: FunctionDeclaration): List<ValueParameter>
 
-    protected abstract fun getExtensionReceiverParameterType(function: FunctionDeclaration): Type?
+    protected abstract fun getExtensionReceiverParameter(function: FunctionDeclaration): ValueParameter?
 
-    protected abstract fun getValueParameters(function: FunctionDeclaration): List<ValueParameter>
+    protected abstract fun getRegularParameters(function: FunctionDeclaration): List<ValueParameter>
 
     protected abstract fun getReturnType(function: FunctionDeclaration): Type?
 
@@ -145,7 +145,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
         builder.appendName(MangleConstant.FUNCTION_NAME_PREFIX)
 
-        platformSpecificFunctionName()?.let {
+        makePlatformSpecificFunctionNameMangleComputer(this).computePlatformSpecificFunctionName()?.let {
             builder.append(it)
             return
         }
@@ -169,18 +169,23 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
         platformSpecificFunctionMarks().forEach { builder.appendSignature(it) }
 
-        getContextReceiverTypes(this).forEach {
-            builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
-            mangleType(builder, it, session)
+        val contextParameters = getContextParameters(this)
+        if (contextParameters.isNotEmpty()) {
+            contextParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+                mangleValueParameter(this, it, session)
+            }
         }
 
-        getExtensionReceiverParameterType(this)?.let {
+        getExtensionReceiverParameter(this)?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleType(builder, it, session)
+            mangleValueParameter(builder, it, session)
         }
 
-        getValueParameters(this).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
-            appendSignature(specialValueParamPrefix(it))
+        getRegularParameters(this).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+            appendSignature(
+                makePlatformSpecificFunctionNameMangleComputer(this@mangleSignature)
+                    .computePlatformSpecificValueParameterPrefix(it)
+            )
             mangleValueParameter(this, it, session)
         }
 

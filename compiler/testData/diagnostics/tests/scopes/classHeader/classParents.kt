@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface I<F, G, H>
 
@@ -10,3 +11,6 @@ class A(impl: Interface) : <!UNRESOLVED_REFERENCE!>Nested<!>(), <!DELEGATION_NOT
 
     interface Interface
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, inner, interfaceDeclaration, nestedClass, nullableType,
+primaryConstructor, typeParameter */

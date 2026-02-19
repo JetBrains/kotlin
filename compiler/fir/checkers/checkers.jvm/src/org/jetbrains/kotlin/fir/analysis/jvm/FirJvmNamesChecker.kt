@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.name.Name
 
 object FirJvmNamesChecker {
@@ -21,22 +22,24 @@ object FirJvmNamesChecker {
     private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
 
 
-    fun checkNameAndReport(name: Name, declarationSource: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    fun checkNameAndReport(
+        name: Name,
+        declarationSource: KtSourceElement?,
+    ) {
         if (declarationSource != null && declarationSource.kind !is KtFakeSourceElementKind && !name.isSpecial) {
             val nameString = name.asString()
             if (nameString.any { it in INVALID_CHARS }) {
                 reporter.reportOn(
                     declarationSource,
                     FirErrors.INVALID_CHARACTERS,
-                    "contains illegal characters: ${INVALID_CHARS.intersect(nameString.toSet()).joinToString("")}",
-                    context
+                    "contains illegal characters: ${INVALID_CHARS.intersect(nameString.toSet()).joinToString("")}"
                 )
             } else if (nameString.any { it in DANGEROUS_CHARS }) {
                 reporter.reportOn(
                     declarationSource,
-                    FirErrors.DANGEROUS_CHARACTERS,
-                    DANGEROUS_CHARS.intersect(nameString.toSet()).joinToString(""),
-                    context
+                    FirJvmErrors.DANGEROUS_CHARACTERS,
+                    DANGEROUS_CHARS.intersect(nameString.toSet()).joinToString("")
                 )
             }
         }

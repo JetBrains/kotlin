@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-63068
 fun Int.f() {
     this<!UNRESOLVED_REFERENCE!>@Int<!>
 }
@@ -25,3 +27,6 @@ class X {
         this<!UNRESOLVED_REFERENCE!>@Int<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+propertyDeclaration, propertyWithExtensionReceiver, setter, thisExpression */

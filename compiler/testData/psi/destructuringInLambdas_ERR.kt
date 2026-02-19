@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     a8.filter { ((x, y), z) -> foo8() }
     a9.filter { (x -> foo9() }

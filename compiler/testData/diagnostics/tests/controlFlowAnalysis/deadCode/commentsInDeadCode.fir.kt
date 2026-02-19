@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package a
 
 fun test1() {
@@ -19,4 +20,4 @@ fun todo(): Nothing = throw Exception()
 
 fun bar(i: Int, s: String, a: Any) {}
 
-
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

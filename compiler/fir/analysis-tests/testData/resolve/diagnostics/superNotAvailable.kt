@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun String.f() {
     <!SUPER_NOT_AVAILABLE!>super@f<!>.compareTo("")
     <!SUPER_NOT_AVAILABLE!>super<!>.compareTo("")
@@ -18,3 +19,5 @@ class A {
         <!UNRESOLVED_REFERENCE!>println<!>("Fest")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, stringLiteral */

@@ -1,6 +1,6 @@
-// IGNORE_REVERSED_RESOLVE
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class CommonClass<!> {
     fun memberFun()
@@ -23,7 +23,6 @@ actual val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonProperty<!>: String
     get() = "hello"
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 
 expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class IntermediateClass<!> {
     fun memberFun()
@@ -66,3 +65,6 @@ actual fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformFun<!>() {}
 expect val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformProperty<!>: String
 actual val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformProperty<!>: String
     get() = "hello"
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, getter, inner, integerLiteral, nestedClass,
+propertyDeclaration, stringLiteral */

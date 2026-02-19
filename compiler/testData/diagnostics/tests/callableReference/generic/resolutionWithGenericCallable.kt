@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun test() {
     val a1: Array<Double.(Double) -> Double> = arrayOf(Double::plus, Double::minus)
@@ -19,3 +20,6 @@ fun test2() {
     bar("", ::foo)
     bar(1.0, ::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-1248 Control visibility of overrides needed
 package kt1248
@@ -11,3 +12,5 @@ class Success<T>(<!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override val valu
     <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override val success : Boolean = true
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, out, override, primaryConstructor,
+propertyDeclaration, typeParameter */

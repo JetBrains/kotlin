@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test() {
   val out : Int? = null
   val x : Nothing? = null
@@ -6,3 +7,6 @@ fun test() {
   if (out == <!DEBUG_INFO_CONSTANT!>x<!>) return
   <!DEBUG_INFO_SMARTCAST!>out<!>.plus(1)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

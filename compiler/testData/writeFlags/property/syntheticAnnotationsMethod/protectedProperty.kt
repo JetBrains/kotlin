@@ -1,4 +1,4 @@
-// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
+// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 
 open class Foo {
     annotation class Anno

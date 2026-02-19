@@ -1,4 +1,6 @@
-// !API_VERSION: 1.0
+// RUN_PIPELINE_TILL: FRONTEND
+// API_VERSION: 1.0
+// ISSUE: KT-63065
 // MODULE: m1
 // FILE: a.kt
 
@@ -36,3 +38,5 @@ import p2.*
     a.<!UNRESOLVED_REFERENCE!>m1<!>()
     a.m2()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

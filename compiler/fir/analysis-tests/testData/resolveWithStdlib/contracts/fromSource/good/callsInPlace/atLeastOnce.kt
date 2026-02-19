@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 
 import kotlin.contracts.*
 
@@ -33,3 +34,6 @@ fun test_2() {
     }
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

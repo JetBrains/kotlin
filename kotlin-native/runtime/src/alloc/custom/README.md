@@ -23,9 +23,10 @@ space. The requested page can either be readily available (already prepared by
 the GC thread), or it might need to be swept first, or it might be newly
 created.
 
-The GC thread has a new responsibility when using this allocator: While the
-mutator threads are paused at the start of GC, the GC thread must prepare the
-allocator for sweeping. This does two things. First, it marks all pages as
+The GC thread has a new responsibility when using this allocator: 
+After all the alive objects have been marked, and while the mutator threads are paused, 
+the GC thread must prepare the allocator for sweeping. 
+This does two things. First, it marks all pages as
 “needs to be swept before next use”. Second, it releases pages that threads are
 holding on to, by clearing the thread local variables for each thread.
 
@@ -38,29 +39,6 @@ settings.
 All allocations are made through a `CustomAllocator` object.
 
 ## [CustomAllocator](cpp/CustomAllocator.hpp)
-
-```cpp
-class CustomAllocator {
-public:
-    CustomAllocator(Heap& heap, GCSchedulerThreadData& scheduler);
-    ObjectHeader* CreateObject(TypeInfo* type);
-    ArrayHeader* CreateArray(TypeInfo* type, uint32_t count);
-    ExtraObjectData* CreateExtraObject();
-    void PrepareForGc();
-
-private:
-    uint8_t* Allocate(uint64_t cellCount);
-    uint8_t* AllocateInSingleObjectPage(uint64_t cellCount);
-    uint8_t* AllocateInNextFitPage(uint32_t cellCount);
-    uint8_t* AllocateInFixedBlockPage(uint32_t cellCount);
-
-    Heap& heap_;
-    GCSchedulerThreadData& gcScheduler_;
-    NextFitPage* nextFitPage_;
-    FixedBlockPage* fixedBlockPages_[MAX_BLOCK_SIZE];
-    ExtraObjectPage* extraObjectPage_;
-};
-```
 
 The primary responsibility of this class is to delegate each requested
 allocation to pages of the appropriate type, based on allocation size. To do
@@ -75,29 +53,6 @@ with no extra space.
 
 ## [Heap](cpp/Heap.hpp)
 
-```cpp
-class Heap {
-public:
-    void PrepareForGC();
-
-    void Sweep();
-
-    AtomicStack<ExtraObjectCell> SweepExtraObjects(GCHandle gcHandle);
-
-    FixedBlockPage* GetFixedBlockPage(uint32_t cellCount);
-    NextFitPage* GetNextFitPage(uint32_t cellCount);
-    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount);
-    ExtraObjectPage* GetExtraObjectPage();
-
-private:
-    PageStore<FixedBlockPage> fixedBlockPages_[MAX_BLOCK_SIZE];
-    PageStore<NextFitPage> nextFitPages_;
-    PageStore<SingleObjectPage> singleObjectPages_;
-    AtomicStack<ExtraObjectPage> extraObjectPages_;
-    AtomicStack<ExtraObjectPage> usedExtraObjectPages_;
-};
-```
-
 A `Heap` object represents a shared allocation space for multiple
 `CustomAllocator`s, which can request pages through one of the
 `GetFixedBlockPage`, `GetNextFitPage`, `GetSingleObjectPage` methods. It also
@@ -108,8 +63,7 @@ the thread that called the method. The `Heap` object keeps track of all pages,
 so there is no need to explicitly return ownership of a page.  Internally, a
 `Heap` keeps the pages for each size class in a `PageStore`. This means one for
 `SingleObjectPage`s, one for `NextFitPage`s, one for each of the block sizes
-for `FixedBlockPage`s. `ExtraObjectPage`s are stored directly in two
-`AtomicStack`s, since they require different handling during sweeping.
+for `FixedBlockPage`s, and one separate `FixedBlockPage` for extra object data.
 
 ## [PageStore](cpp/PageStore.hpp)
 
@@ -119,7 +73,6 @@ class PageStore {
 public:
     void PrepareForGC();
     void Sweep();
-    void SweepAndFree();
     PageType* GetPage(uint32_t cellCount);
     PageType* NewPage(uint64_t cellCount);
 
@@ -157,9 +110,7 @@ of the other threads sweeps a page from `unswept_`, it is moved directly to
 for one specific single allocation, and not reused when that allocation is
 freed. A `SingleObjectPage` allocation goes directly to `NewPage(...)`, without
 checking any of the stacks, and during sweeping, they are freed directly rather
-than being put into the `empty_` stack. Ideally, there would only be two stacks
-in play for `SingleObjectPages`; `used_` and `unswept_`. However, very little
-is lost by just using the existing `PageStore` logic used for the other pages.
+than being put into the `empty_` stack.
 
 ## [AtomicStack](cpp/AtomicStack.hpp)
 
@@ -179,8 +130,8 @@ private:
 ```
 
 The only place where atomics are used are in the stacks inside the `PageStore`.
-All page classes have a non-atomic next pointer, to be used for linking up in
-exactly one stack. `Pop` and `Push` are implemented with compare-and-swap
+All page classes have a next pointer, to be used for linking up in exactly one stack. 
+`Pop` and `Push` are implemented with compare-and-swap
 operations. The class is thread safe, except for if an element is freed while
 another thread tries to Pop it from a stack.
 
@@ -190,10 +141,10 @@ This section is likely to change, given the likely introduction of additional
 page types. It also describes some details about which page type is chosen for
 a given allocation, which is also likely to change.
 
-There are four different page types, but they all share the feature that they
+There are three different page types, but they all share the feature that they
 can be swept independently. The Sweep methods return whether there were any
-live objects in the page after sweeping. If not, the page will be given back to
-the OS.
+live objects in the page after sweeping. If not, the page will be reused for allocation 
+or given back to the OS.
 
 ## [FixedBlockPage](cpp/FixedBlockPage.hpp)
 
@@ -299,10 +250,7 @@ abandoned until the next GC.
 class SingleObjectPage {
 public:
     SingleObjectPage(uint64_t cellCount);
-    bool Sweep();
-
-private:
-    SingleObjectPage* next_; // used by AtomicStack
+    bool SweepAndDestroy();
 };
 ```
 
@@ -314,59 +262,10 @@ allocate a new page. Secondly, a `CustomAllocator` does not keep a reference to
 any of the `SingleObjectPage`s. As a consequence, they are only swept by the GC
 thread.
 
-## [ExtraObjectPage](cpp/ExtraObjectPage.hpp)
-
-```cpp
-class ExtraObjectPage {
-public:
-    ExtraObjectPage();
-    ExtraObjectData* TryAllocate();
-    bool Sweep(FinalizerQueue& queue);
-
-
-private:
-    ExtraObjectPage* next_; // used by AtomicStack
-    ExtraObjectCell* nextFree_;
-    ExtraObjectCell cells_[];
-};
-```
-
-Extra objects are used for attaching additional data to some objects. This is
-used for objects that require special handling during garbage collection:
-
-* objects with finalizers
-* weak references
-* interop references
-
-Extra objects are allocated in `ExtraObjectPage`s, which are very similar to
-`FixedBlockPage`s. They primarily differ in how they are swept, since it is
-during sweeping of `ExtraObject`s that scheduling of finalization happens. If
-an object that requires finalization is found, it is added to the
-`FinalizerQueue` given as argument. The cells are also slightly different, in
-that they add a new field that allows the cells to be added to the finalizer
-queue.
-
-```cpp
-struct ExtraObjectCell {
-    ExtraObjectCell* next_; // used by AtomicStack
-    ExtraObjectData data_;
-};
-```
-
 # Finalizers
 
 Section like to change.
 
-In the existing memory model, finalization tasks are found and scheduled during
+Finalization tasks are found and scheduled during
 sweeping of regular objects. The objects to be finalized are chained together
-using a pointer in the Node header, added to all allocated objects. This header
-is not needed in the custom allocator, apart from linking in the finalization
-queue.
-
-We therefore reintroduce this pointer in a header for `ExtraObjectData`. For
-this, we reuse the `ExtraObjectCell` as header for both free list pointer and as
-linking pointer for the `AtomicStack` that we use as the `FinalizerQueue`.
-
-# Enabling the allocator
-
-The custom allocator is enabled with the compiler flag -Xallocator=custom.
+using a pointer in the `ExtraObjectCell` for the `AtomicStack` that we use as the `FinalizerQueue`.

@@ -1,10 +1,11 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val arr = intArrayOf(10, 20, 30, 40)
 
 fun box(): String {
     val s = StringBuilder()
-    for ((index, x) in arr.withIndex()) {
+    for ([index, x] in arr.withIndex()) {
         s.append("$index:$x;")
     }
     val ss = s.toString()

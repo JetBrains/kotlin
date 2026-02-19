@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun foo(x: Int) {
@@ -19,7 +19,7 @@ fun box() {
     foo(21)
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:19 box
 // test.kt:5 foo
 // test.kt:6 foo
@@ -68,6 +68,85 @@ fun box() {
 // test.kt:16 foo
 // test.kt:12 foo
 // test.kt:11 foo
+// test.kt:16 foo
+// test.kt:20 box
+
+// EXPECTATIONS NATIVE
+// test.kt:19 box
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:14 foo
+// test.kt:15 foo
+// test.kt:16 foo
+// test.kt:7 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:14 foo
+// test.kt:15 foo
+// test.kt:16 foo
+// test.kt:13 foo
+// test.kt:15 foo
+// test.kt:16 foo
+// test.kt:6 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:14 foo
+// test.kt:15 foo
+// test.kt:16 foo
+// test.kt:7 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:14 foo
+// test.kt:15 foo
+// test.kt:16 foo
+// test.kt:13 foo
+// test.kt:15 foo
+// test.kt:16 foo
+// test.kt:12 foo
+// test.kt:15 foo
 // test.kt:16 foo
 // test.kt:20 box
 
@@ -112,3 +191,72 @@ fun box() {
 // test.kt:11 foo
 // test.kt:16 foo
 // test.kt:20 box
+
+// EXPECTATIONS WASM
+// test.kt:19 $box (8, 4)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8, 18, 14)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:7 $foo (8, 18, 14)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:7 $foo (8)
+// test.kt:8 $foo (16)
+// test.kt:11 $foo (18)
+// test.kt:12 $foo (8)
+// test.kt:13 $foo (8)
+// test.kt:14 $foo (16)
+// test.kt:11 $foo (12)
+// test.kt:16 $foo (1)
+// test.kt:11 $foo (18)
+// test.kt:12 $foo (8)
+// test.kt:13 $foo (8, 18, 14)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:7 $foo (8)
+// test.kt:8 $foo (16)
+// test.kt:11 $foo (18)
+// test.kt:12 $foo (8)
+// test.kt:13 $foo (8)
+// test.kt:14 $foo (16)
+// test.kt:11 $foo (12)
+// test.kt:16 $foo (1)
+// test.kt:13 $foo (14)
+// test.kt:11 $foo (12)
+// test.kt:16 $foo (1)
+// test.kt:11 $foo (18)
+// test.kt:12 $foo (8, 18, 14)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:7 $foo (8, 18, 14)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:7 $foo (8)
+// test.kt:8 $foo (16)
+// test.kt:11 $foo (18)
+// test.kt:12 $foo (8)
+// test.kt:13 $foo (8)
+// test.kt:14 $foo (16)
+// test.kt:11 $foo (12)
+// test.kt:16 $foo (1)
+// test.kt:11 $foo (18)
+// test.kt:12 $foo (8)
+// test.kt:13 $foo (8, 18, 14)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:7 $foo (8)
+// test.kt:8 $foo (16)
+// test.kt:11 $foo (18)
+// test.kt:12 $foo (8)
+// test.kt:13 $foo (8)
+// test.kt:14 $foo (16)
+// test.kt:11 $foo (12)
+// test.kt:16 $foo (1)
+// test.kt:13 $foo (14)
+// test.kt:11 $foo (12)
+// test.kt:16 $foo (1)
+// test.kt:12 $foo (14)
+// test.kt:11 $foo (12)
+// test.kt:16 $foo (1)
+// test.kt:20 $box (1)

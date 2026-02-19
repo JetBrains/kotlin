@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: test/GenericSam.java
 
@@ -30,3 +31,6 @@ fun g5() = GenericSam<String> {}::class
 fun g6() = GenericSam<String> {}::invoke
 fun g7() = test.GenericSam<String> {}::class
 fun g8() = test.GenericSam<String> {}::invoke
+
+/* GENERATED_FIR_TAGS: callableReference, classReference, flexibleType, functionDeclaration, javaCallableReference,
+javaType, lambdaLiteral, outProjection, starProjection */

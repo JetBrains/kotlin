@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: x.kt
@@ -25,3 +26,5 @@ public interface B : Base
 import p.*
 
 class Foo: A, B
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

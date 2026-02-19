@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-data class BuildMetrics<B : BuildTime, P : BuildPerformanceMetric>(
+data class BuildMetrics<B : BuildTimeMetric, P : BuildPerformanceMetric>(
     val buildTimes: BuildTimes<B> = BuildTimes(),
     val buildPerformanceMetrics: BuildPerformanceMetrics<P> = BuildPerformanceMetrics(),
     val buildAttributes: BuildAttributes = BuildAttributes(),

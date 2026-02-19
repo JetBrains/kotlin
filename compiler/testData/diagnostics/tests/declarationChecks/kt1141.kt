@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-1141 No check that object in 'object expression' implements all abstract members of supertype
 
@@ -20,3 +21,6 @@ fun foo() {
 fun foo2() {
     val r = <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object<!> : Runnable {} //no error
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+localProperty, objectDeclaration, propertyDeclaration */

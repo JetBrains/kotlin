@@ -8,12 +8,13 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.util.mockGenerateProjectStructureMetadataTaskOutputs
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
@@ -54,6 +55,8 @@ class WasmDependencyResolutionSmokeTest {
         producer.evaluate()
         consumer.evaluate()
 
+        producer.mockGenerateProjectStructureMetadataTaskOutputs()
+
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("commonMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),
             binaryCoordinates(Regex(".*stdlib.*"))
@@ -61,15 +64,18 @@ class WasmDependencyResolutionSmokeTest {
 
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmJsMain").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
-            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm-js.klib")),
+            dependsOnDependency(":consumer/webMain"),
+            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/classes/kotlin/wasmJs/main")),
             binaryCoordinates(Regex(".*stdlib-wasm-js.*"))
         )
 
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmJsTest").assertMatches(
             friendSourceDependency(":consumer/commonMain"),
             friendSourceDependency(":consumer/wasmJsMain"),
+            friendSourceDependency(":consumer/webMain"),
             dependsOnDependency(":consumer/commonTest"),
-            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm-js.klib")),
+            dependsOnDependency(":consumer/webTest"),
+            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/classes/kotlin/wasmJs/main")),
             binaryCoordinates(Regex(".*stdlib-wasm-js.*"))
         )
     }

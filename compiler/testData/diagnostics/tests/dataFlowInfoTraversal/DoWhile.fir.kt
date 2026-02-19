@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -14,3 +15,6 @@ fun foo() {
     } while (y != null)
     bar(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, doWhileLoop, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

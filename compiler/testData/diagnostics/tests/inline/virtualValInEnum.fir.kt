@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class B2() {
     A {
         override val foo: String
@@ -13,3 +14,5 @@ enum class B2() {
     open <!DECLARATION_CANT_BE_INLINED!>inline<!> val bar
         get() = "bar1"
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, getter, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-47494
 
 <!SYNTAX!><!>{
@@ -17,4 +18,8 @@
 
         <!SYNTAX!><!>try {}
 
-        finally<!SYNTAX!><!>
+        finally
+
+<!SYNTAX!><!>}<!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral, tryExpression */

@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface A {
     fun foo(): Boolean
 }
@@ -11,3 +12,6 @@ fun test() {
         a.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, functionDeclaration, interfaceDeclaration, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, whileLoop */

@@ -21,21 +21,20 @@ internal class GradleCompilationResults(
     ) {
 
     var icLogLines: List<String> = emptyList()
-    private val buildMetricsReporter = BuildMetricsReporterImpl<GradleBuildTime, GradleBuildPerformanceMetric>()
-    val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>
+    private val buildMetricsReporter = BuildMetricsReporterImpl<BuildTimeMetric, BuildPerformanceMetric>()
+    val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>
         get() = buildMetricsReporter.getMetrics()
 
     @Throws(RemoteException::class)
     override fun add(compilationResultCategory: Int, value: Serializable) {
         when (compilationResultCategory) {
             CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
-                @Suppress("UNCHECKED_CAST")
                 val compileIterationResult = value as? CompileIterationResult
                 if (compileIterationResult != null) {
                     val sourceFiles = compileIterationResult.sourceFiles
                     if (sourceFiles.any()) {
                         log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
-                        buildMetrics.buildPerformanceMetrics.add(GradleBuildPerformanceMetric.COMPILE_ITERATION)
+                        buildMetrics.buildPerformanceMetrics.addLong(COMPILE_ITERATION)
                     }
                     val exitCode = compileIterationResult.exitCode
                     log.kotlinDebug { "compiler exit code: $exitCode" }
@@ -47,7 +46,8 @@ internal class GradleCompilationResults(
                 (value as? List<String>)?.let { icLogLines = it }
             }
             CompilationResultCategory.BUILD_METRICS.code -> {
-                (value as? BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>)?.let { buildMetricsReporter.addMetrics(it) }
+                @Suppress("UNCHECKED_CAST")
+                (value as? BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>)?.let { buildMetricsReporter.addMetrics(it) }
             }
         }
     }

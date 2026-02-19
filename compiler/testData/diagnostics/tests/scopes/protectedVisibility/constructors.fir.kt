@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class A protected constructor(x: Int) {
     protected constructor() : this(1)
@@ -20,3 +21,6 @@ class B4 : A {
     constructor(x: Int) : super()
     constructor(x: Int, y: Int) : super("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, secondaryConstructor,
+stringLiteral */

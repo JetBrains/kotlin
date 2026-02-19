@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package feature.experimental.self
@@ -27,3 +28,5 @@ import feature.experimental.self.ImportedClass
 import feature.experimental.self.importedFunction
 import feature.experimental.self.importedProperty
 import feature.experimental.self.ImportedClass.importedObjectMember
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, objectDeclaration, propertyDeclaration */

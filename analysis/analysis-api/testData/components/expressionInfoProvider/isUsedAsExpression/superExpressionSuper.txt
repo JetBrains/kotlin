@@ -1,3 +1,4 @@
 expression: SUPER_EXPRESSION
 text: super
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

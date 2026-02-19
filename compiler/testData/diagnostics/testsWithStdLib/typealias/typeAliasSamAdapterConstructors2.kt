@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: JHost.java
 public class JHost {
@@ -26,3 +27,6 @@ val test2 = C<String> { s -> println(s.length) }
 val test3 = CStr { s -> println(s.length) }
 val test4 = CStrList { ss -> for (s in ss) { println(s.length) } }
 val test5 = C2<Int> { a, b -> val x: Int = a + b; println(x)}
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, forLoop, javaType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

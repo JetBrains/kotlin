@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 fun baz(options: String = ""): String = ""
 
@@ -8,3 +9,6 @@ fun foo(dumpStrategy: String) {
 
     runForString(::baz)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, propertyDeclaration,
+stringLiteral */

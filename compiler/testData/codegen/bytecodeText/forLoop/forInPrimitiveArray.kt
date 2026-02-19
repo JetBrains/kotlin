@@ -29,7 +29,6 @@ fun f(): Int {
 // 2 IF_ICMPGE
 // 2 IF
 
-// JVM_IR_TEMPLATES
 // 7 ILOAD
 // 6 ISTORE
 // 0 IADD

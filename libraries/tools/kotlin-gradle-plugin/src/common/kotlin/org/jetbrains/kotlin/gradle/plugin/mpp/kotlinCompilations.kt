@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURES_FEATURE_NAME
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
 import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
@@ -25,12 +24,8 @@ internal fun KotlinCompilation<*>.isMain(): Boolean =
 internal fun KotlinCompilation<*>.isTest(): Boolean =
     name == KotlinCompilation.TEST_COMPILATION_NAME
 
-internal fun addCommonSourcesToKotlinCompileTask(
-    project: Project,
-    taskName: String,
-    sourceFileExtensions: Iterable<String>,
-    sources: () -> Any
-) = addSourcesToKotlinCompileTask(project, taskName, sourceFileExtensions, lazyOf(true), sources)
+internal fun KotlinCompilation<*>.isTestFixtures(): Boolean =
+    name == TEST_FIXTURES_FEATURE_NAME
 
 // FIXME this function dangerously ignores an incorrect type of the task (e.g. if the actual task is a K/N one); consider reporting a failure
 internal fun addSourcesToKotlinCompileTask(
@@ -44,7 +39,7 @@ internal fun addSourcesToKotlinCompileTask(
     fun AbstractKotlinCompile<*>.configureAction() {
         // In this call, the super-implementation of `source` adds the directories files to the roots of the union file tree,
         // so it's OK to pass just the source roots.
-        setSource(Callable(sources))
+        source(Callable(sources))
         with(sourceFileExtensions.toSet()) {
             if (isNotEmpty()) {
                 include(flatMap { ext -> ext.fileExtensionCasePermutations().map { "**/*.$it" } })
@@ -101,14 +96,9 @@ internal fun KotlinCompilation<*>.moduleNameForCompilation(
 internal fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")
 
-internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(): InternalKotlinCompilation<T> {
-    this.kotlinOptions as T
-    @Suppress("UNCHECKED_CAST")
-    return this as InternalKotlinCompilation<T>
-}
-
-internal inline fun <reified T : KotlinCommonCompilerOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
+internal inline fun <reified T : KotlinCommonCompilerOptions> DeprecatedHasCompilerOptions<*>.castCompilerOptionsType(): DeprecatedHasCompilerOptions<T> {
     this.options as T
     @Suppress("UNCHECKED_CAST")
-    return this as HasCompilerOptions<T>
+    return this as DeprecatedHasCompilerOptions<T>
 }

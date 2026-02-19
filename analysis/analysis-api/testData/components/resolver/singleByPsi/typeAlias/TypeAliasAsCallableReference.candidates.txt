@@ -1,0 +1,2 @@
+KtNameReferenceExpression(88,95): 'MyAlias'
+  NO_CANDIDATES

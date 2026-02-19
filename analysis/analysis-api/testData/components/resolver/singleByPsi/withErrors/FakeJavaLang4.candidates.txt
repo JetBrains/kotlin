@@ -1,0 +1,2 @@
+KtNameReferenceExpression(60,64): 'Fake'
+  NO_CANDIDATES

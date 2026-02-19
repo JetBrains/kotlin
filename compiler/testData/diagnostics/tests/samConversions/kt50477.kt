@@ -1,4 +1,5 @@
-// !LANGUAGE: -SuspendOnlySamConversions
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -SuspendOnlySamConversions
 
 fun interface FI {
     suspend fun call() // suspending now(!!!)
@@ -21,3 +22,6 @@ fun main() {
     val x2 = ::foo2
     accept(x2)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funInterface, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, localProperty, propertyDeclaration, samConversion, suspend */

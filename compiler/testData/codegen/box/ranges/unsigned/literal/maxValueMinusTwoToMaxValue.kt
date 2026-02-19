@@ -7,21 +7,21 @@ val MaxUL = ULong.MAX_VALUE
 
 fun box(): String {
     val list1 = ArrayList<UInt>()
-    for (i in (MaxUI - 2u)..MaxUI) {
+    for (i in MaxUI - 2u..MaxUI) {
         list1.add(i)
         if (list1.size > 23) break
     }
     if (list1 != listOf<UInt>(MaxUI - 2u, MaxUI - 1u, MaxUI)) {
-        return "Wrong elements for (MaxUI - 2u)..MaxUI: $list1"
+        return "Wrong elements for MaxUI - 2u..MaxUI: $list1"
     }
 
     val list2 = ArrayList<ULong>()
-    for (i in (MaxUL - 2u)..MaxUL) {
+    for (i in MaxUL - 2u..MaxUL) {
         list2.add(i)
         if (list2.size > 23) break
     }
     if (list2 != listOf<ULong>(MaxUL - 2u, MaxUL - 1u, MaxUL)) {
-        return "Wrong elements for (MaxUL - 2u)..MaxUL: $list2"
+        return "Wrong elements for MaxUL - 2u..MaxUL: $list2"
     }
 
     return "OK"

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2457 Verify error when comparing not null value with null in when
 
@@ -9,3 +10,5 @@ fun foo(i: Int) : Int =
         <!SENSELESS_NULL_IN_WHEN!>null<!> -> 1
         else -> 1
     }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, whenExpression, whenWithSubject */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: C.kt
 
 class C : B() {
@@ -16,3 +17,5 @@ public class B extends A {
 abstract class A {
     abstract fun foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 import java.util.*
 
 fun bar(): String? = null
@@ -20,3 +21,6 @@ fun foo() {
     val b4: Collection<String?> = x
     val b6: MutableCollection<String?> = x
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+nullableType, propertyDeclaration, stringLiteral */

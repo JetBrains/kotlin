@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class Out<out T> {
     fun id() = this
@@ -24,3 +25,7 @@ fun test(a: A<out CharSequence>, z: Out<CharSequence>) {
         <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, comparisonExpression, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType, out, outProjection,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter */

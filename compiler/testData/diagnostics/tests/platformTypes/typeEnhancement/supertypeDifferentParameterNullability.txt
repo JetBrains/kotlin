@@ -41,8 +41,26 @@ public final class C3 : I {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final class C3x : I2 {
+    public constructor C3x()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun foo(/*0*/ x: kotlin.String): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.Nullable x: kotlin.String?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final class C4 : I {
     public constructor C4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull x: kotlin.String): kotlin.Unit
+    public open override /*1*/ fun foo(/*0*/ x: kotlin.String?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C4x : I2 {
+    public constructor C4x()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull x: kotlin.String): kotlin.Unit
     public open override /*1*/ fun foo(/*0*/ x: kotlin.String?): kotlin.Unit
@@ -57,3 +75,12 @@ public interface I : A, B {
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public interface I2 : B, A {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull x: kotlin.String): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.Nullable x: kotlin.String?): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

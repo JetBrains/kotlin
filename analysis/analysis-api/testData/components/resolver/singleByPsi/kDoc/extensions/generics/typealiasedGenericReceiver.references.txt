@@ -1,0 +1,17 @@
+<caret_1>:
+  KDocName(104,112): 'AInt.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) fun A<kotlin.Number>.foo()
+
+<caret_2>:
+  KDocName(118,129): 'AString.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: null
+      symbols:
+        Nothing (Unresolved reference)

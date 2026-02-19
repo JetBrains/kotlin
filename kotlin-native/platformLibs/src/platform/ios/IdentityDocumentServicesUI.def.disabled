@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.IdentityDocumentServicesUI
+
+modules = IdentityDocumentServicesUI
+compilerOpts = -framework IdentityDocumentServicesUI
+linkerOpts = -framework IdentityDocumentServicesUI
+#Disabled: Swift-only framework

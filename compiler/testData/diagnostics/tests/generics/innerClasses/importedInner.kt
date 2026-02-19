@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 import Outer.Inner
 
 
@@ -18,3 +20,6 @@ class Outer<E> {
 class E
 
 fun bar(x: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'Outer'")!>Inner<!>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localClass, localProperty, nestedClass,
+nullableType, propertyDeclaration, typeParameter */

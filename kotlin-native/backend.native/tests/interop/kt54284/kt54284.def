@@ -1,7 +1,0 @@
----
-#define KFILE "FILE:" __FILE__
-#define KLINE "LINE:" __LINE__
-#define KTIME "TIME:" __TIME__
-#define KDATE "DATE:" __DATE__
-#define KFILENAME "NAME:" __FILE_NAME__
-#define KBASEFILE "BASE:" __BASE_FILE__

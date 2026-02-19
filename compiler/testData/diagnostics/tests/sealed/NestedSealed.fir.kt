@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-10648: Exhaustiveness check does not work with nested sealed hierarchy
 sealed class Base {
     sealed class A : Base() {
@@ -43,3 +44,6 @@ fun gav(b: Base?) = when (b) {
         is Base.B.B2 -> 4
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+isExpression, nestedClass, nullableType, sealed, smartcast, whenExpression, whenWithSubject */

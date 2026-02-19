@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
 // Related issue: KT-28370
 
@@ -85,3 +86,6 @@ fun test6(s: String?) {
     }
     s.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, tryExpression */

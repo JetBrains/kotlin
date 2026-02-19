@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM
-// See KT-38103
-// There is no such thing as a readStrongInterface method to deserialize arbitrary IIinterface implementations
 // WITH_STDLIB
 
 @file:JvmName("TestKt")

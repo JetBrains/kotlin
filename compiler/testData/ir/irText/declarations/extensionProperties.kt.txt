@@ -1,15 +1,3 @@
-val String.test1: Int
-  get(): Int {
-    return 42
-  }
-
-var String.test2: Int
-  get(): Int {
-    return 42
-  }
-  set(value: Int) {
-  }
-
 class Host {
   constructor() /* primary */ {
     super/*Any*/()
@@ -30,3 +18,16 @@ class Host {
     }
 
 }
+
+val String.test1: Int
+  get(): Int {
+    return 42
+  }
+
+var String.test2: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+

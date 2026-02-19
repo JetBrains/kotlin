@@ -1,3 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
+// In K2, the name collision detector is weakened, because the backend started to resolve such collisions.
+// K1 was not changed since it's in maintenance mode.
+
 interface I {
     fun foo()
 }
@@ -12,7 +16,7 @@ interface K : I, J {
 }
 
 interface L : K {
-    <!JS_NAME_CLASH!>override fun foo()<!>
+    override fun foo()
 
-    <!JS_NAME_CLASH!>fun bar()<!>
+    fun bar()
 }

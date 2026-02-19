@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 object AnObject {
     val ok = "OK"
@@ -24,3 +25,7 @@ val test25: GenericClassWithCompanion.Companion = TestGCWC
 val test26 = TestGCWC
 val test27: String = TestGCWC.ok
 val test28: String = TestGCWC.foo()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nullableType, objectDeclaration,
+propertyDeclaration, starProjection, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter */

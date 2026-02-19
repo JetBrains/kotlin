@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-53565
 
@@ -10,3 +11,6 @@ fun wrongAnnotationTargetInWhenSubject() {
         0 -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, whenExpression, whenWithSubject */

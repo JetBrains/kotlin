@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-45796
 // SKIP_TXT
@@ -22,3 +23,6 @@ fun whenForSealed(s: SealedClass): Int {
         is Derived3 -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, isExpression,
+primaryConstructor, sealed, smartcast, typeAliasDeclaration, whenExpression, whenWithSubject */

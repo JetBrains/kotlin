@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final const val /I0 // /I0|{}I0[0]
+    final fun <get-I0>(): kotlin/Int // /I0.<get-I0>|<get-I0>(){}[0]
+final const val /I1 // /I1|{}I1[0]
+    final fun <get-I1>(): kotlin/Int // /I1.<get-I1>|<get-I1>(){}[0]
+final const val /I2 // /I2|{}I2[0]
+    final fun <get-I2>(): kotlin/Int // /I2.<get-I2>|<get-I2>(){}[0]
+final const val /STR1 // /STR1|{}STR1[0]
+    final fun <get-STR1>(): kotlin/String // /STR1.<get-STR1>|<get-STR1>(){}[0]
+final const val /STR2 // /STR2|{}STR2[0]
+    final fun <get-STR2>(): kotlin/String // /STR2.<get-STR2>|<get-STR2>(){}[0]
+final const val /STR3 // /STR3|{}STR3[0]
+    final fun <get-STR3>(): kotlin/String // /STR3.<get-STR3>|<get-STR3>(){}[0]
+final const val /STR4 // /STR4|{}STR4[0]
+    final fun <get-STR4>(): kotlin/String // /STR4.<get-STR4>|<get-STR4>(){}[0]

@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 
 class FirPropertyAccessorRenderer {
 
@@ -15,7 +18,11 @@ class FirPropertyAccessorRenderer {
     private val visitor get() = components.visitor
 
     fun render(property: FirProperty) {
-        printer.println()
+        if (property.origin !is FirDeclarationOrigin.ScriptCustomization || property.hasExplicitBackingField ||
+            property.getter != null || property.isVar && property.setter != null
+        ) {
+            printer.println()
+        }
         printer.pushIndent()
 
         if (property.hasExplicitBackingField) {
@@ -23,15 +30,16 @@ class FirPropertyAccessorRenderer {
             printer.println()
         }
 
-        property.getter?.accept(visitor)
-        if (property.getter?.body == null) {
-            printer.println()
-        }
-        if (property.isVar) {
-            property.setter?.accept(visitor)
-            if (property.setter?.body == null) {
+        fun FirPropertyAccessor.render() {
+            accept(visitor)
+            if (body == null) {
                 printer.println()
             }
+        }
+
+        property.getter?.render()
+        if (property.isVar) {
+            property.setter?.render()
         }
         printer.popIndent()
     }

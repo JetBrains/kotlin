@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: annotation.kt
@@ -69,3 +70,6 @@ fun test() {
     takeUByte(UINT_CONST)
     takeUIntWithoutAnnotaion(<!ARGUMENT_TYPE_MISMATCH!>IMPLICIT_INT<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, functionDeclaration, integerLiteral, propertyDeclaration,
+unsignedLiteral, vararg */

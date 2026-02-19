@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val sb = StringBuilder()
 val o = object : Any() {
     val name = "123"
@@ -22,3 +23,7 @@ class Derived : Base<Int>(10)
 val xx = Derived().x + 1
 
 val <!IMPLICIT_NOTHING_PROPERTY_TYPE, REDECLARATION!>t<!> = throw AssertionError("")
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration, getter,
+integerLiteral, localClass, nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral, typeParameter */

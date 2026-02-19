@@ -5,7 +5,7 @@ FILE: forEachOnZip.kt
             ^@forEach Unit
         }
         )
-        R|<local>/l|.R|kotlin/collections/zip|<R|kotlin/String|, R|kotlin/String|>(R|<local>/l|).R|kotlin/collections/forEach<Inapplicable(INAPPLICABLE): kotlin/collections/forEach>#|<R|kotlin/Pair<kotlin/String, kotlin/String>|>(<L> = forEach@fun <anonymous>(left: R|kotlin/Pair<kotlin/String, kotlin/String>|, right: <ERROR TYPE REF: Cannot infer type for parameter right>): R|kotlin/Unit| <inline=Unknown, kind=UNKNOWN>  {
+        R|<local>/l|.R|kotlin/collections/zip|<R|kotlin/String|, R|kotlin/String|>(R|<local>/l|).R|kotlin/collections/forEach<Inapplicable(INAPPLICABLE): kotlin/collections/forEach>#|<R|kotlin/Pair<kotlin/String, kotlin/String>|>(<L> = forEach@fun <anonymous>(left: R|kotlin/Pair<kotlin/String, kotlin/String>|, right: <ERROR TYPE REF: Cannot infer type for parameter right>): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             ^@forEach Unit
         }
         )

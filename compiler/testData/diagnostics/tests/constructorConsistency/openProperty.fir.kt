@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Base {
     abstract var x: Int
 
@@ -11,3 +12,6 @@ abstract class Base {
         y = temp
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, integerLiteral, localProperty, propertyDeclaration,
+secondaryConstructor, thisExpression */

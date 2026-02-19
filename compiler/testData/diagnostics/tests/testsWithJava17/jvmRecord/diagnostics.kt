@@ -1,7 +1,7 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !API_VERSION: 1.5
-// !LANGUAGE: +JvmRecordSupport
+// API_VERSION: 1.5
+// LANGUAGE: +JvmRecordSupport
 // SKIP_TXT
 // JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
@@ -59,3 +59,6 @@ class Outer {
 
 @JvmRecord
 data class A11(<!DATA_CLASS_VARARG_PARAMETER, JVM_RECORD_NOT_LAST_VARARG_PARAMETER!>vararg val x: String<!>, val y: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, enumDeclaration, enumEntry, functionDeclaration, inner, localClass,
+outProjection, primaryConstructor, propertyDeclaration, sealed, secondaryConstructor, vararg */

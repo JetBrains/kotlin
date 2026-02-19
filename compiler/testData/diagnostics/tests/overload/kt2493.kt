@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface A
 interface B
@@ -18,3 +19,6 @@ fun main() {
     BImpl().f()
     C().<!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+typeConstraint, typeParameter */

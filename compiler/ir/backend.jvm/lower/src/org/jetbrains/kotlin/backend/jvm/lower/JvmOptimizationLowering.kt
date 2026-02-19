@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractVariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.loops.isInductionVariable
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
@@ -26,53 +25,35 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
-    ::JvmOptimizationLowering,
-    name = "JvmOptimizationLowering",
-    description = "Optimize code for JVM code generation"
-)
-
-class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
+internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
     private companion object {
         private fun isNegation(expression: IrExpression): Boolean =
             expression is IrCall && expression.symbol.owner.let { not ->
-                not.name == OperatorNameConventions.NOT &&
-                        not.extensionReceiverParameter == null &&
-                        not.valueParameters.isEmpty() &&
-                        not.dispatchReceiverParameter.let { receiver ->
-                            receiver != null && receiver.type.isBoolean()
-                        }
+                not.name == OperatorNameConventions.NOT && not.hasShape(dispatchReceiver = true) &&
+                        not.parameters[0].type.isBoolean()
             }
     }
 
     private val IrFunction.isObjectEquals
-        get() = name.asString() == "equals" &&
-                valueParameters.count() == 1 &&
-                valueParameters[0].type.isNullableAny() &&
-                extensionReceiverParameter == null &&
-                dispatchReceiverParameter != null
+        get() = name.asString() == "equals" && hasShape(dispatchReceiver = true, regularParameters = 1) &&
+                parameters[1].type.isNullableAny()
 
 
     private fun getOperandsIfCallToEQEQOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? =
-        when {
-            call.symbol == context.irBuiltIns.eqeqSymbol -> {
-                val left = call.getValueArgument(0)!!
-                val right = call.getValueArgument(1)!!
-                left to right
-            }
-
-            call.symbol.owner.isObjectEquals -> {
-                val left = call.dispatchReceiver!!
-                val right = call.getValueArgument(0)!!
-                left to right
-            }
-
-            else -> null
+        if (call.symbol == context.irBuiltIns.eqeqSymbol || call.symbol.owner.isObjectEquals) {
+            val left = call.arguments[0]!!
+            val right = call.arguments[1]!!
+            left to right
+        } else {
+            null
         }
 
     override fun lower(irFile: IrFile) {
@@ -82,7 +63,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
     private inner class Transformer(
         private val fileEntry: IrFileEntry,
         private val inlineScopeResolver: IrInlineScopeResolver
-    ) : IrElementTransformer<IrDeclaration?> {
+    ) : IrTransformer<IrDeclaration?>() {
 
         private val dontTouchTemporaryVals = HashSet<IrVariable>()
 
@@ -106,7 +87,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 if (left.isNullConst() && right.isNullConst())
                     return IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
-                if (left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*>)
+                if (left.isNullConst() && right is IrConst || right.isNullConst() && left is IrConst)
                     return IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
             }
 
@@ -114,7 +95,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         }
 
         private fun optimizePropertyAccess(expression: IrCall, data: IrDeclaration?): IrExpression {
-            val accessor = expression.symbol.owner as? IrSimpleFunction ?: return expression
+            val accessor = expression.symbol.owner
             if (accessor.modality != Modality.FINAL || accessor.isExternal) return expression
             val property = accessor.correspondingPropertySymbol?.owner ?: return expression
             if (property.isLateinit) return expression
@@ -125,19 +106,22 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 if (backingField.isStatic && receiver != null && receiver !is IrGetValue) {
                     // If the field is static, evaluate the receiver for potential side effects.
-                    +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
+                    +receiver.coerceToUnit(context.irBuiltIns)
                 }
-                if (accessor.valueParameters.isNotEmpty()) {
+                if (accessor.parameters.any { it.kind == IrParameterKind.Regular }) {
                     +irSetField(
                         receiver.takeUnless { backingField.isStatic },
                         backingField,
-                        expression.getValueArgument(expression.valueArgumentsCount - 1)!!
+                        expression.arguments.last()!!
                     )
                 } else {
-                    +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
+                    +irGetField(receiver.takeUnless { backingField.isStatic }, backingField, expression.type)
                 }
-            }
+            }.unwrapSingleExpressionBlock()
         }
+
+        private fun IrExpression.unwrapSingleExpressionBlock(): IrExpression =
+            (this as? IrBlock)?.statements?.singleOrNull() as? IrExpression ?: this
 
         override fun visitWhen(expression: IrWhen, data: IrDeclaration?): IrExpression {
             val isCompilerGenerated = expression.origin == null
@@ -163,8 +147,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     context.irBuiltIns.booleanType,
                     context.irBuiltIns.andandSymbol
                 ).apply {
-                    putValueArgument(0, expression.branches[0].condition)
-                    putValueArgument(1, expression.branches[0].result)
+                    arguments[0] = expression.branches[0].condition
+                    arguments[1] = expression.branches[0].result
                 }
             }
             if (expression.origin == IrStatementOrigin.OROR) {
@@ -184,8 +168,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     context.irBuiltIns.booleanType,
                     context.irBuiltIns.ororSymbol
                 ).apply {
-                    putValueArgument(0, expression.branches[0].condition)
-                    putValueArgument(1, expression.branches[1].result)
+                    arguments[0] = expression.branches[0].condition
+                    arguments[1] = expression.branches[1].result
                 }
             }
 
@@ -203,91 +187,26 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             return expression
         }
 
-        private fun getInlineableValueForTemporaryVal(statement: IrStatement): IrExpression? {
-            val variable = statement as? IrVariable ?: return null
-            if (variable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || variable.isVar) return null
-            if (variable in dontTouchTemporaryVals) return null
-
-            when (val initializer = variable.initializer) {
-                is IrConst<*> ->
-                    return initializer
-                is IrGetValue ->
-                    when (val initializerValue = initializer.symbol.owner) {
-                        is IrVariable ->
-                            return when {
-                                initializerValue.isVar ->
-                                    null
-                                initializerValue.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ->
-                                    getInlineableValueForTemporaryVal(initializerValue)
-                                        ?: initializer
-                                else ->
-                                    initializer
-                            }
-                        is IrValueParameter ->
-                            return if (initializerValue.isAssignable)
-                                null
-                            else
-                                initializer
-                    }
+        // Remove unnecessary GETSTATIC when @JvmStatic functions call each other
+        private fun removeUnnecessaryIrTypeOperatorCall(statements: MutableList<IrStatement>, data: IrDeclaration?) {
+            val typeOperatorCalls = statements.filter {
+                it is IrTypeOperatorCall
+                        && it.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+                        && it.argument is IrGetField
             }
+            if (typeOperatorCalls.isEmpty())
+                return
 
-            return null
-        }
-
-        private fun removeUnnecessaryTemporaryVariables(statements: MutableList<IrStatement>) {
-            // Remove declarations of immutable temporary variables that can be inlined.
-            statements.removeIf {
-                getInlineableValueForTemporaryVal(it) != null
-            }
-
-            // Remove a block that contains only two statements: the declaration of a temporary
-            // variable and a load of the value of that temporary variable with just the initializer
-            // for the temporary variable. We only perform this transformation for compiler generated
-            // temporary variables. Local variables can be changed at runtime and therefore eliminating
-            // an actual local variable changes debugging behavior.
-            //
-            // This helps avoid temporary variables even for side-effecting expressions when they are
-            // not needed. Having a temporary variable leads to local loads and stores in the
-            // generated java bytecode which are not necessary. For example
-            //
-            //     42.toLong()!!
-            //
-            // introduces a temporary variable for the toLong() call and a null check
-            //    block
-            //      temp = 42.toLong()
-            //      when (eq(temp, null))
-            //        (true) -> throwNep()
-            //        (false) -> temp
-            //
-            // the when is simplified because long is a primitive type, which leaves us with
-            //
-            //    block
-            //      temp = 42.toLong()
-            //      temp
-            //
-            // which can be simplified to simply
-            //
-            //    block
-            //      42.toLong()
-            //
-            // Doing so we avoid local loads and stores.
-            if (statements.size == 2) {
-                val first = statements[0]
-                val second = statements[1]
-                if (first is IrVariable
-                    && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-                    && second is IrGetValue
-                    && first.symbol == second.symbol
-                ) {
-                    statements.clear()
-                    first.initializer?.let { statements.add(it) }
-                }
+            typeOperatorCalls.forEach {
+                val arg = ((it as IrTypeOperatorCall).argument as IrGetField).symbol.owner
+                if (arg.parentClassOrNull == data?.parentClassOrNull)
+                    statements.remove(it)
             }
         }
 
         override fun visitBlockBody(body: IrBlockBody, data: IrDeclaration?): IrBody {
             body.transformChildren(this, data)
-            removeUnnecessaryTemporaryVariables(body.statements)
+            removeUnnecessaryTemporaryVariables(body.statements, dontTouchTemporaryVals::contains)
             return body
         }
 
@@ -310,7 +229,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             }
 
             expression.transformChildren(this, data)
-            removeUnnecessaryTemporaryVariables(expression.statements)
+            removeUnnecessaryTemporaryVariables(expression.statements, dontTouchTemporaryVals::contains)
+            removeUnnecessaryIrTypeOperatorCall(expression.statements, data)
             return expression
         }
 
@@ -357,9 +277,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             when (statement) {
                 is IrDoWhileLoop -> {
                     // Expecting counter loop
-                    val doWhileLoop = statement as? IrDoWhileLoop ?: return null
-                    if (doWhileLoop.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
-                    val doWhileLoopBody = doWhileLoop.body as? IrComposite ?: return null
+                    if (statement.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
+                    val doWhileLoopBody = statement.body as? IrComposite ?: return null
                     if (doWhileLoopBody.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) return null
                     val iterationInitialization = doWhileLoopBody.statements[0] as? IrComposite ?: return null
                     val loopVariableIndex = iterationInitialization.statements.indexOfFirst { it.isLoopVariable() }
@@ -403,25 +322,14 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             else
                 IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, -1)
 
-            return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, context.ir.symbols.intPostfixIncrDecr).apply {
-                putValueArgument(0, getIncrVar)
-                putValueArgument(1, delta)
+            return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, context.symbols.intPostfixIncrDecr).apply {
+                arguments[0] = getIncrVar
+                arguments[1] = delta
             }
         }
 
-        override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?): IrExpression {
-            // Replace IrGetValue of an immutable temporary variable with a constant
-            // initializer with the constant initializer.
-            val variable = expression.symbol.owner
-            return when (val replacement = getInlineableValueForTemporaryVal(variable)) {
-                is IrConst<*> ->
-                    replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
-                is IrGetValue ->
-                    replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
-                else ->
-                    expression
-            }
-        }
+        override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) =
+            optimizeGetValue(expression, dontTouchTemporaryVals::contains)
 
         override fun visitSetValue(expression: IrSetValue, data: IrDeclaration?): IrExpression {
             expression.transformChildren(this, data)
@@ -436,11 +344,11 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     return prefixIncr(expression, if (expression.origin == IrStatementOrigin.PREFIX_INCR) 1 else -1)
                 }
                 IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ -> {
-                    val argument = (expression.value as IrCall).getValueArgument(0)!!
+                    val argument = (expression.value as IrCall).arguments[1]!!
                     if (!hasSameLineNumber(argument, expression)) {
                         return null
                     }
-                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin is IrStatementOrigin.MINUSEQ)
+                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin == IrStatementOrigin.MINUSEQ)
                 }
                 IrStatementOrigin.EQ -> {
                     val value = expression.value
@@ -448,14 +356,13 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                         return null
                     }
                     if (value is IrCall) {
-                        val receiver = value.dispatchReceiver
-                            ?: return null
+                        val receiver = value.arguments.getOrNull(0) ?: return null
                         val symbol = expression.symbol
                         if (!hasSameLineNumber(receiver, expression)) {
                             return null
                         }
                         if (value.origin == IrStatementOrigin.PLUS || value.origin == IrStatementOrigin.MINUS) {
-                            val argument = value.getValueArgument(0)!!
+                            val argument = value.arguments[1]!!
                             if (receiver is IrGetValue && receiver.symbol == symbol && hasSameLineNumber(argument, expression)) {
                                 return rewriteCompoundAssignmentAsPrefixIncrDecr(
                                     expression, argument, value.origin == IrStatementOrigin.MINUS
@@ -473,8 +380,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             value: IrExpression?,
             isMinus: Boolean
         ): IrExpression? {
-            if (value is IrConst<*> && value.kind == IrConstKind.Int) {
-                val delta = IrConstKind.Int.valueOf(value)
+            if (value is IrConst && value.kind == IrConstKind.Int) {
+                val delta = value.value as Int
                 val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
                 val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)
                 if (delta in lowerBound..upperBound) {
@@ -487,9 +394,9 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         private fun prefixIncr(expression: IrSetValue, delta: Int): IrExpression {
             val startOffset = expression.startOffset
             val endOffset = expression.endOffset
-            return IrCallImpl.fromSymbolOwner(startOffset, endOffset, context.ir.symbols.intPrefixIncrDecr).apply {
-                putValueArgument(0, IrGetValueImpl(startOffset, endOffset, expression.symbol))
-                putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, delta))
+            return IrCallImpl.fromSymbolOwner(startOffset, endOffset, context.symbols.intPrefixIncrDecr).apply {
+                arguments[0] = IrGetValueImpl(startOffset, endOffset, expression.symbol)
+                arguments[1] = IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, delta)
             }
         }
 
@@ -498,5 +405,111 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
 
         private fun getLineNumberForOffset(offset: Int): Int =
             fileEntry.getLineNumber(offset) + 1
+    }
+}
+
+private fun getInlineableValueForTemporaryVal(statement: IrStatement, isEliminationForbidden: (IrVariable) -> Boolean): IrExpression? {
+    val variable = statement as? IrVariable ?: return null
+    if (variable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || variable.isVar) return null
+    if (isEliminationForbidden(variable)) return null
+
+    when (val initializer = variable.initializer) {
+        is IrConst ->
+            return initializer
+        is IrGetValue ->
+            when (val initializerValue = initializer.symbol.owner) {
+                is IrVariable ->
+                    return when {
+                        initializerValue.isVar ->
+                            null
+                        initializerValue.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ->
+                            getInlineableValueForTemporaryVal(initializerValue, isEliminationForbidden)
+                                ?: initializer
+                        else ->
+                            initializer
+                    }
+                is IrValueParameter ->
+                    return if (initializerValue.isAssignable)
+                        null
+                    else
+                        initializer
+            }
+    }
+
+    return null
+}
+
+fun optimizeGetValue(expression: IrGetValue, isEliminationForbidden: (IrVariable) -> Boolean): IrExpression {
+    // Replace IrGetValue of an immutable temporary variable with a constant
+    // initializer with the constant initializer.
+    val variable = expression.symbol.owner
+    return when (val replacement = getInlineableValueForTemporaryVal(variable, isEliminationForbidden)) {
+        is IrConst -> IrConstImpl(
+            expression.startOffset,
+            expression.endOffset,
+            replacement.type,
+            replacement.kind,
+            replacement.value
+        )
+        is IrGetValue -> IrGetValueImpl(
+            expression.startOffset,
+            expression.endOffset,
+            replacement.type,
+            replacement.symbol,
+            replacement.origin
+        )
+        else ->
+            expression
+    }
+}
+
+fun removeUnnecessaryTemporaryVariables(statements: MutableList<IrStatement>, isEliminationForbidden: (IrVariable) -> Boolean) {
+    // Remove declarations of immutable temporary variables that can be inlined.
+    statements.removeIf {
+        getInlineableValueForTemporaryVal(it, isEliminationForbidden) != null
+    }
+
+    // Remove a block that contains only two statements: the declaration of a temporary
+    // variable and a load of the value of that temporary variable with just the initializer
+    // for the temporary variable. We only perform this transformation for compiler generated
+    // temporary variables. Local variables can be changed at runtime and therefore eliminating
+    // an actual local variable changes debugging behavior.
+    //
+    // This helps avoid temporary variables even for side-effecting expressions when they are
+    // not needed. Having a temporary variable leads to local loads and stores in the
+    // generated java bytecode which are not necessary. For example
+    //
+    //     42.toLong()!!
+    //
+    // introduces a temporary variable for the toLong() call and a null check
+    //    block
+    //      temp = 42.toLong()
+    //      when (eq(temp, null))
+    //        (true) -> throwNep()
+    //        (false) -> temp
+    //
+    // the when is simplified because long is a primitive type, which leaves us with
+    //
+    //    block
+    //      temp = 42.toLong()
+    //      temp
+    //
+    // which can be simplified to simply
+    //
+    //    block
+    //      42.toLong()
+    //
+    // Doing so we avoid local loads and stores.
+    if (statements.size == 2) {
+        val first = statements[0]
+        val second = statements[1]
+        if (first is IrVariable
+            && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            && second is IrGetValue
+            && first.symbol == second.symbol
+        ) {
+            statements.clear()
+            first.initializer?.let { statements.add(it) }
+        }
     }
 }

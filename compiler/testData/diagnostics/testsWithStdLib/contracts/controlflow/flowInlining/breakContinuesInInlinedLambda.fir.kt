@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -49,3 +50,7 @@ fun test() {
 
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, contractCallsEffect, contracts, doWhileLoop, functionDeclaration,
+functionalType, ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+typeParameter, whileLoop */

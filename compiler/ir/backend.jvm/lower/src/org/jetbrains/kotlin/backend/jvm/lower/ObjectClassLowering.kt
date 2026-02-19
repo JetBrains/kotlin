@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.addJavaLangDeprecatedAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -19,17 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.filterOutAnnotations
 import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
-internal val objectClassPhase = makeIrFilePhase(
-    ::ObjectClassLowering,
-    name = "ObjectClass",
-    description = "Handle object classes"
-)
-
-private class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
+internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
 
     override fun lower(irFile: IrFile) {
@@ -66,13 +58,11 @@ private class ObjectClassLowering(val context: JvmBackendContext) : ClassLowerin
 
         // Mark object instance field as deprecated if the object visibility is private or protected,
         // and ProperVisibilityForCompanionObjectInstanceField language feature is not enabled.
-        if (!context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
+        if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             (irClass.visibility == DescriptorVisibilities.PRIVATE || irClass.visibility == DescriptorVisibilities.PROTECTED)
         ) {
-            context.createJvmIrBuilder(irClass.symbol).run {
-                publicInstanceField.annotations =
-                    filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, publicInstanceField.annotations) +
-                            irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+            with(context.createJvmIrBuilder(irClass.symbol)) {
+                publicInstanceField.addJavaLangDeprecatedAnnotation()
             }
         }
 

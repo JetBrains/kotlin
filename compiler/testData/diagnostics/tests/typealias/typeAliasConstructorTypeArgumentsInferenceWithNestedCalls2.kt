@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // NI_EXPECTED_FILE
 
@@ -39,3 +40,8 @@ fun test() {
     r3.x = r3.x
     r3a.x = r3a.x
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, getter, inProjection,
+integerLiteral, interfaceDeclaration, nullableType, override, primaryConstructor, propertyDeclaration,
+secondaryConstructor, setter, thisExpression, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

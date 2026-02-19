@@ -1,4 +1,5 @@
-
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_DUMP
 // FILE: samConversionToGeneric.kt
 
 fun test1() = J<String> { x -> x }
@@ -55,3 +56,6 @@ public class H {
     public static <X> void bar(J<X> j) {}
     public static <Y> void bar2x(J2X<Y> j2x) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, functionalType, javaFunction, javaType,
+lambdaLiteral, nullableType, samConversion, smartcast, typeParameter, typeWithExtension */

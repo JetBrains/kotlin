@@ -1,19 +1,19 @@
 public final class A /* pack.A*/ {
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String v;
+  private static @org.jetbrains.annotations.NotNull() java.lang.String v;
 
   @org.jetbrains.annotations.NotNull()
-  public static final java.lang.String cv = "A" /* initializer type: java.lang.String */ /* constant value A */;
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String cv = "A" /* initializer type: java.lang.String */ /* constant value A */;
 
   @org.jetbrains.annotations.NotNull()
-  public static final pack.A INSTANCE;
+  public static final @org.jetbrains.annotations.NotNull() pack.A INSTANCE;
 
   private static final int c;
 
   public static final int cc = 1 /* initializer type: int */ /* constant value 1 */;
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getV();//  getV()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getV();//  getV()
 
   private  A();//  .ctor()
 
@@ -21,5 +21,5 @@ public final class A /* pack.A*/ {
 
   public final int getC();//  getC()
 
-  public final void setV(@org.jetbrains.annotations.NotNull() java.lang.String);//  setV(java.lang.String)
+  public final void setV(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setV(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

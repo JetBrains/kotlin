@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST -UNUSED_LAMBDA_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST -UNUSED_LAMBDA_EXPRESSION
 
 class Foo {
     suspend operator fun <T> invoke(body: suspend (Int) -> T) = null as T
@@ -38,3 +39,7 @@ fun main() {
         1
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, suspend,
+typeParameter, typeWithExtension */

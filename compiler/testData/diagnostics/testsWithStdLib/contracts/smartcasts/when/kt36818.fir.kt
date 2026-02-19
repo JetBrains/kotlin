@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun main(x1: Double?, range: ClosedRange<Double>) {
     when (x1) {
         null -> throw Exception()
@@ -9,3 +10,5 @@ fun main(x1: Double?, range: ClosedRange<Double>) {
         x1 in range -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nullableType, smartcast, whenExpression, whenWithSubject */

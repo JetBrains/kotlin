@@ -3,71 +3,48 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.Properties
 
 buildscript {
     val rootBuildDirectory by extra(project.file("../.."))
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
 
     dependencies {
-        classpath("com.google.code.gson:gson:2.8.9")
+        classpath(libs.gson)
     }
 }
 
 repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
     mavenCentral()
     gradlePluginPortal()
 }
 
 plugins {
-    groovy
-    kotlin("jvm")
+    id("org.jetbrains.kotlin.jvm") apply false
     `kotlin-dsl`
 }
 
 dependencies {
     api(gradleApi())
 
-    api("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}") { isTransitive = false }
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    api("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${coreDepsVersion}") { isTransitive = false }
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
     // To build Konan Gradle plugin
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 
-    val versionProperties = Properties()
-    project.rootProject.projectDir.resolve("../../gradle/versions.properties").inputStream().use { propInput ->
-        versionProperties.load(propInput)
-    }
-    implementation("com.google.code.gson:gson:2.8.9")
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion(versionProperties["versions.gson"] as String)
-                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-            }
-        }
-    }
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    val metadataVersion = "0.0.1-dev-10"
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
+    implementation(libs.gson)
 
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
-    implementation(project(":kotlin-native-executors"))
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
 }
 
 val compileKotlin: KotlinCompile by tasks
-val compileGroovy: GroovyCompile by tasks
 
 compileKotlin.apply {
     compilerOptions {
@@ -76,24 +53,21 @@ compileKotlin.apply {
             listOf(
                 "-Xskip-prerelease-check",
                 "-Xsuppress-version-warnings",
+                "-Xallow-unstable-dependencies"
             )
         )
     }
-}
-
-// Add Kotlin classes to a classpath for the Groovy compiler
-compileGroovy.apply {
-    classpath += project.files(compileKotlin.destinationDirectory)
-    dependsOn(compileKotlin)
 }
 
 kotlin {
     sourceSets {
         main {
             kotlin.srcDir("src/main/kotlin")
-            kotlin.srcDir("../../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
         }
     }
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    jvmToolchain(17)
 }
 
 gradlePlugin {
@@ -102,25 +76,37 @@ gradlePlugin {
             id = "compile-to-bitcode"
             implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
         }
-        create("runtimeTesting") {
-            id = "runtime-testing"
-            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
-        }
         create("compilationDatabase") {
             id = "compilation-database"
             implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
         }
-        create("konanPlugin") {
-            id = "konan"
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
-        }
         create("native-interop-plugin") {
             id = "native-interop-plugin"
-            implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"
+            implementationClass = "org.jetbrains.kotlin.interop.NativeInteropPlugin"
         }
         create("native") {
             id = "native"
             implementationClass = "org.jetbrains.kotlin.tools.NativePlugin"
+        }
+        create("nativeDependenciesDownloader") {
+            id = "native-dependencies-downloader"
+            implementationClass = "org.jetbrains.kotlin.dependencies.NativeDependenciesDownloaderPlugin"
+        }
+        create("nativeDependencies") {
+            id = "native-dependencies"
+            implementationClass = "org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin"
+        }
+        create("platformManager") {
+            id = "platform-manager"
+            implementationClass = "org.jetbrains.kotlin.PlatformManagerPlugin"
+        }
+    }
+}
+
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
         }
     }
 }

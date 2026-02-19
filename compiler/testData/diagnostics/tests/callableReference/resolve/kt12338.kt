@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-12338 Compiler error ERROR: Rewrite at slice LEXICAL_SCOPE key: REFERENCE_EXPRESSION with when and function references
 
@@ -8,3 +9,5 @@ fun test() {
         true -> ::a
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, whenExpression */

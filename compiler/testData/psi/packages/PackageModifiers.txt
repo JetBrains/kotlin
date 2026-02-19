@@ -1,4 +1,6 @@
 KtFile: PackageModifiers.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   PACKAGE_DIRECTIVE
     MODIFIER_LIST
       PsiElement(public)('public')

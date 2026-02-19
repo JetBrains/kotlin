@@ -22,11 +22,5 @@ fun inDouble(x: Float): Boolean {
 // 0 doubleRangeContains
 // 0 floatRangeContains
 // 0 contains
-
-// JVM_TEMPLATES
-// 2 I2L
-// 3 F2D
-
-// JVM_IR_TEMPLATES
 // 1 I2L
 // 1 F2D

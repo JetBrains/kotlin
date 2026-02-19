@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForScriptDefaultConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForScriptMain
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -24,20 +24,22 @@ import org.jetbrains.kotlin.psi.KtScript
 
 internal class SymbolLightClassForScript private constructor(
     override val script: KtScript,
-    private val symbolPointer: KtSymbolPointer<KtScriptSymbol>,
-    ktModule: KtModule,
+    private val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
+    ktModule: KaModule,
 ) : KtLightClassForScript, SymbolLightClassBase(ktModule, script.manager) {
-
+    @OptIn(KaImplementationDetail::class)
     internal constructor(
         script: KtScript,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         script,
-        script.symbolPointerOfType(),
+        analyzeForLightClasses(ktModule) {
+            script.symbol.createPointer()
+        },
         ktModule,
     )
 
-    private fun MutableList<KtLightMethod>.addScriptDefaultMethods() {
+    private fun MutableList<PsiMethod>.addScriptDefaultMethods() {
         val defaultConstructor = SymbolLightMethodForScriptDefaultConstructor(
             script,
             this@SymbolLightClassForScript,
@@ -53,44 +55,42 @@ internal class SymbolLightClassForScript private constructor(
         add(mainMethod)
     }
 
-    override fun getOwnMethods(): List<KtLightMethod> = cachedValue {
-        val result = mutableListOf<KtLightMethod>()
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
+        val result = mutableListOf<PsiMethod>()
 
         result.addScriptDefaultMethods()
 
         symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-            createMethods(scriptSymbol.getDeclaredMemberScope().getCallableSymbols(), result)
+            createMethods(this@SymbolLightClassForScript, scriptSymbol.declaredMemberScope.callables, result)
         }
         result
     }
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
-        buildList {
-            symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-                addPropertyBackingFields(this@buildList, scriptSymbol)
+    override fun getOwnFields(): List<PsiField> = cachedValue {
+        symbolPointer.withSymbol(ktModule) { scriptSymbol ->
+            buildList {
+                addPropertyBackingFields(this@SymbolLightClassForScript, this, scriptSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }
 
     override fun getOwnInnerClasses(): List<SymbolLightClassBase> = cachedValue {
         symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-            scriptSymbol.createInnerClasses(manager, this@SymbolLightClassForScript, classOrObject = null)
+            createInnerClasses(scriptSymbol, manager, this@SymbolLightClassForScript, classOrObject = null)
         }
     }
 
     override fun copy(): SymbolLightClassForScript =
         SymbolLightClassForScript(script, symbolPointer, ktModule)
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this@SymbolLightClassForScript,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL)
         )
     }
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    override fun hasModifierProperty(name: String): Boolean = _modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
 
     private val _containingFile by lazyPub {
         FakeFileForLightClass(
@@ -107,8 +107,6 @@ internal class SymbolLightClassForScript private constructor(
     override fun equals(other: Any?): Boolean = this === other || other is SymbolLightClassForScript && other.script == script
 
     override fun hashCode(): Int = script.hashCode()
-
-    override fun toString(): String = "${SymbolLightClassForScript::class.java.simpleName}:${script.fqName}"
 
     override fun getNameIdentifier(): PsiIdentifier? = null
 
@@ -170,6 +168,6 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun getScope(): PsiElement = parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
 
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
@@ -14,8 +15,6 @@ expect open class Foo : Base {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual open class Base {
     actual fun existingMethodInBase() {}
     open fun injected(): Any = ""
@@ -27,3 +26,6 @@ actual open class Foo : Base() {
 
     override fun injected(): String = "" // covariant override
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, override,
+propertyDeclaration, stringLiteral */

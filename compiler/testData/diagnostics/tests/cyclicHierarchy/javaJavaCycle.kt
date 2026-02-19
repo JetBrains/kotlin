@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -27,3 +28,4 @@ fun foo() {
     object : B.B3 { override fun getFoo() = 1 }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, javaType, override */

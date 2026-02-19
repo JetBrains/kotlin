@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,40 +7,54 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.createStubBasedFirSymbolProviderForCommonMetadataFiles
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
-import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
+import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analyzer.common.CommonDefaultImportsProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
-import org.jetbrains.kotlin.fir.session.DefaultCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
-    override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
+    override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
-            registerModuleIndependentCommonComponents()
-
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
+                    this,
+                    providers = listOfNotNull(
+                        context.firProvider.symbolProvider,
+                        context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
+                    ),
+                    context.dependencyProvider,
+                )
+            )
+
+            registerCommonComponents()
+            registerPlatformSpecificComponentsIfAny(module)
+        }
+    }
+
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
+            register(
+                FirSymbolProvider::class,
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOf(
                         context.firProvider.symbolProvider,
@@ -49,70 +63,70 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 )
             )
 
+            registerCommonComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
 
-    override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
-            registerModuleIndependentCommonComponents()
-
-            register(
-                FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOf(
-                        context.firProvider.symbolProvider,
-                    ),
-                    context.dependencyProvider,
-                )
-            )
-
-            registerPlatformSpecificComponentsIfAny(module)
-        }
-    }
-
-    override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerModuleIndependentCommonComponents()
+            registerCommonComponents()
+            registerPlatformSpecificComponentsIfAny(module)
+        }
+    }
+
+    override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
+        return doCreateDanglingFileSession(module, contextSession) { context ->
+            register(
+                FirSymbolProvider::class,
+                LLModuleWithDependenciesSymbolProvider(
+                    this,
+                    providers = listOf(
+                        firProvider.symbolProvider,
+                    ),
+                    context.dependencyProvider,
+                )
+            )
+
+            registerCommonComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
 
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
-        builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
-            add(createStubBasedFirSymbolProviderForCommonMetadataFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
-            add(createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
+            addAll(
+                LLLibrarySymbolProviderFactory.fromSettings(project).createCommonLibrarySymbolProvider(
+                    session,
+                    packagePartProvider,
+                    scope,
+                )
+            )
 
             addIfNotNull(
                 OptionalAnnotationClassesProvider.createIfNeeded(
                     session,
                     moduleDataProvider,
-                    kotlinScopeProvider,
+                    session.kotlinScopeProvider,
                     packagePartProvider
                 )
             )
         }
     }
 
-    private fun LLFirSession.registerModuleIndependentCommonComponents() {
-        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-        register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
+    private fun LLFirSession.registerCommonComponents() {
+        register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))
+        register(FirEnumEntriesSupport(this))
     }
 
-    private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KtModule) {
-        if (module.platform.has<JvmPlatform>())
+    private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {
+        if (module.targetPlatform.has<JvmPlatform>())
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
     }
 }

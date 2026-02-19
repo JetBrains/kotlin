@@ -1,10 +1,4 @@
 abstract class Visibility {
-  constructor(name: String, isPublicAPI: Boolean) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val name: String
     field = name
     get
@@ -13,24 +7,92 @@ abstract class Visibility {
     field = isPublicAPI
     get
 
-  open val internalDisplayName: String
-    open get(): String {
-      return <this>.<get-name>()
-    }
+  constructor(name: String, isPublicAPI: Boolean) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun mustCheckInImports(): Boolean
 
   open val externalDisplayName: String
     open get(): String {
       return <this>.<get-internalDisplayName>()
     }
 
-  abstract fun mustCheckInImports(): Boolean
+  open val internalDisplayName: String
+    open get(): String {
+      return <this>.<get-name>()
+    }
 
 }
 
 object Visibilities {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
+  private val ORDERED_VISIBILITIES: Map<Visibility, Int>
+    field = buildMap<Visibility, Int>(builderAction = local fun MutableMap<Visibility, Int>.<anonymous>() {
+      $this$buildMap.put(key = PrivateToThis, value = 0) /*~> Unit */
+      $this$buildMap.put(key = Private, value = 0) /*~> Unit */
+      $this$buildMap.put(key = Internal, value = 1) /*~> Unit */
+      $this$buildMap.put(key = Protected, value = 1) /*~> Unit */
+      $this$buildMap.put(key = Public, value = 2) /*~> Unit */
+    }
+)
+    private get
+
+  object Inherited : Visibility {
+    private constructor() /* primary */ {
+      super/*Visibility*/(name = "inherited", isPublicAPI = false)
+      /* <init>() */
+
+    }
+
+    override fun mustCheckInImports(): Boolean {
+      throw IllegalStateException(p0 = "This method shouldn't be invoked for INHERITED visibility")
+    }
+
+  }
+
+  object Internal : Visibility {
+    private constructor() /* primary */ {
+      super/*Visibility*/(name = "internal", isPublicAPI = false)
+      /* <init>() */
+
+    }
+
+    override fun mustCheckInImports(): Boolean {
+      return true
+    }
+
+  }
+
+  object InvisibleFake : Visibility {
+    private constructor() /* primary */ {
+      super/*Visibility*/(name = "invisible_fake", isPublicAPI = false)
+      /* <init>() */
+
+    }
+
+    override fun mustCheckInImports(): Boolean {
+      return true
+    }
+
+    override val externalDisplayName: String
+      override get(): String {
+        return "invisible (private in a supertype)"
+      }
+
+  }
+
+  object Local : Visibility {
+    private constructor() /* primary */ {
+      super/*Visibility*/(name = "local", isPublicAPI = false)
+      /* <init>() */
+
+    }
+
+    override fun mustCheckInImports(): Boolean {
+      return true
+    }
 
   }
 
@@ -54,14 +116,14 @@ object Visibilities {
 
     }
 
+    override fun mustCheckInImports(): Boolean {
+      return true
+    }
+
     override val internalDisplayName: String
       override get(): String {
         return "private/*private to this*/"
       }
-
-    override fun mustCheckInImports(): Boolean {
-      return true
-    }
 
   }
 
@@ -74,19 +136,6 @@ object Visibilities {
 
     override fun mustCheckInImports(): Boolean {
       return false
-    }
-
-  }
-
-  object Internal : Visibility {
-    private constructor() /* primary */ {
-      super/*Visibility*/(name = "internal", isPublicAPI = false)
-      /* <init>() */
-
-    }
-
-    override fun mustCheckInImports(): Boolean {
-      return true
     }
 
   }
@@ -104,50 +153,6 @@ object Visibilities {
 
   }
 
-  object Local : Visibility {
-    private constructor() /* primary */ {
-      super/*Visibility*/(name = "local", isPublicAPI = false)
-      /* <init>() */
-
-    }
-
-    override fun mustCheckInImports(): Boolean {
-      return true
-    }
-
-  }
-
-  object Inherited : Visibility {
-    private constructor() /* primary */ {
-      super/*Visibility*/(name = "inherited", isPublicAPI = false)
-      /* <init>() */
-
-    }
-
-    override fun mustCheckInImports(): Boolean {
-      throw IllegalStateException(p0 = "This method shouldn't be invoked for INHERITED visibility")
-    }
-
-  }
-
-  object InvisibleFake : Visibility {
-    private constructor() /* primary */ {
-      super/*Visibility*/(name = "invisible_fake", isPublicAPI = false)
-      /* <init>() */
-
-    }
-
-    override fun mustCheckInImports(): Boolean {
-      return true
-    }
-
-    override val externalDisplayName: String
-      override get(): String {
-        return "invisible (private in a supertype)"
-      }
-
-  }
-
   object Unknown : Visibility {
     private constructor() /* primary */ {
       super/*Visibility*/(name = "unknown", isPublicAPI = false)
@@ -161,15 +166,11 @@ object Visibilities {
 
   }
 
-  private val ORDERED_VISIBILITIES: Map<Visibility, Int>
-    field = buildMap<Visibility, Int>(builderAction = local fun MutableMap<Visibility, Int>.<anonymous>() {
-      $this$buildMap.put(key = PrivateToThis, value = 0) /*~> Unit */
-      $this$buildMap.put(key = Private, value = 0) /*~> Unit */
-      $this$buildMap.put(key = Internal, value = 1) /*~> Unit */
-      $this$buildMap.put(key = Protected, value = 1) /*~> Unit */
-      $this$buildMap.put(key = Public, value = 2) /*~> Unit */
-    }
-)
-    private get
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
+

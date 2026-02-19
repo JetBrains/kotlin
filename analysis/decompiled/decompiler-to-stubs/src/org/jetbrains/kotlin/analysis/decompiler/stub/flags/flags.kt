@@ -24,6 +24,16 @@ val MODALITY: FlagsToModifiers = object : FlagsToModifiers() {
     }
 }
 
+/**
+ * For interfaces, we only need to remember a `sealed` modifier in the stub, as the interface will be abstract by default.
+ */
+val INTERFACE_MODALITY: FlagsToModifiers = object : FlagsToModifiers() {
+    override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+        val modality = Flags.MODALITY.get(flags)
+        return KtTokens.SEALED_KEYWORD.takeIf { modality == ProtoBuf.Modality.SEALED }
+    }
+}
+
 val VISIBILITY: FlagsToModifiers = object : FlagsToModifiers() {
     override fun getModifiers(flags: Int): KtModifierKeywordToken? {
         val visibility = Flags.VISIBILITY.get(flags)
@@ -57,6 +67,8 @@ val SUSPEND = createBooleanFlagToModifier(Flags.IS_SUSPEND, KtTokens.SUSPEND_KEY
 val EXPECT_CLASS = createBooleanFlagToModifier(Flags.IS_EXPECT_CLASS, KtTokens.EXPECT_KEYWORD)
 val EXPECT_FUNCTION = createBooleanFlagToModifier(Flags.IS_EXPECT_FUNCTION, KtTokens.EXPECT_KEYWORD)
 val EXPECT_PROPERTY = createBooleanFlagToModifier(Flags.IS_EXPECT_PROPERTY, KtTokens.EXPECT_KEYWORD)
+
+internal val ACCESSOR_FLAGS = listOf(VISIBILITY, MODALITY, INLINE_ACCESSOR, EXTERNAL_ACCESSOR)
 
 private fun createBooleanFlagToModifier(
     flagField: Flags.BooleanFlagField, ktModifierKeywordToken: KtModifierKeywordToken

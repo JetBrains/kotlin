@@ -1,4 +1,5 @@
-// !LANGUAGE: -ValueClassesSecondaryConstructorWithBody
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ValueClassesSecondaryConstructorWithBody
 // WITH_STDLIB
 
 @JvmInline
@@ -7,3 +8,5 @@ value class Foo(val x: String) {
         println(i)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, secondaryConstructor, value */

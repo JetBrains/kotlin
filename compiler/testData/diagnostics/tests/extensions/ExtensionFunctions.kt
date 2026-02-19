@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package outer
 
@@ -73,3 +74,8 @@ import outer.*
 
             if (command == null) 1
         }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, getter, ifExpression, infix, integerLiteral, javaFunction, javaProperty,
+localProperty, nullableType, operator, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, safeCall,
+stringLiteral, thisExpression, typeConstraint, typeParameter, unaryExpression */

@@ -5,41 +5,30 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.config.LoggingContext
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.config.phaser.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 // Phase composition.
-private class CompositePhase<Context : CommonBackendContext, Input, Output>(
+private class CompositePhase<Context : LoggingContext, Input, Output>(
     val phases: List<CompilerPhase<Context, Any?, Any?>>
 ) : CompilerPhase<Context, Input, Output> {
 
-    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
-        @Suppress("UNCHECKED_CAST") var currentState = phaserState as PhaserState<Any?>
-        var result = phases.first().invoke(phaseConfig, currentState, context, input)
-        for ((previous, next) in phases.zip(phases.drop(1))) {
-            if (next !is SameTypeCompilerPhase<*, *>) {
-                // Discard `stickyPostconditions`, they are useless since data type is changing.
-                currentState = currentState.changePhaserStateType()
-            }
-            currentState.stickyPostconditions.addAll(previous.stickyPostconditions)
-            result = next.invoke(phaseConfig, currentState, context, result)
-        }
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Output {
         @Suppress("UNCHECKED_CAST")
-        return result as Output
+        return phases.fold(input as Any?) { acc, phase ->
+            phase.invoke(phaseConfig, phaserState, context, acc)
+        } as Output
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
         phases.flatMap { it.getNamedSubphases(startDepth) }
-
-    override val stickyPostconditions get() = phases.last().stickyPostconditions
 }
 
 @Suppress("UNCHECKED_CAST")
-infix fun <Context : CommonBackendContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.then(
+infix fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.then(
     other: CompilerPhase<Context, Mid, Output>
 ): CompilerPhase<Context, Input, Output> {
     val unsafeThis = this as CompilerPhase<Context, Any?, Any?>
@@ -47,121 +36,86 @@ infix fun <Context : CommonBackendContext, Input, Mid, Output> CompilerPhase<Con
     return CompositePhase(if (this is CompositePhase<Context, *, *>) phases + unsafeOther else listOf(unsafeThis, unsafeOther))
 }
 
-fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
-    op: (Context, Element) -> Unit,
-    name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
-    preconditions: Set<Checker<Element>> = emptySet(),
-    postconditions: Set<Checker<Element>> = emptySet(),
-    stickyPostconditions: Set<Checker<Element>> = emptySet(),
-    actions: Set<Action<Element, Context>> = setOf(defaultDumper, validationAction),
-    nlevels: Int = 1
-): SameTypeNamedCompilerPhase<Context, Element> =
-    SameTypeNamedCompilerPhase(
-        name, description, prerequisite, CustomPhaseAdapter(op), preconditions, postconditions, stickyPostconditions, actions, nlevels,
-    )
-
-private class CustomPhaseAdapter<Context : CommonBackendContext, Element>(
-    private val op: (Context, Element) -> Unit
-) : SameTypeCompilerPhase<Context, Element> {
-    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Element>, context: Context, input: Element): Element {
-        op(context, input)
-        return input
-    }
-}
-
-fun <Context : CommonBackendContext> namedUnitPhase(
-    name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
-    nlevels: Int = 1,
-    lower: CompilerPhase<Context, Unit, Unit>
-): SameTypeNamedCompilerPhase<Context, Unit> =
-    SameTypeNamedCompilerPhase(
-        name, description, prerequisite, lower, nlevels = nlevels
-    )
-
-@Suppress("unused") // Used in kotlin-native
-fun <Context : CommonBackendContext> namedOpUnitPhase(
-    name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>>,
-    op: Context.() -> Unit
-): SameTypeNamedCompilerPhase<Context, Unit> = namedUnitPhase(
-    name, description, prerequisite,
-    nlevels = 0,
-    lower = object : SameTypeCompilerPhase<Context, Unit> {
-        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-            context.op()
+fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.thenIf(
+    condition: (Mid) -> Boolean,
+    onTrue: CompilerPhase<Context, Mid, out Output>,
+    onFalse: CompilerPhase<Context, Mid, out Output>
+): CompilerPhase<Context, Input, Output> {
+    val firstPhase = this
+    return object : CompilerPhase<Context, Input, Output> {
+        override fun invoke(
+            phaseConfig: PhaseConfig,
+            phaserState: PhaserState,
+            context: Context,
+            input: Input,
+        ): Output {
+            val midResult = firstPhase.invoke(phaseConfig, phaserState, context, input)
+            return if (condition(midResult)) {
+                onTrue.invoke(phaseConfig, phaserState, context, midResult)
+            } else {
+                onFalse.invoke(phaseConfig, phaserState, context, midResult)
+            }
         }
     }
-)
-
-fun <Context : CommonBackendContext> makeIrFilePhase(
-    lowering: (Context) -> FileLoweringPass,
-    name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
-    preconditions: Set<Checker<IrFile>> = emptySet(),
-    postconditions: Set<Checker<IrFile>> = emptySet(),
-    stickyPostconditions: Set<Checker<IrFile>> = emptySet(),
-    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper, validationAction)
-): SameTypeNamedCompilerPhase<Context, IrFile> =
-    SameTypeNamedCompilerPhase(
-        name, description, prerequisite, FileLoweringPhaseAdapter(lowering), preconditions, postconditions, stickyPostconditions, actions,
-        nlevels = 0,
-    )
-
-private class FileLoweringPhaseAdapter<Context : CommonBackendContext>(
-    private val lowering: (Context) -> FileLoweringPass
-) : SameTypeCompilerPhase<Context, IrFile> {
-    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
-        lowering(context).lower(input)
-        return input
-    }
 }
 
-fun <Context : CommonBackendContext> makeIrModulePhase(
-    lowering: (Context) -> FileLoweringPass,
+fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
-    preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction)
-): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
-    SameTypeNamedCompilerPhase(
-        name, description, prerequisite, ModuleLoweringPhaseAdapter(lowering), preconditions, postconditions, stickyPostconditions, actions,
-        nlevels = 0,
-    )
+    preactions: Set<Action<Input, Context>> = emptySet(),
+    postactions: Set<Action<Output, Context>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
+    outputIfNotEnabled: (PhaseConfig, PhaserState, Context, Input) -> Output,
+    op: (Context, Input) -> Output
+): NamedCompilerPhase<Context, Input, Output> = object : NamedCompilerPhase<Context, Input, Output>(
+    name,
+    preactions = preactions,
+    postactions = postactions.map { f ->
+        fun(actionState: ActionState, data: Pair<Input, Output>, context: Context) = f(actionState, data.second, context)
+    }.toSet(),
+    prerequisite = prerequisite,
+) {
+    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Output =
+        outputIfNotEnabled(phaseConfig, phaserState, context, input)
 
-private class ModuleLoweringPhaseAdapter<Context : CommonBackendContext>(
-    private val lowering: (Context) -> FileLoweringPass
-) : SameTypeCompilerPhase<Context, IrModuleFragment> {
-    override fun invoke(
-        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
-    ): IrModuleFragment {
-        lowering(context).lower(input)
-        return input
-    }
+    override fun phaseBody(context: Context, input: Input): Output =
+        op(context, input)
 }
 
-@Suppress("unused") // Used in kotlin-native
-fun <Context : CommonBackendContext, Input> unitSink(): CompilerPhase<Context, Input, Unit> =
-    object : CompilerPhase<Context, Input, Unit> {
-        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input) {}
-    }
+fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
+    name: String,
+    preactions: Set<Action<Input, Context>> = emptySet(),
+    postactions: Set<Action<Input, Context>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
+    op: (Context, Input) -> Unit
+): NamedCompilerPhase<Context, Input, Unit> = object : NamedCompilerPhase<Context, Input, Unit>(
+    name,
+    preactions = preactions,
+    postactions = postactions.map { f ->
+        fun(actionState: ActionState, data: Pair<Input, Unit>, context: Context) = f(actionState, data.first, context)
+    }.toSet(),
+    prerequisite = prerequisite,
+) {
+    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input) {}
 
-// Intermediate phases to change the object of transformations
-@Suppress("unused") // Used in kotlin-native
-fun <Context : CommonBackendContext, OldData, NewData> takeFromContext(op: (Context) -> NewData): CompilerPhase<Context, OldData, NewData> =
-    object : CompilerPhase<Context, OldData, NewData> {
-        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(context)
-    }
+    override fun phaseBody(context: Context, input: Input): Unit =
+        op(context, input)
+}
 
-fun <Context : CommonBackendContext, OldData, NewData> transform(op: (OldData) -> NewData): CompilerPhase<Context, OldData, NewData> =
-    object : CompilerPhase<Context, OldData, NewData> {
-        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(input)
-    }
+fun <Context : LoweringContext> makeIrModulePhase(
+    lowering: (Context) -> ModuleLoweringPass,
+    name: String,
+    prerequisite: Set<NamedCompilerPhase<Context, *, *>> = emptySet(),
+    preconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
+    postconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
+): NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
+    createSimpleNamedCompilerPhase(
+        name = name,
+        preactions = DEFAULT_IR_ACTIONS + preconditions,
+        postactions = DEFAULT_IR_ACTIONS + postconditions,
+        prerequisite = prerequisite,
+        outputIfNotEnabled = { _, _, _, irModule -> irModule },
+        op = { context, irModule ->
+            lowering(context).lower(irModule)
+            irModule
+        },
+    )

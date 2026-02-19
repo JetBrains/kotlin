@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 abstract class Outer {
     protected open class My
@@ -12,3 +13,5 @@ class OuterDerived: Outer() {
     // valid, My and Your have better visibility
     override fun foo(my: Outer.My) = Outer.Your()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, override */

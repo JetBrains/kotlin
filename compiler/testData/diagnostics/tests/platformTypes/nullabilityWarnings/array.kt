@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: J.java
 
@@ -30,3 +31,5 @@ fun test() {
     platformJ[0]  = 1
 }
 
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, integerLiteral, javaProperty, localProperty,
+nullableType, propertyDeclaration */

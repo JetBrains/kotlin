@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.asSequence
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -92,6 +92,7 @@ class CoroutineTransformer(
                 // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
+                config = state.config,
             )
 
             if (generateForInline)
@@ -123,9 +124,9 @@ class CoroutineTransformer(
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
+                config = state.config,
                 needDispatchReceiver = true,
                 internalNameForDispatchReceiver = classBuilder.thisName,
-                putContinuationParameterToLvt = !state.isIrBackend,
             )
 
             if (generateForInline)
@@ -213,6 +214,8 @@ fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode) {
         node.instructions.insertBefore(load, withInstructionAdapter {
             addInlineMarker(this, isStartNotEnd = true)
         })
+        // We cannot add INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL here, as we do not know the type of the non-inlined lambda.
+        // But it seems fine, as it won't happen for inlined lambdas
         node.instructions.insertBefore(invoke, withInstructionAdapter {
             addSuspendMarker(this, isStartNotEnd = true, inlinable = conditional)
         })

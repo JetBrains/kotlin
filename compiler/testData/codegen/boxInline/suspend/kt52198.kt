@@ -1,7 +1,6 @@
 // WITH_COROUTINES
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_MULTI_MODULE_IR_AGAINST_OLD
 // FILE: lib.kt
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

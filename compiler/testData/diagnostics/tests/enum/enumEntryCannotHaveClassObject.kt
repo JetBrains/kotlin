@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 enum class E {
     FIRST,
@@ -10,3 +11,5 @@ enum class E {
 }
 
 fun f() = E.SECOND.<!UNRESOLVED_REFERENCE!>foo<!>()
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

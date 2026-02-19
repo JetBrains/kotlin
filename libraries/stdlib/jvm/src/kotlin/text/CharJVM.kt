@@ -90,7 +90,12 @@ public inline fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentif
 public inline fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
 
 /**
- * Determines whether a character is whitespace according to the Unicode standard.
+ * Determines whether a character is whitespace.
+ *
+ * A character is considered whitespace if either its Unicode [category][Char.category]
+ * is one of [CharCategory.SPACE_SEPARATOR], [CharCategory.LINE_SEPARATOR], [CharCategory.PARAGRAPH_SEPARATOR],
+ * or it is a [CharCategory.CONTROL] character in range `U+0009..U+000D` or `U+001C..U+001F`.
+ *
  * Returns `true` if the character is whitespace.
  *
  * @sample samples.text.Chars.isWhitespace
@@ -123,7 +128,7 @@ public actual inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(thi
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use uppercaseChar() instead.", ReplaceWith("uppercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
 
@@ -137,7 +142,6 @@ public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.uppercaseChar(): Char = Character.toUpperCase(this)
 
@@ -152,7 +156,6 @@ public actual inline fun Char.uppercaseChar(): Char = Character.toUpperCase(this
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.uppercase(): String = toString().uppercase()
 
@@ -167,14 +170,13 @@ public actual inline fun Char.uppercase(): String = toString().uppercase()
  * @sample samples.text.Chars.uppercaseLocale
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.uppercase(locale: Locale): String = toString().uppercase(locale)
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use lowercaseChar() instead.", ReplaceWith("lowercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
 
@@ -188,7 +190,6 @@ public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercaseChar(): Char = Character.toLowerCase(this)
 
@@ -203,7 +204,6 @@ public actual inline fun Char.lowercaseChar(): Char = Character.toLowerCase(this
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercase(): String = toString().lowercase()
 
@@ -218,7 +218,6 @@ public actual inline fun Char.lowercase(): String = toString().lowercase()
  * @sample samples.text.Chars.lowercaseLocale
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.lowercase(locale: Locale): String = toString().lowercase(locale)
 
 /**
@@ -237,7 +236,7 @@ public actual inline fun Char.isTitleCase(): Boolean = Character.isTitleCase(thi
  * @see Character.toTitleCase
  */
 @Deprecated("Use titlecaseChar() instead.", ReplaceWith("titlecaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public inline fun Char.toTitleCase(): Char = titlecaseChar()
 
@@ -251,7 +250,6 @@ public inline fun Char.toTitleCase(): Char = titlecaseChar()
  * @sample samples.text.Chars.titlecase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.titlecaseChar(): Char = Character.toTitleCase(this)
 
@@ -266,7 +264,6 @@ public actual inline fun Char.titlecaseChar(): Char = Character.toTitleCase(this
  * @sample samples.text.Chars.titlecaseLocale
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.titlecase(locale: Locale): String {
     val localizedUppercase = uppercase(locale)
     if (localizedUppercase.length > 1) {
@@ -309,6 +306,7 @@ internal actual fun digitOf(char: Char, radix: Int): Int = Character.digit(char.
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
 @PublishedApi
+@IgnorableReturnValue
 internal actual fun checkRadix(radix: Int): Int {
     if (radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")

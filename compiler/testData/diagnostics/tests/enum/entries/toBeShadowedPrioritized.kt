@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +EnumEntries +PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 // ISSUE: KT-56587
@@ -46,3 +47,6 @@ enum class E10 : I01 {
         println(entries)
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, functionDeclaration, getter, interfaceDeclaration, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

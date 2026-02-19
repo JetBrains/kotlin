@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: canInspectValuesOfPrimitiveTypes.txt
+
 fun main(args: Array<String>) {
     var a: Byte =  1
     var b: Int  =  2

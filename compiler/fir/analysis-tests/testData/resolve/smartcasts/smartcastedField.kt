@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-56820
 
 // FILE: PropertyId.java
@@ -31,3 +32,6 @@ fun test_2(x: Property<String>) {
         x.id
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, intersectionType, isExpression, javaFunction,
+javaType, propertyDeclaration, smartcast */

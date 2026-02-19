@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Producer.java
 
 import java.util.*;
@@ -15,10 +16,10 @@ interface StringSet : MutableSet<String>
 fun foo(arg: Boolean) {
     val x = Producer.foo()
     if (x is Set<*>) {
-        val y = <!DEBUG_INFO_EXPRESSION_TYPE("java.util.ArrayList<kotlin.Any..kotlin.Any?!>..java.util.ArrayList<*> & kotlin.collections.Set<*> & java.util.ArrayList<kotlin.Any..kotlin.Any?!>..java.util.ArrayList<*>")!>x<!>
+        val y = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Set<*> & (java.util.ArrayList<(kotlin.Any..kotlin.Any?)>..java.util.ArrayList<*>)")!>x<!>
     }
     if (x is MutableSet<*>) {
-        val y = <!DEBUG_INFO_EXPRESSION_TYPE("java.util.ArrayList<kotlin.Any..kotlin.Any?!>..java.util.ArrayList<*> & kotlin.collections.MutableSet<*> & java.util.ArrayList<kotlin.Any..kotlin.Any?!>..java.util.ArrayList<*>")!>x<!>
+        val y = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableSet<*> & (java.util.ArrayList<(kotlin.Any..kotlin.Any?)>..java.util.ArrayList<*>)")!>x<!>
     }
     if (x is StringSet) {
         x.add("")
@@ -27,3 +28,7 @@ fun foo(arg: Boolean) {
         x.iterator().next().length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+intersectionType, isExpression, javaFunction, localProperty, nullableType, propertyDeclaration, smartcast,
+starProjection, stringLiteral */

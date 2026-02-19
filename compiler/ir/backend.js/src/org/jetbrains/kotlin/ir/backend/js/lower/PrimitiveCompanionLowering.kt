@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+/**
+ * Replaces common companion object access with platform one.
+ */
 class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
     private fun getActualPrimitiveCompanion(irClass: IrClass): IrClass? {
@@ -33,7 +36,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
         if (!parent.defaultType.isPrimitiveType() && !parent.defaultType.isString())
             return null
 
-        return context.primitiveCompanionObjects[parent.name]?.owner
+        return context.symbols.primitiveCompanionObjects[parent.name]?.owner
     }
 
     private fun getActualPrimitiveCompanionPropertyAccessor(function: IrSimpleFunction): IrSimpleFunction? {

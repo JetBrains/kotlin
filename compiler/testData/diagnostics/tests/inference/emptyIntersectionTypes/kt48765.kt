@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
+// LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // RENDER_DIAGNOSTICS_FULL_TEXT
 open class A<T1, T2> {}
 class B {
@@ -17,3 +18,6 @@ fun <T: <!FINAL_UPPER_BOUND!>String<!>> foo(): T  {
 fun main() {
     C(D(), 10.5).test()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, intersectionType, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

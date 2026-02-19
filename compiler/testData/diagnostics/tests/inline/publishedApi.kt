@@ -1,6 +1,6 @@
-// !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
-
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 inline fun call(a: A) {
     a.test()
@@ -176,3 +176,6 @@ var publicVarTopLevel = 1
 internal var internalVarTopLevel = 1
 
 private var privateVarTopLevel = 1
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, inline, integerLiteral, localProperty,
+propertyDeclaration, setter */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.ir.util.hasTopLevelEqualFqName
@@ -68,10 +70,10 @@ fun getPublicSignature(packageFqName: FqName, name: String) =
     )
 
 private fun IrType.isClassType(signature: IdSignature.CommonSignature, nullable: Boolean? = null): Boolean {
-    if (this !is IrSimpleType) return false
+    if (this !is IrSimpleType || this is IrCapturedType) return false
     if (nullable != null && this.isMarkedNullable() != nullable) return false
     return signature == classifier.signature ||
-            classifier.owner.let { it is IrClass && it.hasFqNameEqualToSignature(signature) }
+            (classifier.isBound && classifier.owner.let { it is IrClass && it.hasFqNameEqualToSignature(signature) })
 }
 
 private fun IrClass.hasFqNameEqualToSignature(signature: IdSignature.CommonSignature): Boolean =
@@ -89,23 +91,28 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
 }
 
 private val idSignatureToPrimitiveType: Map<IdSignature.CommonSignature, PrimitiveType> =
-    PrimitiveType.values().associateBy {
+    PrimitiveType.entries.associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
 
 private val shortNameToPrimitiveType: Map<Name, PrimitiveType> =
-    PrimitiveType.values().associateBy(PrimitiveType::typeName)
+    PrimitiveType.entries.associateBy(PrimitiveType::typeName)
 
 private val idSignatureToUnsignedType: Map<IdSignature.CommonSignature, UnsignedType> =
-    UnsignedType.values().associateBy {
+    UnsignedType.entries.associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
 
 private val shortNameToUnsignedType: Map<Name, UnsignedType> =
-    UnsignedType.values().associateBy(UnsignedType::typeName)
+    UnsignedType.entries.associateBy(UnsignedType::typeName)
 
 val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.CommonSignature> =
-    PrimitiveType.values().associateWith {
+    PrimitiveType.entries.associateWith {
+        getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
+    }
+
+val unsignedArrayTypesSignatures: Map<UnsignedType, IdSignature.CommonSignature> =
+    UnsignedType.entries.associateWith {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
     }
 
@@ -152,8 +159,17 @@ fun <T : Enum<T>> IrType.getPrimitiveOrUnsignedType(byIdSignature: Map<IdSignatu
     return byShortName[klass.name]
 }
 
-fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.nullability == SimpleTypeNullability.MARKED_NULLABLE
-fun IrSimpleType.isMarkedNullable() = nullability == SimpleTypeNullability.MARKED_NULLABLE
+fun IrType.isMarkedNullable(): Boolean = (this as? IrSimpleType)?.nullability == SimpleTypeNullability.MARKED_NULLABLE
+fun IrSimpleType.isMarkedNullable(): Boolean = nullability == SimpleTypeNullability.MARKED_NULLABLE
+
+fun IrType.canBeNull(): Boolean = when (this) {
+    is IrSimpleType -> isMarkedNullable() || when (this) {
+        is IrCapturedType -> constructor.superTypes.any { it.canBeNull() }
+        else -> (classifier as? IrTypeParameterSymbol)?.owner?.superTypes?.all { it.canBeNull() } ?: false
+    }
+    is IrDynamicType -> true
+    is IrErrorType -> isMarkedNullable
+}
 
 fun IrType.isUnit() = isNotNullClassType(IdSignatureValues.unit)
 
@@ -201,3 +217,7 @@ fun IrType.isNullableContinuation(): Boolean = isClassType(StandardNames.CONTINU
 
 // FIR and backend instances have different mask.
 fun IrType.isKClass(): Boolean = isClassType(StandardNames.FqNames.kClass, false)
+
+private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature) = signature == symbol.signature
+
+fun IrClass.isAny() = this.isClassTypeWithSignature(IdSignatureValues.any)

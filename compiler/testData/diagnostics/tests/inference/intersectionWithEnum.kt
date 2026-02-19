@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // NI_EXPECTED_FILE
 
 // ISSUE: KT-32383
@@ -24,3 +25,7 @@ object B : Bar<BFoo>()
 val invs = invOf(A, B)
 val outs = outOf(A, B)
 val ins = inOf(A, B)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, enumDeclaration, functionDeclaration, in,
+interfaceDeclaration, intersectionType, nullableType, objectDeclaration, out, outProjection, propertyDeclaration,
+starProjection, typeConstraint, typeParameter, vararg */

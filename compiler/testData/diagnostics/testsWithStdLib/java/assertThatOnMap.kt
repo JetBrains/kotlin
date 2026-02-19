@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: AbstractMapAssert.java
@@ -34,3 +35,6 @@ public class Assertions {
 fun <S : Map<*,*>> S?.must() {
     Assertions.assertThat(this).isNotNull
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction, javaProperty,
+nullableType, starProjection, thisExpression, typeConstraint, typeParameter */

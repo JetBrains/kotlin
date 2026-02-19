@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KFunction2
 
@@ -14,3 +15,6 @@ fun Foo.bar(vararg x: Int) = ""
 fun actualTest() {
     test(Foo::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
+outProjection, stringLiteral, vararg */

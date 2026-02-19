@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // ISSUE: KT-57979
 
 // FILE: J.java
@@ -42,3 +44,5 @@ fun test(j: J<Unit>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>j.value2<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Unit..kotlin.Unit?)")!>j.value3<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaProperty, javaType, nullableType */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun baz(s: String?): String {
     if (s == null) return ""
     // if explicit type String is given for t, problem disappears
@@ -16,3 +17,6 @@ fun foo(s: String?): String {
     }
     return t
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

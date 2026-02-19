@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Ann.java
 
 public @interface Ann {
@@ -13,3 +14,4 @@ public @interface Ann {
 <!REPEATED_ANNOTATION!>@Ann(x = 10, s = "", y = 10)<!>
 class A
 
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, javaType, stringLiteral */

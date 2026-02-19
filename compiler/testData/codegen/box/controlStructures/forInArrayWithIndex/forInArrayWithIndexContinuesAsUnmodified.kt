@@ -1,12 +1,12 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // See https://youtrack.jetbrains.com/issue/KT-22424
-// IGNORE_BACKEND: JS
 // WITH_STDLIB
 
 fun testUnoptimized(): String {
     var arr = intArrayOf(1, 2, 3, 4)
     val sb = StringBuilder()
     val ixs = arr.withIndex()
-    for ((i, x) in ixs) {
+    for ([i, x] in ixs) {
         sb.append("$i:$x;")
         arr = intArrayOf(10, 20)
     }
@@ -18,7 +18,7 @@ fun box(): String {
 
     var arr = intArrayOf(1, 2, 3, 4)
     val sb = StringBuilder()
-    for ((i, x) in arr.withIndex()) {
+    for ([i, x] in arr.withIndex()) {
         sb.append("$i:$x;")
         arr = intArrayOf(10, 20)
     }

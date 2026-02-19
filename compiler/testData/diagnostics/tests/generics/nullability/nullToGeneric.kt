@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun <E> bar(x: E) {}
 
@@ -34,3 +35,6 @@ class A<F> {
 
     fun foobar(): F = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+typeParameter */

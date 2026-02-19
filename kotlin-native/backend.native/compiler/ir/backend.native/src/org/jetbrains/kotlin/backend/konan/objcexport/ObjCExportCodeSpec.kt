@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.Companion.nsEnumPropertyName
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import java.io.PrintStream
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec {
@@ -87,6 +90,14 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
+                if (namer.getNSEnumTypeName(descriptor) != null) {
+                    val superClass = descriptor.getSuperClassNotAny()!!  // ordinal is declared in KotlinEnum
+                    val ordinalDescriptor = superClass.contributedMethods.single() { it.propertyIfAccessor.name.asString() == "ordinal" }
+                    val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(ordinalDescriptor)
+                    val bridge = mapper.bridgeMethod(ordinalDescriptor)
+                    methods += ObjCGetterForNSEnumType(symbol, bridge, nsEnumPropertyName)
+                }
+
                 descriptor.enumEntries.mapTo(methods) {
                     ObjCGetterForKotlinEnumEntry(symbolTable.descriptorExtension.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
                 }
@@ -142,6 +153,55 @@ internal class ObjCExportCodeSpec(
         val types: List<ObjCTypeForKotlinType>
 )
 
+internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String) {
+    PrintStream(path).use { out ->
+        out.println("# Classes mapping")
+        for (type in types) {
+            val objcClass = type.binaryName
+            val kotlinClass = type.irClassSymbol.signature.toString()
+            out.println("$objcClass,$kotlinClass")
+        }
+        fun ObjCMethodSpec.isInstanceMethod(): Boolean = when (this) {
+            is ObjCFactoryMethodForKotlinArrayConstructor -> baseMethod.bridge.isInstance
+            is ObjCInitMethodForKotlinConstructor -> baseMethod.bridge.isInstance
+            is ObjCMethodForKotlinMethod -> baseMethod.bridge.isInstance
+            is ObjCKotlinThrowableAsErrorMethod -> true
+            is ObjCClassMethodForKotlinEnumValuesOrEntries -> false
+            is ObjCGetterForKotlinEnumEntry -> false
+            is ObjCGetterForObjectInstance -> false
+            is ObjCGetterForNSEnumType -> true
+        }
+
+        fun ObjCMethodSpec.getMapping(objcClass: String): String? = when (this) {
+            is ObjCClassMethodForKotlinEnumValuesOrEntries -> "$objcClass.$selector,${valuesFunctionSymbol.signature}"
+            is ObjCFactoryMethodForKotlinArrayConstructor -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
+            is ObjCGetterForKotlinEnumEntry -> "$objcClass.$selector,${irEnumEntrySymbol.signature}"
+            is ObjCGetterForObjectInstance -> "$objcClass.$selector,${classSymbol.signature}"
+            is ObjCInitMethodForKotlinConstructor -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
+            is ObjCKotlinThrowableAsErrorMethod -> null
+            is ObjCMethodForKotlinMethod -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
+            is ObjCGetterForNSEnumType -> null
+        }
+        out.println("\n# Instance methods mapping")
+        for (type in types) {
+            for (mapping in type.methods.filter { it.isInstanceMethod() }) {
+                out.println(mapping.getMapping(type.binaryName) ?: continue)
+            }
+        }
+        out.println("\n# Class methods mapping")
+        for (type in types) {
+            for (mapping in type.methods.filterNot { it.isInstanceMethod() }) {
+                out.println(mapping.getMapping(type.binaryName) ?: continue)
+            }
+        }
+        for (file in files) {
+            for (mapping in file.methods) {
+                out.println(mapping.getMapping(file.binaryName) ?: continue)
+            }
+        }
+    }
+}
+
 internal sealed class ObjCMethodSpec {
     /**
      * Aggregates base method (as defined by [ObjCExportMapper.isBaseMethod])
@@ -174,6 +234,17 @@ internal class ObjCGetterForKotlinEnumEntry(
     override fun toString(): String =
             "ObjC spec of getter `$selector` for `$irEnumEntrySymbol`"
 }
+
+
+internal class ObjCGetterForNSEnumType(
+        val symbol: IrSimpleFunctionSymbol,
+        val bridge: MethodBridge,
+        val selector: String,
+) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of $selector for $symbol"
+}
+
 
 internal class ObjCClassMethodForKotlinEnumValuesOrEntries(
         val valuesFunctionSymbol: IrFunctionSymbol,

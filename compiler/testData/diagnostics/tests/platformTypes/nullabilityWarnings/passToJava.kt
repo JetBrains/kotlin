@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -87,3 +88,6 @@ fun test(n: J?, nn: J) {
     J(<!TYPE_MISMATCH!>platformN<!>, platformN, platformN)
     J(platformJ, platformJ, platformJ)
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+localProperty, nullableType, propertyDeclaration */

@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.fir.declarations
 
@@ -14,15 +17,29 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Represents a regular (in sense of being named) Kotlin class declaration.
+ * This includes similar declarations as an interface, an object, an enum or annotation class,
+ * but excludes an anonymous object or a type alias.
+ *
+ * Notable properties:
+ * - [name] — the simple name of the class.
+ * - [classKind] — what kind of class it is (interface, object, enum class, enum entry, annotation class, or a plain class). 
+ * - [symbol] — the symbol which serves as a pointer to the class. 
+ * - [typeParameters] — the type parameters of the class and references to type parameters of its outer classes, if any 
+ * - [superTypeRefs] — explicitly declared supertypes, or [kotlin.Any] by default.
+ * - [companionObjectSymbol] — Symbol of the companion object if present, otherwise null.
+ * - [declarations] — member declarations inside the class.
+ * - [annotations] — annotations present on the class, if any.
+ * - [hasLazyNestedClassifiers] — Whether nested classifiers are computed lazily
+ * (targeted for implementations that are lazy by nature, currently used for Java class implementations). 
+ *
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.regularClass]
  */
-
 abstract class FirRegularClass : FirClass() {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
@@ -30,20 +47,23 @@ abstract class FirRegularClass : FirClass() {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
+    abstract override val isLocal: Boolean
     abstract override val deprecationsProvider: DeprecationsProvider
+    abstract override val scopeProvider: FirScopeProvider
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val classKind: ClassKind
+    @DirectDeclarationsAccess
     abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
-    abstract override val scopeProvider: FirScopeProvider
     abstract val name: Name
     abstract override val symbol: FirRegularClassSymbol
     abstract val hasLazyNestedClassifiers: Boolean
     abstract val companionObjectSymbol: FirRegularClassSymbol?
     abstract override val superTypeRefs: List<FirTypeRef>
-    abstract val contextReceivers: List<FirContextReceiver>
+    abstract val contextParameters: List<FirValueParameter>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitRegularClass(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
@@ -54,6 +74,8 @@ abstract class FirRegularClass : FirClass() {
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
+    abstract override fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
@@ -70,4 +92,6 @@ abstract class FirRegularClass : FirClass() {
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass
+
+    abstract fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirRegularClass
 }

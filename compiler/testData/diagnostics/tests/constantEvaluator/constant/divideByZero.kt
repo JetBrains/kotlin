@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 // val prop1: null
@@ -16,7 +17,7 @@ package test
 <!DEBUG_INFO_CONSTANT_VALUE("null")!>val prop5 = <!DIVISION_BY_ZERO!>1 / 0.toLong()<!><!>
 
 // val prop6: Infinity.toDouble()
-<!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop6 = <!DIVISION_BY_ZERO!>1.0 / 0.toInt()<!><!>
+<!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop6 = <!DIVISION_BY_ZERO!>1.0 / 0L.toInt()<!><!>
 
 // val prop7: Infinity.toDouble()
 <!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop7 = <!DIVISION_BY_ZERO!>1.0 / 0.toLong()<!><!>
@@ -77,3 +78,6 @@ package test
 
 // val prop27: Infinity.toDouble()
 <!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop27 = <!DIVISION_BY_ZERO!>1.0.div(0)<!><!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, multiplicativeExpression, propertyDeclaration,
+unaryExpression */

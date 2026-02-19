@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // SCOPE_DUMP: C:foo;x;y;getX, D:x;y;getX, E:x;getX
 
 // FILE: lib.kt
@@ -40,3 +42,6 @@ fun test(d: D) {
     val a = d.x
     val b = d.y
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration */

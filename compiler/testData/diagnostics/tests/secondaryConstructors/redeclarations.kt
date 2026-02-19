@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A<!CONFLICTING_OVERLOADS!>(x: String = "", y: String = "")<!> {
     <!CONFLICTING_OVERLOADS!>constructor(x: String, y: String)<!>: <!OVERLOAD_RESOLUTION_AMBIGUITY!>this<!>(x, y)
@@ -25,3 +27,6 @@ class Outer {
 
     <!CONFLICTING_OVERLOADS!>fun B(x: Int)<!> {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, primaryConstructor, secondaryConstructor,
+stringLiteral */

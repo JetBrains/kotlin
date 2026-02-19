@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A {
     val x: Int
 }
@@ -21,3 +22,6 @@ fun test_2() {
     val y = 1
     y.transform()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, interfaceDeclaration,
+localFunction, localProperty, propertyDeclaration */

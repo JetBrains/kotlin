@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -25,3 +26,6 @@ fun test() {
         })
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, in, interfaceDeclaration,
+lambdaLiteral, nullableType, override, suspend, typeParameter, typeWithExtension */

@@ -21,10 +21,9 @@
 
 #import <objc/runtime.h>
 
-#import <Foundation/NSArray.h>
-#import <Foundation/NSDictionary.h>
-#import <Foundation/NSSet.h>
+#import <Foundation/Foundation.h>
 
+#import "CallsChecker.hpp"
 #import "Exceptions.h"
 #import "ObjCExport.h"
 #import "ObjCExportCollections.h"

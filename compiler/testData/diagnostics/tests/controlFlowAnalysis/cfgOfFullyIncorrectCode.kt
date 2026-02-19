@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-47494
 
 {
@@ -18,3 +19,7 @@
         try {}
 
         finally
+
+}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral, tryExpression */

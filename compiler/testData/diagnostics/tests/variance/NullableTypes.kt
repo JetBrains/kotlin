@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface In<in I>
 interface Out<out O>
@@ -15,3 +16,6 @@ interface Test<in I : Any, out O : Any, P : Any> {
     fun neOk3(i: Inv<in <!TYPE_VARIANCE_CONFLICT_ERROR!>I?<!>>)
     <!TYPE_VARIANCE_CONFLICT_ERROR!>fun neOk4()<!> = getT<Inv<in O?>?>()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, in, inProjection, interfaceDeclaration, nullableType, out,
+typeConstraint, typeParameter */

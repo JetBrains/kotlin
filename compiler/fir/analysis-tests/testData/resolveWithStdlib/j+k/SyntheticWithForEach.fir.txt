@@ -1,10 +1,10 @@
 FILE: test.kt
     public final fun <D : R|kotlin/Any|> R|Call<D>|.testForEach(): R|kotlin/Unit| {
-        this@R|/testForEach|.R|/Call.arguments|.R|SubstitutionOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|@EnhancedNullability kotlin/String!|, value: R|@EnhancedNullability kotlin/String!|): R|kotlin/Unit| <inline=NoInline>  {
+        this@R|/testForEach|.R|/Call.arguments|.R|SubstitutionOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = SAM(forEach@fun <anonymous>(key: R|@EnhancedNullability kotlin/String!|, value: R|@EnhancedNullability kotlin/String!|): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/key|.R|kotlin/String.length|
             R|<local>/value|.R|kotlin/String.length|
         }
-        )
+        ))
         this@R|/testForEach|.R|/Call.arguments|.R|kotlin/collections/forEach|<R|kotlin/String!|, R|kotlin/String!|>(<L> = forEach@fun <anonymous>(it: R|kotlin/collections/Map.Entry<kotlin/String!, kotlin/String!>|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.key: R|kotlin/String!|>|.R|kotlin/String.length|
             R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.value: R|kotlin/String!|>|.R|kotlin/String.length|

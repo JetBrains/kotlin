@@ -8,42 +8,63 @@
 
 #include <atomic>
 #include <cstdint>
+#include <vector>
 
+#include "AnyPage.hpp"
+#include "AllocationSize.hpp"
 #include "AtomicStack.hpp"
-#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
-#include "std_support/Vector.hpp"
+#include "CustomLogging.hpp"
+#include "CustomFinalizerProcessor.hpp"
 
 namespace kotlin::alloc {
 
-class alignas(8) SingleObjectPage {
-public:
-    using GCSweepScope = gc::GCHandle::GCSweepScope;
+class SingleObjectPage;
 
-    static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
+class alignas(kPageAlignment) SingleObjectPage : public AnyPage<SingleObjectPage> {
+public:
 
     static SingleObjectPage* Create(uint64_t cellCount) noexcept;
 
-    void Destroy() noexcept;
-
     uint8_t* Data() noexcept;
 
-    uint8_t* TryAllocate() noexcept;
+    uint8_t* Allocate() noexcept;
 
-    bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+    template<typename SweepTraits>
+    bool SweepAndDestroy(typename SweepTraits::GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
+        CustomAllocDebug("SingleObjectPage@%p::SweepAndDestroy()", this);
+        if (!SweepTraits::trySweepElement(Data(), finalizerQueue, sweepHandle)) {
+            return true;
+        }
+
+        Destroy<SweepTraits>();
+
+        return false;
+    }
+
+    template<typename SweepTraits>
+    void Destroy() noexcept {
+        auto objectSize = SweepTraits::elementSize(data_);
+        destroyImpl(objectSize);
+    }
+
+    template <typename F>
+    void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
+        process(data_);
+    }
 
 private:
-    friend class AtomicStack<SingleObjectPage>;
     friend class Heap;
 
-    explicit SingleObjectPage(size_t size) noexcept;
+    explicit SingleObjectPage(AllocationSize objectSize) noexcept;
+
+    static AllocationSize pageSize(AllocationSize objectSize) noexcept;
+
+    void destroyImpl(AllocationSize objectSize) noexcept;
 
     // Testing method
-    std_support::vector<uint8_t*> GetAllocatedBlocks() noexcept;
+    std::vector<uint8_t*> GetAllocatedBlocks() noexcept;
 
-    std::atomic<SingleObjectPage*> next_;
-    bool isAllocated_ = false;
-    size_t size_;
     struct alignas(8) {
         uint8_t data_[];
     };

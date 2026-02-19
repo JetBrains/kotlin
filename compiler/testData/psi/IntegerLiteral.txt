@@ -3,6 +3,8 @@ KtFile: IntegerLiteral.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
@@ -173,6 +175,4 @@ KtFile: IntegerLiteral.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(INTEGER_LITERAL)('01')

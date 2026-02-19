@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 sealed class Tree {
     object Empty: Tree()
     class Leaf(val x: Int): Tree()
@@ -11,3 +12,7 @@ sealed class Tree {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, thisExpression, whenExpression,
+whenWithSubject */

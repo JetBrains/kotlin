@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class SomeClass<T>
 class TestSome<P> {
     companion object : SomeClass<<!UNRESOLVED_REFERENCE!>P<!>>() {
@@ -5,8 +6,8 @@ class TestSome<P> {
 }
 
 class Test {
-    companion object : <!UNRESOLVED_REFERENCE!>InnerClass<!>() {
-        val a = object: <!UNRESOLVED_REFERENCE!>InnerClass<!>() {
+    companion object : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>InnerClass<!>() {
+        val a = object: <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>InnerClass<!>() {
         }
 
         fun more(): InnerClass {
@@ -24,3 +25,6 @@ class Test {
 
     open inner class InnerClass
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, inner,
+integerLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

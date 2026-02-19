@@ -5,161 +5,137 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa
 
-import org.jetbrains.kotlin.contracts.description.canBeRevisited
-import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
-object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        data.checkPropertyAccesses(isForClassInitialization = false, context, reporter)
+object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(data: VariableInitializationInfoData) {
+        PropertyInitializationCheckProcessor.check(data, isForInitialization = false)
     }
 }
 
 val FirDeclaration.evaluatedInPlace: Boolean
+    get() = symbol.evaluatedInPlace
+
+val FirBasedSymbol<*>.evaluatedInPlace: Boolean
     get() = when (this) {
-        is FirAnonymousFunction -> invocationKind.isInPlace
-        is FirAnonymousObject -> classKind != ClassKind.ENUM_ENTRY
-        is FirConstructor -> true // child of class initialization graph
-        is FirFunction, is FirClass -> false
+        is FirAnonymousFunctionSymbol -> invocationKind.isInPlace
+        is FirAnonymousObjectSymbol -> classKind != ClassKind.ENUM_ENTRY
+        is FirConstructorSymbol -> true // child of class initialization graph
+        is FirFunctionSymbol, is FirClassSymbol -> false
         else -> true // property initializer, etc.
     }
 
+fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
+    if (declaration?.evaluatedInPlace == true)
+        enterNode.previousNodes.firstOrNull()?.owner?.nearestNonInPlaceGraph() ?: this
+    else this
+
 /**
- * [isForClassInitialization] means that caller is interested in member property in the scope
- *   of class initialization section. In this case the fact that property has initializer does
- *   not mean that it's safe to access this property in any place:
+ * [isForInitialization] means that caller is interested in member property in the scope
+ * of file or class initialization section. In this case the fact that property has
+ * initializer does not mean that it's safe to access this property in any place:
  *
+ * ```
  * class A {
  *     val b = a // a is not initialized here
  *     val a = 10
  *     val c = a // but initialized here
  * }
+ * ```
  */
-
 @OptIn(SymbolInternals::class)
-fun FirPropertySymbol.requiresInitialization(isForClassInitialization: Boolean): Boolean {
-    val hasImplicitBackingField = !hasExplicitBackingField && hasBackingField
+fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Boolean {
     return when {
         this is FirSyntheticPropertySymbol -> false
-        isForClassInitialization -> hasDelegate || hasImplicitBackingField
-        else -> !hasInitializer && hasImplicitBackingField && fir.isCatchParameter != true
+        isForInitialization -> hasDelegate || hasBackingField
+        else -> hasBackingField && !hasInitializer && backingFieldSymbol?.resolvedInitializer == null && fir.isCatchParameter != true
     }
 }
 
-fun PropertyInitializationInfoData.checkPropertyAccesses(
-    isForClassInitialization: Boolean,
-    context: CheckerContext,
-    reporter: DiagnosticReporter
-) {
-    // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
-    // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
-    val filtered = properties.filterTo(mutableSetOf()) { it.requiresInitialization(isForClassInitialization) }
-    if (filtered.isEmpty()) return
 
-    checkPropertyAccesses(
-        graph, filtered, context, reporter, scope = null,
-        isForClassInitialization, doNotReportUninitializedVariable = false, mutableMapOf()
-    )
-}
-
-@OptIn(SymbolInternals::class)
-private fun PropertyInitializationInfoData.checkPropertyAccesses(
-    graph: ControlFlowGraph,
-    properties: Set<FirPropertySymbol>,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
-    scope: FirDeclaration?,
-    isForClassInitialization: Boolean,
-    doNotReportUninitializedVariable: Boolean,
-    scopes: MutableMap<FirPropertySymbol, FirDeclaration?>
-) {
-    fun FirQualifiedAccessExpression.hasCorrectReceiver() =
-        (dispatchReceiver.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
-
-    for (node in graph.nodes) {
-        when {
-            // TODO, KT-59669: `node.isUnion` - f({ x = 1 }, { x = 2 }) - which to report?
-            //  Also this is currently indistinguishable from x = 1; f({}, {}).
-
-            node is VariableDeclarationNode -> {
-                val symbol = node.fir.symbol
-                if (scope != null && receiver == null && node.fir.isVal && symbol in properties) {
-                    // It's OK to initialize this variable from a nested called-in-place function, but not from
-                    // a non-called-in-place function or a non-anonymous-object class initializer.
-                    scopes[symbol] = scope
-                }
-            }
-
-            node is VariableAssignmentNode -> {
-                val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
-                if (!symbol.fir.isVal || node.fir.unwrapLValue()?.hasCorrectReceiver() != true || symbol !in properties) continue
-
-                if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
-                    reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
-                } else if (scope != scopes[symbol]) {
-                    val error = if (receiver != null)
-                        FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
-                    else
-                        FirErrors.CAPTURED_VAL_INITIALIZATION
-                    reporter.reportOn(node.fir.lValue.source, error, symbol, context)
-                }
-            }
-
-            node is QualifiedAccessNode -> {
-                if (doNotReportUninitializedVariable) continue
-                val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
-                if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasCorrectReceiver() && symbol in properties &&
-                    getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
-                ) {
-                    reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
-                }
-            }
-
-            // In the class case, subgraphs of the exit node are member functions, which are considered to not
-            // be part of initialization, so any val is considered to be initialized there and the CFG is not
-            // needed. The errors on reassignments will be emitted by `FirReassignmentAndInvisibleSetterChecker`.
-            node is CFGNodeWithSubgraphs<*> && (receiver == null || node !== graph.exitNode) -> {
-                for (subGraph in node.subGraphs) {
-                    /*
-                     * For class initialization graph we allow to read properties in non-in-place lambdas
-                     *   even if they may be not initialized at this point, because if lambda is not in-place,
-                     *   then it most likely will be called after object will be initialized
-                     */
-                    val doNotReportForSubGraph = doNotReportUninitializedVariable ||
-                            (isForClassInitialization && subGraph.kind.doNotReportUninitializedVariableForClassInitialization)
-
-                    val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
-                    checkPropertyAccesses(
-                        subGraph, properties, context, reporter, newScope,
-                        isForClassInitialization, doNotReportForSubGraph, scopes
-                    )
-                }
-            }
+object PropertyInitializationCheckProcessor : VariableInitializationCheckProcessor() {
+    override fun filterProperties(
+        data: VariableInitializationInfoData,
+        isForInitialization: Boolean
+    ): Set<FirVariableSymbol<*>> {
+        // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
+        // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
+        return data.properties.filterTo(mutableSetOf()) {
+            require(it is FirPropertySymbol)
+            it.requiresInitialization(isForInitialization) || it in data.conditionallyInitializedProperties
         }
     }
-}
 
-private val Kind.doNotReportUninitializedVariableForClassInitialization: Boolean
-    get() = when (this) {
-        Kind.AnonymousFunction, Kind.LocalFunction -> true
-        else -> false
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun VariableInitializationInfoData.reportCapturedInitialization(
+        node: VariableAssignmentNode,
+        symbol: FirVariableSymbol<*>,
+    ) {
+        require(symbol is FirPropertySymbol)
+        val capturedInitializationError = if (receiver != null)
+            FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
+        else
+            FirErrors.CAPTURED_VAL_INITIALIZATION
+
+        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol)
     }
+
+    override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: VariableInitializationInfoData): Boolean {
+        val expression = dispatchReceiver?.unwrapSmartcastExpression()
+        return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == data.receiver ||
+                (expression as? FirResolvedQualifier)?.symbol == data.receiver
+    }
+
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun reportUninitializedVariable(
+        expression: FirQualifiedAccessExpression,
+        symbol: FirVariableSymbol<*>,
+    ) {
+        require(symbol is FirPropertySymbol)
+        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_VARIABLE, symbol)
+    }
+
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun reportNonInlineMemberValInitialization(
+        node: VariableAssignmentNode,
+        symbol: FirVariableSymbol<*>,
+    ) {
+        require(symbol is FirPropertySymbol)
+        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol)
+    }
+
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun reportValReassignment(
+        node: VariableAssignmentNode,
+        symbol: FirVariableSymbol<*>,
+    ) {
+        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol)
+    }
+}

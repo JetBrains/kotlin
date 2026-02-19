@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -36,7 +35,10 @@ class DesignationState private constructor(
                 val firProvider = regularClass.moduleData.session.firProvider
                 val outerClasses = generateSequence(symbol.classId) { classId ->
                     classId.outerClassId
-                }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it) }
+                }.mapTo(mutableListOf()) { classId ->
+                    if (classId == symbol.classId) regularClass // Short path, allows also to avoid id clashes as in KT-73347
+                    else firProvider.getFirClassifierByFqName(classId)
+                }
                 val file = firProvider.getFirClassifierContainerFileIfAny(regularClass.symbol)
                 requireNotNull(file) { "Containing file was not found for\n${regularClass.render()}" }
                 if (includeFile) {
@@ -50,7 +52,7 @@ class DesignationState private constructor(
     }
 
     private var currentElement: FirDeclaration? = null
-    var classLocated = false
+    var classLocated: Boolean = false
         private set
 
     fun shouldSkipClass(declaration: FirDeclaration): Boolean {

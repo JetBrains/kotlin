@@ -2,6 +2,7 @@
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // LAMBDAS: CLASS
+// JVM_DEFAULT_MODE: disable
 
 package test
 
@@ -40,18 +41,18 @@ fun box(): String {
 
     val property = Test().property
     enclosing = property.javaClass.enclosingMethod!!
-    if (enclosing.name != "getProperty") return "fail 4: ${enclosing.name}"
-    if (enclosing.getDeclaringClass().simpleName != "DefaultImpls") return "fail 5: ${enclosing.getDeclaringClass().simpleName}"
+    if (enclosing.name != "getProperty") return "fail 5: ${enclosing.name}"
+    if (enclosing.getDeclaringClass().simpleName != "DefaultImpls") return "fail 6: ${enclosing.getDeclaringClass().simpleName}"
 
     val defaultArgs = Test().funWithDefaultArgs()
     enclosing = defaultArgs.javaClass.enclosingMethod!!
-    if (enclosing.name != "funWithDefaultArgs\$default") return "fail 6: ${enclosing.name}"
-    if (enclosing.parameterTypes.size != 4) return "fail 7: not default method ${enclosing.name}"
-    if (enclosing.getDeclaringClass().simpleName != "DefaultImpls") return "fail 8: ${enclosing.getDeclaringClass().simpleName}"
+    if (enclosing.name != "funWithDefaultArgs\$default") return "fail 7: ${enclosing.name}"
+    if (enclosing.parameterTypes.size != 4) return "fail 8: not default method ${enclosing.name}"
+    if (enclosing.getDeclaringClass().simpleName != "DefaultImpls") return "fail 9: ${enclosing.getDeclaringClass().simpleName}"
 
     val nested = Z.Nested::class.java
     val enclosingClass = nested.enclosingClass!!
-    if (enclosingClass.name != "test.Z") return "fail 9: ${enclosingClass.name}"
+    if (enclosingClass.name != "test.Z") return "fail 10: ${enclosingClass.name}"
 
     return "OK"
 }

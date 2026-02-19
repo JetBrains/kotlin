@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!WRONG_MODIFIER_TARGET!>enum<!> interface Some {
     // Enum part
     <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>D<!>;
@@ -6,3 +7,5 @@
     fun test()
     val foo: Int
 }
+
+/* GENERATED_FIR_TAGS: enumEntry, functionDeclaration, interfaceDeclaration, propertyDeclaration */

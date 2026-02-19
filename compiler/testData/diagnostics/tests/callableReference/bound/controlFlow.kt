@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: +UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: +UNUSED_EXPRESSION
+// WITH_EXTRA_CHECKERS
 
 fun unusedExpression(s: String) {
     <!UNUSED_EXPRESSION!>s::hashCode<!>
@@ -22,3 +24,6 @@ fun unreachableCodeInLoop(): Int {
     }
     return 2
 }
+
+/* GENERATED_FIR_TAGS: break, callableReference, classReference, functionDeclaration, ifExpression, integerLiteral,
+localProperty, propertyDeclaration, whileLoop */

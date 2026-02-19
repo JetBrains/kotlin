@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: AbstractClass.java
 
 public abstract class AbstractClass {
@@ -17,3 +18,5 @@ class User : AbstractClass() {
 fun test() {
     AbstractClass.StaticClass()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

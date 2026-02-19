@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 import kotlin.reflect.KMutableProperty0
@@ -19,3 +20,6 @@ fun foo(arg: MakefileSettingsFacade) {
     consume<KProperty0<String?>>(arg::cleanTarget)
     consume<KMutableProperty0<String?>>(arg::cleanTarget)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, functionDeclaration, inheritanceDelegation,
+interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

@@ -6,11 +6,6 @@ plugins {
     `maven-publish`
 }
 
-repositories {
-    mavenLocal()
-    maven("<localRepo>")
-}
-
 val disambiguationAttribute = Attribute.of("disambiguationAttribute", String::class.java)
 
 

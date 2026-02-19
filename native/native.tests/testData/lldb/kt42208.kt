@@ -1,5 +1,7 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: kt42208.txt
+
+
+
 // FILE: kt42208-1.kt
 fun main() {
     foo()()

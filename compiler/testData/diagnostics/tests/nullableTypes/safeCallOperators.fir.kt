@@ -1,5 +1,7 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A(
     val l: MutableList<Int>,
@@ -38,7 +40,7 @@ fun foo(a: A?) {
     (a?.ll)[0][0]++
     (a?.ll)[0][0] = 1
     (a?.q)()
-    (a?.w)++
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a?.<!VARIABLE_EXPECTED!>w<!>)<!>++
 
     a?.l.plusAssign(1)
     a?.l.get(0)
@@ -75,7 +77,7 @@ fun foo(a: A?) {
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0]++
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0] = 1
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>q)()
-        (a<!UNNECESSARY_SAFE_CALL!>?.<!>w)++
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a<!UNNECESSARY_SAFE_CALL!>?.<!><!VARIABLE_EXPECTED!>w<!>)<!>++
 
         a<!UNNECESSARY_SAFE_CALL!>?.<!>l.plusAssign(1)
         a<!UNNECESSARY_SAFE_CALL!>?.<!>l.get(0)
@@ -89,3 +91,7 @@ fun foo(a: A?) {
         a<!UNNECESSARY_SAFE_CALL!>?.<!>w.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inProjection, incrementDecrementExpression, integerLiteral, nullableType, operator,
+primaryConstructor, propertyDeclaration, safeCall, smartcast, thisExpression, typeParameter */

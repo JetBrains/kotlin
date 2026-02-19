@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun takeArray(array: Array<String>) {}
 
@@ -18,3 +19,6 @@ fun baz(arg: Array<Int> = <!UNSUPPORTED!>[]<!>) {
 class Foo(
     val v: Array<Int> = <!UNSUPPORTED!>[]<!>
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, functionDeclaration, ifExpression, integerLiteral,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

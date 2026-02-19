@@ -1,5 +1,5 @@
 FILE: lambda.kt
-    public? final? data class Tuple : R|kotlin/Any| {
+    public final? data class Tuple : R|kotlin/Any| {
         public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.x] x: Int, [CorrespondingProperty=/Tuple.y] y: Int): R|Tuple| {
             super<R|kotlin/Any|>()
         }
@@ -14,7 +14,7 @@ FILE: lambda.kt
 
         public? final operator fun component2(): Int
 
-        public final fun copy(x: Int = this@R|/Tuple|.R|/Tuple.x|, y: Int = this@R|/Tuple|.R|/Tuple.y|): R|Tuple|
+        public? final fun copy(x: Int = this@R|/Tuple|.R|/Tuple.x|, y: Int = this@R|/Tuple|.R|/Tuple.y|): R|Tuple|
 
     }
     public? final? inline fun use(f: ( (Tuple) -> Int )): <implicit> {

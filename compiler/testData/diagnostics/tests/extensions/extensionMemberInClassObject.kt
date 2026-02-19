@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface JPAEntityClass<D> {
     fun <T> T.findByName(s: String): D {null!!}
@@ -17,3 +17,6 @@ fun main() {
         findByName("")
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType, objectDeclaration, stringLiteral, typeParameter */

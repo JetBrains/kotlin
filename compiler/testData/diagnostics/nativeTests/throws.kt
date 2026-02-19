@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-65105
+
 // FILE: kotlin.kt
 package kotlin
 
@@ -40,7 +43,11 @@ fun throwsEmptyParens() {}
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsUnresolved() {}
 
-@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
+class Orphan : <!UNRESOLVED_REFERENCE!>MyUnresolvedParent<!>
+@Throws(<!ARGUMENT_TYPE_MISMATCH!>Orphan::class<!>)
+fun throwsClassWithUnresolvedParent() {}
+
+@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsNamedUnresolved() {}
 
 <!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
@@ -282,7 +289,7 @@ suspend fun suspendDoesNotThrowCancellationException2() {}
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
 suspend fun suspendThrowsUnresolved() {}
 
-@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
+@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
 suspend fun suspendThrowsNamedUnresolved() {}
 
 <!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
@@ -311,6 +318,9 @@ suspend fun suspendThrowsSpreadArrayOfUnresolved() {}
 
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
 suspend fun suspendThrowsTypealiasToUnresolved() {}
+
+@Throws(<!ARGUMENT_TYPE_MISMATCH!>Orphan::class<!>)
+suspend fun suspendThrowsClassWithUnresolvedParent() {}
 
 @Throws(Exception1::class, CancellationException::class)
 suspend fun suspendThrowsCancellationException1() {}
@@ -369,3 +379,17 @@ typealias ThrowableAlias = Throwable
 
 @Throws(ThrowableAlias::class)
 suspend fun suspendThrowsThrowableTypealias() {}
+
+interface Foo<T> {
+    @Throws(IllegalArgumentException::class)
+    public fun f(data: T) {}
+}
+
+class Bar<K> : Foo<K> {
+    @Throws(IllegalArgumentException::class)
+    override fun f(data: K) {}
+}
+
+annotation class A(
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Throws(Exception::class)<!> val w: Int,
+)

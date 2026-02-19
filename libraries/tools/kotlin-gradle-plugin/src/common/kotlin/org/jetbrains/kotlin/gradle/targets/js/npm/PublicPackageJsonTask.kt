@@ -17,6 +17,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
@@ -34,7 +35,14 @@ abstract class PublicPackageJsonTask :
     val projectVersion = project.version.toString()
 
     @get:Input
+    @Deprecated(
+        "All the compilations are always done by the IR compiler, so this property is treated as `true`. Scheduled for removal in Kotlin 2.4",
+        level = DeprecationLevel.ERROR
+    )
     abstract val jsIrCompilation: Property<Boolean>
+
+    @get:Input
+    abstract val extension: Property<String>
 
     @get:Input
     abstract val npmProjectName: Property<String>
@@ -43,8 +51,12 @@ abstract class PublicPackageJsonTask :
     abstract val npmProjectMain: Property<String>
 
     @get:Internal
+    abstract val npmProjectTypes: Property<String>
+
+    @get:Internal
     abstract val packageJsonHandlers: ListProperty<Action<PackageJson>>
 
+    @Suppress("unused")
     @get:Input
     internal val packageJsonInputHandlers: Provider<PackageJson> by lazy {
         packageJsonHandlers.map { packageJsonHandlersList ->
@@ -67,10 +79,11 @@ abstract class PublicPackageJsonTask :
         get() = compilationResolution.externalNpmDependencies
 
     private val defaultPackageJsonFile by lazy {
-        project.buildDir
-            .resolve("tmp")
-            .resolve(name)
-            .resolve(PACKAGE_JSON)
+        project.layout.buildDirectory
+            .dir("tmp")
+            .map { it.dir(name) }
+            .map { it.file(PACKAGE_JSON) }
+            .getFile()
     }
 
     @get:OutputFile
@@ -79,17 +92,14 @@ abstract class PublicPackageJsonTask :
     @TaskAction
     fun resolve() {
         packageJson(
-            npmProjectName.get(),
-            projectVersion,
-            npmProjectMain.get(),
-            externalDependencies,
-            packageJsonHandlers.get()
+            name = npmProjectName.get(),
+            version = projectVersion,
+            main = npmProjectMain.get(),
+            types = npmProjectTypes.orNull,
+            npmDependencies = externalDependencies,
+            packageJsonHandlers = packageJsonHandlers.get()
         ).let { packageJson ->
-            packageJson.main = "${npmProjectName.get()}.js"
-
-            if (jsIrCompilation.get()) {
-                packageJson.types = "${npmProjectName.get()}.d.ts"
-            }
+            packageJson.main = "${npmProjectName.get()}.${extension.get()}"
 
             packageJson.apply {
                 listOf(

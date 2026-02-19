@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57166
 // File order is important.
@@ -20,3 +21,6 @@ class LiveAllocationInstanceObject: InstanceObject {
     override fun getDeallocTime() = 42L
     override fun setDeallocTime(deallocTime: Long) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaProperty, javaType, lambdaLiteral,
+override */

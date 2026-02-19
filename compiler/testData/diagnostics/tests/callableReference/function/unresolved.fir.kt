@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
 
 class A
 
@@ -21,3 +22,5 @@ fun test2() {
     foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::unresolved)
     ::<!UNRESOLVED_REFERENCE!>unresolved<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localFunction, localProperty, propertyDeclaration */

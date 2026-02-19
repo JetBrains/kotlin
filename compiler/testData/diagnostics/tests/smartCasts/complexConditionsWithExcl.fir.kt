@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: String?, y: String?, z: String?) {
     if ((x!!.hashCode() == 0 || y!!.hashCode() == 1) && z!!.hashCode() == 2) {
         x.length
@@ -53,3 +54,7 @@ fun foo(x: String?, y: String?, z: String?) {
         z.length
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, checkNotNullCall, disjunctionExpression, elvisExpression,
+equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration,
+smartcast */

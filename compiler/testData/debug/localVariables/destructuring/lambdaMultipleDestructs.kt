@@ -8,18 +8,6 @@ fun box() {
     foo(A("O", 123), A("K", 877)) { (x, y), (z, w) -> (x + z) + (y + w) }
 }
 
-// EXPECTATIONS JVM
-// test.kt:8 box:
-// test.kt:3 <init>: x:java.lang.String="O":java.lang.String, y:int=123:int
-// test.kt:8 box:
-// test.kt:3 <init>: x:java.lang.String="K":java.lang.String, y:int=877:int
-// test.kt:8 box:
-// test.kt:5 foo: a:A=A, b:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$1
-// test.kt:8 invoke: $dstr$x$y:A=A, $dstr$z$w:A=A
-// test.kt:5 foo: a:A=A, b:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$1
-// test.kt:8 box:
-// test.kt:9 box:
-
 // EXPECTATIONS JVM_IR
 // test.kt:9 box:
 // test.kt:4 <init>: x:java.lang.String="O":java.lang.String, y:int=123:int

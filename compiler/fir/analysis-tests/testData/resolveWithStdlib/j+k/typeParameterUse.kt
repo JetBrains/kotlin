@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FULL_JDK
 // FILE: U.java
 import org.jetbrains.annotations.NotNull;
@@ -17,3 +19,5 @@ fun foo(holder: U, box: Box<Int>): Int {
 
     return holder.getValue(box)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

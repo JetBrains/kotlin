@@ -10,8 +10,7 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.KtInMemoryTextSourceFile
-import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.Companion.DIAGNOSTIC_IN_TESTDATA_PATTERN
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
@@ -20,11 +19,9 @@ import org.jetbrains.kotlin.fir.lightTree.walkTopDown
 import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.readSourceFileWithMapping
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.utils.isCustomTestData
-import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -60,21 +57,24 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun compareAll() {
+        @OptIn(ObsoleteTestInfrastructure::class)
+        val session = FirSessionFactoryHelper.createEmptySession()
+
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
-            val (text, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
-                this.readSourceFileWithMapping()
+            val (text, linesMapping) = file.inputStream().reader(Charsets.UTF_8).use {
+                it.readSourceFileWithMapping()
             }
             splitText(file.path, text.toString().trim()).forEach { pair ->
                 val (filePath, fileText) = pair
 
                 //psi
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileText) as KtFile
-                val firFileFromPsi = ktFile.toFirFile()
+                val firFileFromPsi = ktFile.toFirFile(session)
                 val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
@@ -92,8 +92,11 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     fun testCompareDiagnostics() {
+        @OptIn(ObsoleteTestInfrastructure::class)
+        val session = FirSessionFactoryHelper.createEmptySession()
+
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
@@ -101,10 +104,13 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             if (file.isCustomTestData) {
                 return@compareBase true
             }
-            if (file.path.replace("\\", "/") == "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt") {
-                // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
-                return@compareBase true
+            when (file.path.replace("\\", "/")) {
+                "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt" -> {
+                    // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
+                    return@compareBase true
+                }
             }
+
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             val text = notEditedText.replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "").replaceAfter(".java", "")
 
@@ -113,7 +119,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 //psi
                 val fileName = PathUtil.getFileName(filePath)
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(fileName), fileText) as KtFile
-                val firFileFromPsi = ktFile.toFirFile()
+                val firFileFromPsi = ktFile.toFirFile(session)
                 val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                     .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")

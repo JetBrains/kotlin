@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <M> make(): M? = null
 fun <I> id(arg: I): I = arg
@@ -13,3 +14,5 @@ fun test() {
 
     if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>make<!>() else TODO()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, typeParameter, vararg */

@@ -14,30 +14,30 @@ import kotlinx.cinterop.ExperimentalForeignApi
 @ExperimentalForeignApi
 public final class Vector128 private constructor() {
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getByteAt(index: Int): Byte
+    public external fun getByteAt(index: Int): Byte
 
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getIntAt(index: Int): Int
+    public external fun getIntAt(index: Int): Int
 
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getLongAt(index: Int): Long
+    public external fun getLongAt(index: Int): Long
 
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getFloatAt(index: Int): Float
+    public external fun getFloatAt(index: Int): Float
 
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getDoubleAt(index: Int): Double
+    public external fun getDoubleAt(index: Int): Double
 
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getUByteAt(index: Int): UByte
+    public external fun getUByteAt(index: Int): UByte
 
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getUIntAt(index: Int): UInt
+    public external fun getUIntAt(index: Int): UInt
 
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
-    external fun getULongAt(index: Int): ULong
+    public external fun getULongAt(index: Int): ULong
 
-    public override fun toString() =
+    public override fun toString(): String =
             "(0x${getUIntAt(0).toString(16)}, 0x${getUIntAt(1).toString(16)}, 0x${getUIntAt(2).toString(16)}, 0x${getUIntAt(3).toString(16)})"
 
     // Not as good for floating types
@@ -69,7 +69,7 @@ public external fun vectorOf(f0: Int, f1: Int, f2: Int, f3: Int): Vector128
 public class Vector128VarOf<T : Vector128>(rawPtr: NativePtr) : CVariable(rawPtr) {
     @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
     @Suppress("DEPRECATION")
-    companion object : Type(size = 16, align = 16)
+    public companion object : Type(size = 16, align = 16)
 }
 
 @SinceKotlin("1.9")

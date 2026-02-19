@@ -6,22 +6,22 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class AbstractDiagnosticCollectorComponent(
     protected val session: FirSession,
-    protected val reporter: DiagnosticReporter,
+    protected val reporter: PendingDiagnosticReporter,
 ) : FirVisitor<Unit, CheckerContext>() {
     override fun visitElement(element: FirElement, data: CheckerContext) {}
 
     open fun checkSettings(data: CheckerContext) {}
 
-    protected fun checkAndCommitReportsOn(element: FirElement, context: DiagnosticContext?) {
+    protected fun checkAndCommitReportsOn(element: FirElement, context: DiagnosticContext, commitEverything: Boolean) {
         val source = element.source ?: return
-        reporter.checkAndCommitReportsOn(source, context)
+        reporter.checkAndCommitReportsOn(source, context, commitEverything)
     }
 }

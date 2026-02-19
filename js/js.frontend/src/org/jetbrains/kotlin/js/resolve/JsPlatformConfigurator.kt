@@ -22,12 +22,11 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-        JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
+        JsInheritanceChecker, JsMultipleInheritanceChecker,
         JsExternalInheritorOnlyChecker,
         JsRuntimeAnnotationChecker,
         JsDynamicDeclarationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
@@ -38,7 +37,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
-        container.useInstance(JsNameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()
@@ -52,6 +50,8 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
+        container.useInstance(JsExternalChecker(allowCompanionInInterface = true, allowUnsignedTypes = false))
+        container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = true, includeUnsignedNumbers = false))
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

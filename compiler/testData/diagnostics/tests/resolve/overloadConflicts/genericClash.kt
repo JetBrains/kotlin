@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A<T> {
     fun foo(x: T)
@@ -18,3 +19,5 @@ fun bar(x: A<String>) {
     x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, stringLiteral, typeParameter */

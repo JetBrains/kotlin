@@ -1,5 +1,6 @@
-// !LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 fun foo(a: String, b: String) {}
@@ -17,3 +18,4 @@ fun main() {
     reformat(normalizeCase = "first",str = "",<!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>"second"<!>,<!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>false<!>,<!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>true<!>, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>'s'<!> )
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

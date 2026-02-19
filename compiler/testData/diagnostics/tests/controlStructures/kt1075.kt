@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kt1075
 
 //KT-1075 No type check for 'in range' condition in 'when' expression
@@ -9,3 +10,6 @@ fun foo(b: String) {
         else -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, rangeExpression, whenExpression,
+whenWithSubject */

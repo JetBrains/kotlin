@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface Foo
 interface Bar
@@ -14,3 +15,6 @@ class B : A {
     = Unit
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, typeConstraint,
+typeParameter */

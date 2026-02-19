@@ -1,21 +1,18 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 
-repositories {
-    maven {
-        url = rootProject.buildDir.resolve("repo").toURI()
-    }
-}
-
 plugins {
     kotlin("multiplatform")
 }
+
+val dependencyMode = providers.gradleProperty("dependencyMode")
+val enableAdditionalTarget = providers.gradleProperty("p2.enableAdditionalTarget")
 
 kotlin {
     linuxX64()
     linuxArm64()
 
-    if (properties.containsKey("p2.enableAdditionalTarget")) {
+    if (enableAdditionalTarget.getOrNull() != null) {
         mingwX64()
     }
 
@@ -26,7 +23,7 @@ kotlin {
     }
 
     sourceSets.commonMain.get().dependencies {
-        when (project.properties["dependencyMode"]?.toString()) {
+        when (dependencyMode.getOrNull()?.toString()) {
             null -> {
                 logger.warn("dependencyMode = null -> Using 'project'")
                 implementation(project(":p1"))
@@ -39,7 +36,7 @@ kotlin {
 
             "repository" -> {
                 logger.quiet("dependencyMode = 'repository'")
-                implementation("kotlin-multiplatform-projects:p1:1.0.0-SNAPSHOT")
+                implementation("kotlin-multiplatform-projects:p1:1.0.0")
             }
         }
     }

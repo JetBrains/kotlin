@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 public fun foo() {
     var i: Int? = 1
@@ -8,3 +9,6 @@ public fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, incrementDecrementExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, whileLoop */

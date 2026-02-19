@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ModifierNonBuiltinSuspendFunError
 // FIR_IDENTICAL
 // SKIP_TXT
@@ -9,3 +10,6 @@ fun foo() {
 
     1.suspend(fun () {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral */

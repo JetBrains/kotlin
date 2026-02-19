@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: exp/Ns.java
 package exp;
@@ -24,3 +25,6 @@ package exp
 
 val Ns.Foo<*>.name
     get() = this.bar.name
+
+/* GENERATED_FIR_TAGS: flexibleType, getter, javaProperty, javaType, propertyDeclaration, propertyWithExtensionReceiver,
+starProjection, thisExpression */

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 // SKIP_TXT
 // ISSUE: KT-55024
 // MODULE: a
@@ -18,3 +20,6 @@ private fun test_1(x: A) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, isExpression, override,
+primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral */

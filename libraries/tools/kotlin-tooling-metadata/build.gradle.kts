@@ -1,7 +1,6 @@
 plugins {
     java
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 publish()
@@ -10,7 +9,9 @@ javadocJar()
 configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
-    implementation(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    implementation(kotlin("stdlib", coreDepsVersion))
     implementation(commonDependency("com.google.code.gson:gson"))
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
 }

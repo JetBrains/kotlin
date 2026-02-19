@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Buffered {
     fun flush()
 }
@@ -26,6 +27,11 @@ fun <P> processInfo1(info: String, printer: P) where P: Buffered, P: AIPowered {
     <!INCOMPATIBLE_ENUM_COMPARISON!>printer == BufferedEnum.A<!>
     <!INCOMPATIBLE_ENUM_COMPARISON!>printer == UsualEnum.C<!>
     printer == CleverEnum.E
+
+    <!FORBIDDEN_IDENTITY_EQUALS!>printer === 20<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer === BufferedEnum.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer === UsualEnum.C<!>
+    printer === CleverEnum.E
 }
 
 fun <P> processInfo2(info: String, printer: P) where P: AIPowered, P: Buffered {
@@ -33,6 +39,11 @@ fun <P> processInfo2(info: String, printer: P) where P: AIPowered, P: Buffered {
     <!INCOMPATIBLE_ENUM_COMPARISON!>printer == BufferedEnum.A<!>
     <!INCOMPATIBLE_ENUM_COMPARISON!>printer == UsualEnum.C<!>
     printer == CleverEnum.E
+
+    <!FORBIDDEN_IDENTITY_EQUALS!>printer === 20<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer === BufferedEnum.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer === UsualEnum.C<!>
+    printer === CleverEnum.E
 }
 
 abstract class Printer {
@@ -44,6 +55,11 @@ fun <P> processInfo3(info: String, printer: P) where P: Buffered, P: Printer {
     <!INCOMPATIBLE_ENUM_COMPARISON!>printer == BufferedEnum.A<!>
     <!INCOMPATIBLE_ENUM_COMPARISON!>printer == UsualEnum.C<!>
     <!INCOMPATIBLE_ENUM_COMPARISON!>printer == CleverEnum.E<!>
+
+    <!FORBIDDEN_IDENTITY_EQUALS!>printer === 20<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer === BufferedEnum.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer === UsualEnum.C<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer === CleverEnum.E<!>
 }
 
 fun test(a: Int, b: Any?) {
@@ -61,3 +77,6 @@ fun <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T: Any?<!>> nest(a: Int, b: T) wher
 fun <<!CONFLICTING_UPPER_BOUNDS, INCONSISTENT_TYPE_PARAMETER_BOUNDS, MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T: <!FINAL_UPPER_BOUND!>Int<!><!>, <!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>K: Any?<!>> mest(a: T, b: K) where T : <!FINAL_UPPER_BOUND, ONLY_ONE_CLASS_BOUND_ALLOWED!>String<!>, K: <!FINAL_UPPER_BOUND, ONLY_ONE_CLASS_BOUND_ALLOWED!>Boolean<!> {
     <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, interfaceDeclaration, nullableType, override, typeConstraint, typeParameter */

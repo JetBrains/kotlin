@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNNECESSARY_SAFE_CALL -SAFE_CALL_WILL_CHANGE_NULLABILITY
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNNECESSARY_SAFE_CALL -SAFE_CALL_WILL_CHANGE_NULLABILITY
 
 // MODULE: m1
 // FILE: a.kt
@@ -39,3 +39,6 @@ fun test(b: B?) {
         b?.<!NONE_APPLICABLE!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast, typeConstraint, typeParameter */

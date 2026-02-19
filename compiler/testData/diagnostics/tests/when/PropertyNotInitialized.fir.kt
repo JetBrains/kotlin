@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -26,3 +27,6 @@ class Outer(e: E) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, enumDeclaration, enumEntry, equalityExpression, init,
+integerLiteral, primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

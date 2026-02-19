@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -352,7 +352,7 @@ class ArrayDequeTest {
     }
 
     private fun testArrayDeque(test: (bufferSize: Int, dequeSize: Int, head: Int, tail: Int) -> Unit) {
-        for (bufferSize in listOf(0, 2, 8)) {
+        for (bufferSize in listOf(0, 2, 8, 15)) {
             for (dequeSize in 0..bufferSize) {
                 for (tail in 0 until bufferSize) {
                     val head = tail - dequeSize
@@ -429,6 +429,63 @@ class ArrayDequeTest {
             (0..6).forEach { assertEquals(it, deque.indexOf(it - 4)) }
             assertEquals(-1, deque.indexOf(100))
         }
+
+        testArrayDeque { bufferSize, _, head, tail ->
+            generateArrayDeque(head, tail, bufferSize).let { deque ->
+                deque.forEachIndexed { index, element ->
+                    val actualIndex = deque.indexOf(element)
+                    if (actualIndex != index) {
+                        assertEquals(index, actualIndex, "indexOf($element) for $deque")
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun indexOfNull() {
+        val deque = ArrayDeque<Int?>()
+        assertEquals(-1, deque.indexOf(null))
+        deque.addLast(42)
+        assertEquals(-1, deque.indexOf(null))
+        deque.clear()
+        assertEquals(-1, deque.indexOf(null))
+    }
+
+    @Test
+    fun lastIndexOf() {
+        // head < tail
+        generateArrayDeque(0, 7).let { deque ->
+            (0..6).forEach { assertEquals(it, deque.lastIndexOf(it)) }
+            assertEquals(-1, deque.lastIndexOf(100))
+        }
+
+        // head > tail
+        generateArrayDeque(-4, 3).let { deque ->
+            (0..6).forEach { assertEquals(it, deque.lastIndexOf(it - 4)) }
+            assertEquals(-1, deque.lastIndexOf(100))
+        }
+
+        testArrayDeque { bufferSize, _, head, tail ->
+            generateArrayDeque(head, tail, bufferSize).let { deque ->
+                deque.forEachIndexed { index, element ->
+                    val actualIndex = deque.lastIndexOf(element)
+                    if (actualIndex != index) {
+                        assertEquals(index, actualIndex, "lastIndexOf($element) for $deque")
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun lastIndexOfNull() {
+        val deque = ArrayDeque<Int?>()
+        assertEquals(-1, deque.lastIndexOf(null))
+        deque.addLast(42)
+        assertEquals(-1, deque.lastIndexOf(null))
+        deque.clear()
+        assertEquals(-1, deque.lastIndexOf(null))
     }
 
     @Test
@@ -605,6 +662,40 @@ class ArrayDequeTest {
         for (fromIndex in 0 until dequeSize) {
             for (toIndex in fromIndex..dequeSize) {
                 assertEquals(elements.subList(fromIndex, toIndex), deque.subList(fromIndex, toIndex))
+            }
+        }
+    }
+
+    @Test
+    fun removeRange() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
+        for (fromIndex in 0..dequeSize) {
+            for (toIndex in fromIndex..dequeSize) {
+                val deque = generateArrayDeque(head, tail, bufferSize).apply { testRemoveRange(fromIndex, toIndex) }
+
+                val length = toIndex - fromIndex
+                val expectedHead = when {
+                    length == 0 -> head
+                    length == dequeSize -> 0
+                    fromIndex < dequeSize - toIndex -> head + length   // shift preceding elements
+                    else ->                                            // shift succeeding elements
+                        if (tail <= length - 1)
+                            head + bufferSize   // head becomes positive(head < tail)
+                        else
+                            head
+                }
+
+                val expectedElements = (head until tail).toMutableList().apply {
+                    repeat(length) { removeAt(fromIndex) }
+                }
+
+                deque.internalStructure { actualHead, actualElements ->
+                    assertEquals(
+                        expectedHead,
+                        actualHead,
+                        "bufferSize: $bufferSize, head: $head, tail: $tail, fromIndex: $fromIndex, toIndex: $toIndex"
+                    )
+                    assertEquals(expectedElements, actualElements.toList())
+                }
             }
         }
     }

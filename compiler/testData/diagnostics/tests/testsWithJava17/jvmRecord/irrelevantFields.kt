@@ -1,7 +1,6 @@
-// FIR_IDENTICAL
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
-// !API_VERSION: 1.5
-// !LANGUAGE: +JvmRecordSupport
+// RUN_PIPELINE_TILL: FRONTEND
+// API_VERSION: 1.5
+// LANGUAGE: +JvmRecordSupport
 // SKIP_TXT
 // JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
@@ -38,8 +37,6 @@ data class MyRec5(val name: String) {
     val w: String get() = name + "1"
 }
 
-
-
-
-
-
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration, data, getter,
+inheritanceDelegation, init, integerLiteral, interfaceDeclaration, lambdaLiteral, primaryConstructor,
+propertyDeclaration, propertyDelegate, stringLiteral */

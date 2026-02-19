@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
 // JAVAC_EXPECTED_FILE
 // FILE: A.java
 import java.util.*;
@@ -54,3 +55,6 @@ fun foo(
     al.containsAll(cs)
     al.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, override,
+typeParameter */

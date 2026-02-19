@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-316 Members of traits must be open by default
 
@@ -9,3 +10,5 @@ interface B {
 open class A() : B{
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, primaryConstructor */

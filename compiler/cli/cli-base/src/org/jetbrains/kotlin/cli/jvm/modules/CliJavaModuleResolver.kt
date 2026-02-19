@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import java.util.concurrent.ConcurrentHashMap
 
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
@@ -43,7 +42,7 @@ class CliJavaModuleResolver(
         }
     }
 
-    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project) }
+    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project, module = null) }
 
     override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
         val virtualFile = virtualFileFinder.findSourceOrBinaryVirtualFile(classId) ?: return null
@@ -90,9 +89,5 @@ class CliJavaModuleResolver(
         }
 
         return null
-    }
-
-    companion object {
-        private const val MODULE_ANNOTATIONS_CACHE_SIZE = 10000
     }
 }

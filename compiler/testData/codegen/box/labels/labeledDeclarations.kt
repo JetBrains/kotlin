@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 
 data class A(val a: Int, val b: Int)
 
@@ -5,7 +6,7 @@ fun box() : String
 {
     a@ val x = 1
     b@ fun a() = 2
-    c@ val (z, z2) = A(1, 2)
+    c@ val [z, z2] = A(1, 2)
 
     if (x != 1) return "fail 1"
 

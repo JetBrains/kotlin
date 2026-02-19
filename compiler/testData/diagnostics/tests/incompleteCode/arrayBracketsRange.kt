@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package b
 
@@ -8,3 +9,6 @@ fun main() {
     for(i in 0..ints.size)
         ints[i<!SYNTAX!><!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, forLoop, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, rangeExpression */

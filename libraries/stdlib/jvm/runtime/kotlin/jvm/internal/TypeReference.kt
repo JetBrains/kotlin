@@ -14,7 +14,7 @@ public class TypeReference @SinceKotlin("1.6") constructor(
     @SinceKotlin("1.6") internal val platformTypeUpperBound: KType?,
     @SinceKotlin("1.6") internal val flags: Int,
 ) : KType {
-    constructor(
+    public constructor(
         classifier: KClassifier,
         arguments: List<KTypeProjection>,
         isMarkedNullable: Boolean,
@@ -43,7 +43,7 @@ public class TypeReference @SinceKotlin("1.6") constructor(
             javaClass == null -> classifier.toString()
             flags and IS_NOTHING_TYPE != 0 -> "kotlin.Nothing"
             javaClass.isArray -> javaClass.arrayClassName
-            convertPrimitiveToWrapper && javaClass.isPrimitive -> (classifier as KClass<*>).javaObjectType.name
+            convertPrimitiveToWrapper && javaClass.isPrimitive -> classifier.javaObjectType.name
             else -> javaClass.name
         }
         val args =

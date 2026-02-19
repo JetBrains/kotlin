@@ -5,43 +5,54 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
 
 @DisableCachingByDefault
-open class NodeJsExec
+abstract class NodeJsExec
 @Inject
 constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsCompilation,
+    final override val compilation: KotlinJsIrCompilation,
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
-    @Transient
+
     @get:Internal
-    lateinit var nodeJs: NodeJsRootExtension
+    internal abstract val versions: Property<NpmVersions>
 
     @Internal
     val npmProject = compilation.npmProject
 
     init {
-        onlyIf {
+        this.onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map {
                 it.exists()
             }.get()
         }
     }
+
+    @get:Internal
+    internal abstract val npmToolingEnvDir: DirectoryProperty
 
     @Input
     var nodeArgs: MutableList<String> = mutableListOf()
@@ -56,27 +67,31 @@ constructor(
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:Internal
-    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
-        mutableSetOf<RequiredKotlinJsDependency>().also {
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
+        get() =
             if (sourceMapStackTraces) {
-                it.add(nodeJs.versions.sourceMapSupport)
+                setOf(versions.get().sourceMapSupport)
+            } else {
+                emptySet()
             }
-        }
-    }
 
     override fun exec() {
         val newArgs = mutableListOf<String>()
         newArgs.addAll(nodeArgs)
         if (inputFileProperty.isPresent) {
-            newArgs.add(inputFileProperty.asFile.get().canonicalPath)
+            newArgs.add(inputFileProperty.asFile.get().normalize().absolutePath)
         }
         args?.let { newArgs.addAll(it) }
         args = newArgs
 
+        val modules = NpmProjectModules(
+            npmToolingEnvDir.getFile()
+        )
+
         if (sourceMapStackTraces) {
             val sourceMapSupportArgs = mutableListOf(
                 "--require",
-                npmProject.require("source-map-support/register.js")
+                modules.require("source-map-support/register.js")
             )
 
             args?.let { sourceMapSupportArgs.addAll(it) }
@@ -88,35 +103,90 @@ constructor(
     }
 
     companion object {
-        fun create(
-            compilation: KotlinJsCompilation,
+        fun register(
+            compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: NodeJsExec.() -> Unit = {}
+            configuration: NodeJsExec.() -> Unit = {},
         ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
-            NodeJsRootPlugin.apply(project.rootProject)
-            val nodeJs = project.rootProject.kotlinNodeJsExtension
-            val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
+            val nodeJsRoot = compilation.webTargetVariant(
+                { NodeJsRootPlugin.apply(project.rootProject) },
+                { WasmNodeJsRootPlugin.apply(project.rootProject) },
+            )
+            val nodeJsEnvSpec = compilation.webTargetVariant(
+                { NodeJsPlugin.apply(project) },
+                { WasmNodeJsPlugin.apply(project) },
+            )
+
             val npmProject = compilation.npmProject
+
+            val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
+                compilation.webTargetVariant(
+                    { npmProject.dir.map { it.asFile } },
+                    { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+                )
+            )
+
+            val isWasm: Boolean = compilation.webTargetVariant(
+                jsVariant = false,
+                wasmVariant = true,
+            )
 
             return project.registerTask(
                 name,
                 listOf(compilation)
             ) {
-                it.nodeJs = nodeJs
-                it.executable = nodeJs.requireConfigured().nodeExecutable
-                it.workingDir = npmProject.dir
-                it.dependsOn(
-                    nodeJsTaskProviders.npmInstallTaskProvider,
-                    nodeJsTaskProviders.storeYarnLockTaskProvider,
-                )
-                it.dependsOn(compilation.compileKotlinTaskProvider)
-                if (compilation.platformType == KotlinPlatformType.wasm) {
-                    it.nodeArgs.addWasmExperimentalArguments()
+                it.versions.value(nodeJsRoot.versions)
+                    .disallowChanges()
+                it.executable = nodeJsEnvSpec.executable.get()
+                if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                    it.workingDir(npmProject.dir)
+                    it.dependsOn(
+                        nodeJsRoot.npmInstallTaskProvider,
+                    )
+                    it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+
+                    if (isWasm) {
+                        it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+                    }
                 }
+
+                it.npmToolingEnvDir.value(npmToolingDir).disallowChanges()
+
+                with(nodeJsEnvSpec) {
+                    it.dependsOn(project.nodeJsSetupTaskProvider)
+                }
+                it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()
             }
         }
+
+        @Deprecated(
+            "Use create(KotlinJsIrCompilation, name, configuration). Scheduled for removal in Kotlin 2.4.",
+            replaceWith = ReplaceWith("create(compilation, name, configuration)"),
+            level = DeprecationLevel.HIDDEN
+        )
+        fun create(
+            compilation: KotlinJsCompilation,
+            name: String,
+            configuration: NodeJsExec.() -> Unit = {},
+        ): TaskProvider<NodeJsExec> =
+            register(
+                compilation as KotlinJsIrCompilation,
+                name,
+                configuration
+            )
+
+        @Deprecated(
+            "Use register instead. Scheduled for removal in Kotlin 2.4.",
+            ReplaceWith("register(compilation, name, configuration)"),
+            level = DeprecationLevel.ERROR
+        )
+        fun create(
+            compilation: KotlinJsIrCompilation,
+            name: String,
+            configuration: NodeJsExec.() -> Unit = {},
+        ): TaskProvider<NodeJsExec> = register(compilation, name, configuration)
     }
 }

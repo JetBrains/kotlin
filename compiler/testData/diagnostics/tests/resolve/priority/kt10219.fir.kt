@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Calendar.java
 public class Calendar {
     public void setTimeInMillis(long millis) {}
@@ -15,8 +16,11 @@ fun a(c: Calendar) {
     A().apply {
         c.apply {
             timeInMillis = 5 // synthesized variable for get|setTimeInMillis
-            timeInMillis = <!ASSIGNMENT_TYPE_MISMATCH!>""<!>
+            timeInMillis <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
         }
         timeInMillis = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, javaProperty, javaType, lambdaLiteral,
+propertyDeclaration, propertyWithExtensionReceiver, setter, stringLiteral */

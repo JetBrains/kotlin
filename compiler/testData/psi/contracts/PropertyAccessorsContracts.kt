@@ -6,7 +6,7 @@ class MyClass {
         }
 }
 
-class AnotherClass(multiplier: Int) {
+class AnotherClass(val multiplier: Int) {
     var anotherInt: Int = 0
         get() contract [returnsNotNull()] = 1
         set(value) contract [returns()] {
@@ -18,7 +18,7 @@ class SomeClass(multiplier: Int?) {
     var someInt: Int = 0
         get() contract [returnsNotNull()] = 1
         set(value) contract [returns() implies (value != null)] {
-            value ?: throw NullArgumentException()
+            value ?: throw IllegalArgumentException()
             field = value
         }
 }

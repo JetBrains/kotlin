@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -13,15 +15,17 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 
@@ -34,7 +38,8 @@ class IrFileDeserializer(
 ) {
     val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
 
-    private var annotations: List<ProtoConstructorCall>? = fileProto.annotationList
+    /** Once deserialized this property is set to `null`. */
+    private var protoAnnotationsPendingDeserialization: List<ProtoConstructorCall>? = fileProto.annotationList
 
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
         return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig)).also {
@@ -47,11 +52,23 @@ class IrFileDeserializer(
         return libraryFile.declaration(idSigIndex)
     }
 
-    fun deserializeFileImplicitDataIfFirstUse() {
-        annotations?.let {
+    /**
+     * Deserializes file-level annotations for the current [IrFile].
+     *
+     * The actual deserialization happens just once on the first invocation.
+     * The subsequent invocations have no effect.
+     *
+     * @return If the annotations have been actually deserialized on this invocation.
+     */
+    fun deserializeFileImplicitDataIfFirstUse(): Boolean {
+        protoAnnotationsPendingDeserialization?.let {
             file.annotations += declarationDeserializer.deserializeAnnotations(it)
-            annotations = null
+            protoAnnotationsPendingDeserialization = null
+
+            return true
         }
+
+        return false
     }
 }
 
@@ -61,22 +78,22 @@ class FileDeserializationState(
     val file: IrFile,
     val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
-    deserializeBodies: Boolean,
-    allowErrorNodes: Boolean,
-    deserializeInlineFunctions: Boolean,
+    settings: IrDeserializationSettings,
     moduleDeserializer: IrModuleDeserializer
 ) {
 
-    val symbolDeserializer =
-        IrSymbolDeserializer(
-            linker.symbolTable, fileReader, file.symbol,
-            ::addIdSignature,
-            linker::handleExpectActualMapping,
-            symbolProcessor = linker.symbolProcessor,
-            internationService = linker.internationService
-        ) { idSignature, symbolKind ->
+    val symbolDeserializer = IrSymbolDeserializer(
+        symbolTable = linker.symbolTable,
+        libraryFile = fileReader,
+        fileSymbol = file.symbol,
+        enqueueLocalTopLevelDeclaration = ::addIdSignature,
+        deserializedSymbolPostProcessor = linker.deserializedSymbolPostProcessor,
+        irInterner = linker.irInterner,
+        deserializePublicSymbolWithOwnerInUnknownFile = { idSignature, symbolKind ->
+            // Dispatch it through IR linker to find the concrete file deserializer, and then deserialize the symbol
+            // with the associated symbol deserialized.
             linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(idSignature, symbolKind, moduleDeserializer)
-        }
+        })
 
     val declarationDeserializer = IrDeclarationDeserializer(
         linker.builtIns,
@@ -84,19 +101,43 @@ class FileDeserializationState(
         linker.symbolTable.irFactory,
         fileReader,
         file,
-        allowErrorNodes,
-        deserializeInlineFunctions,
-        deserializeBodies,
+        settings,
         symbolDeserializer,
-        linker.fakeOverrideBuilder.platformSpecificClassFilter,
-        linker.fakeOverrideBuilder,
-        compatibilityMode = moduleDeserializer.compatibilityMode,
-        linker.partialLinkageSupport.isEnabled,
-        internationService = linker.internationService
+        onDeserializedClass = { clazz, signature ->
+            linker.fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode)
+        },
+        needToDeserializeFakeOverrides = { clazz ->
+            !linker.fakeOverrideBuilder.platformSpecificClassFilter.needToConstructFakeOverrides(clazz)
+        },
+        specialProcessingForMismatchedSymbolKind = runIf(linker.partialLinkageSupport.isEnabled) {
+            { deserializedSymbol, fallbackSymbolKind ->
+                referenceDeserializedSymbol(
+                    symbolTable = linker.symbolTable,
+                    fileSymbol = null,
+                    symbolKind = fallbackSymbolKind ?: error("No fallback symbol kind specified for symbol $deserializedSymbol"),
+                    idSig = deserializedSymbol.signature?.takeIf { it.isPubliclyVisible }
+                        ?: error("No public signature for symbol $deserializedSymbol")
+                )
+            }
+        },
+        irInterner = linker.irInterner,
     )
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
 
+    /**
+     * This is the queue of top-level declarations in the current file to be deserialized.
+     *
+     * A declaration can be enqueued using one of the available ways: [addIdSignature], [enqueueAllDeclarations].
+     * The deserialization happens on invocation of [deserializeAllFileReachableTopLevel].
+     *
+     * Note 1: The signature is removed from the queue during deserialization of the corresponding declaration.
+     *
+     * Note 2: Since we don't know the state of a declaration for a certain [IdSignature], there are no
+     * guarantees that the queue contains only items that has NEVER been attempted to be deserialized before.
+     * It actually may contain signatures of already deserialized declarations. In that case, the deserialization
+     * does not happen (as there is nothing effectively to deserialize), but the signature is removed from the queue.
+     */
     private val reachableTopLevels = LinkedHashSet<IdSignature>()
 
     init {
@@ -110,24 +151,38 @@ class FileDeserializationState(
         }
     }
 
-    fun addIdSignature(key: IdSignature) {
-        reachableTopLevels.add(key)
+    /**
+     * Schedule deserialization of a top-level declaration with the given signature.
+     */
+    fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
+        reachableTopLevels.add(topLevelDeclarationSignature)
     }
 
+    /**
+     * Schedule deserialization of all top-level declarations in this file.
+     */
     fun enqueueAllDeclarations() {
         reachableTopLevels.addAll(fileDeserializer.reversedSignatureIndex.keys)
     }
 
+    /**
+     * Deserialize all top-level declarations previously scheduled for deserialization in the current file.
+     */
     fun deserializeAllFileReachableTopLevel() {
         while (reachableTopLevels.isNotEmpty()) {
-            val reachableKey = reachableTopLevels.first()
+            val topLevelDeclarationSignature = reachableTopLevels.first()
 
-            val existedSymbol = symbolDeserializer.deserializedSymbols[reachableKey]
-            if (existedSymbol == null || !existedSymbol.isBound) {
-                fileDeserializer.deserializeDeclaration(reachableKey)
+            val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbolsWithOwnersInCurrentFile[topLevelDeclarationSignature]
+            if (topLevelDeclarationSymbol == null || !topLevelDeclarationSymbol.isBound) {
+                // Perform actual deserialization:
+                val topLevelDeclaration = fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)
+
+                // Enqueue the deserialized declaration to the PL engine for further processing.
+                linker.partialLinkageSupport.enqueueDeclaration(topLevelDeclaration)
             }
 
-            reachableTopLevels.remove(reachableKey)
+            // Remove it from the queue:
+            reachableTopLevels.remove(topLevelDeclarationSignature)
         }
     }
 }
@@ -140,6 +195,7 @@ abstract class IrLibraryFile {
     abstract fun expressionBody(index: Int): ProtoExpression
     abstract fun statementBody(index: Int): ProtoStatement
     abstract fun debugInfo(index: Int): String?
+    abstract fun fileEntry(index: Int): ProtoFileEntry?
 }
 
 abstract class IrLibraryBytesSource {
@@ -149,6 +205,7 @@ abstract class IrLibraryBytesSource {
     abstract fun string(index: Int): ByteArray
     abstract fun body(index: Int): ByteArray
     abstract fun debugInfo(index: Int): ByteArray?
+    abstract fun fileEntry(index: Int): ByteArray?
 }
 
 class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : IrLibraryFile() {
@@ -170,29 +227,78 @@ class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : Ir
         ProtoStatement.parseFrom(bytesSource.body(index).codedInputStream, extensionRegistryLite)
 
     override fun debugInfo(index: Int): String? = bytesSource.debugInfo(index)?.let { WobblyTF8.decode(it) }
+    override fun fileEntry(index: Int): ProtoFileEntry? = bytesSource.fileEntry(index)?.let {
+        ProtoFileEntry.parseFrom(it, extensionRegistryLite)
+    }
 
     companion object {
-        val extensionRegistryLite: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
+        val extensionRegistryLite: ExtensionRegistryLite = ExtensionRegistryLite.getEmptyRegistry()
     }
 }
 
-class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int) : IrLibraryBytesSource() {
-    override fun irDeclaration(index: Int): ByteArray = klib.irDeclaration(index, fileIndex)
-    override fun type(index: Int): ByteArray = klib.type(index, fileIndex)
-    override fun signature(index: Int): ByteArray = klib.signature(index, fileIndex)
-    override fun string(index: Int): ByteArray = klib.string(index, fileIndex)
-    override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
-    override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
+class IrKlibBytesSource(private val ir: KlibIrComponent, private val fileIndex: Int) : IrLibraryBytesSource() {
+    override fun irDeclaration(index: Int): ByteArray = ir.declaration(index, fileIndex)
+    override fun type(index: Int): ByteArray = ir.type(index, fileIndex)
+    override fun signature(index: Int): ByteArray = ir.signature(index, fileIndex)
+    override fun string(index: Int): ByteArray = ir.stringLiteral(index, fileIndex)
+    override fun body(index: Int): ByteArray = ir.body(index, fileIndex)
+    override fun debugInfo(index: Int): ByteArray? = ir.signatureDebugInfo(index, fileIndex)
+    override fun fileEntry(index: Int): ByteArray? = ir.irFileEntry(index, fileIndex)
 }
 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::string)
 
-fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
-    val fileName = fileProto.fileEntry.name
-    val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetList.toIntArray())
+fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile, irInterner: IrInterningService): IrFile {
+    val fileEntry = deserializeFileEntry(fileEntry(fileProto), irInterner)
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
     val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
     return IrFileImpl(fileEntry, symbol, fqName, module)
 }
+
+internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry, irInterner: IrInterningService): IrFileEntry {
+    val lineStartOffsets: IntArray
+    if (fileEntryProto.lineStartOffsetDeltaCount > 0) {
+        lineStartOffsets = IntArray(fileEntryProto.lineStartOffsetDeltaCount)
+        var offset = 0
+        for ((index, delta) in fileEntryProto.lineStartOffsetDeltaList.withIndex()) {
+            offset += delta
+            lineStartOffsets[index] = offset
+        }
+    } else {
+        lineStartOffsets = fileEntryProto.lineStartOffsetList.toIntArray()
+    }
+
+    return NaiveSourceBasedFileEntryImpl(
+        name = irInterner.string(deserializeFileEntryName(fileEntryProto)),
+        lineStartOffsets = lineStartOffsets,
+        firstRelevantLineIndex = fileEntryProto.firstRelevantLineIndex
+    )
+}
+
+fun IrLibraryFile.deserializeFileEntryName(fileEntryProto: ProtoFileEntry): String = when {
+    fileEntryProto.hasName() -> string(fileEntryProto.name)
+    fileEntryProto.hasNameOld() -> fileEntryProto.nameOld
+    else -> error("Malformed KLIB: File entry has no name")
+}
+
+
+fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
+    if (protoFile.hasFileEntryId())
+        fileEntry(protoFile.fileEntryId) ?: error("Invalid KLib: cannot read file entry by its index")
+    else {
+        require(protoFile.hasFileEntry()) { "Invalid KLib: either fileEntry or fileEntryId must be present" }
+        protoFile.fileEntry
+    }
+
+fun KlibIrComponent.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
+    if (protoFile.hasFileEntryId()) {
+        val fileEntry = irFileEntry(protoFile.fileEntryId, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
+        ProtoFileEntry.parseFrom(fileEntry)
+    } else {
+        require(protoFile.hasFileEntry()) {
+            "Invalid KLib: either fileEntry or valid fileEntryId must be present. Valid fileEntryId is a valid index in existing file entries table"
+        }
+        protoFile.fileEntry
+    }

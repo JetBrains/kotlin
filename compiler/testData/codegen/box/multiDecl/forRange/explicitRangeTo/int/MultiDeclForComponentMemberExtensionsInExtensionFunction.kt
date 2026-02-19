@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 class M {
   operator fun Int.component1() = this + 1
   operator fun Int.component2() = this + 2
@@ -5,7 +6,7 @@ class M {
 
 fun M.doTest(): String {
     var s = ""
-    for ((a, b) in 0.rangeTo(2)) {
+    for ([a, b] in 0.rangeTo(2)) {
       s += "$a:$b;"
     }
     return s

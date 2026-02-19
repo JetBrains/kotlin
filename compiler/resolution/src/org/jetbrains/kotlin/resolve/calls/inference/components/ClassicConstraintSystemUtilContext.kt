@@ -83,10 +83,20 @@ class ClassicConstraintSystemUtilContext(
         return atom is FunctionExpression && atom.receiverType != null
     }
 
+    override fun PostponedAtomWithRevisableExpectedType.contextParameterCountOfFunctionExpression(): Int {
+        require(this is ResolvedAtom)
+        val atom = this.atom
+        return if (atom is FunctionExpression) atom.contextReceiversTypes.size else 0
+    }
+
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {
         require(this is ResolvedAtom)
         val atom = this.atom
         return atom is LambdaKotlinCallArgument && atom !is FunctionExpression
+    }
+
+    override fun PostponedAtomWithRevisableExpectedType.isSuspend(): Boolean {
+        return false
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {

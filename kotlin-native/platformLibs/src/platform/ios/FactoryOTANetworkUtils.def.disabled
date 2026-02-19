@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.FactoryOTANetworkUtils
+
+modules = FactoryOTANetworkUtils
+compilerOpts = -framework FactoryOTANetworkUtils
+linkerOpts = -framework FactoryOTANetworkUtils
+#Disabled: Unavailable

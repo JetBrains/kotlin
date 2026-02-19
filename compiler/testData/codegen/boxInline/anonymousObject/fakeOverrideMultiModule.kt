@@ -1,4 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
+
 // MODULE: lib
 // FILE: lib.kt
 package lib

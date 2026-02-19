@@ -21,6 +21,7 @@ public final enum class JvmTarget : kotlin.Enum<JvmTarget> {
 
     private constructor JvmTarget(/*0*/ description: kotlin.String)
     public final val bytecodeVersion: kotlin.String
+    public final val bytecodeVersion2: kotlin.String
     public final val description: kotlin.String
     @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

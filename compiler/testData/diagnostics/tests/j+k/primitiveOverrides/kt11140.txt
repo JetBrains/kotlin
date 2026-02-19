@@ -74,3 +74,4 @@ public interface B</*0*/ T1 : kotlin.Any!, /*1*/ T2 : kotlin.Any!> {
     public abstract fun put(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Double): kotlin.Double
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

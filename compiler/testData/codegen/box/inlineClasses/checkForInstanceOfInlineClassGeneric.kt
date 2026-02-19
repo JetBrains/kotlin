@@ -1,7 +1,11 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
+// FILE: lib.kt
+inline fun <reified T> Any?.instanceOf(): Boolean = this is T
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class UInt<T: Int>(val u: T) {
     override fun toString(): String {
@@ -11,8 +15,6 @@ value class UInt<T: Int>(val u: T) {
 
 fun Any.isUInt(): Boolean = this is UInt<*>
 fun Any.notIsUInt(): Boolean = this !is UInt<*>
-
-inline fun <reified T> Any?.instanceOf(): Boolean = this is T
 
 fun UInt<Int>.extension(): String = "OK:"
 

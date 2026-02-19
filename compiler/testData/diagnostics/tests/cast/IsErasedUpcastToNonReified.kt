@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T, S : T> test(x: T?, y: S, z: T) {
     x is <!CANNOT_CHECK_FOR_ERASED!>T<!>
     <!USELESS_IS_CHECK!>x is T?<!>
@@ -40,3 +41,6 @@ fun <T> foo(x: List<T>, y: List<T>?) {
     <!USELESS_IS_CHECK!>x is List<T><!>
     y is List<T>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, functionDeclaration, inline, intersectionType,
+isExpression, nullableType, reified, smartcast, typeConstraint, typeParameter */

@@ -25,7 +25,7 @@ fun box(): String {
         list2.add(i)
         if (list2.size > 23) break
     }
-    if (list2 != listOf<Int>((MinB + 2).toInt(), (MinB + 1).toInt(), MinB.toInt())) {
+    if (list2 != listOf<Int>(MinB + 2, MinB + 1, MinB.toInt())) {
         return "Wrong elements for (MinB + 2).toByte() downTo MinB step 1: $list2"
     }
 
@@ -35,18 +35,18 @@ fun box(): String {
         list3.add(i)
         if (list3.size > 23) break
     }
-    if (list3 != listOf<Int>((MinS + 2).toInt(), (MinS + 1).toInt(), MinS.toInt())) {
+    if (list3 != listOf<Int>(MinS + 2, MinS + 1, MinS.toInt())) {
         return "Wrong elements for (MinS + 2).toShort() downTo MinS step 1: $list3"
     }
 
     val list4 = ArrayList<Long>()
-    val range4 = (MinL + 2).toLong() downTo MinL step 1
+    val range4 = MinL + 2 downTo MinL step 1
     for (i in range4) {
         list4.add(i)
         if (list4.size > 23) break
     }
-    if (list4 != listOf<Long>((MinL + 2).toLong(), (MinL + 1).toLong(), MinL)) {
-        return "Wrong elements for (MinL + 2).toLong() downTo MinL step 1: $list4"
+    if (list4 != listOf<Long>(MinL + 2, MinL + 1, MinL)) {
+        return "Wrong elements for MinL + 2 downTo MinL step 1: $list4"
     }
 
     val list5 = ArrayList<Char>()

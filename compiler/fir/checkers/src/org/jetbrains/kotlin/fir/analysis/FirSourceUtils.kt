@@ -6,40 +6,116 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
-fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return getChild(setOf(type), index, depth, reverse)
-}
+fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
+    getChild(setOf(type), index, depth, reverse)
 
-fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return getChild(types.types.toSet(), index, depth, reverse)
-}
+fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
+    getChild(types.types.toSet(), index, depth, reverse)
 
 fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return when (this) {
-        is KtPsiSourceElement -> {
-            getChild(types, index, depth, reverse)
+    var idx = index
+
+    forEachChildOfType(types, depth, reverse) {
+        if (idx-- == 0) {
+            return it
         }
-        is KtLightSourceElement -> {
-            getChild(types, index, depth, reverse)
+    }
+
+    return null
+}
+
+/**
+ * Iterates recursively over all children up to the given [depth] or indefinitely if [depth] is -1.
+ * `processChild` is invoked for each child having a type in the `types` set.
+ */
+inline fun KtSourceElement.forEachChildOfType(
+    types: Set<IElementType>,
+    depth: Int,
+    reverse: Boolean = false,
+    processChild: (KtSourceElement) -> Unit,
+) {
+    when (this) {
+        is KtPsiSourceElement -> psi.forEachChildOfType(types, depth, reverse) {
+            processChild(it.toKtPsiSourceElement())
         }
-        else -> null
+        is KtLightSourceElement -> lighterASTNode.forEachChildOfType(types, depth, reverse, treeStructure) {
+            processChild(it.toKtLightSourceElement(treeStructure))
+        }
     }
 }
 
-private fun KtPsiSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
-    val visitor = PsiElementFinderByType(types, index, depth, reverse)
-    return visitor.find(psi)?.toKtPsiSourceElement()
+/**
+ * See [KtSourceElement.forEachChildOfType]
+ */
+inline fun PsiElement.forEachChildOfType(
+    types: Set<IElementType>,
+    depth: Int,
+    reverse: Boolean = false,
+    processChild: (PsiElement) -> Unit,
+) {
+    forEachChildOfType(
+        this, types, depth, reverse,
+        getElementType = { it.node.elementType },
+        getChildren = { it.allChildren.toList() },
+        processChild,
+    )
 }
 
-private fun KtLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
-    val visitor = LighterTreeElementFinderByType(treeStructure, types, index, depth, reverse)
-    val childNode = visitor.find(lighterASTNode) ?: return null
-    return buildChildSourceElement(childNode)
+/**
+ * See [KtSourceElement.forEachChildOfType]
+ */
+inline fun LighterASTNode.forEachChildOfType(
+    types: Set<IElementType>,
+    depth: Int,
+    reverse: Boolean = false,
+    treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
+    processChild: (LighterASTNode) -> Unit,
+) {
+    forEachChildOfType(
+        this, types, depth, reverse,
+        getElementType = { it.tokenType },
+        getChildren = { it.getChildren(treeStructure) },
+        processChild,
+    )
+}
+
+inline fun <T> forEachChildOfType(
+    root: T,
+    types: Set<IElementType>,
+    depth: Int,
+    reverse: Boolean = false,
+    getElementType: (T) -> IElementType,
+    getChildren: (T) -> List<T>,
+    processChild: (T) -> Unit,
+) {
+    val stack = mutableListOf(root to 0)
+
+    while (stack.isNotEmpty()) {
+        val (element, currentDepth) = stack.popLast()
+
+        if (currentDepth != 0 && getElementType(element) in types) {
+            processChild(element)
+        }
+
+        if (currentDepth == depth) {
+            continue
+        }
+
+        getChildren(element).butIf(!reverse) { it.asReversed() }.forEach { child ->
+            stack += child to (currentDepth + 1)
+        }
+    }
 }
 
 /**
@@ -69,3 +145,10 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
     return segmentSource.takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
         ?: segmentSource.getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }
+
+/**
+ * Looks for the source element of the last segment
+ * of `importedFqName`.
+ */
+fun FirImport.getLastImportedFqNameSegmentSource(): KtSourceElement? =
+    source?.getChild(KtNodeTypes.REFERENCE_EXPRESSION, reverse = true)

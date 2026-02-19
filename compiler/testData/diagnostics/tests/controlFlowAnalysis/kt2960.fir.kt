@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2960 Perform control flow checks for package property initializers
 
 package b
@@ -34,3 +35,6 @@ class A {
 }
 
 fun doSmth(i: Int) = i
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

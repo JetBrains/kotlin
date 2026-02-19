@@ -1,0 +1,7 @@
+KDocName(8,12): 'A.BB'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in A) class BB

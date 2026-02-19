@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
@@ -11,7 +10,9 @@ standardPublicJars()
 
 dependencies {
     api(platform(project(":kotlin-gradle-plugins-bom")))
-    compileOnly(kotlinStdlib())
+
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
 }
 
 apiValidation {

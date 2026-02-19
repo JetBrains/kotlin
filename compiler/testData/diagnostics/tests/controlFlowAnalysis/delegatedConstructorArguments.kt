@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // DUMP_CFG
@@ -23,3 +24,6 @@ class Test {
         this.values = list
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, init, integerLiteral, lambdaLiteral,
+propertyDeclaration, secondaryConstructor, thisExpression */

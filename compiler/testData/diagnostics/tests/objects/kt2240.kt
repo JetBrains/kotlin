@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package a
 
@@ -12,3 +13,6 @@ val o = object {
         A().foo(f) // Ambiguity here!
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+nullableType, propertyDeclaration, typeParameter */

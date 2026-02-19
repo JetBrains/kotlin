@@ -1,7 +1,7 @@
 fun test() {
     val value = System.getProperty("key")
     if (value != null) {
-        value.toUpperCase()
+        value.uppercase()
     }
 }
 

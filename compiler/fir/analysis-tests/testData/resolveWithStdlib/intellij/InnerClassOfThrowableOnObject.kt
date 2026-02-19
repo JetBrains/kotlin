@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // See KT-49129
 
 class Generic<T> {
@@ -17,3 +18,6 @@ class Generic<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, inner,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

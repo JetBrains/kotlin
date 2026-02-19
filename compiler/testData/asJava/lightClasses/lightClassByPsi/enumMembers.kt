@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 enum class Event {
     ON_CREATE, ON_START, ON_STOP, ON_DESTROY;
     companion object {
@@ -24,3 +26,4 @@ enum class State {
         fun done(state: State) = state.isFinished
     }
 }
+// LIGHT_ELEMENTS_NO_DECLARATION: Event.class[getEntries;valueOf;values], State.class[getEntries;valueOf;values]

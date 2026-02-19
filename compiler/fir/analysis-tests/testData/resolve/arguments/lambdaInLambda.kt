@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class StringBuilder {
     fun append(s: String) {}
 }
@@ -21,3 +22,6 @@ fun test(ordinal: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, nullableType, safeCall, typeConstraint, typeParameter, typeWithExtension */

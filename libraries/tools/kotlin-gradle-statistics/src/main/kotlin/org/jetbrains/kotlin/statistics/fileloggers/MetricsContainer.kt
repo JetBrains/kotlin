@@ -16,7 +16,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.util.*
 
-class MetricsContainer(private val forceValuesValidation: Boolean = false) : IStatisticsValuesConsumer {
+class MetricsContainer(private val forceValuesValidation: Boolean = false) : StatisticsValuesConsumer {
     data class MetricDescriptor(val name: String, val projectHash: String?) : Comparable<MetricDescriptor> {
         override fun compareTo(other: MetricDescriptor): Int {
             val compareNames = name.compareTo(other.name)
@@ -59,7 +59,7 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : ISt
                     if (BUILD_SESSION_SEPARATOR == line) {
                         consumer.invoke(container)
                         container = MetricsContainer()
-                    } else {
+                    } else if (line.contains('=')) {
                         // format: metricName.hash=string representation
                         val lineParts = line.split('=')
                         if (lineParts.size == 2) {
@@ -143,20 +143,32 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : ISt
         return true
     }
 
-    fun flush(trackingFile: IRecordLogger?) {
-        if (trackingFile == null) return
+    fun populateFromMetricsContainer(metrics: MetricsContainer) = synchronized(metricsLock) {
+        metrics.booleanMetrics.forEach { (descriptor, metric) ->
+            report(BooleanMetrics.valueOf(descriptor.name), metric.getValue() ?: return@forEach, descriptor.projectHash, null)
+        }
+        metrics.stringMetrics.forEach { (descriptor, metric) ->
+            report(StringMetrics.valueOf(descriptor.name), metric.getValue() ?: return@forEach, descriptor.projectHash, null)
+        }
+        metrics.numericalMetrics.forEach { (descriptor, metric) ->
+            report(NumericalMetrics.valueOf(descriptor.name), metric.getValue() ?: return@forEach, descriptor.projectHash, null)
+        }
+    }
+
+    fun flush(writer: BufferedWriter) {
         val allMetrics = TreeMap<MetricDescriptor, IMetricContainer<out Any>>()
         synchronized(metricsLock) {
             allMetrics.putAll(numericalMetrics)
             allMetrics.putAll(booleanMetrics)
             allMetrics.putAll(stringMetrics)
         }
+        writer.appendLine()
         for (entry in allMetrics.entries) {
             val suffix = if (entry.key.projectHash == null) "" else ".${entry.key.projectHash}"
-            trackingFile.append("${entry.key.name}$suffix=${entry.value.toStringRepresentation()}")
+            writer.appendLine("${entry.key.name}$suffix=${entry.value.toStringRepresentation()}")
         }
 
-        trackingFile.append(BUILD_SESSION_SEPARATOR)
+        writer.appendLine(BUILD_SESSION_SEPARATOR)
 
         synchronized(metricsLock) {
             stringMetrics.clear()
@@ -175,5 +187,9 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : ISt
 
     fun getMetric(metric: BooleanMetrics): IMetricContainer<Boolean>? = synchronized(metricsLock) {
         booleanMetrics[MetricDescriptor(metric.name, null)]
+    }
+
+    fun isEmpty(): Boolean = synchronized(metricsLock) {
+        numericalMetrics.isEmpty() && booleanMetrics.isEmpty() && stringMetrics.isEmpty()
     }
 }

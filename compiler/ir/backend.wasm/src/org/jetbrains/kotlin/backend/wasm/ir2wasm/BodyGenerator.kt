@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.ir.returnType
+import org.jetbrains.kotlin.backend.common.lower.SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
+import org.jetbrains.kotlin.backend.wasm.toCatchThrowableOrJsException
 import org.jetbrains.kotlin.backend.wasm.utils.*
-import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -21,39 +22,65 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 class BodyGenerator(
-    val context: WasmModuleCodegenContext,
-    val functionContext: WasmFunctionCodegenContext,
-    private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
-) : IrElementVisitorVoid {
-    val body: WasmExpressionBuilder = functionContext.bodyGen
+    private val backendContext: WasmBackendContext,
+    private val wasmFileCodegenContext: WasmFileCodegenContext,
+    private val functionContext: WasmFunctionCodegenContext,
+    private val wasmModuleMetadataCache: WasmModuleMetadataCache,
+    private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val locationProvider: LocationProvider,
+    val body: WasmExpressionBuilder,
+) : IrVisitorVoid() {
+
 
     // Shortcuts
-    private val backendContext: WasmBackendContext = context.backendContext
-    private val wasmSymbols: WasmSymbols = backendContext.wasmSymbols
+    private val wasmSymbols: BackendWasmSymbols = backendContext.wasmSymbols
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
-    private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
     fun WasmExpressionBuilder.buildGetUnit() {
-        buildGetGlobal(
-            context.referenceGlobalField(unitInstanceField.symbol),
-            SourceLocation.NoLocation("GET_UNIT")
+        buildInstr(
+            WasmOp.CALL_PURE,
+            SourceLocation.NoLocation("GET_UNIT"),
+            wasmFileCodegenContext.referenceFunction(unitGetInstance.symbol)
         )
+    }
+
+    fun getStructFieldId(field: IrField): Int {
+        val klass = field.parentAsClass
+        val metadata = wasmModuleMetadataCache.getClassMetadata(klass.symbol)
+        val fieldId = metadata.fields.indexOf(field) + 3 //Implicit vtable, itable and rtti fields
+        return fieldId
     }
 
     // Generates code for the given IR element. Leaves something on the stack unless expression was of the type Void.
     internal fun generateExpression(expression: IrExpression) {
         expression.acceptVoid(this)
 
-        if (expression.type.isNothing()) {
+        // Checks if it is safe to assume the statement doesn't return
+        // (e.g. throws an exception or loops infinitely)
+        //
+        // Takes into account cases like `fun <T> foo(): T = Any() as
+        // T`, which could be used as `foo<Nothing>()` and terminate
+        // despite the call type `Nothing`.
+        //
+        // Assumes that only functions with explicit return type
+        // `Nothing` do not return.
+        //
+        // Also see KotlinNothingValueExceptionLowering.kt
+        if (expression.type.isNothing() &&
+                !(expression is IrCall && !expression.symbol.owner.returnType.isNothing())) {
             // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site. 
             body.buildUnreachableAfterNothingType()
         }
@@ -62,13 +89,13 @@ class BodyGenerator(
     // Generates code for the given IR element but *never* leaves anything on the stack.
     private fun generateAsStatement(statement: IrExpression) {
         generateExpression(statement)
-        if (statement.type != wasmSymbols.voidType) {
-            body.buildDrop(statement.getSourceLocation())
+        if (statement.type != wasmSymbols.voidType && !statement.type.isNothing()) {
+            body.buildDrop(SourceLocation.NoLocation("DROP"))
         }
     }
 
     private fun generateStatement(statement: IrStatement) {
-        when(statement) {
+        when (statement) {
             is IrExpression -> generateAsStatement(statement)
             is IrVariable -> statement.acceptVoid(this)
             else -> error("Unsupported node type: ${statement::class.simpleName}")
@@ -79,14 +106,14 @@ class BodyGenerator(
         error("Unexpected element of type ${element::class}")
     }
 
-    private fun tryGenerateConstVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.GcType): Boolean {
+    private fun tryGenerateConstVarargArray(irVararg: IrVararg, wasmArrayType: GcTypeSymbol): Boolean {
         if (irVararg.elements.isEmpty()) return false
 
-        val kind = (irVararg.elements[0] as? IrConst<*>)?.kind ?: return false
+        val kind = (irVararg.elements[0] as? IrConst)?.kind ?: return false
         if (kind == IrConstKind.String || kind == IrConstKind.Null) return false
-        if (irVararg.elements.any { it !is IrConst<*> || it.kind != kind }) return false
+        if (irVararg.elements.any { it !is IrConst || it.kind != kind }) return false
 
-        val elementConstValues = irVararg.elements.map { (it as IrConst<*>).value!! }
+        val elementConstValues = irVararg.elements.map { (it as IrConst).value!! }
 
         val resource = when (irVararg.varargElementType) {
             irBuiltIns.byteType -> elementConstValues.map { (it as Byte).toLong() } to WasmI8
@@ -97,7 +124,7 @@ class BodyGenerator(
             else -> return false
         }
 
-        val constantArrayId = context.referenceConstantArray(resource)
+        val constantArrayId = wasmFileCodegenContext.referenceConstantArray(resource)
 
         irVararg.getSourceLocation().let { location ->
             body.buildConstI32(0, location)
@@ -107,7 +134,7 @@ class BodyGenerator(
         return true
     }
 
-    private fun tryGenerateVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.GcType) {
+    private fun tryGenerateVarargArray(irVararg: IrVararg, wasmArrayType: GcTypeSymbol) {
         irVararg.elements.forEach {
             check(it is IrExpression)
             generateExpression(it)
@@ -121,52 +148,389 @@ class BodyGenerator(
         val arrayClass = expression.type.getClass()!!
 
         val wasmArrayType = arrayClass.constructors
-            .mapNotNull { it.valueParameters.singleOrNull()?.type }
+            .mapNotNull { it.parameters.singleOrNull()?.type }
             .firstOrNull { it.getClass()?.getWasmArrayAnnotation() != null }
             ?.getRuntimeClass(irBuiltIns)?.symbol
-            ?.let(context::referenceGcType)
-            ?.let(WasmImmediate::GcType)
+            ?.let(wasmFileCodegenContext::referenceGcType)
 
         check(wasmArrayType != null)
 
         val location = expression.getSourceLocation()
         generateAnyParameters(arrayClass.symbol, location)
         if (!tryGenerateConstVarargArray(expression, wasmArrayType)) tryGenerateVarargArray(expression, wasmArrayType)
-        body.buildStructNew(context.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol), location)
+        body.buildStructNew(wasmFileCodegenContext.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol), location)
     }
 
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
-        if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+
+        if (backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
             body.buildUnreachable(SourceLocation.NoLocation("Unreachable is inserted instead of a `throw` instruction"))
             return
         }
 
-        body.buildThrow(functionContext.tagIdx, expression.getSourceLocation())
+        val sourceLocation = expression.getSourceLocation()
+
+        if (backendContext.isWasmJsTarget) {
+            // For wasm-js target call `throwValue` to throw the attached JavaScript value (typically an Error object)
+            body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.throwValue), sourceLocation)
+            return
+        }
+
+        body.buildThrow(exceptionTagId, sourceLocation)
     }
 
     override fun visitTry(aTry: IrTry) {
-        assert(aTry.isCanonical(irBuiltIns)) { "expected canonical try/catch" }
+        assert(aTry.isCanonical(backendContext)) { "expected canonical try/catch" }
 
-        if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+        if (backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
             generateExpression(aTry.tryResult)
             return
         }
 
-        val resultType = context.transformBlockResultType(aTry.type)
-        body.buildTry(null, resultType)
-        generateExpression(aTry.tryResult)
-
-        body.buildCatch(functionContext.tagIdx)
-
-        // Exception object is on top of the stack, store it into the local
-        aTry.catches.single().catchParameter.symbol.let {
-            functionContext.defineLocal(it)
-            body.buildSetLocal(functionContext.referenceLocal(it), it.owner.getSourceLocation())
+        if (backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)) {
+            generateTryFollowingNewProposal(aTry)
+        } else {
+            generateTryFollowingOldProposal(aTry)
         }
-        generateExpression(aTry.catches.single().result)
+    }
 
-        body.buildEnd()
+    /**
+     * Generates WebAssembly code for a Kotlin try-catch-finally expression following the new exception handling proposal.
+     *
+     * The function handles three cases:
+     * 1. try-finally blocks (transformed into try-catch(Throwable))
+     * 2. try-catch blocks with exception handlers
+     * 3. simple try-catch blocks
+     */
+    private fun generateTryFollowingNewProposal(aTry: IrTry) {
+        val catchBlock = aTry.catches.single()
+
+        val resultType = wasmModuleTypeTransformer.transformBlockResultType(aTry.type)
+
+        // Always generate top level block with $resultType used for success breaks.  
+        body.buildBlock(null, resultType) { topLevelBlock ->
+            when {
+                /* 
+                Kotlin try-finally block at this point expected to be transformed into try-catch(Throwable).
+                Note here we have only a finally block for a failure case, a success path is covered separately on IR level.
+
+                Generate the following wasm code:
+                ```wat
+                block $topLevelBlock (result $resultType)
+                    block $toCatchAll (result exnref)
+                        try_table (catch_all_ref $toCatchAll)
+                            <try>
+                            br $topLevelBlock
+                        end
+                        unreachable
+                    end ;; $toCatchAll
+                    <finally>
+                    throw_ref
+                end
+                ```
+                */
+                catchBlock.origin === SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION -> {
+                    buildTryWithCatchAll(aTry, successLevel = topLevelBlock)
+
+                    // catch_all_ref
+                    buildFinallyBody(catchBlock)
+                    body.buildThrowRef(SourceLocation.NoLocation("Rethrow exception after finally block"))
+                }
+
+                /* 
+                Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+                If there were catch blocks with non-Throwable type, they are replaced with ifs.
+                Uses catch_all as a fallback mechanism to ensure the catch block executes for any exception type, 
+                it's required in this case since original try-catch contained a catch with Throwable or JsException. 
+
+                Generate the following wasm code:
+                ```wat
+                
+                block $topLevelBlock (result $resultType)
+                    block $toCatch (result externref | ref Throwable)
+                        block $toCatchAll (result exnref)
+                            try_table (catch $exn_tag $toCatch) (catch_all_ref $toCatchAll)
+                                <try>
+                                br $topLevelBlock
+                            end
+                            unreachable
+                        end ;; $toCatchAll
+                        ;; TODO KT-78898 K/Wasm: investigate if we can get additional info in catch_all blocks by going through JS    
+                        ;; Drop exnref which is unneeded now.
+                        drop
+                        ;; Use catch_all to make sure that catches for Throwable and JsException are executed for any exception.  
+                        ;; There is no information about the exception in this case, so we put `null` to the stack as a result of the try block.  
+                        ref.null $rawExceptionType
+                    end 
+                    
+                    ;; for wasm-js {
+                    call $getKotlinException
+                    ;; }
+                    
+                    <catches>
+                end
+                ```
+                */
+                catchBlock.toCatchThrowableOrJsException -> {
+                    body.buildBlock(null, rawExceptionType) { toCatch ->
+                        buildTryWithCatchAll(aTry, successLevel = topLevelBlock, { body.createNewCatch(exceptionTagId, toCatch) })
+
+                        // catch_all_ref
+                        body.buildDrop(SourceLocation.NoLocation("Drop exnref after catch_all_ref"))
+                        body.buildRefNull(rawExceptionType.getHeapType(), SourceLocation.NoLocation("Push null to the stack for further processing"))
+                    }
+
+                    buildCatchBlockBody(catchBlock)
+                }
+
+                /* 
+                Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+                If there were catch blocks with non-Throwable type, they are replaced with ifs.
+                A simple try-catch-end block can be generated here since the original try-catch block 
+                contains neither Throwable nor JsException handlers.
+
+                We generate the following wasm code:
+                block $topLevelBlock (result $resultType)
+                    block $toCatch (result externref | ref Throwable)
+                        try_table (catch $exn_tag $toCatch) (catch_all_ref $toCatchAll)
+                            <try>
+                            br $topLevelBlock
+                        end
+                        unreachable
+                    end 
+                    <catches>
+                end
+                */
+                else -> {
+                    body.buildBlock(null, rawExceptionType) { toCatch ->
+                        body.buildTryTable(body.createNewCatch(exceptionTagId, toCatch)) {
+                            generateExpression(aTry.tryResult)
+                            body.buildBr(
+                                topLevelBlock,
+                                SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
+                            )
+                        }
+
+                        body.buildUnreachableForVerifier()
+                    }
+
+                    buildCatchBlockBody(catchBlock)
+                }
+            }
+        }
+    }
+
+    /**
+     * Actual/raw reference type used to throw and catch exceptions.
+     *
+     * For wasm-js target:
+     * - Uses `externref` type to handle JavaScript Error objects directly.
+     * - JavaScript exceptions are wrapped in JsException for Kotlin code.
+     * - Kotlin exceptions are wrapped in JavaScript Error with reference to original exception.
+     * - Uses `WebAssembly.JSTag` for seamless exception handling between Kotlin and JavaScript.
+     * - Falls back to `WebAssembly.Tag` with same signature when `WebAssembly.JSTag` is unavailable,
+     *   allowing the same wasm binary to work in both environments.
+     *
+     * For wasm-wasi target:
+     * - Uses `ref Throwable` type, typed reference to Kotlin's Throwable class.
+     */
+    private val rawExceptionType =
+        if (backendContext.isWasmJsTarget)
+            WasmExternRef
+        else
+            wasmModuleTypeTransformer.transformBlockResultType(irBuiltIns.throwableType)
+                ?: error("Can't transform Throwable type to wasm block result type")
+
+    private fun buildFinallyBody(catchBlock: IrCatch) {
+        val composite = catchBlock.result as IrComposite
+        assert(composite.statements.last().isSimpleRethrowing(catchBlock)) { "Last throw is not rethrowing" }
+        composite.statements.dropLast(1).forEach(::generateStatement)
+    }
+
+    private fun buildCatchBlockBody(catchBlock: IrCatch) {
+        // wasm stack: 
+        // for wasm-js: [externref]
+        // otherwise: [Throwable]
+
+        if (backendContext.isWasmJsTarget) {
+            // wasm stack: [externref] 
+            // basically, it's a reference to JS Error
+
+            body.buildCall(
+                wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getKotlinException),
+                catchBlock.catchParameter.getSourceLocation()
+            )
+        }
+        // wasm stack for all targets: [Throwable]
+
+        catchBlock.initializeCatchParameter()
+        generateExpression(catchBlock.result)
+    }
+
+    /**
+     * Generates wasm code with the following structure:
+     * ```wat
+     * block $toCatchAll (result exnref)
+     *     try_table [(additionalCatch)] (catch_all_ref $toCatchAll)
+     *         <try>
+     *         br $successLevel
+     *     end
+     *     unreachable
+     * end
+     * ```
+     */
+    private fun buildTryWithCatchAll(aTry: IrTry, successLevel: Int, additionalCatch: (() -> WasmImmediate.Catch)? = null) {
+        body.buildBlock(null, WasmExnRefType) { toCatchAll ->
+
+            val catchAll = body.createNewCatchAllRef(toCatchAll)
+            val additional = additionalCatch?.invoke()
+
+            val catch1 = additional ?: catchAll
+            val catch2 = catchAll.takeIf { additional != null }
+
+            body.buildTryTable(catch1, catch2) {
+                generateExpression(aTry.tryResult)
+                body.buildBr(
+                    successLevel,
+                    SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
+                )
+            }
+
+            body.buildUnreachableForVerifier()
+        }
+    }
+
+    private fun IrCatch.initializeCatchParameter() {
+        with(catchParameter.symbol) {
+            functionContext.defineLocal(this)
+            body.buildSetLocal(functionContext.referenceLocal(this), owner.getSourceLocation())
+        }
+    }
+
+    private fun IrStatement.isSimpleRethrowing(catchBlock: IrCatch): Boolean =
+        ((this as IrThrow).value as IrGetValue).symbol == catchBlock.catchParameter.symbol
+
+    /**
+     * Generates WebAssembly code for a Kotlin try-catch-finally expression following the old exception handling proposal.
+     *
+     * This function handles three main cases:
+     * 1. try-finally blocks (transformed into try-catch(Throwable))
+     * 2. try-catch blocks with Throwable/JsException handlers
+     * 3. try-catch blocks without Throwable/JsException handlers
+     */
+    private fun generateTryFollowingOldProposal(aTry: IrTry) {
+        val catchBlock = aTry.catches.single()
+
+        // type of <try> in terms of wasm types
+        val resultType = wasmModuleTypeTransformer.transformBlockResultType(aTry.type)
+
+        when {
+            /* 
+            Kotlin try-finally block at this point expected to be transformed into try-catch(Throwable).
+            Note here we have only a finally block for a failure case, a success path is covered separately on IR level.
+
+            We generate the following wasm code:
+            ```wat
+            try (result $resultType)
+                <try>
+            catch_all | catch ;;  wasm-js | wasm-wasi 
+                <finally>
+                rethrow | throw $exn_tag
+            end
+            ```
+            */
+            catchBlock.origin == SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION -> {
+                body.buildTry(resultType) {
+                    generateExpression(aTry.tryResult)
+
+                    if (backendContext.isWasmJsTarget) {
+                        body.buildCatchAll()
+
+                        buildFinallyBody(catchBlock)
+                        body.buildInstr(
+                            WasmOp.RETHROW,
+                            SourceLocation.NoLocation("Rethrow exception after finally block"),
+                            relativeTryLevelForRethrowInFinallyBlock
+                        )
+                    } else {
+                        // WasmEdge and maybe some other standalone VMs don't support rethrow instruction.
+                        body.buildCatch(exceptionTagId)
+
+                        buildCatchBlockBody(catchBlock)
+                    }
+                }
+            }
+
+            /* 
+            Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+            If there were catch blocks with non-Throwable type, they are replaced with ifs.
+            Since the original try-catch contained a catch with Throwable or JsException, 
+            we need to guarantee that the catch block will be executed for any exception, so we use catch_all as fallback.
+
+            We generate the following wasm code:
+            ```wat
+            block $topLevelBlockLabel (result $resultType)
+                try (result $rawExceptionType)
+                    <try>
+                    br $topLevelBlockLabel
+                catch $exnTag
+                    ;; Do nothing, just let a reference on the top of the stack further.
+                catch_all
+                    ;; Use catch_all to make sure that catches for Throwable and JsException are executed for any exception.  
+                    ;; There is no information about the exception in this case, so we put `null` to the stack as a result of the try block.  
+                    ref.null $rawExceptionType
+                end
+                <catch(es)>
+            end
+            ```
+            */
+            catchBlock.toCatchThrowableOrJsException -> {
+                body.buildBlock(null, resultType) { topLevelBlockLabel ->
+                    body.buildTry(rawExceptionType) {
+                        generateExpression(aTry.tryResult)
+
+                        body.buildBr(
+                            topLevelBlockLabel,
+                            SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
+                        )
+
+                        body.buildCatch(exceptionTagId, SourceLocation.NextLocation)
+
+                        body.buildCatchAll()
+                        body.buildRefNull(rawExceptionType.getHeapType(), SourceLocation.NoLocation("Set null ref for catch_all"))
+                    }
+
+                    buildCatchBlockBody(catchBlock)
+                }
+            }
+
+            /* 
+            Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+            If there were catch blocks with non-Throwable type, they are replaced with ifs.
+            Since the original try-catch didn't contain any catch with Throwable or JsException, 
+            we can generate a simple try-catch-end block.
+
+            We generate the following wasm code:
+            ```wat
+            try (result $resultType)
+                <try>
+            catch $exnTag
+                <catch(es)>
+            end
+            ```
+            */
+            else -> {
+                body.buildTry(resultType) {
+
+                    generateExpression(aTry.tryResult)
+
+                    body.buildCatch(exceptionTagId, SourceLocation.NextLocation)
+
+                    buildCatchBlockBody(catchBlock)
+                }
+            }
+        }
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
@@ -180,8 +544,8 @@ class BodyGenerator(
         }
     }
 
-    override fun visitConst(expression: IrConst<*>): Unit =
-        generateConstExpression(expression, body, context, expression.getSourceLocation())
+    override fun visitConst(expression: IrConst): Unit =
+        generateConstExpression(expression, body, wasmFileCodegenContext, backendContext, expression.getSourceLocation())
 
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner
@@ -197,7 +561,7 @@ class BodyGenerator(
                 generateInstanceFieldAccess(field, location)
             }
         } else {
-            body.buildGetGlobal(context.referenceGlobalField(field.symbol), location)
+            body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalField(field.symbol), location)
             body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
     }
@@ -218,8 +582,8 @@ class BodyGenerator(
         body.buildInstr(
             opcode,
             location,
-            WasmImmediate.GcType(context.referenceGcType(field.parentAsClass.symbol)),
-            WasmImmediate.StructFieldIdx(context.getStructFieldRef(field))
+            wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol),
+            WasmImmediate.StructFieldIdx.get(getStructFieldId(field))
         )
         body.commentPreviousInstr { "name: ${field.name.asString()}, type: ${field.type.render()}" }
     }
@@ -234,14 +598,14 @@ class BodyGenerator(
             generateExpression(receiver)
             generateExpression(expression.value)
             body.buildStructSet(
-                struct = context.referenceGcType(field.parentAsClass.symbol),
-                fieldId = context.getStructFieldRef(field),
+                struct = wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol),
+                fieldId = getStructFieldId(field),
                 location
             )
             body.commentPreviousInstr { "name: ${field.name}, type: ${field.type.render()}" }
         } else {
             generateExpression(expression.value)
-            body.buildSetGlobal(context.referenceGlobalField(expression.symbol), location)
+            body.buildSetGlobal(wasmFileCodegenContext.referenceGlobalField(expression.symbol), location)
             body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
 
@@ -282,16 +646,16 @@ class BodyGenerator(
             "All inline class constructor calls must be lowered to static function calls"
         }
 
-        val wasmGcType: WasmSymbol<WasmTypeDeclaration> = context.referenceGcType(klassSymbol)
+        val wasmGcType = wasmFileCodegenContext.referenceGcType(klassSymbol)
         val location = expression.getSourceLocation()
 
         if (klass.getWasmArrayAnnotation() != null) {
-            require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
-            generateExpression(expression.getValueArgument(0)!!)
+            require(expression.arguments.size == 1) { "@WasmArrayOf constructs must have exactly one argument" }
+            generateExpression(expression.arguments[0]!!)
             body.buildInstr(
                 WasmOp.ARRAY_NEW_DEFAULT,
                 location,
-                WasmImmediate.GcType(wasmGcType)
+                wasmGcType
             )
             body.commentPreviousInstr { "@WasmArrayOf ctor call: ${klass.fqNameWhenAvailable}" }
             return
@@ -299,9 +663,8 @@ class BodyGenerator(
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
             generateAnyParameters(klassSymbol, location)
-            for (i in 0 until expression.valueArgumentsCount) {
-                generateExpression(expression.getValueArgument(i)!!)
-            }
+            expression.arguments.forEach { generateExpression(it!!) }
+
             body.buildStructNew(wasmGcType, location)
             body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
             return
@@ -314,14 +677,14 @@ class BodyGenerator(
     private fun generateAnyParameters(klassSymbol: IrClassSymbol, location: SourceLocation) {
         //ClassITable and VTable load
         body.commentGroupStart { "Any parameters" }
-        body.buildGetGlobal(context.referenceGlobalVTable(klassSymbol), location)
+        body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalVTable(klassSymbol), location)
         if (klassSymbol.owner.hasInterfaceSuperClass()) {
-            body.buildGetGlobal(context.referenceGlobalClassITable(klassSymbol), location)
+            body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalClassITable(klassSymbol), location)
         } else {
-            body.buildRefNull(WasmHeapType.Simple.Struct, location)
+            body.buildRefNull(WasmHeapType.Simple.None, location)
         }
 
-        body.buildConstI32Symbol(context.referenceTypeId(klassSymbol), location)
+        body.buildGetGlobal(wasmFileCodegenContext.referenceRttiGlobal(klassSymbol), location)
         body.buildConstI32(0, location) // Any::_hashCode
         body.commentGroupEnd()
     }
@@ -339,11 +702,11 @@ class BodyGenerator(
             generateAnyParameters(parentClass.symbol, location)
             val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
             irFields.forEachIndexed { index, field ->
-                if (index > 1) {
-                    generateDefaultInitializerForType(context.transformType(field.type), body)
+                if (index > 0) {
+                    generateDefaultInitializerForType(wasmModuleTypeTransformer.transformType(field.type), body)
                 }
             }
-            body.buildStructNew(context.referenceGcType(parentClass.symbol), location)
+            body.buildStructNew(wasmFileCodegenContext.referenceGcType(parentClass.symbol), location)
             body.buildSetLocal(thisParameter, location)
             body.buildEnd()
         }
@@ -351,7 +714,7 @@ class BodyGenerator(
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-        val klass = functionContext.irFunction.parentAsClass
+        val klass = functionContext.irFunction!!.parentAsClass
 
         // Don't delegate constructors of Any to Any.
         if (klass.defaultType.isAny()) {
@@ -368,106 +731,152 @@ class BodyGenerator(
         val location = expression.getSourceLocation()
         generateAnyParameters(klassSymbol, location)
         generateExpression(expression)
-        body.buildStructNew(context.referenceGcType(klassSymbol), location)
+        body.buildStructNew(wasmFileCodegenContext.referenceGcType(klassSymbol), location)
         body.commentPreviousInstr { "box" }
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {
-        val location = call.getSourceLocation()
+        val location = if (call.origin === IrStatementOrigin.DEFAULT_DISPATCH_CALL)
+            SourceLocation.NoLocation("Default dispatch")
+        else call.getSourceLocation()
+
+        if (call.symbol == unitGetInstance.symbol) {
+            body.buildGetUnit()
+            return
+        }
 
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
+        if (call.symbol == wasmSymbols.boxBoolean) {
+            generateBox(call.arguments[0]!!, irBuiltIns.booleanType)
+            return
+        }
         if (call.symbol == wasmSymbols.boxIntrinsic) {
-            generateBox(call.getValueArgument(0)!!, call.getTypeArgument(0)!!)
+            val type = call.typeArguments[0]!!
+            if (type == irBuiltIns.booleanType) {
+                generateExpression(call.arguments[0]!!)
+                body.buildCall(wasmFileCodegenContext.referenceFunction(backendContext.wasmSymbols.getBoxedBoolean), location)
+            } else {
+                generateBox(call.arguments[0]!!, type)
+            }
+            return
+        }
+
+        if (call.symbol == wasmSymbols.wasmGetRttiIntField || call.symbol == wasmSymbols.wasmGetRttiLongField) {
+            val fieldIndex = (call.arguments[0] as? IrConst)?.value as? Int ?: error("Invalid field index")
+            generateExpression(call.arguments[1]!!)
+            body.buildRefCastStatic(Synthetics.HeapTypes.rttiType, location)
+            body.buildStructGet(Synthetics.GcTypes.rttiType, fieldIndex, location)
             return
         }
 
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
-        if (!backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS)) {
+        if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) != true) {
             if (call.symbol == wasmSymbols.rangeCheck) {
                 body.buildGetUnit()
                 return
             }
         }
-        if (!backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ASSERTS)) {
-            if (call.symbol in wasmSymbols.assertFuncs) {
+        if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ASSERTS) != true) {
+            if (call.symbol in wasmSymbols.asserts) {
                 body.buildGetUnit()
                 return
             }
         }
 
-        val function: IrFunction = call.symbol.owner.realOverrideTarget
+        call.arguments.forEach { generateExpression(it!!) }
 
-        call.dispatchReceiver?.let { generateExpression(it) }
-        call.extensionReceiver?.let { generateExpression(it) }
-        for (i in 0 until call.valueArgumentsCount) {
-            val valueArgument = call.getValueArgument(i)
-            if (valueArgument == null) {
-                generateDefaultInitializerForType(context.transformType(function.valueParameters[i].type), body)
-            } else {
-                generateExpression(valueArgument)
-            }
-        }
+        val callFunction = call.symbol.owner
 
-        if (tryToGenerateIntrinsicCall(call, function)) {
-            if (function.returnType.isUnit())
+        if (tryToGenerateIntrinsicCall(call, callFunction)) {
+            if (callFunction.returnType.isUnit())
                 body.buildGetUnit()
             return
         }
 
         // We skip now calling any ctor because it is empty
-        if (function.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) return
+        if (callFunction.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) return
 
+        val function: IrFunction = callFunction.realOverrideTarget
         val isSuperCall = call is IrCall && call.superQualifierSymbol != null
         if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
-            // Generating index for indirect call
-            val klass = function.parentAsClass
+            val originalClass = callFunction.parentAsClass
+            val realOverrideTargetClass = function.parentAsClass
+            val klass = when {
+                callFunction == function || !realOverrideTargetClass.isInterface || originalClass.isInterface -> realOverrideTargetClass
+                else -> originalClass
+            }
+
+            val klassSymbol = klass.symbol
+            val vTableGcTypeReference = wasmFileCodegenContext.referenceVTableGcType(klassSymbol)
+            val vTableHeapTypeReference = wasmFileCodegenContext.referenceVTableHeapType(klassSymbol)
+            val functionTypeReference = wasmFileCodegenContext.referenceFunctionType(function.symbol)
+
             if (!klass.isInterface) {
-                val classMetadata = context.getClassMetadata(klass.symbol)
+                body.commentGroupStart { "Class Virtual call: ${function.fqNameWhenAvailable}" }
+
+                val classMetadata = wasmModuleMetadataCache.getClassMetadata(klassSymbol)
                 val vfSlot = classMetadata.virtualMethods.indexOfFirst { it.function == function }
                 // Dispatch receiver should be simple and without side effects at this point
                 // TODO: Verify
                 val receiver = call.dispatchReceiver!!
                 generateExpression(receiver)
-
-                body.commentGroupStart { "virtual call: ${function.fqNameWhenAvailable}" }
-
                 //TODO: check why it could be needed
-                generateRefCast(receiver.type, klass.defaultType, location)
+                generateRefCast(receiver.type, klass.defaultType, isRefNullCast = false, location)
 
-                body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0), location)
-                body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot), location)
-                body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
-                body.commentGroupEnd()
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(klassSymbol), ANY_VTABLE_FIELD_ID, location)
+                val vTableSlotId = vfSlot + 1 //First element is always contains Special ITable
+                body.buildStructGet(vTableGcTypeReference, vTableSlotId, location)
+                body.buildInstr(WasmOp.CALL_REF, location, functionTypeReference)
             } else {
-                val symbol = klass.symbol
-                if (symbol in hierarchyDisjointUnions) {
-                    generateExpression(call.dispatchReceiver!!)
+                generateExpression(call.dispatchReceiver!!)
 
-                    body.commentGroupStart { "interface call: ${function.fqNameWhenAvailable}" }
-                    body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
+                val specialITableSlot = backendContext.specialSlotITableTypes.indexOf(klassSymbol)
+                if (specialITableSlot != -1) {
+                    body.commentGroupStart { "Special Interface call: ${function.fqNameWhenAvailable}" }
+                    generateSpecialITableFromAny(location)
+                    body.buildStructGet(
+                        Synthetics.GcTypes.specialSlotITableType,
+                        specialITableSlot,
+                        location
+                    )
+                } else if (klassSymbol.isFunction()) {
+                    val functionalInterfaceSlot = getFunctionalInterfaceSlot(klass)
 
-                    val classITableReference = context.referenceClassITableGcType(symbol)
-                    body.buildRefCastStatic(classITableReference, location)
-                    body.buildStructGet(classITableReference, context.referenceClassITableInterfaceSlot(symbol), location)
-
-                    val vfSlot = context.getInterfaceMetadata(symbol).methods
-                        .indexOfFirst { it.function == function }
-
-                    body.buildStructGet(context.referenceVTableGcType(symbol), WasmSymbol(vfSlot), location)
-                    body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
-                    body.commentGroupEnd()
+                    body.commentGroupStart { "Functional Interface call: ${function.fqNameWhenAvailable}" }
+                    generateSpecialITableFromAny(location)
+                    body.buildStructGet(
+                        Synthetics.GcTypes.specialSlotITableType,
+                        backendContext.specialSlotITableTypes.size,
+                        location
+                    )
+                    body.buildConstI32(functionalInterfaceSlot, location)
+                    body.buildInstr(
+                        WasmOp.ARRAY_GET,
+                        location,
+                        Synthetics.GcTypes.wasmAnyArrayType
+                    )
                 } else {
-                    // We came here for a call to an interface method which interface is not implemented anywhere, 
-                    // so we don't have a slot in the itable and can't generate a correct call, 
-                    // and, anyway, the call effectively is unreachable.
-                    body.buildUnreachableForVerifier()
+                    body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
+                    body.buildConstI64(wasmFileCodegenContext.referenceTypeId(klassSymbol), location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
                 }
-            }
 
+                body.buildRefCastStatic(vTableHeapTypeReference, location)
+                val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
+                    .indexOfFirst { it.function == function }
+                body.buildStructGet(vTableGcTypeReference, vfSlot, location)
+
+                body.buildInstr(
+                    WasmOp.CALL_REF,
+                    location,
+                    functionTypeReference
+                )
+            }
+            body.commentGroupEnd()
         } else {
             // Static function call
-            body.buildCall(context.referenceFunction(function.symbol), location)
+            body.buildCall(wasmFileCodegenContext.referenceFunction(function.symbol), location)
         }
 
         // Unit types don't cross function boundaries
@@ -476,49 +885,68 @@ class BodyGenerator(
         }
     }
 
-    private fun generateRefNullCast(fromType: IrType, toType: IrType, location: SourceLocation) {
-        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
-            body.buildRefCastNullStatic(
-                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
-                location
-            )
-        }
-    }
+    private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
+        when {
+            isDownCastAlwaysSuccessInRuntime(fromType, toType) -> {
 
-    private fun generateRefCast(fromType: IrType, toType: IrType, location: SourceLocation) {
-        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
-            body.buildRefCastStatic(
-                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
-                location
-            )
+            }
+            isInvalidDownCast(fromType, toType) -> {
+                body.buildUnreachable(location)
+            }
+            else -> {
+                val wasmToType = wasmFileCodegenContext.referenceHeapType(toType.getRuntimeClass(irBuiltIns).symbol)
+                if (isRefNullCast) {
+                    body.buildRefCastNullStatic(wasmToType, location)
+                } else {
+                    body.buildRefCastStatic(wasmToType, location)
+                }
+            }
         }
     }
 
     private fun generateRefTest(fromType: IrType, toType: IrType, location: SourceLocation) {
-        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
-            body.buildRefTestStatic(
-                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
-                location
-            )
-        } else {
-            body.buildDrop(location)
-            body.buildConstI32(1, location)
+        when {
+            isDownCastAlwaysSuccessInRuntime(fromType, toType) -> {
+                body.buildDrop(location)
+                body.buildConstI32(1, location)
+            }
+            isInvalidDownCast(fromType, toType) -> {
+                body.buildUnreachable(location)
+            }
+            else -> {
+                body.buildRefTestStatic(
+                    toType = wasmFileCodegenContext.referenceHeapType(toType.getRuntimeClass(irBuiltIns).symbol),
+                    location
+                )
+            }
         }
+    }
+
+    private fun isInvalidDownCast(fromType: IrType, toType: IrType): Boolean {
+        if (toType.isAny()) return false
+        val fromTypeIsExternal = fromType.classOrNull?.owner?.isExternal ?: return false
+        val toTypeIsExternal = toType.classOrNull?.owner?.isExternal ?: return false
+        return fromTypeIsExternal != toTypeIsExternal
     }
 
     private fun isDownCastAlwaysSuccessInRuntime(fromType: IrType, toType: IrType): Boolean {
         val upperBound = fromType.erasedUpperBound
-        if (upperBound != null && upperBound.symbol.isSubtypeOfClass(backendContext.wasmSymbols.wasmAnyRefClass)) {
+        if (upperBound.symbol.isSubtypeOfClass(backendContext.wasmSymbols.wasmAnyRefClass)) {
             return false
         }
         return fromType.getRuntimeClass(irBuiltIns).isSubclassOf(toType.getRuntimeClass(irBuiltIns))
+    }
+
+    private fun generateSpecialITableFromAny(location: SourceLocation) {
+        body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_VTABLE_FIELD_ID, location)
+        body.buildStructGet(wasmFileCodegenContext.referenceVTableGcType(irBuiltIns.anyClass), VTABLE_SPECIAL_ITABLE_FIELD_ID, location)
     }
 
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
         call: IrFunctionAccessExpression,
-        function: IrFunction
+        function: IrFunction,
     ): Boolean {
         if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
             return true
@@ -526,66 +954,190 @@ class BodyGenerator(
 
         val location = call.getSourceLocation()
 
+        if (backendContext.isWasmJsTarget) {
+            when (function.symbol) {
+                wasmSymbols.jsRelatedSymbols.throw0 -> {
+                    if (backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+                        body.buildUnreachable(SourceLocation.NoLocation("Unreachable is inserted instead of a `throw` instruction"))
+                        return true
+                    }
+
+                    body.buildThrow(exceptionTagId, location)
+                    return true
+                }
+                else -> {}
+            }
+        }
+
         when (function.symbol) {
             wasmSymbols.wasmTypeId -> {
-                val klass = call.getTypeArgument(0)!!.getClass()
+                val klass = call.typeArguments[0]!!.getClass()
                     ?: error("No class given for wasmTypeId intrinsic")
-                body.buildConstI32Symbol(context.referenceTypeId(klass.symbol), location)
+                body.buildConstI64(wasmFileCodegenContext.referenceTypeId(klass.symbol), location)
+            }
+
+            wasmSymbols.wasmGetTypeRtti -> {
+                val klass = call.typeArguments[0]!!.getClass()
+                    ?: error("No class given for wasmGetTypeRtti intrinsic")
+                body.buildGetGlobal(wasmFileCodegenContext.referenceRttiGlobal(klass.symbol), location)
+            }
+
+            wasmSymbols.wasmGetRttiSupportedInterfaces -> {
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
+                body.buildStructGet(Synthetics.GcTypes.rttiType, RTTI_IMPLEMENTED_INTERFACES_FIELD_ID, location)
+            }
+
+            wasmSymbols.wasmGetRttiSuperClass -> {
+                body.buildRefCastStatic(Synthetics.HeapTypes.rttiType, location)
+                body.buildStructGet(Synthetics.GcTypes.rttiType, RTTI_SUPER_CLASS_FIELD_ID, location)
+            }
+
+            wasmSymbols.wasmGetQualifierImpl, wasmSymbols.wasmGetSimpleNameImpl -> {
+                body.buildRefCastStatic(Synthetics.HeapTypes.rttiType, location)
+
+                val fieldId =
+                    if (function.symbol == wasmSymbols.wasmGetQualifierImpl) RTTI_QUALIFIED_NAME_GETTER_FIELD_ID else RTTI_SIMPLE_NAME_GETTER_FIELD_ID
+
+                val createStringLiteralType: FunctionTypeSymbol
+                if (backendContext.isWasmJsTarget) {
+                    val globalId =
+                        if (function.symbol == wasmSymbols.wasmGetQualifierImpl) RTTI_QUALIFIED_NAME_GLOBAL_FIELD_ID else RTTI_SIMPLE_NAME_GLOBAL_FIELD_ID
+                    body.buildStructGet(Synthetics.GcTypes.rttiType, globalId, location)
+                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+                    body.buildRefCastStatic(Synthetics.HeapTypes.rttiType, location)
+
+                    createStringLiteralType = Synthetics.GcTypes.stringLiteralJsStringFunctionType
+                } else {
+                    createStringLiteralType = Synthetics.GcTypes.stringLiteralFunctionType
+                }
+                body.buildStructGet(Synthetics.GcTypes.rttiType, fieldId, location)
+
+                body.buildInstr(
+                    op = WasmOp.CALL_REF,
+                    location = location,
+                    createStringLiteralType,
+                )
+            }
+
+            wasmSymbols.reflectionSymbols.wasmGetInterfaceVTableBodyImpl -> {
+                //This is implementation of getInterfaceVTable, so argument locals could be used from the call-site
+                //obj.interfacesArray
+                body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_ITABLE_FIELD_ID, location)
+
+                //wasmArrayAnyIndexOfValue(obj.rtti.interfaceIds)
+                body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
+                body.buildStructGet(Synthetics.GcTypes.rttiType, RTTI_IMPLEMENTED_INTERFACES_FIELD_ID, location)
+                body.buildGetLocal(functionContext.referenceLocal(1), location) //interfaceId
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.wasmArrayAnyIndexOfValue), location)
+
+                body.buildInstr(
+                    WasmOp.ARRAY_GET,
+                    location,
+                    Synthetics.GcTypes.wasmAnyArrayType
+                )
+            }
+
+            wasmSymbols.wasmGetObjectRtti -> {
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
             }
 
             wasmSymbols.wasmIsInterface -> {
-                val irInterface = call.getTypeArgument(0)!!.getClass()
+                val irInterface = call.typeArguments[0]!!.getClass()
                     ?: error("No interface given for wasmIsInterface intrinsic")
                 assert(irInterface.isInterface)
-                if (irInterface.symbol in hierarchyDisjointUnions) {
-                    val classITable = context.referenceClassITableGcType(irInterface.symbol)
-                    val parameterLocal = functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
-                    body.buildSetLocal(parameterLocal, location)
-                    body.buildBlock("isInterface", WasmI32) { outerLabel ->
-                        body.buildBlock("isInterface") { innerLabel ->
-                            body.buildGetLocal(parameterLocal, location)
-                            body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
 
-                            val tmpLocal = functionContext.referenceLocal(SyntheticLocalType.TMP_FOR_BR_ON_CAST_EMULATION)
-                            body.buildInstr(WasmOp.LOCAL_TEE, location, WasmImmediate.LocalIdx(tmpLocal))
-                            body.buildRefTestStatic(classITable, location)
-                            body.buildInstr(WasmOp.I32_EQZ, location)
-                            body.buildBrIf(innerLabel, location)
+                val specialSlotIndex = backendContext.specialSlotITableTypes.indexOf(irInterface.symbol)
+                if (specialSlotIndex != -1) {
+                    body.commentGroupStart { "Check special interface supported" }
+                    body.buildSetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                    body.buildBlock("SpecialIFaceTestSuccess", WasmI32) { success ->
+                        body.buildBlock("SpecialIFaceTestFail") { fail ->
+                            body.buildGetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                            generateSpecialITableFromAny(location)
 
-                            body.buildGetLocal(tmpLocal, location)
-                            body.buildRefCastStatic(classITable, location)
-
-                            body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol), location)
+                            body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
+                            body.buildStructGet(
+                                Synthetics.GcTypes.specialSlotITableType,
+                                specialSlotIndex,
+                                location
+                            )
                             body.buildInstr(WasmOp.REF_IS_NULL, location)
                             body.buildInstr(WasmOp.I32_EQZ, location)
-                            body.buildBr(outerLabel, location)
+                            body.buildBr(success, location)
                         }
                         body.buildConstI32(0, location)
                     }
                 } else {
-                    body.buildDrop(location)
-                    body.buildConstI32(0, location)
-                }
-            }
+                    if (irInterface.symbol.isFunction()) {
+                        val functionalInterfaceSlot = getFunctionalInterfaceSlot(irInterface)
 
+                        body.commentGroupStart { "Check functional interface supported" }
+                        body.buildSetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                        body.buildBlock("FunctionTestSuccess", WasmI32) { result ->
+                            body.buildBlock("FunctionTestFail") { fail ->
+                                body.buildGetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                                generateSpecialITableFromAny(location)
+
+                                body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
+                                body.buildStructGet(
+                                    Synthetics.GcTypes.specialSlotITableType,
+                                    backendContext.specialSlotITableTypes.size,
+                                    location
+                                )
+                                body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
+
+                                body.buildTeeLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_ANY_ARRAY), location)
+
+                                body.buildInstr(WasmOp.ARRAY_LEN, location)
+
+                                body.buildConstI32(functionalInterfaceSlot, location)
+
+                                body.buildInstr(WasmOp.I32_LE_U, location)
+                                body.buildBrIf(fail, location)
+
+                                body.buildGetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_ANY_ARRAY), location)
+                                body.buildConstI32(functionalInterfaceSlot, location)
+
+                                body.buildInstr(
+                                    WasmOp.ARRAY_GET,
+                                    location,
+                                    Synthetics.GcTypes.wasmAnyArrayType
+                                )
+                                body.buildInstr(WasmOp.REF_IS_NULL, location)
+                                body.buildInstr(WasmOp.I32_EQZ, location)
+                                body.buildBr(result, location)
+                            }
+                            body.buildConstI32(0, location)
+                        }
+                    } else {
+                        body.commentGroupStart { "Check interface supported" }
+                        body.buildConstI64(wasmFileCodegenContext.referenceTypeId(irInterface.symbol), location)
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.isSupportedInterface), location)
+                    }
+                }
+                body.commentGroupEnd()
+            }
             wasmSymbols.refCastNull -> {
-                generateRefNullCast(
-                    fromType = call.getValueArgument(0)!!.type,
-                    toType = call.getTypeArgument(0)!!,
-                    location = location
+                generateRefCast(
+                    fromType = call.arguments[0]!!.type,
+                    toType = call.typeArguments[0]!!,
+                    isRefNullCast = true,
+                    location = location,
                 )
             }
 
             wasmSymbols.refTest -> {
                 generateRefTest(
-                    fromType = call.getValueArgument(0)!!.type,
-                    toType = call.getTypeArgument(0)!!,
+                    fromType = call.arguments[0]!!.type,
+                    toType = call.typeArguments[0]!!,
                     location
                 )
             }
 
             wasmSymbols.unboxIntrinsic -> {
-                val fromType = call.getTypeArgument(0)!!
+                val fromType = call.typeArguments[0]!!
 
                 if (fromType.isNothing()) {
                     body.buildUnreachableAfterNothingType()
@@ -593,54 +1145,82 @@ class BodyGenerator(
                     return true
                 }
 
-                val toType = call.getTypeArgument(1)!!
+                val toType = call.typeArguments[1]!!
                 val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
                 val field = getInlineClassBackingField(klass)
 
-                generateRefCast(fromType, toType, location)
+                generateRefCast(fromType, toType, isRefNullCast = false, location)
                 generateInstanceFieldAccess(field, location)
             }
 
-            wasmSymbols.unsafeGetScratchRawMemory -> {
-                body.buildConstI32Symbol(context.scratchMemAddr, location)
-            }
-
             wasmSymbols.returnArgumentIfItIsKotlinAny -> {
-                body.buildBlock("returnIfAny") { innerLabel ->
+                body.buildBlock("returnIfAny", WasmAnyRef) { innerLabel ->
                     body.buildGetLocal(functionContext.referenceLocal(0), location)
                     body.buildInstr(WasmOp.EXTERN_INTERNALIZE, location)
 
-                    val tmpLocal = functionContext.referenceLocal(SyntheticLocalType.TMP_FOR_BR_ON_CAST_EMULATION)
-                    body.buildInstr(WasmOp.LOCAL_TEE, location, WasmImmediate.LocalIdx(tmpLocal))
-
-                    val toType = context.referenceGcType(backendContext.irBuiltIns.anyClass)
-                    body.buildRefTestStatic(toType, location)
-                    body.buildInstr(WasmOp.I32_EQZ, location)
-                    body.buildBrIf(innerLabel, location)
-
-                    body.buildGetLocal(tmpLocal, location)
-                    body.buildRefCastStatic(toType, location)
+                    body.buildBrOnCastInstr(
+                        WasmOp.BR_ON_CAST_FAIL,
+                        innerLabel,
+                        fromIsNullable = true,
+                        toIsNullable = true,
+                        from = WasmHeapType.Simple.Any,
+                        to = wasmFileCodegenContext.referenceHeapType(backendContext.irBuiltIns.anyClass),
+                        location,
+                    )
 
                     body.buildInstr(WasmOp.RETURN, location)
                 }
+                body.buildDrop(location)
             }
 
             wasmSymbols.wasmArrayCopy -> {
-                val immediate = WasmImmediate.GcType(
-                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
-                )
+                val immediate = wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
                 body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
             }
 
-            wasmSymbols.stringGetPoolSize -> {
-                body.buildConstI32Symbol(context.stringPoolSize, location)
+            wasmSymbols.getWasmAbiVersion -> {
+                body.buildConstI32(WASM_ABI_VERSION, location)
             }
 
             wasmSymbols.wasmArrayNewData0 -> {
-                val arrayGcType = WasmImmediate.GcType(
-                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                val arrayGcType = wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
+            }
+
+            wasmSymbols.wasmArrayNewData -> {
+                val arrayGcType = wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
+                val dataIdx = (call.arguments[2] as? IrConst)?.value as? Int
+                    ?: error("An argument for dataIdx should be a compile time const with type Int")
+                body.buildDrop(location)
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(dataIdx))
+            }
+
+            wasmSymbols.wasmArrayNewData0CharArray -> {
+                val arrayGcType = wasmFileCodegenContext.referenceGcType(
+                    wasmSymbols.wasmArrayNewData0CharArray.owner.returnType.getRuntimeClass(irBuiltIns).symbol,
                 )
                 body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
+            }
+
+            wasmSymbols.callAssociatedObjectGetter -> {
+                val tryGetAssociatedObjectType =
+                    wasmFileCodegenContext.referenceFunctionType(backendContext.wasmSymbols.tryGetAssociatedObject)
+
+                body.buildRefCastStatic(
+                    toType = Synthetics.HeapTypes.associatedObjectGetterWrapper,
+                    location = location,
+                )
+
+                body.buildStructGet(
+                    struct = Synthetics.GcTypes.associatedObjectGetterWrapper,
+                    fieldId = CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID,
+                    location = location
+                )
+                body.buildInstr(
+                    op = WasmOp.CALL_REF,
+                    location = location,
+                    tryGetAssociatedObjectType,
+                )
             }
 
             else -> {
@@ -653,31 +1233,33 @@ class BodyGenerator(
 
     override fun visitBlockBody(body: IrBlockBody) {
         body.statements.forEach(::generateStatement)
+        this.body.buildNop(body.getSourceEndLocation())
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression) {
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        val inlineFunction = inlinedBlock.inlinedFunctionSymbol?.owner
+        val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
+        val owner = correspondingProperty?.owner ?: inlineFunction
+        val name = owner?.fqNameWhenAvailable?.asString() ?: owner?.name?.asString() ?: "UNKNOWN"
+
+        body.commentGroupStart { "Inlined call of `$name`" }
+        body.buildNop(inlinedBlock.getSourceLocation())
+
+        functionContext.stepIntoInlinedFunction(inlinedBlock.inlinedFunctionSymbol, inlinedBlock.inlinedFunctionFileEntry)
+        super.visitInlinedFunctionBlock(inlinedBlock)
+        functionContext.stepOutLastInlinedFunction()
+    }
+
+    override fun visitReturnableBlock(expression: IrReturnableBlock) {
+        functionContext.defineNonLocalReturnLevel(
+            expression.symbol,
+            body.buildBlock(wasmModuleTypeTransformer.transformBlockResultType(expression.type))
+        )
+        super.visitReturnableBlock(expression)
+    }
+
+    private fun processContainerExpression(expression: IrContainerExpression) {
         val statements = expression.statements
-
-        if (statements.isEmpty()) {
-            if (expression.type == irBuiltIns.unitType) {
-                body.buildGetUnit()
-            }
-            return
-        }
-
-        if (expression is IrReturnableBlock) {
-            val inlineFunction = expression.symbol.owner.inlineFunction
-            val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
-            val owner = correspondingProperty?.owner ?: inlineFunction
-            val name = owner?.fqNameWhenAvailable?.asString() ?: owner?.name?.asString() ?: "<UNKNOWN>"
-
-            body.commentGroupStart { "Inlined call of `$name`" }
-            functionContext.defineNonLocalReturnLevel(
-                expression.symbol,
-                body.buildBlock(context.transformBlockResultType(expression.type))
-            )
-        }
-
         statements.forEachIndexed { i, statement ->
             if (i != statements.lastIndex) {
                 generateStatement(statement)
@@ -697,6 +1279,17 @@ class BodyGenerator(
             body.buildEnd()
             body.commentGroupEnd()
         }
+    }
+
+    override fun visitContainerExpression(expression: IrContainerExpression) {
+        if (expression.statements.isEmpty()) {
+            if (expression.type == irBuiltIns.unitType) {
+                body.buildGetUnit()
+            }
+            return
+        }
+
+        processContainerExpression(expression)
     }
 
     override fun visitBreak(jump: IrBreak) {
@@ -772,8 +1365,7 @@ class BodyGenerator(
                 else
                     WasmHeapType.Simple.None
 
-            body.buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(type))
-
+            body.buildRefCastNullStatic(type, location)
             return
         }
 
@@ -807,7 +1399,7 @@ class BodyGenerator(
         // PRIMITIVE -> REF -> FALSE
         // REF -> PRIMITIVE -> FALSE
         if (expectedIsPrimitive != actualIsPrimitive) {
-            // TODO Shouldn't we throw ICE instead? 
+            // TODO Shouldn't we throw ICE instead?
             body.buildUnreachableForVerifier()
             return
         }
@@ -815,10 +1407,7 @@ class BodyGenerator(
         // REF -> REF -> REF_CAST
         if (!expectedIsPrimitive) {
             if (expectedClassErased.isSubclassOf(actualClassErased)) {
-                if (expectedType.isNullable())
-                    generateRefNullCast(actualTypeErased, expectedTypeErased, location)
-                else
-                    generateRefCast(actualTypeErased, expectedTypeErased, location)
+                generateRefCast(actualTypeErased, expectedTypeErased, isRefNullCast = expectedType.isNullable(), location)
                 body.commentPreviousInstr { "to make verifier happy" }
             } else {
                 body.buildUnreachableForVerifier()
@@ -837,22 +1426,40 @@ class BodyGenerator(
     }
 
     override fun visitWhen(expression: IrWhen) {
-        if (tryGenerateOptimisedWhen(expression, context.backendContext.wasmSymbols)) {
+        if (!backendContext.isDebugFriendlyCompilation && tryGenerateOptimisedWhen(
+                expression,
+                backendContext.irBuiltIns,
+                backendContext.wasmSymbols,
+                functionContext,
+                wasmModuleTypeTransformer
+            )
+        ) {
             return
         }
 
-        val resultType = context.transformBlockResultType(expression.type)
+        val branches = expression.branches
+        val onlyOneBranch = branches.singleOrNull()
+
+        if (onlyOneBranch != null && isElseBranch(onlyOneBranch)) {
+            generateExpression(onlyOneBranch.result)
+            return
+        }
+
+        val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
         var ifCount = 0
         var seenElse = false
+        val isLogicalOperator = expression.origin == IrStatementOrigin.ANDAND || expression.origin == IrStatementOrigin.OROR
+        val expressionLocation = expression.takeIf { isLogicalOperator }?.getSourceLocation()
 
-        for (branch in expression.branches) {
+        for (branch in branches) {
             if (!isElseBranch(branch)) {
+                if (ifCount > 0) body.buildElse()
                 generateExpression(branch.condition)
                 body.buildIf(null, resultType)
                 generateWithExpectedType(branch.result, expression.type)
-                body.buildElse()
                 ifCount++
             } else {
+                body.buildElse(expressionLocation)
                 generateWithExpectedType(branch.result, expression.type)
                 seenElse = true
                 break
@@ -864,13 +1471,17 @@ class BodyGenerator(
         if (!seenElse && resultType != null) {
             assert(expression.type != irBuiltIns.nothingType)
             if (expression.type.isUnit()) {
+                if (branches.isNotEmpty()) body.buildElse()
                 body.buildGetUnit()
             } else {
                 error("'When' without else branch and non Unit type: ${expression.type.dumpKotlinLike()}")
             }
         }
 
-        repeat(ifCount) { body.buildEnd() }
+        repeat(ifCount) {
+            val endLocation = branches[branches.lastIndex - it].takeIf { !isLogicalOperator }?.nextLocation()
+            body.buildEnd(endLocation)
+        }
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
@@ -932,7 +1543,12 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName, declaration.getSourceLocation())
+        val location = if (declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) {
+            SourceLocation.NoLocation("Temporary variable")
+        } else {
+            init.getSourceLocation()
+        }
+        body.buildSetLocal(varName, location)
     }
 
     // Return true if function is recognized as intrinsic.
@@ -950,29 +1566,32 @@ class BodyGenerator(
                     body.buildInstr(op, location)
                 }
                 1 -> {
-                    fun getReferenceGcType(): WasmSymbol<WasmTypeDeclaration> {
-                        val type = function.dispatchReceiverParameter?.type ?: call.getTypeArgument(0)!!
-                        return context.referenceGcType(type.classOrNull!!)
+                    fun getReferenceGcType(): GcTypeSymbol {
+                        val type = function.dispatchReceiverParameter?.type ?: call.typeArguments[0]!!
+                        return wasmFileCodegenContext.referenceGcType(type.classOrNull!!)
                     }
 
-                    val immediates = arrayOf(
-                        when (val imm = op.immediates[0]) {
-                            WasmImmediateKind.MEM_ARG ->
-                                WasmImmediate.MemArg(0u, 0u)
-                            WasmImmediateKind.STRUCT_TYPE_IDX ->
-                                WasmImmediate.GcType(getReferenceGcType())
-                            WasmImmediateKind.HEAP_TYPE ->
-                                WasmImmediate.HeapType(WasmHeapType.Type(getReferenceGcType()))
-                            WasmImmediateKind.TYPE_IDX ->
-                                WasmImmediate.TypeIdx(getReferenceGcType())
-                            WasmImmediateKind.MEMORY_IDX ->
-                                WasmImmediate.MemoryIdx(0)
+                    fun getReferenceHeapType(): WasmImmediate.HeapType {
+                        val type = function.dispatchReceiverParameter?.type ?: call.typeArguments[0]!!
+                        return WasmImmediate.HeapType(wasmFileCodegenContext.referenceHeapType(type.classOrNull!!))
+                    }
 
-                            else ->
-                                error("Immediate $imm is unsupported")
-                        }
-                    )
-                    body.buildInstr(op, location, *immediates)
+                    val immediate = when (val imm = op.immediates[0]) {
+                        WasmImmediateKind.MEM_ARG ->
+                            WasmImmediate.MemArg(0u, 0u)
+                        WasmImmediateKind.STRUCT_TYPE_IDX ->
+                            getReferenceGcType()
+                        WasmImmediateKind.HEAP_TYPE ->
+                            getReferenceHeapType()
+                        WasmImmediateKind.TYPE_IDX ->
+                            getReferenceGcType()
+                        WasmImmediateKind.MEMORY_IDX ->
+                            WasmImmediate.MemoryIdx(0)
+                        else ->
+                            error("Immediate $imm is unsupported")
+                    }
+
+                    body.buildInstr(op, location, immediate)
                 }
                 else ->
                     error("Op $opString is unsupported")
@@ -983,5 +1602,29 @@ class BodyGenerator(
         return false
     }
 
-    private fun IrElement.getSourceLocation() = getSourceLocation(functionContext.irFunction.fileOrNull?.fileEntry)
+    private fun IrElement.getSourceLocation(): SourceLocation =
+        locationProvider.getSourceLocation(this, functionContext.currentFunctionSymbol, functionContext.currentFileEntry)
+
+    private fun IrElement.getSourceEndLocation(): SourceLocation =
+        locationProvider.getSourceEndLocation(this, functionContext.currentFunctionSymbol, functionContext.currentFileEntry)
+
+    private fun IrElement.nextLocation() =
+        locationProvider.nextLocation(this, functionContext.currentFunctionSymbol, functionContext.currentFileEntry)
+
+    companion object {
+        const val WASM_ABI_VERSION = 1
+        const val ANY_VTABLE_FIELD_ID = 0
+        const val ANY_ITABLE_FIELD_ID = 1
+        const val ANY_RTTI_FIELD_ID = 2
+        const val VTABLE_SPECIAL_ITABLE_FIELD_ID = 0
+        const val RTTI_IMPLEMENTED_INTERFACES_FIELD_ID = 0
+        const val RTTI_SUPER_CLASS_FIELD_ID = 1
+        const val RTTI_QUALIFIED_NAME_GETTER_FIELD_ID = 6
+        const val RTTI_SIMPLE_NAME_GETTER_FIELD_ID = 7
+        const val RTTI_QUALIFIED_NAME_GLOBAL_FIELD_ID = 8
+        const val RTTI_SIMPLE_NAME_GLOBAL_FIELD_ID = 9
+        private const val CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID = 0
+        private val exceptionTagId = WasmSymbol(0)
+        private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx.get(0)
+    }
 }

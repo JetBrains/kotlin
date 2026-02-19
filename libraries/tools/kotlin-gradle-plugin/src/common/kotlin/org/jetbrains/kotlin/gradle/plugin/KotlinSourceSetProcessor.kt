@@ -58,23 +58,10 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
                 val kotlinSourceDirectorySet = compilationInfo.tcs.compilation.defaultSourceSet.kotlin
                 kotlinSourceDirectorySet.destinationDirectory.value(defaultKotlinDestinationDir)
                 task.configure {
-                    if (it is Kotlin2JsCompile) {
-                        it.defaultDestinationDirectory.convention(kotlinSourceDirectorySet.destinationDirectory)
-                    } else {
-                        it.destinationDirectory.convention(kotlinSourceDirectorySet.destinationDirectory)
-                    }
+                    it.destinationDirectory.convention(kotlinSourceDirectorySet.destinationDirectory)
                 }
                 compilationInfo.classesDirs.from(kotlinSourceDirectorySet.destinationDirectory).builtBy(task)
-                if (compilationInfo.tcs.compilation.platformType == KotlinPlatformType.js) {
-                    @Suppress("UNCHECKED_CAST")
-                    kotlinSourceDirectorySet.compiledBy(
-                        task as TaskProvider<Kotlin2JsCompile>,
-                        Kotlin2JsCompile::defaultDestinationDirectory
-                    )
-                    (kotlinSourceDirectorySet.classesDirectory as Property<Directory>).set(task.flatMap { it.destinationDirectory })
-                } else {
-                    kotlinSourceDirectorySet.compiledBy(task, AbstractKotlinCompile<*>::destinationDirectory)
-                }
+                kotlinSourceDirectorySet.compiledBy(task, AbstractKotlinCompile<*>::destinationDirectory)
                 if (compilationInfo.isMain) {
                     project.tasks.named(
                         compilationInfo.tcs.compilation.target.artifactsTaskName,
@@ -119,7 +106,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         open class IDEClassesTask : DefaultTask()
         // Workaround: as per KT-26641, when there's a Kotlin compilation with a Java source set, we create another task
         // that has a name composed as '<IDE module name>Classes`, where the IDE module name is the default source set name:
-        val expectedClassesTaskName = "${kotlinCompilation.defaultSourceSetName}Classes"
+        val expectedClassesTaskName = "${kotlinCompilation.defaultSourceSet.name}Classes"
         project.tasks.run {
             val shouldCreateTask = expectedClassesTaskName !in names
             if (shouldCreateTask) {
@@ -133,11 +120,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected fun applyStandardTaskConfiguration(taskConfiguration: AbstractKotlinCompileConfig<*>) {
         taskConfiguration.configureTask {
             it.description = taskDescription
-            if (it is Kotlin2JsCompile) {
-                it.defaultDestinationDirectory.convention(defaultKotlinDestinationDir)
-            } else {
-                it.destinationDirectory.convention(defaultKotlinDestinationDir)
-            }
+            it.destinationDirectory.convention(defaultKotlinDestinationDir)
             it.libraries.from({ compilationInfo.compileDependencyFiles })
         }
     }

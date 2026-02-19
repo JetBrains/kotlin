@@ -1,3 +1,4 @@
+// DUMP_IR
 interface MyIterator<T> {
     operator fun hasNext() : Boolean
     operator fun next() : T

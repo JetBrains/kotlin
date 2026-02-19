@@ -1,6 +1,5 @@
-// IGNORE_BACKEND_K2: JVM_IR
-// IGNORE_BACKEND_K2: JS_IR
-// IGNORE_BACKEND_K2: JS_IR_ES6
+// KT-53629: K2: repeated labels on statements are not supported or diagnostic is incorrect
+// IGNORE_BACKEND_K2: ANY
 inline fun foo() = false
 
 fun run(x: Boolean, y: Boolean): String {

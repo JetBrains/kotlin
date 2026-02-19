@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /SimpleType : /SimpleTypeMarker { // /SimpleType|null[0]
+    constructor <init>() // /SimpleType.<init>|<init>(){}[0]
+    final fun foo(): kotlin/String // /SimpleType.foo|foo(){}[0]
+}
+abstract interface /SimpleTypeMarker // /SimpleTypeMarker|null[0]
+abstract interface /User { // /User|null[0]
+    open fun (/SimpleTypeMarker).bar(): kotlin/String // /User.bar|bar@SimpleTypeMarker(){}[0]
+}
+final class /UserImpl { // /UserImpl|null[0]
+    constructor <init>() // /UserImpl.<init>|<init>(){}[0]
+    final fun (/SimpleTypeMarker).bar(): kotlin/String // /UserImpl.bar|bar@SimpleTypeMarker(){}[0]
+}

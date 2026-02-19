@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 abstract class FirScopeProvider {
@@ -18,7 +19,19 @@ abstract class FirScopeProvider {
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope
 
-    abstract fun getStaticMemberScopeForCallables(
+    abstract fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope
+
+    abstract fun getStaticCallableMemberScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirContainingNamesAwareScope?
+
+    abstract fun getStaticCallableMemberScopeForBackend(
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
@@ -30,13 +43,34 @@ abstract class FirScopeProvider {
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope?
 
+    /**
+     * @return scope containing static callable members, and all classifiers, including non-static ones.
+     * This works so because even non-static classifiers are accessible on a qualifier receiver.
+     */
     fun getStaticScope(
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
+        return getStaticScopeImpl(klass, useSiteSession, scopeSession, this::getStaticCallableMemberScope)
+    }
+
+    fun getStaticScopeForBackend(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirContainingNamesAwareScope? {
+        return getStaticScopeImpl(klass, useSiteSession, scopeSession, this::getStaticCallableMemberScopeForBackend)
+    }
+
+    private inline fun getStaticScopeImpl(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        callableMemberScope: (FirClass, FirSession, ScopeSession) -> FirContainingNamesAwareScope?
+    ): FirContainingNamesAwareScope? {
         val nestedClassifierScope = getNestedClassifierScope(klass, useSiteSession, scopeSession)
-        val callableScope = getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession)
+        val callableScope = callableMemberScope(klass, useSiteSession, scopeSession)
 
         return when {
             nestedClassifierScope != null && callableScope != null ->
@@ -45,3 +79,6 @@ abstract class FirScopeProvider {
         }
     }
 }
+
+fun FirClass.staticScopeForBackend(session: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? =
+    scopeProvider.getStaticScopeForBackend(this, session, scopeSession)

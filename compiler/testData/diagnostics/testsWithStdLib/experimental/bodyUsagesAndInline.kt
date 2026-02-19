@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
@@ -83,3 +84,6 @@ internal class InternalClass {
         <!OPT_IN_USAGE!>f<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, inline, propertyDeclaration,
+setter */

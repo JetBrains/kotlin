@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,28 +8,20 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.class]
  */
-abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
-        IrDeclarationWithVisibility, IrTypeParametersContainer, IrDeclarationContainer,
-        IrAttributeContainer, IrMetadataSourceOwner {
+abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrTypeParametersContainer, IrDeclarationContainer, IrMetadataSourceOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 
@@ -51,6 +43,14 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var isFun: Boolean
 
+    /**
+     * Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES` metadata flag set.
+     * This flag is useful for Kotlin/JVM to determine whether an enum class from dependency actually has the `entries` property
+     * in its bytecode, as opposed to whether it has it in its member scope, which is true even for enum classes compiled by
+     * old versions of Kotlin which did not support the EnumEntries language feature.
+     */
+    abstract var hasEnumEntries: Boolean
+
     abstract val source: SourceElement
 
     abstract var superTypes: List<IrType>
@@ -60,8 +60,7 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
     abstract var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
 
     /**
-     * If this is a sealed class or interface, this list contains symbols of all its immediate
-     * subclasses.
+     * If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
      * Otherwise, this is an empty list.
      *
      * NOTE: If this [IrClass] was deserialized from a klib, this list will always be empty!
@@ -69,16 +68,16 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
      */
     abstract var sealedSubclasses: List<IrClassSymbol>
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         thisReceiver?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)

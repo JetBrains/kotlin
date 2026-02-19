@@ -101,15 +101,15 @@ private static final class Companion /* C1.Companion*/ {
   private  Companion();//  .ctor()
 }
 
-public static final class Companion /* I.Companion*/ {
-  private  Companion();//  .ctor()
-}
-
 public static final class Companion /* C2.Companion*/ {
   private  Companion();//  .ctor()
 }
 
 public static final class Companion /* ClassWithConstContainer.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
+public static final class Companion /* I.Companion*/ {
   private  Companion();//  .ctor()
 }
 

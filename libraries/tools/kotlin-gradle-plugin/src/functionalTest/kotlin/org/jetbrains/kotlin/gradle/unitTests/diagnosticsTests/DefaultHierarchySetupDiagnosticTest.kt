@@ -7,16 +7,14 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmMain
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
 import kotlin.test.Test
 
 class DefaultHierarchySetupDiagnosticTest {
@@ -44,51 +42,6 @@ class DefaultHierarchySetupDiagnosticTest {
 
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             project.checkDiagnostics("KotlinDefaultHierarchyFallbackIllegalTargetNames")
-        }
-    }
-
-    @Test
-    fun `test - warning - ios shortcut`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
-
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = multiplatformExtension
-            @Suppress("DEPRECATION")
-            kotlin.ios()
-
-            project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-                project.checkDiagnostics("KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected-ios")
-            }
-        }
-    }
-
-    @Test
-    fun `test - warning - watchos shortcut`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
-
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = multiplatformExtension
-            @Suppress("DEPRECATION")
-            kotlin.watchos()
-
-            project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-                project.checkDiagnostics("KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected-watchos")
-            }
-        }
-    }
-
-    @Test
-    fun `test - warning - tvos shortcut`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
-
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = multiplatformExtension
-            @Suppress("DEPRECATION")
-            kotlin.tvos()
-
-            project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-                project.checkDiagnostics("KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected-tvos")
-            }
         }
     }
 }

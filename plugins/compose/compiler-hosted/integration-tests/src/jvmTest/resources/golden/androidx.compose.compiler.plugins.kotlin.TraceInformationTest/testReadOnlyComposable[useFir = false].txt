@@ -1,0 +1,47 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+@ReadOnlyComposable
+internal fun someFun(a: Boolean): Boolean {
+    if (a) {
+        return a
+    } else {
+        return a
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ReadOnlyComposable
+internal fun someFun(a: Boolean, %composer: Composer?, %changed: Int): Boolean {
+  sourceInformationMarkerStart(%composer, <>, "C(someFun):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (a) {
+    val tmp0_return = a
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp0_return
+  } else {
+    val tmp1_return = a
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp1_return
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

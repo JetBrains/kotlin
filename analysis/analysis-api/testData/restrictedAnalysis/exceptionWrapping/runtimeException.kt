@@ -1,0 +1,1 @@
+// THROW: java.lang.RuntimeException

@@ -10,5 +10,3 @@ public inline fun f(): Int = 3
 
 @kotlin.internal.InlineOnly
 public inline fun g(p: String): String = "p"
-
-// FIR_COMPARISON

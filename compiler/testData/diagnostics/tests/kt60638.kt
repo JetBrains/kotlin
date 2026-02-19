@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package usage
 
 class MyType
@@ -7,3 +8,6 @@ val MyClass.isInterface get() = 4
 fun usage(type: MyType) {
     type.<!FUNCTION_EXPECTED, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>isInterface<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, propertyDeclaration,
+propertyWithExtensionReceiver */

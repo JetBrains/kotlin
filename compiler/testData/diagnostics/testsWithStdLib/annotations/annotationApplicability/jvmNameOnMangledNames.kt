@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER, -INLINE_CLASS_DEPRECATED
 
 inline class Foo(val x: Int) {
     <!INAPPLICABLE_JVM_NAME!>@JvmName("other")<!>
@@ -29,3 +30,6 @@ class C {
 
 @JvmName("extensionFun")
 fun Foo.extensionFun() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

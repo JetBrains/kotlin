@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
@@ -56,9 +45,9 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -146,6 +135,7 @@ class TypeResolver(
     }
 
     internal fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
+        @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 
     // TODO: remove this method and its usages in 1.4
@@ -377,8 +367,12 @@ class TypeResolver(
                 val receiverTypeRef = type.receiverTypeReference
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
-                val contextReceiverList = type.contextReceiverList
+                val contextReceiverList = type.contextParameterList as? KtContextReceiverList
+
                 val contextReceiversTypes = if (contextReceiverList != null) {
+                    if (contextReceiverList.contextParameters.isNotEmpty()) {
+                        c.trace.report(CONTEXT_PARAMETERS_UNSUPPORTED.on(contextReceiverList))
+                    }
                     checkContextReceiversAreEnabled(c.trace, languageVersionSettings, contextReceiverList)
                     val types = contextReceiverList.typeReferences().map { typeRef ->
                         resolveType(c.noBareTypes(), typeRef)
@@ -477,7 +471,8 @@ class TypeResolver(
                 }
             }
 
-            override fun visitSelfType(type: KtSelfType) {
+            @Deprecated("Deprecated in Java")
+            override fun visitSelfType(type: @Suppress("DEPRECATION") KtSelfType) {
                 c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
             }
 

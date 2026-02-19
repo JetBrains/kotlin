@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: CollectionStringImpl.java
 
@@ -84,3 +85,5 @@ fun test(x: CollectionStringImpl) {
     x.contains("")
     (x as Collection<String>).contains("")
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, javaFunction, javaType, stringLiteral */

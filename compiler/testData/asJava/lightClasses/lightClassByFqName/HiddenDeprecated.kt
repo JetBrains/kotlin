@@ -5,4 +5,3 @@ package a
 fun f() {
 
 }
-// FIR_COMPARISON

@@ -6,10 +6,15 @@ B:
     [Enhancement]: public abstract fun getFoo(): R|kotlin/String!| from Java enhancement scope for /A [id: 1]
 
 C:
-  [Source]: public open override fun getFoo(): R|kotlin/String| from Java enhancement scope for /C [id: 0]
-    [Enhancement]: public abstract fun getFoo(): R|kotlin/String!| from Java enhancement scope for /A [id: 1]
+  [IntersectionOverride]: public open override fun getFoo(): R|kotlin/String| from Java enhancement scope for /C [id: 0]
+    [Source]: public open override fun getFoo(): R|kotlin/String| from Use site scope of /B [id: 1]
+      [Enhancement]: public abstract fun getFoo(): R|kotlin/String!| from Java enhancement scope for /A [id: 2]
+    [Enhancement]: public abstract fun getFoo(): R|kotlin/String!| from Java enhancement scope for /A [id: 2]
 
 D:
-  [Source]: public open override fun getFoo(): R|kotlin/String| from Use site scope of /D [id: 0]
-    [Enhancement]: public abstract fun getFoo(): R|kotlin/String!| from Java enhancement scope for /A [id: 1]
+  [IntersectionOverride]: public open override fun getFoo(): R|kotlin/String| from Use site scope of /D [id: 0]
+    [IntersectionOverride]: public open override fun getFoo(): R|kotlin/String| from Java enhancement scope for /C [id: 0]
+      [Source]: public open override fun getFoo(): R|kotlin/String| from Use site scope of /B [id: 1]
+        [Enhancement]: public abstract fun getFoo(): R|kotlin/String!| from Java enhancement scope for /A [id: 2]
+      [Enhancement]: public abstract fun getFoo(): R|kotlin/String!| from Java enhancement scope for /A [id: 2]
 

@@ -1,5 +1,6 @@
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo1(f: suspend () -> Unit) {}
 fun bar1() {}
@@ -16,3 +17,6 @@ fun test() {
 
     foo2(42, <!TYPE_MISMATCH!>::bar1<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, nullableType,
+stringLiteral, suspend, typeParameter */

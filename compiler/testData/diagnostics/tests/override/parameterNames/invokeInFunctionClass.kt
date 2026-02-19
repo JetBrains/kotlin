@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+
 class Function1Impl : (String) -> Unit {
     override fun invoke(myParamName: String) {}
 }
@@ -34,3 +37,6 @@ fun test4(f: (myParamName: String) -> Unit) {
     f.invoke(<!NO_VALUE_FOR_PARAMETER!><!NAMED_ARGUMENTS_NOT_ALLOWED, NAMED_PARAMETER_NOT_FOUND!>p0<!> = "")<!>
     f.invoke(<!NAMED_ARGUMENTS_NOT_ALLOWED!>myParamName<!> = "")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, operator, override, stringLiteral,
+typeWithExtension */

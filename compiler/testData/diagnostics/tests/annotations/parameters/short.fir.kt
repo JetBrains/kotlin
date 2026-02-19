@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 annotation class Ann(
@@ -10,3 +11,5 @@ annotation class Ann(
 @Ann(1, 1.toShort(), 32768.toShort(), <!ARGUMENT_TYPE_MISMATCH!>32768<!>) class MyClass
 
 // EXPECTED: @Ann(b1 = 1.toShort(), b2 = 1.toShort(), b3 = -32768.toShort(), b4 = 32768)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

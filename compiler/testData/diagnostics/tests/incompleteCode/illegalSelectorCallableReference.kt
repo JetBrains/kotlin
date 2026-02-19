@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun test() {
     "a".<!ILLEGAL_SELECTOR!>"b"<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
@@ -6,3 +7,5 @@ fun test() {
     "a".<!ILLEGAL_SELECTOR!>"b"<!>.<!ILLEGAL_SELECTOR!>"c"<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
     "a".<!ILLEGAL_SELECTOR!>"b"<!>.<!ILLEGAL_SELECTOR!>"c"<!>::class
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, stringLiteral */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-56243
-// !LANGUAGE: +ReferencesToSyntheticJavaProperties
+// LANGUAGE: +ReferencesToSyntheticJavaProperties
 
 // FILE: JavaInv.java
 public class JavaInv<T> {
@@ -16,3 +17,6 @@ fun test() {
     JavaInv<out Number>::stringVal
     KotlinInv<out Number>::stringVal
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, javaCallableReference, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

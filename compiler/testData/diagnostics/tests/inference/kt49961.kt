@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Xyz {
     fun x(): String? {
         return try {
@@ -8,3 +9,6 @@ class Xyz {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, elvisExpression, functionDeclaration, localProperty,
+nullableType, propertyDeclaration, tryExpression */

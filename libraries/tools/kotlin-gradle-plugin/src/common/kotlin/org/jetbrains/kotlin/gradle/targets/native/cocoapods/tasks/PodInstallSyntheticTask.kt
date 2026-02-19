@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.platformLiteral
+import org.jetbrains.kotlin.gradle.utils.RunProcessResult
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
 
@@ -42,18 +43,18 @@ abstract class PodInstallSyntheticTask : AbstractPodInstallTask() {
         super.doPodInstall()
     }
 
-    override fun handleError(retCode: Int, error: String, process: Process): String? {
+    override fun handleError(result: RunProcessResult): String? {
         var message = """
-            |'pod install' command on the synthetic project failed with return code: $retCode
+            |'pod install' command on the synthetic project failed with return code: ${result.retCode}
             |
-            |        Error: ${error.lines().filter { it.contains("[!]") }.joinToString("\n")}
+            |        Error: ${result.stdErr.lines().filter { it.contains("[!]") }.joinToString("\n")}
             |       
         """.trimMargin()
 
         if (
-            error.contains("deployment target") ||
-            error.contains("no platform was specified") ||
-            error.contains(Regex("The platform of the target .+ is not compatible with `${podName.get()}"))
+            result.stdErr.contains("deployment target") ||
+            result.stdErr.contains("no platform was specified") ||
+            result.stdErr.contains(Regex("The platform of the target .+ is not compatible with `${podName.get()}"))
         ) {
             message += """
                 |
@@ -68,9 +69,9 @@ abstract class PodInstallSyntheticTask : AbstractPodInstallTask() {
             """.trimMargin()
             return message
         } else if (
-            error.contains("Unable to add a source with url") ||
-            error.contains("Couldn't determine repo name for URL") ||
-            error.contains("Unable to find a specification")
+            result.stdErr.contains("Unable to add a source with url") ||
+            result.stdErr.contains("Couldn't determine repo name for URL") ||
+            result.stdErr.contains("Unable to find a specification")
         ) {
             message += """
                 |

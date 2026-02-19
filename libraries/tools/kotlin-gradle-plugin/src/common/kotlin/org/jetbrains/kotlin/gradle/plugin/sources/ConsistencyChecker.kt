@@ -45,9 +45,10 @@ internal class FragmentConsistencyChecks<T>(
         name = "unstable language feature set",
         getValue = { unit ->
             unit.languageSettings().getValueIfExists {
+                @Suppress("DEPRECATION")
                 enabledLanguageFeatures
                     .mapNotNull { parseLanguageFeature(it) }
-                    .filterTo(mutableSetOf()) { it.kind == LanguageFeature.Kind.UNSTABLE_FEATURE }
+                    .filterTo(mutableSetOf()) { it.forcesPreReleaseBinaries }
             }
         },
         leftExtendsRightConsistently = { left, right ->

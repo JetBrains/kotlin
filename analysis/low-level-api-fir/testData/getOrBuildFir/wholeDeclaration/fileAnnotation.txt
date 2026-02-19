@@ -1,0 +1,10 @@
+KT element: KtAnnotation
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(RAW_FIR)] fileAnnotation.kt
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)

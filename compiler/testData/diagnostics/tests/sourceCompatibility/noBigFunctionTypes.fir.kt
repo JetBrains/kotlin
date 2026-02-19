@@ -1,5 +1,6 @@
-// !LANGUAGE: -FunctionTypesWithBigArity
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -FunctionTypesWithBigArity
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A
 
@@ -18,3 +19,6 @@ fun test(
     bar(::foo)
     bar(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, outProjection,
+starProjection, vararg */

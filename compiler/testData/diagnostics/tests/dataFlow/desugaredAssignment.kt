@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 package usage
 
@@ -15,3 +16,6 @@ open class ABC {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, forLoop, functionDeclaration, integerLiteral,
+isExpression, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

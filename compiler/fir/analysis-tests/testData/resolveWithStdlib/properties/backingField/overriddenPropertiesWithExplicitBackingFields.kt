@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A {
-    open var it: Number
-        private field = 3
+    open <!VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>var<!> it: Number
+        <!NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!><!WRONG_MODIFIER_TARGET!>private<!> field = 3<!>
         set(value) {
             field = value.toInt()
         }
@@ -9,7 +10,7 @@ open class A {
         // error, because `it` is not
         // final, so no smart type narrowing
         // is provided
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(it <!UNRESOLVED_REFERENCE!>+<!> 1)
+        println(it <!UNRESOLVED_REFERENCE!>+<!> 1)
     }
 }
 
@@ -18,3 +19,15 @@ open class B : A() {
         get() = 3.14
         set(value) {}
 }
+
+interface NumberHolder {
+    val number: Number
+}
+
+class FinalNumberHolder : NumberHolder {
+    override val number: Number
+        field = 0f
+}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, explicitBackingField, functionDeclaration,
+getter, integerLiteral, override, propertyDeclaration, setter */

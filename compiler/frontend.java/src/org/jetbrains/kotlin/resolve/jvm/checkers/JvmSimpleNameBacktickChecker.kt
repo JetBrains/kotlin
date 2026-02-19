@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.IdentifierChecker
+import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object JvmSimpleNameBacktickChecker : IdentifierChecker {
-    // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
-    val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
-
     // These characters can cause problems on Windows. '?*"|' are not allowed in file names, and % leads to unexpected env var expansion.
     private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
 
@@ -61,11 +59,11 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
             text.isEmpty() -> {
                 diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(reportOn() ?: return, "should not be empty"))
             }
-            text.any { it in INVALID_CHARS } -> {
+            text.any { it in JvmConstants.INVALID_CHARS } -> {
                 diagnosticHolder.report(
                     Errors.INVALID_CHARACTERS.on(
                         reportOn() ?: return,
-                        "contains illegal characters: ${INVALID_CHARS.intersect(text.toSet()).joinToString("")}"
+                        "contains illegal characters: ${JvmConstants.INVALID_CHARS.intersect(text.toSet()).joinToString("")}"
                     )
                 )
             }

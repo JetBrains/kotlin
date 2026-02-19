@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun interface Foo<T> {
     fun invoke(): T
 }
@@ -5,6 +6,6 @@ fun interface Foo<T> {
 fun test() {
     Foo { }
     Foo<Unit> { }
-    Foo<String> <!TYPE_MISMATCH!>{ }<!>
+    Foo<String> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
     Foo<String> { "" }
 }

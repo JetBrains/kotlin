@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,36 +11,32 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import kotlinx.collections.immutable.mutate
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassLike
-import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
-import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
-import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
 internal class SymbolLightFieldForObject private constructor(
     containingClass: SymbolLightClassForClassLike<*>,
     private val name: String,
     lightMemberOrigin: LightMemberOrigin?,
-    private val objectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+    private val objectSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
     override val kotlinOrigin: KtObjectDeclaration?,
     private val isCompanion: Boolean,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
-        ktAnalysisSession: KtAnalysisSession,
-        objectSymbol: KtNamedClassOrObjectSymbol,
+        objectSymbol: KaNamedClassSymbol,
         name: String,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassForClassLike<*>,
@@ -50,16 +46,16 @@ internal class SymbolLightFieldForObject private constructor(
         name = name,
         lightMemberOrigin = lightMemberOrigin,
         kotlinOrigin = objectSymbol.sourcePsiSafe(),
-        objectSymbolPointer = with(ktAnalysisSession) { objectSymbol.createPointer() },
+        objectSymbolPointer = objectSymbol.createPointer(),
         isCompanion = isCompanion,
     )
 
-    private inline fun <T> withObjectDeclarationSymbol(crossinline action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
+    private inline fun <T> withObjectDeclarationSymbol(crossinline action: KaSession.(KaNamedClassSymbol) -> T): T =
         objectSymbolPointer.withSymbol(ktModule, action)
 
     override fun getName(): String = name
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = if (isCompanion) {
@@ -92,12 +88,14 @@ internal class SymbolLightFieldForObject private constructor(
 
     override fun isDeprecated(): Boolean = _isDeprecated
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
     private val _type: PsiType by lazyPub {
         withObjectDeclarationSymbol { objectSymbol ->
-            objectSymbol.buildSelfClassType()
-                .asPsiType(this@SymbolLightFieldForObject, allowErrorTypes = true)
+            objectSymbol.defaultType
+                .asPsiType(
+                    this@SymbolLightFieldForObject,
+                    allowErrorTypes = true,
+                    allowNonJvmPlatforms = true,
+                )
         } ?: nonExistentType()
     }
 

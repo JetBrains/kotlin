@@ -1,4 +1,7 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +LocalTypeAliases
+// RENDER_DIAGNOSTICS_FULL_TEXT
+
 typealias TopLevel = Any
 
 interface A {
@@ -18,3 +21,5 @@ class C {
 fun foo() {
     <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Local = Any<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass, typeAliasDeclaration */

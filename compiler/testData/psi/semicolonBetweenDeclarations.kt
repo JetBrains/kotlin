@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 package foo;
 
 fun foo1() {};

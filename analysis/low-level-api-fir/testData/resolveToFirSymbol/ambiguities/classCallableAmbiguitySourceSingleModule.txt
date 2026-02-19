@@ -1,0 +1,31 @@
+KtNamedFunction 'callable' in 'main.kt' (12,5):
+  public final fun callable(): R|kotlin/Int| {
+      ^callable Int(2)
+  }
+
+
+KtProperty 'callable' in 'main.kt' (14,5):
+  public final val callable: R|kotlin/Int| = Int(2)
+      public get(): R|kotlin/Int|
+
+
+KtNamedFunction 'callable' in 'main.kt' (24,5):
+  public final fun callable(): R|kotlin/Int| {
+      ^callable Int(3)
+  }
+
+
+KtProperty 'callable' in 'main.kt' (26,5):
+  public final val callable: R|kotlin/Int| = Int(3)
+      public get(): R|kotlin/Int|
+
+
+KtNamedFunction 'callable' in 'main.kt' (6,5):
+  public final fun callable(): R|kotlin/Int| {
+      ^callable Int(1)
+  }
+
+
+KtProperty 'callable' in 'main.kt' (8,5):
+  public final val callable: R|kotlin/Int| = Int(1)
+      public get(): R|kotlin/Int|

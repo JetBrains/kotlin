@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Base {
     init {
         register(<!DEBUG_INFO_LEAKING_THIS!>this<!>)
@@ -32,3 +33,6 @@ enum class MyEnum {
 
     abstract fun foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, init, override,
+primaryConstructor, propertyDeclaration, thisExpression */

@@ -55,6 +55,10 @@ object Aggregates : TemplateGroupBase() {
             return true
             """
         }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.allWithPredicate")
+        }
     }
 
     val f_none_predicate = fn("none(predicate: (T) -> Boolean)") {
@@ -81,6 +85,10 @@ object Aggregates : TemplateGroupBase() {
             for (element in this) if (predicate(element)) return false
             return true
             """
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.noneWithPredicate")
         }
     }
 
@@ -112,6 +120,10 @@ object Aggregates : TemplateGroupBase() {
         body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             "return isEmpty()"
         }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.none")
+        }
     }
 
     val f_any_predicate = fn("any(predicate: (T) -> Boolean)") {
@@ -138,6 +150,10 @@ object Aggregates : TemplateGroupBase() {
             for (element in this) if (predicate(element)) return true
             return false
             """
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.anyWithPredicate")
         }
     }
 
@@ -166,6 +182,10 @@ object Aggregates : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) {
             inlineOnly()
             body { "return storage.any()" }
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.any")
         }
     }
 
@@ -268,15 +288,16 @@ object Aggregates : TemplateGroupBase() {
                 selectorType.startsWith("java") -> selectorType.substringAfterLast('.')
                 else -> selectorType
             }
-            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
-            annotation("@OverloadResolutionByLambdaReturnType")
+            if (selectorType !in listOf("Int", "UInt")) {
+                annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+                annotation("@OverloadResolutionByLambdaReturnType")
+            }
             specialFor(ArraysOfUnsigned) {
                 annotation("""@Suppress("INAPPLICABLE_JVM_NAME")""")
             }
             annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
             if (selectorType.startsWith("U")) {
                 since("1.5")
-                wasExperimental("ExperimentalUnsignedTypes")
             }
 
             doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
@@ -334,11 +355,11 @@ object Aggregates : TemplateGroupBase() {
 
                 val isFloat = primitive?.isFloatingPoint() == true
                 val isUnsigned = family == ArraysOfUnsigned
+                val isGeneric = family in listOf(Iterables, Sequences, ArraysOfObjects)
 
                 if (!nullable || legacy) suppress("CONFLICTING_OVERLOADS")
                 if (legacy) {
                     deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull()", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
-                    val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
                     if (isFloat && isGeneric) {
                         since("1.1")
                     }
@@ -354,13 +375,28 @@ object Aggregates : TemplateGroupBase() {
                 if (!nullable) since("1.7")
 
                 doc {
-                    "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}." +
-                    if (isFloat) "\n\n" + "If any of ${f.element.pluralize()} is `NaN` returns `NaN`." else ""
+                    val isMax = op == "max"
+                    val elements = f.element.pluralize()
+                    """
+                    Returns the ${if (isMax) "largest" else "smallest"} ${f.element}${" or `null` if the ${f.collection} is empty".ifOrEmpty(nullable)}.
+                    """ +
+                    """
+                    If there are multiple equal ${if (isMax) "maximal" else "minimal"} $elements, this function returns the first of those $elements.
+                    """.ifOrEmpty(isGeneric && primitive == null) +
+                    """
+                    If any of $elements is `NaN`, this function returns `NaN`.
+                    """.ifOrEmpty(isFloat)
                 }
                 if (!nullable) {
                     throws("NoSuchElementException", "if the ${f.collection} is empty.")
                     annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
+                val sampleFun = "maxMin" + when {
+                    isFloat -> "Floating"
+                    isGeneric -> "Generic"
+                    else -> "Primitive"
+                }
+                sample("samples.collections.Collections.Aggregates.$sampleFun")
 
                 val acc = op
                 val cmpBlock = if (isFloat)
@@ -406,9 +442,10 @@ object Aggregates : TemplateGroupBase() {
                 includeDefault()
                 include(Maps, CharSequences, ArraysOfUnsigned)
             } builder {
+                val isMax = op == "maxBy"
                 inline()
                 specialFor(ArraysOfUnsigned) { inlineOnly() }
-                specialFor(Maps) { if (op == "maxBy" || !legacy) inlineOnly() }
+                specialFor(Maps) { if (isMax || !legacy) inlineOnly() }
                 typeParam("R : Comparable<R>")
                 returns("T" + "?".ifOrEmpty(nullable))
                 val isUnsigned = family == ArraysOfUnsigned
@@ -425,15 +462,27 @@ object Aggregates : TemplateGroupBase() {
                 since("1.4")
                 if (!nullable) since("1.7")
 
-                doc { "Returns the first ${f.element} yielding the ${if (op == "maxBy") "largest" else "smallest"} value of the given function${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}." }
-                sample("samples.collections.Collections.Aggregates.$op$orNull")
+                doc {
+                    """
+                        Returns the first ${f.element} yielding the ${if (isMax) "largest" else "smallest"} value of the given [selector] function${
+                        " or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                        
+                        If there are multiple equal ${if (isMax) "maximal" else "minimal"} values returned by the [selector] function, 
+                        this function returns the first of ${f.element.pluralize()} corresponding to these values.
+                        
+                        Note that the function [selector] is not invoked when the ${f.collection} contains zero or one ${f.element.pluralize()} 
+                        because in these cases it is clear which ${f.element} to return without invoking the [selector].
+                        Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each ${f.element}.
+                    """
+                }
+                sample("samples.collections.Collections.Aggregates.minMaxByOrNull")
 
                 if (!nullable) {
                     throws("NoSuchElementException", "if the ${f.collection} is empty.")
                     annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
 
-                val (elem, value, cmp) = if (op == "minBy") Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
+                val (elem, value, cmp) = if (!isMax) Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
                 body {
                     """
                     val iterator = iterator()
@@ -560,10 +609,15 @@ object Aggregates : TemplateGroupBase() {
                 val isFloat = selectorType != "R"
 
                 doc {
+                    val isMax = op == "max"
+                    val elements = f.element.pluralize()
                     """
-                    Returns the ${if (op == "max") "largest" else "smallest"} value among all values produced by [selector] function 
-                    applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    Returns the ${if (isMax) "largest" else "smallest"} value among all values produced by [selector] function 
+                    applied to each ${f.element} in the ${f.collection}${" or `null` if the ${f.collection} is empty".ifOrEmpty(nullable)}.
                     """ +
+                    """
+                    If multiple $elements produce the ${if (isMax) "maximal" else "minimal"} value, this function returns the first of those values.
+                    """.ifOrEmpty(!isFloat) +
                     """
                     If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
                     """.ifOrEmpty(isFloat)
@@ -571,6 +625,12 @@ object Aggregates : TemplateGroupBase() {
                 if (!nullable) {
                     throws("NoSuchElementException", "if the ${f.collection} is empty.")
                 }
+                val sampleFun = "maxOfMinOf" + when {
+                    isFloat -> "FloatingResult"
+                    primitive != null -> "Primitive"
+                    else -> "Generic"
+                }
+                sample("samples.collections.Collections.Aggregates.$sampleFun")
 
                 if (!isFloat) typeParam("R : Comparable<R>")
                 returns(selectorType + "?".ifOrEmpty(nullable))
@@ -632,14 +692,20 @@ object Aggregates : TemplateGroupBase() {
                 annotation("@OverloadResolutionByLambdaReturnType")
 
                 doc {
+                    val isMax = op == "max"
+                    val elements = f.element.pluralize()
                     """
-                    Returns the ${if (op == "max") "largest" else "smallest"} value according to the provided [comparator] 
-                    among all values produced by [selector] function applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    Returns the ${if (isMax) "largest" else "smallest"} value according to the provided [comparator] 
+                    among all values produced by [selector] function applied to each ${f.element} in the ${f.collection}${" or `null` if the ${f.collection} is empty".ifOrEmpty(nullable)}.
+
+                    If multiple $elements produce the ${if (isMax) "maximal" else "minimal"} value, this function returns the first of those values.
                     """ +
                     """
                     @throws NoSuchElementException if the ${f.collection} is empty.
                     """.ifOrEmpty(!nullable)
                 }
+                val sampleFun = "maxOfWithMinOfWith" + if (primitive != null) "Primitive" else "Generic"
+                sample("samples.collections.Collections.Aggregates.$sampleFun")
 
                 typeParam(selectorType)
                 returns(selectorType + "?".ifOrEmpty(nullable))
@@ -1188,7 +1254,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1213,7 +1278,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
 
         doc { reduceDoc("reduceOrNull") }
@@ -1313,7 +1377,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1339,7 +1402,6 @@ object Aggregates : TemplateGroupBase() {
         include(Lists, ArraysOfObjects)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
@@ -1460,7 +1522,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1558,7 +1619,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1658,7 +1718,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // Issue: KT-36254
 
@@ -16,3 +17,5 @@ fun takeConvertor(c: Convertor<String, String>) {}
 fun main() {
     takeConvertor(Convertor { null })
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral */

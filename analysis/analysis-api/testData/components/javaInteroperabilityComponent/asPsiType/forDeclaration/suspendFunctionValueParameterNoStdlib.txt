@@ -1,0 +1,2 @@
+KaType: suspend (Int) -> Unit
+PsiType: null

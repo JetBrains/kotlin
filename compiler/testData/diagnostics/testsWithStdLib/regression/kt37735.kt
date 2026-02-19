@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import java.net.URI
 
@@ -22,3 +23,7 @@ class WebClient {
 
 class OutDto
 class InDto
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, javaFunction, lambdaLiteral, nestedClass, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

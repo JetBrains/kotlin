@@ -34,7 +34,6 @@ fun box(): String {
 // 1 IF_ICMPLE
 // 2 IF
 
-// JVM_IR_TEMPLATES
 // 3 ILOAD
 // 2 ISTORE
 // 0 IADD

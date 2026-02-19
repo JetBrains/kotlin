@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,29 @@
 
 package kotlin.collections
 
+import kotlin.js.collections.JsArray
+
 /**
- * Provides a [MutableList] implementation, which uses a resizable array as its backing storage.
+ * A dynamic array implementation of [MutableList].
  *
- * This implementation doesn't provide a way to manage capacity, as backing JS array is resizeable itself.
- * There is no speed advantage to pre-allocating array sizes in JavaScript, so this implementation does not include any of the
- * capacity and "growth increment" concepts.
+ * This class stores elements using a native JavaScript array as its backing storage.
+ * It fully implements the [MutableList] contract, providing all standard list
+ * operations including indexed access, iteration, and modification. As an implementation of
+ * [RandomAccess], it provides fast indexed access to elements.
+ *
+ * ## JS-specific implementation notes
+ *
+ * On the JS target, this implementation uses a native JavaScript array as its backing storage.
+ * JavaScript arrays are inherently dynamic and manage their own capacity automatically.
+ * Therefore, capacity management methods like [ensureCapacity] and [trimToSize] have no effect.
+ * There is no performance advantage to pre-allocating array sizes in JavaScript.
+ *
+ * ## Thread safety
+ *
+ * [ArrayList] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
+ *
+ * @param E the type of elements contained in the list.
  */
 public actual open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), MutableList<E>, RandomAccess {
     private companion object {
@@ -65,6 +82,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     actual override val size: Int get() = array.size
     @Suppress("UNCHECKED_CAST")
     actual override fun get(index: Int): E = array[rangeCheck(index)] as E
+    @IgnorableReturnValue
     actual override fun set(index: Int, element: E): E {
         checkIsMutable()
         rangeCheck(index)
@@ -72,6 +90,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return array[index].apply { array[index] = element } as E
     }
 
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean {
         checkIsMutable()
         array.asDynamic().push(element)
@@ -91,6 +110,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return previous
     }
 
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         if (elements.isEmpty()) return false
@@ -103,6 +123,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return true
     }
 
+    @IgnorableReturnValue
     actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
         checkIsMutable()
         insertionRangeCheck(index)
@@ -122,6 +143,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return true
     }
 
+    @IgnorableReturnValue
     actual override fun removeAt(index: Int): E {
         checkIsMutable()
         rangeCheck(index)
@@ -132,6 +154,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
             array.asDynamic().splice(index, 1)[0]
     }
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean {
         checkIsMutable()
         for (index in array.indices) {
@@ -161,7 +184,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
     actual override fun lastIndexOf(element: E): Int = array.lastIndexOf(element)
 
-    override fun toString() = arrayToString(array)
+    override fun toString(): String = arrayToString(array)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> toArray(array: Array<T>): Array<T> {
@@ -178,15 +201,21 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return js("[]").slice.call(array)
     }
 
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("2.0")
+    override fun asJsArrayView(): JsArray<E> = array.unsafeCast<JsArray<E>>()
 
     internal override fun checkIsMutable() {
         if (isReadOnly) throw UnsupportedOperationException()
     }
 
+    @IgnorableReturnValue
     private fun rangeCheck(index: Int) = index.apply {
         AbstractList.checkElementIndex(index, size)
     }
 
+    @IgnorableReturnValue
     private fun insertionRangeCheck(index: Int) = index.apply {
         AbstractList.checkPositionIndex(index, size)
     }

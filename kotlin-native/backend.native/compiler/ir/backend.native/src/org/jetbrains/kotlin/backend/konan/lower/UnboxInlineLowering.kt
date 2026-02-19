@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.getUnboxFunction
+import org.jetbrains.kotlin.backend.konan.ir.isUnbox
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -34,14 +34,9 @@ internal class UnboxInlineLowering(
 }
 
 private class AccessorInliner(commonBackendContext: CommonBackendContext) : IrElementTransformerVoid() {
-
     private val context = commonBackendContext as Context
-    private val anyType = context.irBuiltIns.anyType
 
-    private fun IrFunction.isEasyInlineableUnbox(): Boolean =
-            origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION &&
-                    name.asString().endsWith("-unbox>") &&
-                    !returnType.isNullable()
+    private fun IrFunction.isEasyInlineableUnbox(): Boolean = !returnType.isNullable() && isUnbox()
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
@@ -60,7 +55,7 @@ private class AccessorInliner(commonBackendContext: CommonBackendContext) : IrEl
                 // Boxed primitive types (Int, Short,..) have `value` field
                 // Inline unsigned classes (UInt, UShort,..) have `data` field
                 val field = retVal.symbol.owner
-                context.createIrBuilder(call.symbol, call.startOffset, call.endOffset).irGetField(call.getValueArgument(0), field)
+                context.createIrBuilder(call.symbol, call.startOffset, call.endOffset).irGetField(call.arguments[0], field)
             } else {
                 context.log { "Cannot inline unbox function ${call.symbol} with body `IrReturn(expression)`, where `expression` is not IrGetField(...)" }
                 null

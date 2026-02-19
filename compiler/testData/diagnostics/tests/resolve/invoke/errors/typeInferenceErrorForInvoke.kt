@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A<T>
 
@@ -11,3 +12,6 @@ fun foo(s: String, ai: A<Int>) {
 
     ""(<!TYPE_MISMATCH!>ai<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+operator, stringLiteral, typeParameter */

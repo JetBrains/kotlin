@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.KtParameter
@@ -90,12 +89,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 it.toIrType()
             }
 
-            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
-                startOffset, endOffset,
-                IrDeclarationOrigin.INSTANCE_RECEIVER,
-                descriptor.thisAsReceiverParameter,
-                descriptor.thisAsReceiverParameter.type.toIrType()
-            ).also { it.parent = irClass }
+            irClass.setThisReceiverParameter(context)
 
             irClass.valueClassRepresentation = descriptor.valueClassRepresentation?.mapUnderlyingType { it.toIrType() as IrSimpleType }
         }
@@ -133,12 +127,12 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         }
     }
 
-    protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
+    protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement, kind: IrParameterKind): IrValueParameter {
         return symbolTable.descriptorExtension.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,
-            descriptor, descriptor.type.toIrType(),
+            descriptor, kind, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
         )
     }
@@ -151,21 +145,26 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
 
         // TODO: KtElements
 
-        irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            declareParameter(it, null, irFunction)
-        }
-
-        irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            declareParameter(it, null, irFunction)
+        functionDescriptor.dispatchReceiverParameter?.let {
+            irFunction.parameters += declareParameter(it, null, irFunction, IrParameterKind.DispatchReceiver)
         }
 
         // Declare all the value parameters up first.
-        irFunction.valueParameters = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
+        val (contextParameters, regularParameters) = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction).also {
+            val kind = if (valueParameterDescriptor.index < functionDescriptor.contextReceiverParameters.size) IrParameterKind.Context else IrParameterKind.Regular
+            declareParameter(valueParameterDescriptor, ktParameter, irFunction, kind).also {
                 it.defaultValue = irFunction.defaultArgumentFactory(it)
             }
+        }.partition {
+            it.kind == IrParameterKind.Context
         }
+
+        irFunction.parameters += contextParameters
+        functionDescriptor.extensionReceiverParameter?.let {
+            irFunction.parameters += declareParameter(it, null, irFunction, IrParameterKind.ExtensionReceiver)
+        }
+        irFunction.parameters += regularParameters
     }
 
     fun generateConstructor(
@@ -181,7 +180,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 visibility = visibility,
                 isInline = isInline,
                 isExpect = isExpect,
-                returnType = IrUninitializedType,
+                returnType = descriptor.returnType.toIrType(),
                 symbol = symbol,
                 isPrimary = isPrimary,
                 isExternal = isEffectivelyExternal(),
@@ -193,7 +192,6 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
             generateScopedTypeParameterDeclarations(irConstructor, ctorTypeParameters)
             generateValueParameterDeclarations(irConstructor, descriptor, defaultArgumentFactory)
-            irConstructor.returnType = descriptor.returnType.toIrType()
         }
 
         return irConstructor
@@ -216,7 +214,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 visibility = visibility,
                 isInline = isInline,
                 isExpect = isExpect,
-                returnType = IrUninitializedType,
+                returnType = null,
                 modality = modality,
                 symbol = symbol,
                 isTailrec = isTailrec,

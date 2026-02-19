@@ -15,7 +15,7 @@ var n: J? = J()
 
 fun test() {
     v = J.staticNN
-    v = J.staticN
+    v = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>
     v = J.staticJ
 
     n = J.staticNN

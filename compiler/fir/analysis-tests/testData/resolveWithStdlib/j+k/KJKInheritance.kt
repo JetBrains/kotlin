@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: K1.kt
 open class KFirst() {
     fun foo() {
@@ -16,3 +17,5 @@ class K2: J1() {
         baz()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, primaryConstructor */

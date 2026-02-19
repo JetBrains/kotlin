@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-575 Cannot ++ a companion object member
 
@@ -31,3 +32,6 @@ class Creature() {
         C().ccc++
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, incrementDecrementExpression, init, integerLiteral,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration */

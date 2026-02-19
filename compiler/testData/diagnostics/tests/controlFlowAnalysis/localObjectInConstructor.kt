@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun println(obj: Any?) = obj
 
@@ -86,3 +87,6 @@ class Demo5 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+ifExpression, lambdaLiteral, nullableType, propertyDeclaration, typeParameter */

@@ -1,0 +1,167 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] arrayOfCall.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(CONTRACTS)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Ann.a] vararg a: R|kotlin/Array<out java/lang/String>| = <Unresolved name: arrayOf>#(ERROR_EXPR(Missing stdlib class: kotlin/String))): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: R|kotlin/Array<out java/lang/String>| = R|<local>/a|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] get(): R|kotlin/Array<out java/lang/String>|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] arrayOfCall.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Ann.a] vararg a: R|kotlin/Array<out java/lang/String>| = <Unresolved name: arrayOf>#(ERROR_EXPR(Missing stdlib class: kotlin/String))): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: R|kotlin/Array<out java/lang/String>| = R|<local>/a|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] get(): R|kotlin/Array<out java/lang/String>|
+
+    }

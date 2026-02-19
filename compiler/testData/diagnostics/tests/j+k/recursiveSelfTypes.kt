@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // FILE: TSFBuilder.java
@@ -29,3 +30,5 @@ fun main() {
             .build()
     )
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, nullableType, starProjection */

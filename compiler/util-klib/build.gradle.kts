@@ -1,24 +1,39 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("project-tests-convention")
+    id("java-test-fixtures")
 }
 
 description = "Common klib reader and writer"
 
 dependencies {
-    api(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    api("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     api(project(":kotlin-util-io"))
-    testImplementation(commonDependency("junit:junit"))
+
+    compileOnly(project(":core:metadata")) { exclude("org.jetbrains.kotlin", "kotlin-stdlib") }
+
+    embedded(project(":core:metadata")) { isTransitive = false }
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
+    testFixturesApi("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 configureKotlinCompileTasksGradleCompatibility()
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
+}
 
 publish()
 

@@ -2,18 +2,26 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -51,9 +59,16 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
         toolOptionsConfigure = configure::execute
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
-    override fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+
+    @Deprecated(
+        message = KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
+    override fun kotlinOptions(
+        @Suppress("DEPRECATION_ERROR") fn: Action<KotlinCommonToolOptions>
+    ) {
         kotlinOptionsFn = fn::execute
     }
 
@@ -72,14 +87,10 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
 
 internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
     val librariesConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkLibrary")
-    configurations.maybeCreate(librariesConfigurationName).apply {
-        isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = true
+    configurations.maybeCreateResolvable(librariesConfigurationName).apply {
+        setInvisibleIfSupported()
         isTransitive = true
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        configureAttributesFor(project, target)
     }
     deps.forEach { dependencies.add(librariesConfigurationName, it) }
     return librariesConfigurationName
@@ -87,15 +98,20 @@ internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName:
 
 internal fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
     val exportConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkExport")
-    configurations.maybeCreate(exportConfigurationName).apply {
-        isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = true
+    configurations.maybeCreateResolvable(exportConfigurationName).apply {
+        setInvisibleIfSupported()
         isTransitive = false
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        configureAttributesFor(project, target)
     }
     deps.forEach { dependencies.add(exportConfigurationName, it) }
     return exportConfigurationName
+}
+
+private fun Configuration.configureAttributesFor(project: Project, target: KonanTarget) = with(project) {
+    attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
+    if (kotlinPropertiesProvider.useNonPackedKlibs) {
+        KlibPackaging.setAttributeTo(project, attributes, false)
+    }
 }

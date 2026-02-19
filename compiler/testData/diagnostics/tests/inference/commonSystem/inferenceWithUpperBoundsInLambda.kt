@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import java.util.*
 
@@ -12,3 +13,7 @@ fun <F : Foo> test(map: MutableMap<String, Bar<F>>) {
 }
 
 fun <K, V> MutableMap<K, V>.getOrPut1(key: K, defaultValue: () -> V): V = throw Exception()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, javaFunction, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter */

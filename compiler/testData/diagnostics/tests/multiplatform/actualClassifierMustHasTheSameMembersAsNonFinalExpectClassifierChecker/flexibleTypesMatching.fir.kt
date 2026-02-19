@@ -1,13 +1,15 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
 expect open class Base {
-    <!INCOMPATIBLE_MATCHING{JVM}!>open fun foo(): MutableList<String><!>
+    open fun foo(): MutableList<String>
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo : Base {
+expect open class Foo : Base {
 
-}<!>
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -18,7 +20,7 @@ actual open class Foo : Base() {
     // K1 doesn't report a diagnostic here because when it compares scopes it sees flexible type
     // K2 will likely report a diagnostic here
     // I don't think we can fix this 'K1 green -> K2 red'. It must be a rare case anyway.
-    override fun foo(): List<String> {
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>foo<!>(): List<String> {
         return super.foo()
     }
 }
@@ -31,3 +33,6 @@ public class BaseJava {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, flexibleType, functionDeclaration, javaFunction, javaType,
+override, superExpression, typeAliasDeclaration */

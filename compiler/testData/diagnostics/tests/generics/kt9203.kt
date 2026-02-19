@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 
@@ -9,3 +10,6 @@ fun main() {
             .collect(Collectors.toList())
     xs[0]
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, lambdaLiteral, localProperty,
+outProjection, propertyDeclaration, samConversion, starProjection */

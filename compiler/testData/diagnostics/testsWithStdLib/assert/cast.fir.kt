@@ -1,4 +1,5 @@
-// !IGNORE_DATA_FLOW_IN_ASSERT
+// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_DATA_FLOW_IN_ASSERT
 // SKIP_TXT
 // WITH_STDLIB
 
@@ -18,3 +19,6 @@ fun test2() {
     assert((a as B).bool())
     a<!UNNECESSARY_SAFE_CALL!>?.<!>bool()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, localProperty,
+nullableType, propertyDeclaration, safeCall, smartcast */

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 foo bar(1) buzz<T>(1) zoo package aa
 
 foo bar(1) buzz<T>(1) zoo class A

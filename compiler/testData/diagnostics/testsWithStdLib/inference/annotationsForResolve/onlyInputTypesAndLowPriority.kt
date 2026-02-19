@@ -1,4 +1,5 @@
-//!DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.jvm.JvmName("containsAny")
@@ -23,3 +24,6 @@ fun test(map: Map<Int, String>) {
     val c: String? = map.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>get1<!>("")
     val d: String? = map.get1(1)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, integerLiteral, intersectionType,
+localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral, typeParameter */

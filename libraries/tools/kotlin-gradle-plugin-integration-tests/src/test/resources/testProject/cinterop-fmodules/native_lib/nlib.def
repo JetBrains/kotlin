@@ -1,0 +1,3 @@
+modules = Foo
+package = lib.Foo
+language = Objective-C

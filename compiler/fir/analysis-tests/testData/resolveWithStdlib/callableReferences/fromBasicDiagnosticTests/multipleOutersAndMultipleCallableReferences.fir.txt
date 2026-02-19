@@ -18,5 +18,5 @@ FILE: multipleOutersAndMultipleCallableReferences.kt
     public final fun <T, R : R|Base|> bar(f: R|(T) -> Inv<R>|, p: R|kotlin/Int| = Int(4)): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/bar|<R|kotlin/Int|, R|kotlin/Int|>(::R|/foo|)
+        R|/bar|<R|@R|kotlin/ParameterName|(name = String(x))  kotlin/Int|, R|kotlin/Int|>(::R|/foo|)
     }

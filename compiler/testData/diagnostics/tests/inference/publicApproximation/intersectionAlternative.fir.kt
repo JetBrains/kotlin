@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Bound
 interface Bound1 : Bound
@@ -14,3 +15,6 @@ fun testIntersectionAlternative() = intersect(First, Second)
 fun test() {
     testIntersectionAlternative()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, objectDeclaration, typeConstraint,
+typeParameter, vararg */

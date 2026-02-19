@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -29,3 +30,6 @@ fun test() {
 }
 
 fun foo(j: J) {}
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, javaProperty, javaType,
+localProperty, nullableType, propertyDeclaration, smartcast */

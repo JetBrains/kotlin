@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -20,3 +21,6 @@ fun foo(x: Int) {
 fun r(f: () -> Int) {
     f()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+whenExpression, whenWithSubject */

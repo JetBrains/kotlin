@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object T2 {
     interface Foo<T>
@@ -11,3 +12,6 @@ object T2 {
     val String.test1: String by delegate()
     val test2: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>delegate()<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nestedClass, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, typeParameter */

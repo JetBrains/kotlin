@@ -1,6 +1,7 @@
-// !SKIP_JAVAC
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
 // SKIP_TXT
-// !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // FILE: JavaInterface.java
 import org.jetbrains.annotations.NotNull;
 
@@ -12,3 +13,5 @@ public interface JavaInterface<V> {
 interface KotlinInterface<X> : JavaInterface<X> {
     override <!SYNTAX!><<!><!SYNTAX!>T<!><!SYNTAX!>><!> fun <!VIRTUAL_MEMBER_HIDDEN!>interfaceMethod<!>(x: X)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun Any?.foo() {}
 
@@ -6,3 +7,6 @@ fun test(a: Any?) {
         a.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, nullableType,
+smartcast */

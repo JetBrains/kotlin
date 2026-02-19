@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -16,26 +16,33 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.typeArguments
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
+/**
+ * Transforms statement-like-expression nodes into pure-statement to make it easily transform into JS.
+ */
+@PhasePrerequisites(TypeOperatorLowering::class, JsSuspendFunctionsLowering::class, JsSuspendFunctionWithGeneratorsLowering::class)
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
     override fun unreachableExpression(): IrExpression =
-        JsIrBuilder.buildCall(context.intrinsics.unreachable, context.irBuiltIns.nothingType)
+        JsIrBuilder.buildCall(context.symbols.unreachable, context.irBuiltIns.nothingType)
 }
 
 abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {
@@ -170,7 +177,7 @@ class BlockDecomposerTransformer(
 
     private fun destructureComposite(expression: IrStatement) = (expression as? IrComposite)?.statements ?: listOf(expression)
 
-    private inner class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrElementTransformer<IrLoop> {
+    private inner class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrTransformer<IrLoop>() {
         override fun visitBreak(jump: IrBreak, data: IrLoop) = jump.apply {
             if (loop == data) loop = breakLoop
         }
@@ -538,7 +545,7 @@ class BlockDecomposerTransformer(
                     compositesLeft == 0 -> value
                     index == 0 && dontDetachFirstArgument -> value
                     value == null -> value
-                    value.isPure(anyVariable = false, context = context) -> value
+                    value.isPure(anyVariable = false, symbols = context.symbols) -> value
                     else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
                         val (newArg, tempVar) = mapArgument(value)
@@ -571,17 +578,21 @@ class BlockDecomposerTransformer(
                     lastIntrinsicCall = JsIrBuilder.buildCall(saveToTmp.symbol, saveToTmp.type, saveToTmp.typeArguments.filterNotNull())
                     rootIntrinsicCall = lastIntrinsicCall
                 } else {
-                    val nextCall = JsIrBuilder.buildCall(saveToTmp.symbol)
-                    lastIntrinsicCall.putValueArgument(0, nextCall)
+                    val nextCall = JsIrBuilder.buildCall(saveToTmp.symbol, saveToTmp.type, saveToTmp.typeArguments.filterNotNull())
+                    lastIntrinsicCall.arguments[0] = nextCall
                     lastIntrinsicCall = nextCall
                 }
-                saveToTmp = saveToTmp.getValueArgument(0) ?: error("expect passing 1 argument to boxing intrinsic")
+                saveToTmp = saveToTmp.arguments[0]
+                    ?: irError("expect passing 1 argument to boxing intrinsic") {
+                        withIrEntry("arg", arg)
+                        withIrEntry("saveToTmp", saveToTmp)
+                    }
             }
 
             val irTempVar = makeTempVar(saveToTmp.type, saveToTmp)
             val irGetTempVar = JsIrBuilder.buildGetValue(irTempVar.symbol)
             val newArg = lastIntrinsicCall?.let {
-                it.putValueArgument(0, irGetTempVar)
+                it.arguments[0] = irGetTempVar
                 rootIntrinsicCall
             } ?: irGetTempVar
 
@@ -627,8 +638,7 @@ class BlockDecomposerTransformer(
         override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 
-            val oldArguments = mutableListOf(expression.dispatchReceiver, expression.extensionReceiver)
-            for (i in 0 until expression.valueArgumentsCount) oldArguments += expression.getValueArgument(i)
+            val oldArguments = expression.arguments
             val compositeCount = oldArguments.count { it is IrComposite }
 
             if (compositeCount == 0) return expression
@@ -636,12 +646,7 @@ class BlockDecomposerTransformer(
             val newStatements = mutableListOf<IrStatement>()
             val newArguments = mapArguments(oldArguments, compositeCount, newStatements)
 
-            expression.dispatchReceiver = newArguments[0]
-            expression.extensionReceiver = newArguments[1]
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                expression.putValueArgument(i, newArguments[i + 2])
-            }
+            expression.arguments.assignFrom(newArguments)
 
             newStatements += expression
 
@@ -753,7 +758,7 @@ class BlockDecomposerTransformer(
             val newTryResult = wrap(aTry.tryResult, irVar)
             val newCatches = aTry.catches.memoryOptimizedMap {
                 val newCatchBody = wrap(it.result, irVar)
-                IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody)
+                IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody, it.origin)
             }
 
             val newTry = aTry.run { IrTryImpl(startOffset, endOffset, unitType, newTryResult, newCatches, finallyExpression) }

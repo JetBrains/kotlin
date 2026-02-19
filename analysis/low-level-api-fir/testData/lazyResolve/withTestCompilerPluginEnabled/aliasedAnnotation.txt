@@ -1,0 +1,139 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] aliasedAnnotation.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
+    @MyTypeAlias[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
+    @MyTypeAlias[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
+    @MyTypeAlias[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
+    @MyTypeAlias[Unresolved]() public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
+    @MyTypeAlias[Unresolved]() public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(CONTRACTS)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] aliasedAnnotation.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] aliasedAnnotation.kt
+    public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

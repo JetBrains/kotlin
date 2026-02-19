@@ -5,113 +5,124 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import com.google.gson.GsonBuilder
 import org.gradle.internal.hash.FileHasher
-import org.gradle.internal.hash.Hashing.defaultFunction
-import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import java.io.File
-import java.nio.file.Files
+import java.io.StringWriter
+import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir as appendConfigsFromDirInternal
+import org.jetbrains.kotlin.gradle.targets.js.internal.calculateDirHash as calculateDirHashInternal
+import org.jetbrains.kotlin.gradle.targets.js.internal.toHex as toHexInternal
 
+@Deprecated(
+    "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
+@Suppress("DeprecatedCallableAddReplaceWith")
 fun Appendable.appendConfigsFromDir(confDir: File) {
-    val files = confDir.listFiles() ?: return
-
-    files.asSequence()
-        .filter { it.isFile }
-        .filter { it.extension == "js" }
-        .sortedBy { it.name }
-        .forEach {
-            appendLine("// ${it.name}")
-            append(it.readText())
-            appendLine()
-            appendLine()
-        }
+    appendConfigsFromDirInternal(confDir)
 }
 
-fun ByteArray.toHex(): String {
-    val result = CharArray(size * 2) { ' ' }
-    var i = 0
-    forEach {
-        val n = it.toInt()
-        result[i++] = Character.forDigit(n shr 4 and 0xF, 16)
-        result[i++] = Character.forDigit(n and 0xF, 16)
-    }
-    return String(result)
-}
+@Deprecated(
+    "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
+@Suppress("DeprecatedCallableAddReplaceWith")
+fun ByteArray.toHex(): String =
+    toHexInternal()
 
-fun extractWithUpToDate(
-    destination: File,
-    destinationHashFile: File,
-    dist: File,
-    fileHasher: FileHasher,
-    extract: (File, File) -> Unit
-) {
-    var distHash: String? = null
-    val upToDate = destinationHashFile.let { file ->
-        if (file.exists()) {
-            file.useLines { seq ->
-                val list = seq.first().split(" ")
-                list.size == 2 &&
-                        list[0] == fileHasher.calculateDirHash(destination) &&
-                        list[1] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
-            }
-        } else false
-    }
-
-    if (upToDate) {
-        return
-    }
-
-    if (destination.isDirectory) {
-        destination.deleteRecursively()
-    }
-
-    extract(dist, destination.parentFile)
-
-    destinationHashFile.writeText(
-        fileHasher.calculateDirHash(destination)!! +
-                " " +
-                (distHash ?: fileHasher.hash(dist).toByteArray().toHex())
-    )
-}
-
+@Deprecated(
+    "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
+@Suppress("DeprecatedCallableAddReplaceWith")
 fun FileHasher.calculateDirHash(
-    dir: File
-): String? {
-    if (!dir.isDirectory) return null
-
-    val hasher = defaultFunction().newHasher()
-    dir.walk()
-        .forEach { file ->
-            hasher.putString(file.toRelativeString(dir))
-            if (file.isFile && !Files.isSymbolicLink(file.toPath())) {
-                if (!Files.isSymbolicLink(file.toPath())) {
-                    hasher.putHash(hash(file))
-                } else {
-                    val canonicalFile = file.canonicalFile
-                    hasher.putHash(hash(canonicalFile))
-                    hasher.putString(canonicalFile.toRelativeString(dir))
-                }
-            }
-        }
-
-    return hasher.hash().toByteArray().toHex()
-}
+    dir: File,
+): String? =
+    calculateDirHashInternal(dir)
 
 const val JS = "js"
+const val MJS = "mjs"
+const val WASM = "wasm"
 const val JS_MAP = "js.map"
 const val META_JS = "meta.js"
 const val HTML = "html"
 
-internal fun writeWasmUnitTestRunner(compiledFile: File): File {
-    val testRunnerFile = compiledFile.parentFile.resolve("runUnitTests.mjs")
+internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File {
+    val static = workingDir.resolve("static").also {
+        it.mkdirs()
+    }
+
+    val testRunnerFile = static.resolve("runUnitTests.mjs")
     testRunnerFile.writeText(
         """
-        import exports from './${compiledFile.name}';
-        exports.startUnitTests?.();
+        import * as exports from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
+        exports["startUnitTests"]?.();
         """.trimIndent()
     )
     return testRunnerFile
 }
 
-internal fun MutableList<String>.addWasmExperimentalArguments() {
-    add("--experimental-wasm-gc")
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the compilation configuration.
+ *
+ * @param jsVariant The variant to be used if the target is JavaScript.
+ * @param wasmVariant The variant to be used if the target is WebAssembly.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the compilation configuration.
+ */
+internal fun <T> KotlinJsIrCompilation.webTargetVariant(
+    jsVariant: T,
+    wasmVariant: T,
+): T = target.webTargetVariant(jsVariant, wasmVariant)
+
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the compilation configuration.
+ *
+ * @param jsVariant A lambda that returns the JavaScript-specific variant.
+ * @param wasmVariant A lambda that returns the WebAssembly-specific variant.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the compilation configuration.
+ */
+internal fun <T> KotlinJsIrCompilation.webTargetVariant(
+    jsVariant: () -> T,
+    wasmVariant: () -> T,
+): T = target.webTargetVariant(jsVariant, wasmVariant)
+
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the target configuration.
+ *
+ * @param jsVariant A lambda that returns the JavaScript-specific variant.
+ * @param wasmVariant A lambda that returns the WebAssembly-specific variant.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the target configuration.
+ */
+internal fun <T> KotlinJsIrTarget.webTargetVariant(
+    jsVariant: () -> T,
+    wasmVariant: () -> T,
+): T = if (wasmTargetType == null) {
+    jsVariant()
+} else {
+    wasmVariant()
 }
+
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the target configuration.
+ *
+ * @param jsVariant The variant to be used if the target is JavaScript.
+ * @param wasmVariant The variant to be used if the target is WebAssembly.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the target configuration.
+ */
+internal fun <T> KotlinJsIrTarget.webTargetVariant(
+    jsVariant: T,
+    wasmVariant: T,
+): T = if (wasmTargetType == null) {
+    jsVariant
+} else {
+    wasmVariant
+}
+
+/**
+ * Default JSON emitter
+ */
+internal fun json(obj: Any) = StringWriter().also {
+    GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
+}.toString()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <R> materialize(): R = null!!
 
 fun test_1() {
@@ -9,6 +10,9 @@ fun test_1() {
 
 fun test_2() {
     <!UNRESOLVED_REFERENCE!>myRun<!> {
-        materialize()
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+multiplicativeExpression, nullableType, propertyDeclaration, typeParameter */

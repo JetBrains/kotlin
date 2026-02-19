@@ -1,0 +1,5 @@
+KtAnnotationEntry(35,49): '@setparam:Anno'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Anno
+    ]

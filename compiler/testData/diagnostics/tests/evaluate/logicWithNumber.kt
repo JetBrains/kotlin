@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar() {
     false and false
 }
@@ -6,3 +7,5 @@ fun bar() {
 fun foo() {
     42 and <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

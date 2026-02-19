@@ -1,0 +1,10 @@
+Before shortening: com.dependency.Bar
+with default settings:
+[type] com.dependency.Bar -> Bar1
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] com.dependency.Bar -> Bar1
+with SHORTEN_AND_IMPORT:
+[type] com.dependency.Bar -> Bar1
+with SHORTEN_AND_STAR_IMPORT:
+[type] com.dependency.Bar -> Bar1

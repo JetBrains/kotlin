@@ -30,7 +30,8 @@ enum class DependenciesResolverOptionsName(optionName: String? = null) {
     KEY_FILE,
     KEY_PASSPHRASE,
     CLASSIFIER,
-    EXTENSION;
+    EXTENSION,
+    MAVEN_REPOSITORY_ID;
 
     val key = optionName ?: name.lowercase()
 }
@@ -83,3 +84,9 @@ val ExternalDependenciesResolver.Options.classifier
  */
 val ExternalDependenciesResolver.Options.extension
     get() = value(DependenciesResolverOptionsName.EXTENSION)
+
+/**
+ * Id of the repository that is used to match against <server> in maven settings with the same id
+ */
+val ExternalDependenciesResolver.Options.mavenRepoId
+    get() = value(DependenciesResolverOptionsName.MAVEN_REPOSITORY_ID)

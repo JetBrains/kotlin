@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 class File(name: String)
 interface InputStream
@@ -33,3 +34,7 @@ fun test() {
         // All files are closed at the end
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, interfaceDeclaration, lambdaLiteral, localProperty, override, primaryConstructor, propertyDeclaration,
+stringLiteral, tryExpression, typeWithContext */

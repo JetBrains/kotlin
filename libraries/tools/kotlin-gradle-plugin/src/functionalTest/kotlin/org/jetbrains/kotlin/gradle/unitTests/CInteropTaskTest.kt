@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.getFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -48,7 +49,7 @@ class CInteropTaskTest : MultiplatformExtensionTest() {
         project.evaluate()
 
         assertEquals("updated-dependencyFile", cinteropTask.libraries.files.single().name)
-        assertEquals("updated-defFile", cinteropTask.defFile.name)
+        assertEquals("updated-defFile", cinteropTask.definitionFile.getFile().name)
         assertEquals("updated-packageName", cinteropTask.packageName)
         assertEquals(listOf("default-compilerOpts", "updated-compilerOpts"), cinteropTask.compilerOpts)
         assertEquals(listOf("default-linkerOpts", "updated-linkerOpts"), cinteropTask.linkerOpts)

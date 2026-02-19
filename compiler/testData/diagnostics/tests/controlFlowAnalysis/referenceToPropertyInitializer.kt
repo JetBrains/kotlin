@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 package o
 
 class TestFunctionLiteral {
@@ -30,3 +31,6 @@ class TestObjectLiteral {
 class TestOther {
     val x: Int = <!UNINITIALIZED_VARIABLE!>x<!> + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration,
+functionalType, init, integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration */

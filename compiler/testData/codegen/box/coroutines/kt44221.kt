@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // WITH_STDLIB
 
 import kotlin.coroutines.*

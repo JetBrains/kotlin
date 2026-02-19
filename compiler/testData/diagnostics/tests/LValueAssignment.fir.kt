@@ -1,3 +1,6 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
+// RUN_PIPELINE_TILL: FRONTEND
+
 package lvalue_assignment
 
 open class B() {
@@ -45,8 +48,8 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>""<!> = "";
     <!VARIABLE_EXPECTED!>foo()<!> = Unit;
 
-    (<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>) = 34
-    (<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>) = false
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>)<!> = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>)<!> = false
     <!VARIABLE_EXPECTED!>A()<!> = A()
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
@@ -57,19 +60,19 @@ annotation class Ann
 
 fun canBe(i0: Int, j: Int) {
     var i = i0
-    (label@ i) = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ i)<!> = 34
 
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34 //repeat for j
 
     val a = A()
-    (l@ a.a) = 3894
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(l@ a.a)<!> = 3894
 
     @Ann
-    l@ (i) = 123
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (i)<!> = 123
 }
 
 fun canBe2(j: Int) {
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34
 }
 
 class A() {
@@ -79,19 +82,19 @@ class A() {
 class Test() {
     fun testIllegalValues() {
         <!VARIABLE_EXPECTED!>1<!> += 23
-        (l@ <!VARIABLE_EXPECTED!>1<!>) += 23
+        (l@ 1) <!UNRESOLVED_REFERENCE!>+=<!> 23
 
         <!VARIABLE_EXPECTED!>getInt()<!> += 343
-        (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
+        (f@ getInt()) <!UNRESOLVED_REFERENCE!>+=<!> 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        (r@ <!VARIABLE_EXPECTED!>1<!>)--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(r@ <!VARIABLE_EXPECTED!>1<!>)<!>--
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        (m@ <!VARIABLE_EXPECTED!>getInt()<!>)--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(m@ <!VARIABLE_EXPECTED!>getInt()<!>)<!>--
 
         ++<!VARIABLE_EXPECTED!>2<!>
-        --(r@ <!VARIABLE_EXPECTED!>2<!>)
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(r@ <!VARIABLE_EXPECTED!>2<!>)<!>
 
         <!VARIABLE_EXPECTED!>this<!><!UNRESOLVED_REFERENCE!>++<!>
 
@@ -101,7 +104,12 @@ class Test() {
         s += (a@ 2)
 
         @Ann
-        l@ (<!VARIABLE_EXPECTED!>1<!>) = 123
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (<!VARIABLE_EXPECTED!>1<!>)<!> = 123
+    }
+
+    fun testIllegalTypeRef(): Any {
+        <!VARIABLE_EXPECTED!>Char<!>=
+            return ""
     }
 
     fun testIncompleteSyntax() {
@@ -114,24 +122,24 @@ class Test() {
         val b: Int = 34
 
         a += 34
-        (l@ a) += 34
+        (l@ a) <!UNRESOLVED_REFERENCE!>+=<!> 34
 
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        (@Ann l@ a)--
-        (a)++
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(@Ann l@ a)<!>--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)<!>++
         --a
-        ++(@Ann l@ a)
-        --(a)
+        ++<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(@Ann l@ a)<!>
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)<!>
     }
 
     fun testVariables1() {
         val b: Int = 34
 
-        (l@ <!VAL_REASSIGNMENT!>b<!>) += 34
+        (l@ b) <!UNRESOLVED_REFERENCE!>+=<!> 34
         //repeat for b
-        (<!VAL_REASSIGNMENT!>b<!>) += 3
+        (b) <!UNRESOLVED_REFERENCE!>+=<!> 3
     }
 
     fun testArrays(a: Array<Int>, ab: Ab) {
@@ -160,3 +168,7 @@ fun Array<Int>.checkThis() {
 abstract class Ab {
     abstract fun getArray() : Array<Int>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, asExpression, assignment, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, incrementDecrementExpression, inner, integerLiteral, isExpression,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral, superExpression, thisExpression */

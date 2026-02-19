@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -33,8 +34,8 @@ fun test(n: J?, nn: J) {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>n<!>
-    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>platformN<!>
+    J.staticNN <!ASSIGNMENT_TYPE_MISMATCH!>=<!> n
+    J.staticNN <!ASSIGNMENT_TYPE_MISMATCH!>=<!> platformN
     J.staticNN = nn
     J.staticNN = platformNN
     J.staticNN = platformJ
@@ -57,8 +58,8 @@ fun test(n: J?, nn: J) {
     J.staticSet(<!ARGUMENT_TYPE_MISMATCH!>platformN<!>, platformN, platformN)
     J.staticSet(platformJ, platformJ, platformJ)
 
-    J().nn = <!ASSIGNMENT_TYPE_MISMATCH!>n<!>
-    J().nn = <!ASSIGNMENT_TYPE_MISMATCH!>platformN<!>
+    J().nn <!ASSIGNMENT_TYPE_MISMATCH!>=<!> n
+    J().nn <!ASSIGNMENT_TYPE_MISMATCH!>=<!> platformN
     J().nn = nn
     J().nn = platformNN
     J().nn = platformJ
@@ -87,3 +88,6 @@ fun test(n: J?, nn: J) {
     J(<!ARGUMENT_TYPE_MISMATCH!>platformN<!>, platformN, platformN)
     J(platformJ, platformJ, platformJ)
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+localProperty, nullableType, propertyDeclaration */

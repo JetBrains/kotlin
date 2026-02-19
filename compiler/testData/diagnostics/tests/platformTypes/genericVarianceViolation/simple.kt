@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -66,3 +67,6 @@ fun main(
     a.foo1(ll as List<List<Any>>)
 
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, intersectionType, javaFunction, javaType, localProperty,
+propertyDeclaration, smartcast */

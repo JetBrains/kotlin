@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/J.java
 
@@ -16,3 +17,5 @@ import p.*
 fun test() {
     J.c(Comparator { a, b -> b - a })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, javaFunction, lambdaLiteral */

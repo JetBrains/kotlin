@@ -589,12 +589,27 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             outputTarget("(a, b)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
             registerFakeStdlibIntegersDependency("(a, b)")
-            simpleSingleSourceTarget("a", "typealias X = kotlinx.cinterop.UIntVarOf<UInt>")
-            simpleSingleSourceTarget("b", "typealias X = kotlinx.cinterop.ULongVarOf<ULong>")
+
+            simpleSingleSourceTarget(
+                "a",
+                """
+                    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                    typealias X = kotlinx.cinterop.UIntVarOf<UInt>
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b",
+                """
+                    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                    typealias X = kotlinx.cinterop.ULongVarOf<ULong>
+                """.trimIndent()
+            )
         }
 
         result.assertCommonized(
             "(a, b)", """
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 @UnsafeNumber(["a: kotlinx.cinterop.UIntVarOf<kotlin.UInt>", "b: kotlinx.cinterop.ULongVarOf<kotlin.ULong>"])
                 typealias X = kotlinx.cinterop.UIntVarOf<UInt>
             """.trimIndent()
@@ -606,12 +621,26 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             outputTarget("(a, b)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
             registerFakeStdlibIntegersDependency("(a, b)")
-            simpleSingleSourceTarget("a", "typealias X = kotlinx.cinterop.IntVarOf<Int>")
-            simpleSingleSourceTarget("b", "typealias X = kotlinx.cinterop.LongVarOf<Long>")
+
+            simpleSingleSourceTarget(
+                "a",
+                """
+                    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                    typealias X = kotlinx.cinterop.IntVarOf<Int>
+                """.trimIndent()
+            )
+            simpleSingleSourceTarget(
+                "b",
+                """
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                typealias X = kotlinx.cinterop.LongVarOf<Long>
+                """.trimIndent()
+            )
         }
 
         result.assertCommonized(
             "(a, b)", """
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 @UnsafeNumber(["a: kotlinx.cinterop.IntVarOf<kotlin.Int>", "b: kotlinx.cinterop.LongVarOf<kotlin.Long>"])
                 typealias X = kotlinx.cinterop.IntVarOf<Int>
             """.trimIndent()
@@ -698,6 +727,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             "(a, b)", """
                 @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias X = Int
+                @OptIn(UnsafeNumber::class)
                 expect fun x(p: X)
             """.trimIndent()
         )
@@ -914,6 +944,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             
             @UnsafeNumber(["a: Box<kotlin.Int>", "b: Box<kotlin.Long>"])
             expect fun x(): Box<TA>
+            @OptIn(UnsafeNumber::class)
             expect fun y(a: TA)
         """.trimIndent()
         )
@@ -938,6 +969,42 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             @UnsafeNumber(["a: Box<kotlin.Int>", "b: Box<kotlin.Long>", "c: Box<kotlin.Int>", "d: Box<kotlin.Long>"])
             expect fun x(): Box<Int>
         """.trimIndent()
+        )
+    }
+
+    fun `test KT-64376 - UnsafeNumber annotation - isn't applied to a commonization type that isn't a number - when commonizing hierarchically`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(a, b, c)")
+            setting(OptimisticNumberCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(a, b)", "(a, b, c)")
+            simpleSingleSourceTarget("a", """
+                typealias X = Short
+                fun foo(x: X): X = x
+            """.trimIndent())
+            simpleSingleSourceTarget("b", """
+                typealias X = Int
+                fun foo(x: X): X = x
+            """.trimIndent())
+            simpleSingleSourceTarget("c", """
+                typealias X = Any
+                fun foo(x: X): X = x
+            """.trimIndent())
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
+                typealias X = Short
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
+                expect fun foo(x: X): X
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(a, b, c)", """
+                expect class X
+                expect fun foo(x: X): X
+            """.trimIndent()
         )
     }
 }

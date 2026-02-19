@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 const val myPi = kotlin.math.PI
 
@@ -8,3 +9,5 @@ fun f() {}
 
 @Anno(myPi)
 fun g() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, functionDeclaration, primaryConstructor, propertyDeclaration */

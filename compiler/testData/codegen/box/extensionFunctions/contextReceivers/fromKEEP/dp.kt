@@ -1,5 +1,7 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // TARGET_BACKEND: JVM_IR
+// IGNORE_HEADER_MODE: JVM_IR
 // WITH_STDLIB
 
 class View {

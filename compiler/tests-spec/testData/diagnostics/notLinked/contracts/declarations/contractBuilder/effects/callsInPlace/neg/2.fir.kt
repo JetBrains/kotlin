@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -13,18 +13,18 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
-    contract {
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-    }
+    }<!>
     return block()
 }
 
 // TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
-    contract {
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-    }
+    }<!>
     return block()
 }

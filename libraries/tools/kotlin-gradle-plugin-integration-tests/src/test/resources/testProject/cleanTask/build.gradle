@@ -1,20 +1,20 @@
-import java.io.File
-import java.time.*
-import java.util.concurrent.*
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 
 plugins {
-    id "org.jetbrains.kotlin.js"
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
-String nodeJsVersion
 String nodeJsLocation
 
 tasks.create("checkDownloadedFolder") {
     description = "updated last modified date for downloaded folder"
     dependsOn "build"
+    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check downloaded folder existance")
-        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
             throw new InvalidUserDataException("Downloaded folder was not found")
         }
@@ -31,9 +31,10 @@ tasks.create("checkDownloadedFolder") {
 tasks.create("checkIfLastModifiedNotNow") {
     description = "check if last modified is not current date now"
     dependsOn "build"
+    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check downloaded folder existance")
-        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
             throw new InvalidUserDataException("Downloaded folder was not found")
         }
@@ -52,9 +53,10 @@ tasks.create("checkIfLastModifiedNotNow") {
 
 tasks.create("testCleanTask") {
     description = "check clean task behaviour"
+    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check deletion of downloaded folder")
-        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (downloadedFolder.exists()) {
             throw new InvalidUserDataException("Folder was not deleted")
         }
@@ -131,14 +133,10 @@ class NodeJsPlatform {
     }()
 }
 
-afterEvaluate {
-    project.kotlinNodeJs.nodeVersion = "14.16.0"
-
-    project.tasks.nodeKotlinClean.dependsOn(checkDownloadedFolder)
-    project.tasks.testCleanTask.dependsOn(nodeKotlinClean)
-
-    nodeJsVersion = project.extensions.getByName("kotlinNodeJs").nodeVersion
-    println("Node js version: $nodeJsVersion")
+project.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin) {
+    def spec = project.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec)
+    def nodeJsVersion = "18.19.1"
+    spec.version = nodeJsVersion
 
     def nodeJsPlatform = new NodeJsPlatform()
 
@@ -149,8 +147,21 @@ afterEvaluate {
     println("Use $nodeJsLocation location")
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+afterEvaluate {
+    project.tasks.nodeKotlinClean.dependsOn(checkDownloadedFolder)
+    project.tasks.testCleanTask.dependsOn(nodeKotlinClean)
 }
 
-kotlin.target.browser {}
+kotlin {
+    js {
+        browser {}
+    }
+
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+            }
+        }
+    }
+}

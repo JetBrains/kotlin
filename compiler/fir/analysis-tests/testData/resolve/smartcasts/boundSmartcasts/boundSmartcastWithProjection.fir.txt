@@ -10,7 +10,7 @@ FILE: boundSmartcastWithProjection.kt
     }
     public final fun test1(x: R|Inv<out kotlin/String?>|): R|kotlin/Unit| {
         lval y: R|kotlin/String?| = R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/String?)|>|
-        when (R|<local>/y|) {
+        when (lval <when-subject>: R|kotlin/String?| = R|<local>/y|) {
             ($subj$ is R|kotlin/String|) ->  {
                 R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/String?)|>|.R|kotlin/String.length|
             }
@@ -19,7 +19,7 @@ FILE: boundSmartcastWithProjection.kt
     }
     public final fun test2(x: R|Inv<out kotlin/Any?>|): R|kotlin/Unit| {
         lval y: R|kotlin/Any?| = R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/Any?)|>|
-        when (R|<local>/y|) {
+        when (lval <when-subject>: R|kotlin/Any?| = R|<local>/y|) {
             ($subj$ is R|kotlin/String|) ->  {
                 R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/Any?)|>|.R|kotlin/String.length|
             }

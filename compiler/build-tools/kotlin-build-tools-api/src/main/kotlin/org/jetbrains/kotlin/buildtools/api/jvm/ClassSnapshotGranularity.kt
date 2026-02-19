@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm
 
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+
+
 /**
  * The granularity of a [ClassSnapshot].
  *

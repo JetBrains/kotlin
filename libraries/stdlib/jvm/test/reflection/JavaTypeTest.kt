@@ -16,7 +16,7 @@ import kotlin.test.fail
 
 @Suppress(
     "unused", "UNUSED_VARIABLE", "ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "RedundantInnerClassModifier", "NAME_SHADOWING",
-    "FINAL_UPPER_BOUND"
+    "FINAL_UPPER_BOUND", "SameParameterValue",
 )
 class JavaTypeTest {
     @Test
@@ -137,11 +137,9 @@ class JavaTypeTest {
         parameterized(javaTypeOf<Set<U1>>()) { type ->
             typeVariable(type.actualTypeArguments.single()) { tv ->
                 assertEquals("U1", tv.name)
-                assertEquals("U1", tv.typeName)
                 assertEquals(listOf(Any::class.java), tv.bounds.toList())
-
-                // assertEquals(m, tv.genericDeclaration)
-                // assertEqualsAndHashCode(tvs[0], tv)
+                assertEquals(m, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[0], tv)
             }
         }
         lateinit var u2: TypeVariable<*>
@@ -156,26 +154,100 @@ class JavaTypeTest {
                     star(comparable.actualTypeArguments.single())
                 }
                 u2 = tv
-
-                // assertEquals(m, tv.genericDeclaration)
-                // assertEqualsAndHashCode(tvs[1], tv)
+                assertEquals(m, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[1], tv)
             }
         }
         parameterized(javaTypeOf<Set<U3>>()) { type ->
             typeVariable(type.actualTypeArguments.single()) { tv ->
                 assertEquals("U3", tv.name)
-                // assertEquals(listOf(u2), tv.bounds.toList())
-
-                // assertEquals(m, tv.genericDeclaration)
-                // assertEqualsAndHashCode(tvs[2], tv)
+                assertEquals(listOf(u2), tv.bounds.toList())
+                assertEquals(m, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[2], tv)
             }
         }
+    }
+
+    @Test
+    @JvmName("functionWithJvmNameTypeVariable_renamed")
+    fun <E1 : Cloneable> functionWithJvmNameTypeVariable() {
+        val m = this::class.java.declaredMethods.single { it.name == "functionWithJvmNameTypeVariable_renamed" }
+        val tvs = m.typeParameters
+        parameterized(javaTypeOf<Set<E1>>()) { type ->
+            typeVariable(type.actualTypeArguments.single()) { tv ->
+                assertEquals("E1", tv.name)
+                assertEquals(listOf(Cloneable::class.java), tv.bounds.toList())
+                assertEquals(m, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[0], tv)
+            }
+        }
+    }
+
+    @Suppress("UnusedReceiverParameter") // KTIJ-36293
+    private val <P1, P2 : List<P1>> Map<P1, P2>.genericProperty: Unit
+        get() {
+            val m = this@JavaTypeTest::class.java.declaredMethods.single { it.name == "getGenericProperty" }
+            val tvs = m.typeParameters
+            parameterized(javaTypeOf<Set<P1>>()) { type ->
+                typeVariable(type.actualTypeArguments.single()) { tv ->
+                    assertEquals("P1", tv.name)
+                    assertEquals(listOf(Any::class.java), tv.bounds.toList())
+                    assertEquals(m, tv.genericDeclaration)
+                    assertEqualsAndHashCode(tvs[0], tv)
+                }
+            }
+            parameterized(javaTypeOf<Set<P2>>()) { type ->
+                typeVariable(type.actualTypeArguments.single()) { tv ->
+                    assertEquals("P2", tv.name)
+                    parameterized(tv.bounds.single()) { list ->
+                        assertEquals(List::class.java, list.rawType)
+                        wildcardExtends(list.actualTypeArguments.single()) { bound ->
+                            typeVariable(bound) { tvv ->
+                                assertEquals("P1", tvv.name)
+                            }
+                        }
+                    }
+                    assertEquals(m, tv.genericDeclaration)
+                    assertEqualsAndHashCode(tvs[1], tv)
+                }
+            }
+        }
+
+    @Test
+    fun propertyTypeVariables() {
+        emptyMap<String, List<String>>().genericProperty
     }
 
     private inner class T1<V1, V2, V3 : V2> where V2 : Number, V2 : Comparable<*> {
         fun setOfV1(): Type = javaTypeOf<Set<V1>>()
         fun setOfV2(): Type = javaTypeOf<Set<V2>>()
         fun setOfV3(): Type = javaTypeOf<Set<V3>>()
+    }
+
+    // Test different primitive and array types to check that signature mapping (to find the type parameter's container) works correctly.
+    private fun <F> f(
+        i: Int, j: Long, s: Short, b: Byte, z: Boolean, c: Char, f: Float, d: Double,
+        ia: IntArray, ja: LongArray, sa: ShortArray, ba: ByteArray, za: BooleanArray, ca: CharArray, fa: FloatArray, da: DoubleArray,
+        ai: Array<Int>, aai: Array<Array<Int>>, aia: Array<IntArray>, an: Array<Number>,
+    ): Type = javaTypeOf<Set<F>>()
+
+    @Test
+    fun functionTypeVariablesWithDifferentTypesInSignature() {
+        val m = this::class.java.declaredMethods.single { it.name == "f" }
+        val tvs = m.typeParameters
+        val type = f<Any>(
+            0, 0, 0, 0, false, '0', 0f, 0.0,
+            intArrayOf(), longArrayOf(), shortArrayOf(), byteArrayOf(), booleanArrayOf(), charArrayOf(), floatArrayOf(), doubleArrayOf(),
+            emptyArray(), emptyArray(), emptyArray(), emptyArray(),
+        )
+        parameterized(type) { type ->
+            typeVariable(type.actualTypeArguments.single()) { tv ->
+                assertEquals("F", tv.name)
+                assertEquals(listOf(Any::class.java), tv.bounds.toList())
+                assertEquals(m, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[0], tv)
+            }
+        }
     }
 
     @Test
@@ -187,9 +259,8 @@ class JavaTypeTest {
                 assertEquals("V1", tv.name)
                 assertEquals(listOf(Any::class.java), tv.bounds.toList())
                 assertEquals("V1", tv.typeName)
-
-                // assertEquals(T1::class.java, tv.genericDeclaration)
-                // assertEqualsAndHashCode(tvs[0], tv)
+                assertEquals(T1::class.java, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[0], tv)
             }
         }
         lateinit var v2: TypeVariable<*>
@@ -204,18 +275,16 @@ class JavaTypeTest {
                     star(comparable.actualTypeArguments.single())
                 }
                 v2 = tv
-
-                // assertEquals(T1::class.java, tv.genericDeclaration)
-                // assertEqualsAndHashCode(tvs[1], tv)
+                assertEquals(T1::class.java, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[1], tv)
             }
         }
         parameterized(t1.setOfV3()) { type ->
             typeVariable(type.actualTypeArguments.single()) { tv ->
                 assertEquals("V3", tv.name)
-                // assertEquals(listOf(v2), tv.bounds.toList())
-
-                // assertEquals(T1::class.java, tv.genericDeclaration)
-                // assertEqualsAndHashCode(tvs[2], tv)
+                assertEquals(listOf(v2), tv.bounds.toList())
+                assertEquals(T1::class.java, tv.genericDeclaration)
+                assertEqualsAndHashCode(tvs[2], tv)
             }
         }
     }

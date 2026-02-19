@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun box(): String = "OK"
 
 fun main(args: Array<String>) {
@@ -5,3 +6,5 @@ fun main(args: Array<String>) {
         throw Exception("Hello")
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, stringLiteral */

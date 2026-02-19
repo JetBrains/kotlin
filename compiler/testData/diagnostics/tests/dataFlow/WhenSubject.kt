@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Expr
 class BinOp(val operator : String) : Expr
 
@@ -8,3 +9,6 @@ fun test(e : Expr) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+isExpression, primaryConstructor, propertyDeclaration, whenExpression, whenWithSubject */

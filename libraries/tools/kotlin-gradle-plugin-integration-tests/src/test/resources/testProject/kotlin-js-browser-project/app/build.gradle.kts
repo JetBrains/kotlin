@@ -1,16 +1,7 @@
-import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
-import javax.inject.Inject
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 plugins {
-    kotlin("js")
-}
-
-dependencies {
-    implementation(kotlin("stdlib-js"))
-    implementation(project(":lib"))
-    implementation(npm(projectDir.resolve("src/main/css")))
-    testImplementation(kotlin("test-js"))
+    kotlin("multiplatform")
 }
 
 abstract class CustomWebpackRule
@@ -23,7 +14,7 @@ constructor(name: String) : org.jetbrains.kotlin.gradle.targets.js.webpack.Kotli
 }
 
 kotlin {
-    target {
+    js {
         browser {
             webpackTask {
                 cssSupport {
@@ -56,25 +47,47 @@ kotlin {
                 customField("customField5", "@as/${nameOfModule}")
             }
         }
+
+        val mainCompilation = compilations["main"]
+        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+            tasks.register<Exec>("runWebpackResult") {
+                val webpackTask = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("jsBrowserProductionWebpack")
+                dependsOn(webpackTask)
+
+                val workDir = webpackTask.flatMap { it.outputDirectory.asFile }
+
+                val nodeJsExecutable = rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>()
+                    .executable
+                val projectName = project.name
+                doFirst {
+                    this as Exec
+                    this.executable(nodeJsExecutable.get())
+                    this.setArgs(listOf("./$projectName.js"))
+                    workingDir(workDir)
+                }
+            }
+        }
     }
-}
 
-rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
-    val kotlinNodeJs = rootProject.extensions.getByType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+                implementation(project(":lib"))
+                implementation(npm(projectDir.resolve("src/jsMain/css")))
+            }
+        }
 
-    tasks.register<Exec>("runWebpackResult") {
-        val webpackTask = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserProductionWebpack")
-        dependsOn(webpackTask)
-
-        executable(kotlinNodeJs.requireConfigured().nodeExecutable)
-
-        workingDir(webpackTask.flatMap { it.outputDirectory.asFile })
-        args("./${project.name}.js")
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>().configureEach {
-    kotlinOptions {
-        moduleKind = "es"
+    compilerOptions {
+        moduleKind.set(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_ES)
     }
 }

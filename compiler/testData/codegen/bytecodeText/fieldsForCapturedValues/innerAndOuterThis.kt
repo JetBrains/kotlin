@@ -16,6 +16,4 @@ class Outer {
 }
 
 // 1 final synthetic LOuter\$Inner; this\$0
-
-// JVM_IR_TEMPLATES
 // 1 final synthetic LOuter; this\$1

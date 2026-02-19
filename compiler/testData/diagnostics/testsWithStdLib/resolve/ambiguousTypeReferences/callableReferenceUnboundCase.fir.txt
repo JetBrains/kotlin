@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/reflect/KProperty1<kotlin/collections/HashMap<kotlin/String, kotlin/String>, kotlin/Int>| {
+        ^test Q|kotlin/collections/HashMap|<R|kotlin/String|, R|kotlin/String|>::R|SubstitutionOverride<java/util/HashMap.size: R|kotlin/Int|>|
+    }

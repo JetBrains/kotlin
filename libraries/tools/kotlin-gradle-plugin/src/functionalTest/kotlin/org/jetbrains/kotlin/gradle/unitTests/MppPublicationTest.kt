@@ -16,20 +16,20 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.kotlin.dsl.apply
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
-import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
+import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
 class MppPublicationTest {
 
-    private val project = ProjectBuilder.builder().build().also {
-        addBuildEventsListenerRegistryMock(it)
-        disableLegacyWarning(it)
-    } as ProjectInternal
+    private val project = ProjectBuilder.builder().build() as ProjectInternal
 
     init {
         project.plugins.apply("kotlin-multiplatform")
@@ -94,7 +94,8 @@ class MppPublicationTest {
 
         val extraExpectedAttributes = mapOf(               // target disambiguation attribute
             "org.jetbrains.kotlin.platform.type" to "jvm", // is set by default by kgp, when it sets usage as `java-runtime-jars`
-            "org.gradle.libraryelements" to "jar"          // see [KotlinUsages.producerApiUsage]
+            "org.gradle.libraryelements" to "jar",         // see [KotlinUsages.producerApiUsage]
+            "org.gradle.jvm.environment" to "standard-jvm"
         )
 
         val expectedAttributes = javaSourcesElementsAttributes.toMapOfStrings() + extraExpectedAttributes
@@ -109,6 +110,7 @@ class MppPublicationTest {
             targets.all { target -> target.attributes { attribute(userAttribute, target.name) } }
             js(IR)
             linuxX64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
         }
 
@@ -227,6 +229,79 @@ class MppPublicationTest {
         }
     }
 
+    @Test
+    fun `test creation of default publications can be disabled`() {
+        val project = buildProject { }
+        project.propertiesExtension.set("kotlin.internal.mpp.createDefaultMultiplatformPublications", "false")
+        project.plugins.apply("kotlin-multiplatform")
+        project.plugins.apply("maven-publish")
+
+        project.kotlin {
+            jvm()
+            linuxArm64()
+        }
+
+        project.evaluate()
+
+        val publishing = project.extensions.getByType(PublishingExtension::class.java)
+        val actualPublications = publishing.publications.names
+        if (actualPublications.isNotEmpty()) fail("Expected no default publications to be created")
+
+        // Even though creation of default publications are disabled
+        // it is still important that components and everything else needed for publishing are still present
+        val components = project.components.names
+        assertEquals(setOf("kotlin", "adhocKotlin"), components)
+
+        val expectedSourcesJarTasks = setOf("sourcesJar", "metadataSourcesJar", "jvmSourcesJar", "linuxArm64SourcesJar")
+        val missingSourcesJarTasks = expectedSourcesJarTasks - project.tasks.names
+        if (missingSourcesJarTasks.isNotEmpty()) fail("Following sources jar tasks are not created: $missingSourcesJarTasks")
+
+        val expectedConfigurations = setOf(
+            "jvmApiElements",
+            "jvmApiElements-published",
+            "jvmRuntimeElements",
+            "jvmRuntimeElements-published",
+            "jvmSourcesElements",
+            "jvmSourcesElements-published",
+            "metadataApiElements",
+        )
+        val missingConfigurations = expectedConfigurations - project.configurations.names
+        if (missingConfigurations.isNotEmpty()) fail("Following configurations are not created: $missingConfigurations")
+    }
+
+    @Test
+    @OptIn(ExperimentalWasmDsl::class)
+    fun `test MavenPublish applied before KotlinMultiplatform KT-28520`() {
+        val project = buildProject {
+
+            apply<MavenPublishPlugin>()
+
+            assertTrue(pluginManager.hasPlugin("maven-publish"), "Expected project has MavenPublish plugin")
+            assertFalse(project.pluginManager.hasPlugin("kotlin-multiplatform"), "Expected project does not have KGP")
+
+            applyMultiplatformPlugin()
+
+            assertTrue(project.pluginManager.hasPlugin("kotlin-multiplatform"), "Expected project has KGP")
+
+            kotlin {
+                jvm()
+
+                linuxX64()
+                mingwX64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                macosX64()
+
+                js { browser() }
+
+                wasmJs { browser() }
+                wasmWasi { nodejs() }
+            }
+        }.evaluate()
+
+        assertTrue(project.pluginManager.hasPlugin("maven-publish"), "Expected evaluated project has MavenPublish plugin")
+        assertTrue(project.pluginManager.hasPlugin("kotlin-multiplatform"), "Expected evaluated project has KGP")
+    }
+
     private fun SoftwareComponent.attributesOfUsageContext(usageContextName: String): AttributeContainer {
         this as SoftwareComponentInternal
         return usages.first { it.name == usageContextName }.attributes
@@ -234,5 +309,4 @@ class MppPublicationTest {
 
     private fun AttributeContainer.toMapOfStrings(): Map<String, String> = keySet()
         .associate { key -> key.name to getAttribute(key).toString() }
-
 }

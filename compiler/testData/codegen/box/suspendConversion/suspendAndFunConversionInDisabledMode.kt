@@ -1,6 +1,5 @@
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
-// IGNORE_BACKEND: JVM
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface Runnable {
     fun run()

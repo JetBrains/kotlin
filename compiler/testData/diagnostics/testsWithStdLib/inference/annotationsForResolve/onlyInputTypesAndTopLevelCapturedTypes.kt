@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class Inv<T>
 
@@ -70,3 +71,8 @@ class Test5 {
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, capturedType, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, integerLiteral, intersectionType,
+localProperty, nullableType, outProjection, propertyDeclaration, safeCall, setter, smartcast, starProjection,
+stringLiteral, typeConstraint, typeParameter */

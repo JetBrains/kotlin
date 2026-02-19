@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class My(val v: Int) {
     // Ok: setter is just private
@@ -29,3 +30,6 @@ class My(val v: Int) {
         u = 3
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, multiplicativeExpression,
+primaryConstructor, propertyDeclaration, secondaryConstructor, setter */

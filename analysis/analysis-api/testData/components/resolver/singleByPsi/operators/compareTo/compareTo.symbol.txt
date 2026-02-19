@@ -1,0 +1,2 @@
+KtNameReferenceExpression(114,123): 'compareTo'
+  null

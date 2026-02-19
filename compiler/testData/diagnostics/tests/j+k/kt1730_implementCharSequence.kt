@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-1730 Method which has been implemented by Java is recognized to be abstract.
 
@@ -23,3 +24,5 @@ public class C implements java.lang.CharSequence {
 
 // FILE: T.kt
 class T : C()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * There is some complex rules for conversions from java method `get...` to property
  *   (see `JavaSyntheticPropertiesScope`), but they are not supported in FIR
@@ -80,3 +81,6 @@ fun test_4(foo: Foo) {
 fun test_5(x: D) {
     x.isGood
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,
+localProperty, propertyDeclaration */

@@ -1,0 +1,6 @@
+FILE: functionWithAnnotations.kt
+    public? final? fun foo(@ParameterAnnotation(String(param)) param1: @ParameterTypeAnnotation(<strcat>(prop#)) List<@NestedParameterTypeAnnotation(<strcat>(String(nested ), prop#)) Collection<@NestedNestedParameterTypeAnnotation(<strcat>(String(nested nested ), prop#)) String>> = @DefaultValueAnnotation() fun <anonymous>(i: @Anno(<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno(<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
+    }
+    ): <implicit> {
+        ^foo param1#
+    }

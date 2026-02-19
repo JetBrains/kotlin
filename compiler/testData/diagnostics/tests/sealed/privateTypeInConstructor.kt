@@ -1,5 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // ISSUE: KT-45043, KT-51229
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 
 private class Bar
 
@@ -22,3 +25,6 @@ internal sealed class A {
         constructor() : this(null)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, nestedClass, nullableType, override, primaryConstructor,
+propertyDeclaration, sealed, secondaryConstructor */

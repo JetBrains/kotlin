@@ -29,10 +29,6 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         }
     }
 
-    override fun CompanionObjectBuilder.modifyGeneratedCompanionObject(thisKind: PrimitiveType) {
-        isPublic = true
-    }
-
     override fun primitiveConstants(type: PrimitiveType): List<Any> {
         return when (type) {
             PrimitiveType.FLOAT -> listOf(
@@ -51,7 +47,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     }
 
     override fun MethodBuilder.modifyGeneratedCompareTo(thisKind: PrimitiveType, otherKind: PrimitiveType) {
-        if (thisKind != otherKind || thisKind !in PrimitiveType.floatingPoint) {
+        if (thisKind != otherKind) {
             modifySignature { isInline = true }
         }
 
@@ -67,15 +63,14 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
             
                     // Canonical NaN bit representation is higher than any other value's bit representation
                     return thisBits.compareTo(otherBits)
-                """.trimIndent().addAsMultiLineBody()
+                """.trimIndent().setAsBlockBody()
             } else {
                 val body = when (thisKind) {
-                    PrimitiveType.BYTE -> "wasm_i32_compareTo(this.toInt(), $parameterName.toInt())"
-                    PrimitiveType.SHORT -> "this.toInt().compareTo($parameterName.toInt())"
+                    PrimitiveType.BYTE, PrimitiveType.SHORT -> "wasm_i32_compareTo(this.toInt(), $parameterName.toInt())"
                     PrimitiveType.INT, PrimitiveType.LONG -> "wasm_${thisKind.prefixLowercase}_compareTo(this, $parameterName)"
                     else -> throw IllegalArgumentException("Unsupported type $thisKind for generation `compareTo` method")
                 }
-                body.addAsSingleLineBody(bodyOnNewLine = true)
+                body.setAsExpressionBody()
             }
             return
         }
@@ -85,29 +80,45 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         when {
             thisKind == PrimitiveType.FLOAT && otherKind == PrimitiveType.DOUBLE -> "-${otherCasted}.compareTo(this)"
             else -> "$thisCasted.compareTo($otherCasted)"
-        }.addAsSingleLineBody(bodyOnNewLine = true)
+        }.setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedBinaryOperation(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val sign = operatorSign(methodName)
         if (thisKind != PrimitiveType.BYTE && thisKind != PrimitiveType.SHORT && thisKind == otherKind) {
             val type = thisKind.capitalized
-
             when (methodName) {
                 "div" -> {
                     val oneConst = if (thisKind == PrimitiveType.LONG) "-1L" else "-1"
+                    val zeroConst = if (thisKind == PrimitiveType.LONG) "0L" else "0"
                     when (thisKind) {
-                        PrimitiveType.INT, PrimitiveType.LONG -> "if (this == $type.MIN_VALUE && $parameterName == $oneConst) $type.MIN_VALUE " +
-                                "else wasm_${thisKind.prefixLowercase}_div_s(this, $parameterName)"
+                        PrimitiveType.INT, PrimitiveType.LONG -> {
+
+                            "when ($parameterName) {\n" +
+                                    "        $oneConst -> if (this == $type.MIN_VALUE) $type.MIN_VALUE else wasm_${thisKind.prefixLowercase}_div_s(this, $parameterName)\n" +
+                                    "        $zeroConst -> throw ArithmeticException(\"Division by zero\")\n" +
+                                    "        else -> wasm_${thisKind.prefixLowercase}_div_s(this, $parameterName)\n" +
+                                    "    }"
+                        }
                         else -> return implementAsIntrinsic(thisKind, methodName)
                     }
                 }
                 "rem" -> when (thisKind) {
-                    in PrimitiveType.floatingPoint -> "this - (wasm_${thisKind.prefixLowercase}_truncate(this / $parameterName) * $parameterName)"
+                    PrimitiveType.DOUBLE ->
+                        "kotlin.math.fdlibm.__ieee754_fmod(this, $parameterName)"
+                    PrimitiveType.FLOAT ->
+                        "kotlin.math.fdlibm.__ieee754_fmodf(this, $parameterName)"
+                    PrimitiveType.INT, PrimitiveType.LONG -> {
+                        val zeroConst = if (thisKind == PrimitiveType.LONG) "0L" else "0"
+                        "when (other) {\n" +
+                                "        $zeroConst -> throw ArithmeticException(\"Division by zero\")\n" +
+                                "        else -> wasm_${thisKind.prefixLowercase}_rem_s(this, $parameterName)\n" +
+                                "}"
+                    }
                     else -> return implementAsIntrinsic(thisKind, methodName)
                 }
                 else -> return implementAsIntrinsic(thisKind, methodName)
-            }.addAsSingleLineBody(bodyOnNewLine = true)
+            }.setAsExpressionBody()
             return
         }
 
@@ -115,12 +126,12 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         val returnTypeAsPrimitive = PrimitiveType.valueOf(returnType.uppercase())
         val thisCasted = "this" + thisKind.castToIfNecessary(returnTypeAsPrimitive)
         val otherCasted = parameterName + parameterType.toPrimitiveType().castToIfNecessary(returnTypeAsPrimitive)
-        "$thisCasted $sign $otherCasted".addAsSingleLineBody(bodyOnNewLine = true)
+        "$thisCasted $sign $otherCasted".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedUnaryOperation(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.INT && methodName == "dec") {
-            additionalDoc = "TODO: Fix test compiler/testData/codegen/box/functions/invoke/invoke.kt with inline dec"
+            additionalComments = "TODO: Fix test compiler/testData/codegen/box/functions/invoke/invoke.kt with inline dec"
         } else {
             modifySignature { isInline = true }
         }
@@ -128,11 +139,11 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         if (methodName in setOf("inc", "dec")) {
             val sign = if (methodName == "inc") "+" else "-"
             when (thisKind) {
-                PrimitiveType.BYTE, PrimitiveType.SHORT -> "(this $sign 1).to${thisKind.capitalized}()".addAsSingleLineBody(bodyOnNewLine = true)
-                PrimitiveType.INT -> "this $sign 1".addAsSingleLineBody(bodyOnNewLine = true)
-                PrimitiveType.LONG -> "this $sign 1L".addAsSingleLineBody(bodyOnNewLine = true)
-                PrimitiveType.FLOAT -> "this $sign 1.0f".addAsSingleLineBody(bodyOnNewLine = true)
-                PrimitiveType.DOUBLE -> "this $sign 1.0".addAsSingleLineBody(bodyOnNewLine = true)
+                PrimitiveType.BYTE, PrimitiveType.SHORT -> "(this $sign 1).to${thisKind.capitalized}()".setAsExpressionBody()
+                PrimitiveType.INT -> "this $sign 1".setAsExpressionBody()
+                PrimitiveType.LONG -> "this $sign 1L".setAsExpressionBody()
+                PrimitiveType.FLOAT -> "this $sign 1.0f".setAsExpressionBody()
+                PrimitiveType.DOUBLE -> "this $sign 1.0".setAsExpressionBody()
                 else -> Unit
             }
         }
@@ -151,7 +162,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                     else -> "-"
                 }
             } else ""
-            "$sign$thisCasted".addAsSingleLineBody(bodyOnNewLine = true)
+            "$sign$thisCasted".setAsExpressionBody()
         }
     }
 
@@ -160,7 +171,8 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
             implementAsIntrinsic(thisKind, methodName)
         } else if (thisKind == PrimitiveType.LONG) {
             modifySignature { isInline = true }
-            "wasm_i64_${methodName.toWasmOperator().lowercase()}(this, ${parameterName}.toLong())".addAsSingleLineBody(bodyOnNewLine = true)
+            annotations += "kotlin.internal.DoNotInlineOnFirstStage"
+            "wasm_i64_${methodName.toWasmOperator().lowercase()}(this, ${parameterName}.toLong())".setAsExpressionBody()
         }
     }
 
@@ -168,7 +180,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         if (methodName == "inv") {
             modifySignature { isInline = true }
             val oneConst = if (thisKind == PrimitiveType.LONG) "-1L" else "-1"
-            "this.xor($oneConst)".addAsSingleLineBody(bodyOnNewLine = true)
+            "this.xor($oneConst)".setAsExpressionBody()
             return
         }
 
@@ -178,7 +190,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         if (otherKind == thisKind) {
             modifySignature { isInline = true }
-            "this".addAsSingleLineBody(bodyOnNewLine = true)
+            "this".setAsExpressionBody()
             return
         }
 
@@ -221,7 +233,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 else -> throw IllegalArgumentException("Unsupported type $otherKind for generation conversion method from type $thisKind")
             }
             else -> throw IllegalArgumentException("Unsupported type $thisKind to generate conversion methods")
-        }.addAsSingleLineBody(bodyOnNewLine = false)
+        }.setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {
@@ -232,15 +244,15 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 "wasm_i32_eq(this${thisKind.castToIfNecessary(PrimitiveType.INT)}, $parameterName${thisKind.castToIfNecessary(PrimitiveType.INT)})"
             }
         }
-        "$parameterName is ${thisKind.capitalized} && $additionalCheck".addAsSingleLineBody(bodyOnNewLine = true)
+        "$parameterName is ${thisKind.capitalized} && $additionalCheck".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {
         when (thisKind) {
-            in PrimitiveType.floatingPoint -> "dtoa(this${thisKind.castToIfNecessary(PrimitiveType.DOUBLE)})"
-            PrimitiveType.INT, PrimitiveType.LONG -> "itoa${thisKind.bitSize}(this, 10)"
+            in PrimitiveType.floatingPoint -> "dtoa(this${thisKind.castToIfNecessary(PrimitiveType.DOUBLE)}, isSinglePrecision = ${thisKind == PrimitiveType.FLOAT})"
+            PrimitiveType.INT, PrimitiveType.LONG -> "itoa${thisKind.bitSize}(this)"
             else -> "this.toInt().toString()"
-        }.addAsSingleLineBody(bodyOnNewLine = true)
+        }.setAsExpressionBody()
     }
 
     override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
@@ -254,33 +266,16 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         }
     }
 
-    private fun ClassBuilder.generateHashCode(thisKind: PrimitiveType) {
-        method {
-            signature {
-                isOverride = true
-                methodName = "hashCode"
-                returnType = PrimitiveType.INT.capitalized
-            }
-
-            when (thisKind) {
-                PrimitiveType.LONG -> "((this ushr 32) xor this).toInt()"
-                PrimitiveType.FLOAT -> "toBits()"
-                PrimitiveType.DOUBLE -> "toBits().hashCode()"
-                else -> "this${thisKind.castToIfNecessary(PrimitiveType.INT)}"
-            }.addAsSingleLineBody()
-        }
-    }
-
     private fun ClassBuilder.generateReinterpret(otherKind: PrimitiveType) {
         method {
             annotations += "WasmNoOpCast"
-            annotations += "PublishedApi"
+            expectActual = ExpectActualModifier.Unspecified
             signature {
                 visibility = MethodVisibility.INTERNAL
                 methodName = "reinterpretAs${otherKind.capitalized}"
                 returnType = otherKind.capitalized
             }
-            implementedAsIntrinsic.addAsSingleLineBody(bodyOnNewLine = true)
+            implementedAsIntrinsic.setAsExpressionBody()
         }
     }
 
@@ -305,7 +300,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         internal fun MethodBuilder.implementAsIntrinsic(thisKind: PrimitiveType, methodName: String) {
             modifySignature { isInline = false }
             annotations += "WasmOp(WasmOp.${thisKind.prefixUppercase}_${methodName.toWasmOperator()})"
-            implementedAsIntrinsic.addAsSingleLineBody(bodyOnNewLine = true)
+            implementedAsIntrinsic.setAsExpressionBody()
         }
 
         private val PrimitiveType.prefixUppercase: String

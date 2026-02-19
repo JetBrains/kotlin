@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.k2.java
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
@@ -106,7 +107,8 @@ class DummyJavaClassType(
         get() = classifierQualifiedName
 }
 
-fun JavaType.toRef(): FirJavaTypeRef = buildJavaTypeRef {
+fun JavaType.toRef(source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
     type = this@toRef
     annotationBuilder = { emptyList() }
+    this.source = source
 }

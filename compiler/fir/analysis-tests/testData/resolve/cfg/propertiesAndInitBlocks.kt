@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 inline fun run(block: () -> Unit) {
     block()
 }
@@ -41,3 +42,6 @@ val x4 = try {
 } finally {
     0
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, getter, init, inline,
+integerLiteral, lambdaLiteral, localClass, localFunction, localProperty, propertyDeclaration, setter, tryExpression */

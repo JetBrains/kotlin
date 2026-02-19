@@ -15,18 +15,18 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
 
 object FirUnsupportedDefaultValueInFunctionTypeParameterChecker : FirFunctionalTypeParameterSyntaxChecker() {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsiOrLightTree(
         element: FirFunctionTypeParameter,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val defaultValue = source.defaultValueForParameter ?: return
-        report(defaultValue, reporter, context)
+        report(defaultValue)
     }
 
-    private fun report(defaultValueSource: KtSourceElement, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun report(defaultValueSource: KtSourceElement) {
         val diagnostic = ConeUnsupportedDefaultValueInFunctionType(defaultValueSource)
-        reporter.reportOn(diagnostic.source, FirErrors.UNSUPPORTED, diagnostic.reason, context)
+        reporter.reportOn(diagnostic.source, FirErrors.UNSUPPORTED, diagnostic.reason)
     }
 }

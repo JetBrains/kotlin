@@ -3,7 +3,6 @@
 // the compiler argument is taking place.
 
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // NO_NEW_JAVA_ANNOTATION_TARGETS
 // FULL_JDK
 // WITH_STDLIB

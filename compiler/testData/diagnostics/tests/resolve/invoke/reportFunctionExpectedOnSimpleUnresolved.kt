@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object Scope1 {
     val someVar: Any = Any()
 
@@ -14,3 +15,6 @@ object Scope2 {
         <!FUNCTION_EXPECTED!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Klass {
     constructor(a: Int) {}
@@ -11,3 +12,5 @@ fun user(f: (Int) -> Klass) {}
 fun fn() {
     user(::Klass)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, secondaryConstructor */

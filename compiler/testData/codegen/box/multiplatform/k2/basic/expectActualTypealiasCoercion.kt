@@ -1,12 +1,7 @@
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: NATIVE
-
-// IGNORE_BACKEND_K1: NATIVE
-// !LANGUAGE: +MultiPlatformProjects +ImplicitSignedToUnsignedIntegerConversion
+// LANGUAGE: +MultiPlatformProjects +ImplicitSignedToUnsignedIntegerConversion
 // WITH_STDLIB
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: annotation.kt
 
 package kotlin.internal

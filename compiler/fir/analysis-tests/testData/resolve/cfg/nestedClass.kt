@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 class OuterClass {
     fun outerFunction() {}
     val outerProperty = 1
@@ -10,3 +11,5 @@ class OuterClass {
         val nestedProperty2 = nestedProperty
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nestedClass, propertyDeclaration */

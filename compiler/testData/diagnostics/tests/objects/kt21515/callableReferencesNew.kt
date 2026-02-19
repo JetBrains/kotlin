@@ -1,4 +1,5 @@
-// !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // See KT-21515 for a class diagram and details
 
 // class is to prevent accidental short-name import
@@ -140,3 +141,6 @@ class C : O.B() {
     // DEPRECATED: Classifiers from supertypes of our own companion
     val r = <!UNRESOLVED_REFERENCE!>FromDelta<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, objectDeclaration, override, propertyDeclaration */

@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface A {
     fun foo()
 }
@@ -16,7 +17,7 @@ fun test_1(x: Any?) {
     when {
         x !is A -> {}
         x !is B -> x.foo()
-        x is Int -> {
+        <!USELESS_IS_CHECK!>x is Int<!> -> {
             x.foo()
             x.bar()
             x.inc()
@@ -37,7 +38,7 @@ fun test_2(x: Any?) {
     when(x) {
         !is A -> {}
         !is B -> x.foo()
-        is Int -> {
+        <!USELESS_IS_CHECK!>is Int<!> -> {
             x.foo()
             x.bar()
             x.inc()
@@ -67,7 +68,7 @@ fun test_3(x: Any?) {
             x.foo()
             y.foo()
         }
-        is Int -> {
+        <!USELESS_IS_CHECK!>is Int<!> -> {
             x.foo()
             x.bar()
             x.inc()
@@ -90,3 +91,6 @@ fun test_4(x: Any) {
     }
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, interfaceDeclaration, intersectionType,
+isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

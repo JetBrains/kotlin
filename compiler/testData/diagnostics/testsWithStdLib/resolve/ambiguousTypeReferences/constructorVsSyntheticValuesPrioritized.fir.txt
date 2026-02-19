@@ -1,0 +1,36 @@
+FILE: constructorVsSyntheticValuesPrioritized.fir.kt
+    public final enum class SomeClass : R|kotlin/Enum<SomeClass>| {
+        private constructor(): R|SomeClass| {
+            super<R|kotlin/Enum<SomeClass>|>()
+        }
+
+        public final static enum entry FIRST: R|SomeClass|
+        public final static enum entry LAST: R|SomeClass|
+        public final class entries : R|kotlin/Any| {
+            public constructor(): R|SomeClass.entries| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|SomeClass.entries.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<SomeClass>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|SomeClass| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeClass>|
+            public get(): R|kotlin/enums/EnumEntries<SomeClass>|
+
+    }
+    public final val resultEntries: R|kotlin/enums/EnumEntries<SomeClass>| = Q|SomeClass|.R|/SomeClass.entries*s|
+        public get(): R|kotlin/enums/EnumEntries<SomeClass>|
+    public final val resultEntriesRef: <ERROR TYPE REF: Ambiguity: entries, [/SomeClass.entries, /SomeClass.entries.entries]> = Q|SomeClass|::<Ambiguity: entries, [/SomeClass.entries, /SomeClass.entries.entries]>#
+        public get(): <ERROR TYPE REF: Ambiguity: entries, [/SomeClass.entries, /SomeClass.entries.entries]>

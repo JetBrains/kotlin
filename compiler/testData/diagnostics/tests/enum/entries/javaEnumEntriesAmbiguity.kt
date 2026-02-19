@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
 
 // FILE: JEnumEntry.java
@@ -32,3 +33,5 @@ fun test() {
 
     JEnumField::<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE!>entries<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaCallableReference, javaProperty, javaType */

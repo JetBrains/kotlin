@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
+// DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
 
 import kotlin.reflect.*
 
@@ -26,3 +27,6 @@ val y0 = A::<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>
 val y1 = ofType<(A) -> Unit>(A::bar)
 val y2 = ofType<KProperty1<A, Int>>(A::bar)
 val y3: KProperty1<A, Int> = A::bar
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, nullableType, propertyDeclaration, stringLiteral, typeParameter */

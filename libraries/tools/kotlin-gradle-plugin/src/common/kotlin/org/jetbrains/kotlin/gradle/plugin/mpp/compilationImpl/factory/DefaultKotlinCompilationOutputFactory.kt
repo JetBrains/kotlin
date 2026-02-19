@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
-import java.util.concurrent.Callable
 
 internal object DefaultKotlinCompilationOutputFactory : KotlinCompilationImplFactory.KotlinCompilationOutputFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationOutput = DefaultKotlinCompilationOutput(
-        target.project, Callable { target.project.buildDir.resolve("processedResources/${target.targetName}/$compilationName") }
+        target.project,
+        target.project.layout.buildDirectory.dir("processedResources/${target.targetName}/$compilationName")
     )
 }

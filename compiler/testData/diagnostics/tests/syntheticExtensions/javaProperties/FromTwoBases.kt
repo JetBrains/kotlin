@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: KotlinFile.kt
 
@@ -18,3 +19,6 @@ public interface B {
     int getSomething();
     void setSomething(int value);
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, integerLiteral,
+interfaceDeclaration, javaFunction, javaType */

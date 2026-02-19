@@ -1,0 +1,29 @@
+FILE: reifiedInferenceEnumWithCaptured.kt
+    public final enum class MyEnum : R|kotlin/Enum<MyEnum>| {
+        private constructor(): R|MyEnum| {
+            super<R|kotlin/Enum<MyEnum>|>()
+        }
+
+        public final static enum entry A: R|MyEnum|
+        public final static enum entry B: R|MyEnum|
+        public final static fun values(): R|kotlin/Array<MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
+            public get(): R|kotlin/enums/EnumEntries<MyEnum>|
+
+    }
+    public final fun test(): R|MyEnum| {
+        ^test when () {
+            Boolean(true) ->  {
+                R|kotlin/enumValueOf|<R|MyEnum|>(String(A))
+            }
+            else ->  {
+                Q|MyEnum|.R|/MyEnum.B|
+            }
+        }
+
+    }

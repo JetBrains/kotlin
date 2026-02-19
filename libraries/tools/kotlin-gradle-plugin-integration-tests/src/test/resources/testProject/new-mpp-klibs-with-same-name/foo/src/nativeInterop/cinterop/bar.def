@@ -1,8 +1,0 @@
-language = C
-package = foo
-
----
-
-const char* question() {
-    return "To be, or not to be";
-}

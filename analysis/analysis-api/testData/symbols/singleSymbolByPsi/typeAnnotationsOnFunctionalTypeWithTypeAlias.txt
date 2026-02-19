@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,12 +17,14 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtFunctionalType:
-    annotationsList: [
+  returnType: KaFunctionType:
+    annotations: [
       Anno1()
         psi: KtAnnotationEntry
       Anno2()
@@ -28,16 +32,20 @@ KtFunctionSymbol:
       Anno3()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Unit
     ]
-    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  kotlin/Function0<kotlin/Unit>
-  symbolKind: TOP_LEVEL
+    type: () -> kotlin/Unit
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionalTypeWithTypeAlias.kt)
+  getContainingJvmClassName: TypeAnnotationsOnFunctionalTypeWithTypeAliasKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: foo

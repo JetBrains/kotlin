@@ -1,3 +1,4 @@
+
 // FILE: nullabilityAnnotationsOnDelegatedMembers.kt
 class JImpl(j: J) : J by j
 

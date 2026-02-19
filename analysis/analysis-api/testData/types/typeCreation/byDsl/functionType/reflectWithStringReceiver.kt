@@ -1,0 +1,1 @@
+val x = "Hel<caret_type>lo"

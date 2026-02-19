@@ -1,4 +1,4 @@
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// RUN_PIPELINE_TILL: BACKEND
 
 // FILE: JavaBodySpec.java
 public interface JavaBodySpec<B, S extends JavaBodySpec<B, S>> {
@@ -13,11 +13,14 @@ interface BodySpec<B, S : BodySpec<B, S>> {
 }
 
 fun test(b: BodySpec<String, *>) {
-    val x = b.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>x<!>
+    val x = b.isEqualTo("")
+    <!DEBUG_INFO_EXPRESSION_TYPE("BodySpec<kotlin.String, *>")!>x<!>
 }
 
 fun testJava(b: JavaBodySpec<String, *>) {
-    val x = b.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>x<!>
+    val x = b.isEqualTo("")
+    <!DEBUG_INFO_EXPRESSION_TYPE("(JavaBodySpec<(kotlin.String..kotlin.String?), *>..JavaBodySpec<(kotlin.String..kotlin.String?), *>?)")!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, interfaceDeclaration, javaType, localProperty,
+nullableType, propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

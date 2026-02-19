@@ -1,8 +1,9 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !SKIP_JAVAC
-// !LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
+// SKIP_JAVAC
+// LANGUAGE: +CustomEqualsInValueClasses, +JvmInlineMultiFieldValueClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 package kotlin.jvm
 
@@ -124,3 +125,7 @@ value class MFVC8<T>(val a: String, val b: String) {
 value class MFVC9<T>(val a: String, val b: String) {
     fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>MFVC9<String><!>): Boolean = true
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, nullableType, operator, override, primaryConstructor, propertyDeclaration, secondaryConstructor,
+starProjection, stringLiteral, typeParameter, value */

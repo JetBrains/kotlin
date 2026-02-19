@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 interface A
@@ -34,3 +35,7 @@ fun testDataFlowInfo2(a: Int?, b: Int?) {
 fun testTypeMismatch(a: String?, b: Any) {
     doInt(<!TYPE_MISMATCH!>a ?: b<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter */

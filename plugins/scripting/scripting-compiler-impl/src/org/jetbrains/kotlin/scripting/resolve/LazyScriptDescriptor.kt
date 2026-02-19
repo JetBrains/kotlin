@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(K1SpecificScriptingServiceAccessor::class)
+
 package org.jetbrains.kotlin.scripting.resolve
 
 import com.intellij.psi.PsiElement
@@ -51,7 +53,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.toValidJvmIdentifier
-
 
 class LazyScriptDescriptor(
     val resolveSession: ResolveSession,
@@ -121,7 +122,8 @@ class LazyScriptDescriptor(
     val scriptCompilationConfiguration: () -> ScriptCompilationConfiguration = resolveSession.storageManager.createLazyValue {
         run {
             val containingFile = scriptInfo.script.containingKtFile
-            val provider = ScriptDependenciesProvider.getInstance(containingFile.project)
+            val provider = ScriptConfigurationsProvider.getInstance(containingFile.project)
+            @Suppress("DEPRECATION")
             provider?.getScriptConfiguration(containingFile)?.configuration
                 ?: containingFile.findScriptDefinition()?.compilationConfiguration
         }
@@ -212,7 +214,8 @@ class LazyScriptDescriptor(
     private val scriptImplicitReceivers: () -> List<ClassDescriptor> = resolveSession.storageManager.createLazyValue {
         val res = ArrayList<ClassDescriptor>()
 
-        val importedScriptsFiles = ScriptDependenciesProvider.getInstance(scriptInfo.script.project)
+        @Suppress("DEPRECATION")
+        val importedScriptsFiles = ScriptConfigurationsProvider.getInstance(scriptInfo.script.project)
             ?.getScriptConfiguration(scriptInfo.script.containingKtFile)?.importedScripts
         if (importedScriptsFiles != null) {
             val findImportedScriptDescriptor = ImportedScriptDescriptorsFinder()
@@ -221,6 +224,7 @@ class LazyScriptDescriptor(
             }
         }
 
+        // TODO: we may want to treat getScriptingClass call here the same way as in scriptProvidedProperties
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.implicitReceivers]?.mapNotNullTo(res) { receiver ->
             findTypeDescriptor(getScriptingClass(receiver), Errors.MISSING_SCRIPT_RECEIVER_CLASS)
         }
@@ -262,7 +266,18 @@ class LazyScriptDescriptor(
     private val scriptProvidedProperties: () -> List<ScriptProvidedPropertyDescriptor> = resolveSession.storageManager.createLazyValue {
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.providedProperties].orEmpty()
             .mapNotNull { (name, type) ->
-                findTypeDescriptor(getScriptingClass(type), Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)?.let {
+                val propertyClass = try {
+                    getScriptingClass(type)
+                } catch (e: IllegalArgumentException) {
+                    // IAE here means that we're unable to access the class of the property, but we can treat it as Any
+                    null
+                }
+                val propertyType =
+                    // If we cannot load the class for the property type, replacing it with Any allows keeping the property avoiding
+                    // possibly risky deleting at this place and also still allows using it from the script with a cast
+                    if (propertyClass == null) builtIns.any
+                    else findTypeDescriptor(propertyClass, Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)
+                propertyType?.let {
                     name.toValidJvmIdentifier() to
                             it.defaultType.makeNullableAsSpecified(type.isNullable).replaceArgumentsWithStarProjections()
                 }
@@ -283,7 +298,6 @@ class LazyScriptDescriptor(
         val constructor: ClassConstructorDescriptorImpl,
         val earlierScriptsParameter: ValueParameterDescriptor?,
         val baseClassConstructorParameters: List<ValueParameterDescriptor>,
-        val implicitReceiversParameters: List<ValueParameterDescriptor>,
         val scriptProvidedPropertiesParameters: List<ValueParameterDescriptor>
     )
 
@@ -343,7 +357,6 @@ class LazyScriptDescriptor(
             constructorDescriptor,
             earlierScriptsParameter = earlierScriptsParameter,
             baseClassConstructorParameters = explicitParameters,
-            implicitReceiversParameters = implicitReceiversParameters,
             scriptProvidedPropertiesParameters = providedPropertiesParameters
         )
     }
@@ -353,9 +366,6 @@ class LazyScriptDescriptor(
 
     override fun getExplicitConstructorParameters(): List<ValueParameterDescriptor> =
         scriptPrimaryConstructorWithParams().baseClassConstructorParameters
-
-    override fun getImplicitReceiversParameters(): List<ValueParameterDescriptor> =
-        scriptPrimaryConstructorWithParams().implicitReceiversParameters
 
     override fun getScriptProvidedPropertiesParameters(): List<ValueParameterDescriptor> =
         scriptPrimaryConstructorWithParams().scriptProvidedPropertiesParameters
@@ -391,8 +401,4 @@ class LazyScriptDescriptor(
 
     override val annotations: Annotations
         get() = scriptClassAnnotations()
-
-    override fun isReplScript(): Boolean {
-        return isReplScript
-    }
 }

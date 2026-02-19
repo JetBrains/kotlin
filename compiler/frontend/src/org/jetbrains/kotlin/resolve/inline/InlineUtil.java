@@ -25,12 +25,11 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 
 public class InlineUtil {
 
@@ -73,19 +72,6 @@ public class InlineUtil {
         if (isInline(descriptor)) return true;
         if (descriptor == null) return false;
         return isInlineOrContainingInline(descriptor.getContainingDeclaration());
-    }
-
-    public static boolean isInPublicInlineScope(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor == null) return false;
-        if (isInline(descriptor) && descriptor instanceof DeclarationDescriptorWithVisibility) {
-            DescriptorVisibility visibility = ((DeclarationDescriptorWithVisibility) descriptor).getVisibility();
-            if (!DescriptorVisibilities.isPrivate(visibility)) {
-                ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
-                if (containingClass == null || !DescriptorVisibilities.isPrivate(containingClass.getVisibility()))
-                    return true;
-            }
-        }
-        return isInPublicInlineScope(descriptor.getContainingDeclaration());
     }
 
     public static boolean checkNonLocalReturnUsage(
@@ -207,14 +193,6 @@ public class InlineUtil {
             }
         }
         return true;
-    }
-
-    public static boolean containsReifiedTypeParameters(@NotNull CallableDescriptor descriptor) {
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            if (typeParameterDescriptor.isReified()) return true;
-        }
-
-        return false;
     }
 
     public static boolean isInlinableParameterExpression(@Nullable KtExpression deparenthesized) {

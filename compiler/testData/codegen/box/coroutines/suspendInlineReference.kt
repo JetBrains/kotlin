@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// IGNORE_BACKEND: JVM, JS
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -14,6 +14,11 @@ suspend inline fun foo(): String {
     suspendHere()
     return "OK"
 }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun box(): String {
     var result = ""

@@ -7,33 +7,34 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
-import org.jetbrains.kotlin.fir.analysis.js.checkers.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalArgument
 
-object FirJsExternalArgumentCallChecker : FirCallChecker() {
-    override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJsExternalArgumentCallChecker : FirCallChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCall) {
         val arguments = expression.resolvedArgumentMapping ?: return
         for ((argument, parameter) in arguments) {
             if (parameter.hasAnnotation(JsExternalArgument, context.session)) {
                 val unwrappedArg = argument.unwrapArgument()
-                val type = unwrappedArg.coneTypeOrNull ?: continue
-                val symbol = type.toRegularClassSymbol(context.session)
+                val type = unwrappedArg.resolvedType
+                val symbol = type.toRegularClassSymbol()
                 if (symbol?.isEffectivelyExternal(context.session) == false || type is ConeDynamicType) {
                     reporter.reportOn(
                         unwrappedArg.source,
                         FirJsErrors.JS_EXTERNAL_ARGUMENT,
-                        type,
-                        context
+                        type
                     )
                 }
             }

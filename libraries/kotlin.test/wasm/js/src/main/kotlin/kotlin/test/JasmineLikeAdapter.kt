@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package kotlin.test
 
-import kotlin.test.FrameworkAdapter
 import kotlin.js.Promise
 
 // Need to wrap into additional lambdas so that js launcher will work without Mocha or any other testing framework
@@ -68,3 +69,4 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
         }
     }
 }
+

@@ -5,9 +5,18 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
-import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.cli.common.repl.BasicReplStageHistory
+import org.jetbrains.kotlin.cli.common.repl.ILineId
+import org.jetbrains.kotlin.cli.common.repl.IReplStageState
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.messages.DiagnosticMessageHolder
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -68,4 +77,15 @@ class GenericReplCompilerState(environment: KotlinCoreEnvironment, override val 
     val analyzerEngine = ReplCodeAnalyzerBase(environment)
 
     var lastDependencies: ScriptDependencies? = null
+
+    private val manglerAndSymbolTable by lazy {
+        val mangler = JvmDescriptorMangler(
+            MainFunctionDetector(analyzerEngine.trace.bindingContext, environment.configuration.languageVersionSettings)
+        )
+        val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl)
+        mangler to symbolTable
+    }
+
+    val mangler: JvmDescriptorMangler get() = manglerAndSymbolTable.first
+    val symbolTable: SymbolTable get() = manglerAndSymbolTable.second
 }

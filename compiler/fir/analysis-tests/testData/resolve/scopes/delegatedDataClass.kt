@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: Data:equals, Data:hashCode, Data:toString
 
 interface AnyNeighbor {
@@ -23,3 +24,6 @@ class Impl : AnyNeighbor {
 }
 
 data class Data(val i: Impl) : AnyNeighbor by i
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, nullableType, operator, override, primaryConstructor, propertyDeclaration, stringLiteral */

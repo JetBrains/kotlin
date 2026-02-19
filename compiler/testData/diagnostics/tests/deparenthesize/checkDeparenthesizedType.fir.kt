@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 package m
 
@@ -12,10 +13,10 @@ fun test(i: Int?) {
         foo((l3@ i))
     }
 
-    val a: Int = <!INITIALIZER_TYPE_MISMATCH!>l4@ ""<!>
-    val b: Int = <!INITIALIZER_TYPE_MISMATCH!>("")<!>
+    val a: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> l4@ ""
+    val b: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> ("")
     val c: Int = checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
-    val d: Int = <!INITIALIZER_TYPE_MISMATCH!>checkSubtype<Long>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>
+    val d: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> checkSubtype<Long>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
 
     foo(l4@ <!ARGUMENT_TYPE_MISMATCH!>""<!>)
@@ -29,3 +30,7 @@ fun test(i: Int?) {
 fun foo(i: Int) = i
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, localProperty, nullableType, outProjection, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, typeWithExtension, vararg */

@@ -1,6 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
 
 import kotlin.contracts.*
 
@@ -96,3 +97,6 @@ fun innerFinallyInitializesOuterRethrows() {
     // Guaranteed to be initialized because all catch-clauses are rethrowing
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, tryExpression, typeParameter */

@@ -8,14 +8,15 @@ open annotation class Ann : Annotation {
 }
 
 class Test {
+  val x: Int
+    field = x
+    get
+
   constructor(@Ann x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
 }
+

@@ -83,7 +83,7 @@ class ResolvedAtomCompleter(
         }
 
         when (resolvedAtom) {
-            is ResolvedCollectionLiteralAtom -> completeCollectionLiteralCalls(resolvedAtom)
+            is ResolvedCollectionLiteralAtom -> completeCollectionLiterals(resolvedAtom)
             is ResolvedCallableReferenceArgumentAtom -> completeCallableReferenceArgument(resolvedAtom)
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
@@ -455,7 +455,6 @@ class ResolvedAtomCompleter(
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun KotlinType.replaceFunctionTypeArgumentsByDescriptor(descriptor: CallableDescriptor) =
         when (descriptor) {
             is CallableMemberDescriptor -> {
@@ -642,7 +641,7 @@ class ResolvedAtomCompleter(
         return false
     }
 
-    private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {
+    private fun completeCollectionLiterals(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {
         val psiCallArgument = collectionLiteralArgument.atom.psiCallArgument as CollectionLiteralKotlinCallArgumentImpl
         val context = psiCallArgument.outerCallContext
 

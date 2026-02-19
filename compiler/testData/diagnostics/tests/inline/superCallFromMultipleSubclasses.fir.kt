@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: 1.kt
 
 package test
@@ -25,3 +26,6 @@ import test.*
 fun box(): String {
     return B.doTest("O") + C.doTest("K")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, inline, objectDeclaration, override,
+stringLiteral, superExpression */

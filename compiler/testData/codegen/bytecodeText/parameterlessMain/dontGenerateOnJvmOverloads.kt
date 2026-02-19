@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 fun main() {
   println("FAIL")
 }

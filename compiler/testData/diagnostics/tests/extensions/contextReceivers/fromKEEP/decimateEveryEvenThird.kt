@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 
 fun List<Int>.decimateEveryEvenThird() = sequence {
@@ -11,3 +11,7 @@ fun List<Int>.decimateEveryEvenThird() = sequence {
         counter += 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, equalityExpression, forLoop,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, localProperty,
+multiplicativeExpression, propertyDeclaration, thisExpression */

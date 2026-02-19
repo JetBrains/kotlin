@@ -1,5 +1,5 @@
 // JSPECIFY_STATE: warn
-// !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: NonPlatformTypeParameter.java
@@ -17,14 +17,15 @@ public class Test {}
 fun <T : Test> main(a1: NonPlatformTypeParameter<Any?>, a2: NonPlatformTypeParameter<Test>, x: T): Unit {
     a1.foo(null)
     a1.bar<Test?>(null)
-    // jspecify_nullness_mismatch
     a1.bar<T>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a1.bar<T>(x)
 
-    // jspecify_nullness_mismatch
     a2.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a2.bar<Test?>(null)
-    // jspecify_nullness_mismatch
     a2.bar<T>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a2.bar<T>(x)
+}
+
+fun testNullable(a1: NonPlatformTypeParameter<Test>, x: Test?) {
+    a1.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x<!>)
 }

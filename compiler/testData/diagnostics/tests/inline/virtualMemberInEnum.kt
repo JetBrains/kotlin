@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class Some {
     A {
         override fun foo(s: () -> String): String {
@@ -10,3 +11,5 @@ enum class Some {
         return s()
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, functionalType, inline */

@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.name.Name
 
 class GetterProcessor(private val config: LombokConfig) : Processor {
 
-    context(LazyJavaResolverContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder, c: LazyJavaResolverContext) {
         val globalAccessors = Accessors.get(classDescriptor, config)
         val clGetter =
             Getter.getOrNull(classDescriptor)

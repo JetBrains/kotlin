@@ -1,0 +1,23 @@
+// RUN_PIPELINE_TILL: FRONTEND
+import org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
+
+fun context() {
+    @CompanionWithFoo
+    class SomeClass {
+
+        @CompanionWithFoo
+        <!NESTED_CLASS_NOT_ALLOWED!>class Nested<!>
+    }
+
+    fun takeInt(x: Int) {}
+
+    fun test() {
+        takeInt(SomeClass.foo())
+        takeInt(SomeClass.Companion.foo())
+
+        takeInt(SomeClass.Nested.foo())
+        takeInt(SomeClass.Nested.Companion.foo())
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, localFunction, nestedClass */

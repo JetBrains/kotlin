@@ -1,3 +1,19 @@
+class F<T : Float> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun testCapturedType(x: T, y: Any): Boolean {
+    return when {
+      y is Double -> ieee754equals(arg0 = x.toDouble(), arg1 = y /*as Double */)
+      else -> false
+    }
+  }
+
+}
+
 fun <T : Any?> test0(x: Any, y: T): Boolean {
   return when {
     x is Int -> EQEQ(arg0 = x, arg1 = y)
@@ -47,18 +63,3 @@ fun <T : Number> test6(x: Any, y: T): Boolean {
   }
 }
 
-class F<T : Float> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun testCapturedType(x: T, y: Any): Boolean {
-    return when {
-      y is Double -> ieee754equals(arg0 = x.toDouble(), arg1 = y /*as Double */)
-      else -> false
-    }
-  }
-
-}

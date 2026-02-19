@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 inline class Foo(val b: Bar)
 inline class Bar(val i: Int)

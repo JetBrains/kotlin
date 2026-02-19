@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // invalid, depends on local class
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = run {
     class A
@@ -17,3 +17,5 @@ abstract class My
 fun bar() = run {
     object: My() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, lambdaLiteral, localClass */

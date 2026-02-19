@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 annotation class Ann(val x: Int = 1)
 class A <!MISSING_CONSTRUCTOR_KEYWORD!>private (val x: Int)<!> {
     inner class B <!MISSING_CONSTRUCTOR_KEYWORD!>@Ann(2) (val y: Int)<!>
@@ -7,3 +8,6 @@ class A <!MISSING_CONSTRUCTOR_KEYWORD!>private (val x: Int)<!> {
         class C <!MISSING_CONSTRUCTOR_KEYWORD!>private @Ann(3) (args: Int)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, inner, integerLiteral, localClass,
+primaryConstructor, propertyDeclaration */

@@ -1,0 +1,2 @@
+KtNamedFunction(73,115): '/**'
+  NO_CANDIDATES

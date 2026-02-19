@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KProperty
 
 class LazyDelegate<T>(val value: T) {
@@ -15,3 +16,6 @@ class Test {
         materialize()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, typeParameter */

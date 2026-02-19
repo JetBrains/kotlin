@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 
 #include "Porting.h"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "ThreadData.hpp"
 
 using namespace kotlin;

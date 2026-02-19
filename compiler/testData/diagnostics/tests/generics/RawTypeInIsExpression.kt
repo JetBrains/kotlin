@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package p
 
 public fun foo(a: Any) {
@@ -12,3 +13,5 @@ public fun foo(a: Any) {
 
     (a as <!NO_TYPE_ARGUMENTS_ON_RHS!>Map<!>) is <!INCOMPATIBLE_TYPES!>Int<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, isExpression, nullableType, outProjection, starProjection */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-6026 Exception on instantiating a nested class in an anonymous object
 
@@ -7,3 +8,6 @@ val oo = object {
 
     fun f1() = Nested(<!TOO_MANY_ARGUMENTS!>11<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral, localClass,
+nestedClass, propertyDeclaration */

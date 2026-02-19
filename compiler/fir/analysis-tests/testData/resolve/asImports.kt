@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.kt
 
 package foo
@@ -19,3 +20,5 @@ fun test_1() {
 fun test_2(b: B) {
     b.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

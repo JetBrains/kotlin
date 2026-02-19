@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package h
 
@@ -14,3 +15,6 @@ fun test(c: C) {
         c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, typeParameter */

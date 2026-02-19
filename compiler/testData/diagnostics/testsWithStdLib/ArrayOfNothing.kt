@@ -1,15 +1,24 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
-// !LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
+// LANGUAGE: +NullableNothingInReifiedPosition
 class A<T>
+class C<T, G>
+class D<T>
 
 fun test1(
     a: <!UNSUPPORTED!>Array<Nothing><!>,
+    // Note: in K2, it's JVM-only diagnostic. Other platforms support Array<Nothing?> properly.
+    // See also BB tests: reifiedNullableNothing3.kt, reifiedNullableNothing4.kt
     b: <!UNSUPPORTED!>Array<Nothing?><!>,
     c: <!UNSUPPORTED!>Array<in Nothing><!>,
     d: <!UNSUPPORTED!>Array<in Nothing?><!>,
     e: <!UNSUPPORTED!>Array<out Nothing><!>,
-    f: <!UNSUPPORTED!>Array<out Nothing?><!>
-) {}
+    f: <!UNSUPPORTED!>Array<out Nothing?><!>,
+    g: C<String, <!UNSUPPORTED!>Array<Nothing><!>>,
+    h: A<D<<!UNSUPPORTED!>Array<Nothing><!>>>
+) {
+    <!UNSUPPORTED!>A<!><D<<!UNSUPPORTED!>Array<Nothing><!>>>()
+}
 
 fun test2(
     a: <!UNSUPPORTED!>Array<Nothing><!>?,
@@ -47,9 +56,11 @@ fun <T> foo(): Array<T> = (object {} as Any) as Array<T>
 
 fun test6() = <!UNSUPPORTED!>foo<!><Nothing>()
 
-
 class B<T>(val array: Array<T>)
 
 fun <T> bar() = B<Array<T>>(<!TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR!>arrayOf<!>())
 
 fun test7() = <!UNSUPPORTED!>bar<!><Nothing>()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, classDeclaration, functionDeclaration, inProjection,
+integerLiteral, lambdaLiteral, nullableType, outProjection, primaryConstructor, propertyDeclaration, typeParameter */

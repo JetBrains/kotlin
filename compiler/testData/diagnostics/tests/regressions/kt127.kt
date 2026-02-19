@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-127 Support extension functions in when expressions
 
@@ -17,3 +18,6 @@ fun main() {
     command.equals1(null)
     command?.equals(null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, safeCall */

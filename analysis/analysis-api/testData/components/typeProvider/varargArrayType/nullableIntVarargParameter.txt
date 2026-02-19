@@ -1,0 +1,9 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    out KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int?
+  ]
+  type: kotlin/Array<out kotlin/Int?>

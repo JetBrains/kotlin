@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 abstract class KotlinClass : JavaClass(), KotlinInterface, JavaInterface {
     override fun getSomething1(): Int = 1
@@ -50,3 +51,7 @@ public interface JavaInterface {
     Object getSomething5();
     void setSomething5(Object value);
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, javaFunction, javaProperty, javaType, localProperty, nullableType, override, propertyDeclaration,
+stringLiteral */

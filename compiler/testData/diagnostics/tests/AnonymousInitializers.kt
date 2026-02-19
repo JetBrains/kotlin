@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface NoC {
   <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {
@@ -25,3 +26,6 @@ class WithC() {
     val zz = x
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, init, integerLiteral, interfaceDeclaration, localProperty,
+primaryConstructor, propertyDeclaration */

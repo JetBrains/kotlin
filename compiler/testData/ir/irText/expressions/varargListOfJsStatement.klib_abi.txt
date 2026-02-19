@@ -1,0 +1,33 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Bar : /SomeOtherInterface, /SourceInfoAwareJsNode { // /Bar|null[0]
+    constructor <init>() // /Bar.<init>|<init>(){}[0]
+}
+final class /Foo : /SomeOtherInterface, /SourceInfoAwareJsNode { // /Foo|null[0]
+    constructor <init>() // /Foo.<init>|<init>(){}[0]
+}
+final class /JsExport : /JsStatement, /SourceInfoAwareJsNode { // /JsExport|null[0]
+    constructor <init>() // /JsExport.<init>|<init>(){}[0]
+}
+abstract interface /JsNode // /JsNode|null[0]
+final class /JsNonJsNode : /JsStatement, /NonJsNode { // /JsNonJsNode|null[0]
+    constructor <init>() // /JsNonJsNode.<init>|<init>(){}[0]
+}
+abstract interface /JsStatement : /JsNode // /JsStatement|null[0]
+final class /JsVars : /JsStatement, /SourceInfoAwareJsNode { // /JsVars|null[0]
+    constructor <init>() // /JsVars.<init>|<init>(){}[0]
+}
+abstract class /NonJsNode { // /NonJsNode|null[0]
+    constructor <init>() // /NonJsNode.<init>|<init>(){}[0]
+}
+abstract interface /SomeOtherInterface // /SomeOtherInterface|null[0]
+abstract class /SourceInfoAwareJsNode : /JsNode { // /SourceInfoAwareJsNode|null[0]
+    constructor <init>() // /SourceInfoAwareJsNode.<init>|<init>(){}[0]
+}
+final fun /listOfFooBar(): kotlin.collections/List</SomeOtherInterface> // /listOfFooBar|listOfFooBar(){}[0]
+final fun /listOfVarsExport(): kotlin.collections/List</JsStatement> // /listOfVarsExport|listOfVarsExport(){}[0]
+final fun /listOfVarsNonJsNode(): kotlin.collections/List</JsStatement> // /listOfVarsNonJsNode|listOfVarsNonJsNode(){}[0]

@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -EXTENSION_SHADOWED_BY_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -EXTENSION_SHADOWED_BY_MEMBER
 
 import kotlin.reflect.KProperty
 
@@ -217,3 +219,6 @@ infix fun Example.i1(n: Int) {}
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun i1(n: Int) {}
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun i1(n: Int, n2: Int) {}
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun i1(vararg n: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, infix, interfaceDeclaration,
+nullableType, operator, override, starProjection, stringLiteral, vararg */

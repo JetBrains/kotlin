@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 abstract class Base {
     final override fun equals(other: Any?) = false
@@ -15,3 +16,6 @@ interface AbstractAnyMembers {
 }
 
 data class Data2(val field: String): Base(), AbstractAnyMembers
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+operator, override, primaryConstructor, propertyDeclaration, stringLiteral */

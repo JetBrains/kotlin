@@ -16,7 +16,7 @@ object TestIdeaExtrasSerializationExtension : IdeaKotlinExtrasSerializationExten
     val ignoredStringKey = extrasKeyOf<String>("ignored")
     val anySerializableKey = extrasKeyOf<Any>("serializable")
 
-    override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? = when {
+    override fun <T> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? = when {
         key == ignoredStringKey -> null
         key == anySerializableKey -> IdeaKotlinExtrasSerializer.javaIoSerializable<Any>()
         key.type == extrasTypeOf<String>() -> IdeaKotlinStringExtrasSerializer

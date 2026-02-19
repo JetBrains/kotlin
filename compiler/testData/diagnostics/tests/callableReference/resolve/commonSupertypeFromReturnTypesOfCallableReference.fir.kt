@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface Parent
 interface Child1 : Parent
@@ -13,3 +14,6 @@ fun test() {
     val a = select(::foo, ::bar)
     a
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, typeParameter */

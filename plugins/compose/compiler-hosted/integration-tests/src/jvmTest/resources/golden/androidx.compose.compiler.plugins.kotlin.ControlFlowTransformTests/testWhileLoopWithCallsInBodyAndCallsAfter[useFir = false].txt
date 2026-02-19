@@ -1,0 +1,46 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(items: MutableList<Int>) {
+    // since we have a composable call which is called a conditional number of times,
+    // we need to generate groups around the loop's block as well as a group around the
+    // overall statement.
+    while (items.isNotEmpty()) {
+        val item = items.removeAt(items.size - 1)
+        P(item)
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(items: MutableList<Int>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<P(item...>")
+  while (items.isNotEmpty()) {
+    val item = items.removeAt(items.size - 1)
+    P(item, %composer, 0)
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

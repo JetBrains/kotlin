@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import java.util.*
 fun foo() {
     val al = ArrayList<String>()
@@ -26,3 +27,6 @@ fun foo() {
 
     hm.remove("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

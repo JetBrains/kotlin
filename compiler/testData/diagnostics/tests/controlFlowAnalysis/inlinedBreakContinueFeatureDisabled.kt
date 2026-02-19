@@ -1,7 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: -BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// IGNORE_ERRORS
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // WITH_STDLIB
 
 inline fun foo(block: () -> Unit) { block() }
@@ -37,3 +37,6 @@ fun test3() {
         bar({}, { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> }, { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, break, continue, crossinline, functionDeclaration, functionalType, inline,
+lambdaLiteral, noinline, whileLoop */

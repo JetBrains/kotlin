@@ -1,0 +1,19 @@
+Restored type is the same as the original one
+
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: [
+    KaNamedClassSymbol(Either)
+  ]
+  errorMessage: Wrong number of type arguments
+  presentableText: Either
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Either
+      symbol: KaNamedClassSymbol(Either)
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true

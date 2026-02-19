@@ -5,22 +5,21 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.diagnostics.registeredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
+import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
+import org.jetbrains.kotlin.fir.serialization.FirMetadataSerializerPlugin
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     companion object {
-        fun getInstances(project: Project): List<FirExtensionRegistrar> {
-            @Suppress("UNCHECKED_CAST")
-            return FirExtensionRegistrarAdapter.getInstances(project) as List<FirExtensionRegistrar>
-        }
-
         internal val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
@@ -32,9 +31,16 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirSamConversionTransformerExtension::class,
             FirAssignExpressionAltererExtension::class,
             FirScriptConfiguratorExtension::class,
+            FirScriptResolutionConfigurationExtension::class,
             Fir2IrScriptConfiguratorExtension::class,
+            Fir2IrReplSnippetConfiguratorExtension::class,
+            FirReplSnippetConfiguratorExtension::class,
+            FirReplSnippetResolveExtension::class,
             FirFunctionTypeKindExtension::class,
-            FirDeclarationsForMetadataProviderExtension::class,
+            @OptIn(FirExtensionApiInternals::class)
+            FirMetadataSerializerPlugin::class,
+            @OptIn(FirExtensionApiInternals::class)
+            FirFunctionCallRefinementExtension::class,
         )
 
         internal val ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION = listOf(
@@ -98,9 +104,29 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirScriptConfiguratorExtension::class, this)
         }
 
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun (FirScriptResolutionConfigurationExtension.Factory).unaryPlus() {
+            registerExtension(FirScriptResolutionConfigurationExtension::class, this)
+        }
+
         @JvmName("plusFir2IrScriptConfiguratorExtension")
         operator fun (Fir2IrScriptConfiguratorExtension.Factory).unaryPlus() {
             registerExtension(Fir2IrScriptConfiguratorExtension::class, this)
+        }
+
+        @JvmName("plusFir2IrReplStateDeclarationsProviderExtension")
+        operator fun (Fir2IrReplSnippetConfiguratorExtension.Factory).unaryPlus() {
+            registerExtension(Fir2IrReplSnippetConfiguratorExtension::class, this)
+        }
+
+        @JvmName("plusReplSnippetConfiguratorExtension")
+        operator fun (FirReplSnippetConfiguratorExtension.Factory).unaryPlus() {
+            registerExtension(FirReplSnippetConfiguratorExtension::class, this)
+        }
+
+        @JvmName("plusReplSnippetResolveExtension")
+        operator fun (FirReplSnippetResolveExtension.Factory).unaryPlus() {
+            registerExtension(FirReplSnippetResolveExtension::class, this)
         }
 
         @JvmName("plusFunctionTypeKindExtension")
@@ -108,9 +134,16 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirFunctionTypeKindExtension::class, this)
         }
 
-        @JvmName("plusDeclarationForMetadataProviderExtension")
-        operator fun (FirDeclarationsForMetadataProviderExtension.Factory).unaryPlus() {
-            registerExtension(FirDeclarationsForMetadataProviderExtension::class, this)
+        @FirExtensionApiInternals
+        @JvmName("plusMetadataSerializerPlugin")
+        operator fun (FirMetadataSerializerPlugin.Factory).unaryPlus() {
+            registerExtension(FirMetadataSerializerPlugin::class, this)
+        }
+
+        @FirExtensionApiInternals
+        @JvmName("plusFunctionCallRefinementExtension")
+        operator fun (FirFunctionCallRefinementExtension.Factory).unaryPlus() {
+            registerExtension(FirFunctionCallRefinementExtension::class, this)
         }
 
         // ------------------ reference methods ------------------
@@ -165,9 +198,29 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun ((FirSession) -> FirScriptResolutionConfigurationExtension).unaryPlus() {
+            FirScriptResolutionConfigurationExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
         @JvmName("plusFir2IrScriptConfiguratorExtension")
         operator fun ((FirSession) -> Fir2IrScriptConfiguratorExtension).unaryPlus() {
             Fir2IrScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusFir2IrReplStateDeclarationsProviderExtension")
+        operator fun ((FirSession) -> Fir2IrReplSnippetConfiguratorExtension).unaryPlus() {
+            Fir2IrReplSnippetConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusReplSnippetConfiguratorExtension")
+        operator fun ((FirSession) -> FirReplSnippetConfiguratorExtension).unaryPlus() {
+            FirReplSnippetConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusReplSnippetResolveExtension")
+        operator fun ((FirSession) -> FirReplSnippetResolveExtension).unaryPlus() {
+            FirReplSnippetResolveExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusFunctionTypeKindExtension")
@@ -175,9 +228,22 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirFunctionTypeKindExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
-        @JvmName("plusDeclarationForMetadataProviderExtension")
-        operator fun ((FirSession) -> FirDeclarationsForMetadataProviderExtension).unaryPlus() {
-            FirDeclarationsForMetadataProviderExtension.Factory { this.invoke(it) }.unaryPlus()
+        @FirExtensionApiInternals
+        @JvmName("plusMetadataSerializerPlugin")
+        operator fun ((FirSession) -> FirMetadataSerializerPlugin).unaryPlus() {
+            FirMetadataSerializerPlugin.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @FirExtensionApiInternals
+        @JvmName("plusFunctionCallRefinementExtension")
+        operator fun ((FirSession) -> FirFunctionCallRefinementExtension).unaryPlus() {
+            FirFunctionCallRefinementExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        // ------------------ diagnostics ------------------
+
+        fun registerDiagnosticContainers(vararg diagnosticContainers: KtDiagnosticsContainer) {
+            this@FirExtensionRegistrar.diagnosticsContainers += diagnosticContainers
         }
 
         // ------------------ utilities ------------------
@@ -195,13 +261,15 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
     @OptIn(PluginServicesInitialization::class)
     fun configure(): BunchOfRegisteredExtensions {
-        return BunchOfRegisteredExtensions(configuredExtensionFactories)
+        return BunchOfRegisteredExtensions(configuredExtensionFactories, diagnosticsContainers)
     }
 
     private val extensionFactories: Map<KClass<out FirExtension>, MutableList<FirExtension.Factory<FirExtension>>> =
         AVAILABLE_EXTENSIONS.associateWith {
             mutableListOf()
         }
+
+    private val diagnosticsContainers: MutableList<KtDiagnosticsContainer> = mutableListOf()
 
     /**
      * A lazy property which returns the [extensionFactories] map, but calls
@@ -229,12 +297,16 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 }
 
 class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
-    val extensions: Map<KClass<out FirExtension>, List<FirExtension.Factory<FirExtension>>>
+    val extensions: Map<KClass<out FirExtension>, List<FirExtension.Factory<FirExtension>>>,
+    val diagnosticsContainers: List<KtDiagnosticsContainer>
 ) {
     companion object {
         @OptIn(PluginServicesInitialization::class)
         fun empty(): BunchOfRegisteredExtensions {
-            return BunchOfRegisteredExtensions(FirExtensionRegistrar.AVAILABLE_EXTENSIONS.associateWith { listOf() })
+            return BunchOfRegisteredExtensions(
+                extensions = FirExtensionRegistrar.AVAILABLE_EXTENSIONS.associateWith { listOf() },
+                diagnosticsContainers = emptyList()
+            )
         }
     }
 
@@ -245,7 +317,8 @@ class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
                 put(extensionClass, extensions.getValue(extensionClass) + other.extensions.getValue(extensionClass))
             }
         }
-        return BunchOfRegisteredExtensions(combinedExtensions)
+        val diagnosticContainers = diagnosticsContainers + other.diagnosticsContainers
+        return BunchOfRegisteredExtensions(combinedExtensions, diagnosticContainers)
     }
 }
 
@@ -259,4 +332,8 @@ fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegister
         session.register(it.componentClass, it)
     }
     session.registeredPluginAnnotations.initialize()
+    if (session.kind == FirSession.Kind.Source) {
+        session.registeredDiagnosticFactoriesStorage.registerDiagnosticContainers(registeredExtensions.diagnosticsContainers)
+    }
 }
+

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 @RequiresOptIn
@@ -30,3 +31,5 @@ class OuterKlass {
     abstract inner class InnerAbstractKlass
 
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, inner, interfaceDeclaration, nestedClass */

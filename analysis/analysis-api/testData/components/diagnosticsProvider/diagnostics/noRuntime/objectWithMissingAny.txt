@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtObjectDeclaration at (5,1-11)
+    UNRESOLVED_REFERENCE      text ranges: [(49,59)]
+      PSI: KtObjectDeclaration at (5,1-11)

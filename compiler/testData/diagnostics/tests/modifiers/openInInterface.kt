@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface My {
     <!REDUNDANT_OPEN_IN_INTERFACE!>open<!> fun foo()
@@ -9,3 +10,5 @@ interface My {
         get() = ""
     <!REDUNDANT_MODIFIER!>open<!> abstract val z: Double
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, interfaceDeclaration, propertyDeclaration, stringLiteral */

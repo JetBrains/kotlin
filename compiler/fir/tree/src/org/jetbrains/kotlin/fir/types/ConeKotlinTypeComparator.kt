@@ -62,8 +62,9 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         return 0
     }
 
-    private fun compare(a: ConeNullability, b: ConeNullability): Int {
-        return a.ordinal - b.ordinal
+    private fun compareNullability(a: ConeKotlinType, b: ConeKotlinType): Int {
+        // true compares as lower, therefore, the arguments are swapped.
+        return b.isMarkedNullable.compareTo(a.isMarkedNullable)
     }
 
     override fun compare(a: ConeKotlinType, b: ConeKotlinType): Int {
@@ -87,7 +88,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (nameDiff != 0) {
                     return nameDiff
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -107,23 +108,27 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 require(b is ConeCapturedType) {
                     "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
-                val aHasLowerType = if (a.lowerType != null) 1 else 0
-                val bHasLowerType = if (b.lowerType != null) 1 else 0
+                val aConstructor = a.constructor
+                val aHasLowerType = if (aConstructor.lowerType != null) 1 else 0
+                val bConstructor = b.constructor
+                val bHasLowerType = if (bConstructor.lowerType != null) 1 else 0
                 val hasLowerTypeDiff = aHasLowerType - bHasLowerType
                 if (hasLowerTypeDiff != 0) {
                     return hasLowerTypeDiff
                 }
-                if (a.lowerType != null && b.lowerType != null) {
-                    val lowerTypeDiff = compare(a.lowerType!!, b.lowerType!!)
+                if (aConstructor.lowerType != null) {
+                    // See the diff above
+                    check(bConstructor.lowerType != null)
+                    val lowerTypeDiff = compare(aConstructor.lowerType!!, bConstructor.lowerType!!)
                     if (lowerTypeDiff != 0) {
                         return lowerTypeDiff
                     }
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
-                return a.constructor.hashCode() - b.constructor.hashCode()
+                return aConstructor.hashCode() - bConstructor.hashCode()
             }
             is ConeDefinitelyNotNullType -> {
                 require(b is ConeDefinitelyNotNullType) {
@@ -150,7 +155,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (nameDiff != 0) {
                     return nameDiff
                 }
-                return compare(a.nullability, b.nullability)
+                return compareNullability(a, b)
             }
             is ConeIntegerLiteralConstantType -> {
                 require(b is ConeIntegerLiteralConstantType) {
@@ -160,7 +165,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (valueDiff != 0L) {
                     return valueDiff.toInt()
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -168,7 +173,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 return a.hashCode() - b.hashCode()
             }
             is ConeIntegerConstantOperatorType -> {
-                return compare(a.nullability, b.nullability)
+                return compareNullability(a, b)
             }
             else ->
                 error("Unsupported type comparison: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}")

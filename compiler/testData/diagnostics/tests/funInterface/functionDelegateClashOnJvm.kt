@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface F1 {
     val <!FUNCTION_DELEGATE_MEMBER_NAME_CLASH!>functionDelegate<!>: Function<*>? get() = null
@@ -31,3 +32,6 @@ fun interface F6 {
     fun getFunctionDelegate(x: Any?): Function<*>? = null
     fun invoke()
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, getter, interfaceDeclaration, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, starProjection */

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.deprecation
 
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -148,30 +146,6 @@ internal data class DeprecatedByOverridden(private val deprecations: Collection<
 
     internal fun additionalMessage() =
         "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
-}
-
-internal data class DeprecatedOperatorMod(
-    val languageVersionSettings: LanguageVersionSettings,
-    val currentDeprecation: DescriptorBasedDeprecationInfo
-) : DescriptorBasedDeprecationInfo() {
-    init {
-        assert(shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
-            "Deprecation created for mod that shouldn't have any deprecations; languageVersionSettings: $languageVersionSettings"
-        }
-    }
-
-    override val deprecationLevel: DeprecationLevelValue
-        get() = when (languageVersionSettings.apiVersion) {
-            ApiVersion.KOTLIN_1_1, ApiVersion.KOTLIN_1_2 -> WARNING
-            ApiVersion.KOTLIN_1_3 -> ERROR
-            else -> ERROR
-        }
-
-    override val message: String?
-        get() = currentDeprecation.message
-
-    override val target: DeclarationDescriptor
-        get() = currentDeprecation.target
 }
 
 internal data class DeprecatedByVersionRequirement(

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
@@ -27,7 +26,7 @@ internal suspend fun Project.includeCommonizedCInteropMetadata(metadataKlib: Zip
     val outputDirectory = commonizerTask.commonizedOutputDirectory(commonizerDependencyToken) ?: return
 
     metadataKlib.from(outputDirectory) { spec ->
-        spec.into(cinteropMetadataDirectoryPath(compilation.defaultSourceSetName))
+        spec.into(cinteropMetadataDirectoryPath(compilation.defaultSourceSet.name))
     }
 }
 

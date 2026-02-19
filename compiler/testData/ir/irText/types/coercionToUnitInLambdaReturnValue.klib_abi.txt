@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test() // /test|test(){}[0]
+final fun /use(kotlin/Function0<kotlin/Unit>) // /use|use(kotlin.Function0<kotlin.Unit>){}[0]

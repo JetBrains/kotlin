@@ -1,0 +1,36 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /DVal { // /DVal|null[0]
+    final val kmember // /DVal.kmember|{}kmember[0]
+        final fun <get-kmember>(): kotlin/Any // /DVal.kmember.<get-kmember>|<get-kmember>(){}[0]
+    constructor <init>(kotlin/Any) // /DVal.<init>|<init>(kotlin.Any){}[0]
+    final fun getValue(kotlin/Any?, kotlin/Any): kotlin/Int // /DVal.getValue|getValue(kotlin.Any?;kotlin.Any){}[0]
+}
+final class <#A: kotlin/Any?> /Value { // /Value|null[0]
+    final var text // /Value.text|{}text[0]
+        final fun <get-text>(): kotlin/String? // /Value.text.<get-text>|<get-text>(){}[0]
+        final fun <set-text>(kotlin/String?) // /Value.text.<set-text>|<set-text>(kotlin.String?){}[0]
+    final var value // /Value.value|{}value[0]
+        final fun <get-value>(): #A // /Value.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(#A) // /Value.value.<set-value>|<set-value>(1:0){}[0]
+    constructor <init>(#A = ..., kotlin/String? = ...) // /Value.<init>|<init>(1:0;kotlin.String?){}[0]
+}
+final val /additionalText // /additionalText|@Value<0:0>{0§<kotlin.Any?>}additionalText[0]
+    final fun <#A1: kotlin/Any?> (/Value<#A1>).<get-additionalText>(): kotlin/Int // /additionalText.<get-additionalText>|<get-additionalText>@Value<0:0>(){0§<kotlin.Any?>}[0]
+final val /additionalValue // /additionalValue|@Value<0:0>{0§<kotlin.Any?>}additionalValue[0]
+    final fun <#A1: kotlin/Any?> (/Value<#A1>).<get-additionalValue>(): kotlin/Int // /additionalValue.<get-additionalValue>|<get-additionalValue>@Value<0:0>(){0§<kotlin.Any?>}[0]
+final var /bar // /bar|@0:0{0§<kotlin.Any?>}bar[0]
+    final fun <#A1: kotlin/Any?> (#A1).<get-bar>(): #A1 // /bar.<get-bar>|<get-bar>@0:0(){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> (#A1).<set-bar>(#A1) // /bar.<set-bar>|<set-bar>@0:0(0:0){0§<kotlin.Any?>}[0]
+final val /barRef // /barRef|{}barRef[0]
+    final fun <get-barRef>(): kotlin.reflect/KMutableProperty1<kotlin/String?, kotlin/String?> // /barRef.<get-barRef>|<get-barRef>(){}[0]
+final var /recivier // /recivier|{}recivier[0]
+    final fun <get-recivier>(): kotlin/Any? // /recivier.<get-recivier>|<get-recivier>(){}[0]
+    final fun <set-recivier>(kotlin/Any?) // /recivier.<set-recivier>|<set-recivier>(kotlin.Any?){}[0]
+final var /value2 // /value2|{}value2[0]
+    final fun <get-value2>(): kotlin/Any? // /value2.<get-value2>|<get-value2>(){}[0]
+    final fun <set-value2>(kotlin/Any?) // /value2.<set-value2>|<set-value2>(kotlin.Any?){}[0]

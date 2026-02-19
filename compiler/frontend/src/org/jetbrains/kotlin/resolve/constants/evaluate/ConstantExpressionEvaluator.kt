@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUnsignedLiteralsDiagnosticMessageProvider
 import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType.*
@@ -52,16 +52,14 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isGenericArrayOfTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.math.BigInteger
 
 class ConstantExpressionEvaluator(
     internal val module: ModuleDescriptor,
     internal val languageVersionSettings: LanguageVersionSettings,
-    project: Project,
     internal val inlineConstTracker: InlineConstTracker = InlineConstTracker.DoNothing
 ) {
-    private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
-
     fun updateNumberType(
         numberType: KotlinType,
         expression: KtExpression?,
@@ -105,7 +103,7 @@ class ConstantExpressionEvaluator(
         val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
         val constantType = if (argumentsAsVararg) varargElementType else parameterDescriptor.type
         val expectedType = getEffectiveExpectedType(parameterDescriptor, resolvedArgument, languageVersionSettings, trace)
-        val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType!!, expectedType, trace)
+        val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType, expectedType, trace)
         val constants = compileTimeConstants.map { it.toConstantValue(expectedType) }
 
         if (argumentsAsVararg) {
@@ -166,7 +164,7 @@ class ConstantExpressionEvaluator(
         // array(1, <!>null<!>, 3) - error should be reported on inner expression
         val callArguments = when (argumentExpression) {
             is KtCallExpression -> getArgumentExpressionsForArrayCall(argumentExpression, trace)
-            is KtCollectionLiteralExpression -> getArgumentExpressionsForCollectionLiteralCall(argumentExpression, trace)
+            is KtCollectionLiteralExpression -> getArgumentExpressionsForCollectionLiteral(argumentExpression, trace)
             else -> null
         }
 
@@ -216,7 +214,7 @@ class ConstantExpressionEvaluator(
         return getArgumentExpressionsForArrayLikeCall(resolvedCall)
     }
 
-    private fun getArgumentExpressionsForCollectionLiteralCall(
+    private fun getArgumentExpressionsForCollectionLiteral(
         expression: KtCollectionLiteralExpression,
         trace: BindingTrace
     ): List<KtExpression>? {
@@ -323,7 +321,7 @@ class ConstantExpressionEvaluator(
 
         with(OptInUsageChecker) {
             val descriptor = constantType.constructor.declarationDescriptor ?: return
-            val optInDescriptions = descriptor.loadOptIns(moduleAnnotationsResolver, trace.bindingContext, languageVersionSettings)
+            val optInDescriptions = descriptor.loadOptIns(trace.bindingContext, languageVersionSettings)
 
             reportNotAllowedOptIns(
                 optInDescriptions, expression, languageVersionSettings, trace, EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS
@@ -334,19 +332,20 @@ class ConstantExpressionEvaluator(
     companion object {
         private class ExperimentalityDiagnostic1(
             val factory: DiagnosticFactory1<PsiElement, String>,
-            val verb: String
+            val verb: String,
         ) : OptInUsageChecker.OptInDiagnosticReporter {
             override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
                 val defaultMessage = OptInUsageChecker.getDefaultDiagnosticMessage(
-                    "Unsigned literals are experimental and their usages $verb be marked"
+                    ExperimentalUnsignedLiteralsDiagnosticMessageProvider,
+                    verb
                 )
                 trace.reportDiagnosticOnce(factory.on(element, defaultMessage(fqName)))
             }
         }
 
         private val EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS = OptInUsageChecker.OptInReporterMultiplexer(
-            warning = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS, "should"),
-            error = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must"),
+            warning = { ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS, "should") },
+            error = { ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must") },
             futureError = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must"),
         )
 
@@ -382,7 +381,7 @@ class ConstantExpressionEvaluator(
 }
 
 private val DIVISION_OPERATION_NAMES =
-    listOf(OperatorNameConventions.DIV, OperatorNameConventions.REM, OperatorNameConventions.MOD)
+    listOf(OperatorNameConventions.DIV, OperatorNameConventions.REM)
         .map(Name::asString)
         .toSet()
 
@@ -487,13 +486,18 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
-        val text = expression.text ?: return null
+        val text = expression.text
 
         val nodeElementType = expression.node.elementType
         if (nodeElementType == KtNodeTypes.NULL) return NullValue().wrap()
 
         val result: Any = when (nodeElementType) {
-            KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, nodeElementType)
+            KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> {
+                if (nodeElementType == KtNodeTypes.INTEGER_CONSTANT && hasLeadingZeros(text)) {
+                    trace.report(Errors.INT_LITERAL_WITH_LEADING_ZEROS.on(expression))
+                }
+                parseNumericLiteral(text, nodeElementType)
+            }
             KtNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             KtNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
             else -> throw IllegalArgumentException("Unsupported constant: $expression")
@@ -535,6 +539,10 @@ private class ConstantExpressionEvaluatorVisitor(
                 isConvertableConstVal = false
             )
         )
+    }
+
+    private fun hasLeadingZeros(text: String): Boolean {
+        return text.length > 1 && text[0] == '0' && text[1].let { it.isDigit() || it == '_' }
     }
 
     override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
@@ -976,7 +984,7 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
-        val kClassType = trace.getType(expression)!!
+        val kClassType = trace.getType(expression) ?: return null
         if (kClassType.isError) return null
         val descriptor = kClassType.constructor.declarationDescriptor
         if (descriptor !is ClassDescriptor || !KotlinBuiltIns.isKClass(descriptor)) return null
@@ -1201,7 +1209,6 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType
         ExplicitReceiverKind.EXTENSION_RECEIVER -> resolvedCall.extensionReceiver!!.type
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> null
         ExplicitReceiverKind.BOTH_RECEIVERS -> null
-        else -> null
     }
 }
 
@@ -1238,30 +1245,20 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
     else -> throw IllegalArgumentException("Unsupported type: $str")
 }
 
-fun evaluateUnary(name: String, typeStr: String, value: Any): Any? =
-    evalUnaryOp(name, typeStrToCompileTimeType(typeStr), value)
+// K1 will not support the new intrinsic const functions since we are planning on deprecating that frontend soon (KT-75372).
+// The functions must be explicitly excluded as otherwise K1 would evaluate them even if the IntrinsicConstFlag is disabled.
+private val FORBIDDEN_FUNCTIONS = listOf(
+    "STRING.trimIndent()", "STRING.trimMargin()", "STRING.trimMargin(STRING)"
+)
 
-private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? =
-    evalUnaryOp(name, type, value).also { result ->
+private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? {
+    val signature = "${type.name}.$name()"
+    if (signature in FORBIDDEN_FUNCTIONS) return null
+
+    return evalUnaryOp(name, type, value).also { result ->
         if (isIntegerType(value) && (name == "minus" || name == "unaryMinus") && value == result && !isZero(value)) {
             reportIntegerOverflow()
         }
-    }
-
-fun evaluateBinary(
-    name: String,
-    receiverTypeStr: String,
-    receiverValue: Any,
-    parameterTypeStr: String,
-    parameterValue: Any
-): Any? {
-    val receiverType = typeStrToCompileTimeType(receiverTypeStr)
-    val parameterType = typeStrToCompileTimeType(parameterTypeStr)
-
-    return try {
-        evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
-    } catch (e: Exception) {
-        null
     }
 }
 
@@ -1273,9 +1270,13 @@ private fun evaluateBinaryAndCheck(
     parameterValue: Any,
     reportIntegerOverflow: () -> Unit,
 ): Any? {
+    val signature = "${receiverType.name}.$name(${parameterType.name})"
+    if (signature in FORBIDDEN_FUNCTIONS) return null
+
     val actualResult = try {
         evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
     } catch (e: Exception) {
+        rethrowIntellijPlatformExceptionIfNeeded(e)
         null
     }
 

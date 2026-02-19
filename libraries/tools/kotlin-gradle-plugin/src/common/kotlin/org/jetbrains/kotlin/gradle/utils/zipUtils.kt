@@ -27,11 +27,10 @@ internal fun ZipFile.copyPartially(destinationZipFile: File, path: String) {
             sourceEntry.lastAccessTime?.let { destinationEntry.lastAccessTime = it }
             sourceEntry.lastModifiedTime?.let { destinationEntry.lastModifiedTime = it }
             sourceEntry.creationTime?.let { destinationEntry.creationTime = it }
-            destinationEntry.crc = sourceEntry.crc
             destinationEntry.comment = sourceEntry.comment
-            destinationEntry.size = sourceEntry.size
-            destinationEntry.compressedSize = sourceEntry.compressedSize
             destinationEntry.extra = sourceEntry.extra
+            destinationEntry.crc = sourceEntry.crc
+            destinationEntry.size = sourceEntry.size
             destinationEntry.method = sourceEntry.method
 
             destinationZipOutputStream.putNextEntry(destinationEntry)

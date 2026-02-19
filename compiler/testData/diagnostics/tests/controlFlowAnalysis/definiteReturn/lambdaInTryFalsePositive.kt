@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-48160
 // FIR_IDENTICAL
 // FULL_JDK
@@ -22,3 +23,7 @@ fun foo(): Int? {
         return null
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+inline, integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall,
+stringLiteral, thisExpression, tryExpression, typeConstraint, typeParameter */

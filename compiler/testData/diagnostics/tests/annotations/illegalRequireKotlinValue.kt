@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 package test
 
@@ -36,3 +37,5 @@ fun ok2() {}
 
 @RequireKotlin("0.0.0")
 fun ok3() {}
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, functionDeclaration, stringLiteral */

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun <T> foo1(x: @ann T & Any) {}
 fun <T> foo2(x: List<@ann T & Any>) {}
 fun <T> foo3(x: List<out @ann T & Any>) {}

@@ -1,21 +1,21 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFieldCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -29,12 +29,6 @@ abstract class FirAbstractImportingScope(
     protected val scopeSession: ScopeSession,
     lookupInFir: Boolean
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
-    private val FirClassLikeSymbol<*>.fullyExpandedSymbol: FirClassSymbol<*>?
-        get() = when (this) {
-            is FirTypeAliasSymbol -> fir.expandedConeType?.lookupTag?.toSymbol(session)?.fullyExpandedSymbol
-            is FirClassSymbol<*> -> this
-        }
-
     private fun FirClassSymbol<*>.getStaticsScope(): FirContainingNamesAwareScope? =
         if (fir.classKind == ClassKind.OBJECT) {
             unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS)
@@ -43,7 +37,7 @@ abstract class FirAbstractImportingScope(
         }
 
     fun getStaticsScope(classId: ClassId): FirContainingNamesAwareScope? =
-        provider.getClassLikeSymbolByClassId(classId)?.fullyExpandedSymbol?.getStaticsScope()
+        provider.getClassLikeSymbolByClassId(classId)?.fullyExpandedClass(session)?.getStaticsScope()
 
     protected abstract fun isExcluded(import: FirResolvedImport, name: Name): Boolean
 
@@ -62,7 +56,42 @@ abstract class FirAbstractImportingScope(
         }
     }
 
-    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<out D>> processCallablesFromImportsByName(
+    /**
+     * This is a simplified version of [processCallablesFromImportsByName] that is used for finding enum entries
+     * during the [COMPILER_REQUIRED_ANNOTATIONS][FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] phase to
+     * avoid contract violations as we have a limited amount of information.
+     *
+     * As a side effect, it may prioritize imported enum entries over other properties with the same name.
+     *
+     * [doFindEnumEntryWithoutResolution] is a default implementation for this function.
+     */
+    @FirImplementationDetail
+    abstract fun findEnumEntryWithoutResolution(name: Name): FirEnumEntrySymbol?
+
+    @FirImplementationDetail
+    protected fun doFindEnumEntryWithoutResolution(name: Name?, imports: List<FirResolvedImport>): FirEnumEntrySymbol? {
+        for (import in imports) {
+            val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
+            val parentClassId = import.resolvedParentClassId ?: continue
+            val classSymbol = provider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol ?: continue
+            if (classSymbol.fir.classKind != ClassKind.ENUM_CLASS) continue
+            val enumEntry = classSymbol.fir.declarations.firstNotNullOfOrNull {
+                if (it is FirEnumEntry && it.name == importedName)
+                    it
+                else
+                    null
+            }
+
+            if (enumEntry != null) {
+                return enumEntry.symbol
+            }
+        }
+
+        return null
+    }
+
+    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> processCallablesFromImportsByName(
         name: Name?,
         imports: List<FirResolvedImport>,
         crossinline processor: (S) -> Unit,
@@ -75,12 +104,12 @@ abstract class FirAbstractImportingScope(
             if (isExcluded(import, importedName)) continue
             val parentClassId = import.resolvedParentClassId
             if (parentClassId != null) {
-                val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedSymbol
+                val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedClass(session)
                 val staticsScope = staticsScopeOwnerSymbol?.getStaticsScope()
                 if (staticsScope != null) {
                     staticsScope.processCallablesByName(importedName) {
                         if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
-                            processor(it.buildImportedCopy(parentClassId))
+                            processor(it.buildImportedCopy(staticsScopeOwnerSymbol.classId))
                         } else {
                             processor(it)
                         }
@@ -117,10 +146,13 @@ abstract class FirAbstractImportingScope(
             provider::getTopLevelPropertySymbols
         )
     }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractImportingScope
 }
 
-internal fun FirSimpleFunction.buildImportedVersion(importedClassId: ClassId): FirSimpleFunction {
-    return buildSimpleFunctionCopy(this) {
+internal fun FirNamedFunction.buildImportedVersion(importedClassId: ClassId): FirNamedFunction {
+    return buildNamedFunctionCopy(this) {
         origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
         this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
     }.apply {
@@ -133,7 +165,7 @@ internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVari
         is FirProperty -> {
             buildPropertyCopy(this) {
                 origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
+                this.symbol = FirRegularPropertySymbol(CallableId(importedClassId, name))
                 this.delegateFieldSymbol = null
             }.apply {
                 importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)

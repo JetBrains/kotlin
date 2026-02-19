@@ -1,0 +1,38 @@
+STEP 0:
+    dependencies: lib1
+    added file: m.kt
+STEP 1:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 2..6:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 7:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 8:
+    dependencies: lib1, libProxy
+    modifications:
+        U : m.proxy.kt -> m.kt
+    modified ir: m.kt
+STEP 9..13:
+    dependencies: lib1, libProxy
+    modified ir: m.kt
+STEP 14:
+    dependencies: lib1, libProxy
+    modified ir: m.kt
+STEP 15:
+    dependencies: lib1, libProxy
+    modified ir: m.kt
+STEP 16:
+    dependencies: lib1, libProxy
+    modified ir: m.kt
+STEP 17..21:
+    dependencies: lib1, libProxy
+    modified ir: m.kt
+STEP 22:
+    dependencies: lib1, libProxy
+    modified ir: m.kt
+STEP 23:
+    dependencies: lib1, libProxy
+    modified ir: m.kt

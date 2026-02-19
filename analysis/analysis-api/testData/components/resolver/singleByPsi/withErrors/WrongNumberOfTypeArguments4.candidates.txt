@@ -1,0 +1,2 @@
+KtNameReferenceExpression(54,56): 'CC'
+  NO_CANDIDATES

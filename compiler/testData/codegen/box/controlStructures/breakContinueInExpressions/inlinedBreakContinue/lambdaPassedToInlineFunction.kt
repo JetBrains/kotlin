@@ -1,18 +1,17 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
-// TARGET_BACKEND: NATIVE
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND_K1: ANY
+// Reason: break/continue in inline lambdas unsupported
 // WITH_STDLIB
 
+// FILE: lib.kt
+inline fun foo(block: () -> Unit) = block()
+
+// FILE: main.kt
 import kotlin.test.assertEquals
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class SomeAnnotation
-
-inline fun foo(block: () -> Unit) = block()
 
 fun box(): String {
     val visited = mutableListOf<Pair<Int, Int>>()

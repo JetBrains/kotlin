@@ -1,0 +1,2 @@
+val kotlin.Int.extension: kotlin.Int
+  get()

@@ -1,10 +1,8 @@
-// IGNORE_REVERSED_RESOLVE
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-<!NO_ACTUAL_FOR_EXPECT!>expect class Foo(
-        val constructorProperty: String,
-        constructorParameter: String
-) {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class Foo {
     <!EXPECTED_DECLARATION_WITH_BODY!>init<!> {
         "no"
     }
@@ -18,10 +16,15 @@
     val prop: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
     var getSet: String
-        get() = "no"
-        set(value) {}
+        <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+        <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
     <!EXPECTED_DECLARATION_WITH_BODY!>fun functionWithBody(x: Int): Int<!> {
         return x + 1
     }
-}<!>
+}
+
+// MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, expect, functionDeclaration, getter, init, integerLiteral,
+propertyDeclaration, secondaryConstructor, setter, stringLiteral */

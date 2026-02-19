@@ -1,0 +1,81 @@
+Module: lib
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <lib>
+final class /ExternalClass { // /ExternalClass|null[0]
+    final var externalClassVar1 // /ExternalClass.externalClassVar1|{}externalClassVar1[0]
+        final fun <get-externalClassVar1>(): kotlin/String // /ExternalClass.externalClassVar1.<get-externalClassVar1>|<get-externalClassVar1>(){}[0]
+        final fun <set-externalClassVar1>(kotlin/String) // /ExternalClass.externalClassVar1.<set-externalClassVar1>|<set-externalClassVar1>(kotlin.String){}[0]
+    final var externalClassVar2 // /ExternalClass.externalClassVar2|{}externalClassVar2[0]
+        final fun <get-externalClassVar2>(): kotlin/String // /ExternalClass.externalClassVar2.<get-externalClassVar2>|<get-externalClassVar2>(){}[0]
+        final fun <set-externalClassVar2>(kotlin/String) // /ExternalClass.externalClassVar2.<set-externalClassVar2>|<set-externalClassVar2>(kotlin.String){}[0]
+    constructor <init>() // /ExternalClass.<init>|<init>(){}[0]
+    final fun externalClassFun(kotlin/Int): kotlin/String // /ExternalClass.externalClassFun|externalClassFun(kotlin.Int){}[0]
+    final fun getNestedInterface(): /ExternalClass.NestedInterface // /ExternalClass.getNestedInterface|getNestedInterface(){}[0]
+    final class NestedClass { // /ExternalClass.NestedClass|null[0]
+        final var nestedClassVar1 // /ExternalClass.NestedClass.nestedClassVar1|{}nestedClassVar1[0]
+            final fun <get-nestedClassVar1>(): kotlin/String // /ExternalClass.NestedClass.nestedClassVar1.<get-nestedClassVar1>|<get-nestedClassVar1>(){}[0]
+            final fun <set-nestedClassVar1>(kotlin/String) // /ExternalClass.NestedClass.nestedClassVar1.<set-nestedClassVar1>|<set-nestedClassVar1>(kotlin.String){}[0]
+        final var nestedClassVar2 // /ExternalClass.NestedClass.nestedClassVar2|{}nestedClassVar2[0]
+            final fun <get-nestedClassVar2>(): kotlin/String // /ExternalClass.NestedClass.nestedClassVar2.<get-nestedClassVar2>|<get-nestedClassVar2>(){}[0]
+            final fun <set-nestedClassVar2>(kotlin/String) // /ExternalClass.NestedClass.nestedClassVar2.<set-nestedClassVar2>|<set-nestedClassVar2>(kotlin.String){}[0]
+        constructor <init>() // /ExternalClass.NestedClass.<init>|<init>(){}[0]
+        final fun nestedClassFun(kotlin/Int): kotlin/String // /ExternalClass.NestedClass.nestedClassFun|nestedClassFun(kotlin.Int){}[0]
+    }
+    abstract interface NestedInterface { // /ExternalClass.NestedInterface|null[0]
+        abstract var nestedInterfaceVar // /ExternalClass.NestedInterface.nestedInterfaceVar|{}nestedInterfaceVar[0]
+            abstract fun <get-nestedInterfaceVar>(): kotlin/String // /ExternalClass.NestedInterface.nestedInterfaceVar.<get-nestedInterfaceVar>|<get-nestedInterfaceVar>(){}[0]
+            abstract fun <set-nestedInterfaceVar>(kotlin/String) // /ExternalClass.NestedInterface.nestedInterfaceVar.<set-nestedInterfaceVar>|<set-nestedInterfaceVar>(kotlin.String){}[0]
+        abstract fun nestedInterfaceFun(kotlin/Int): kotlin/String // /ExternalClass.NestedInterface.nestedInterfaceFun|nestedInterfaceFun(kotlin.Int){}[0]
+    }
+    final object NestedObject { // /ExternalClass.NestedObject|null[0]
+        final var nestedObjectVar1 // /ExternalClass.NestedObject.nestedObjectVar1|{}nestedObjectVar1[0]
+            final fun <get-nestedObjectVar1>(): kotlin/String // /ExternalClass.NestedObject.nestedObjectVar1.<get-nestedObjectVar1>|<get-nestedObjectVar1>(){}[0]
+            final fun <set-nestedObjectVar1>(kotlin/String) // /ExternalClass.NestedObject.nestedObjectVar1.<set-nestedObjectVar1>|<set-nestedObjectVar1>(kotlin.String){}[0]
+        final var nestedObjectVar2 // /ExternalClass.NestedObject.nestedObjectVar2|{}nestedObjectVar2[0]
+            final fun <get-nestedObjectVar2>(): kotlin/String // /ExternalClass.NestedObject.nestedObjectVar2.<get-nestedObjectVar2>|<get-nestedObjectVar2>(){}[0]
+            final fun <set-nestedObjectVar2>(kotlin/String) // /ExternalClass.NestedObject.nestedObjectVar2.<set-nestedObjectVar2>|<set-nestedObjectVar2>(kotlin.String){}[0]
+        final fun nestedObjectFun(kotlin/Int): kotlin/String // /ExternalClass.NestedObject.nestedObjectFun|nestedObjectFun(kotlin.Int){}[0]
+    }
+}
+abstract interface /ExternalInterface { // /ExternalInterface|null[0]
+    abstract var externalInterfaceVar // /ExternalInterface.externalInterfaceVar|{}externalInterfaceVar[0]
+        abstract fun <get-externalInterfaceVar>(): kotlin/String // /ExternalInterface.externalInterfaceVar.<get-externalInterfaceVar>|<get-externalInterfaceVar>(){}[0]
+        abstract fun <set-externalInterfaceVar>(kotlin/String) // /ExternalInterface.externalInterfaceVar.<set-externalInterfaceVar>|<set-externalInterfaceVar>(kotlin.String){}[0]
+    abstract fun externalInterfaceFun(kotlin/Int): kotlin/String // /ExternalInterface.externalInterfaceFun|externalInterfaceFun(kotlin.Int){}[0]
+    abstract fun getNestedInterface(): /ExternalInterface.NestedInterface // /ExternalInterface.getNestedInterface|getNestedInterface(){}[0]
+    final object Companion { // /ExternalInterface.Companion|null[0]
+        final var companionObjectVar1 // /ExternalInterface.Companion.companionObjectVar1|{}companionObjectVar1[0]
+            final fun <get-companionObjectVar1>(): kotlin/String // /ExternalInterface.Companion.companionObjectVar1.<get-companionObjectVar1>|<get-companionObjectVar1>(){}[0]
+            final fun <set-companionObjectVar1>(kotlin/String) // /ExternalInterface.Companion.companionObjectVar1.<set-companionObjectVar1>|<set-companionObjectVar1>(kotlin.String){}[0]
+        final var companionObjectVar2 // /ExternalInterface.Companion.companionObjectVar2|{}companionObjectVar2[0]
+            final fun <get-companionObjectVar2>(): kotlin/String // /ExternalInterface.Companion.companionObjectVar2.<get-companionObjectVar2>|<get-companionObjectVar2>(){}[0]
+            final fun <set-companionObjectVar2>(kotlin/String) // /ExternalInterface.Companion.companionObjectVar2.<set-companionObjectVar2>|<set-companionObjectVar2>(kotlin.String){}[0]
+        final fun companionObjectFun(kotlin/Int): kotlin/String // /ExternalInterface.Companion.companionObjectFun|companionObjectFun(kotlin.Int){}[0]
+        final fun getExternalInterface(): /ExternalInterface // /ExternalInterface.Companion.getExternalInterface|getExternalInterface(){}[0]
+    }
+    abstract interface NestedInterface { // /ExternalInterface.NestedInterface|null[0]
+        abstract var nestedInterfaceVar // /ExternalInterface.NestedInterface.nestedInterfaceVar|{}nestedInterfaceVar[0]
+            abstract fun <get-nestedInterfaceVar>(): kotlin/String // /ExternalInterface.NestedInterface.nestedInterfaceVar.<get-nestedInterfaceVar>|<get-nestedInterfaceVar>(){}[0]
+            abstract fun <set-nestedInterfaceVar>(kotlin/String) // /ExternalInterface.NestedInterface.nestedInterfaceVar.<set-nestedInterfaceVar>|<set-nestedInterfaceVar>(kotlin.String){}[0]
+        abstract fun nestedInterfaceFun(kotlin/Int): kotlin/String // /ExternalInterface.NestedInterface.nestedInterfaceFun|nestedInterfaceFun(kotlin.Int){}[0]
+    }
+}
+final var /topLevelVar1 // /topLevelVar1|{}topLevelVar1[0]
+    final fun <get-topLevelVar1>(): kotlin/String // /topLevelVar1.<get-topLevelVar1>|<get-topLevelVar1>(){}[0]
+    final fun <set-topLevelVar1>(kotlin/String) // /topLevelVar1.<set-topLevelVar1>|<set-topLevelVar1>(kotlin.String){}[0]
+final var /topLevelVar2 // /topLevelVar2|{}topLevelVar2[0]
+    final fun <get-topLevelVar2>(): kotlin/String // /topLevelVar2.<get-topLevelVar2>|<get-topLevelVar2>(){}[0]
+    final fun <set-topLevelVar2>(kotlin/String) // /topLevelVar2.<set-topLevelVar2>|<set-topLevelVar2>(kotlin.String){}[0]
+final fun /topLevelFun(kotlin/Int): kotlin/String // /topLevelFun|topLevelFun(kotlin.Int){}[0]
+Module: app
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <app>
+final fun /main() // /main|main(){}[0]

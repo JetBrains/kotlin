@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
+// SKIP_TXT
+
 fun foo(x: String?) = x
 
 class Test
@@ -23,3 +26,6 @@ fun gav(i: TestWithEquals?, j: TestWithEquals?) {
         if (i == j) foo(i)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType, operator,
+override, smartcast, superExpression, whenExpression, whenWithSubject */

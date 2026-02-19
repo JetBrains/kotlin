@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/J.java
 package p;
@@ -16,3 +17,5 @@ class Foo<T>: Sub<T> {
         return Foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType, nullableType, typeParameter */

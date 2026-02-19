@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE -UNUSED_PARAMETER
+// DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE -UNUSED_PARAMETER
 
 interface Parent
 object ChildA : Parent
@@ -11,3 +12,5 @@ fun test() {
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>select<!>(ChildA, ChildB) // should be error
     select<Any>(ChildA, ChildB) // should be ok
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, objectDeclaration, typeParameter */

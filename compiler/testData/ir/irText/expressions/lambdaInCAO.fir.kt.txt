@@ -1,15 +1,15 @@
-operator fun Any.plusAssign(lambda: Function0<Unit>) {
-}
-
 operator fun Any.get(index: Function0<Unit>): Int {
   return 42
+}
+
+operator fun Any.plusAssign(lambda: Function0<Unit>) {
 }
 
 operator fun Any.set(index: Function0<Unit>, value: Int) {
 }
 
 fun test1(a: Any) {
-  a.plusAssign(lambda = local fun <anonymous>() {
+  plusAssign(/* <this> = a, */ lambda = local fun <anonymous>() {
     return Unit
   }
 )
@@ -17,22 +17,23 @@ fun test1(a: Any) {
 
 fun test2(a: Any) {
   { // BLOCK
-    val <array>: Any = a
-    val <index_0>: Function0<Unit> = local fun <anonymous>() {
+    val tmp_0: Any = a
+    val tmp_1: Function0<Unit> = local fun <anonymous>() {
       return Unit
     }
 
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).plus(other = 42))
+    set(/* <this> = tmp_0, */ index = tmp_1, value = get(/* <this> = tmp_0, */ index = tmp_1).plus(other = 42))
   }
 }
 
 fun test3(a: Any) {
-  val <array>: Any = a
-  val <index_0>: Function0<Unit> = local fun <anonymous>() {
+  val tmp_2: Any = a
+  val tmp_3: Function0<Unit> = local fun <anonymous>() {
     return Unit
   }
 
-  val <unary>: Int = <array>.get(index = <index_0>)
-  <array>.set(index = <index_0>, value = <unary>.inc())
-  <unary> /*~> Unit */
+  val tmp_4: Int = get(/* <this> = tmp_2, */ index = tmp_3)
+  set(/* <this> = tmp_2, */ index = tmp_3, value = tmp_4.inc())
+  tmp_4 /*~> Unit */
 }
+

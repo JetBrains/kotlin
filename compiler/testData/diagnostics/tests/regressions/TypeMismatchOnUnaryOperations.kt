@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// K2: See KT-65342
+
 fun main() {
     val a : Int? = null;
     var v = 1
@@ -13,3 +16,6 @@ fun main() {
     val l : String = <!TYPE_MISMATCH!>-1<!>;
     val m : String = <!TYPE_MISMATCH!>+1<!>;
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration */

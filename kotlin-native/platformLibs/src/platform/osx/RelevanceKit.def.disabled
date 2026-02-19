@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.RelevanceKit
+
+modules = RelevanceKit
+compilerOpts = -framework RelevanceKit
+linkerOpts = -framework RelevanceKit
+#Disabled: Swift-only framework

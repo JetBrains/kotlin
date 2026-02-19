@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun test(name: String?) {
     try {
@@ -9,3 +10,5 @@ fun test(name: String?) {
         name?.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, safeCall, tryExpression */

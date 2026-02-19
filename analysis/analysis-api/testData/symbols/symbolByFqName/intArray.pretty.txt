@@ -1,0 +1,1 @@
+class IntArray(size: kotlin.Int) : kotlin.Cloneable, java.io.Serializable

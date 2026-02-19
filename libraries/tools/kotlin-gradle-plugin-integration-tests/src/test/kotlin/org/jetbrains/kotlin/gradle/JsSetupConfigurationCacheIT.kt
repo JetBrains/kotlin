@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -18,26 +20,57 @@ import org.junit.jupiter.api.condition.OS
 @NativeGradlePluginTests
 class JsSetupConfigurationCacheIT : KGPBaseTest() {
 
-    override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(
-            configurationCache = true,
-            configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
-        )
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms")
     @GradleTest
+    @TestMetadata("kotlin-js-browser-project")
     fun checkNodeJsSetup(gradleVersion: GradleVersion) {
-        project("kotlin-js-browser-project", gradleVersion) {
-            build("kotlinUpgradeYarnLock") {
-                assertTasksExecuted(":kotlinUpgradeYarnLock")
-                assertConfigurationCacheStored()
-            }
+        project(
+            "kotlin-js-browser-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    yarn = false
+                )
+            )
+        ) {
+            checkNodeJsSetup("kotlinUpgradePackageLock")
+        }
+    }
 
-            build("kotlinUpgradeYarnLock") {
-                assertTasksUpToDate(":kotlinUpgradeYarnLock")
-                assertConfigurationCacheReused()
-            }
+    // hack to be run on Mac m*
+    @DisplayName("Check Node.JS setup on different platforms with Yarn")
+    @GradleTest
+    @TestMetadata("kotlin-js-browser-project")
+    fun checkNodeJsSetupYarn(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-browser-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    yarn = true
+                )
+            )
+        ) {
+            checkNodeJsSetup("kotlinUpgradeYarnLock")
+        }
+    }
+
+    private fun TestProject.checkNodeJsSetup(
+        upgradeTask: String
+    ) {
+        build(upgradeTask) {
+            assertTasksExecuted(":$upgradeTask")
+            assertConfigurationCacheStored()
+        }
+
+        build(upgradeTask) {
+            assertTasksUpToDate(":$upgradeTask")
+            assertConfigurationCacheReused()
         }
     }
 }

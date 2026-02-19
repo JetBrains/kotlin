@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +BooleanElvisBoundSmartCasts
 // See KT-20752
 
 class Unstable {
@@ -39,3 +39,7 @@ fun bar(list: BooleanList, arg: UnstableBoolean) {
         list.remove(arg.first)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, getter, ifExpression, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral,
+thisExpression */

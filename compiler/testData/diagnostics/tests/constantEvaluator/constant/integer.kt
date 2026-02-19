@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 // val prop1: 1.toLong()
@@ -29,3 +30,5 @@ package test
 
 // val prop10: 1.toLong()
 <!DEBUG_INFO_CONSTANT_VALUE("1.toLong()")!>val prop10 = 0B1<!WRONG_LONG_SUFFIX!>l<!><!>
+
+/* GENERATED_FIR_TAGS: propertyDeclaration */

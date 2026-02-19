@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 // WITH_STDLIB
 
 class MySet<K, V, E : Map.Entry<K, V>>: AbstractSet<E>() {

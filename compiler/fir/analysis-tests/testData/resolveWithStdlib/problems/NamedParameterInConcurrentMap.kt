@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 
 import java.util.concurrent.ConcurrentHashMap
@@ -9,3 +10,6 @@ fun main() {
         value = "value"
     )
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration,
+stringLiteral */

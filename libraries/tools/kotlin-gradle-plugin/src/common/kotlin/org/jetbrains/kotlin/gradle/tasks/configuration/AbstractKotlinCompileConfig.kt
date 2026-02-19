@@ -14,9 +14,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.CompilerSystemPropertiesService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
@@ -34,13 +32,11 @@ import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
  */
 internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile<*>>(
     project: Project,
-    val ext: KotlinTopLevelExtension
+    val explicitApiMode: Provider<ExplicitApiMode>,
 ) : TaskConfigAction<TASK>(project) {
 
     init {
         val compilerSystemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project)
-        val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
-        val cachedClassLoadersService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         val buildIdService = BuildIdService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
@@ -55,6 +51,8 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
             task.systemPropertiesService.value(compilerSystemPropertiesService).disallowChanges()
 
+            task.kotlinCompilerArgumentsLogLevel.value(propertiesProvider.kotlinCompilerArgumentsLogLevel).disallowChanges()
+
             propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
                 task.kotlinDaemonJvmArguments.set(providers.provider {
                     kotlinDaemonJvmArgs.split("\\s+".toRegex())
@@ -65,37 +63,27 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.suppressKotlinOptionsFreeArgsModificationWarning
                 .convention(propertiesProvider.kotlinOptionsSuppressFreeArgsModificationWarning)
                 .finalizeValueOnRead()
-
-            task.preciseCompilationResultsBackup
-                .convention(propertiesProvider.preciseCompilationResultsBackup)
+            // those are covered by precise outputs backups and in-memory IC caches
+            task.taskOutputsBackupExcludes.add(task.destinationDirectory.asFile)
+            task.taskOutputsBackupExcludes.add(task.taskBuildLocalStateDirectory.asFile)
+            task.taskOutputsBackupExcludes.add(task.taskBuildCacheableOutputDirectory.asFile)
+            task.enableUnsafeIncrementalCompilationForMultiplatform
+                .convention(propertiesProvider.enableUnsafeOptimizationsForMultiplatform)
                 .finalizeValueOnRead()
-            task.taskOutputsBackupExcludes.addAll(task.preciseCompilationResultsBackup.map {
-                if (it) listOf(task.destinationDirectory.get().asFile, task.taskBuildLocalStateDirectory.get().asFile) else emptyList()
-            })
-            task.keepIncrementalCompilationCachesInMemory
-                .convention(task.preciseCompilationResultsBackup.map { it && propertiesProvider.keepIncrementalCompilationCachesInMemory })
+            task.enableMonotonousIncrementalCompileSetExpansion
+                .convention(propertiesProvider.enableMonotonousIncrementalCompileSetExpansion)
                 .finalizeValueOnRead()
-            task.taskOutputsBackupExcludes.addAll(task.keepIncrementalCompilationCachesInMemory.map {
-                if (it) listOf(task.taskBuildCacheableOutputDirectory.get().asFile) else emptyList()
-            })
-            task.suppressExperimentalIcOptimizationsWarning
-                .convention(propertiesProvider.suppressExperimentalICOptimizationsWarning)
-                .finalizeValueOnRead()
-            task.buildFinishedListenerService.value(buildFinishedListenerService).disallowChanges()
             task.buildIdService.value(buildIdService).disallowChanges()
 
             task.incremental = false
             task.useModuleDetection.convention(false)
-            if (propertiesProvider.useK2 == true) {
-                @Suppress("DEPRECATION")
-                task.compilerOptions.useK2.value(true)
-            }
             task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
-            task.classLoadersCachingService.value(cachedClassLoadersService).disallowChanges()
+            task.generateCompilerRefIndex.convention(propertiesProvider.generateCompilerRefIndex).finalizeValueOnRead()
 
             task.explicitApiMode
-                .value(project.providers.provider { ext.explicitApi })
+                .value(explicitApiMode)
                 .finalizeValueOnRead()
+            task.separateKmpCompilation.convention(propertiesProvider.separateKmpCompilation)
         }
     }
 
@@ -107,7 +95,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
     constructor(compilationInfo: KotlinCompilationInfo) : this(
         compilationInfo.project,
-        compilationInfo.project.topLevelExtension
+        compilationInfo.explicitApiMode(),
     ) {
         configureTask { task ->
             task.friendPaths.from({ compilationInfo.friendPaths })
@@ -120,40 +108,34 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 )
             }
 
-            @Suppress("DEPRECATION")
-            task.ownModuleName.set(project.provider { compilationInfo.moduleName })
             task.sourceSetName.value(providers.provider { compilationInfo.compilationName })
             task.multiPlatformEnabled.value(
                 providers.provider {
                     compilationInfo.project.plugins.any {
-                        it is KotlinPlatformPluginBase ||
-                                it is AbstractKotlinMultiplatformPluginWrapper
+                        it is AbstractKotlinMultiplatformPluginWrapper
                     }
                 }
             )
-
-            task.explicitApiMode
-                .value(
-                    project.providers.provider {
-                        // Plugin explicitly does not configures 'explicitApi' mode for test sources
-                        // compilation, as test sources are not published
-                        val compilation = compilationInfo.tcs.compilation
-                        val isCommonCompilation = compilation.target is KotlinMetadataTarget
-
-                        val androidCompilation = compilationInfo.tcs.compilation as? KotlinJvmAndroidCompilation
-                        val isMainAndroidCompilation = androidCompilation?.let {
-                            getTestedVariantData(it.androidVariant) == null
-                        } ?: false
-
-                        if (compilationInfo.isMain || isCommonCompilation || isMainAndroidCompilation) {
-                            ext.explicitApi
-                        } else {
-                            ExplicitApiMode.Disabled
-                        }
-                    }
-                )
-                .finalizeValueOnRead()
         }
+    }
+}
+
+private fun KotlinCompilationInfo.explicitApiMode(): Provider<ExplicitApiMode> = project.providers.provider {
+    // Plugin explicitly does not configure 'explicitApi' mode for test sources
+    // compilation, as test sources are not published
+    val compilation = tcs.compilation
+    val isCommonCompilation = compilation.target is KotlinMetadataTarget
+
+    val androidCompilation = tcs.compilation as? KotlinJvmAndroidCompilation
+    val isMainAndroidCompilation = androidCompilation?.let {
+        @Suppress("DEPRECATION") val variant = it.androidVariant
+        variant != null && getTestedVariantData(variant) == null
+    } == true
+
+    if (isMain || isCommonCompilation || isMainAndroidCompilation) {
+        project.topLevelExtension.explicitApi
+    } else {
+        ExplicitApiMode.Disabled
     }
 }
 

@@ -28,17 +28,10 @@ fun f(a: UInt): Int {
 // 0 INVOKESTATIC kotlin/UInt.constructor-impl
 // 0 INVOKE\w+ kotlin/UInt.(un)?box-impl
 
-// JVM_TEMPLATES
 // 1 INVOKESTATIC kotlin/UnsignedKt.uintCompare
 // 1 IFGE
 // 1 IF
 
-// JVM_IR_TEMPLATES
-// 1 INVOKESTATIC kotlin/UnsignedKt.uintCompare
-// 1 IFGE
-// 1 IF
-
-// JVM_IR_TEMPLATES
 // 4 ILOAD
 // 3 ISTORE
 // 0 IADD

@@ -1,0 +1,18 @@
+KaType
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: []
+  errorMessage: Unresolved class MyClass
+  presentableText: MyClass
+  qualifiers: [
+    KaUnresolvedClassTypeQualifier:
+      name: MyClass
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+MyClass

@@ -1,6 +1,7 @@
 // Tests that are inspired by the stack-related and verifier-related bugs in the wasm backend
 
 // WITH_STDLIB
+// WASM_FAILS_IN: WasmEdge
 
 fun box(): String {
     if (!test1()) return "Fail 1"

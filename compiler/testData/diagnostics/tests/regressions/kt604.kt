@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-604 Internal frontend error
 
@@ -19,3 +20,6 @@ class StandardPipelineFactory(val config:  ChannelPipeline.()->Unit) : ChannelPi
         return pipeline
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, localProperty,
+override, primaryConstructor, propertyDeclaration, typeWithExtension */

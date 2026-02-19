@@ -8,12 +8,15 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCommonizedCInteropDependencyConfigurationView
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import kotlin.test.Test
 import kotlin.test.fail
 

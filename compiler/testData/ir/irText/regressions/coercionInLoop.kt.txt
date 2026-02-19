@@ -7,9 +7,9 @@ fun box(): String {
       ieee754equals(arg0 = a.get(index = i), arg1 = x.next()).not() -> return "Fail " + i
     }
     { // BLOCK
-      val tmp0: Int = i
-      i = tmp0.inc()
-      tmp0
+      val tmp_0: Int = i
+      i = tmp_0.inc()
+      tmp_0
     } /*~> Unit */
   }
   return "OK"

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: a.kt
 fun main() {
      class Local : B() {
@@ -9,3 +10,5 @@ fun main() {
 abstract class B {
     protected abstract val message: String
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, override, propertyDeclaration, stringLiteral */

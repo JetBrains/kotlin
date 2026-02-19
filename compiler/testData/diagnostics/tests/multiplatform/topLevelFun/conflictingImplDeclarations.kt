@@ -1,7 +1,9 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun <!AMBIGUOUS_ACTUALS{JVM}, AMBIGUOUS_ACTUALS{JS}!>foo<!>()
+expect fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -9,8 +11,4 @@ expect fun <!AMBIGUOUS_ACTUALS{JVM}, AMBIGUOUS_ACTUALS{JS}!>foo<!>()
 <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
 <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
 
-// MODULE: m3-js()()(m1-common)
-// FILE: js.kt
-
-<!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
-<!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

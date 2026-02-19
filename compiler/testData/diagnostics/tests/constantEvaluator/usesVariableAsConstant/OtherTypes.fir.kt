@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 enum class MyEnum { A, B }
@@ -20,3 +21,5 @@ val prop4 = intArrayOf(1, 2, 3)
 
 // val prop5: true
 val prop5 = intArrayOf(1, 2, x, x)
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, propertyDeclaration */

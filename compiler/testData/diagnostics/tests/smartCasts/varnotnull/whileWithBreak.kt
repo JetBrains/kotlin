@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class SomeObject(val n: SomeObject?) {
     fun doSomething(): Boolean = true
     fun next(): SomeObject? = n    
@@ -15,3 +16,6 @@ fun list(start: SomeObject) {
     // e can be null because of next()
     e<!UNSAFE_CALL!>.<!>doSomething()
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, whileLoop */

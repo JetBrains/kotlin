@@ -13,7 +13,8 @@ import java.util.AbstractList
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
 @SinceKotlin("1.1")
-@AllowDifferentMembersInActual // New 'AbstractList` supertype is added compared to the expect declaration
+// removeRange, modCount: Kotlin `protected` visibility is different from Java
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 public actual abstract class AbstractMutableList<E> protected actual constructor() : MutableList<E>, AbstractList<E>() {
     /**
      * Replaces the element at the specified position in this list with the specified element.
@@ -23,6 +24,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
 
      * @return the element previously at the specified position.
      */
+    @IgnorableReturnValue
     abstract override fun set(index: Int, element: E): E
 
     /**
@@ -33,6 +35,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      *
      * @return the element that has been removed.
      */
+    @IgnorableReturnValue
     abstract override fun removeAt(index: Int): E
 
     /**

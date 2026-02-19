@@ -1,41 +1,58 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.JAVA_METHOD_HANDLE_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.JAVA_VAR_HANDLE_FQ_NAME
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-internal val polymorphicSignaturePhase = makeIrFilePhase(
-    ::PolymorphicSignatureLowering,
-    name = "PolymorphicSignature",
-    description = "Replace polymorphic methods with fake ones according to types at the call site"
-)
-
-private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformer<PolymorphicSignatureLowering.Data>,
+/**
+ * Replaces polymorphic methods (annotated with [java.lang.invoke.MethodHandle.PolymorphicSignature]) with fake ones according to types
+ * at the call site. This is similar to how the Java compiler generates calls to such methods.
+ *
+ * For example:
+ *
+ *     val mh: MethodHandle = ...
+ *     val result: String = mh.invokeExact(Foo()) as String
+ *
+ * In this case, [java.lang.invoke.MethodHandle.invokeExact] is a polymorphic method, which means that its declaration-site signature
+ * must be discarded, and the real signature must be computed from the argument types at the call site and the expected return type.
+ * It results in the following call in the bytecode:
+ *
+ *     invokevirtual java/lang/invoke/MethodHandle.invokeExact:(LFoo;)Ljava/lang/String;
+ *
+ * This lowering phase creates and calls a fake `IrFunction` which is the same as the original callee in everything except value parameter
+ * types and return type.
+ */
+internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrTransformer<PolymorphicSignatureLowering.Data>(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))
+        if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))
             irFile.transformChildren(this, Data(null))
     }
 
@@ -97,16 +114,34 @@ private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrE
             expression.transform(data.coerceToType)
         } else super.visitCall(expression, Data.NO_COERCION)
 
-    private fun IrCall.isPolymorphicCall(): Boolean =
-        symbol.owner.hasAnnotation(PolymorphicSignatureCallChecker.polymorphicSignatureFqName)
+    private fun IrCall.isPolymorphicCall(): Boolean {
+        // See JLS §15.12.3.
+        // > A method is _signature polymorphic_ if all of the following are true:
+        // >     * It is declared in the `java.lang.invoke.MethodHandle` class or the `java.lang.invoke.VarHandle` class.
+        // >     * It has a single variable arity parameter (§8.4.1) whose declared type is `Object[]`.
+        // >     * It is `native`.
+        val callee = symbol.owner
+        return callee.isExternal &&
+                callee.parameters.size == 2 &&
+                callee.parameters[0].let { dispatchReceiver ->
+                    dispatchReceiver.kind == IrParameterKind.DispatchReceiver && dispatchReceiver.type.classOrNull?.owner?.let {
+                        it.isClassWithFqName(JAVA_METHOD_HANDLE_FQ_NAME) || it.isClassWithFqName(JAVA_VAR_HANDLE_FQ_NAME)
+                    } == true
+                } &&
+                callee.parameters[1].let { parameter ->
+                    parameter.kind == IrParameterKind.Regular && parameter.varargElementType?.isNullableAny() == true
+                }
+    }
 
     private fun IrCall.transform(castReturnType: IrType?): IrCall {
         val function = symbol.owner
-        assert(function.valueParameters.singleOrNull()?.varargElementType != null) {
+        val (regularParameters, nonRegularParameters) = function.parameters.partition { it.kind == IrParameterKind.Regular }
+        val regularParameter = regularParameters.singleOrNull()
+        require(regularParameter?.varargElementType != null) {
             "@PolymorphicSignature methods should only have a single vararg argument: ${dump()}"
         }
 
-        val values = (getValueArgument(0) as IrVararg?)?.elements?.map {
+        val values = (arguments[regularParameter] as IrVararg?)?.elements?.map {
             when (it) {
                 is IrExpression -> it
                 is IrSpreadElement -> it.expression // `*xs` acts as `xs` (for compatibility?)
@@ -121,10 +156,13 @@ private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrE
         }.apply {
             parent = function.parent
             copyTypeParametersFrom(function)
-            dispatchReceiverParameter = function.dispatchReceiverParameter
-            extensionReceiverParameter = function.extensionReceiverParameter
-            for ((i, value) in values.withIndex()) {
-                addValueParameter("\$$i", value.type, JvmLoweredDeclarationOrigin.POLYMORPHIC_SIGNATURE_INSTANTIATION)
+            parameters = nonRegularParameters + values.mapIndexed { i, value ->
+                buildValueParameter(this) {
+                    name = Name.identifier("$$i")
+                    type = value.type
+                    origin = JvmLoweredDeclarationOrigin.POLYMORPHIC_SIGNATURE_INSTANTIATION
+                    kind = IrParameterKind.Regular
+                }
             }
         }
         return IrCallImpl.fromSymbolOwner(
@@ -132,9 +170,7 @@ private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrE
             origin = origin, superQualifierSymbol = superQualifierSymbol
         ).apply {
             copyTypeArgumentsFrom(this@transform)
-            dispatchReceiver = this@transform.dispatchReceiver
-            extensionReceiver = this@transform.extensionReceiver
-            values.forEachIndexed(::putValueArgument)
+            arguments.assignFrom(nonRegularParameters.map { this@transform.arguments[it] } + values)
             transformChildren(this@PolymorphicSignatureLowering, Data.NO_COERCION)
         }
     }

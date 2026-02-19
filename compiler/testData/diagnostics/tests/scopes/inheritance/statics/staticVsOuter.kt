@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: A.java
 public class A {
@@ -18,3 +19,6 @@ class C: B() {
         val a: Int = foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, javaFunction, javaType, localProperty,
+propertyDeclaration, stringLiteral */

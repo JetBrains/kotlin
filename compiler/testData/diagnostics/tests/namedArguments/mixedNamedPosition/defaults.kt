@@ -1,5 +1,6 @@
-// !LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 fun foo(
@@ -26,3 +27,5 @@ fun main() {
     foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>""<!>)
     foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>3.0<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

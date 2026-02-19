@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
@@ -20,3 +21,5 @@ public class JavaClass {
 
     public int getter() { return 1; }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType */

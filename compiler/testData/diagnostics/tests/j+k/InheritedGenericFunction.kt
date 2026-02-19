@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/A.java
 
@@ -29,3 +31,5 @@ import p.*
 abstract class K: C() {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,8 @@ package kotlin.text
 /**
  * Returns `true` if this character is an ISO control character.
  *
- * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL].
+ * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL],
+ * meaning the Char is in the range `'\u0000'..'\u001F'` or in the range `'\u007F'..'\u009F'`.
  *
  * @sample samples.text.Chars.isISOControl
  */
@@ -28,14 +29,14 @@ public actual fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROG
 public actual fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGATE..Char.MAX_LOW_SURROGATE
 
 /** Converts a surrogate pair to a unicode code point. Doesn't validate that the characters are a valid surrogate pair. */
-internal fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
+internal actual fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
     (((high - MIN_HIGH_SURROGATE) shl 10) or (low - MIN_LOW_SURROGATE)) + 0x10000
 
 /** Checks if the codepoint specified is a supplementary codepoint or not. */
-internal fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
+internal actual fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
     codepoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
 
-internal fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
+internal actual fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
 
 /**
  * Converts the codepoint specified to a char array. If the codepoint is not supplementary, the method will
@@ -43,7 +44,7 @@ internal fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = hi
  * a low surrogate in A[1].
  */
 @Suppress("DEPRECATION")
-internal fun Char.Companion.toChars(codePoint: Int): CharArray =
+internal actual fun Char.Companion.toChars(codePoint: Int): CharArray =
     when {
         codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> charArrayOf(codePoint.toChar())
         codePoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT -> {

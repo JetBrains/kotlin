@@ -72,7 +72,7 @@ private fun IrSimpleType.buildPossiblyInnerType(classifier: IrClass?, index: Int
             "${arguments.size - toIndex} trailing arguments were found in this type: ${render()}"
         }
 
-        return PossiblyInnerIrType(classifier, arguments.subList(index, arguments.size), null)
+        return PossiblyInnerIrType(classifier, arguments.subList(index, toIndex), null)
     }
 
     val argumentsSubList = arguments.subList(index, toIndex)

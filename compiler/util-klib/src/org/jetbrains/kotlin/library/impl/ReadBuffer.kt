@@ -5,21 +5,28 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import java.io.File
 import java.lang.ref.SoftReference
 import java.nio.ByteBuffer
 
-sealed class ReadBuffer {
+/**
+ * A buffer that allows effectively reading data from an underlying byte buffer.
+ * See inheritors for implementation details.
+ */
+sealed interface ReadBuffer {
 
-    abstract val size: Int
-    abstract fun get(result: ByteArray, offset: Int, length: Int)
-    abstract var position: Int
+    val size: Int
+    fun get(result: ByteArray, offset: Int, length: Int)
+    var position: Int
 
+    val int: Int
+    val long: Long
 
-    abstract val int: Int
-    abstract val long: Long
-
-    abstract class NIOReader(private val buffer: ByteBuffer) : ReadBuffer() {
+    /**
+     * Allows reading data directly from the byte array [bytes].
+     * The byte array is known at the time of [MemoryBuffer] creation.
+     */
+    class MemoryBuffer(bytes: ByteArray) : ReadBuffer {
+        private val buffer: ByteBuffer = bytes.buffer
 
         override val size: Int
             get() = buffer.limit()
@@ -30,7 +37,9 @@ sealed class ReadBuffer {
 
         override var position: Int
             get() = buffer.position()
-            set(value) { buffer.position(value) }
+            set(value) {
+                buffer.position(value)
+            }
 
         override val int: Int
             get() = buffer.int
@@ -39,19 +48,37 @@ sealed class ReadBuffer {
             get() = buffer.long
     }
 
-    class MemoryBuffer(bytes: ByteArray) : NIOReader(bytes.buffer)
+    /**
+     * Allows reading data from the byte array that is obtained though [loadBytes].
+     *
+     * The byte array may not be known at the time of [OnDemandMemoryBuffer] creation.
+     * It will be created later, on the first access to any of the declared [OnDemandMemoryBuffer] members.
+     * The byte array is cached using [SoftReference], which means that it can be potentially
+     * released (garbage collected) in case of JVM heap memory deficit.
+     *
+     * This implementation allows having lesser memory consumption than [MemoryBuffer] in case
+     * of occasional reads from [ReadBuffer].
+     */
+    class OnDemandMemoryBuffer(private val loadBytes: () -> ByteArray) : ReadBuffer {
+        private var bufferRef: SoftReference<ByteBuffer> = SoftReference(null)
+        private var pos: Int = 0
 
-    class DirectFileBuffer(file: File) : NIOReader(file.readBytes().buffer)
-
-    class WeakFileBuffer(private val file: File) : ReadBuffer() {
         override val size: Int
-            get() = file.length().toInt()
+            get() = ensureBuffer().limit()
 
         override fun get(result: ByteArray, offset: Int, length: Int) {
             val buf = ensureBuffer()
             pos += length
             buf.get(result, offset, length)
         }
+
+        override var position: Int
+            get() = pos.also { assert(it == ensureBuffer().position()) }
+            set(value) {
+                val buf = ensureBuffer()
+                pos = value
+                buf.position(value)
+            }
 
         override val int: Int
             get(): Int {
@@ -67,26 +94,14 @@ sealed class ReadBuffer {
                 return buf.long
             }
 
-        private var pos: Int = 0
-
-        override var position: Int
-            get() = pos.also { assert(it == ensureBuffer().position()) }
-            set(value) {
-                val buf = ensureBuffer()
-                pos = value
-                buf.position(value)
-            }
-
         private fun ensureBuffer(): ByteBuffer {
-            var tmpBuffer = weakBuffer.get()
+            var tmpBuffer = bufferRef.get()
             if (tmpBuffer == null) {
-                tmpBuffer = file.readBytes().buffer
+                tmpBuffer = loadBytes().buffer
                 tmpBuffer.position(pos)
-                weakBuffer = SoftReference(tmpBuffer)
+                bufferRef = SoftReference(tmpBuffer)
             }
             return tmpBuffer
         }
-
-        private var weakBuffer: SoftReference<ByteBuffer> = SoftReference(null)
     }
 }

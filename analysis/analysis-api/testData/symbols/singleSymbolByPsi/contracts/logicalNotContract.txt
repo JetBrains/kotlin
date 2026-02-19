@@ -1,41 +1,56 @@
-KtFunctionSymbol:
-  annotationsList: [
+KaNamedFunctionSymbol:
+  annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /logicalNotContract
+  callableId: /logicalNotContract
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSuccessfullyEffectDeclaration:
+        KaContractReturnsSuccessfullyEffectDeclaration:
       condition:
-        KtContractLogicalNotExpression:
+        KaContractLogicalNotExpression:
           argument:
-            KtContractBooleanValueParameterExpression:
+            KaContractBooleanValueParameterExpression:
               parameterSymbol:
-                KtValueParameterSymbol:
-                  annotationsList: []
-                  callableIdIfNonLocal: null
-                  contextReceivers: []
-                  generatedPrimaryConstructorProperty: null
-                  hasDefaultValue: false
-                  isCrossinline: false
-                  isExtension: false
-                  isImplicitLambdaParameter: false
-                  isNoinline: false
-                  isVararg: false
-                  name: value
-                  origin: SOURCE
-                  receiverParameter: null
-                  returnType: KtUsualClassType:
-                    annotationsList: []
-                    ownTypeArguments: []
-                    type: kotlin/Boolean
-                  symbolKind: LOCAL
-                  typeParameters: []
-                  getContainingModule: KtSourceModule "Sources of main"
-                  deprecationStatus: null
+                KaContractExplicitParameterValue:
+                  symbol:
+                    KaValueParameterSymbol:
+                      annotations: []
+                      callableId: null
+                      compilerVisibility: Public
+                      contextReceivers: []
+                      generatedPrimaryConstructorProperty: null
+                      hasDeclaredDefaultValue: false
+                      hasDefaultValue: false
+                      hasSynthesizedName: false
+                      isActual: false
+                      isCrossinline: false
+                      isExpect: false
+                      isExtension: false
+                      isExternal: false
+                      isImplicitLambdaParameter: false
+                      isNoinline: false
+                      isVal: true
+                      isVararg: false
+                      location: LOCAL
+                      modality: FINAL
+                      name: value
+                      origin: SOURCE
+                      receiverParameter: null
+                      returnType: KaUsualClassType:
+                        annotations: []
+                        typeArguments: []
+                        type: kotlin/Boolean
+                      visibility: PUBLIC
+                      getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
+                      getContainingJvmClassName: LogicalNotContractKt
+                      getContainingModule: KaSourceModule "Sources of main"
+                      deprecationStatus: null
+                      importableFqName: null
   ]
   hasStableParameterNames: true
   isActual: false
@@ -49,40 +64,57 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: logicalNotContract
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Boolean
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtSourceModule "Sources of main"
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
+      getContainingJvmClassName: LogicalNotContractKt
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
+  getContainingJvmClassName: LogicalNotContractKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: logicalNotContract

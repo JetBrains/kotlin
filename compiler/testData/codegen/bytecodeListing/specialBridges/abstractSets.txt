@@ -5,7 +5,6 @@ public abstract class ASA {
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
     public method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean
@@ -23,7 +22,6 @@ public abstract class ASAN {
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
     public method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean
@@ -39,7 +37,7 @@ public abstract class ASI {
     // source: 'abstractSets.kt'
     public method <init>(): void
     public method add(p0: int): boolean
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public abstract method contains(p0: int): boolean
@@ -59,7 +57,7 @@ public abstract class ASIN {
     // source: 'abstractSets.kt'
     public method <init>(): void
     public method add(p0: java.lang.Integer): boolean
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public abstract method contains(p0: java.lang.Integer): boolean
@@ -78,7 +76,7 @@ public abstract class ASIN {
 public abstract class ASS {
     // source: 'abstractSets.kt'
     public method <init>(): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -98,7 +96,7 @@ public abstract class ASS {
 public abstract class ASSN {
     // source: 'abstractSets.kt'
     public method <init>(): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -121,7 +119,6 @@ public abstract class AST {
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
     public method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean

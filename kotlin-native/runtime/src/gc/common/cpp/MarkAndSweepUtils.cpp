@@ -5,9 +5,8 @@
 
 #include "MarkAndSweepUtils.hpp"
 
-void kotlin::gc::stopTheWorld(kotlin::gc::GCHandle gcHandle) noexcept {
-    bool didSuspend = mm::RequestThreadsSuspension();
-    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+void kotlin::gc::stopTheWorld(GCHandle gcHandle, const char* reason) noexcept {
+    mm::RequestThreadsSuspension(reason);
     gcHandle.suspensionRequested();
 
     mm::WaitForThreadsSuspension();

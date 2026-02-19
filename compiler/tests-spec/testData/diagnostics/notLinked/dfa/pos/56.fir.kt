@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
 
 /*
@@ -12,7 +12,7 @@
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Class?) {
-    if (x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<kotlin.Function1<kotlin.Int, kotlin.Function1<kotlin.Int, kotlin.Int>>>")!>x::fun_1<!>
+    if (x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<(kotlin.Int) -> (kotlin.Int) -> kotlin.Int>")!>x::fun_1<!>
 }
 
 /*
@@ -21,8 +21,8 @@ fun case_1(x: Class?) {
  * ISSUES: KT-17386
  */
 fun case_2(x: Class?) {
-    val y = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<kotlin.Function1<kotlin.Int, kotlin.Function1<kotlin.Int, kotlin.Int>>>?")!>if (x != null) x::fun_1 else null<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<kotlin.Function1<kotlin.Int, kotlin.Function1<kotlin.Int, kotlin.Int>>>?")!>y<!>
+    val y = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<(kotlin.Int) -> (kotlin.Int) -> kotlin.Int>?")!>if (x != null) x::fun_1 else null<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<(kotlin.Int) -> (kotlin.Int) -> kotlin.Int>?")!>y<!>
 }
 
 /*
@@ -31,8 +31,8 @@ fun case_2(x: Class?) {
  * ISSUES: KT-17386
  */
 fun case_3(x: Class?) {
-    val y = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<Class, kotlin.Function1<kotlin.Int, kotlin.Function1<kotlin.Int, kotlin.Int>>>?")!>if (x != null) Class::fun_1 else null<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<Class, kotlin.Function1<kotlin.Int, kotlin.Function1<kotlin.Int, kotlin.Int>>>?")!>y<!>
+    val y = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<Class, (kotlin.Int) -> (kotlin.Int) -> kotlin.Int>?")!>if (x != null) Class::fun_1 else null<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<Class, (kotlin.Int) -> (kotlin.Int) -> kotlin.Int>?")!>y<!>
 }
 
 /*

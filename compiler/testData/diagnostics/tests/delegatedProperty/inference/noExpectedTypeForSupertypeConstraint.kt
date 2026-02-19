@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 import kotlin.reflect.KProperty
 
@@ -15,3 +16,6 @@ class MyProperty<T, R> {
         throw Exception("$thisRef $desc $t")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

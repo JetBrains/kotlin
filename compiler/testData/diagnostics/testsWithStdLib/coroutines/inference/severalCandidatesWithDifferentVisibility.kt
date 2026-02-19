@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 // FILE: a.kt
 
@@ -41,3 +42,6 @@ fun test() {
     }
 }
 
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, companionObject, flexibleType,
+functionDeclaration, functionalType, integerLiteral, interfaceDeclaration, javaFunction, lambdaLiteral, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, typeParameter, typeWithExtension */

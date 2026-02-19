@@ -1,4 +1,5 @@
-// !LANGUAGE: +RefineTypeCheckingOnAssignmentsToJavaFields
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +RefineTypeCheckingOnAssignmentsToJavaFields
 // WITH_STDLIB
 
 // FILE: Foo.java
@@ -25,7 +26,7 @@ public class Foo3<T> {
 // --- from Java --- //
 
 fun takeStarFoo(x: Foo<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
     x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
@@ -43,8 +44,8 @@ public class Bar<T> {
 }
 
 fun takeStarBar(x: Bar<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
-    x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main2() {
@@ -57,8 +58,8 @@ fun main2() {
 // --- from Java (nullable) --- //
 
 fun takeStarFoo2(x: Foo2<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
-    x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main3() {
@@ -74,8 +75,8 @@ public class Bar2<T> {
 }
 
 fun takeStarBar2(x: Bar2<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
-    x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main4() {
@@ -88,8 +89,8 @@ fun main4() {
 // --- from Java (not-null) --- //
 
 fun takeStarFoo3(x: Foo3<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
-    x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main5() {
@@ -106,8 +107,8 @@ class Bar3<T> {
 }
 
 fun takeStarBar3(x: Bar3<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
-    x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main6() {
@@ -116,3 +117,7 @@ fun main6() {
     takeStarBar3(bar)
     println(bar.value) // CCE: String cannot be cast to Number
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, capturedType, classDeclaration, dnnType, flexibleType,
+functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, nullableType, propertyDeclaration,
+starProjection, stringLiteral, typeParameter */

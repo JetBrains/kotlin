@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.build.report.metrics
 import java.io.Serializable
 import java.util.*
 
-class BuildAttributes : Serializable {
-    private val myAttributes =
-        EnumMap<BuildAttribute, Int>(
-            BuildAttribute::class.java
-        )
+data class BuildAttributes(
+    private val myAttributes: MutableMap<BuildAttribute, Int> = EnumMap(BuildAttribute::class.java)
+) : Serializable {
 
     fun add(attr: BuildAttribute, count: Int = 1) {
         myAttributes[attr] = myAttributes.getOrDefault(attr, 0) + count

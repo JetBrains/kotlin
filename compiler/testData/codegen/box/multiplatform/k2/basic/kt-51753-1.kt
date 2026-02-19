@@ -1,11 +1,10 @@
-// ISSUE: KT-51753
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
+// ISSUE: KT-51753
 // WITH_STDLIB
 // WITH_REFLECT
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common/AtomicBoolean.kt
 
 import kotlin.reflect.KProperty
@@ -26,7 +25,6 @@ private val _topLevelBoolean = atomic(false)
 var topLevelDelegatedPropertyBoolean: Boolean by _topLevelBoolean
 
 // MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: jvm/AtomicBoolean.kt
 
 import kotlin.reflect.KProperty

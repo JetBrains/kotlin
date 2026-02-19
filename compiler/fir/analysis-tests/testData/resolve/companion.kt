@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 abstract class Some {
@@ -15,3 +16,5 @@ abstract class Another {
 
     abstract val x: InCompanion
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, propertyDeclaration */

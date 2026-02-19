@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
+
 fun castInTry(s: Any) {
     try {
         s as String // Potential cast exception
@@ -15,3 +18,5 @@ fun castInTryAndFinally(s: Any) {
     }
     <!DEBUG_INFO_SMARTCAST!>s<!>.length // Should be smartcast
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, smartcast, tryExpression */

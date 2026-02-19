@@ -11,9 +11,4 @@ fun testLongWithObjectArray(i: Long, xs: Array<Any>) = i in xs.indices
 // 2 I2L
 // 4 ARRAYLENGTH
 // 2 LCONST_0
-
-// JVM_TEMPLATES
-// 6 ICONST_0
-
-// JVM_IR_TEMPLATES
 // 10 ICONST_0

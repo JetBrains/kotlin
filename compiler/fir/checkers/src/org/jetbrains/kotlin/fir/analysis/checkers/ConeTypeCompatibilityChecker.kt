@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -96,7 +96,7 @@ object ConeTypeCompatibilityChecker {
             // This is to stay compatible with FE1.0.
             else -> Compatibility.SOFT_INCOMPATIBLE
         }
-        return ctx.getCompatibility(flatMap { it.collectUpperBounds() }.toSet(), emptySet(), compatibilityUpperBound)
+        return ctx.getCompatibility(flatMap { it.collectUpperBounds(ctx) }.toSet(), emptySet(), compatibilityUpperBound)
     }
 
     private fun ConeKotlinType.isConcreteType(): Boolean {
@@ -241,16 +241,18 @@ object ConeTypeCompatibilityChecker {
             is ConeErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
-                is ConeTypeVariableType -> emptySet()
                 is ConeTypeParameterType -> emptySet()
-                else -> throw IllegalStateException("missing branch for ${javaClass.name}")
+                else -> error("missing branch for ${javaClass.name}")
             }
+            is ConeTypeVariableType -> emptySet()
             is ConeDefinitelyNotNullType -> original.collectLowerBounds()
             is ConeIntersectionType -> intersectedTypes.flatMap { it.collectLowerBounds() }.toSet()
             is ConeFlexibleType -> lowerBound.collectLowerBounds()
             is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectLowerBounds() }?.toSet().orEmpty()
             is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
-            is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
+            is ConeStubType, is ConeIntegerLiteralConstantType -> {
+                error("$this should not reach here")
+            }
         }
     }
 
@@ -306,9 +308,9 @@ object ConeTypeCompatibilityChecker {
                     is ConeKotlinTypeConflictingProjection -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
                     is ConeKotlinType ->
                         when (typeParameter.variance) {
-                            Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.IN_VARIANCE)
-                            Variance.OUT_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.OUT_VARIANCE)
-                            else -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
+                            Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection, Variance.IN_VARIANCE)
+                            Variance.OUT_VARIANCE -> BoundTypeArgument(coneTypeProjection, Variance.OUT_VARIANCE)
+                            else -> BoundTypeArgument(coneTypeProjection, Variance.INVARIANT)
                         }
                 }
                 val coneKotlinType = boundTypeArgument.type
@@ -336,7 +338,7 @@ object ConeTypeCompatibilityChecker {
             // the semantic of type parameter in Enum and KClass are fixed: values of types with incompatible type parameters are always
             // incompatible.
             val compatibilityUpperBoundForTypeArg =
-                if ((ctx.prohibitComparisonOfIncompatibleEnums && typeParameterOwner.classId == StandardClassIds.Enum) ||
+                if (typeParameterOwner.classId == StandardClassIds.Enum ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && typeParameterOwner.classId == StandardClassIds.KClass)
                 ) {
                     compatibilityUpperBound
@@ -350,27 +352,25 @@ object ConeTypeCompatibilityChecker {
                 it.lower += type.collectLowerBounds()
             }
             if (boundTypeArgument.variance.allowsOutPosition) {
-                it.upper += type.collectUpperBounds()
+                it.upper += type.collectUpperBounds(ctx)
             }
         }
     }
 
     private fun FirClassLikeSymbol<*>.getSuperTypes(): List<ConeClassLikeType> {
         return when (this) {
-            is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneTypeSafe())
-            is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneTypeSafe() }
-            else -> emptyList()
+            is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneType as? ConeClassLikeType)
+            is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneType as? ConeClassLikeType }
         }
     }
 
     private fun ConeClassLikeType.getClassLikeElement(ctx: ConeInferenceContext): FirClassLikeSymbol<*>? =
-        ctx.symbolProvider.getSymbolByLookupTag(lookupTag)
+        lookupTag.toSymbol(ctx.session)
 
     private fun FirClassLikeSymbol<*>.getTypeParameter(index: Int): FirTypeParameterSymbol? {
         return when (this) {
             is FirTypeAliasSymbol -> typeParameterSymbols[index]
             is FirClassSymbol<*> -> typeParameterSymbols[index]
-            else -> return null
         }
     }
 
@@ -396,7 +396,7 @@ object ConeTypeCompatibilityChecker {
 
     private fun ConeClassLikeLookupTag.toFirClassWithSuperClasses(
         ctx: ConeInferenceContext
-    ): FirClassWithSuperClasses? = when (val klass = ctx.symbolProvider.getSymbolByLookupTag(this)) {
+    ): FirClassWithSuperClasses? = when (val klass = toSymbol(ctx.session)) {
         is FirTypeAliasSymbol -> klass.fullyExpandedClass(ctx.session)?.let { FirClassWithSuperClasses(it, ctx) }
         is FirClassSymbol<*> -> FirClassWithSuperClasses(klass, ctx)
         else -> null
@@ -406,7 +406,7 @@ object ConeTypeCompatibilityChecker {
         val isInterface: Boolean get() = firClass.isInterface
 
         val superClasses: Set<FirClassWithSuperClasses> by lazy {
-            firClass.resolvedSuperTypes.mapNotNull { (it as? ConeClassLikeType)?.lookupTag?.toFirClassWithSuperClasses(ctx) }.toSet()
+            firClass.resolvedSuperTypes.mapNotNull { it.classLikeLookupTagIfAny?.toFirClassWithSuperClasses(ctx) }.toSet()
         }
 
         val thisAndAllSuperClasses: Set<FirClassWithSuperClasses> by lazy {
@@ -436,11 +436,11 @@ object ConeTypeCompatibilityChecker {
          *   - kotlin.Unit
          */
         fun getHasPredefinedEqualityContract(ctx: ConeInferenceContext): Boolean {
-            return (ctx.prohibitComparisonOfIncompatibleEnums && (firClass.isEnumClass || firClass.classId == StandardClassIds.Enum)) ||
+            return (firClass.isEnumClass || firClass.classId == StandardClassIds.Enum) ||
                     firClass.isPrimitiveType() ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && firClass.classId == StandardClassIds.KClass) ||
                     firClass.classId == StandardClassIds.String || firClass.classId == StandardClassIds.Unit ||
-                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInline))
+                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInlineOrValue))
         }
 
         private val FirClassSymbol<*>.isFinal: Boolean
@@ -448,13 +448,9 @@ object ConeTypeCompatibilityChecker {
                 return when (this) {
                     is FirAnonymousObjectSymbol -> true
                     is FirRegularClassSymbol -> modality == Modality.FINAL
-                    else -> error("unknown type of FirClass $this")
                 }
             }
     }
-
-    private val ConeInferenceContext.prohibitComparisonOfIncompatibleEnums: Boolean
-        get() = session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitComparisonOfIncompatibleEnums)
 
     private val ConeInferenceContext.prohibitComparisonOfIncompatibleClasses: Boolean
         get() = session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitComparisonOfIncompatibleClasses)

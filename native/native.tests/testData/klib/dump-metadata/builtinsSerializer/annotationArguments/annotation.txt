@@ -1,9 +1,47 @@
-    annotation class AnnotationArray constructor(annotationArray: Array<JustAnnotation>) : Annotation {
-        val annotationArray: Array<JustAnnotation>
+library {
+  // module name: <annotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnotationArray
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/Empty
+    // class name: test/JustAnnotation
+
+    public final annotation class test/AnnotationArray : kotlin/Annotation {
+
+      public constructor(annotationArray: kotlin/Array<test/JustAnnotation>)
+
+      public final val annotationArray: kotlin/Array<test/JustAnnotation>
+        public final get
     }
-    @JustAnnotation(annotation = Empty) @AnnotationArray(annotationArray = {}) class C1 constructor()
-    @AnnotationArray(annotationArray = {JustAnnotation(annotation = Empty), JustAnnotation(annotation = Empty)}) class C2 constructor()
-    annotation class Empty constructor() : Annotation
-    annotation class JustAnnotation constructor(annotation: Empty) : Annotation {
-        val annotation: Empty
+
+    @test/JustAnnotation(annotation = test/Empty())
+    @test/AnnotationArray(annotationArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
     }
+
+    @test/AnnotationArray(annotationArray = [test/JustAnnotation(annotation = test/Empty()), test/JustAnnotation(annotation = test/Empty())])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final annotation class test/Empty : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final annotation class test/JustAnnotation : kotlin/Annotation {
+
+      public constructor(annotation: test/Empty)
+
+      public final val annotation: test/Empty
+        public final get
+    }
+  }
+}

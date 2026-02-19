@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 
 // WITH_REFLECT
@@ -17,7 +18,7 @@ interface Interface2
 class A<Z> : Interface<String, Z>, Klass(), Interface2
 
 fun box(): String {
-    val (i, k, i2) = A::class.supertypes.map { it.javaType }
+    val [i, k, i2] = A::class.supertypes.map { it.javaType }
 
     i as? ParameterizedType ?: fail("Not a parameterized type: $i")
     assertEquals(Interface::class.java, i.rawType)

@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final inline fun /bar(kotlin/Function0<kotlin/Unit>, noinline kotlin/Function0<kotlin/Unit>) // /bar|bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}[0]
+final inline fun /foo(kotlin/Function0<kotlin/Unit>) // /foo|foo(kotlin.Function0<kotlin.Unit>){}[0]
+final fun /test1() // /test1|test1(){}[0]
+final fun /test2() // /test2|test2(){}[0]

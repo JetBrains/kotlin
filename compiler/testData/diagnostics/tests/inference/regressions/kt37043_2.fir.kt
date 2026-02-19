@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -USELESS_ELVIS
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -USELESS_ELVIS
 
 fun <T> first(x: Array<out T>): T = TODO()
 fun <E> elvis(first: E?, second: E): E = TODO()
@@ -29,3 +30,6 @@ fun main() {
     nullableNumber3
     nullableNumber4
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, inline, localProperty, nullableType, outProjection,
+propertyDeclaration, reified, typeParameter */

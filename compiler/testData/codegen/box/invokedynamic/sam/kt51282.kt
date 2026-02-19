@@ -16,7 +16,7 @@ public interface Foo {
 
 package org.example.bar
 
-fun doFoo(s: String): String = s.toUpperCase()
+fun doFoo(s: String): String = s.uppercase()
 
 // FILE: bar2.kt
 

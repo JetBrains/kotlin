@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: AnnotationRetentions.java
 
@@ -34,3 +35,5 @@ public class AnnotationRetentions {
 @AnnotationRetentions.BinaryAnnotation class BinaryClass
 
 @AnnotationRetentions.RuntimeAnnotation class RuntimeClass
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

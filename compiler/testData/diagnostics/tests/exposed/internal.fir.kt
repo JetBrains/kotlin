@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 internal open class My
 
 // valid, internal from internal
@@ -23,3 +24,5 @@ internal class Their: His() {
     // error, effectively internal from protected
     class InnerDerived: <!EXPOSED_SUPER_CLASS!>His.Nested<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, nullableType, propertyDeclaration */

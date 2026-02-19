@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-47870
 
 // FILE: example/JavaSuper.java
@@ -24,3 +25,5 @@ class KotlinChildOfJavaSuper : JavaSuper() {
     @Foo("should work")
     fun usesFoo() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, stringLiteral */

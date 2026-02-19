@@ -1,22 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
-/*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
-/*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Named
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import java.util.*
 
@@ -30,10 +22,16 @@ import java.util.*
  */
 class HierarchyAttributeContainer(
     val parent: AttributeContainer?,
+    private val objectFactory: ObjectFactory,
     val filterParentAttributes: (Attribute<*>) -> Boolean = { true }
 ) : AttributeContainer {
+    // The order of the query should be local first:
+    // - lazyAttributesMap
+    // - attributesMap
+    // - otherContainerAttributes
     private val attributesMap = Collections.synchronizedMap(mutableMapOf<Attribute<*>, Any>())
     private val lazyAttributesMap = Collections.synchronizedMap(mutableMapOf<Attribute<*>, Provider<out Any>>())
+    private val otherContainerAttributes = Collections.synchronizedList(listOf<AttributeContainer>())
 
     private fun getFilteredParentAttribute(key: Attribute<*>) =
         if (parent != null && filterParentAttributes(key)) parent.getAttribute(key) else null
@@ -41,20 +39,28 @@ class HierarchyAttributeContainer(
     override fun contains(key: Attribute<*>): Boolean =
         lazyAttributesMap.contains(key) ||
                 attributesMap.contains(key) ||
+                otherContainerAttributes.any { it.contains(key) } ||
                 getFilteredParentAttribute(key) != null
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> getAttribute(key: Attribute<T>): T? = lazyAttributesMap[key]?.get() as T?
         ?: attributesMap[key] as T?
+        ?: otherContainerAttributes.find { it.contains(key) }?.getAttribute(key)
         ?: getFilteredParentAttribute(key) as T?
 
     override fun isEmpty(): Boolean = lazyAttributesMap.isEmpty() &&
             attributesMap.isEmpty() &&
-            (parent?.keySet().orEmpty().filter(filterParentAttributes).isEmpty())
+            otherContainerAttributes.all { it.isEmpty } &&
+            (parent?.keySet().orEmpty().toSet().none(filterParentAttributes))
 
     override fun keySet(): Set<Attribute<*>> = lazyAttributesMap.keys +
             attributesMap.keys +
-            parent?.keySet().orEmpty().filter(filterParentAttributes)
+            otherContainerAttributes.fold(mutableSetOf()) { acc, container -> acc.apply { addAll(container.keySet()) }} +
+            parent?.keySet().orEmpty().toSet().filter(filterParentAttributes)
+
+    override fun <T : Named?> named(type: Class<T>, name: String): T {
+        return objectFactory.named(type, name)
+    }
 
     override fun <T : Any> attribute(key: Attribute<T>, value: T): AttributeContainer {
         val checkedValue = requireNotNull(value as Any?) { "null values for attributes are not supported" }
@@ -71,6 +77,11 @@ class HierarchyAttributeContainer(
     ): AttributeContainer {
         lazyAttributesMap[key] = provider
         attributesMap.remove(key)
+        return this
+    }
+
+    override fun addAllLater(other: AttributeContainer): AttributeContainer {
+        otherContainerAttributes.add(other)
         return this
     }
 }

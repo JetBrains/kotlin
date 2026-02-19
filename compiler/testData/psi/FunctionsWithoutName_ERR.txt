@@ -3,6 +3,8 @@ KtFile: FunctionsWithoutName_ERR.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
     PsiErrorElement:Expecting '('
@@ -245,8 +247,10 @@ KtFile: FunctionsWithoutName_ERR.kt
       PsiElement(GT)('>')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
-      PsiErrorElement:Expecting a parameter declaration
-        PsiElement(COMMA)(',')
+      VALUE_PARAMETER
+        PsiErrorElement:Expecting a parameter declaration
+          <empty list>
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
       VALUE_PARAMETER
         PsiElement(IDENTIFIER)('a')
@@ -259,8 +263,10 @@ KtFile: FunctionsWithoutName_ERR.kt
               PsiElement(IDENTIFIER)('foo')
       PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting a parameter declaration
-        PsiElement(COMMA)(',')
+      VALUE_PARAMETER
+        PsiErrorElement:Expecting a parameter declaration
+          <empty list>
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
       VALUE_PARAMETER
         PsiElement(IDENTIFIER)('a')

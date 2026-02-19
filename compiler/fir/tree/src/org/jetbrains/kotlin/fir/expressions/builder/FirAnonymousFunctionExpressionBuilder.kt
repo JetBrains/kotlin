@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,11 +21,13 @@ import kotlin.contracts.contract
 class FirAnonymousFunctionExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     lateinit var anonymousFunction: FirAnonymousFunction
+    var isTrailingLambda: Boolean = false
 
     override fun build(): FirAnonymousFunctionExpression {
         return FirAnonymousFunctionExpressionImpl(
             source,
-            anonymousFunction
+            anonymousFunction,
+            isTrailingLambda,
         )
     }
 
@@ -42,9 +44,26 @@ class FirAnonymousFunctionExpressionBuilder : FirAnnotationContainerBuilder, Fir
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildAnonymousFunctionExpression(init: FirAnonymousFunctionExpressionBuilder.() -> Unit = {}): FirAnonymousFunctionExpression {
+inline fun buildAnonymousFunctionExpression(init: FirAnonymousFunctionExpressionBuilder.() -> Unit): FirAnonymousFunctionExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
+
     return FirAnonymousFunctionExpressionBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildAnonymousFunctionExpressionCopy(
+    original: FirAnonymousFunctionExpression,
+    init: FirAnonymousFunctionExpressionBuilder.() -> Unit,
+): FirAnonymousFunctionExpression {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+
+    val copyBuilder = FirAnonymousFunctionExpressionBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.anonymousFunction = original.anonymousFunction
+    copyBuilder.isTrailingLambda = original.isTrailingLambda
+    return copyBuilder.apply(init).build()
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // FILE: imm/Map.java
 package imm;
@@ -18,7 +19,7 @@ public interface Option<T> {
 
 // FILE: imm/LinkedHashSet.java
 package imm;
-public class LinkedHashSet<E> extends Set<E> {
+public class LinkedHashSet<E> implements Set<E> {
     public static <T> LinkedHashSet<T> empty() { return null; }
 }
 
@@ -33,3 +34,6 @@ private typealias ImmutableMultimap<K, V> = ImmutableMap<K, ImmutableSet<V>>
 private fun <K, V> ImmutableMultimap<K, V>.put(key: K, value: V) {
     this[key].getOrElse(ImmutableLinkedHashSet.empty<V>())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction, javaType, nullableType,
+thisExpression, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

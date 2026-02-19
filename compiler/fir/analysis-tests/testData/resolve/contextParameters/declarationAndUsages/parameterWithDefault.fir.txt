@@ -1,0 +1,15 @@
+FILE: parameterWithDefault.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A| = ERROR_EXPR(Context parameters cannot have default values))
+    public final fun test(): R|kotlin/Unit| {
+    }
+    context(a: R|A| = ERROR_EXPR(Context parameters cannot have default values))
+    public final val testProperty: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }

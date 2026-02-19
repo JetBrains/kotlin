@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -18,3 +19,5 @@ package test
 
 @Deprecated("To check that ::foo is resolved to actual fun foo when compiling common+jvm")
 actual fun foo(): String = ""
+
+/* GENERATED_FIR_TAGS: actual, callableReference, expect, functionDeclaration, functionalType, stringLiteral */

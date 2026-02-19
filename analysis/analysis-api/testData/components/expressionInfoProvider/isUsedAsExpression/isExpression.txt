@@ -1,3 +1,4 @@
 expression: IS_EXPRESSION
 text: b is Number
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

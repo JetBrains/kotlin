@@ -104,12 +104,13 @@ infix fun <T, R> Collection<T>.memoryOptimizedZip(other: Collection<R>): List<Pa
 }
 
 /**
- * [Sequence] variant of [org.jetbrains.kotlin.backend.common.atMostOne]
+ * [Sequence] variant of [org.jetbrains.kotlin.utils.atMostOne]
+ *
  * So, when:
  * - there is no element then `null` will be returned
  * - there is a single element then the element will be returned
  * - there is more than one element then the error will be thrown
- * @see org.jetbrains.kotlin.backend.common.atMostOne
+ * @see org.jetbrains.kotlin.utils.atMostOne
  */
 fun <T> Sequence<T>.atMostOne(): T? {
     val iterator = iterator()

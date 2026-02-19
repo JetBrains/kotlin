@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-456 No check for obligatory return in getters
 
@@ -29,3 +30,6 @@ class C() {
 }
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, primaryConstructor, propertyDeclaration,
+tryExpression */

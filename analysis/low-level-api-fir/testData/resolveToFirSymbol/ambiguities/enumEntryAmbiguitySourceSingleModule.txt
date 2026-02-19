@@ -1,0 +1,36 @@
+KtEnumEntry 'Entry' in 'main.kt' (12,5):
+  public final static enum entry Entry: R|test/A| = object : R|test/A| {
+      private constructor(): R|test/<anonymous>| {
+          super<R|test/A|>()
+      }
+
+      public final val two: R|kotlin/Int| = Int(2)
+          public get(): R|kotlin/Int|
+
+  }
+
+
+KtEnumEntry 'Entry' in 'main.kt' (22,5):
+  public final static enum entry Entry: R|test/A| = object : R|test/A| {
+      private constructor(): R|test/<anonymous>| {
+          super<R|test/A|>()
+      }
+
+      public final val three: R|kotlin/Int| = Int(3)
+          public get(): R|kotlin/Int|
+
+  }
+
+
+KtEnumEntry 'Entry' in 'main.kt' (6,5):
+  public final static enum entry Entry: R|test/A| = object : R|test/A| {
+      private constructor(): R|test/<anonymous>| {
+          super<R|test/A|>()
+      }
+
+      public final val one: R|kotlin/Int| = Int(1)
+          public get(): R|kotlin/Int|
+
+  }
+
+

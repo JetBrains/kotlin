@@ -1,6 +1,0 @@
-KT element: KtClassBody
-FIR element: null
-FIR source kind: null
-
-FIR element rendered:
-null

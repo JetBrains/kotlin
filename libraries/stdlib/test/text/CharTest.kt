@@ -17,6 +17,8 @@ class CharTest {
             "Κκϰ", "Ππϖ", "Ρρϱ", "Σςσ", "Φφϕ", "ΩωΩ", "Ṡṡẛ",
             "Θθϑϴ", "Iiİı",
         )
+
+       val allCharsByCategory = (Char.MIN_VALUE..Char.MAX_VALUE).groupBy { it.category }
     }
 
     @Test
@@ -324,6 +326,17 @@ class CharTest {
         assertTrue(controlCancel.isISOControl())
         assertEquals(CharCategory.CONTROL, controlCancel.category)
         assertEquals("Cc", CharCategory.CONTROL.code)
+    }
+
+    @Test
+    fun whitespace() {
+        val allWhitespace = (Char.MIN_VALUE..Char.MAX_VALUE).filter { it.isWhitespace() }
+        val expected =
+            listOf(CharCategory.SPACE_SEPARATOR, CharCategory.LINE_SEPARATOR, CharCategory.PARAGRAPH_SEPARATOR)
+                .flatMap { allCharsByCategory[it]!! } +
+                    ('\u0009'..'\u000D') +
+                    ('\u001C'..'\u001F')
+        assertEquals(expected.sorted(), allWhitespace)
     }
 
     @Test

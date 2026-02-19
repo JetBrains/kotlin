@@ -1,4 +1,4 @@
-// LANGUAGE: +ProhibitConfusingSyntaxInWhenBranches
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -INCOMPATIBLE_TYPES, -NON_EXHAUSTIVE_WHEN_STATEMENT, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // ISSUE: KT-48385
 
@@ -57,8 +57,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x in x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x !in x<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_ERROR!>x is String<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_ERROR!>x !is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x < x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x > x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x <= x<!> -> {}
@@ -72,8 +72,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         (x in x) -> {}
         (x !in x) -> {}
-        (x is String) -> {}
-        (x !is String) -> {}
+        (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) -> {}
+        (<!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!>) -> {}
         (x < x) -> {}
         (x > x) -> {}
         (x <= x) -> {}
@@ -161,8 +161,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x in x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x !in x<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x is String<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x !is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x < x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x > x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x <= x<!> -> {}
@@ -176,8 +176,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in (x in x) -> {}
         in (x !in x) -> {}
-        in (x is String) -> {}
-        in (x !is String) -> {}
+        in (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) -> {}
+        in (<!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!>) -> {}
         in (x < x) -> {}
         in (x > x) -> {}
         in (x <= x) -> {}
@@ -234,3 +234,8 @@ fun testWithRange_bad_4(b: B) {
         in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, comparisonExpression,
+disjunctionExpression, elvisExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, interfaceDeclaration, isExpression, localProperty, multiplicativeExpression, nullableType,
+operator, propertyDeclaration, rangeExpression, safeCall, whenExpression, whenWithSubject */

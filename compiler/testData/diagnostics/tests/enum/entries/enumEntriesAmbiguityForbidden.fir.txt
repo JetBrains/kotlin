@@ -1,0 +1,20 @@
+FILE: enumEntriesAmbiguityForbidden.fir.kt
+    public final enum class Ambiguous : R|kotlin/Enum<Ambiguous>| {
+        private constructor(): R|Ambiguous| {
+            super<R|kotlin/Enum<Ambiguous>|>()
+        }
+
+        public final static enum entry first: R|Ambiguous|
+        public final static enum entry entries: R|Ambiguous|
+        public final static fun values(): R|kotlin/Array<Ambiguous>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Ambiguous| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Ambiguous>|
+            public get(): R|kotlin/enums/EnumEntries<Ambiguous>|
+
+    }
+    public final val e: R|kotlin/Int| = Q|Ambiguous|.R|/Ambiguous.entries*s|.R|SubstitutionOverride<kotlin/enums/EnumEntries.get: R|Ambiguous|>|(Int(0)).R|SubstitutionOverride</Ambiguous.ordinal: R|kotlin/Int|>|
+        public get(): R|kotlin/Int|

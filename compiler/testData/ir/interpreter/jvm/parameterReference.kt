@@ -11,12 +11,14 @@ fun String.withExtension(a: Int) = 0
 
 @CompileTimeCalculation
 class A {
-    fun String.get(a: Int) = this
+    fun get1(a: Int) {}
+    fun String.get2(a: Int) = this
 }
 
 const val parameters1 = <!EVALUATED: `parameter #0 a of fun withParameters(kotlin.Int, kotlin.Double): kotlin.Int, parameter #1 b of fun withParameters(kotlin.Int, kotlin.Double): kotlin.Int`!>(::withParameters as KFunction<*>).parameters.joinToString()<!>
 const val parameters2 = <!EVALUATED: `extension receiver parameter of fun kotlin.String.withExtension(kotlin.Int): kotlin.Int, parameter #1 a of fun kotlin.String.withExtension(kotlin.Int): kotlin.Int`!>(String::withExtension as KFunction<*>).parameters.joinToString()<!>
-const val parameters3 = <!EVALUATED: `instance parameter of fun test.A.(kotlin.String.)get(kotlin.Int): kotlin.String, extension receiver parameter of fun test.A.(kotlin.String.)get(kotlin.Int): kotlin.String, parameter #2 a of fun test.A.(kotlin.String.)get(kotlin.Int): kotlin.String`!>A::class.members.toList()[0].parameters.joinToString()<!>
+const val parameters3 = <!EVALUATED: `instance parameter of fun test.A.(kotlin.String.)get2(kotlin.Int): kotlin.String, extension receiver parameter of fun test.A.(kotlin.String.)get2(kotlin.Int): kotlin.String, parameter #2 a of fun test.A.(kotlin.String.)get2(kotlin.Int): kotlin.String`!>A::class.members.toList()[1].parameters.joinToString()<!>
+const val parametersWithReceiver = <!EVALUATED: `parameter #1 a of fun test.A.get1(kotlin.Int): kotlin.Unit`!>(A()::get1 as KFunction<*>).parameters.joinToString()<!>
 
 // properties
 @CompileTimeCalculation

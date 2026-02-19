@@ -112,14 +112,22 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
  *
  * # Migration
  *
- * Rewrite the code using explicit `actual typealias`. Unfortunately, it requires you to move your expect declarations into another
- * package. Refer to [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) for more detailed migration example.
+ * Alternatives:
+ * 1. Rewrite the code using explicit `actual typealias`. Unfortunately, it requires you to move your expect declarations into another package.
+ *    Refer to [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) for a more detailed migration example.
+ * 2. Use `kotlin.jvm.KotlinActual` experimental feature. See https://youtrack.jetbrains.com/issue/KT-67202
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 @ExperimentalMultiplatform
 @MustBeDocumented
 @SinceKotlin("1.9")
+@Deprecated(
+    "Please migrate to kotlin.jvm.KotlinActual in kotlin-annotations-jvm. " +
+            "ImplicitlyActualizedByJvmDeclaration will be dropped in future versions of Kotlin. " +
+            "See https://youtrack.jetbrains.com/issue/KT-67202"
+)
+@DeprecatedSinceKotlin(errorSince = "2.1")
 public actual annotation class ImplicitlyActualizedByJvmDeclaration
 
 /**
@@ -134,13 +142,17 @@ public actual annotation class ImplicitlyActualizedByJvmDeclaration
 public actual annotation class JvmField
 
 /**
- * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with
- * declaration-site variance, for example such as `Collection<out T>` has.
+ * Instructs the compiler to generate or omit wildcards for type arguments corresponding to parameters with declaration-site variance,
+ * for example such as `E` of `kotlin.collections.Collection` which is declared with an `out` variance.
  *
- * If the innermost applied `@JvmSuppressWildcards` has `suppress=true`, the type is generated without wildcards.
- * If the innermost applied `@JvmSuppressWildcards` has `suppress=false`, the type is generated with wildcards.
+ * - If the innermost applied `@JvmSuppressWildcards` has `suppress=true` and the type is not annotated with `@JvmWildcard`, the type is
+ * generated without wildcards.
+ * - If the innermost applied `@JvmSuppressWildcards` has `suppress=false`, the type is generated with wildcards.
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#variant-generics)
+ * for more information.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
@@ -148,9 +160,12 @@ public actual annotation class JvmField
 public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean = true)
 
 /**
- * Instructs compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
+ * Instructs the compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java without wildcard.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#variant-generics)
+ * for more information.
  */
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
@@ -160,8 +175,8 @@ public actual annotation class JvmWildcard
 /**
  * Specifies that given value class is inline class.
  *
- * Adding and removing the annotation is binary incompatible change, since inline classes' methods and functions with inline classes
- * in their signature are mangled.
+ * Adding or removing the annotation is a binary-incompatible change, since methods of inline classes
+ * and functions with inline classes in their signatures are mangled.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -177,3 +192,36 @@ public actual annotation class JvmInline
 @MustBeDocumented
 @SinceKotlin("1.5")
 public actual annotation class JvmRecord
+
+/**
+ * This annotation instructs the compiler to expose the API of functions with inline classes
+ * (and the classes containing them, including inline classes themselves)
+ * as their boxed variant for effective usage from Java.
+ *
+ * It performs the following transformations:
+ *
+ * - For annotated functions and constructors that take or return inline classes,
+ *   an unmangled wrapper function is created where inline classes are boxed.
+ *   The wrapper is thus visible and callable from Java.
+ *
+ * - If class is annotated, the annotation implicitly propagates to its methods, forcing
+ *   the compiler to generate wrappers for them.
+ *
+ * - A constructor is made available from Java.
+ *
+ * These changes maintain backward compatibility, allowing existing API to be safely marked.
+ *
+ * @property jvmName optional wrapper name. Only applicable to functions, getters and setters.
+ */
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@Target(
+    // function-like
+    AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
+    // containers
+    AnnotationTarget.CLASS,
+)
+public actual annotation class JvmExposeBoxed(actual val jvmName: String)

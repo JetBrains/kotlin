@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,36 +7,33 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
-import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
+import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.FirDefaultOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
-import org.jetbrains.kotlin.fir.session.DefaultCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory.Companion.registerNativeComponents
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
-    override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
+    override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
-            registerModuleIndependentNativeComponents()
+            registerNativeComponents()
 
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOfNotNull(
                         context.firProvider.symbolProvider,
@@ -49,12 +46,15 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
-            registerModuleIndependentNativeComponents()
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
+            registerNativeComponents()
+            // Resolvable library session for decompiled libraries can miss annotation arguments
+            // necessary for correct work of the native overload checker
+            register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOf(
                         context.firProvider.symbolProvider,
@@ -65,43 +65,53 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerModuleIndependentNativeComponents()
+            registerNativeComponents()
+        }
+    }
+
+    override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
+        return doCreateDanglingFileSession(module, contextSession) { context ->
+            registerNativeComponents()
+
+            register(
+                FirSymbolProvider::class,
+                LLModuleWithDependenciesSymbolProvider(
+                    this,
+                    providers = listOfNotNull(
+                        firProvider.symbolProvider,
+                        context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
+                    ),
+                    context.dependencyProvider,
+                )
+            )
         }
     }
 
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
-        builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
-            add(
-                createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
-                    project, scope, session, moduleDataProvider, kotlinScopeProvider
+            addAll(
+                LLLibrarySymbolProviderFactory.fromSettings(project).createNativeLibrarySymbolProvider(
+                    session,
+                    scope,
                 )
             )
             addIfNotNull(
                 OptionalAnnotationClassesProvider.createIfNeeded(
                     session,
                     moduleDataProvider,
-                    kotlinScopeProvider,
+                    session.kotlinScopeProvider,
                     packagePartProvider
                 )
             )
         }
-    }
-
-    private fun LLFirSession.registerModuleIndependentNativeComponents() {
-        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-        register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
     }
 }

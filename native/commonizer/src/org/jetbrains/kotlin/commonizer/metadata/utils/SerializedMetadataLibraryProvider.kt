@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.metadata.utils
 
+import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.library.SerializedMetadata
 
@@ -15,7 +16,8 @@ private typealias MapOfFragmentParts = Map<String, FragmentPartContents>
 class SerializedMetadataLibraryProvider(
     override val moduleHeaderData: ByteArray,
     fragments: List<ListOfFragmentParts>,
-    fragmentNames: List<String>
+    fragmentNames: List<String>,
+    override val metadataVersion: KlibMetadataVersion
 ) : KlibModuleMetadata.MetadataLibraryProvider {
     private val fragmentMap: Map<String, MapOfFragmentParts>
 
@@ -42,7 +44,8 @@ class SerializedMetadataLibraryProvider(
     constructor(serializedMetadata: SerializedMetadata) : this(
         serializedMetadata.module,
         serializedMetadata.fragments,
-        serializedMetadata.fragmentNames
+        serializedMetadata.fragmentNames,
+        KlibMetadataVersion(serializedMetadata.metadataVersion),
     )
 
     override fun packageMetadataParts(fqName: String): Set<String> {

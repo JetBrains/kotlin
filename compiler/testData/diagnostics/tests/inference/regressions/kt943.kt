@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-943 Type inference failed
 package maze
@@ -22,3 +23,7 @@ fun foo(lines: List<String>) {
 fun <T : Any> T?.sure() : T = this!!
 
 public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, inline, javaFunction, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, thisExpression, typeConstraint, typeParameter, typeWithExtension */

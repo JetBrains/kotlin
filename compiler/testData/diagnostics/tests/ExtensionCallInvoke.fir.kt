@@ -1,7 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(doIt: Int.() -> Int) {
     1.doIt()
     1<!UNNECESSARY_SAFE_CALL!>?.<!>doIt()
     val i: Int? = 1
-    <!ARGUMENT_TYPE_MISMATCH!>i<!>.doIt()
+    i.<!UNSAFE_IMPLICIT_INVOKE_CALL!>doIt<!>()
     i?.doIt()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, typeWithExtension */

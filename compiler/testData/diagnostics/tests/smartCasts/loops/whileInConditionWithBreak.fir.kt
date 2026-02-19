@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun bar(): Boolean { return true }
 
 fun foo(s: String?): Int {
@@ -7,3 +8,6 @@ fun foo(s: String?): Int {
     }
     return s.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, smartcast, whileLoop */

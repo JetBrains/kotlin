@@ -1,5 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE, WASM
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // FILE: common.kt

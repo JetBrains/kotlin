@@ -1,3 +1,4 @@
 expression: BINARY_WITH_TYPE
 text: v as? String
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

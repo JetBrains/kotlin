@@ -11,22 +11,31 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
+import org.jetbrains.kotlin.gradle.util.removingTrailingNewline
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import java.util.zip.ZipFile
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsSource
+import java.nio.file.Path
+import java.util.stream.Stream
 import kotlin.io.path.*
-import kotlin.test.*
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("CocoaPods plugin tests")
 @NativeGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @OptIn(EnvironmentalVariablesOverride::class)
 class CocoaPodsIT : KGPBaseTest() {
 
@@ -42,8 +51,9 @@ class CocoaPodsIT : KGPBaseTest() {
     private val podspecTaskName = ":$POD_SPEC_TASK_NAME"
     private val podImportTaskName = ":$POD_IMPORT_TASK_NAME"
     private val podInstallTaskName = ":${KotlinCocoapodsPlugin.POD_INSTALL_TASK_NAME}"
+    private val syncTaskName = ":$SYNC_TASK_NAME"
 
-    private val defaultPodName = "AFNetworking"
+    private val defaultPodName = "Base64"
 
     @BeforeAll
     fun setUp() {
@@ -53,7 +63,30 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import single")
     @GradleTest
     fun testPodImportSingle(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
+
+            buildWithCocoapodsWrapper(podImportTaskName) {
+                podImportAsserts(buildGradleKts)
+            }
+
+            buildWithCocoapodsWrapper(":kotlin-library:podImport") {
+                podImportAsserts(subProject("kotlin-library").buildGradleKts, "kotlin-library")
+            }
+        }
+    }
+
+    @DisplayName("Pod import single noPodspec")
+    @GradleTest
+    fun testPodImportSingleNoPodspec(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
+
+            buildGradleKts.addCocoapodsBlock("noPodspec()")
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -68,7 +101,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import multiple")
     @GradleTest
     fun testPodImportMultiple(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsMultipleKtPods, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsMultipleKtPods,
+            gradleVersion
+        ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -76,9 +112,7 @@ class CocoaPodsIT : KGPBaseTest() {
 
             buildWithCocoapodsWrapper(":kotlin-library:podImport") {
                 podImportAsserts(subProject("kotlin-library").buildGradleKts, "kotlin-library")
-                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_6)) {
-                    assertOutputContains("Podfile location is set")
-                }
+                assertOutputContains("Podfile location is set")
             }
 
             buildWithCocoapodsWrapper(":second-library:podImport") {
@@ -111,14 +145,56 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Dummy UTD")
     @GradleTest
     fun testDummyUTD(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                cocoapodsPlatform = "iphonesimulator",
+                cocoapodsArchs = "arm64",
+                cocoapodsConfiguration = "Debug"
+            )
+        )
+
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
+
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    framework {
+                        baseName = "shared"
+                        isStatic = false
+                    }
+                """.trimIndent()
+            )
 
             buildWithCocoapodsWrapper(dummyTaskName) {
+                assertDirectoryInProjectExists("build/cocoapods/framework/shared.framework")
+                assertDirectoryInProjectExists("build/cocoapods/framework/shared.framework.dSYM")
                 assertTasksExecuted(dummyTaskName)
             }
+
             buildWithCocoapodsWrapper(dummyTaskName) {
                 assertTasksUpToDate(dummyTaskName)
             }
+
+            buildWithCocoapodsWrapper(syncTaskName) {
+                assertTasksExecuted(syncTaskName)
+            }
+
+            val frameworkResult = runProcess(
+                listOf("dwarfdump", "--uuid", "shared.framework/shared"),
+                projectPath.resolve("build/cocoapods/framework/").toFile()
+            )
+
+            val dsymResult = runProcess(
+                listOf("dwarfdump", "--uuid", "shared.framework.dSYM"),
+                projectPath.resolve("build/cocoapods/framework/").toFile()
+            )
+
+            assertContains(frameworkResult.output, "UUID:")
+            assertContains(dsymResult.output, "UUID:")
+
+            val frameworkUUID = frameworkResult.output.split(" ").getOrNull(1)
+            val dsymUUID = dsymResult.output.split(" ").getOrNull(1)
+
+            assertEquals(frameworkUUID, dsymUUID)
         }
     }
 
@@ -128,14 +204,12 @@ class CocoaPodsIT : KGPBaseTest() {
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 cocoapodsPlatform = "iphonesimulator",
-                cocoapodsArchs = "x86_64",
+                cocoapodsArchs = "arm64",
                 cocoapodsConfiguration = "Debug"
             )
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
-            val syncTaskName = ":syncFramework"
-
             buildGradleKts.addCocoapodsBlock(
                 """
                     framework {
@@ -169,14 +243,12 @@ class CocoaPodsIT : KGPBaseTest() {
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 cocoapodsPlatform = "iphonesimulator",
-                cocoapodsArchs = "x86_64",
+                cocoapodsArchs = "arm64",
                 cocoapodsConfiguration = "Debug"
             )
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
-            val syncTaskName = ":syncFramework"
-
             buildGradleKts.addCocoapodsBlock(
                 """
                     framework {
@@ -238,7 +310,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("UTD with podspec deployment target")
     @GradleTest
     fun testUTDPodspecDeploymentTarget(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
 
             buildWithCocoapodsWrapper(podspecTaskName)
 
@@ -262,17 +337,17 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addCocoapodsBlock(podDeclaration)
 
             buildWithCocoapodsWrapper(podImportTaskName) {
-                assertTasksExecuted(":cinteropBase64IOS")
+                assertTasksExecuted(":cinteropBase64IosArm64")
             }
 
             buildWithCocoapodsWrapper(podImportTaskName) {
-                assertTasksUpToDate(":cinteropBase64IOS")
+                assertTasksUpToDate(":cinteropBase64IosArm64")
             }
 
             buildGradleKts.replaceText(podDeclaration, """pod("Base64", version = "1.1.2")""")
 
             buildWithCocoapodsWrapper(podImportTaskName) {
-                assertTasksExecuted(":cinteropBase64IOS")
+                assertTasksExecuted(":cinteropBase64IosArm64")
             }
         }
     }
@@ -302,10 +377,11 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testCustomPackageName(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
 
-            buildGradleKts.addPod("AFNetworking", "packageName = \"AFNetworking\"")
+            buildGradleKts.addPod("Base64", "packageName = \"Base64\"")
             val srcFileForChanging = projectPath.resolve("src/iosMain/kotlin/A.kt")
             srcFileForChanging.replaceText(
-                "println(\"hi!\")", "println(AFNetworking.AFNetworkingReachabilityNotificationStatusItem)"
+                """println("hi!")""",
+                """println(Base64.MF_Base64Codec.dataFromBase64String(""))"""
             )
             buildWithCocoapodsWrapper("assemble")
         }
@@ -315,9 +391,21 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testCinteropExtraOpts(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            buildGradleKts.addPod("AFNetworking", "extraOpts = listOf(\"-help\")")
-            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
+            buildGradleKts.addPod("Base64", "extraOpts = listOf(\"-help\")")
+            buildWithCocoapodsWrapper("cinteropBase64IosArm64") {
                 assertOutputContains("Usage: cinterop options_list")
+                assertOutputContains("-compiler-option -fmodules")
+            }
+        }
+    }
+
+    @DisplayName("KT-79429 - Cinterop explicit header and fmodules")
+    @GradleTest
+    fun testCinteropExplicitHeaderAndFmodules(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addPod("AFNetworking", "headers = \"AFNetworking.h\"")
+            buildWithCocoapodsWrapper("cinteropAFNetworkingIosArm64") {
+                assertOutputDoesNotContain("-compiler-option -fmodules")
             }
         }
     }
@@ -339,12 +427,12 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug"
                 )
             )
             build("syncFramework", buildOptions = buildOptions) {
-                assertTasksExecuted(":linkPodDebugFrameworkIOS")
+                assertTasksExecuted(":linkPodDebugFrameworkIosSimulatorArm64")
                 assertFileInProjectExists("build/cocoapods/framework/cocoapods.framework/cocoapods")
             }
         }
@@ -358,12 +446,12 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "CUSTOM"
                 )
             )
             build("syncFramework", buildOptions = buildOptions) {
-                assertTasksExecuted(":linkPodDebugFrameworkIOS")
+                assertTasksExecuted(":linkPodDebugFrameworkIosSimulatorArm64")
                 assertFileInProjectExists(("build/cocoapods/framework/cocoapods.framework/cocoapods"))
             }
         }
@@ -414,6 +502,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 """
                     |
                     |kotlin {
+                    |    iosX64()
                     |    iosSimulatorArm64()
                     |    cocoapods {
                     |       framework {
@@ -446,9 +535,13 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Xcode style errors when sync framework configuration failed")
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenConfigurationFailed(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             buildGradleKts.appendText(
                 """
                 kotlin {
@@ -461,9 +554,9 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug"
-                )
+                ),
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
                 assertOutputContains("error: Could not find com.example.unknown:dependency:0.0.1.")
@@ -474,17 +567,20 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Xcode style errors when sync framework compilation failed")
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenCompilationFailed(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
-                    cocoapodsConfiguration = "Debug"
-                )
+                    cocoapodsArchs = "arm64",
+                    cocoapodsConfiguration = "Debug",
+                ),
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
-                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Expecting a top level declaration")
+                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
                 assertOutputContains("error: Compilation finished with errors")
             }
         }
@@ -498,13 +594,13 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug"
-                )
+                ),
             )
-            buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
+            buildAndFail("linkPodDebugFrameworkIosSimulatorArm64", buildOptions = buildOptions) {
                 assertOutputContains("e: file:///")
-                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2 Expecting a top level declaration")
+                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2 Syntax error: Expecting a top level declaration")
                 assertOutputDoesNotContain("error: Compilation finished with errors")
             }
         }
@@ -513,18 +609,21 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Other tasks use Xcode style errors when compilation failed and `useXcodeMessageStyle` option enabled")
     @GradleTest
     fun testOtherTasksUseXcodeStyleErrorsWhenCompilationFailedAndOptionEnabled(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug",
                     useXcodeMessageStyle = true
-                )
+                ),
             )
-            buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
-                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Expecting a top level declaration")
+            buildAndFail("linkPodDebugFrameworkIosArm64", buildOptions = buildOptions) {
+                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
                 assertOutputContains("error: Compilation finished with errors")
             }
         }
@@ -534,7 +633,7 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testPodDependencyInUnitTests(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsTestsProjectName, gradleVersion) {
-            buildWithCocoapodsWrapper(":iosX64Test")
+            buildWithCocoapodsWrapper(":iosSimulatorArm64Test")
         }
     }
 
@@ -544,9 +643,11 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
             buildWithCocoapodsWrapper(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksNotExecuted(":cinteropAFNetworkingIosArm64")
-                assertTasksNotExecuted(":cinteropAFNetworkingIosX64")
-                assertTasksNotExecuted(":commonizeCInterop")
+                assertTasksAreNotInTaskGraph(
+                    ":cinteropBase64IosArm64",
+                    ":cinteropBase64IosSimulatorArm64",
+                    ":commonizeCInterop",
+                )
             }
         }
     }
@@ -570,8 +671,8 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
             buildWithCocoapodsWrapper(":commonize", *buildArguments) {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksExecuted(":cinteropAFNetworkingIosArm64")
-                assertTasksExecuted(":cinteropAFNetworkingIosX64")
+                assertTasksExecuted(":cinteropBase64IosArm64")
+                assertTasksExecuted(":cinteropBase64IosSimulatorArm64")
                 assertTasksExecuted(":commonizeCInterop")
             }
         }
@@ -638,7 +739,10 @@ class CocoaPodsIT : KGPBaseTest() {
         val subprojectPodImportTask = ":$subProjectName$podImportTaskName"
         val subprojectPodspecTask = ":$subProjectName$podspecTaskName"
         val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
             buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
                 assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
@@ -665,14 +769,15 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testCinteropKlibsProvideLinkerOptsToFramework(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            buildGradleKts.addPod("AFNetworking")
-            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
-                val cinteropKlib = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-AFNetworking.klib")
-                val manifestLines = ZipFile(cinteropKlib.toFile()).use { zip ->
-                    zip.getInputStream(zip.getEntry("default/manifest")).bufferedReader().use { it.readLines() }
-                }
+            buildGradleKts.addPod("Base64")
+            buildWithCocoapodsWrapper("cinteropBase64IosArm64") {
+                val cinteropManifest =
+                    projectPath.resolve("build/classes/kotlin/iosArm64/main/cinterop/cocoapods-cinterop-Base64/default/manifest")
+                        .inputStream()
+                        .useToLoadProperties()
 
-                assertContains(manifestLines, "linkerOpts=-framework AFNetworking")
+                assertContains(cinteropManifest, "linkerOpts")
+                assertEquals(cinteropManifest["linkerOpts"], "-framework Base64")
             }
         }
     }
@@ -683,14 +788,14 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addCocoapodsBlock(
                 """
-                    pod("AFNetworking") { linkOnly = true }
+                    pod("Base64") { linkOnly = true }
                     pod("SSZipArchive", linkOnly = true)
                     pod("SDWebImage/Core")
                 """.trimIndent()
             )
 
             buildAndAssertAllTasks(
-                notRegisteredTasks = listOf(":cinteropAFNetworkingIOS", ":cinteropSSZipArchiveIOS"),
+                notRegisteredTasks = listOf(":cinteropBase64IosArm64", ":cinteropSDWebImageIosArm64"),
                 buildOptions = this.buildOptions.copy(
                     nativeOptions = this.buildOptions.nativeOptions.copy(
                         cocoapodsGenerateWrapper = true
@@ -698,31 +803,17 @@ class CocoaPodsIT : KGPBaseTest() {
                 )
             )
 
-            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
-                assertTasksExecuted(":podBuildAFNetworkingIphonesimulator")
-                assertTasksExecuted(":podBuildSDWebImageIphonesimulator")
-                assertTasksExecuted(":podBuildSSZipArchiveIphonesimulator")
+            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIosArm64") {
+                assertTasksExecuted(":podBuildBase64Ios")
+                assertTasksExecuted(":podBuildSDWebImageIos")
+                assertTasksExecuted(":podBuildSSZipArchiveIos")
 
-                assertTasksExecuted(":cinteropSDWebImageIOS")
+                assertTasksExecuted(":cinteropSDWebImageIosArm64")
 
-                // TODO(Dmitrii Krasnov): rewrite it, when GeneralNativeIT will be migrated to new test dsl
-                assertOutputContains(
-                    """
-                    |	-linker-option
-                    |	-framework
-                    |	-linker-option
-                    |	AFNetworking
-                    """.trimMargin()
-                )
-
-                assertOutputContains(
-                    """
-                    |	-linker-option
-                    |	-framework
-                    |	-linker-option
-                    |	SSZipArchive
-                    """.trimMargin()
-                )
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkPodDebugFrameworkIosArm64") {
+                    assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "Base64")
+                    assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "SSZipArchive")
+                }
             }
         }
     }
@@ -737,11 +828,28 @@ class CocoaPodsIT : KGPBaseTest() {
                         isStatic = true
                     }
         
-                    pod("AFNetworking") { linkOnly = true }
+                    pod("Base64") { linkOnly = true }
                 """.trimIndent()
             )
-            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
+            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIosArm64") {
                 assertHasDiagnostic(CocoapodsPluginDiagnostics.LinkOnlyUsedWithStaticFramework)
+            }
+        }
+    }
+
+    @DisplayName("Add pod-dependencies together with noPodspec")
+    @GradleTest
+    fun testPodDependenciesWithNoPodspec(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    noPodspec()
+        
+                    pod("Base64", version = "1.1.2")
+                """.trimIndent()
+            )
+            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIosArm64") {
+                assertFileInProjectNotExists("cocoapods.podspec")
             }
         }
     }
@@ -750,7 +858,7 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testHierarchyOfDependantPodsCompilesSuccessfully(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsDependantPodsProjectName, gradleVersion) {
-            buildWithCocoapodsWrapper(":compileKotlinIosX64")
+            buildWithCocoapodsWrapper(":compileKotlinIosArm64")
         }
     }
 
@@ -822,61 +930,44 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Configuration cache works in a complex scenario")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun testConfigurationCacheWorksInAComplexScenario(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 cocoapodsGenerateWrapper = true,
                 cocoapodsPlatform = "iphonesimulator",
-                cocoapodsArchs = "x86_64",
+                cocoapodsArchs = "arm64",
                 cocoapodsConfiguration = "Debug"
             ),
-            configurationCache = true
         )
+
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,
             buildOptions = buildOptions
         ) {
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version = "1.1.2")""")
 
-            val tasks = arrayOf(
-                ":podspec",
-                ":podImport",
-                ":podPublishDebugXCFramework",
-                ":podPublishReleaseXCFramework",
-                ":syncFramework",
+            assertSimpleConfigurationCacheScenarioWorks(
+                buildArguments = arrayOf(
+                    ":podspec",
+                    ":podImport",
+                    ":podPublishDebugXCFramework",
+                    ":podPublishReleaseXCFramework",
+                    ":syncFramework",
+                ),
+                buildOptions = buildOptions,
+                executedTaskNames = listOf(
+                    ":podPublishDebugXCFramework",
+                    ":podPublishReleaseXCFramework",
+                    ":linkPodDebugFrameworkIosArm64",
+                )
             )
-
-            val executableTasks = listOf(
-                ":podspec",
-                ":podPublishDebugXCFramework",
-                ":podPublishReleaseXCFramework",
-                ":linkPodDebugFrameworkIOS",
-            )
-
-            build(*tasks) {
-                assertTasksExecuted(executableTasks)
-
-                assertOutputContains("Calculating task graph as no configuration cache is available for tasks")
-
-                assertOutputContains("Configuration cache entry stored.")
-            }
-
-            build("clean")
-
-            build(*tasks) {
-                assertOutputContains("Reusing configuration cache.")
-            }
-
-            build(*tasks) {
-                assertTasksUpToDate(executableTasks)
-            }
         }
     }
 
     private val maybeCocoaPodsIsNotInstalledError = "Possible reason: CocoaPods is not installed"
     private val maybePodfileIsIncorrectError = "Please, check that podfile contains following lines in header"
+    private val missingPodExecutableInPath = "CocoaPods executable not found in your PATH"
 
     @DisplayName("Pod install emits correct error when pod binary is not present in PATH")
     @GradleTest
@@ -898,7 +989,8 @@ class CocoaPodsIT : KGPBaseTest() {
                 podInstallTaskName,
             ) {
                 assertOutputDoesNotContain(maybePodfileIsIncorrectError)
-                assertOutputContains(maybeCocoaPodsIsNotInstalledError)
+                assertOutputDoesNotContain(maybeCocoaPodsIsNotInstalledError)
+                assertOutputContains(missingPodExecutableInPath)
             }
         }
     }
@@ -929,6 +1021,206 @@ class CocoaPodsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Installing pod with custom defined pod executable in the local.properties")
+    @GradleTest
+    fun testPodInstallWithCustomExecutablePath(gradleVersion: GradleVersion) {
+        val podPathRun = runProcess(listOf("which", "pod"), Path("/").toFile())
+        val pathWithoutCocoapods = "/bin:/usr/bin"
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                mapOf("PATH" to pathWithoutCocoapods)
+            )
+        ) {
+
+            val podPath = podPathRun.output.removingTrailingNewline()
+
+            assertTrue {
+                podPath.isNotBlank()
+            }
+            assertTrue {
+                podPathRun.exitCode != 1
+            }
+
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    framework {
+                        baseName = "kotlin-library"
+                    }
+                    name = "kotlin-library"
+                    podfile = project.file("ios-app/Podfile")
+                """.trimIndent()
+            )
+
+            buildAndFailWithCocoapodsWrapper(podInstallTaskName) {
+                assertOutputContains(missingPodExecutableInPath)
+            }
+
+            projectPath.resolve("local.properties")
+                .also { if (!it.exists()) it.createFile() }
+                .apply {
+                    append("\n")
+                    appendText(
+                        """
+                            kotlin.apple.cocoapods.bin=${podPath}
+                        """.trimIndent()
+                    )
+                }
+
+            buildWithCocoapodsWrapper(podInstallTaskName) {
+                assertTasksExecuted(podInstallTaskName)
+            }
+        }
+    }
+
+    @DisplayName("Build fails when embedAndSign task is used with pod-dependencies")
+    @GradleTest
+    fun testEmbedAndSignNotUsedWithPodDepsDiagnostic(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
+
+            buildAndFail(":embedAndSignPodAppleFrameworkForXcode") {
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
+    @DisplayName("Build succeeded when embedAndSign task is used with pod-dependencies and diagnostic supressed with property")
+    @GradleTest
+    fun testEmbedAndSignNotUsedWithPodDepsDiagnosticDisabled(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
+
+            build(
+                ":embedAndSignPodAppleFrameworkForXcode",
+                "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true"
+            ) {
+                assertNoDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
+    @DisplayName("KT-74901 : Check that all podBuild tasks are up-to-date")
+    @GradleTest
+    fun testPodBuildTasksUpToDate(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    ios.deploymentTarget = "15.0"
+                    
+                    pod("AFNetworking", version="4.0.1")            
+                    pod("SDWebImage", version="5.21.5")
+                    pod("Reachability", version="3.7.6")
+                    pod("Sentry", version="9.3.0", headers="Sentry.h")
+            
+                    pod("Intercom") {
+                        version = "19.1.1"
+                        extraOpts += listOf("-compiler-option", "-fmodules")
+                    }
+                """.trimIndent()
+            )
+
+            build(":iosArm64Binaries") {
+                assertTasksExecuted(":podBuildAFNetworkingIos")
+                assertTasksExecuted(":podBuildIntercomIos")
+                assertTasksExecuted(":podBuildReachabilityIos")
+                assertTasksExecuted(":podBuildSDWebImageIos")
+                assertTasksExecuted(":podBuildSentryIos")
+            }
+
+            build(":iosArm64Binaries") {
+                assertTasksUpToDate(":podBuildAFNetworkingIos")
+                assertTasksUpToDate(":podBuildIntercomIos")
+                assertTasksUpToDate(":podBuildReachabilityIos")
+                assertTasksUpToDate(":podBuildSDWebImageIos")
+                assertTasksUpToDate(":podBuildSentryIos")
+            }
+        }
+    }
+
+    internal class GradleAndIsStaticArgumentsProvider : GradleArgumentsProvider() {
+        override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+            return super.provideArguments(context).flatMap { arguments ->
+                val gradleVersion = arguments.get().first()
+                Stream.of(true, false).map { isStatic ->
+                    Arguments.of(gradleVersion, isStatic)
+                }
+            }
+        }
+    }
+
+    @DisplayName("Build fails when embedAndSign with non-pod framework is used with pod-dependencies")
+    @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
+    @ArgumentsSource(GradleAndIsStaticArgumentsProvider::class)
+    fun testEmbedAndSignOtherFrameworkNotUsedWithPodDepsDiagnostic(gradleVersion: GradleVersion, isStatic: Boolean, @TempDir tmp: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tmp.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tmp.absolutePathString(),
+            )
+        ) {
+
+            buildGradleKts.addKotlinBlock(
+                """
+                iosArm64()
+                
+                targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
+                   binaries.framework {
+                       isStatic = $isStatic
+                   }
+               }
+            """.trimIndent()
+            )
+
+            buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
+
+            buildAndFail(":embedAndSignAppleFrameworkForXcode") {
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
 
     private fun TestProject.buildAndFailWithCocoapodsWrapper(
         vararg buildArguments: String,
@@ -982,7 +1274,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 spec.summary                  = 'CocoaPods test library'
                 spec.vendored_frameworks      = 'cocoapods.xcframework'
                 spec.libraries                = 'c++'
-                spec.ios.deployment_target = '13.5'
+                spec.ios.deployment_target    = '15'
             end
         """.trimIndent()
 
@@ -996,8 +1288,8 @@ class CocoaPodsIT : KGPBaseTest() {
                 spec.authors                  = { 'Kotlin Dev' => 'kotlin.dev@jetbrains.com' }
                 spec.license                  = 'MIT'
                 spec.summary                  = 'CocoaPods test library'
-                spec.ios.deployment_target = '13.5'
-                spec.dependency 'AFNetworking'
+                spec.ios.deployment_target    = '15'
+                spec.dependency 'Base64'
                 spec.social_media_url = 'https://twitter.com/kotlin'
                 spec.vendored_frameworks = 'CustomFramework.xcframework'
                 spec.libraries = 'xml'

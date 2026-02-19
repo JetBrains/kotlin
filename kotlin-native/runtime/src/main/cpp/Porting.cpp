@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+#include <cstdint>
 #ifdef KONAN_ANDROID
 #include <android/log.h>
 #endif
 #include <cstdio>
+#include <cstdlib>
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -29,12 +30,13 @@
 #endif
 
 #include <chrono>
+#include <vector>
 
+#include "CallsChecker.hpp"
 #include "Common.h"
 #include "CompilerConstants.hpp"
 #include "Porting.h"
 #include "KAssert.h"
-#include "std_support/CStdlib.hpp"
 
 using namespace kotlin;
 
@@ -84,9 +86,9 @@ int getLastErrorMessage(char* message, uint32_t size) {
   if (errCode) {
     auto flags = FORMAT_MESSAGE_FROM_SYSTEM;
     auto errMsgBufSize = size / 4;
-    wchar_t errMsgBuffer[errMsgBufSize];
-    ::FormatMessageW(flags, NULL, errCode, 0, errMsgBuffer, errMsgBufSize, NULL);
-    ::WideCharToMultiByte(CP_UTF8, 0, errMsgBuffer, -1, message, size, NULL, NULL);
+    std::vector<wchar_t> errMsgBuffer(errMsgBufSize);
+    ::FormatMessageW(flags, NULL, errCode, 0, errMsgBuffer.data(), errMsgBufSize, NULL);
+    ::WideCharToMultiByte(CP_UTF8, 0, errMsgBuffer.data(), -1, message, size, NULL, NULL);
   }
   return errCode;
 }
@@ -100,9 +102,9 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
     unsigned long bufferRead;
     // In UTF-16 there are surrogate pairs that a 2 * 16-bit long (4 bytes).
     auto bufferLength = maxSizeBytes / 4 - 1;
-    wchar_t buffer[bufferLength];
-    if (::ReadConsoleW(stdInHandle, buffer, bufferLength, &bufferRead, NULL)) {
-      length = ::WideCharToMultiByte(CP_UTF8, 0, buffer, bufferRead, (char*) utf8,
+    std::vector<wchar_t> buffer(bufferLength);
+    if (::ReadConsoleW(stdInHandle, buffer.data(), bufferLength, &bufferRead, NULL)) {
+      length = ::WideCharToMultiByte(CP_UTF8, 0, buffer.data(), bufferRead, (char*) utf8,
                                      maxSizeBytes - 1, NULL, NULL);
       if (!length && kotlin::compiler::shouldContainDebugInfo()) {
         char msg[512];
@@ -185,7 +187,7 @@ static void onThreadExitCallback(void* value) {
   while (record != nullptr) {
     record->destructor(record->destructorParameter);
     auto next = record->next;
-    std_support::free(record);
+    std::free(record);
     record = next;
   }
 }
@@ -213,7 +215,7 @@ static void onThreadExitInit() {
 void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
   // We cannot use pthread_cleanup_push() as it is lexical scope bound.
   pthread_once(&terminationKeyOnceControl, onThreadExitInit);
-  DestructorRecord* destructorRecord = (DestructorRecord*)std_support::calloc(1, sizeof(DestructorRecord));
+  DestructorRecord* destructorRecord = (DestructorRecord*)std::calloc(1, sizeof(DestructorRecord));
   destructorRecord->destructor = destructor;
   destructorRecord->destructorParameter = destructorParameter;
   destructorRecord->next =
@@ -234,12 +236,14 @@ NO_EXTERNAL_CALLS_CHECK NO_INLINE int gettid() {
 }
 #endif
 
-NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
+NO_EXTERNAL_CALLS_CHECK uintptr_t currentThreadId() {
 #if defined(KONAN_OSX) or defined(KONAN_IOS) or defined(KONAN_TVOS) or defined(KONAN_WATCHOS)
     uint64_t tid;
     pthread_t self = pthread_self();
     RuntimeCheck(!pthread_threadid_np(self, &tid), "Error getting thread id");
-    RuntimeCheck((*(reinterpret_cast<int32_t*>(&tid) + 1)) == 0, "Thread id is not a uint32");
+    if constexpr (sizeof(uintptr_t) < sizeof(uint64_t)) {
+        RuntimeCheck(*(reinterpret_cast<int32_t*>(&tid) + 1) == 0, "Thread id does not fit in a pointer");
+    }
     return tid;
 #elif KONAN_ANDROID
     return gettid();
@@ -250,22 +254,6 @@ NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
 #else
 #error "How to find currentThreadId()?"
 #endif
-}
-
-// String/byte operations.
-// memcpy/memmove are not here intentionally, as frequently implemented/optimized
-// by C compiler.
-void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen) {
-#if KONAN_NO_MEMMEM
-  for (size_t i = 0; i + littleLen <= bigLen; ++i) {
-    void* pos = ((char*)big) + i;
-    if (::memcmp(little, pos, littleLen) == 0) return pos;
-  }
-  return nullptr;
-#else
-  return ::memmem(big, bigLen, little, littleLen);
-#endif
-
 }
 
 // Time operations.
@@ -284,6 +272,14 @@ uint64_t getTimeNanos() {
 
 uint64_t getTimeMicros() {
   return duration_cast<microseconds>(steady_time_clock::now().time_since_epoch()).count();
+}
+
+uint64_t getSystemTimeNanos() {
+  return duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count();
+}
+
+bool isLittleEndian() {
+  return __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__;
 }
 
 }  // namespace konan

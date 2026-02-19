@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 
@@ -23,6 +23,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
         defaultSetupWithoutAndroidTarget()
         /* Previously failed with 'Collection is empty.' */
         assertNull(project.findAndroidTarget())
+        @Suppress("DEPRECATION")
         assertSame(kotlin.androidTarget(), project.findAndroidTarget())
     }
 
@@ -38,6 +39,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
     @Test
     fun `test runMissingAndroidTargetProjectConfigurationHealthCheck - no warning`() {
         defaultSetupWithoutAndroidTarget()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         // Present android target -> expect no warning message anymore
@@ -78,7 +80,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
+        android.configureDefaults()
         kotlin.jvm()
 
         project.setMultiplatformAndroidSourceSetLayoutVersion(2)

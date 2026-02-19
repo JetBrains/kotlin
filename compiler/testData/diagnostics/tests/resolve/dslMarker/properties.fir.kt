@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 @DslMarker
 annotation class Ann
 
@@ -60,3 +61,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, classDeclaration, functionDeclaration,
+functionalType, getter, incrementDecrementExpression, integerLiteral, lambdaLiteral, propertyDeclaration,
+propertyWithExtensionReceiver, setter, thisExpression, typeWithExtension */

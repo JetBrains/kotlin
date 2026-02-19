@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 @Target(AnnotationTarget.FUNCTION) annotation class base
 
@@ -21,3 +22,7 @@
 }
 
 <!WRONG_ANNOTATION_TARGET!>@base<!> val z = 0
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, localFunction, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

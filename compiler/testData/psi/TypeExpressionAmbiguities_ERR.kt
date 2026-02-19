@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     foo<Int?>()
     fooo<Double?addddd>()

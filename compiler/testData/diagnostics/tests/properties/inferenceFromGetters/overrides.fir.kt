@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 interface A {
     val x: Int
 
@@ -34,8 +35,12 @@ fun foo(c: C) {
     c.z checkType { _<String>() }
 
     c.y = ""
-    c.y = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
+    c.y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 1
 
     c.z = ""
-    c.z = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
+    c.z <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 1
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, override, propertyDeclaration, setter,
+starProjection, stringLiteral, superExpression, typeParameter, typeWithExtension */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 abstract class Parser {
@@ -14,3 +15,6 @@ class Some(strings: List<String>) {
     private val listOfString = strings
     private val listOfInt: List<Int> = listOfString.map(parser::parse)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, checkNotNullCall, classDeclaration,
+functionDeclaration, override, primaryConstructor, propertyDeclaration */

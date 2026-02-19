@@ -1,0 +1,5 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] constructorWithLocalDeclarations.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
+
+    }

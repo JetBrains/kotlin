@@ -9,18 +9,16 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 
-internal class KotlinLoggerMessageCollectorAdapter(private val kotlinLogger: KotlinLogger) : MessageCollector {
-    private val messageRenderer = MessageRenderer.GRADLE_STYLE
-
+internal class KotlinLoggerMessageCollectorAdapter(internal val kotlinLogger: KotlinLogger) : MessageCollector {
     override fun clear() {}
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        val renderedMessage = messageRenderer.render(severity, message, location) // TODO: move rendering to the KotlinLogger side
+        val renderedMessage = KotlinMessageRenderer.render(severity, message, location)
         when (severity) {
-            CompilerMessageSeverity.EXCEPTION, CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
-            CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING -> kotlinLogger.warn(renderedMessage)
+            CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(renderedMessage, RuntimeException(message)) // TODO: get the original exception properly and avoid duplication of stacktrace in message
+            CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
+            CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(renderedMessage)
             CompilerMessageSeverity.INFO -> kotlinLogger.info(renderedMessage)
             CompilerMessageSeverity.OUTPUT, CompilerMessageSeverity.LOGGING -> kotlinLogger.debug(renderedMessage)
         }

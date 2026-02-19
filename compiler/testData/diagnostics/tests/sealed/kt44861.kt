@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-44861
 // DIAGNOSTICS: -UNUSED_VARIABLE
@@ -16,3 +17,6 @@ fun Foo(kind: String = "A"): Foo = when (kind) {
 fun main() {
     val foo = Foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, localProperty, nestedClass,
+primaryConstructor, propertyDeclaration, sealed, stringLiteral, whenExpression, whenWithSubject */

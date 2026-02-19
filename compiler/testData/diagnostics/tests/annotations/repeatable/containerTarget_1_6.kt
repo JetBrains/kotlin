@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +RepeatableAnnotations +RepeatableAnnotationContainerConstraints
+// LANGUAGE: +RepeatableAnnotations +RepeatableAnnotationContainerConstraints
 // FULL_JDK
 
 import java.lang.annotation.Repeatable as R
@@ -52,3 +53,5 @@ annotation class D3(val value: Array<B3>)
 annotation class B4
 @Target(ANNOTATION_CLASS, CLASS, TYPE_PARAMETER)
 annotation class D4(val value: Array<B4>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, primaryConstructor, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: f11.kt
@@ -37,3 +38,6 @@ class PositionalArgumentMapping : ArgumentMapping {
         // However, here v we still have a problem
         ApplicabilityResult.Inapplicable
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, data, functionDeclaration, interfaceDeclaration,
+nestedClass, objectDeclaration, override, primaryConstructor, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Outer1 {
     class Nested
 
@@ -30,3 +31,6 @@ class Outer2 {
         Inner()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, primaryConstructor,
+propertyDeclaration */

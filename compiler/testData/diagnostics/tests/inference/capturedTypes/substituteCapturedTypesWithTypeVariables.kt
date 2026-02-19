@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER
 
 class Foo<K>
 
@@ -11,3 +12,6 @@ fun main(x: Int) {
         getFoo(x)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+outProjection, typeParameter */

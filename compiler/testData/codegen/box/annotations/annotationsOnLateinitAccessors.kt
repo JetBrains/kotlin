@@ -28,4 +28,3 @@ fun box(): String {
     LateinitProperties().test()
     return "OK"
 }
-

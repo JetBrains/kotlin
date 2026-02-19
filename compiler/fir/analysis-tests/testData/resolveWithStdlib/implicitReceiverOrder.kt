@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A {
     fun foo() = 1
 
@@ -24,3 +25,5 @@ fun test(a: A, b: B) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral */

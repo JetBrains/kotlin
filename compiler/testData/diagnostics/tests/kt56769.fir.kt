@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun main(args: Array<<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Anno<!> String>) {}
 
 annotation class Anno
@@ -22,3 +23,6 @@ fun (<!WRONG_ANNOTATION_TARGET!>@Anno<!> Int).crane() {}
 annotation class Anno2
 
 fun <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Anno2<!> Int.pain() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, annotationUseSiteTargetReceiver,
+funWithExtensionReceiver, functionDeclaration */

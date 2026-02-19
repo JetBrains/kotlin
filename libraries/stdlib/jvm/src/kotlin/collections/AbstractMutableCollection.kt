@@ -13,7 +13,6 @@ import java.util.AbstractCollection
  * @param E the type of elements contained in the collection. The collection is invariant in its element type.
  */
 @SinceKotlin("1.1")
-@AllowDifferentMembersInActual // New 'AbstractCollection` supertype is added compared to the expect declaration
 public actual abstract class AbstractMutableCollection<E> protected actual constructor() : MutableCollection<E>, AbstractCollection<E>() {
     /**
      * Adds the specified element to the collection.
@@ -24,5 +23,6 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      * @return `true` if the element has been added, `false` if the collection does not support duplicates
      * and the element is already contained in the collection.
      */
+    @IgnorableReturnValue
     actual abstract override fun add(element: E): Boolean
 }

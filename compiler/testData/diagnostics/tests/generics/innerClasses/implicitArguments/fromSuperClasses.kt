@@ -1,8 +1,10 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
-// !CHECK_TYPE
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
+// CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
-    typealias Alias<W> = Map<W, X>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias Alias<W> = Map<W, X>
 }
 
 class Derived : Outer<String, Int>() {
@@ -24,3 +26,7 @@ fun foo() {
     A.B().bar() checkType { _<Outer<Float, Long>.Inner<String>>() }
     A.B().x() checkType { _<Map<String, Float>>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, nestedClass, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter, typeWithExtension */

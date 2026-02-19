@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package kotlin.collections.builders
 import java.io.Externalizable
 import java.io.InvalidObjectException
 import java.io.NotSerializableException
+import java.io.ObjectInputStream
+import kotlin.internal.throwReadObjectNotSupported
 
 internal class MapBuilder<K, V> private constructor(
     // keys in insert order
@@ -16,7 +18,7 @@ internal class MapBuilder<K, V> private constructor(
     private var valuesArray: Array<V>?,
     // hash of a key by its index, -1 if a key at that index was removed
     private var presenceArray: IntArray,
-    // (index + 1) of a key by its hash, 0 if there is no key with that hash, -1 if collision chain continues to the hash-1
+    // (index + 1) of a key by its hash, 0 if there is no key with that hash
     private var hashArray: IntArray,
     // max length of a collision chain
     private var maxProbeDistance: Int,
@@ -32,7 +34,7 @@ internal class MapBuilder<K, V> private constructor(
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators of the [keys], [values] and [entries] views
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
     private var modCount: Int = 0
@@ -72,6 +74,8 @@ internal class MapBuilder<K, V> private constructor(
         else
             throw NotSerializableException("The map cannot be serialized while it is being built.")
 
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
+
     override fun isEmpty(): Boolean = size == 0
     override fun containsKey(key: K): Boolean = findKey(key) >= 0
     override fun containsValue(value: V): Boolean = findValue(value) >= 0
@@ -102,11 +106,11 @@ internal class MapBuilder<K, V> private constructor(
     }
 
     override fun remove(key: K): V? {
-        val index = removeKey(key)  // mutability gets checked here
+        checkIsMutable()
+        val index = findKey(key)
         if (index < 0) return null
-        val valuesArray = valuesArray!!
-        val oldValue = valuesArray[index]
-        valuesArray.resetAt(index)
+        val oldValue = valuesArray!![index]
+        removeEntryAt(index)
         return oldValue
     }
 
@@ -199,7 +203,7 @@ internal class MapBuilder<K, V> private constructor(
 
     private fun ensureExtraCapacity(n: Int) {
         if (shouldCompact(extraCapacity = n)) {
-            rehash(hashSize)
+            compact(updateHashArray = true)
         } else {
             ensureCapacity(length + n)
         }
@@ -235,14 +239,19 @@ internal class MapBuilder<K, V> private constructor(
 
     private fun hash(key: K) = (key.hashCode() * MAGIC) ushr hashShift
 
-    private fun compact() {
+    private fun compact(updateHashArray: Boolean) {
         var i = 0
         var j = 0
         val valuesArray = valuesArray
         while (i < length) {
-            if (presenceArray[i] >= 0) {
+            val hash = presenceArray[i]
+            if (hash >= 0) {
                 keysArray[j] = keysArray[i]
                 if (valuesArray != null) valuesArray[j] = valuesArray[i]
+                if (updateHashArray) {
+                    presenceArray[j] = hash
+                    hashArray[hash] = j + 1
+                }
                 j++
             }
             i++
@@ -254,19 +263,19 @@ internal class MapBuilder<K, V> private constructor(
     }
 
     private fun rehash(newHashSize: Int) {
+//        require(newHashSize > hashSize) { "Rehash can only be executed with a grown hash array" }
+
         registerModification()
-        if (length > size) compact()
-        if (newHashSize != hashSize) {
-            hashArray = IntArray(newHashSize)
-            hashShift = computeShift(newHashSize)
-        } else {
-            hashArray.fill(0, 0, hashSize)
-        }
+        if (length > size) compact(updateHashArray = false)
+        hashArray = IntArray(newHashSize)
+        hashShift = computeShift(newHashSize)
+
         var i = 0
         while (i < length) {
             if (!putRehash(i++)) {
-                throw IllegalStateException("This cannot happen with fixed magic multiplier and grow-only hash array. " +
-                                                    "Have object hashCodes changed?")
+                throw IllegalStateException(
+                    "This cannot happen with fixed magic multiplier and grow-only hash array. Have object hashCodes changed?"
+                )
             }
         }
     }
@@ -292,7 +301,7 @@ internal class MapBuilder<K, V> private constructor(
         while (true) {
             val index = hashArray[hash]
             if (index == 0) return TOMBSTONE
-            if (index > 0 && keysArray[index - 1] == key) return index - 1
+            if (keysArray[index - 1] == key) return index - 1
             if (--probesLeft < 0) return TOMBSTONE
             if (hash-- == 0) hash = hashSize - 1
         }
@@ -316,7 +325,7 @@ internal class MapBuilder<K, V> private constructor(
             var probeDistance = 0
             while (true) {
                 val index = hashArray[hash]
-                if (index <= 0) { // claim or reuse hash slot
+                if (index == 0) { // claim or reuse hash slot
                     if (length >= capacity) {
                         ensureExtraCapacity(1)
                         continue@retry
@@ -342,16 +351,17 @@ internal class MapBuilder<K, V> private constructor(
         }
     }
 
-    internal fun removeKey(key: K): Int {
+    internal fun removeKey(key: K): Boolean {
         checkIsMutable()
         val index = findKey(key)
-        if (index < 0) return TOMBSTONE
-        removeKeyAt(index)
-        return index
+        if (index < 0) return false
+        removeEntryAt(index)
+        return true
     }
 
-    private fun removeKeyAt(index: Int) {
+    private fun removeEntryAt(index: Int) {
         keysArray.resetAt(index)
+        valuesArray?.resetAt(index)
         removeHashAt(presenceArray[index])
         presenceArray[index] = TOMBSTONE
         size--
@@ -360,50 +370,32 @@ internal class MapBuilder<K, V> private constructor(
 
     private fun removeHashAt(removedHash: Int) {
         var hash = removedHash
-        var hole = removedHash // will try to patch the hole in hash array
+        var hole = removedHash // will try to patch the hole in the hash array
         var probeDistance = 0
-        var patchAttemptsLeft = (maxProbeDistance * 2).coerceAtMost(hashSize / 2) // don't spend too much effort
         while (true) {
             if (hash-- == 0) hash = hashSize - 1
-            if (++probeDistance > maxProbeDistance) {
-                // too far away -- can release the hole, bad case will not happen
-                hashArray[hole] = 0
-                return
-            }
             val index = hashArray[hash]
-            if (index == 0) {
-                // end of chain -- can release the hole, bad case will not happen
+            if (++probeDistance > maxProbeDistance) {
+                // too far away - can release the hole, a bad case will not happen
                 hashArray[hole] = 0
                 return
             }
-            if (index < 0) {
-                // TOMBSTONE FOUND
-                //   - <--- [ TS ] ------ [hole] ---> +
-                //             \------------/
-                //             probeDistance
-                // move tombstone into the hole
-                hashArray[hole] = TOMBSTONE
+            if (index == 0) {
+                // end of chain - can release the hole, a bad case will not happen
+                hashArray[hole] = 0
+                return
+            }
+            val otherHash = hash(keysArray[index - 1])
+            // Bad case:
+            //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
+            //             \------------/
+            //             probeDistance
+            if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
+                // move otherHash into the hole, move the hole
+                hashArray[hole] = index
+                presenceArray[index - 1] = hole
                 hole = hash
                 probeDistance = 0
-            } else {
-                val otherHash = hash(keysArray[index - 1])
-                // Bad case:
-                //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
-                //             \------------/
-                //             probeDistance
-                if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
-                    // move otherHash into the hole, move the hole
-                    hashArray[hole] = index
-                    presenceArray[index - 1] = hole
-                    hole = hash
-                    probeDistance = 0
-                }
-            }
-            // check how long we're patching holes
-            if (--patchAttemptsLeft < 0) {
-                // just place tombstone into the hole
-                hashArray[hole] = TOMBSTONE
-                return
             }
         }
     }
@@ -446,6 +438,7 @@ internal class MapBuilder<K, V> private constructor(
         return false
     }
 
+    @IgnorableReturnValue
     private fun putAllEntries(from: Collection<Map.Entry<K, V>>): Boolean {
         if (from.isEmpty()) return false
         ensureExtraCapacity(from.size)
@@ -463,7 +456,7 @@ internal class MapBuilder<K, V> private constructor(
         val index = findKey(entry.key)
         if (index < 0) return false
         if (valuesArray!![index] != entry.value) return false
-        removeKeyAt(index)
+        removeEntryAt(index)
         return true
     }
 
@@ -471,7 +464,7 @@ internal class MapBuilder<K, V> private constructor(
         checkIsMutable()
         val index = findValue(element)
         if (index < 0) return false
-        removeKeyAt(index)
+        removeEntryAt(index)
         return true
     }
 
@@ -514,7 +507,7 @@ internal class MapBuilder<K, V> private constructor(
             checkForComodification()
             check(lastIndex != -1) { "Call next() before removing element from the iterator." }
             map.checkIsMutable()
-            map.removeKeyAt(lastIndex)
+            map.removeEntryAt(lastIndex)
             lastIndex = -1
             expectedModCount = map.modCount
         }
@@ -583,13 +576,22 @@ internal class MapBuilder<K, V> private constructor(
         private val map: MapBuilder<K, V>,
         private val index: Int
     ) : MutableMap.MutableEntry<K, V> {
+        private val expectedModCount = map.modCount
+
         override val key: K
-            get() = map.keysArray[index]
+            get() {
+                checkForComodification()
+                return map.keysArray[index]
+            }
 
         override val value: V
-            get() = map.valuesArray!![index]
+            get() {
+                checkForComodification()
+                return map.valuesArray!![index]
+            }
 
         override fun setValue(newValue: V): V {
+            checkForComodification()
             map.checkIsMutable()
             val valuesArray = map.allocateValuesArray()
             val oldValue = valuesArray[index]
@@ -605,6 +607,11 @@ internal class MapBuilder<K, V> private constructor(
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
         override fun toString(): String = "$key=$value"
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount)
+                throw ConcurrentModificationException("The backing map has been modified after this entry was obtained.")
+        }
     }
 }
 
@@ -618,7 +625,7 @@ internal class MapBuilderKeys<E> internal constructor(
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
-    override fun remove(element: E): Boolean = backing.removeKey(element) >= 0
+    override fun remove(element: E): Boolean = backing.removeKey(element)
     override fun iterator(): MutableIterator<E> = backing.keysIterator()
 
     override fun removeAll(elements: Collection<E>): Boolean {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun foo() {
     <!WRONG_MODIFIER_TARGET!>public<!> class A
@@ -5,3 +6,5 @@ fun foo() {
     <!WRONG_MODIFIER_TARGET!>protected<!> class C
     <!WRONG_MODIFIER_TARGET!>internal<!> class D
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass */

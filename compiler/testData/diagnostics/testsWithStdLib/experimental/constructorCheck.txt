@@ -3,6 +3,28 @@ package
 public fun foo(/*0*/ some: Some? = ...): kotlin.Unit
 public fun test(): kotlin.Unit
 
+public final enum class Enumeration : kotlin.Enum<Enumeration> {
+    enum entry ENTRY
+
+    enum entry ENTRY2
+
+    @Marker private constructor Enumeration()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Enumeration): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Enumeration!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Enumeration>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Enumeration
+    public final /*synthesized*/ fun values(): kotlin.Array<Enumeration>
+}
+
 @kotlin.RequiresOptIn public final annotation class Marker : kotlin.Annotation {
     public constructor Marker()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

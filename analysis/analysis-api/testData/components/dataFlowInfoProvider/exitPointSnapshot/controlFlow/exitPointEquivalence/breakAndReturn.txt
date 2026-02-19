@@ -1,0 +1,13 @@
+KaDataFlowExitPointSnapshot:
+  defaultExpressionInfo = null
+  hasEscapingJumps = false
+  hasJumps = true
+  hasMultipleJumpKinds = true
+  hasMultipleJumpTargets = false
+  jumpExpressions = [
+    return,
+    break
+  ]
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

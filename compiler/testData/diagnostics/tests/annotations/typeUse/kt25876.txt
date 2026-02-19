@@ -35,3 +35,4 @@ public abstract class Foo : @Anno kotlin.Throwable {
     public open override /*1*/ /*fake_override*/ fun setStackTrace(/*0*/ stackTrace: kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

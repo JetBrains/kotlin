@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
 // SKIP_TXT
 
 fun test() {
@@ -24,7 +26,7 @@ fun test() {
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.length // OK, since `c` is aliased to `a`
     }
-    if (b is String) {
+    if (<!USELESS_IS_CHECK!>b is String<!>) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
@@ -34,11 +36,11 @@ fun test() {
     }
 
     a = 2 // break `c` -> `a`
-    if (a is String) {
+    if (<!USELESS_IS_CHECK!>a is String<!>) {
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
-    if (b is String) {
+    if (<!USELESS_IS_CHECK!>b is String<!>) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
@@ -82,3 +84,6 @@ fun test3() {
         c.length // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

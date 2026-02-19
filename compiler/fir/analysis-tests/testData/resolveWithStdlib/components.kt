@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 data class D(val x: Int, val y: String)
 
 fun foo(list: List<D>) {
@@ -9,3 +10,6 @@ fun foo(list: List<D>) {
         println(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, forLoop, functionDeclaration, lambdaLiteral,
+localProperty, primaryConstructor, propertyDeclaration */

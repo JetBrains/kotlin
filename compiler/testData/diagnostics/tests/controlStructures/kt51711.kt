@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: -ProhibitNonExhaustiveIfInRhsOfElvis
 // ISSUE: KT-51711
@@ -20,3 +21,6 @@ fun test_2(x: String?, y: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, elvisExpression, equalityExpression, functionDeclaration, ifExpression, lambdaLiteral,
+nullableType, safeCall, smartcast, whenExpression, whileLoop */

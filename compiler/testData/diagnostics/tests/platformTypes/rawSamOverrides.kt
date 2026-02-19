@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // (failed) attempt to reproduce exception in
 // http://stackoverflow.com/questions/42571812/unsupportedoperationexception-while-building-a-kotlin-project-in-idea
@@ -40,3 +41,5 @@ class E1 : C.D(), B {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class E2<!> : B {
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: Any, y: Fun<String?>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override */

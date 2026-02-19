@@ -1,5 +1,5 @@
 // TARGET_BACKEND: NATIVE
-
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:OptIn(kotlin.ExperimentalStdlibApi::class)
@@ -27,12 +27,34 @@ val a = "1"
 val b = "2"
 val c = "3"
 
+@Volatile var byte: Byte = 1
+@Volatile var short: Short = 1
 @Volatile var x: Int = 1
 @Volatile var y: Long = 1L
 @Volatile var z: String = a
 @Volatile var t: Boolean = true
 
 fun box() : String {
+    if (::byte.compareAndSetField(1.toByte(), 2.toByte()) != true) return "FAIL Byte: 1"
+    if (::byte.compareAndSetField(1.toByte(), 2.toByte()) != false) return "FAIL Byte: 2"
+    if (::byte.compareAndExchangeField(2.toByte(), 1.toByte()) != 2.toByte()) return "FAIL Byte: 3"
+    if (::byte.compareAndExchangeField(2.toByte(), 1.toByte()) != 1.toByte()) return "FAIL Byte: 4"
+    if (::byte.getAndSetField(3.toByte()) != 1.toByte()) return "FAIL Byte: 5"
+    if (::byte.getAndSetField(1.toByte()) != 3.toByte()) return "FAIL Byte: 6"
+    if (::byte.getAndAddFieldLocal(1.toByte()) != 1.toByte()) return "FAIL Byte: 7"
+    if (::byte.getAndAddFieldLocal(1.toByte()) != 2.toByte()) return "FAIL Byte: 8"
+    if (byte != 3.toByte()) return "FAIL Byte: 9"
+
+    if (::short.compareAndSetField(1.toShort(), 2.toShort()) != true) return "FAIL Short: 1"
+    if (::short.compareAndSetField(1.toShort(), 2.toShort()) != false) return "FAIL Short: 2"
+    if (::short.compareAndExchangeField(2.toShort(), 1.toShort()) != 2.toShort()) return "FAIL Short: 3"
+    if (::short.compareAndExchangeField(2.toShort(), 1.toShort()) != 1.toShort()) return "FAIL Short: 4"
+    if (::short.getAndSetField(3.toShort()) != 1.toShort()) return "FAIL Short: 5"
+    if (::short.getAndSetField(1.toShort()) != 3.toShort()) return "FAIL Short: 6"
+    if (::short.getAndAddFieldLocal(1.toShort()) != 1.toShort()) return "FAIL Short: 7"
+    if (::short.getAndAddFieldLocal(1.toShort()) != 2.toShort()) return "FAIL Short: 8"
+    if (short != 3.toShort()) return "FAIL Short: 9"
+
     if (::x.compareAndSetField(1, 2) != true) return "FAIL Int: 1"
     if (::x.compareAndSetField(1, 2) != false) return "FAIL Int: 2"
     if (::x.compareAndExchangeField(2, 1) != 2) return "FAIL Int: 3"
@@ -53,16 +75,13 @@ fun box() : String {
     if (::y.getAndAddFieldLocal(1L) != 2L) return "FAIL Long: 8"
     if (y != 3L) return "FAIL Long: 9"
 
-
-    if (isExperimentalMM()) {
-        if (::z.compareAndSetField(a, b) != true) return "FAIL String: 1"
-        if (::z.compareAndSetField(a, b) != false) return "FAIL String: 2"
-        if (::z.compareAndExchangeField(b, a) != b) return "FAIL String: 3"
-        if (::z.compareAndExchangeField(b, a) != a) return "FAIL String: 4"
-        if (::z.getAndSetField(c) != a) return "FAIL String: 5"
-        if (::z.getAndSetField(a) != c) return "FAIL String: 6"
-        if (z != a) return "FAIL String: 7"
-    }
+    if (::z.compareAndSetField(a, b) != true) return "FAIL String: 1"
+    if (::z.compareAndSetField(a, b) != false) return "FAIL String: 2"
+    if (::z.compareAndExchangeField(b, a) != b) return "FAIL String: 3"
+    if (::z.compareAndExchangeField(b, a) != a) return "FAIL String: 4"
+    if (::z.getAndSetField(c) != a) return "FAIL String: 5"
+    if (::z.getAndSetField(a) != c) return "FAIL String: 6"
+    if (z != a) return "FAIL String: 7"
 
     if (::t.compareAndSetField(true, false) != true) return "FAIL Bool: 1"
     if (::t.compareAndSetField(true, false) != false) return "FAIL Bool: 2"

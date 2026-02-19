@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package d
 
 //import from objects before properties resolve
@@ -31,3 +32,6 @@ object A {
         fun foo() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration */

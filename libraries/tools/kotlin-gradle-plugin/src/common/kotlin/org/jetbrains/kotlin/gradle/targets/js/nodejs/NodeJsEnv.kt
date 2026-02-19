@@ -1,23 +1,23 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
 import java.io.File
 
 data class NodeJsEnv(
-    val cleanableStore: CleanableStore,
-    val rootPackageDir: File,
-    val nodeDir: File,
+    override val download: Boolean,
+    override val dir: File,
     val nodeBinDir: File,
-    val nodeExecutable: String,
-
+    override val executable: String,
     val platformName: String,
     val architectureName: String,
-    val ivyDependency: String,
-    val downloadBaseUrl: String,
-
-    val packageManager: NpmApi,
-) {
+    override val ivyDependency: String,
+    override val downloadBaseUrl: String?,
+    override val allowInsecureProtocol: Boolean,
+) : AbstractEnv {
     val isWindows: Boolean
         get() = platformName == "win"
+
+    @Deprecated("Use executable instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("executable"), level = DeprecationLevel.ERROR)
+    val nodeExecutable
+        get() = executable
 }

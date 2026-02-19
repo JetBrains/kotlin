@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 class KotlinJvmBinarySourceElement(
     val binaryClass: KotlinJvmBinaryClass,
-    override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-    override val isPreReleaseInvisible: Boolean = false,
+    override val incompatibility: IncompatibleVersionErrorData<MetadataVersion>? = null,
+    override val preReleaseInfo: PreReleaseInfo = PreReleaseInfo.DEFAULT_VISIBLE,
     override val abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
 ) : DeserializedContainerSource {
     override val presentableString: String

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
 // MODULE: m1-common
@@ -13,7 +13,7 @@ interface MutableListEx<E> : MutableList<E> {
     fun removeToSize(size: Int) {}
 }
 
-expect class FastArrayList<E> : MutableListEx<E>, RandomAccess {
+expect class FastArrayList<E> : MutableListEx<E>, <!UNRESOLVED_REFERENCE!>RandomAccess<!> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(elements: Collection<E>)
@@ -23,11 +23,11 @@ expect class FastArrayList<E> : MutableListEx<E>, RandomAccess {
     fun ensureCapacity(minCapacity: Int)
     override val size: Int
     override fun isEmpty(): Boolean
-    override fun contains(element: @UnsafeVariance E): Boolean
-    override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+    override fun contains(element: E): Boolean
+    override fun containsAll(elements: Collection<E>): Boolean
     override operator fun get(index: Int): E
-    override fun indexOf(element: @UnsafeVariance E): Int
-    override fun lastIndexOf(element: @UnsafeVariance E): Int
+    override fun indexOf(element: E): Int
+    override fun lastIndexOf(element: E): Int
     override fun iterator(): MutableIterator<E>
     override fun add(element: E): Boolean
     override fun remove(element: E): Boolean
@@ -75,3 +75,7 @@ public actual open class FastArrayList<E> internal constructor(
     actual override fun indexOf(element: E): Int = -1
     actual override fun lastIndexOf(element: E): Int = -1
 }
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, asExpression, classDeclaration, expect, functionDeclaration, getter,
+integerLiteral, interfaceDeclaration, nullableType, operator, override, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, typeParameter */

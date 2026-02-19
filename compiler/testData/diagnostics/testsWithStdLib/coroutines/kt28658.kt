@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -32,3 +32,5 @@ fun test3() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

@@ -1,0 +1,22 @@
+//
+// Source
+// ------------------------------------------
+
+package test
+
+import androidx.compose.runtime.Composable
+import dependency.Content
+
+class ContentImpl : Content {
+    override fun setContent(c: @Composable () -> Unit) {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class ContentImpl : Content {
+  override fun setContent(c: Function2<Composer, Int, Unit>) { }
+  static val %stable: Int = 0
+}

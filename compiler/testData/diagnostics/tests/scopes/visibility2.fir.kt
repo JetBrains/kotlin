@@ -1,6 +1,8 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 //FILE:a.kt
 package a
@@ -25,12 +27,12 @@ import a.makeA
 import a.<!INVISIBLE_REFERENCE!>PO<!>
 
 fun test() {
-    val y = makeA()
+    val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!>
     y.<!INVISIBLE_REFERENCE!>bar<!>()
     <!INVISIBLE_REFERENCE!>foo<!>()
 
     val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
-    val a : <!INVISIBLE_REFERENCE!>java.util.Arrays.ArrayList<Int><!>;
+    val a : java.util.Arrays.<!INVISIBLE_REFERENCE!>ArrayList<!><Int>;
 
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 }
@@ -40,7 +42,7 @@ class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>(
 class Q {
     class W {
         fun foo() {
-            val y = makeA() //assure that 'makeA' is visible
+            val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!> //assure that 'makeA' is visible
         }
     }
 }
@@ -49,3 +51,6 @@ class Q {
 class NewClass : java.util.ArrayList<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>() {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun toString() = "a"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, objectDeclaration, override,
+propertyDeclaration, stringLiteral */

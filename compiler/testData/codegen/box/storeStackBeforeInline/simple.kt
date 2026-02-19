@@ -1,11 +1,12 @@
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun bar(x: Int) : Int {
     return x
 }
 
+// FILE: main.kt
+import kotlin.test.assertEquals
 fun foobar(x: Int, y: Int, z: Int) = x + y + z
 
 fun foo() : Int {

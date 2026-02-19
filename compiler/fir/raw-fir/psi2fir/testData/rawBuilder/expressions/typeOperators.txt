@@ -1,5 +1,5 @@
 FILE: typeOperators.kt
-    public? final? interface IThing : R|kotlin/Any| {
+    public final? interface IThing : R|kotlin/Any| {
     }
     public? final? fun test1(x: Any): <implicit> {
         ^test1 (x# is IThing)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 typealias<!SYNTAX!><!>
 
@@ -6,3 +7,5 @@ typealias<!SYNTAX!><!>
 <!SYNTAX!><!>typealias A2 =
 
 <!SYNTAX!><!>typealias Valid = String
+
+/* GENERATED_FIR_TAGS: typeAliasDeclaration */

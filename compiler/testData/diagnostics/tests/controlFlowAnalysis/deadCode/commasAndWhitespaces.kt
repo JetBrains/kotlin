@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testCommasAndWhitespaces() {
     fun bar(i: Int, s: String, x: Any) {}
@@ -9,5 +10,4 @@ fun testCommasAndWhitespaces() {
 
 fun todo(): Nothing = throw Exception()
 
-
-
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localFunction, stringLiteral */

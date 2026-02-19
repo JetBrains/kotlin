@@ -1,0 +1,51 @@
+FILE: delegatedFieldNestedName.kt
+    @Target(AnnotationTarget#.TYPE#) public final? annotation class Anno : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Anno] constructor([CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? interface Base<A> : R|kotlin/Any| {
+        public? final? fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final? interface Second<T> : R|kotlin/Any| {
+    }
+    public? final? const val outer: <implicit> = IntegerLiteral(0)
+        public? get(): <implicit>
+    public? final? const val inner: <implicit> = String()
+        public? get(): <implicit>
+    public final? [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : @Anno(IntegerLiteral(0).plus#(outer#)) Base<@Anno(IntegerLiteral(1).plus#(outer#)) Base<@Anno(IntegerLiteral(2).plus#(outer#)) Int>>, @Anno(IntegerLiteral(4).plus#(outer#)) Second<@Anno(IntegerLiteral(5).plus#(outer#)) String> {
+        public? [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            super<<implicit>>()
+        }
+
+        private final field $$delegate_0: @Anno(IntegerLiteral(0).plus#(outer#)) Base<@Anno(IntegerLiteral(1).plus#(outer#)) Base<@Anno(IntegerLiteral(2).plus#(outer#)) Int>> = Companion#
+
+        private final field $$delegate_1: @Anno(IntegerLiteral(4).plus#(outer#)) Second<@Anno(IntegerLiteral(5).plus#(outer#)) String> = NestedObject#
+
+        public final? companion object Companion : @Anno(IntegerLiteral(6).plus#(inner#)) Base<@Anno(IntegerLiteral(7).plus#(inner#)) Base<@Anno(IntegerLiteral(8).plus#(inner#)) Int>> {
+            private [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                super<<implicit>>()
+            }
+
+            public? final? const val outer: <implicit> = String()
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const val inner: <implicit> = IntegerLiteral(0)
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? object NestedObject : @Anno(IntegerLiteral(9).plus#(inner#)) Second<@Anno(IntegerLiteral(10).plus#(inner#)) String> {
+            private [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                super<<implicit>>()
+            }
+
+        }
+
+    }

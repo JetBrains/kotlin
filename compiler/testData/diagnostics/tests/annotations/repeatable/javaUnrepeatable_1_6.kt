@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 // FULL_JDK
 // FILE: Runtime.java
 
@@ -32,3 +33,5 @@ class UseClazz
 
 @Source <!REPEATED_ANNOTATION!>@Source<!>
 class UseSource
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

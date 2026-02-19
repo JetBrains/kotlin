@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package override
 
 interface T {
@@ -36,3 +37,6 @@ open class GC1(g : G<Int>) : G<Int> by g {
 open class GC2(g : G<Int>) : GC1(g) {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

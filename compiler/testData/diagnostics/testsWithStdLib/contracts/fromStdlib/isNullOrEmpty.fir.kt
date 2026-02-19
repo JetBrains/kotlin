@@ -1,5 +1,6 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseReturnsEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ReadDeserializedContracts +UseReturnsEffect
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 fun testIsNullOrEmpty(x: String?) {
     if (x.isNullOrEmpty()) {
@@ -18,3 +19,4 @@ fun testIsNotNullOrEmpty(x: String?) {
     x<!UNSAFE_CALL!>.<!>length
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, smartcast */

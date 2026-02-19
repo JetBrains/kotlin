@@ -1,0 +1,7 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInArrayAccessesKt]]
+  facadeFqName: EmptyArgumentsInArrayAccessesKt
+  partSimpleName: "EmptyArgumentsInArrayAccessesKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
+    VALUE_PARAMETER_LIST

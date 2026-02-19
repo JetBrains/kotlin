@@ -1,0 +1,20 @@
+KtFile: freezeKt79951.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('foo')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  DESTRUCTURING_DECLARATION
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(val)('val')
+        PsiErrorElement:Expecting a name
+          <empty list>
+      PsiErrorElement:Expecting ')'
+        <empty list>

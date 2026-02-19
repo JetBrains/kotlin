@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59233
 
 fun <T> consume(arg: T) {}
@@ -7,3 +7,6 @@ fun box(): String {
     val foo = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>consume<!>
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter */

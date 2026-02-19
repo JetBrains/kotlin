@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,70 +10,95 @@ import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.references.builder.buildFromMissingDependenciesNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-class StubBasedAnnotationDeserializer(
-    private val session: FirSession,
-) {
-    fun loadAnnotations(
-        ktAnnotated: KtAnnotated,
-    ): List<FirAnnotation> {
-        val annotations = ktAnnotated.annotationEntries
-        if (annotations.isEmpty()) return emptyList()
-        return annotations.map { deserializeAnnotation(it) }
+internal class StubBasedAnnotationDeserializer(private val session: FirSession) {
+    companion object {
+        fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
+            val userType = ktAnnotation.calleeExpression?.typeReference?.typeElement
+            requireWithAttachment(
+                userType is KtUserType,
+                { "${KtTypeElement::class.simpleName} should be ${KtUserType::class.simpleName}" },
+            ) {
+                withPsiEntry("annotationEntry", ktAnnotation)
+            }
+
+            return userType.classId()
+        }
+
+        val RECEIVER_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == AnnotationUseSiteTarget.RECEIVER
+        }
+
+        val TYPE_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == null
+        }
     }
 
-    private val constantCache = mutableMapOf<CallableId, FirExpression>()
+    fun loadAnnotations(
+        ktAnnotated: KtAnnotated,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
+    ): List<FirAnnotation> {
+        val annotations = ktAnnotated.annotationEntries
+        if (annotations.isEmpty()) {
+            return emptyList()
+        }
 
-    fun loadConstant(property: KtProperty, callableId: CallableId): FirExpression? {
-        if (!property.hasModifier(KtTokens.CONST_KEYWORD)) return null
-        constantCache[callableId]?.let { return it }
-        val propertyStub = (property.stub ?: loadStubByElement(property)) as? KotlinPropertyStubImpl ?: return null
+        return annotations.mapNotNull { deserializeAnnotation(it, useSiteTargetFilter = useSiteTargetFilter) }
+    }
+
+    fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
+        // Default values for annotation properties have constant as a workaround for KT-58137 (ee30cc04ee810fcdd719085af3a0e0c1995a73ee)
+        if (!property.hasModifier(KtTokens.CONST_KEYWORD) && !isFromAnnotation) return null
+        val propertyStub: KotlinPropertyStubImpl = property.compiledStub
         val constantValue = propertyStub.constantInitializer ?: return null
-        return resolveValue(property, constantValue)
+        val resultValue = when {
+            !isUnsigned -> constantValue
+            constantValue is ByteValue -> UByteValue(constantValue.value)
+            constantValue is ShortValue -> UShortValue(constantValue.value)
+            constantValue is IntValue -> UIntValue(constantValue.value)
+            constantValue is LongValue -> ULongValue(constantValue.value)
+            else -> constantValue
+        }
+
+        return resolveValue(property, resultValue)
     }
 
     private fun deserializeAnnotation(
-        ktAnnotation: KtAnnotationEntry
-    ): FirAnnotation {
+        ktAnnotation: KtAnnotationEntry,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
+    ): FirAnnotation? {
+        val useSiteTarget = ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+        if (useSiteTargetFilter?.invoke(useSiteTarget) == false) {
+            return null
+        }
+
+        val annotationStub: KotlinAnnotationEntryStubImpl = ktAnnotation.compiledStub
+        val valueArguments = annotationStub.valueArguments
+
         return deserializeAnnotation(
             ktAnnotation,
             getAnnotationClassId(ktAnnotation),
-            ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
-            ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+            valueArguments,
+            useSiteTarget,
         )
-    }
-
-    fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
-        val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
-            ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
-            ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
-        return userType.classId()
     }
 
     private fun deserializeAnnotation(
@@ -85,7 +110,7 @@ class StubBasedAnnotationDeserializer(
         return buildAnnotation {
             source = KtRealPsiSourceElement(ktAnnotation)
             annotationTypeRef = buildResolvedTypeRef {
-                type = classId.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                coneType = classId.toLookupTag().constructClassType()
             }
             this.argumentMapping = buildAnnotationArgumentMapping {
                 valueArguments?.forEach { (name, constantValue) ->
@@ -107,21 +132,21 @@ class StubBasedAnnotationDeserializer(
             is KClassValue -> buildGetClassCall {
                 source = KtRealPsiSourceElement(sourceElement)
                 val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
-                val referencedType = lookupTag.constructType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                val referencedType = lookupTag.constructType()
                 val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
-                        classTypeRef = buildResolvedTypeRef { type = referencedType }
+                        classTypeRef = buildResolvedTypeRef { coneType = referencedType }
                         coneTypeOrNull = resolvedType
                     }
                 )
                 coneTypeOrNull = resolvedType
             }
             is ArrayValue -> {
-                buildArrayLiteral {
+                buildCollectionLiteral {
                     source = KtRealPsiSourceElement(sourceElement)
                     // Not quite precise, yet doesn't require annotation resolution
-                    coneTypeOrNull = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.type).createArrayType()
+                    coneTypeOrNull = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.coneType).createArrayType()
 
                     argumentList = buildArgumentList {
                         value.value.mapTo(arguments) { resolveValue(sourceElement, it) }
@@ -131,7 +156,7 @@ class StubBasedAnnotationDeserializer(
             is AnnotationValue -> {
                 deserializeAnnotation(
                     sourceElement,
-                    (value.value.type as KotlinClassTypeBean).classId,
+                    value.value.classId,
                     value.value.argumentsMapping
                 )
             }
@@ -142,10 +167,10 @@ class StubBasedAnnotationDeserializer(
             is LongValue -> const(ConstantValueKind.Long, value.value, session.builtinTypes.longType, sourceElement)
             is FloatValue -> const(ConstantValueKind.Float, value.value, session.builtinTypes.floatType, sourceElement)
             is DoubleValue -> const(ConstantValueKind.Double, value.value, session.builtinTypes.doubleType, sourceElement)
-            is UByteValue -> const(ConstantValueKind.UnsignedByte, value.value, session.builtinTypes.byteType, sourceElement)
-            is UShortValue -> const(ConstantValueKind.UnsignedShort, value.value, session.builtinTypes.shortType, sourceElement)
-            is UIntValue -> const(ConstantValueKind.UnsignedInt, value.value, session.builtinTypes.intType, sourceElement)
-            is ULongValue -> const(ConstantValueKind.UnsignedLong, value.value, session.builtinTypes.longType, sourceElement)
+            is UByteValue -> const(ConstantValueKind.UnsignedByte, value.value, session.builtinTypes.uByteType, sourceElement)
+            is UShortValue -> const(ConstantValueKind.UnsignedShort, value.value, session.builtinTypes.uShortType, sourceElement)
+            is UIntValue -> const(ConstantValueKind.UnsignedInt, value.value, session.builtinTypes.uIntType, sourceElement)
+            is ULongValue -> const(ConstantValueKind.UnsignedLong, value.value, session.builtinTypes.uLongType, sourceElement)
             is IntValue -> const(ConstantValueKind.Int, value.value, session.builtinTypes.intType, sourceElement)
             NullValue -> const(ConstantValueKind.Null, null, session.builtinTypes.nullableAnyType, sourceElement)
             is StringValue -> const(ConstantValueKind.String, value.value, session.builtinTypes.stringType, sourceElement)
@@ -166,25 +191,25 @@ class StubBasedAnnotationDeserializer(
             }
 
             return when (firstValue) {
-                is BooleanValue -> session.builtinTypes.booleanType.type
-                is ByteValue -> session.builtinTypes.byteType.type
-                is CharValue -> session.builtinTypes.charType.type
-                is ShortValue -> session.builtinTypes.shortType.type
-                is IntValue -> session.builtinTypes.intType.type
-                is LongValue -> session.builtinTypes.longType.type
-                is UByteValue -> session.builtinTypes.byteType.type
-                is UShortValue -> session.builtinTypes.shortType.type
-                is UIntValue -> session.builtinTypes.intType.type
-                is ULongValue -> session.builtinTypes.longType.type
-                is DoubleValue -> session.builtinTypes.doubleType.type
-                is FloatValue -> session.builtinTypes.floatType.type
-                is AnnotationValue -> session.builtinTypes.annotationType.type
-                is StringValue -> session.builtinTypes.stringType.type
-                is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                is BooleanValue -> session.builtinTypes.booleanType.coneType
+                is ByteValue -> session.builtinTypes.byteType.coneType
+                is CharValue -> session.builtinTypes.charType.coneType
+                is ShortValue -> session.builtinTypes.shortType.coneType
+                is IntValue -> session.builtinTypes.intType.coneType
+                is LongValue -> session.builtinTypes.longType.coneType
+                is UByteValue -> session.builtinTypes.byteType.coneType
+                is UShortValue -> session.builtinTypes.shortType.coneType
+                is UIntValue -> session.builtinTypes.intType.coneType
+                is ULongValue -> session.builtinTypes.longType.coneType
+                is DoubleValue -> session.builtinTypes.doubleType.coneType
+                is FloatValue -> session.builtinTypes.floatType.coneType
+                is AnnotationValue -> session.builtinTypes.annotationType.coneType
+                is StringValue -> session.builtinTypes.stringType.coneType
+                is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 is ArrayValue -> values.firstNotNullOfOrNull { inferArrayValueType((it as ArrayValue).value) }?.createArrayType()
                 is KClassValue -> {
-                    val kClassType = session.builtinTypes.anyType.type
-                    StandardClassIds.KClass.constructClassLikeType(arrayOf(kClassType), isNullable = false)
+                    val kClassType = session.builtinTypes.anyType.coneType
+                    StandardClassIds.KClass.constructClassLikeType(arrayOf(kClassType), isMarkedNullable = false)
                 }
                 else -> null
             }
@@ -193,39 +218,23 @@ class StubBasedAnnotationDeserializer(
         return null
     }
 
-    private fun <T> const(
-        kind: ConstantValueKind<T>,
-        value: T,
+    private fun const(
+        kind: ConstantValueKind,
+        value: Any?,
         typeRef: FirResolvedTypeRef,
         sourceElement: PsiElement
-    ): FirConstExpression<T> {
-        return buildConstExpression(
+    ): FirLiteralExpression {
+        return buildLiteralExpression(
             KtRealPsiSourceElement(sourceElement),
             kind,
             value,
             setType = true
-        ).apply { this.replaceConeTypeOrNull(typeRef.type) }
+        ).apply { this.replaceConeTypeOrNull(typeRef.coneType) }
     }
 
-    private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression {
-        return buildPropertyAccessExpression {
-            source = KtRealPsiSourceElement(this@toEnumEntryReferenceExpression)
-            val enumLookupTag = classId.toLookupTag()
-            val enumSymbol = enumLookupTag.toSymbol(session)
-            val firClass = enumSymbol?.fir as? FirRegularClass
-            val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
-            val enumEntrySymbol = enumEntries.find { it.name == entryName }
-            calleeReference = enumEntrySymbol?.let {
-                buildResolvedNamedReference {
-                    name = entryName
-                    resolvedSymbol = it.symbol
-                }
-            } ?: buildFromMissingDependenciesNamedReference {
-                name = entryName
-            }
-            if (enumEntrySymbol != null) {
-                coneTypeOrNull = enumEntrySymbol.returnTypeRef.coneTypeOrNull
-            }
+    private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression =
+        buildEnumEntryDeserializedAccessExpression {
+            enumClassId = classId
+            enumEntryName = entryName
         }
-    }
 }

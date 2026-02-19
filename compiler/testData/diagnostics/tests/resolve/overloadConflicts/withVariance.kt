@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 object X1
 object X2
@@ -8,3 +9,6 @@ class A<T>
 <!CONFLICTING_OVERLOADS!>fun <T2> A<out T2>.foo()<!> = X2
 
 fun <T> A<out T>.test() = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>() // TODO fix constraint system
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, objectDeclaration,
+outProjection, typeParameter */

@@ -19,4 +19,6 @@ class DeserializedSourceFile(
     override fun hashCode(): Int {
         return library.hashCode() xor name.hashCode()
     }
+
+    override fun toString() = "DeserializedSourceFile(\"$name\" from \"${library.libraryFile}\")"
 }

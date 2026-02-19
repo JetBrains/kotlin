@@ -5,23 +5,22 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.relativeTo
 
-@DisabledOnOs(
-    OS.WINDOWS,
-    disabledReason = "Compiler plugin is leaking file descriptor preventing cleaning the project"
+@OsCondition(
+    supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+    enabledOnCI = [OS.LINUX], // Compiler plugin is leaking file descriptor preventing cleaning the project on Windows
 )
 @DisplayName("Scripting plugin")
 @OtherGradlePluginTests
-@GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3) // workaround for a Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450
 abstract class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("basic script is working")
@@ -30,8 +29,6 @@ abstract class ScriptingIT : KGPBaseTest() {
         project("scripting", gradleVersion) {
             val appSubProject = subProject("app")
             val scriptTemplateSubProject = subProject("script-template")
-            appSubProject.disableLightTreeIfNeeded()
-            scriptTemplateSubProject.disableLightTreeIfNeeded()
             build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertCompiledKotlinSources(
                     listOf(
@@ -47,12 +44,14 @@ abstract class ScriptingIT : KGPBaseTest() {
         }
     }
 
+    @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled non-incremental")
     @GradleTest
     fun testScriptingCustomExtensionNonIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = false)
     }
 
+    @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
     open fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
@@ -72,7 +71,6 @@ abstract class ScriptingIT : KGPBaseTest() {
             )
         ) {
             val appSubproject = subProject("app")
-            appSubproject.disableLightTreeIfNeeded()
             val bobGreetSource = appSubproject.kotlinSourcesDir().resolve("bob.greet")
             val bobGreet = bobGreetSource.relativeTo(projectPath)
             val aliceGreet = appSubproject.kotlinSourcesDir().resolve("alice.greet").relativeTo(projectPath)
@@ -111,13 +109,34 @@ abstract class ScriptingIT : KGPBaseTest() {
     fun testNoScriptingWarning(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("help") {
-                assertOutputDoesNotContain(ScriptingGradleSubplugin.MISCONFIGURATION_MESSAGE_SUFFIX)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinScriptingMisconfiguration)
             }
         }
     }
 
-    open fun GradleProject.disableLightTreeIfNeeded() {
-
+    // Compose only works on JDK 11+
+    // compilerOptions("-language-version", "1.9") is set in scriptDef.kt due to KT-64362.
+    @DisplayName("Compose compiler plugin should work with scripting")
+    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @GradleWithJdkTest
+    fun testComposeInterop(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        project(
+            projectName = "scriptingComposeInterop",
+            gradleVersion = gradleVersion,
+            buildJdk = jdk.location
+        ) {
+            val appSubProject = subProject("app")
+            build(":app:test", buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+            )) {
+                assertCompiledKotlinSources(
+                    listOf(
+                        appSubProject.kotlinSourcesDir("test").resolve("script/ComposeMainKtsTest.kt").relativeTo(projectPath),
+                    ),
+                    output
+                )
+            }
+        }
     }
 }
 
@@ -129,26 +148,4 @@ class ScriptingK1IT : ScriptingIT() {
 @DisplayName("K2 Scripting plugin")
 class ScriptingK2IT : ScriptingIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("KT-61137")
-    override fun testScripting(gradleVersion: GradleVersion) {
-        super.testScripting(gradleVersion)
-    }
-
-    @Disabled("KT-61137")
-    override fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
-        super.testScriptingCustomExtensionIncremental(gradleVersion)
-    }
-
-    override fun GradleProject.disableLightTreeIfNeeded() {
-        buildGradle.append(
-            """
-            tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configure {
-                compilerOptions {
-                    freeCompilerArgs.add("-Xuse-fir-lt=false") // Scripts are not yet supported with K2 in LightTree mode
-                }
-            }            
-            """.trimIndent()
-        )
-    }
 }

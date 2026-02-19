@@ -1,27 +1,71 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @ExternalObjCClass @ExperimentalForeignApi open class MyClass : ObjCObjectBase {
-        @ObjCConstructor(designated = true, initSelector = "init") constructor()
-        var instanceProperty: Int
-            @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") get
-            @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") set
-        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass()", imports = {})) @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "init") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun init(): MyClass?
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
-        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") open external fun instanceProperty(): Int
-        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") open external fun setInstanceProperty(instanceProperty: Int)
-        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    // class name: dependency/MyClass
+    // class name: dependency/MyClass.Companion
+    // class name: dependency/MyClassMeta
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
+
+      @kotlinx/cinterop/ObjCConstructor(designated = true, initSelector = "init")
+      public /* secondary */ constructor()
+
+      @kotlin/Deprecated(message = "Use constructor instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = "MyClass()"), level = kotlin/DeprecationLevel.ERROR)
+      @kotlinx/cinterop/ObjCMethod(selector = "init", encoding = "@16@0:8", isStret = false)
+      @kotlinx/cinterop/internal/CCall.ConsumesReceiver
+      @kotlinx/cinterop/internal/CCall.ReturnsRetained
+      public open external fun init(): dependency/MyClass?
+
+      @kotlinx/cinterop/ObjCMethod(selector = "instanceMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun instanceMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "instanceProperty", encoding = "i16@0:8", isStret = false)
+      public open external fun instanceProperty(): kotlin/Int
+
+      @kotlinx/cinterop/ObjCMethod(selector = "setInstanceProperty:", encoding = "v20@0:8i16", isStret = false)
+      public open external fun setInstanceProperty(instanceProperty: kotlin/Int): kotlin/Unit
+
+      public final var instanceProperty: kotlin/Int
+        @kotlinx/cinterop/ObjCMethod(selector = "instanceProperty", encoding = "i16@0:8", isStret = false)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/ObjCMethod(selector = "setInstanceProperty:", encoding = "v20@0:8i16", isStret = false)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-    @ExternalObjCClass @ExperimentalForeignApi open class MyClassMeta : ObjCObjectBaseMeta {
-        protected constructor()
-        var classProperty: Any?
-            @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") get
-            @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") set
-        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
-        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") open external fun classProperty(): Any?
-        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") open external fun setClassProperty(classProperty: Any?)
+    public final companion object dependency/MyClass.Companion : dependency/MyClassMeta, kotlinx/cinterop/ObjCClassOf<dependency/MyClass> {
+
+      private constructor()
     }
 
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public open class dependency/MyClassMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "classMethod", encoding = "v16@0:8", isStret = false)
+      public open external fun classMethod(): kotlin/Unit
+
+      @kotlinx/cinterop/ObjCMethod(selector = "classProperty", encoding = "@16@0:8", isStret = false)
+      public open external fun classProperty(): kotlin/Any?
+
+      @kotlinx/cinterop/ObjCMethod(selector = "setClassProperty:", encoding = "v24@0:8@16", isStret = false)
+      public open external fun setClassProperty(classProperty: kotlin/Any?): kotlin/Unit
+
+      public final var classProperty: kotlin/Any?
+        @kotlinx/cinterop/ObjCMethod(selector = "classProperty", encoding = "@16@0:8", isStret = false)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/ObjCMethod(selector = "setClassProperty:", encoding = "v24@0:8@16", isStret = false)
+        public final /* non-default */ external set(value: kotlin/Any?)
+    }
+  }
 }
-

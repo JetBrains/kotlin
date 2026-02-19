@@ -12,7 +12,8 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import kotlin.reflect.jvm.internal.asKCallableImpl
+import kotlin.reflect.jvm.internal.asReflectCallable
+import kotlin.reflect.jvm.internal.callDefaultMethod
 
 /**
  * Returns a parameter representing the `this` instance needed to call this callable,
@@ -21,6 +22,13 @@ import kotlin.reflect.jvm.internal.asKCallableImpl
 @SinceKotlin("1.1")
 val KCallable<*>.instanceParameter: KParameter?
     get() = parameters.singleOrNull { it.kind == KParameter.Kind.INSTANCE }
+
+/**
+ * Returns context parameters of this callable.
+ */
+@ExperimentalContextParameters
+val KCallable<*>.contextParameters: List<KParameter>
+    get() = parameters.filter { it.kind == KParameter.Kind.CONTEXT }
 
 /**
  * Returns a parameter representing the extension receiver instance needed to call this callable,
@@ -70,7 +78,7 @@ suspend fun <R> KCallable<R>.callSuspend(vararg args: Any?): R {
 suspend fun <R> KCallable<R>.callSuspendBy(args: Map<KParameter, Any?>): R {
     if (!this.isSuspend) return callBy(args)
     if (this !is KFunction<*>) throw IllegalArgumentException("Cannot callSuspendBy on a property $this: suspend properties are not supported yet")
-    val kCallable = asKCallableImpl() ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
+    val kCallable = asReflectCallable() ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
     val result = suspendCoroutineUninterceptedOrReturn<R> { kCallable.callDefaultMethod(args, it) }
     // If suspend function returns Unit and tail-call, it might appear, that it returns not Unit,
     // see comment above replaceReturnsUnitMarkersWithPushingUnitOnStack for explanation.

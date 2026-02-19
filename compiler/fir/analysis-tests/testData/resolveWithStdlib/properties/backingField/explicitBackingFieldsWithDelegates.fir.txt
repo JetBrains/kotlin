@@ -3,7 +3,13 @@ FILE: explicitBackingFieldsWithDelegates.kt
         ^ (Int(2) as R|kotlin/Number|)
     }
     )
-        private <explicit backing field>: R|kotlin/Int| = Int(10)
+        private final backing field field: R|kotlin/Int| = Int(10)
         public get(): R|kotlin/Number| {
             ^ D|/thingWithDelefate|.R|kotlin/getValue|<R|kotlin/Number|>(Null(null), ::R|/thingWithDelefate|)
         }
+    public final val delegatedEBF: R|kotlin/collections/List<kotlin/String>|
+        private final backing field field: R|kotlin/collections/MutableList<kotlin/String>|
+        public get(): R|kotlin/collections/List<kotlin/String>|
+    public final fun <no name provided>(): R|kotlin/Unit| {
+        R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+    }

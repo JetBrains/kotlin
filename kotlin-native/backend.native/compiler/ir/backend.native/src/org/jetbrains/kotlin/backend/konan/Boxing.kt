@@ -5,27 +5,26 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.LLVMArrayType
-import llvm.LLVMConstInt
-import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.getOrPut
+import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.constValue
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.defaultOrNullableType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 // TODO: Find a better home for this function than Context.
 internal fun Context.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
@@ -38,38 +37,48 @@ private fun Context.getTypeConversionImpl(
     if (actualInlinedClass == expectedInlinedClass) return null
 
     return when {
-        actualInlinedClass == null && expectedInlinedClass == null -> null
         actualInlinedClass != null && expectedInlinedClass == null -> getBoxFunction(actualInlinedClass)
         actualInlinedClass == null && expectedInlinedClass != null -> getUnboxFunction(expectedInlinedClass)
         else -> error("actual type is ${actualInlinedClass?.fqNameForIrSerialization}, expected ${expectedInlinedClass?.fqNameForIrSerialization}")
-    }?.symbol
+    }.symbol
 }
 
-internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
+internal val DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION = IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
 
-internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = mapping.boxFunctions.getOrPut(inlinedClass) {
-    require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf(inlinedClass)
-    var parent = inlinedClass.parent
+private fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
+        if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
+
+private var IrClass.boxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrClass.unboxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrClass.inlineClassFieldSetter: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+private fun IrClass.getParentAndFullName(): Pair<IrDeclarationParent, String> {
+    require(this.isUsedAsBoxClass())
+    val classes = mutableListOf(this)
+    var parent = this.parent
     while (parent is IrClass) {
         classes.add(parent)
         parent = parent.parent
     }
     require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
 
+    return Pair(parent, classes.reversed().joinToString(".") { it.name.asString() })
+}
+
+internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
+    val (parent, fullName) = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = ir.symbols.any.owner.defaultOrNullableType(isNullable)
+    val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-box>")
+        name = Name.special("<$fullName-box>")
         returnType = boxedType
     }.also { function ->
         function.parent = parent
-        function.attributeOwnerId = inlinedClass // To be able to get the file.
 
         function.addValueParameter {
             startOffset = inlinedClass.startOffset
@@ -80,31 +89,20 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = m
     }
 }
 
-internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = mapping.unboxFunctions.getOrPut(inlinedClass) {
-    require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf(inlinedClass)
-    var parent = inlinedClass.parent
-    while (parent is IrClass) {
-        classes.add(parent)
-        parent = parent.parent
-    }
-    require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
-
-    val symbols = ir.symbols
-
+internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
+    val (parent, fullName) = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = symbols.any.owner.defaultOrNullableType(isNullable)
+    val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() } }-unbox>")
+        name = Name.special("<$fullName-unbox>")
         returnType = unboxedType
     }.also { function ->
         function.parent = parent
-        function.attributeOwnerId = inlinedClass // To be able to get the file.
 
         function.addValueParameter {
             startOffset = inlinedClass.startOffset
@@ -115,12 +113,42 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
     }
 }
 
+internal fun Context.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
+    val (parent, fullName) = inlinedClass.getParentAndFullName()
+    val isNullable = inlinedClass.inlinedClassIsNullable()
+    val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
+    val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
+
+    irFactory.buildFun {
+        startOffset = inlinedClass.startOffset
+        endOffset = inlinedClass.endOffset
+        origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+        name = Name.special("<$fullName-setValue>")
+        returnType = irBuiltIns.unitType
+    }.also { function ->
+        function.parent = parent
+
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("inst")
+            type = boxedType
+        }
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("value")
+            type = unboxedType
+        }
+    }
+}
+
 /**
  * Initialize static boxing.
  * If output target is native binary then the cache is created.
  */
 internal fun initializeCachedBoxes(generationState: NativeGenerationState) {
-    BoxCache.values().forEach { cache ->
+    BoxCache.entries.forEach { cache ->
         val cacheName = "${cache.name}_CACHE"
         val rangeStart = "${cache.name}_RANGE_FROM"
         val rangeEnd = "${cache.name}_RANGE_TO"
@@ -134,7 +162,7 @@ internal fun initializeCachedBoxes(generationState: NativeGenerationState) {
  * Adds global that refers to the cache.
  */
 private fun initCache(cache: BoxCache, generationState: NativeGenerationState, cacheName: String,
-                      rangeStartName: String, rangeEndName: String, declareOnly: Boolean) : StaticData.Global {
+                      rangeStartName: String, rangeEndName: String, declareOnly: Boolean): StaticData.Global {
 
     val context = generationState.context
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
@@ -142,7 +170,7 @@ private fun initCache(cache: BoxCache, generationState: NativeGenerationState, c
     val llvm = generationState.llvm
     val llvmType = kotlinType.defaultType.toLLVMType(llvm)
     val llvmBoxType = llvm.structType(llvm.runtime.objHeaderType, llvmType)
-    val (start, end) = context.config.target.getBoxCacheRange(cache)
+    val (start, end) = cache.defaultRange
 
     return if (declareOnly) {
         staticData.createGlobal(LLVMArrayType(llvmBoxType, end - start + 1)!!, cacheName, true)
@@ -180,10 +208,19 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
         IrConstKind.Long -> value.value as Long
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
-    val (start, end) = generationState.config.target.getBoxCacheRange(cacheType)
+    val (start, end) = cacheType.defaultRange
     return if (value in start..end) {
         generationState.llvm.let { llvm ->
-            llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(llvm, value.toInt() - start)?.getElementPtr(llvm, 0)
+            val llvmType = llvm.structType(llvm.runtime.objHeaderType, when (cacheType) {
+                BoxCache.BOOLEAN -> llvm.int1Type
+                BoxCache.BYTE -> llvm.int8Type
+                BoxCache.SHORT -> llvm.int16Type
+                BoxCache.CHAR -> llvm.int16Type
+                BoxCache.INT -> llvm.int32Type
+                BoxCache.LONG -> llvm.int64Type
+            })
+            val llvmArrayType = LLVMArrayType(llvmType, end - start + 1)!!
+            llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(llvm, llvmArrayType, value.toInt() - start)?.getElementPtr(llvm, llvmType, 0)
         }
     } else {
         null
@@ -192,36 +229,3 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
 
 private fun createConstant(llvmType: LLVMTypeRef, value: Int): ConstValue =
         constValue(LLVMConstInt(llvmType, value.toLong(), 1)!!)
-
-// When start is greater than end then `inRange` check is always false
-// and can be eliminated by LLVM.
-private val emptyRange = 1 to 0
-
-// Memory usage is around 20kb.
-private val BoxCache.defaultRange get() = when (this) {
-    BoxCache.BOOLEAN -> (0 to 1)
-    BoxCache.BYTE -> (-128 to 127)
-    BoxCache.SHORT -> (-128 to 127)
-    BoxCache.CHAR -> (0 to 255)
-    BoxCache.INT -> (-128 to 127)
-    BoxCache.LONG -> (-128 to 127)
-}
-
-private fun KonanTarget.getBoxCacheRange(cache: BoxCache): Pair<Int, Int> = when (this) {
-    is KonanTarget.ZEPHYR   -> emptyRange
-    else                    -> cache.defaultRange
-}
-
-internal fun IrBuiltIns.getKotlinClass(cache: BoxCache): IrClass = when (cache) {
-    BoxCache.BOOLEAN -> booleanClass
-    BoxCache.BYTE -> byteClass
-    BoxCache.SHORT -> shortClass
-    BoxCache.CHAR -> charClass
-    BoxCache.INT -> intClass
-    BoxCache.LONG -> longClass
-}.owner
-
-// TODO: consider adding box caches for unsigned types.
-enum class BoxCache {
-    BOOLEAN, BYTE, SHORT, CHAR, INT, LONG
-}

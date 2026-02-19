@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Delegate(val value: String) {
     operator fun getValue(thisRef: Any?, property: Any?) = value
 }
@@ -7,3 +8,6 @@ class DelegateProvider(val value: String) {
 }
 
 val testTopLevel by DelegateProvider("OK")
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, stringLiteral */

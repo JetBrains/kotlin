@@ -1,0 +1,25 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
+
+class A
+class B
+class C
+
+context(A) fun B.f() {}
+context(A) fun B.g() {
+    <!NO_CONTEXT_ARGUMENT!>f<!>()
+}
+context(A) fun C.h() {
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()
+}
+
+fun A.q(b: B) {
+    with(b) {
+        f()
+    }
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+lambdaLiteral */

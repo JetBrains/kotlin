@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface KRunnable {
     fun invoke()
@@ -63,3 +64,7 @@ object Test5 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funInterface, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nestedClass, objectDeclaration, propertyDeclaration, samConversion,
+stringLiteral */

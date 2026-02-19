@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: MyFunction.java
 public interface MyFunction<T, R> {
     R foo(T x);
@@ -14,7 +15,9 @@ fun main() {
         x.toString()
     }
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyFunction<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>MyFunction<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral, stringLiteral */

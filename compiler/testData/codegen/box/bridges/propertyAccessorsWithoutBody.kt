@@ -1,3 +1,4 @@
+
 open class A<T> {
     open var x: T = "Fail" as T
     get

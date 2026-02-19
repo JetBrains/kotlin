@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 open class A(open val x: Any)
 
 class B(x: Any) : A(x) {
@@ -14,3 +15,6 @@ fun test_2(b: B) {
         b.x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, primaryConstructor,
+propertyDeclaration, smartcast */

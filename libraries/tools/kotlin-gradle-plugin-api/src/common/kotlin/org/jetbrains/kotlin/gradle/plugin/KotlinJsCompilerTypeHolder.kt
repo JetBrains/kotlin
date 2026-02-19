@@ -7,22 +7,48 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+/**
+ * Represents a Kotlin DSL entity holding information about possible modes for the Kotlin/JS compiler.
+ */
 interface KotlinJsCompilerTypeHolder {
-    @Deprecated("Because only IR compiler is left, no more necessary to know about compiler type in properties")
+
+    /**
+     * @suppress
+     */
+    @Deprecated(
+        "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     val compilerTypeFromProperties: KotlinJsCompilerType?
 
+    /**
+     * The default mode of the Kotlin/JS compiler to be used.
+     */
     val defaultJsCompilerType: KotlinJsCompilerType
-        get() = compilerTypeFromProperties ?: KotlinJsCompilerType.IR
+        get() = KotlinJsCompilerType.IR
 
+    /**
+     * @suppress
+     */
     // Necessary to get rid of KotlinJsCompilerType import in build script
-    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
+    @Deprecated("The legacy compiler is deprecated. Migrate your project to the new IR-based compiler", level = DeprecationLevel.HIDDEN)
     val LEGACY: KotlinJsCompilerType
+        @Suppress("DEPRECATION_ERROR")
         get() = KotlinJsCompilerType.LEGACY
 
+    /**
+     * Represents the Kotlin/JS IR (intermediate representation) compiler's backend mode.
+     *
+     * @see KotlinJsCompilerType.IR
+     */
     val IR: KotlinJsCompilerType
         get() = KotlinJsCompilerType.IR
 
-    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
+    /**
+     * @suppress
+     */
+    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler", level = DeprecationLevel.HIDDEN)
     val BOTH: KotlinJsCompilerType
+        @Suppress("DEPRECATION_ERROR")
         get() = KotlinJsCompilerType.BOTH
 }

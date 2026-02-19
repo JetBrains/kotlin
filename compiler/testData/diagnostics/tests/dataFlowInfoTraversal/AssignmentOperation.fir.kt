@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun bar1(x: Number, y: Int) {
     var yy = y
@@ -15,3 +16,7 @@ fun bar3(x: Number, y: Array<Int>) {
     y[0] += x as Int
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+typeParameter, typeWithExtension */

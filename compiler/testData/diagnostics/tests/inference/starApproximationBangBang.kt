@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -22,3 +23,6 @@ fun main() {
     outFoo()!!.x.x.x.x.x.x // OK
     outFoo()!!.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x // unresolved x in NI
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, functionDeclaration, interfaceDeclaration, nullableType, out,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

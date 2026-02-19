@@ -1,4 +1,4 @@
 import c.b
 
-val a<caret_onAirContext> = 5
+val a = 5
 

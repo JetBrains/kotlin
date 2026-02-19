@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-1820 Write test for ASSIGN_OPERATOR_AMBIGUITY
 package kt1820
@@ -14,3 +15,6 @@ fun test(m: MyInt) {
     var i = 1
     i <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 34
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, primaryConstructor, propertyDeclaration */

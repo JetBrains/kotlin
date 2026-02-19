@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -14,20 +13,22 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
-import org.jetbrains.kotlin.backend.konan.isObjCClass
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = mapping.objectInstanceGetter.getOrPut(clazz) {
+private var IrClass.objectClassInstanceFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = clazz::objectClassInstanceFunction.getOrSetIfNull {
     when {
-        clazz.isUnit() -> ir.symbols.theUnitInstance.owner
+        clazz.isUnit() -> symbols.theUnitInstance.owner
         clazz.isCompanion -> {
             require((clazz.parent as? IrClass)?.isExternalObjCClass() != true) { "External objc Classes can't be used this way"}
             val property = irFactory.buildProperty {
@@ -64,7 +65,7 @@ internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = mapping.ob
 
 internal class ObjectClassLowering(val generationState: NativeGenerationState) : FileLoweringPass {
     val context = generationState.context
-    val symbols = context.ir.symbols
+    val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {
         irFile.transform(object: IrBuildingTransformer(context) {
@@ -98,8 +99,8 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
 
     fun IrBuilderWithScope.irGetObjCClassCompanion(declaration: IrClass): IrExpression {
         require(declaration.isCompanion && (declaration.parent as IrClass).isObjCClass())
-        return irCall(symbols.interopInterpretObjCPointer, listOf(declaration.defaultType)).apply {
-            putValueArgument(0, irCall(symbols.interopGetObjCClass, listOf((declaration.parent as IrClass).defaultType)))
+        return irCallWithSubstitutedType(symbols.interopInterpretObjCPointer, listOf(declaration.defaultType)).apply {
+            arguments[0] = irCallWithSubstitutedType(symbols.interopGetObjCClass, listOf((declaration.parent as IrClass).defaultType))
         }
     }
 
@@ -115,10 +116,9 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
             isFinal = true
             isStatic = true
             type = declaration.defaultType
-            visibility = DescriptorVisibilities.PRIVATE
         }.also { field ->
             val primaryConstructor = declaration.constructors.single { it.isPrimary }
-            require(primaryConstructor.valueParameters.isEmpty())
+            require(primaryConstructor.parameters.isEmpty())
             val builder = context.createIrBuilder(field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
             val initializer = if (declaration.isCompanion && classToAdd.isObjCClass()) {
                 builder.irGetObjCClassCompanion(declaration)
@@ -131,10 +131,11 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
                 } else {
                     builder.irBlock {
                         // we need to make object available for rereading from the same thread while initializing
-                        +irSetField(null, field, irCall(symbols.createUninitializedInstance, listOf(declaration.defaultType)), origin = IrStatementOriginFieldPreInit)
+                        val uninitializedInstanceCall = irCallWithSubstitutedType(symbols.createUninitializedInstance, listOf(declaration.defaultType))
+                        +irSetField(null, field, uninitializedInstanceCall, origin = IrStatementOriginFieldPreInit)
                         +irCall(symbols.initInstance).apply {
-                            putValueArgument(0, irGetField(null, field))
-                            putValueArgument(1, irCallConstructor(primaryConstructor.symbol, emptyList()))
+                            arguments[0] = irGetField(null, field)
+                            arguments[1] = irCallConstructor(primaryConstructor.symbol, emptyList())
                         }
                         +irGetField(null, field)
                     }
@@ -143,9 +144,7 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
             field.initializer = builder.irExprBody(initializer)
         }
         if (declaration.annotations.hasAnnotation(KonanFqNames.threadLocal)) {
-            property.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.threadLocal.owner)
-        } else if (declaration.annotations.hasAnnotation(KonanFqNames.sharedImmutable) || context.memoryModel != MemoryModel.EXPERIMENTAL){
-            property.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.sharedImmutable.owner)
+            property.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.symbols.threadLocal.owner)
         }
         function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
             +irReturn(irGetField(null, property.backingField!!))
@@ -154,12 +153,11 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
 
     private fun IrConstructor.isAutogeneratedSimpleConstructor(): Boolean {
         if (!this.isPrimary) return false
-        if (valueParameters.isNotEmpty()) return false
+        if (parameters.isNotEmpty()) return false
         val statements = this.body?.statements ?: return false
         if (statements.isEmpty()) return false
         val constructorCall = statements[0] as? IrDelegatingConstructorCall ?: return false
-        val constructor = constructorCall.symbol.owner as? IrConstructor ?: return false
-        if (!constructor.constructedClass.isAny()) return false
+        if (!constructorCall.symbol.owner.constructedClass.isAny()) return false
         return statements.asSequence().drop(1).all {
             it is IrBlock && it.origin == IrStatementOrigin.INITIALIZE_FIELD
         }
@@ -172,7 +170,8 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
     }
 
 
-    // This is a hack to avoid early freezing. Should be removed when freezing is removed
-    object IrStatementOriginFieldPreInit : IrStatementOriginImpl("FIELD_PRE_INIT")
-
+    companion object {
+        // This is a hack to avoid early freezing. Should be removed when freezing is removed
+        val IrStatementOriginFieldPreInit = IrStatementOriginImpl("FIELD_PRE_INIT")
+    }
 }

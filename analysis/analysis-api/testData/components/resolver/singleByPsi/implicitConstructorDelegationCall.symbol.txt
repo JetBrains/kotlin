@@ -1,0 +1,5 @@
+KtCallExpression(62,67): 'A(42)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): A
+    ]

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class A {
     private open class B
@@ -14,3 +15,6 @@ fun f(): Int {
     val x = object : D() { }
     return x.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, localProperty,
+nestedClass, propertyDeclaration */

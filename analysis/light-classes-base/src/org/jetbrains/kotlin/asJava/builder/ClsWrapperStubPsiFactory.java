@@ -5,19 +5,13 @@
 
 package org.jetbrains.kotlin.asJava.builder;
 
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
-import com.intellij.psi.impl.compiled.ClsEnumConstantImpl;
-import com.intellij.psi.impl.compiled.ClsFieldImpl;
 import com.intellij.psi.impl.java.stubs.*;
-import com.intellij.psi.stubs.StubBase;
-import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ClsWrapperStubPsiFactory extends StubPsiFactory {
-    public static final Key<LightElementOrigin> ORIGIN = Key.create("ORIGIN");
     public static final ClsWrapperStubPsiFactory INSTANCE = new ClsWrapperStubPsiFactory();
 
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
@@ -26,28 +20,13 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     @Override
     public PsiClass createClass(@NotNull PsiClassStub stub) {
-        PsiElement origin = getOriginalElement(stub);
         return new ClsClassImpl(stub) {
-            @NotNull
-            @Override
-            public PsiElement getNavigationElement() {
-                if (origin != null) return origin;
-
-                return super.getNavigationElement();
-            }
-
             @Nullable
             @Override
             public PsiClass getSourceMirrorClass() {
                 return null;
             }
         };
-    }
-
-    @Nullable
-    public static PsiElement getOriginalElement(@NotNull StubElement stub) {
-        LightElementOrigin origin = ((StubBase) stub).getUserData(ORIGIN);
-        return origin != null ? origin.getOriginalElement() : null;
     }
 
     @Override
@@ -67,26 +46,7 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     @Override
     public PsiField createField(PsiFieldStub stub) {
-        PsiElement origin = getOriginalElement(stub);
-        if (origin == null) return delegate.createField(stub);
-        if (stub.isEnumConstant()) {
-            return new ClsEnumConstantImpl(stub) {
-                @NotNull
-                @Override
-                public PsiElement getNavigationElement() {
-                    return origin;
-                }
-            };
-        }
-        else {
-            return new ClsFieldImpl(stub) {
-                @NotNull
-                @Override
-                public PsiElement getNavigationElement() {
-                    return origin;
-                }
-            };
-        }
+        return delegate.createField(stub);
     }
 
     @Override

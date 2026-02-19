@@ -1,4 +1,5 @@
-// !LANGUAGE: +AllowBreakAndContinueInsideWhen
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowBreakAndContinueInsideWhen
 
 fun breakContinueInWhen(i: Int) {
     for (y in 0..10) {
@@ -90,3 +91,7 @@ fun testBreakContinueInWhenInForIteratorExpression(xs: List<Any>, i: Int) {
     }) {
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, comparisonExpression, continue, doWhileLoop, equalityExpression, forLoop,
+functionDeclaration, ifExpression, incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration,
+rangeExpression, whenExpression, whenWithSubject, whileLoop */

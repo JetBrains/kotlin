@@ -1,18 +1,21 @@
 element: e
-implicit receivers:
-  type: KtTypeErrorType:
-    annotationsList: []
-    type: ERROR CLASS: Cannot infer argument for type parameter T
-  owner symbol: KtFirAnonymousFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaErrorType:
+      annotations: []
+      type: ERROR_TYPE
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): ERROR CLASS: Unresolved name: e
 
 scopes:
-  TypeScope, index = 0
+  LocalScope, index = 0
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  LocalScope, index = 1
+  TypeScope, index = 1
     packages: 0
     classifiers: 0
     callables: 0
@@ -30,37 +33,51 @@ scopes:
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 4
+  LocalScope, index = 4
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 5
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 6
     packages: 6
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: META-INF
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: java
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: javax
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: kotlin
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: org
+        location: TOP_LEVEL
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: sun
+        location: TOP_LEVEL
         origin: SOURCE
     classifiers: 0
     callables: 1
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /test
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: /test
+        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -75,31 +92,30 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
+        location: TOP_LEVEL
         modality: FINAL
         name: test
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Unit
-        symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
-
-  DefaultSimpleImportingScope, index = 6
 
   DefaultSimpleImportingScope, index = 7
 
-  ExplicitStarImportingScope, index = 8
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
-
-  DefaultSimpleImportingScope, index = 9
 
   DefaultStarImportingScope, index = 10
 

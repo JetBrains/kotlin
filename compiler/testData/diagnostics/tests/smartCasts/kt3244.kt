@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Should work already in M11
 
@@ -11,3 +12,6 @@ fun test(a : A): String? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, nullableType,
+primaryConstructor, propertyDeclaration */

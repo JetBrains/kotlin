@@ -35,8 +35,9 @@ enum class KotlinCompilerExecutionStrategy(
     /**
      * Execute Kotlin compiler in a new forked process for each compilation
      *
-     * Note: currently this strategy doesn't support incremental compilation
+     * Note: currently this strategy doesn't support incremental compilation and doesn't work with Build Tools API
      */
+    @Deprecated("Scheduled to be removed in 2.4.0 release, replace with DAEMON value", ReplaceWith("DAEMON"))
     OUT_OF_PROCESS("out-of-process"),
     ;
 

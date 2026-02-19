@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1267
-
 const val x = '2'
 const val y = '+'
 const val z = '3'

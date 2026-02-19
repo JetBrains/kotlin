@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> = null!!
 fun <T> listOf(): List<T> = null!!
@@ -17,3 +18,6 @@ fun commonSystemFailed(a: List<Int>) {
         else listOf(it)
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType, typeParameter, vararg */

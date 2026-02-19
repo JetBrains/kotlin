@@ -1,0 +1,39 @@
+FILE: OpenInterface.kt
+    public open interface OpenInterface : R|kotlin/Any| {
+        public abstract fun defaultModalityFuncWithoutBody(): R|kotlin/Unit|
+
+        public open fun defaultModalityFuncWithBody(): R|kotlin/Unit| {
+        }
+
+        public abstract fun abstractFunc(): R|kotlin/Unit|
+
+        public open fun openFunc(): R|kotlin/Unit| {
+        }
+
+        public abstract val defaultModalityValWithoutGetter: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+        public open val defaultModalityValWithGetter: R|kotlin/Any|
+            public get(): R|kotlin/Any| {
+                ^ Int(42)
+            }
+
+        public abstract val abstractVal: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+        public open val openVal: R|kotlin/Any|
+            public get(): R|kotlin/Any| {
+                ^ Int(42)
+            }
+
+        public abstract val abstractValWithGetter: R|kotlin/Any|
+            public get(): R|kotlin/Any| {
+                ^ Int(42)
+            }
+
+        public abstract var abstractValWithSetter: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+            public set(value: R|kotlin/Any|): R|kotlin/Unit| {
+            }
+
+    }

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION -UNCHECKED_CAST -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION -UNCHECKED_CAST -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 fun <T> materialize(): T = null as T
 
@@ -57,3 +58,6 @@ class Foo<out A> {
         fun <A> bar(x: A) = materialize<Foo<A>>()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, out, propertyDeclaration, typeParameter */

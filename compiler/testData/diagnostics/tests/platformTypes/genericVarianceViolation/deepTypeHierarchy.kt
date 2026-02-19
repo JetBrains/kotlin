@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -23,3 +24,6 @@ interface MyList3<A2, B> : MyList2<Any, B>
 fun bar(): MyList3<Int, out String> {
     TODO()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType, nullableType,
+outProjection, typeParameter */

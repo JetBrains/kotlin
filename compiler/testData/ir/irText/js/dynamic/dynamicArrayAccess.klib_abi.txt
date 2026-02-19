@@ -1,0 +1,9 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testArrayAccess1(dynamic): dynamic // /testArrayAccess1|testArrayAccess1(<dynamic>){}[0]
+final fun /testArrayAccess2(dynamic): dynamic // /testArrayAccess2|testArrayAccess2(<dynamic>){}[0]
+final fun /testArrayAccess3(dynamic): dynamic // /testArrayAccess3|testArrayAccess3(<dynamic>){}[0]

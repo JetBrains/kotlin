@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 public interface A {
     public class A_S { // static
@@ -88,3 +89,6 @@ class Z: C() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, init, javaFunction, javaType, nestedClass, objectDeclaration,
+propertyDeclaration */

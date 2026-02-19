@@ -241,5 +241,5 @@ The whole FIR plugin API is designed in a way which provides IDE supports for pl
 
 # Examples
 
-- [fir-plugin-prototype](https://github.com/JetBrains/kotlin/tree/master/plugins/fir-plugin-prototype) sandbox plugin which tests all existing extension points
+- [plugin-sandbox](https://github.com/JetBrains/kotlin/tree/master/plugins/plugin-sandbox) sandbox plugin which tests all existing extension points
 - [fir-parcelize](https://github.com/JetBrains/kotlin/tree/master/plugins/parcelize/parcelize-compiler/parcelize.k2/src/org/jetbrains/kotlin/parcelize/fir) FIR implementation of Parcelize plugin

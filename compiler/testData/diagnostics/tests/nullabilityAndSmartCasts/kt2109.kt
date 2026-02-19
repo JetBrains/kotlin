@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-2109 Nullability inference fails in extension function
 package kt2109
 
@@ -18,3 +19,6 @@ fun A.baz() {
     }
     foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+nullableType, smartcast, thisExpression */

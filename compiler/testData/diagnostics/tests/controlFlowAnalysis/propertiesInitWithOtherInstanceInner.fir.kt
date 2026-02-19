@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Outer {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val outerProp: String<!>
     inner class Inner(inner: Inner, outer: Outer) {
@@ -19,3 +20,6 @@ class Outer {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, init, inner, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */

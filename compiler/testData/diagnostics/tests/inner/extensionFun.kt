@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class Outer {
     class Nested
@@ -27,3 +28,5 @@ fun Outer.foo() {
     <!UNRESOLVED_REFERENCE!>Nested<!>()
     Inner()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inner, nestedClass */

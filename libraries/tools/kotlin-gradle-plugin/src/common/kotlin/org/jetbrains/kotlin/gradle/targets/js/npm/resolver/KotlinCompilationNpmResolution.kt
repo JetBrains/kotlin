@@ -8,12 +8,20 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 import org.gradle.api.Action
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
-import java.io.File
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.Serializable
 
+/**
+ * _This is an internal KGP utility and should not be used in user buildscripts._
+ *
+ * Contains details about the npm dependencies that can affect a Kotlin Compilation.
+ *
+ * The resolution is produced by [KotlinCompilationNpmResolver].
+ */
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
     var internalCompositeDependencies: Collection<CompositeDependency>,
@@ -21,14 +29,9 @@ class KotlinCompilationNpmResolution(
     var externalNpmDependencies: Collection<NpmDependencyDeclaration>,
     var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
     val projectPath: String,
-    val projectPackagesDir: File,
-    val rootDir: File,
     val compilationDisambiguatedName: String,
     val npmProjectName: String,
     val npmProjectVersion: String,
-    val npmProjectMain: String,
-    val npmProjectPackageJsonFile: File,
-    val npmProjectDir: File,
     val tasksRequirements: TasksRequirements,
 ) : Serializable {
 
@@ -63,7 +66,6 @@ class KotlinCompilationNpmResolution(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
     ): PreparedKotlinCompilationNpmResolution {
-
         return resolution ?: prepareWithDependencies(
             npmResolutionManager,
             logger
@@ -120,7 +122,7 @@ class KotlinCompilationNpmResolution(
         val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies, logger)
 
         return PreparedKotlinCompilationNpmResolution(
-            npmProjectDir,
+            npmResolutionManager.packagesDir.map { it.dir(npmProjectName) },
             importedExternalGradleDependencies,
             allNpmDependencies,
         )
@@ -128,21 +130,24 @@ class KotlinCompilationNpmResolution(
 
     fun createPackageJson(
         resolution: PreparedKotlinCompilationNpmResolution,
+        npmProjectMain: Provider<String>,
+        npmProjectTypes: Provider<String>,
         packageJsonHandlers: ListProperty<Action<PackageJson>>,
     ) {
         val packageJson = packageJson(
-            npmProjectName,
-            npmProjectVersion,
-            npmProjectMain,
-            resolution.externalNpmDependencies,
-            packageJsonHandlers.get()
+            name = npmProjectName,
+            version = npmProjectVersion,
+            main = npmProjectMain.get(),
+            types = npmProjectTypes.orNull,
+            npmDependencies = resolution.externalNpmDependencies,
+            packageJsonHandlers = packageJsonHandlers.get()
         )
 
         packageJsonHandlers.get().forEach {
             it.execute(packageJson)
         }
 
-        packageJson.saveTo(npmProjectPackageJsonFile)
+        packageJson.saveTo(resolution.npmProjectDir.getFile().resolve(NpmProject.PACKAGE_JSON))
     }
 
     private fun disambiguateDependencies(
@@ -152,19 +157,19 @@ class KotlinCompilationNpmResolution(
     ): Collection<NpmDependencyDeclaration> {
         val unique = others.groupBy(NpmDependencyDeclaration::name)
             .filterKeys { k -> direct.none { it.name == k } }
-            .mapNotNull { (name, dependencies) ->
+            .mapNotNull { (_, dependencies) ->
                 dependencies.maxByOrNull { dep ->
                     SemVer.from(dep.version, true)
                 }?.also { selected ->
                     if (dependencies.size > 1) {
                         logger.warn(
                             """
-                                Transitive npm dependency version clash for compilation "${compilationDisambiguatedName}"
-                                    Candidates:
-                                ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
-                                    Selected:
-                                        ${selected.name}@${selected.version}
-                                """.trimIndent()
+                            Transitive npm dependency version clash for compilation "$compilationDisambiguatedName"
+                                Candidates:
+                            ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
+                                Selected:
+                                    ${selected.name}@${selected.version}
+                            """.trimIndent()
                         )
                     }
                 }

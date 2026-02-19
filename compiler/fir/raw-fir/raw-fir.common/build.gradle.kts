@@ -5,30 +5,24 @@
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("generated-sources")
 }
 
 dependencies {
     api(project(":compiler:fir:tree"))
 
     implementation(kotlinxCollectionsImmutable())
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:psi:parser"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
-
-    testCompileOnly(intellijCore())
-    testRuntimeOnly(intellijCore())
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-        java.srcDir("gen")
-    }
+    "main" { projectDefault() }
     "test" { none() }
 }
 
-projectTest(parallel = true) {
-    workingDir = rootDir
-}
+generatedDiagnosticContainersAndCheckerComponents()

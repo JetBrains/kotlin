@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
     try {
         { <!CANNOT_INFER_PARAMETER_TYPE!>toDouble<!> ->
@@ -22,3 +22,6 @@ fun box(): String {
     test2()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral,
+tryExpression */

@@ -1,4 +1,5 @@
 // SKIP_IN_FIR_TEST
+// Reason: KT-4455
 package test;
 
 class NoSamForTypeParameter<K extends Runnable> {

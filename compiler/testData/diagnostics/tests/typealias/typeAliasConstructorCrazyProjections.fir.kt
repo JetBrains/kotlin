@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 class Bound<X, Y : X>(val x: X, val y: Y)
@@ -10,6 +11,10 @@ fun <T> listOf(): List<T> = null!!
 // Unresolved reference is ok here:
 // we can't create a substituted signature for type alias constructor
 // since it has 'out' type projection in 'in' position.
-val test1 = BOutIn(<!ARGUMENT_TYPE_MISMATCH!>listOf()<!>, null!!)
+val test1 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR!><!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>BOutIn<!>(<!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>(), null!!)<!>
 
-val test2 = BInIn(listOf(), null!!)
+val test2 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR!><!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>BInIn<!>(<!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>(), null!!)<!>
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, inProjection, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

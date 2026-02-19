@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -66,3 +67,7 @@ class InitializationForbiddenInNonInitSection {
         myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, forLoop, functionDeclaration,
+functionalType, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, rangeExpression, smartcast, typeParameter */

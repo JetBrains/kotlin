@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightRecordMethod
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -195,8 +198,8 @@ fun demangleInternalName(name: String): String? {
     return if (indexOfDollar >= 0) name.substring(0, indexOfDollar) else null
 }
 
-fun mangleInternalName(name: String, module: KtSourceModule): String {
-    val moduleName = (module.stableModuleName ?: module.moduleName).removeSurrounding("<", ">")
+fun mangleInternalName(name: String, stableModuleName: String): String {
+    val moduleName = stableModuleName.removeSurrounding("<", ">")
     return name + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
 }
 
@@ -231,44 +234,11 @@ fun getAccessorNamesCandidatesByPropertyName(name: String): List<String> {
     return listOf(JvmAbi.setterName(name), JvmAbi.getterName(name))
 }
 
-fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierListOwner>): Boolean {
-    val elementIsApplicable = lightElement is KtLightMember<*> || lightElement is LightParameter
-    if (!elementIsApplicable) return false
-
-    val annotatedElement = lightElement.kotlinOrigin ?: return true
-
-    // all data-class generated members are not-null
-    if (annotatedElement is KtClass && annotatedElement.isData()) return true
-
-    // backing fields for lateinit props are skipped
-    if (lightElement is KtLightField && annotatedElement is KtProperty && annotatedElement.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
-
-    if (lightElement is KtLightMethod && (annotatedElement as? KtModifierListOwner)?.isPrivate() == true) {
-        return false
-    }
-
-    if (annotatedElement is KtParameter) {
-        val containingClassOrObject = annotatedElement.containingClassOrObject
-        if (containingClassOrObject?.isAnnotation() == true) return false
-        if ((containingClassOrObject as? KtClass)?.isEnum() == true) {
-            if (annotatedElement.parent.parent is KtPrimaryConstructor) return false
-        }
-
-        when (val parent = annotatedElement.parent.parent) {
-            is KtConstructor<*> -> if (lightElement is KtLightParameter && parent.isPrivate()) return false
-            is KtNamedFunction -> return !parent.isPrivate()
-            is KtPropertyAccessor -> return (parent.parent as? KtProperty)?.isPrivate() != true
-        }
-    }
-
-    return true
-}
-
 private val PsiMethod.canBeGetter: Boolean
     get() = JvmAbi.isGetterName(name) && parameters.isEmpty() && returnTypeElement?.textMatches("void") != true
 
 private val PsiMethod.canBeSetter: Boolean
-    get() = JvmAbi.isSetterName(name) && parameters.size == 1 && returnTypeElement?.textMatches("void") != false
+    get() = JvmAbi.isSetterName(name) && parameters.size == 1
 
 private val PsiMethod.probablyCanHaveSyntheticAccessors: Boolean
     get() = probablyCanHaveSyntheticAccessors()
@@ -302,7 +272,7 @@ fun PsiMethod.syntheticAccessors(withoutOverrideCheck: Boolean = false): Collect
     }
 }
 
-val PsiMethod.canHaveSyntheticAccessors: Boolean get() = probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
+val PsiMethod.canHaveSyntheticAccessors: Boolean get() = this is LightRecordMethod || probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
 
 val PsiMethod.canHaveSyntheticGetter: Boolean get() = probablyCanHaveSyntheticAccessors && canBeGetter
 

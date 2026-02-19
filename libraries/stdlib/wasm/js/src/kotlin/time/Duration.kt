@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+@file:OptIn(ExperimentalWasmJsInterop::class)
 
 package kotlin.time
 
@@ -34,6 +35,3 @@ internal actual fun formatToExactDecimals(value: Double, decimals: Int): String 
         if (rounded < 0) "-$positiveString" else positiveString
     }
 }
-
-internal actual fun formatUpToDecimals(value: Double, decimals: Int): String =
-    js("(value, decimals) => value.toLocaleString(\"en-us\", ({\"maximumFractionDigits\": decimals}))")

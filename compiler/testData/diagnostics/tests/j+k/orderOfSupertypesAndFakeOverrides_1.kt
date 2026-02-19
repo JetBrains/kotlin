@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50850
 // FILE: Base.java
 public interface Base {
@@ -20,3 +21,5 @@ class ClassThenInterface : Derived(), Base {}
 fun test_2(x: ClassThenInterface, s: String?) {
     x.delete(<!TYPE_MISMATCH!>s<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override */

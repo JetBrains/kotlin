@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: B.kt
 
@@ -23,3 +24,5 @@ package aa;
 public class B extends A {
     public static String CONST = null;
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaProperty, nullableType, safeCall */

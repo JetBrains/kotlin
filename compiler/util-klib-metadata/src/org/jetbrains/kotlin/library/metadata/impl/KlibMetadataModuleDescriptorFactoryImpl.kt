@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,19 +15,16 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.hasDependencies
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
-
-private val ModuleDescriptorImpl.isStdlibModule
-    get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library?.let { !it.hasDependencies } ?: false
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
@@ -44,32 +41,27 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         lookupTracker: LookupTracker
     ): ModuleDescriptorImpl {
 
-        val libraryProto = parseModuleHeader(library.moduleHeaderData)
+        val libraryProto = parseModuleHeader(library.metadata.moduleHeaderData)
 
         val moduleName = Name.special(libraryProto.moduleName)
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
 
-        val moduleDescriptor = if (builtIns != null )
+        val moduleDescriptor = if (builtIns != null)
             descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
         else
             descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
 
-        val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
-
-        val compositePackageFragmentAddend =
-            if (moduleDescriptor.isStdlibModule) {
-                functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
-            } else null
-
         val provider = createPackageFragmentProvider(
-            library,
-            packageAccessHandler,
-            libraryProto.packageFragmentNameList,
-            storageManager,
-            moduleDescriptor,
-            deserializationConfiguration,
-            compositePackageFragmentAddend,
-            lookupTracker
+            library = library,
+            packageAccessHandler = packageAccessHandler,
+            customMetadataProtoLoader = null,
+            storageManager = storageManager,
+            moduleDescriptor = moduleDescriptor,
+            configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
+            compositePackageFragmentAddend = runIf(library.isAnyPlatformStdlib) {
+                functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
+            },
+            lookupTracker = lookupTracker
         )
 
         moduleDescriptor.initialize(provider)
@@ -96,7 +88,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     override fun createPackageFragmentProvider(
         library: KotlinLibrary,
         packageAccessHandler: PackageAccessHandler?,
-        packageFragmentNames: List<String>,
+        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         configuration: DeserializationConfiguration,
@@ -105,7 +97,12 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     ): PackageFragmentProvider {
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
-            library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager, configuration
+            library = library,
+            moduleDescriptor = moduleDescriptor,
+            packageAccessedHandler = packageAccessHandler,
+            customMetadataProtoLoader = customMetadataProtoLoader,
+            storageManager = storageManager,
+            configuration = configuration
         )
 
         // Generate empty PackageFragmentDescriptor instances for packages that aren't mentioned in compilation units directly.

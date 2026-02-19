@@ -1,4 +1,6 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -AllowContractsOnPropertyAccessors
+// OPT_IN: kotlin.RequiresOptIn
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)
@@ -17,3 +19,7 @@ val Any?.isNotNull: Boolean
         }
         return this@isNotNull != null
     }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, getter, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 
@@ -52,3 +53,5 @@ val floatModFloat = float.mod(float)
 val floatModDouble = float.mod(double)
 val doubleModFloat = double.mod(float)
 val doubleModDouble = double.mod(double)
+
+/* GENERATED_FIR_TAGS: const, integerLiteral, propertyDeclaration */

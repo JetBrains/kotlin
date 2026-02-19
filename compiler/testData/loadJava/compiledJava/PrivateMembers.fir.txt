@@ -1,7 +1,7 @@
 public open class PrivateMembers : R|kotlin/Any| {
-    private open field field: R|kotlin/Int|
+    private field field: R|kotlin/Int|
 
-    private open static field staticField: R|kotlin/Int|
+    private static field staticField: R|kotlin/Int|
 
     private open fun method(): R|kotlin/Unit|
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: DocumentedAnnotations.java
 
@@ -19,3 +20,5 @@ public class DocumentedAnnotations {
 @DocumentedAnnotations.NotDocAnn class Your
 
 @DocumentedAnnotations.RunDocAnn class His
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

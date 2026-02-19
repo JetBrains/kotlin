@@ -33,5 +33,6 @@ public final class<<A::Ljava/lang/Comparable<-TA;>;B:Ljava/lang/Object;>Ljava/la
     public bridge final <null> method size(): int
     public synthetic bridge <null> method subMap(p0: java.lang.Object, p1: java.lang.Object): java.util.SortedMap
     public synthetic bridge <null> method tailMap(p0: java.lang.Object): java.util.SortedMap
-    private final field <Ljava/util/SortedMap<TA;TB;>;> map: java.util.SortedMap
+    private final @org.jetbrains.annotations.NotNull field <Ljava/util/SortedMap<TA;TB;>;> map: java.util.SortedMap
+    public inner class java/util/Map$Entry
 }

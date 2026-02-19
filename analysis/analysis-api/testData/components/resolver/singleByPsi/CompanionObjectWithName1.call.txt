@@ -1,0 +1,2 @@
+KtNameReferenceExpression(65,70): 'Inner'
+  null

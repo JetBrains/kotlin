@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiPlatformProjects
-// !DIAGNOSTICS: -NO_ACTUAL_FOR_EXPECT, -ACTUAL_WITHOUT_EXPECT
+// DIAGNOSTICS: -NO_ACTUAL_FOR_EXPECT, -ACTUAL_WITHOUT_EXPECT
 // FIR_IDENTICAL
 class SimpleClass {
     protected fun foo() = Unit
@@ -34,3 +35,6 @@ expect enum class ExpEnumClass {
 
     <!WRONG_MODIFIER_CONTAINING_DECLARATION("protected; final expect class")!>protected<!> val bar: Int
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, enumDeclaration, enumEntry, expect, functionDeclaration, integerLiteral,
+propertyDeclaration */

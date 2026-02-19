@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun whileLoop(x: Int?) {
     outer@ while (x != 0) {
@@ -32,3 +33,7 @@ fun whileLoopContinueInnerOuter(x: Int?) {
     }
     checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, continue, doWhileLoop, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, integerLiteral, nullableType, smartcast, typeParameter,
+typeWithExtension, whileLoop */

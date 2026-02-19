@@ -1,6 +1,8 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -15,64 +17,90 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: FINAL
   name: a
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: MyEnumClass.FirstEntry
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: null
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: null
 
-KtEnumEntrySymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.FirstEntry
-  containingEnumClassIdIfNonLocal: MyEnumClass
+KaEnumEntrySymbol:
+  annotations: []
+  callableId: /MyEnumClass.FirstEntry
+  compilerVisibility: Public
   contextReceivers: []
+  enumEntryInitializer: KaEnumEntrySymbol(/MyEnumClass.FirstEntry)
+  isActual: false
+  isExpect: false
   isExtension: false
+  isExternal: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
   name: FirstEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: MyEnumClass
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: MyEnumClass
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: MyEnumClass.FirstEntry
 
-KtEnumEntrySymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.SecondEntry
-  containingEnumClassIdIfNonLocal: MyEnumClass
+KaEnumEntrySymbol:
+  annotations: []
+  callableId: /MyEnumClass.SecondEntry
+  compilerVisibility: Public
   contextReceivers: []
+  enumEntryInitializer: null
+  isActual: false
+  isExpect: false
   isExtension: false
+  isExternal: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
   name: SecondEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: MyEnumClass
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: MyEnumClass
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: MyEnumClass.SecondEntry
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -87,28 +115,36 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: FINAL
   name: one
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: MyEnumClass.ThirdEntry
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: null
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -123,71 +159,98 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: CLASS
   modality: FINAL
   name: one
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: i
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtSourceModule "Sources of main"
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: MyEnumClass.ThirdEntry
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: null
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: null
 
-KtEnumEntrySymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.ThirdEntry
-  containingEnumClassIdIfNonLocal: MyEnumClass
+KaEnumEntrySymbol:
+  annotations: []
+  callableId: /MyEnumClass.ThirdEntry
+  compilerVisibility: Public
   contextReceivers: []
+  enumEntryInitializer: KaEnumEntrySymbol(/MyEnumClass.ThirdEntry)
+  isActual: false
+  isExpect: false
   isExtension: false
+  isExternal: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
   name: ThirdEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: MyEnumClass
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: MyEnumClass
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: MyEnumClass.ThirdEntry
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: MyEnumClass
+KaNamedClassSymbol:
+  annotations: []
+  classId: MyEnumClass
   classKind: ENUM_CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -196,23 +259,25 @@ KtNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: MyEnumClass
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: MyEnumClass
       ]
       type: kotlin/Enum<MyEnumClass>
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: MyEnumClass

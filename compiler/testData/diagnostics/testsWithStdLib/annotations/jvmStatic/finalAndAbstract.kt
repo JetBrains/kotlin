@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 abstract class A {
 
     open fun a() {}
@@ -31,3 +32,5 @@ class C {
         @JvmStatic <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> fun d() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, override */

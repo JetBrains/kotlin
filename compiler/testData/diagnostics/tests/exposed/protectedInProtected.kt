@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See KT-9540 
 
@@ -20,3 +21,5 @@ open class Owner {
         protected abstract fun foo(): ProtectedInA
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass */

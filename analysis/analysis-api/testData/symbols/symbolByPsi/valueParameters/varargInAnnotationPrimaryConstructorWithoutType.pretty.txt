@@ -1,0 +1,1 @@
+annotation class Foo(vararg ints: ERROR(Incomplete code))

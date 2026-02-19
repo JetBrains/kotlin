@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 class Foo<T>
 class Bar<S>
@@ -18,3 +19,5 @@ fun test() {
     )
 
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, nullableType, outProjection, typeParameter */

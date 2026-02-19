@@ -30,6 +30,7 @@ object ArrayFqNames {
     )
 
     val ARRAY_OF_FUNCTION: Name = Name.identifier("arrayOf")
+    val ARRAY_OF_NULLS_FUNCTION: Name = Name.identifier("arrayOfNulls")
 
     val EMPTY_ARRAY: Name = Name.identifier("emptyArray")
 

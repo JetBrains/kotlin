@@ -3,20 +3,30 @@
  * that can be found in the LICENSE file.
  */
 
+#pragma once
+
 #include <array>
 #include <type_traits>
+#include <vector>
 
+#include "ExternalRCRef.hpp"
 #include "KAssert.h"
 #include "Memory.h"
+#include "ReferenceOps.hpp"
 #include "TypeInfo.h"
 #include "Types.h"
 #include "Utils.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin {
 namespace test_support {
 
 // TODO: Some concepts from here can be used in production code.
+
+template<typename Host>
+using RefFieldPtr = mm::RefField Host::*;
+
+template<typename Host>
+using NoRefFields = std::array<RefFieldPtr<Host>, 0>;
 
 class TypeInfoHolder : private Pinned {
 private:
@@ -27,7 +37,7 @@ private:
         virtual ~Builder() = default;
 
         int32_t instanceSize_ = 0;
-        std_support::vector<int32_t> objOffsets_;
+        std::vector<int32_t> objOffsets_;
         int32_t objOffsetsCount_ = 0;
         int32_t flags_ = 0;
         int32_t instanceAlignment_ = 8;
@@ -94,11 +104,14 @@ public:
         typeInfo_.instanceAlignment_ = builder.instanceAlignment_;
     }
 
+    template<>
+    class ArrayBuilder<mm::RefField> : public ArrayBuilder<ObjHeader*> {};
+
     TypeInfo* typeInfo() noexcept { return &typeInfo_; }
 
 private:
     TypeInfo typeInfo_{};
-    std_support::vector<int32_t> objOffsets_;
+    std::vector<int32_t> objOffsets_;
 };
 
 class Any : private Pinned {
@@ -121,9 +134,9 @@ public:
     public:
         FieldIterator(Object& owner, size_t index) noexcept : owner_(owner), index_(index) {}
 
-        ObjHeader*& operator*() noexcept {
+        mm::RefField& operator*() noexcept {
             auto* header = &owner_.header_;
-            return *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(header) + header->type_info()->objOffsets_[index_]);
+            return *reinterpret_cast<mm::RefField*>(reinterpret_cast<uintptr_t>(header) + header->type_info()->objOffsets_[index_]);
         }
 
         FieldIterator& operator++() noexcept {
@@ -146,7 +159,7 @@ public:
 
         size_t size() const noexcept { return owner_.header_.type_info()->objOffsetsCount_; }
 
-        ObjHeader*& operator[](size_t index) noexcept { return *FieldIterator(owner_, index); }
+        mm::RefField& operator[](size_t index) noexcept { return *FieldIterator(owner_, index); }
 
         FieldIterator begin() noexcept { return FieldIterator(owner_, 0); }
         FieldIterator end() noexcept { return FieldIterator(owner_, size()); }
@@ -188,8 +201,7 @@ TypeInfoHolder::ObjectBuilder<Payload>::ObjectBuilder() noexcept {
     char c;
     Object<Payload>& object = *reinterpret_cast<Object<Payload>*>(&c);
     auto& payload = *object;
-    using Field = ObjHeader* Payload::*;
-    for (Field field : Payload::kFields) {
+    for (RefFieldPtr<Payload> field : Payload::kFields) {
         auto& actualField = payload.*field;
         objOffsets_.push_back(reinterpret_cast<uintptr_t>(&actualField) - reinterpret_cast<uintptr_t>(object.header()));
     }
@@ -235,13 +247,13 @@ private:
 } // namespace internal
 
 template <size_t ElementCount>
-class ObjectArray : public internal::Array<ObjHeader*, ElementCount> {
+class ObjectArray : public internal::Array<mm::RefField, ElementCount> {
 public:
     static ObjectArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
-        return static_cast<ObjectArray<ElementCount>&>(internal::Array<ObjHeader*, ElementCount>::FromArrayHeader(arr));
+        return static_cast<ObjectArray<ElementCount>&>(internal::Array<mm::RefField, ElementCount>::FromArrayHeader(arr));
     }
 
-    ObjectArray() noexcept : internal::Array<ObjHeader*, ElementCount>(theArrayTypeInfo) {}
+    ObjectArray() noexcept : internal::Array<mm::RefField, ElementCount>(theArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
@@ -345,14 +357,11 @@ public:
 };
 
 struct RegularWeakReferenceImplPayload {
-    void* weakRef;
+    mm::RawExternalRCRef* weakRef;
     void* referred;
 
-    using Field = ObjHeader* RegularWeakReferenceImplPayload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr test_support::NoRefFields<RegularWeakReferenceImplPayload> kFields{};
 };
-
-extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader*);
 
 class RegularWeakReferenceImpl : public Object<RegularWeakReferenceImplPayload> {
 public:
@@ -363,7 +372,7 @@ public:
 
     RegularWeakReferenceImpl() noexcept : Object(theRegularWeakReferenceImplTypeInfo) {}
 
-    OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(Konan_RegularWeakReferenceImpl_get, header()); }
+    OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(mm::tryRefExternalRCRef, (*this)->weakRef); }
 
     ObjHeader* get() noexcept {
         ObjHeader* result;

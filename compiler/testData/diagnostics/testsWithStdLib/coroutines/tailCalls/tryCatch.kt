@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -40,3 +41,6 @@ suspend fun tryCatchFinally(): Int {
         baz()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, suspend,
+tryExpression */

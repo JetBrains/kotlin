@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun takeByte(ilt: Byte) {}
 fun takeShort(ilt: Short) {}
@@ -13,3 +14,5 @@ fun test() {
     takeInt(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>id(42)<!>)
     takeLong(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>id(42)<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter */

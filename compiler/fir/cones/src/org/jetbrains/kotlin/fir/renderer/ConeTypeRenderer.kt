@@ -1,18 +1,26 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.nextOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.withSeenElementsCounting
 
-open class ConeTypeRenderer {
-
+open class ConeTypeRenderer(
+    private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString,
+    private var renderCapturedDetails: Boolean = false,
+) {
     lateinit var builder: StringBuilder
     lateinit var idRenderer: ConeIdRenderer
-    var attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString
 
     open fun renderAsPossibleFunctionType(
         type: ConeKotlinType,
@@ -34,17 +42,38 @@ open class ConeTypeRenderer {
             builder.append(it)
             builder.append(" ")
         }
-        val typeArguments = type.typeArguments
-        val isExtension = type.isExtensionFunctionType
-        val (receiver, otherTypeArguments) = if (isExtension && typeArguments.first() != ConeStarProjection) {
-            typeArguments.first() to typeArguments.drop(1)
-        } else {
-            null to typeArguments.toList()
+
+        var contextParameters: List<ConeTypeProjection> = emptyList()
+        var receiverParameter: ConeTypeProjection? = null
+        var regularParameters: List<ConeTypeProjection> = type.typeArguments.asList()
+
+        val numberOfContextParameters = type.contextParameterNumberForFunctionType
+        if (numberOfContextParameters > 0 && regularParameters.size >= numberOfContextParameters + 1) {
+            contextParameters = regularParameters.subList(0, numberOfContextParameters)
+            regularParameters = regularParameters.subList(numberOfContextParameters, regularParameters.size)
         }
-        val arguments = otherTypeArguments.subList(0, otherTypeArguments.size - 1)
-        val returnType = otherTypeArguments.last()
-        if (receiver != null) {
-            receiver.render()
+
+        if (type.isExtensionFunctionType && regularParameters.size >= 2 && regularParameters.first() != ConeStarProjection) {
+            receiverParameter = regularParameters.first()
+            regularParameters = regularParameters.subList(1, regularParameters.size)
+        }
+
+        if (contextParameters.isNotEmpty()) {
+            builder.append("context(")
+            for ((index, contextParameter) in contextParameters.withIndex()) {
+                if (index != 0) {
+                    builder.append(", ")
+                }
+
+                contextParameter.render()
+            }
+            builder.append(") ")
+        }
+
+        val arguments = regularParameters.subList(0, regularParameters.size - 1)
+        val returnType = regularParameters.last()
+        if (receiverParameter != null) {
+            receiverParameter.render()
             builder.append(".")
         }
         builder.append("(")
@@ -61,40 +90,22 @@ open class ConeTypeRenderer {
         }
     }
 
-    fun render(type: ConeKotlinType) {
-        if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType) {
-            // We don't render attributes for flexible/definitely not null types here,
+    fun render(
+        type: ConeKotlinType,
+        nullabilityMarker: String = if (type !is ConeFlexibleType && type.isMarkedNullable) "?" else "",
+    ) {
+        if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType && type.classId?.isFunctionType() != true) {
+            // We don't render attributes for flexible/definitely not null/extension function types here,
             // because bounds duplicate these attributes often
             type.renderAttributes()
         }
         when (type) {
-            is ConeTypeVariableType -> {
-                builder.append("TypeVariable(")
-                builder.append(type.lookupTag.name)
-                builder.append(")")
-            }
-
             is ConeDefinitelyNotNullType -> {
-                render(type.original)
-                builder.append(" & Any")
+                render(type)
             }
 
-            is ConeErrorType -> {
-                builder.append("ERROR CLASS: ${type.diagnostic.reason}")
-            }
-
-            is ConeCapturedType -> {
-                builder.append("CapturedType(")
-                type.constructor.projection.render()
-                builder.append(")")
-            }
-
-            is ConeClassLikeType -> {
-                type.render()
-            }
-
-            is ConeLookupTagBasedType -> {
-                builder.append(type.lookupTag.name.asString())
+            is ConeIntersectionType -> {
+                render(type)
             }
 
             is ConeDynamicType -> {
@@ -105,40 +116,142 @@ open class ConeTypeRenderer {
                 render(type)
             }
 
-            is ConeIntersectionType -> {
-                builder.append("it(")
-                for ((index, intersected) in type.intersectedTypes.withIndex()) {
-                    if (index > 0) {
-                        builder.append(" & ")
-                    }
-                    render(intersected)
+            is ConeSimpleKotlinType -> when {
+                type is ConeClassLikeType && type.classId.isFunctionType() -> {
+                    renderFunctionType(type, nullabilityMarker)
+                    return
                 }
+
+                else -> {
+                    renderSimpleType(type, nullabilityMarker)
+                    return
+                }
+            }
+        }
+        builder.append(nullabilityMarker)
+    }
+
+    private fun renderFunctionType(type: ConeClassLikeType, nullabilityMarker: String = "") {
+        if (nullabilityMarker != "") {
+            builder.append('(')
+        }
+        if (type.classId.isSuspendFunctionType()) {
+            builder.append("suspend ")
+        }
+        val arguments = type.typeArguments.iterator().withSeenElementsCounting()
+
+        if (type.hasContextParameters) {
+            builder.append("context(")
+            repeat(type.contextParameterNumberForFunctionType - 1) {
+                arguments.nextOrNull()?.render()
+                builder.append(", ")
+            }
+            arguments.nextOrNull()?.render()
+            builder.append(") ")
+        }
+
+        if (type.isExtensionFunctionType) {
+            arguments.nextOrNull()?.let { next ->
+                if (couldBenefitFromParenthesizing(next)) {
+                    builder.append('(')
+                }
+                next.render()
+                if (couldBenefitFromParenthesizing(next)) {
+                    builder.append(')')
+                }
+            }
+            builder.append(".")
+        }
+
+        builder.append('(')
+        while (arguments.numberOfElementsSeen < type.typeArguments.size - 2) {
+            arguments.nextOrNull()?.render()
+            builder.append(", ")
+        }
+        if (arguments.numberOfElementsSeen == type.typeArguments.size - 2) {
+            arguments.nextOrNull()?.render()
+        }
+        builder.append(") -> ")
+        arguments.nextOrNull()?.render()
+
+        if (nullabilityMarker != "") {
+            builder.append(')')
+            builder.append(nullabilityMarker)
+        }
+        return
+    }
+
+    protected open fun couldBenefitFromParenthesizing(projection: ConeTypeProjection): Boolean =
+        // For non-invariant projections, e.g., `(in T).() -> Unit`
+        projection !is ConeKotlinType
+                // For `(T & Any).() -> Unit`
+                || projection is ConeDefinitelyNotNullType
+                // For `(() -> Unit)?.() -> Unit` and `(() -> Unit).() -> Unit`
+                || projection.classId?.isFunctionType() == true && !projection.isMarkedNullable
+
+    private fun ClassId.isFunctionType(): Boolean = isNonSuspendFunctionType() || isSuspendFunctionType()
+
+    private fun ClassId.isNonSuspendFunctionType(): Boolean =
+        this.asString().removePrefix(StandardClassIds.Function.asString()).toIntOrNull() != null
+
+    private fun ClassId.isSuspendFunctionType(): Boolean =
+        this.asString().removePrefix(StandardClassIds.SuspendFunction.asString()).toIntOrNull() != null
+
+    protected open fun renderSimpleType(type: ConeSimpleKotlinType, nullabilityMarker: String) {
+        val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
+        renderConstructor(type.getConstructor())
+        if (hasTypeArguments) {
+            type.renderTypeArguments()
+        }
+
+        builder.append(nullabilityMarker)
+    }
+
+    fun renderConstructor(constructor: TypeConstructorMarker) {
+        require(constructor is ConeTypeConstructorMarker)
+        when (constructor) {
+            is ConeTypeVariableTypeConstructor -> {
+                builder.append("TypeVariable(")
+                builder.append(constructor.name)
                 builder.append(")")
             }
 
-            is ConeStubTypeForSyntheticFixation -> {
-                builder.append("Stub (fixation): ${type.constructor.variable}")
+            is ConeCapturedTypeConstructor -> {
+                builder.append("CapturedType(")
+                constructor.projection.render()
+                builder.append(")")
+                if (renderCapturedDetails) {
+                    builder.append(
+                        " with lowerType=${constructor.lowerType?.let(::render)}, supertypes=["
+                    )
+                    // To prevent recursion
+                    renderCapturedDetails = false
+                    constructor.supertypes?.forEach(::render)
+                    renderCapturedDetails = true
+                    builder.append("]")
+                }
             }
 
-            is ConeStubTypeForChainInference -> {
-                builder.append("Stub (chain inference): ${type.constructor.variable}")
-            }
+            is ConeClassLikeErrorLookupTag -> builder.append(renderDiagnostic(constructor.diagnostic, prefix = "ERROR CLASS: "))
 
-            is ConeStubType -> {
-                builder.append("Stub (subtyping): ${type.constructor.variable}")
-            }
+            is ConeClassLikeLookupTag -> idRenderer.renderClassId(constructor.classId)
+            is ConeClassifierLookupTag -> builder.append(constructor.name.asString())
 
-            is ConeIntegerLiteralType -> {
-                render(type)
-            }
-        }
-        if (type !is ConeFlexibleType && type !is ConeErrorType) {
-            builder.append(type.nullability.suffix)
+            is ConeStubTypeConstructor -> builder.append("Stub (subtyping): ${constructor.variable}")
+            is ConeIntegerLiteralType -> render(constructor)
+
+            is ConeIntersectionType -> error(
+                "`renderConstructor` mustn't be called with an intersection type argument. " +
+                        "Call `render` to simply render the type or filter out intersection types on the call-site."
+            )
         }
     }
 
-    private fun ConeClassLikeType.render() {
-        idRenderer.renderClassId(lookupTag.classId)
+    open fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String = "", suffix: String = ""): String {
+        return "$prefix${diagnostic.reason}$suffix"
+    }
+
+    private fun ConeClassLikeType.renderTypeArguments() {
         if (typeArguments.isEmpty()) return
         builder.append("<")
         for ((index, typeArgument) in typeArguments.withIndex()) {
@@ -151,14 +264,18 @@ open class ConeTypeRenderer {
     }
 
     private fun ConeFlexibleType.renderForSameLookupTags(): Boolean {
+        if (isTrivial && lowerBound !is ConeDefinitelyNotNullType) {
+            render(lowerBound, nullabilityMarker = "!")
+            return true
+        }
+
         if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
             lowerBound.lookupTag == upperBound.lookupTag &&
-            lowerBound.nullability == ConeNullability.NOT_NULL && upperBound.nullability == ConeNullability.NULLABLE
+            !lowerBound.isMarkedNullable && upperBound.isMarkedNullable
         ) {
             if (lowerBound !is ConeClassLikeType || lowerBound.typeArguments.isEmpty()) {
                 if (upperBound !is ConeClassLikeType || upperBound.typeArguments.isEmpty()) {
-                    render(lowerBound)
-                    builder.append("!")
+                    render(lowerBound, nullabilityMarker = "!")
                     return true
                 }
             }
@@ -177,19 +294,19 @@ open class ConeTypeRenderer {
         builder.append(">")
     }
 
-    private fun ConeKotlinType.renderAttributes() {
+    protected open fun ConeKotlinType.renderAttributes() {
         if (!attributes.any()) return
         builder.append(attributeRenderer.render(attributes))
     }
 
-    private fun ConeKotlinType.renderNonCompilerAttributes() {
+    protected fun ConeKotlinType.renderNonCompilerAttributes() {
         val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
-        if (attributes.any { it.key !in compilerAttributes }) {
-            builder.append(attributeRenderer.render(attributes))
-        }
+        attributes
+            .filter { it.key !in compilerAttributes }
+            .ifNotEmpty { builder.append(attributeRenderer.render(this)) }
     }
 
-    private fun ConeTypeProjection.render() {
+    protected fun ConeTypeProjection.render() {
         when (this) {
             ConeStarProjection -> {
                 builder.append("*")
@@ -226,5 +343,21 @@ open class ConeTypeRenderer {
                 builder.append("IOT")
             }
         }
+    }
+
+    protected open fun render(type: ConeDefinitelyNotNullType) {
+        this.render(type.original)
+        builder.append(" & Any")
+    }
+
+    protected open fun render(type: ConeIntersectionType) {
+        builder.append("it(")
+        for ((index, intersected) in type.intersectedTypes.withIndex()) {
+            if (index > 0) {
+                builder.append(" & ")
+            }
+            this.render(intersected)
+        }
+        builder.append(")")
     }
 }

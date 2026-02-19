@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/javaSealedClass/SealedJava.java
+$TESTDATA_DIR$/javaSealedClass/SubSealedAJava.java
+$TESTDATA_DIR$/javaSealedClass/SubSealedBJava.java
+$TESTDATA_DIR$/javaSealedClass/javaSealedClass.kt
+-d
+$TEMP_DIR$

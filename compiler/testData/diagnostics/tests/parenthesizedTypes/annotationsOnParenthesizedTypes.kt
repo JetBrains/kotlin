@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface AnnotationsOnParenthesizedTypes {
     fun B<(@A C)>.receiverArgument() {}
@@ -30,3 +31,6 @@ annotation class A
 
 interface B<T>
 interface C
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

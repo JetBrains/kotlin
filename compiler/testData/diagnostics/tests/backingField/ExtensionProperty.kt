@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See KT-9303: synthetic field variable does not exist for extension properties
 val String.foo: Int
@@ -16,3 +17,6 @@ class My {
         // Error
         get() = <!UNRESOLVED_REFERENCE!>field<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, localProperty, propertyDeclaration,
+propertyWithExtensionReceiver */

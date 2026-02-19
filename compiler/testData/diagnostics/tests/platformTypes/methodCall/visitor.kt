@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/Visitor.java
 
@@ -24,3 +25,5 @@ import p.*
 fun test(v: Visitor<Nothing>, e: Element) {
     e.accept(v, null)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType */

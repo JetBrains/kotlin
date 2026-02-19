@@ -14,8 +14,10 @@ STEP 2:
     updated exports: l1.kt
 STEP 3:
 STEP 4:
-    modifications:
+    modifications <js>:
         U : l1.4.bug.kt -> l1.kt
+    modifications <wasm>:
+        U : l1.4.wasm.kt -> l1.kt
     modified ir: l1.kt
 STEP 5:
 STEP 6:

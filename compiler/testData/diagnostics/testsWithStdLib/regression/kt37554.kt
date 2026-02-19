@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
 
@@ -18,3 +19,7 @@ fun test(dailyTimes: List<DailyTime>): List<DailyTime> {
     println(dateRange.start)
     return dailyTimes
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, elvisExpression, funWithExtensionReceiver, functionDeclaration,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, rangeExpression, typeConstraint,
+typeParameter, whenExpression */

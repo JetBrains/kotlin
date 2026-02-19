@@ -1,4 +1,5 @@
-// !LANGUAGE: +ClassTypeParameterAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ClassTypeParameterAnnotations
 annotation class A1
 annotation class A2(val some: Int = 12)
 
@@ -23,3 +24,6 @@ class TTopLevelClass<<!WRONG_ANNOTATION_TARGET!>@TA1<!> @TA2(3) <!REPEATED_ANNOT
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localClass,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

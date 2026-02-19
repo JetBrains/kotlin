@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 interface A
@@ -13,7 +14,7 @@ fun testElvis(a: Int?, b: Int?) {
     if (a != null) {
         doInt(b ?: a)
     }
-    <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION("T; a/A, kotlin/Int; final class and interface")!>doList<!>(getList() ?: emptyListOfA()) //should be an error
+    <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION("T; A, Int; final class and interface")!>doList<!>(getList() ?: emptyListOfA()) //should be an error
     doList(getList() ?: strangeList { doInt(it) }) //lambda was not analyzed
 }
 
@@ -34,3 +35,7 @@ fun testDataFlowInfo2(a: Int?, b: Int?) {
 fun testTypeMismatch(a: String?, b: Any) {
     doInt(<!ARGUMENT_TYPE_MISMATCH!>a ?: b<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter */

@@ -1,4 +1,3 @@
-
 val (_, b, _) = A()
 
 class A {

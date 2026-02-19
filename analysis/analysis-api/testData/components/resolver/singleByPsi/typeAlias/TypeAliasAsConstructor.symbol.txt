@@ -1,0 +1,2 @@
+KtNameReferenceExpression(76,83): 'MyAlias'
+  null

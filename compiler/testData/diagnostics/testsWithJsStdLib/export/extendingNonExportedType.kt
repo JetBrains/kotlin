@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !OPT_IN: kotlin.js.ExperimentalJsExport
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: BACKEND
+// OPT_IN: kotlin.js.ExperimentalJsExport
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 package foo
 

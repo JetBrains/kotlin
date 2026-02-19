@@ -34,7 +34,7 @@ public final class Foo : java/lang/Object {
 public final class InlineClassCaptureKt : java/lang/Object {
     public final static void block(kotlin.jvm.functions.Function0 block) {
         Local variables:
-            0 block: Lkotlin/jvm/functions/Function0;
             1 $i$f$block: I
+            0 block: Lkotlin/jvm/functions/Function0;
     }
 }

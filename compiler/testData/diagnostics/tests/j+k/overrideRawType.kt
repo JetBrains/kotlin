@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE: Foo.java
 public class Foo<T extends CharSequence> {
@@ -14,3 +15,5 @@ class BarImpl: Bar {
         throw UnsupportedOperationException()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, starProjection */

@@ -1,3 +1,3 @@
-@Suppress("UNSUPPORTED")
+@Suppress("UNSUPPORTED", "THROWS_IN_ANNOTATION_ERROR")
 fun foo() {
 }

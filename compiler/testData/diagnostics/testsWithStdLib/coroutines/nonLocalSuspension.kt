@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 import Host.suspendFromObject
 
 suspend fun suspendHere() = 1
@@ -80,3 +81,7 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration, crossinline,
+functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localClass, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, stringLiteral, suspend, typeParameter */

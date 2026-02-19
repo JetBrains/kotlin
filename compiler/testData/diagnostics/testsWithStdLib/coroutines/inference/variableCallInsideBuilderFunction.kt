@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -16,3 +17,6 @@ fun <K> filter(e: K, predicate: (K) -> Boolean) =
         predicate(e)
         yield(42)
     }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, typeParameter, typeWithExtension */

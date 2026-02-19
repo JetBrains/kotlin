@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Your {
     init {
         var y: String? = "xyz"
@@ -20,3 +21,6 @@ class Normal {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, ifExpression, init, localProperty, nullableType,
+propertyDeclaration, secondaryConstructor, smartcast, stringLiteral */

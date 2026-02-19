@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
-// !DIAGNOSTICS: -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_VALUE
 
 fun foo(f: Boolean): Int {
     val i: Int
@@ -10,3 +11,6 @@ fun foo(f: Boolean): Int {
     <!VAL_REASSIGNMENT!>i<!> = 3
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, whenExpression, whenWithSubject */

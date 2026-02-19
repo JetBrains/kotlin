@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !API_VERSION: 1.1
+// API_VERSION: 1.1
 
 @SinceKotlin("0.9")
 fun ok1() {}
@@ -17,3 +18,5 @@ fun t1() = ok1()
 fun t2() = ok2()
 fun t3() = ok3()
 fun t4() = ok4()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

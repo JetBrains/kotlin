@@ -27,7 +27,7 @@ const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolver> = NoDependencies::class,
-                                          val scriptFilePattern: String = DEFAULT_SCRIPT_FILE_PATTERN)
+    val scriptFilePattern: String = DEFAULT_SCRIPT_FILE_PATTERN)
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 enum class ProtocolState {
   WAITING {
@@ -20,3 +21,6 @@ fun box(): String {
    if (x != ProtocolState.WAITING) return "fail 2"
    return "OK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression,
+localProperty, propertyDeclaration, stringLiteral */

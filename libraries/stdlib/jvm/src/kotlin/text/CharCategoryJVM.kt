@@ -161,7 +161,7 @@ public actual enum class CharCategory(public val value: Int, public actual val c
      */
     public actual operator fun contains(char: Char): Boolean = Character.getType(char) == this.value
 
-    companion object {
+    public companion object {
         /**
          * Returns the [CharCategory] corresponding to the specified [category] that represents a Java general category constant.
          *

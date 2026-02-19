@@ -1,0 +1,53 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
+                Type: test.Outer<MyParam>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
+                Type: test.Outer.Inner<MyParam>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|MyParam|
+
+FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromInner_typeRefInMember.kt
+    public final? [ResolvedTo(RAW_FIR)] class Outer<[ResolvedTo(RAW_FIR)] MyParam> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] MyParam>(): R|test/Outer<MyParam>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? inner [ResolvedTo(RAW_FIR)] class Inner<[ResolvedTo(RAW_FIR)] Outer(MyParam)> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] test/Outer<MyParam>.constructor(): R|test/Outer.Inner<MyParam>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun member([ResolvedTo(BODY_RESOLVE)] p: R|MyParam|): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

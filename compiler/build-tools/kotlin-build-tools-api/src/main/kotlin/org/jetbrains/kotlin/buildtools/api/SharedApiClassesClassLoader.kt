@@ -6,6 +6,8 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
+import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -24,15 +26,18 @@ public fun SharedApiClassesClassLoader(): ClassLoader = SharedApiClassesClassLoa
 
 internal fun <T : Any> loadImplementation(cls: KClass<T>, classLoader: ClassLoader): T {
     val implementations = ServiceLoader.load(cls.java, classLoader)
-    implementations.firstOrNull() ?: error("The classpath contains no implementation for ${cls.qualifiedName}")
+    implementations.firstOrNull() ?: throw NoImplementationFoundException(cls)
     return implementations.singleOrNull()
         ?: error("The classpath contains more than one implementation for ${cls.qualifiedName}")
 }
 
+internal class NoImplementationFoundException(cls: KClass<*>) :
+    IllegalStateException("The classpath contains no implementation for ${cls.qualifiedName}")
+
 private class SharedApiClassesClassLoaderImpl(
     private val parent: ClassLoader,
     private val allowedPackage: String,
-) : ClassLoader(null) { // `null` parent means that the parent is the bootstrap classloader
+) : ClassLoader(@OptIn(KotlinBuildToolsInternalJdkUtils::class) getJdkClassesClassLoader()) {
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
         return if (name.startsWith(allowedPackage)) {
             parent.loadClass(name)

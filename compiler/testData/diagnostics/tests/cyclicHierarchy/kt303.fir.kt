@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-303 Stack overflow on a cyclic class hierarchy
 
 open class Foo() : <!CYCLIC_INHERITANCE_HIERARCHY!>Bar<!>() {
@@ -8,4 +9,6 @@ open class Bar() : <!CYCLIC_INHERITANCE_HIERARCHY!>Foo<!>() {
 
 }
 
-val x : Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>Foo()<!>
+val x : Int <!INITIALIZER_TYPE_MISMATCH!>=<!> Foo()
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class Delegate<T>
 
@@ -12,3 +13,7 @@ fun test() {
         return@createDelegate { "str" }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, operator, propertyDeclaration, propertyDelegate, starProjection, stringLiteral,
+typeParameter */

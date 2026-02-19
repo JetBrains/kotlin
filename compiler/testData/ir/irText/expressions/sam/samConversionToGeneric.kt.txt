@@ -5,6 +5,10 @@ fun test1(): J<String> {
  /*-> J<String> */
 }
 
+fun test10(fn: Function1<Int, String>) {
+  bar2x<@FlexibleNullability Int?>(j2x = fn /*-> @FlexibleNullability J2X<@FlexibleNullability Int?>? */)
+}
+
 fun test2(): J<@FlexibleNullability String?> {
   return local fun <anonymous>(x: String): @FlexibleNullability String? {
     return x
@@ -46,6 +50,3 @@ fun test9(efn: @ExtensionFunctionType Function1<String, String>) {
   bar<@FlexibleNullability String?>(j = efn /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
 }
 
-fun test10(fn: Function1<Int, String>) {
-  bar2x<@FlexibleNullability Int?>(j2x = fn /*-> @FlexibleNullability J2X<@FlexibleNullability Int?>? */)
-}

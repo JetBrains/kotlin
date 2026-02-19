@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 fun jsNullUndefinedHashCode() {
     assertEquals(js("null").unsafeCast<Any>().hashCode(), js("null").unsafeCast<Any>().hashCode())
     assertEquals(js("undefined").unsafeCast<Any>().hashCode(), js("undefined").unsafeCast<Any>().hashCode())

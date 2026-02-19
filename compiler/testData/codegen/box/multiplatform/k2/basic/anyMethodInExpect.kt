@@ -1,5 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // FILE: common.kt

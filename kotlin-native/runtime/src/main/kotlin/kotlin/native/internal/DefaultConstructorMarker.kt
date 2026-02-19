@@ -5,5 +5,8 @@
 
 package kotlin.native.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @ExportForCompiler
+@UsedFromCompilerGeneratedCode
 internal object DefaultConstructorMarker;

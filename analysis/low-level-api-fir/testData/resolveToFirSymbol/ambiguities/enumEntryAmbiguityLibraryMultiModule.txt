@@ -1,0 +1,5 @@
+KtEnumEntry 'Entry' in 'library1.jar!/library/A.class':
+  public final static enum entry Entry: R|library/A|
+
+KtEnumEntry 'Entry' in 'library2.jar!/library/A.class':
+  public final static enum entry Entry: R|library/A|

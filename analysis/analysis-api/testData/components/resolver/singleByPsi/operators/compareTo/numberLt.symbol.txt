@@ -1,0 +1,2 @@
+KtOperationReferenceExpression(20,21): '<'
+  null

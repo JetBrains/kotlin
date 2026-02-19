@@ -1,0 +1,199 @@
+KtFile: withDataFlowBasedExhaustivenes.kt
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +ConditionImpliesReturnsContracts, +DataFlowBasedExhaustiveness')
+  PsiWhiteSpace('\n')
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
+      PsiElement(COLON)(':')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('OptIn')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('ExperimentalContracts')
+            PsiElement(COLONCOLON)('::')
+            PsiElement(class)('class')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_ARGUMENT
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('ExperimentalExtendedContracts')
+            PsiElement(COLONCOLON)('::')
+            PsiElement(class)('class')
+        PsiElement(RPAR)(')')
+  PACKAGE_DIRECTIVE
+    <empty list>
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// ISSUE: KT-79271')
+  PsiWhiteSpace('\n')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('kotlin')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('contracts')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(sealed)('sealed')
+    PsiWhiteSpace(' ')
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Variants')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      OBJECT_DECLARATION
+        MODIFIER_LIST
+          PsiElement(data)('data')
+        PsiWhiteSpace(' ')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('A')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Variants')
+      PsiWhiteSpace('\n    ')
+      OBJECT_DECLARATION
+        MODIFIER_LIST
+          PsiElement(data)('data')
+        PsiWhiteSpace(' ')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('B')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Variants')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('ensureA')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('v')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Variants')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Variants')
+        PsiElement(QUEST)('?')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('contract')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                BINARY_EXPRESSION
+                  PARENTHESIZED
+                    PsiElement(LPAR)('(')
+                    IS_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('v')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(is)('is')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Variants')
+                          PsiElement(DOT)('.')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('A')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(IDENTIFIER)('implies')
+                  PsiWhiteSpace(' ')
+                  PARENTHESIZED
+                    PsiElement(LPAR)('(')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('returnsNotNull')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        BINARY_WITH_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('v')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(as)('as')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Variants')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

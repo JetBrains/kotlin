@@ -1,3 +1,5 @@
 > Task :checkKotlinGradlePluginConfigurationErrors FAILED
-e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotlin/Native targets were used in the project: linuxMips32
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] Invalid `dependsOn` Configuration in Common Source Set
+commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end

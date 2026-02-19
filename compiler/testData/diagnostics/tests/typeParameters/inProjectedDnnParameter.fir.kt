@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-54663
 // FILE: JavaAction.java
 import org.jetbrains.annotations.NotNull;
@@ -28,3 +29,6 @@ class A<T> {
         action.execute(<!ARGUMENT_TYPE_MISMATCH!>element<!>) // type mismatch in K1 and K2
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, inProjection, interfaceDeclaration, javaType,
+nullableType, typeParameter */

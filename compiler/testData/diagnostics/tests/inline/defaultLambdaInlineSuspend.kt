@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE -NOTHING_TO_INLINE
 // SKIP_TXT
 
 suspend inline fun test1(<!NOT_YET_SUPPORTED_IN_INLINE!>s : suspend () -> String = { "OK" }<!>) {}
@@ -9,3 +10,5 @@ suspend inline fun test4(crossinline s : () -> String = { "OK" }) {}
 suspend inline fun test5(noinline s : suspend () -> String = { "OK" }) {}
 suspend inline fun test6(noinline s : () -> String = { "OK" }) {}
 
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, noinline, stringLiteral,
+suspend */

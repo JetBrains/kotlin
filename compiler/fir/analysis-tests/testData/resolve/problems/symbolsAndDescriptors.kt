@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class IrClassSymbolImpl(descriptor: String? = null) :
     IrBindableSymbolBase<String>(descriptor),
     IrClassSymbol
@@ -28,6 +29,5 @@ abstract class IrSymbolBase<out D : Any>(
         get() = _descriptor!!
 }
 
-
-
-
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, getter, interfaceDeclaration, nullableType, out, override,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

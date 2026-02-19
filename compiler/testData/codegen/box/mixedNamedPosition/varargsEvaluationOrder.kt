@@ -1,4 +1,4 @@
-// !LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
 // See KT-17691: Wrong argument order in resolved call with varargs. (fixed in JVM_IR)
 
 var log = ""

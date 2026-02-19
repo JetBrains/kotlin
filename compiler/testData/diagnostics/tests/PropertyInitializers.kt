@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 class Foo(val a: Int, b: Int) {
@@ -11,3 +12,6 @@ class Foo(val a: Int, b: Int) {
 
     val map: Map<String, Int> = <!TYPE_MISMATCH("String; Int"), TYPE_MISMATCH("Int; String"), TYPE_MISMATCH("Map<String, Int>; Map<String, String>")!>mapOf(1 to "hello")<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, getter, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

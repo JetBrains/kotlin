@@ -7,111 +7,103 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationsForMetadataProviderExtension
-import org.jetbrains.kotlin.fir.extensions.declarationForMetadataProviders
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.FqName
 
+
+/**
+ * This extension can be used to provide information about declarations, which should be written in Kotlin metadata (i.e. be part of a module's ABI),
+ *   but for some reason can not (or should not) be generated with [FirDeclarationGenerationExtension]
+ *
+ * Example: assume your plugin generates some constructor in [IrGenerationExtension] which have value parameters matching
+ *   all properties of a class, and this constructor is used only as an implementation detail (so the only actor who accesses it
+ *   is a plugin itself). The constructor should be accessible from another module, so it should be present in the metadata. But you
+ *   can not generate this constructor in [FirDeclarationGenerationExtension], because it depends on types of properties,
+ *   which may be not resolved at the moment of constructor creation.
+ *
+ *
+ *   // MODULE: a
+ *   open class Base {
+ *       val x: Int = 1
+ *       val y = "hello"
+ *
+ *       constructor()
+ *
+ *       // generated
+ *       constructor(x: Int, y: String) { ... } // (1)
+ *   }
+ *
+ *   // MODULE: b(a)
+ *   class Derived : Base {
+ *       val z = 1.0
+ *
+ *       constructor() : super()
+ *
+ *       // generated
+ *       constructor(x: Int, y: String, z: Double) : super(x, y) { ... } // (2)
+ *
+ *       // constructor (1) should be presented in metadata of class Base, so IR plugin
+ *       //  can reference it during generation of constructor (2)
+ *  }
+ *
+ * All declarations provided by this extension should be fully resolved and contain all sub declarations if they exist.
+ *   E.g. if you want to provide some class then this class should contain all declarations of this class you want to be
+ *   present in metadata in `declarations` field of a `FirRegularClass`.
+ *   [FirDeclarationGenerationExtension] won't be called for classes provided by this extension.
+ */
 abstract class FirProvidedDeclarationsForMetadataService : FirSessionComponent {
     companion object {
         fun create(session: FirSession): FirProvidedDeclarationsForMetadataService {
-            val extensionProviders = session.extensionService.declarationForMetadataProviders
-            return if (extensionProviders.isEmpty()) Empty else FirProvidedDeclarationsForMetadataServiceImpl(session, extensionProviders)
+            return FirProvidedDeclarationsForMetadataServiceImpl(session)
         }
     }
 
     abstract fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration>
     abstract fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor>
     abstract fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration>
-    abstract fun getProvidedNestedClassifiers(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirClassLikeSymbol<*>>
 
-    private object Empty : FirProvidedDeclarationsForMetadataService() {
-        override fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration> {
-            return emptyList()
-        }
+    abstract fun registerDeclaration(declaration: FirCallableDeclaration)
 
-        override fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor> {
-            return emptyList()
-        }
-
-        override fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration> {
-            return emptyList()
-        }
-
-        override fun getProvidedNestedClassifiers(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirClassLikeSymbol<*>> {
-            return emptyList()
-        }
-    }
 }
 
-private class FirProvidedDeclarationsForMetadataServiceImpl(
-    session: FirSession,
-    private val extensionDeclarationProviders: List<FirDeclarationsForMetadataProviderExtension>
-) : FirProvidedDeclarationsForMetadataService() {
-    private val cachesFactory = session.firCachesFactory
+private class FirProvidedDeclarationsForMetadataServiceImpl(private val session: FirSession) : FirProvidedDeclarationsForMetadataService() {
+    private val topLevelsCache: MutableMap<FqName, MutableList<FirDeclaration>> = hashMapOf()
 
-    private val topLevelsCache: FirCache<FqName, List<FirDeclaration>, ScopeSession> =
-        cachesFactory.createCache(::computeTopLevelDeclarations)
+    private val memberCache: MutableMap<FirClassSymbol<*>, ClassDeclarations> = hashMapOf()
 
-    private val membersCache: FirCache<FirClassSymbol<*>, ClassDeclarations, ScopeSession> =
-        cachesFactory.createCache(::computeMemberDeclarations)
-
-    private fun computeTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration> {
-        return buildList {
-            for (extensionProvider in extensionDeclarationProviders) {
-                for (declaration in extensionProvider.provideTopLevelDeclarations(packageFqName, scopeSession)) {
-                    add(declaration)
-                }
+    override fun registerDeclaration(declaration: FirCallableDeclaration) {
+        val containingClass = declaration.containingClassLookupTag()?.toRegularClassSymbol(session)?.fir
+        if (containingClass == null) {
+            val list = topLevelsCache.getOrPut(declaration.symbol.callableId!!.packageName) { mutableListOf() }
+            list += declaration
+        } else {
+            val declarations = memberCache.getOrPut(containingClass.symbol) { ClassDeclarations() }
+            when (declaration) {
+                is FirConstructor -> declarations.providedConstructors += declaration
+                else -> declarations.providedCallables += declaration
             }
         }
     }
 
     override fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration> {
-        return topLevelsCache.getValue(packageFqName, scopeSession)
+        return topLevelsCache[packageFqName] ?: emptyList()
     }
 
     override fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor> {
-        return membersCache.getValue(owner, scopeSession).providedConstructors
+        return memberCache[owner]?.providedConstructors ?: emptyList()
     }
 
     override fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration> {
-        return membersCache.getValue(owner, scopeSession).providedCallables
+        return memberCache[owner]?.providedCallables ?: emptyList()
     }
 
-    override fun getProvidedNestedClassifiers(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirClassLikeSymbol<*>> {
-        return membersCache.getValue(owner, scopeSession).providedNestedClasses
-    }
-
-    private data class ClassDeclarations(
-        val providedCallables: List<FirCallableDeclaration>,
-        val providedConstructors: List<FirConstructor>,
-        val providedNestedClasses: List<FirClassLikeSymbol<*>>,
-    )
-
-    private fun computeMemberDeclarations(symbol: FirClassSymbol<*>, scopeSession: ScopeSession): ClassDeclarations {
-        val providedCallables = mutableListOf<FirCallableDeclaration>()
-        val providedConstructors = mutableListOf<FirConstructor>()
-        val providedNestedClassifiers = mutableListOf<FirClassLikeSymbol<*>>()
-
-        for (extensionProvider in extensionDeclarationProviders) {
-            for (declaration in extensionProvider.provideDeclarationsForClass(symbol.fir, scopeSession)) {
-                when (declaration) {
-                    is FirConstructor -> providedConstructors += declaration
-                    is FirCallableDeclaration -> providedCallables += declaration
-                    is FirClassLikeDeclaration -> providedNestedClassifiers += declaration.symbol
-                    else -> error("Unsupported declaration type in: $symbol ${declaration.render()}")
-                }
-            }
-        }
-
-        return ClassDeclarations(providedCallables, providedConstructors, providedNestedClassifiers)
+    private class ClassDeclarations {
+        val providedCallables: MutableList<FirCallableDeclaration> = mutableListOf()
+        val providedConstructors: MutableList<FirConstructor> = mutableListOf()
     }
 }
 

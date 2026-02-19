@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -19,12 +19,12 @@ inline fun case_1(block: () -> Unit) {
 
 // TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
-    contract({ })
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract({ })<!>
     return block()
 }
 
 // TESTCASE NUMBER: 3
 inline fun case_3(block: () -> Unit) {
-    contract(builder = { })
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract(builder = { })<!>
     return block()
 }

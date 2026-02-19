@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
     `maven-publish`
 }
 
@@ -9,24 +9,9 @@ version = "1.0"
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { setUrl("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") }
 }
 
-kotlin.sourceSets {
-    getByName("main") {
-        dependencies {
-            api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
-            implementation(kotlin("stdlib-js"))
-        }
-    }
-    getByName("test") {
-        dependencies {
-            implementation(kotlin("test-js"))
-        }
-    }
-}
-
-kotlin.target {
+kotlin.js {
     nodejs()
     browser {
         testTask {
@@ -39,11 +24,27 @@ kotlin.target {
     }
 }
 
-kotlin.target.compilations.create("benchmark") {
+kotlin.js().compilations.create("benchmark") {
     defaultSourceSet.dependencies {
-        val main by kotlin.target.compilations
+        val main by kotlin.js().compilations
         implementation(main.compileDependencyFiles + main.output.classesDirs)
         runtimeOnly(files(main.runtimeDependencyFiles))
+    }
+}
+
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
+                implementation(kotlin("stdlib-js"))
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }
 

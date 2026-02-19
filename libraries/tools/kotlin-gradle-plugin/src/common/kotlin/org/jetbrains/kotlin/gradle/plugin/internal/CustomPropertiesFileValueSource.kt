@@ -18,7 +18,7 @@ import java.util.*
  * Returned type is `Map<String, String>` due to the following [bug in Gradle](https://github.com/gradle/gradle/pull/24846) which
  * prevents proper serialization of [Properties] type.
  *
- * If the file does not exist - returned provider will be empty.
+ * If the file does not exist - returned map will be empty.
  *
  * Usage:
  * ```
@@ -38,7 +38,7 @@ internal abstract class CustomPropertiesFileValueSource : ValueSource<Map<String
 
     override fun getDisplayName(): String = "properties file ${parameters.propertiesFile.get().asFile.absolutePath}"
 
-    override fun obtain(): Map<String, String>? {
+    override fun obtain(): Map<String, String> {
         val customFile = parameters.propertiesFile.get().asFile
         return if (customFile.exists()) {
             customFile.bufferedReader().use {
@@ -46,7 +46,7 @@ internal abstract class CustomPropertiesFileValueSource : ValueSource<Map<String
                 Properties().apply { load(it) }.toMap() as Map<String, String>
             }
         } else {
-            null
+            emptyMap()
         }
     }
 }

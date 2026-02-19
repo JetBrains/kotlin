@@ -1,0 +1,2 @@
+Resolved to:
+    (in DeclSite) (psi: public int calculateX() )

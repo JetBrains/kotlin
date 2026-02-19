@@ -1,4 +1,5 @@
-// FILE: A.java
+// RUN_PIPELINE_TILL: FRONTEND
+// FILE: base/A.java
 
 package base;
 
@@ -25,3 +26,5 @@ public class C extends B {}
 fun box(): String {
     return C().<!INVISIBLE_MEMBER!>f<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, propertyDeclaration, stringLiteral */

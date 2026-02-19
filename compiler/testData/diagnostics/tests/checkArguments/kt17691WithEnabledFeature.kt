@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // WITH_STDLIB
 
 fun foo(vararg x: Unit, y: Any) {}
@@ -24,3 +24,5 @@ fun main3() {
     // no warning, execution order is already right
     foo3(y = {  }(), x = arrayOf({  }()))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, vararg */

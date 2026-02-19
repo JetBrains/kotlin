@@ -1,4 +1,4 @@
-// MUTED_WHEN: K1
+// FIR_IDENTICAL
 package test
 
 data class DataClass(

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59748
 // FIR_DUMP
 
@@ -27,3 +28,6 @@ fun plugAssign(condition: Boolean): Unit = when {
     condition -> x += ""
     else -> Unit
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, whenExpression */

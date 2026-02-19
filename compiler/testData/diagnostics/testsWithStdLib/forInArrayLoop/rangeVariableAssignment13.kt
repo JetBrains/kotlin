@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProperForInArrayLoopRangeVariableAssignmentSemantic
-// !DIAGNOSTICS: -UNUSED_VALUE
+// LANGUAGE: +ProperForInArrayLoopRangeVariableAssignmentSemantic
+// DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 
 fun testObjectArray() {
@@ -18,3 +19,6 @@ fun testPrimitiveArray() {
         xs = intArrayOf(4, 5, 6)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral */

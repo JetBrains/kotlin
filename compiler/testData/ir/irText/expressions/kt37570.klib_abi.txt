@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val b // /A.b|{}b[0]
+        final fun <get-b>(): kotlin/String // /A.b.<get-b>|<get-b>(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final fun /a(): kotlin/String // /a|a(){}[0]

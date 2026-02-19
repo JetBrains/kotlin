@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun interface Foo
 
 fun interface Foo {

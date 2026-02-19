@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -18,3 +19,6 @@ fun foo(arg: Boolean?): String {
         null -> "unknown"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nullableType, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

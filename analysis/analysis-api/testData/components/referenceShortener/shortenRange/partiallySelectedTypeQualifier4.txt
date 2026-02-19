@@ -1,0 +1,10 @@
+Before shortening: dependency.Foo.Bar
+with default settings:
+[qualifier] dependency.Foo
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] dependency.Foo
+with SHORTEN_AND_IMPORT:
+[qualifier] dependency.Foo.Bar
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] dependency.Foo.Bar

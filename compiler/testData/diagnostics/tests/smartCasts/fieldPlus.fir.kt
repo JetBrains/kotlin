@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNNECESSARY_NOT_NULL_ASSERTION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNNECESSARY_NOT_NULL_ASSERTION
 // Advancement of KT-9126
 
 class My(val x: Int?) {
@@ -12,3 +13,7 @@ fun foo() {
         (y + My(0)).x<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, operator, primaryConstructor,
+propertyDeclaration, smartcast, thisExpression */

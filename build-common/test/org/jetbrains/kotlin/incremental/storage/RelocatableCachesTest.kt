@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class RelocatableCachesTest : TestWithWorkingDir() {
+class RelocatableCachesTest {
+
+    @TempDir
+    lateinit var workingDir: File
+
     @Test
     fun testLookupStorageAddAllReversedFiles() {
         val originalRoot = workingDir.resolve("original")
@@ -60,7 +64,7 @@ class RelocatableCachesTest : TestWithWorkingDir() {
 
         for (i in 0..10) {
             val newSymbol = LookupSymbol(name = "MyClass_$i", scope = "myscope_$i")
-            val newSourcePath = projectRoot.resolve("src/${newSymbol.asRelativePath()}").canonicalFile.invariantSeparatorsPath
+            val newSourcePath = projectRoot.resolve("src/${newSymbol.asRelativePath()}").absoluteFile.invariantSeparatorsPath
             symbols.add(newSymbol)
 
             for (lookedUpSymbol in symbols) {
@@ -73,7 +77,7 @@ class RelocatableCachesTest : TestWithWorkingDir() {
         val filesToAdd = if (reverseFiles) files.reversedSet() else files
         val lookupsToAdd = if (reverseLookups) lookups.reversedMultiMap() else lookups
         lookupStorage.addAll(lookupsToAdd, filesToAdd)
-        lookupStorage.flush(memoryCachesOnly = false)
+        lookupStorage.flush()
     }
 
     private val File.storageRoot: File

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun <S> select(vararg args: S): S = TODO()
 
@@ -15,3 +16,6 @@ fun test() {
     val cst = select(O1, O2)
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*> & I1")!>cst<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, vararg */

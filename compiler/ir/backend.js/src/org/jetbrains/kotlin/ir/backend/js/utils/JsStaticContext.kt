@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIntrinsicTransformers
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 
 
 class JsStaticContext(
@@ -25,6 +25,7 @@ class JsStaticContext(
     val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
 
     val initializerBlock = JsCompositeBlock()
+    val eagerInitializerBlock = JsCompositeBlock()
 
     val isPerFile: Boolean get() = mode.granularity === JsGenerationGranularity.PER_FILE
 }

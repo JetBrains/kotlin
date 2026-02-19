@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun case(): String {
     val x0 = false
     val x1: String
@@ -11,3 +12,6 @@ fun case(): String {
     }
     return "NOK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, disjunctionExpression, functionDeclaration, localProperty, propertyDeclaration,
+stringLiteral, tryExpression */

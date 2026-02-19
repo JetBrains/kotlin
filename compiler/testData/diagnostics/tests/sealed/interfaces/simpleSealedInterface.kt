@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-20423
-// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage +SealedInterfaces
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage +SealedInterfaces
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 sealed interface Base
 
@@ -37,3 +38,7 @@ fun test_2(base: Base) {
         D -> 6
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, interfaceDeclaration, isExpression, localProperty, nestedClass, objectDeclaration, propertyDeclaration,
+sealed, smartcast, whenExpression, whenWithSubject */

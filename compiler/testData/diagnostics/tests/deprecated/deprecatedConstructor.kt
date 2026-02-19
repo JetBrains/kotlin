@@ -1,5 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.kt
 class A(s: String) {
@@ -35,3 +37,6 @@ fun use(a: A, b: B, c: C) {
     B("")
     <!DEPRECATION!>C<!>("s")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, primaryConstructor,
+secondaryConstructor, stringLiteral */

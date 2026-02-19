@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun test_1(x: Any?) {
     x as String
     x.length
@@ -43,3 +44,6 @@ fun test_4(b: Any) {
     }
     b.<!UNRESOLVED_REFERENCE!>not<!>()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, disjunctionExpression, equalityExpression, functionDeclaration,
+ifExpression, nullableType, smartcast */

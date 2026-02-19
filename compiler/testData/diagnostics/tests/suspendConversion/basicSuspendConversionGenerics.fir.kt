@@ -1,5 +1,6 @@
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 class Inv2<T, K>
 
@@ -28,3 +29,6 @@ fun test(f: (Int) -> String, g: () -> String) {
     val a5 = foo3(id(f))
     a5
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, localProperty, nullableType,
+propertyDeclaration, suspend, typeParameter */

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.SYSTEM_LINE_SEPARATOR
 import java.io.File
 
 class ProcessRunResult(
@@ -19,50 +17,39 @@ class ProcessRunResult(
     val isSuccessful: Boolean
         get() = exitCode == 0
 
-    override fun toString(): String = """
-Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
-    Command: ${cmd.joinToString()}
-    Working directory: ${workingDir.absolutePath}
-    Exit code: $exitCode
-"""
+    override fun toString(): String =
+        """
+        |Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
+        |    Command: ${cmd.joinToString()}
+        |    Working directory: ${workingDir.absolutePath}
+        |    Exit code: $exitCode
+        """.trimMargin()
 }
 
 fun runProcess(
     cmd: List<String>,
     workingDir: File,
     environmentVariables: Map<String, String> = mapOf(),
-    options: BaseGradleIT.BuildOptions? = null,
     redirectErrorStream: Boolean = true,
 ): ProcessRunResult {
     val builder = ProcessBuilder(cmd)
     builder.environment().putAll(environmentVariables)
     builder.directory(workingDir)
-    // redirectErrorStream merges stdout and stderr, so it can be get from process.inputStream
+    // redirectErrorStream merges stdout and stderr, so it can be gotten from process.inputStream
     builder.redirectErrorStream(redirectErrorStream)
 
     val process = builder.start()
-    // important to read inputStream, otherwise the process may hang on some systems
+    // important to read inputStream, otherwise the process may freeze on some systems
     val sb = StringBuilder()
     process.inputStream!!.bufferedReader().forEachLine {
-        if (options?.forceOutputToStdout ?: false) {
-            println(it)
-        }
-        sb.append(it).append(SYSTEM_LINE_SEPARATOR)
+        println(it)
+        sb.append(it).append(System.lineSeparator())
     }
     val stdErr = process.errorStream.bufferedReader().use { it.readText() }
     val exitCode = process.waitFor()
 
     return ProcessRunResult(cmd, workingDir, exitCode, sb.toString(), stdErr)
 }
-
-fun createGradleCommand(wrapperDir: File, tailParameters: List<String>): List<String> {
-    return if (isWindows)
-        listOf("cmd", "/C", "${wrapperDir.absolutePath}/gradlew.bat") + tailParameters
-    else
-        listOf("/bin/bash", "${wrapperDir.absolutePath}/gradlew") + tailParameters
-}
-
-val isWindows: Boolean = System.getProperty("os.name")!!.contains("Windows")
 
 /**
  * Asserts the result of running a process by calling a set of assertions on the result object.
@@ -79,22 +66,22 @@ fun assertProcessRunResult(result: ProcessRunResult, assertions: ProcessRunResul
     } catch (e: AssertionError) {
         println(
             """
-                |Process info:
-                |#######################
-                |$result
-                |#######################
-                |
-                |Process output:
-                |#######################
-                |${result.output}
-                |#######################
-                |
-                |Process error output:
-                |#######################
-                |${result.stdErr}
-                |#######################
-                |
-                """.trimMargin()
+            |Process info:
+            |#######################
+            |$result
+            |#######################
+            |
+            |Process output:
+            |#######################
+            |${result.output}
+            |#######################
+            |
+            |Process error output:
+            |#######################
+            |${result.stdErr}
+            |#######################
+            |
+            """.trimMargin()
         )
         throw e
     }

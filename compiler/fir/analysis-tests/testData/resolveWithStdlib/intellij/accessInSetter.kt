@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class DrawableGrid(var isEnabled: Boolean)
 
 class My {
@@ -26,3 +27,6 @@ class Your {
         if (useAll) -1 else 0
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, ifExpression, integerLiteral,
+lambdaLiteral, primaryConstructor, propertyDeclaration, setter */

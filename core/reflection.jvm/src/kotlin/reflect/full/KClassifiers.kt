@@ -18,14 +18,14 @@
 
 package kotlin.reflect.full
 
-import org.jetbrains.kotlin.types.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
-import kotlin.reflect.KVariance
-import kotlin.reflect.jvm.internal.KClassifierImpl
-import kotlin.reflect.jvm.internal.KTypeImpl
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.KClassImpl
+import kotlin.reflect.jvm.internal.types.SimpleKType
+import kotlin.reflect.jvm.internal.types.allTypeParameters
+import kotlin.reflect.jvm.internal.useK1Implementation
 
 /**
  * Creates a [KType] instance with the given classifier, type arguments, nullability and annotations.
@@ -42,39 +42,43 @@ import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 fun KClassifier.createType(
     arguments: List<KTypeProjection> = emptyList(),
     nullable: Boolean = false,
-    annotations: List<Annotation> = emptyList()
+    annotations: List<Annotation> = emptyList(),
 ): KType {
-    val descriptor = (this as? KClassifierImpl)?.descriptor
-        ?: throw KotlinReflectionInternalError("Cannot create type for an unsupported classifier: $this (${this.javaClass})")
+    return createTypeImpl(arguments, nullable, annotations)
+}
 
-    val typeConstructor = descriptor.typeConstructor
-    val parameters = typeConstructor.parameters
-    if (parameters.size != arguments.size) {
-        throw IllegalArgumentException("Class declares ${parameters.size} type parameters, but ${arguments.size} were provided.")
+internal fun KClassifier.createTypeImpl(
+    arguments: List<KTypeProjection> = emptyList(),
+    nullable: Boolean = false,
+    annotations: List<Annotation> = emptyList(),
+    mutableCollectionClass: KClass<*>? = null,
+): KType {
+    if (useK1Implementation) {
+        return createK1KType(arguments, nullable)
     }
+
+    val parameters = (this as? KClass<*>)?.allTypeParameters().orEmpty()
+    checkArgumentsSize(parameters.size, arguments.size)
 
     // TODO: throw exception if argument does not satisfy bounds
 
-    val typeAttributes =
-        if (annotations.isEmpty()) TypeAttributes.Empty
-        else TypeAttributes.Empty // TODO: support type annotations
-
-    return KTypeImpl(createKotlinType(typeAttributes, typeConstructor, arguments, nullable))
+    return SimpleKType(
+        this,
+        arguments,
+        nullable,
+        annotations,
+        abbreviation = null,
+        isDefinitelyNotNullType = false,
+        isNothingType = false,
+        isSuspendFunctionType = false,
+        mutableCollectionClass,
+    )
 }
 
-private fun createKotlinType(
-    attributes: TypeAttributes, typeConstructor: TypeConstructor, arguments: List<KTypeProjection>, nullable: Boolean
-): SimpleType {
-    val parameters = typeConstructor.parameters
-    return KotlinTypeFactory.simpleType(attributes, typeConstructor, arguments.mapIndexed { index, typeProjection ->
-        val type = (typeProjection.type as KTypeImpl?)?.type
-        when (typeProjection.variance) {
-            KVariance.INVARIANT -> TypeProjectionImpl(Variance.INVARIANT, type!!)
-            KVariance.IN -> TypeProjectionImpl(Variance.IN_VARIANCE, type!!)
-            KVariance.OUT -> TypeProjectionImpl(Variance.OUT_VARIANCE, type!!)
-            null -> StarProjectionImpl(parameters[index])
-        }
-    }, nullable)
+internal fun checkArgumentsSize(parametersSize: Int, argumentsSize: Int) {
+    if (parametersSize != argumentsSize) {
+        throw IllegalArgumentException("Class declares $parametersSize type parameters, but $argumentsSize were provided.")
+    }
 }
 
 /**
@@ -86,7 +90,7 @@ private fun createKotlinType(
 @SinceKotlin("1.1")
 val KClassifier.starProjectedType: KType
     get() {
-        val descriptor = (this as? KClassifierImpl)?.descriptor
+        val descriptor = (this as? KClassImpl<*>)?.descriptor
             ?: return createType()
 
         val typeParameters = descriptor.typeConstructor.parameters

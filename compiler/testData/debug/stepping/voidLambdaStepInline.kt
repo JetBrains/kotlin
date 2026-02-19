@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun box(): String {
@@ -9,7 +9,7 @@ fun box(): String {
     return "OK"
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // fake.kt:1 box
 // test.kt:5 box
@@ -18,5 +18,19 @@ fun box(): String {
 // test.kt:6 box
 // test.kt:9 box
 
+// EXPECTATIONS NATIVE
+// test.kt:5 box
+// test.kt:5 box
+// test.kt:6 box
+// test.kt:7 box
+// test.kt:9 box
+// test.kt:10 box
+
 // EXPECTATIONS JS_IR
 // test.kt:9 box
+
+// EXPECTATIONS WASM
+// test.kt:5 $box (4, 10, 19)
+// test.kt:6 $box (4)
+// test.kt:7 $box (8, 17)
+// test.kt:9 $box (11, 4)

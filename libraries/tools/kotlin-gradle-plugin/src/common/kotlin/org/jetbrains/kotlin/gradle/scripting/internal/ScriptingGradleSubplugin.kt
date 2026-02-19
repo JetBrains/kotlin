@@ -13,38 +13,47 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.transform.*
-import org.gradle.api.attributes.Attribute
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.buildtools.api.CompilationService
-import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.api.jvm.discoverScriptExtensionsOperation
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
+import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
 
+
 class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
-        const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
-
         fun configureForSourceSet(project: Project, sourceSetName: String) {
-            val discoveryConfiguration = project.configurations.maybeCreate(getDiscoveryClasspathConfigurationName(sourceSetName)).apply {
-                isVisible = false
-                isCanBeConsumed = false
-                description = "Script filename extensions discovery classpath configuration"
-            }
+            val discoveryConfiguration = project.configurations
+                .maybeCreateDependencyScope(getDiscoveryClasspathConfigurationName(sourceSetName)) {
+                    description = "Script filename extensions discovery classpath configuration"
+                }
             project.logger.info("$SCRIPTING_LOG_PREFIX created the scripting discovery configuration: ${discoveryConfiguration.name}")
 
             configureDiscoveryTransformation(project, discoveryConfiguration, getDiscoveryResultsConfigurationName(sourceSetName))
@@ -55,38 +64,51 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         project.plugins.apply(ScriptingKotlinGradleSubplugin::class.java)
 
         project.afterEvaluate {
-            val javaSourceSets = project
-                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                .getInstance(project)
-                .sourceSetsIfAvailable
-            if (javaSourceSets?.isEmpty() == false) {
+            project.plugins.withType(AbstractKotlinPluginWrapper::class.java) {
+                project.configureForKotlinJvmPlugin()
+            }
 
-                val configureAction: (KotlinCompile) -> (Unit) = ca@{ task ->
+            project.plugins.withType(AbstractKotlinMultiplatformPluginWrapper::class.java) {
+                project.configureForKotlinMultiplatformPlugin()
+            }
+        }
+    }
 
-                    if (task !is KaptGenerateStubsTask) {
-                        val sourceSetName = task.sourceSetName.orNull ?: return@ca
-                        val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
-                        val discoveryResultConfiguration = project.configurations.findByName(discoveryResultsConfigurationName)
-                        if (discoveryResultConfiguration == null) {
-                            project.logger.warn(
-                                "$SCRIPTING_LOG_PREFIX $project.${task.name} - configuration not found:" +
-                                        " $discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX"
-                            )
-                        } else {
-                            task.scriptDefinitions.from(discoveryResultConfiguration)
-                        }
-                    }
-                }
+    private fun Project.configureForKotlinJvmPlugin() {
+        project.tasks.withType(KotlinCompile::class.java).configureEach(::configureScripting)
+    }
 
-                project.tasks.withType(KotlinCompile::class.java).configureEach(configureAction)
-            } else {
-                // TODO: implement support for discovery in MPP project: use KotlinSourceSet directly and do not rely on java convevtion sourcesets
-                if (project.multiplatformExtensionOrNull == null) {
-                    project.logger.warn("$SCRIPTING_LOG_PREFIX applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")
+    private fun Project.configureForKotlinMultiplatformPlugin() {
+        multiplatformExtension.targets.withType<KotlinJvmTarget>().configureEach { target ->
+            target.compilations.configureEach { jvmCompilation ->
+                jvmCompilation.compileTaskProvider.configure {
+                    configureScripting(it as KotlinCompile)
                 }
             }
         }
     }
+
+    private fun configureScripting(task: KotlinCompile) {
+        if (task !is KaptGenerateStubsTask) {
+            val sourceSetName = task.sourceSetName.orNull ?: return
+            val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
+            val discoveryResultConfiguration = task.project.configurations.findByName(discoveryResultsConfigurationName)
+            if (discoveryResultConfiguration == null) {
+                task.project.reportDiagnostic(
+                    KotlinToolingDiagnostics.KotlinScriptingMisconfiguration(
+                        task.path,
+                        discoveryResultsConfigurationName,
+                    )
+                )
+            } else {
+                task.scriptDefinitions.from(discoveryResultConfiguration)
+            }
+        }
+    }
+}
+
+internal val ScriptingGradleSubpluginSetupAction = KotlinProjectSetupAction {
+    project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 }
 
 private const val MAIN_CONFIGURATION_NAME = "kotlinScriptDef"
@@ -106,25 +128,31 @@ private fun configureDiscoveryTransformation(
     discoveryConfiguration: Configuration,
     discoveryResultsConfigurationName: String
 ) {
-    project.configurations.maybeCreate(discoveryResultsConfigurationName).apply {
-        isCanBeConsumed = false
-        isCanBeResolved = true
-        attributes.attribute(artifactType, scriptFilesExtensions)
+    project.configurations.maybeCreateResolvable(discoveryResultsConfigurationName).apply {
+        setInvisibleIfSupported()
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, scriptFilesExtensions)
         extendsFrom(discoveryConfiguration)
     }
     val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
     val compilerClasspath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
-    project.dependencies.registerOnceDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath)
+    val buildSessionService = BuildSessionService.registerIfAbsent(project)
+    project.dependencies.registerOnceDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath, buildSessionService)
 }
 
 @CacheableTransform
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<DiscoverScriptExtensionsTransformAction.Parameters> {
+
+    private val logger = Logging.getLogger(DiscoverScriptExtensionsTransformAction::class.java)
+
     interface Parameters : TransformParameters {
         @get:Internal
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
 
         @get:Classpath
         val compilerClasspath: ConfigurableFileCollection
+
+        @get:Internal
+        val buildSessionService: Property<BuildSessionService>
     }
 
     @get:Classpath
@@ -135,11 +163,19 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
     override fun transform(outputs: TransformOutputs) {
         val input = inputArtifact.get().asFile
 
-        val classLoader = parameters.classLoadersCachingService.get()
-            .getClassLoader(parameters.compilerClasspath.toList(), SharedApiClassesClassLoaderProvider)
-        val compilationService = CompilationService.loadImplementation(classLoader)
+        val buildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
+            parameters.classLoadersCachingService.get(),
+            parameters.compilerClasspath.toList()
+        )
+        val kotlinToolchains = buildSession.kotlinToolchains
 
-        val extensions = compilationService.getCustomKotlinScriptFilenameExtensions(listOf(input))
+        val extensions = kotlinToolchains.jvm.discoverScriptExtensionsOperation(listOf(input.toPath())).let { operation ->
+            buildSession.executeOperation(
+                operation,
+                kotlinToolchains.createInProcessExecutionPolicy(),
+                GradleKotlinLogger(logger)
+            )
+        }
 
         if (extensions.isNotEmpty()) {
             val outputFile = outputs.file("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
@@ -151,35 +187,36 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
 private fun DependencyHandler.registerDiscoverScriptExtensionsTransform(
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
     compilerClasspath: NamedDomainObjectProvider<Configuration>,
+    buildSessionService: Provider<BuildSessionService>,
 ) {
     fun TransformSpec<DiscoverScriptExtensionsTransformAction.Parameters>.configureCommonParameters() {
         parameters.classLoadersCachingService.set(classLoadersCachingService)
         parameters.compilerClasspath.from(compilerClasspath)
+        parameters.buildSessionService.set(buildSessionService)
     }
-    registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-        transformSpec.from.attribute(artifactType, "jar")
-        transformSpec.to.attribute(artifactType, scriptFilesExtensions)
-        transformSpec.configureCommonParameters()
-    }
+    registerTransformForArtifactType(
+        DiscoverScriptExtensionsTransformAction::class.java,
+        fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
+        toArtifactType = scriptFilesExtensions,
+    ) { it.configureCommonParameters() }
 
-    registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-        transformSpec.from.attribute(artifactType, "classes")
-        transformSpec.to.attribute(artifactType, scriptFilesExtensions)
-        transformSpec.configureCommonParameters()
-    }
+    registerTransformForArtifactType(
+        DiscoverScriptExtensionsTransformAction::class.java,
+        fromArtifactType = CLASSES_SECONDARY_VARIANT_NAME,
+        toArtifactType = scriptFilesExtensions,
+    ) { it.configureCommonParameters() }
 }
 
 private fun DependencyHandler.registerOnceDiscoverScriptExtensionsTransform(
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
-    compilerClasspath: NamedDomainObjectProvider<Configuration>
+    compilerClasspath: NamedDomainObjectProvider<Configuration>,
+    buildSessionService: Provider<BuildSessionService>,
 ) {
     if (!extensions.extraProperties.has("DiscoverScriptExtensionsTransform")) {
-        registerDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath)
+        registerDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath, buildSessionService)
         extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
     }
 }
-
-private val artifactType = Attribute.of("artifactType", String::class.java)
 
 private const val scriptFilesExtensions = "script-files-extensions"
 

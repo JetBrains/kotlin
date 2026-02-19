@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 suspend fun <T> threadSafeSuspendCallback(startAsync: (CompletionLambda<T>) -> CancellationLambda): T = TODO()
 typealias CompletionLambda<T> = (result: Result<T>) -> Unit
@@ -28,3 +29,7 @@ class Scope {
 
 class CoroutineWorker
 interface CoroutineScope
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nestedClass, nullableType, primaryConstructor, propertyDeclaration, suspend, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter, typeWithExtension */

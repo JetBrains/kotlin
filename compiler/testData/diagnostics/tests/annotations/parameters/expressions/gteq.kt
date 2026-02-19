@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 package test
 
 annotation class Ann(
@@ -12,3 +13,6 @@ annotation class Ann(
 @Ann(1 >= 2, 1.0 >= 2.0, 1 >= 1, 1.0 >= 1.0) class MyClass
 
 // EXPECTED: @Ann(b1 = false, b2 = false, b3 = true, b4 = true)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, comparisonExpression, integerLiteral, primaryConstructor,
+propertyDeclaration */

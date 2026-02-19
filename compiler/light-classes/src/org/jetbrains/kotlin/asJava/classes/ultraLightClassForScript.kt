@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -70,7 +71,7 @@ class KtUltraLightClassForScript(
         val methodBuilder = LightMethodBuilder(manager, language, "main").apply {
             isConstructor = false
             addModifiers(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
-            setMethodReturnType(PsiType.VOID)
+            setMethodReturnType(PsiTypes.voidType())
         }
 
         val mainMethod = KtUltraLightMethodForSourceDeclaration(
@@ -106,7 +107,7 @@ class KtUltraLightClassForScript(
         {
             CachedValueProvider.Result.create(
                 ownMethods(),
-                KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker,
+                KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
             )
         },
         false,

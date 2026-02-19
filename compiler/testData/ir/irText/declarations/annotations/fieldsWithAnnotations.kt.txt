@@ -1,16 +1,3 @@
-open annotation class TestAnn : Annotation {
-  constructor(x: String) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val x: String
-    field = x
-    get
-
-}
-
 val testVal: String
   field = "a val"
   get
@@ -19,3 +6,17 @@ var testVar: String
   field = "a var"
   get
   set
+
+open annotation class TestAnn : Annotation {
+  val x: String
+    field = x
+    get
+
+  constructor(x: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+

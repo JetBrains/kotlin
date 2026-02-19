@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun <T> select(x: T, y: T): T = x
 open class Inv<K>
@@ -85,3 +87,6 @@ fun testCapturedVariable() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Number>")!>c3<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, localFunction, localProperty, nullableType,
+outProjection, propertyDeclaration, typeConstraint, typeParameter */

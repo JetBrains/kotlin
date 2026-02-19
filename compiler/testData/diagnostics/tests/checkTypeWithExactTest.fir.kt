@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE_WITH_EXACT
 
 open class A
@@ -12,3 +13,5 @@ fun test(expr: B) {
     checkTypeEquality(B(), expr)
     checkTypeEquality(C(), <!ARGUMENT_TYPE_MISMATCH!>expr<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, stringLiteral, typeParameter */

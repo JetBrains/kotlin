@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.addArgument
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -21,7 +24,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -78,7 +80,7 @@ abstract class DataClassMembersGenerator(
         }
 
         private fun irOther(): IrExpression {
-            val irFirstParameter = irFunction.valueParameters[0]
+            val irFirstParameter = irFunction.parameters[1]
             return IrGetValueImpl(
                 startOffset, endOffset,
                 irFirstParameter.type,
@@ -95,7 +97,7 @@ abstract class DataClassMembersGenerator(
                 irGetField(receiver, backingField)
             } else {
                 irCall(property.getter!!).apply {
-                    dispatchReceiver = receiver
+                    arguments[0] = receiver
                 }
             }
         }
@@ -112,19 +114,20 @@ abstract class DataClassMembersGenerator(
                     constructedClass = irClass
                 ).apply {
                     for ((i, typeParameterType) in constructorSymbol.typesOfTypeParameters().withIndex()) {
-                        putTypeArgument(i, typeParameterType)
+                        typeArguments[i] = typeParameterType
                     }
-                    for ((i, valueParameter) in irFunction.valueParameters.withIndex()) {
-                        putValueArgument(i, irGet(valueParameter.type, valueParameter.symbol))
+                    for (param in irFunction.nonDispatchParameters) {
+                        arguments[param.indexInParameters - 1] = irGet(param.type, param.symbol)
                     }
                 }
             )
         }
 
-        private fun IrSimpleFunction.isTypedEqualsInValueClass() = name == OperatorNameConventions.EQUALS &&
-                returnType == context.irBuiltIns.booleanType && irClass.isValue
-                && valueParameters.size == 1 && valueParameters[0].type.classifierOrNull == irClass.symbol
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+        private fun IrSimpleFunction.isTypedEqualsInValueClass() =
+            name == OperatorNameConventions.EQUALS
+                    && irClass.isValue
+                    && hasShape(dispatchReceiver = true, regularParameters = 1)
+                    && parameters[1].type.classifierOrNull == irClass.symbol
 
         fun generateEqualsMethodBody(properties: List<IrProperty>) {
             val irType = irClass.defaultType
@@ -134,8 +137,8 @@ abstract class DataClassMembersGenerator(
                 +irIfThenReturnFalse(irNotIs(irOther(), irType))
                 val otherCasted = irImplicitCast(irOther(), irType)
                 +irReturn(irCall(typedEqualsFunction).apply {
-                    putArgument(typedEqualsFunction.dispatchReceiverParameter!!, irThis())
-                    putValueArgument(0, otherCasted)
+                    arguments[0] = irThis()
+                    arguments[1] = otherCasted
                 })
                 return
             }
@@ -144,11 +147,26 @@ abstract class DataClassMembersGenerator(
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
             }
             +irIfThenReturnFalse(irNotIs(irOther(), irType))
-            val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
+            val otherWithCast = irTemporary(irImplicitCast(irOther(), irType), "other_with_cast")
             for (property in properties) {
                 val arg1 = irGetProperty(irThis(), property)
                 val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), property)
-                +irIfThenReturnFalse(irNotEquals(arg1, arg2))
+                +irIfThenReturnFalse(
+                    IrCallImplWithShape(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = context.irBuiltIns.booleanType,
+                        symbol = context.irBuiltIns.booleanNotSymbol,
+                        typeArgumentsCount = 0,
+                        valueArgumentsCount = 0,
+                        contextParameterCount = 0,
+                        hasDispatchReceiver = true,
+                        hasExtensionReceiver = false,
+                        origin = IrStatementOrigin.EXCLEQ,
+                    ).apply<IrCallImpl> {
+                        arguments[0] = this@MemberFunctionBuilder.irEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ)
+                    }
+                )
             }
             +irReturnTrue()
         }
@@ -178,7 +196,20 @@ abstract class DataClassMembersGenerator(
 
             for (property in properties.drop(1)) {
                 val shiftedResult = shiftResultOfHashCode(irResultVar)
-                val irRhs = irCallOp(context.irBuiltIns.intPlusSymbol, irIntType, shiftedResult, getHashCodeOfProperty(property))
+                val irRhs = IrCallImplWithShape(
+                    startOffset,
+                    endOffset,
+                    type = irIntType,
+                    symbol = context.irBuiltIns.intPlusSymbol,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 1,
+                    contextParameterCount = 0,
+                    hasDispatchReceiver = true,
+                    hasExtensionReceiver = false,
+                ).apply {
+                    arguments[0] = shiftedResult
+                    arguments[1] = getHashCodeOfProperty(property)
+                }
                 +irSet(irResultVar.symbol, irRhs)
             }
 
@@ -218,7 +249,7 @@ abstract class DataClassMembersGenerator(
                 val irPropertyStringValue =
                     if (classifier.isArrayOrPrimitiveArray)
                         irCall(context.irBuiltIns.dataClassArrayMemberToStringSymbol, context.irBuiltIns.stringType).apply {
-                            putValueArgument(0, irPropertyValue)
+                            arguments[0] = irPropertyValue
                         }
                     else
                         irPropertyValue
@@ -232,7 +263,20 @@ abstract class DataClassMembersGenerator(
     }
 
     protected open fun IrBuilderWithScope.shiftResultOfHashCode(irResultVar: IrVariable): IrExpression =
-        irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, irGet(irResultVar), irInt(31))
+        IrCallImplWithShape(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            symbol = context.irBuiltIns.intTimesSymbol,
+            type = context.irBuiltIns.intType,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 1,
+            contextParameterCount = 0,
+            hasDispatchReceiver = true,
+            hasExtensionReceiver = false,
+        ).apply {
+            arguments[0] = irGet(irResultVar)
+            arguments[1] = irInt(31)
+        }
 
     protected open fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression {
         return builder.getHashCodeOf(getHashCodeFunctionInfo(property), irValue)
@@ -240,18 +284,19 @@ abstract class DataClassMembersGenerator(
 
     protected fun IrBuilderWithScope.getHashCodeOf(hashCodeFunctionInfo: HashCodeFunctionInfo, irValue: IrExpression): IrExpression {
         val hashCodeFunctionSymbol = hashCodeFunctionInfo.symbol
-        val hasDispatchReceiver = hashCodeFunctionSymbol.hasDispatchReceiver()
-        return irCall(
-            hashCodeFunctionSymbol,
-            context.irBuiltIns.intType,
+        val hasDispatchReceiver = hashCodeFunctionInfo.hasDispatchReceiver ?: hashCodeFunctionSymbol.hasDispatchReceiver()
+        return IrCallImplWithShape(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            symbol = hashCodeFunctionSymbol,
+            type = context.irBuiltIns.intType,
             valueArgumentsCount = if (hasDispatchReceiver) 0 else 1,
-            typeArgumentsCount = 0
+            contextParameterCount = 0,
+            hasDispatchReceiver = hasDispatchReceiver,
+            hasExtensionReceiver = false,
+            typeArgumentsCount = 0,
         ).apply {
-            if (hasDispatchReceiver) {
-                dispatchReceiver = irValue
-            } else {
-                putValueArgument(0, irValue)
-            }
+            arguments[0] = irValue
             hashCodeFunctionInfo.commitSubstituted(this)
         }
     }
@@ -263,6 +308,13 @@ abstract class DataClassMembersGenerator(
 
     interface HashCodeFunctionInfo {
         val symbol: IrSimpleFunctionSymbol
+
+        /**
+         * Implement it if [symbol] may be unbound
+         */
+        val hasDispatchReceiver: Boolean?
+            get() = null
+
         fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>)
     }
 
@@ -285,6 +337,7 @@ abstract class IrBasedDataClassMembersGenerator(
     fqName: FqName?,
     origin: IrDeclarationOrigin,
     forbidDirectFieldAccess: Boolean,
+    private val generateBodies: Boolean,
 ) : DataClassMembersGenerator(context, symbolTable, irClass, fqName, origin, forbidDirectFieldAccess) {
     fun generateComponentFunction(irFunction: IrFunction, irProperty: IrProperty) {
         buildMember(irFunction) {
@@ -294,9 +347,11 @@ abstract class IrBasedDataClassMembersGenerator(
 
     fun generateCopyFunction(irFunction: IrFunction, constructorSymbol: IrConstructorSymbol) {
         buildMember(irFunction) {
-            irFunction.valueParameters.forEach { irValueParameter ->
-                irValueParameter.defaultValue = irExprBody(irGetProperty(irThis(), getProperty(irValueParameter)))
-            }
+            irFunction.parameters
+                .filter { it.kind == IrParameterKind.Regular }
+                .forEach { irValueParameter ->
+                    irValueParameter.defaultValue = irExprBody(irGetProperty(irThis(), getProperty(irValueParameter)))
+                }
             generateCopyFunction(constructorSymbol)
         }
     }
@@ -332,7 +387,9 @@ abstract class IrBasedDataClassMembersGenerator(
         MemberFunctionBuilder(startOffset, endOffset, irFunction).build { function ->
             function.buildWithScope {
                 generateSyntheticFunctionParameterDeclarations(function)
-                body(function)
+                if (generateBodies) {
+                    body(function)
+                }
             }
         }
     }

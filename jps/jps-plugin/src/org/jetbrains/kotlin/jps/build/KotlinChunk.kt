@@ -156,8 +156,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
     }
 
     fun compilerArgumentsFile(target: ModuleBuildTarget): Path = context.dataPaths
-        .getTargetDataRoot(target)
-        .toPath()
+        .getTargetDataRootDir(target)
         .resolve(representativeTarget.compilerArgumentsFileName)
 
     fun saveVersions() {

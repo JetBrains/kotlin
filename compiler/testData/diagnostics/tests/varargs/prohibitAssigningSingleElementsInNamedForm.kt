@@ -1,5 +1,6 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class Anno1(vararg val s: String)
 annotation class Anno2(vararg val i: Int)
@@ -22,3 +23,6 @@ fun test() {
     foo(ints = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     foo(ints = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>intArrayOf(1)<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, vararg */

@@ -16,12 +16,19 @@
 
 package org.jetbrains.kotlin.gradle
 
-import android.app.Application
-import android.test.ApplicationTestCase
+import androidx.test.InstrumentationRegistry
+import androidx.test.runner.AndroidJUnit4
+import org.junit.runner.RunWith
+import org.junit.Test
+import org.junit.Assert.*
 
-class InternalDummyApplicationTest : ApplicationTestCase<Application>(Application::class.java) {
-    init {
-        val dummy = InternalDummy("World")
-        assert("Hello World!" == dummy.greeting) { "Expected: 'Hello World!'. Actual value: ${dummy.greeting}" }
+@RunWith(AndroidJUnit4::class)
+class ExampleInstrumentedTest {
+    @Test
+    fun useAppContext() {
+        // Context of the app under test.
+        val appContext = InstrumentationRegistry.getTargetContext()
+
+        assertEquals("org.jetbrains.kotlin.gradle.test.androidalfa", appContext.packageName)
     }
 }

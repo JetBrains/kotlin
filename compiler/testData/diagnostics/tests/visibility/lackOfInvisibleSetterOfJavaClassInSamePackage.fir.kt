@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Foo.java
 public class Foo {
     public String getBar() { return ""; }
@@ -21,3 +22,6 @@ class B : Foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, flexibleType, functionDeclaration, ifExpression,
+isExpression, javaProperty, javaType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

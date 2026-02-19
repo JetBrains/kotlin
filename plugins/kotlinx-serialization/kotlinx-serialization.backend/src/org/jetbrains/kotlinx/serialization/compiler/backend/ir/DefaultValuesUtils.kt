@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -13,18 +14,18 @@ import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty): IrExpression {
+fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty, expectedPropertyType: IrType? = null): IrExpression {
     return if (property.getter != null)
-        irGet(property.getter!!.returnType, receiver, property.getter!!.symbol)
+        irGet(expectedPropertyType ?: property.getter!!.returnType, receiver, property.getter!!.symbol)
     else
         irGetField(receiver, property.backingField!!)
 }
@@ -114,7 +115,7 @@ fun createInitializerAdapter(
             } else {
                 rawExpression
             }
-        return expression.deepCopyWithVariables().transform(initializerTransformer, null)
+        return expression.deepCopyWithoutPatchingParents().transform(initializerTransformer, null)
     }
 }
 
@@ -123,6 +124,6 @@ private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<IrValueS
     val original = irClass.constructors.singleOrNull { it.isPrimary }
     // default arguments of original constructor
     val defaultsMap: Map<IrValueSymbol, IrExpression?> =
-        original?.valueParameters?.associate { it.symbol to it.defaultValue?.expression } ?: emptyMap()
+        original?.parameters?.associate { it.symbol to it.defaultValue?.expression } ?: emptyMap()
     return defaultsMap + extractDefaultValuesFromConstructor(irClass.getSuperClassNotAny())
 }

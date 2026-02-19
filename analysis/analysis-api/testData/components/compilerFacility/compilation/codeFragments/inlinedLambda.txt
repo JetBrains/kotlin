@@ -1,0 +1,13 @@
+public final class CodeFragment$run$$inlined$perform$1 {
+    // source: 'kotlinAdapter.kt'
+    enclosing method CodeFragment.run()V
+    inner (anonymous) class CodeFragment$run$$inlined$perform$1
+    public method <init>(): void
+    public final method run(): void
+}
+
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method run(): void
+}

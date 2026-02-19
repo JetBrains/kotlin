@@ -9,5 +9,4 @@ package kotlin.text
  *  The exception thrown when a character encoding or decoding error occurs.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect open class CharacterCodingException() : Exception

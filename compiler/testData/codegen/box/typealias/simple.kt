@@ -1,3 +1,5 @@
+// WASM_FAILS_IN: WasmEdge, NodeJs, Wasmtime
+
 typealias S = String
 
 typealias SF<T> = (T) -> S

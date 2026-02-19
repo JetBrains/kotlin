@@ -5,23 +5,31 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.isLegacyContextReceiver
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
 open class FirSymbolRenderer {
 
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
+    protected val printer: FirPrinter get() = components.printer
 
-    fun printReference(symbol: FirBasedSymbol<*>) {
+    open fun printReference(symbol: FirBasedSymbol<*>) {
         printer.print(renderReference(symbol))
     }
 
     protected open fun renderReference(symbol: FirBasedSymbol<*>): String {
         return when (symbol) {
-            is FirCallableSymbol<*> -> symbol.callableId.toString()
+            is FirValueParameterSymbol if (symbol.fir.isLegacyContextReceiver()) ->
+                "context of ${renderReference(symbol.fir.containingDeclarationSymbol)}"
+            is FirCallableSymbol<*> -> symbol.callableIdAsString()
             is FirClassLikeSymbol<*> -> symbol.classId.toString()
+            is FirReceiverParameterSymbol -> {
+                renderReference(symbol.fir.containingDeclarationSymbol)
+            }
             else -> "?"
         }
     }

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -21,7 +21,7 @@ class FirExpectActualMatcherProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
-    private val enabled = session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+    private val enabled = LanguageFeature.MultiPlatformProjects.isEnabled()
 
     override val transformer: FirTransformer<Nothing?> = FirExpectActualMatcherTransformer(session, scopeSession)
 
@@ -31,13 +31,21 @@ class FirExpectActualMatcherProcessor(
     }
 }
 
+/**
+ * This transformer populates [expectForActual] mapping for actual declarations.
+ * Also, populates it memberExpectForActual mapping in [FirExpectActualMappingStorage]
+ *
+ * Should run before any kind of body resolution, since [expectForActual] is used there.
+ *
+ * See `/docs/fir/k2_kmp.md`
+ */
 open class FirExpectActualMatcherTransformer(
     final override val session: FirSession,
-    private val scopeSession: ScopeSession,
+    actualScopeSession: ScopeSession,
 ) : FirAbstractTreeTransformer<Nothing?>(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
 
     private val expectActualMatchingContext = session.expectActualMatchingContextFactory.create(
-        session, scopeSession,
+        session, actualScopeSession,
         allowedWritingMemberExpectForActualMapping = true,
     )
 
@@ -49,7 +57,7 @@ open class FirExpectActualMatcherTransformer(
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
         transformMemberDeclaration(regularClass)
-        regularClass.transformChildren(this, data)
+        regularClass.transformDeclarations(this, data)
         return regularClass
     }
 
@@ -69,23 +77,30 @@ open class FirExpectActualMatcherTransformer(
         return constructor
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?): FirStatement =
         transformConstructor(errorPrimaryConstructor, data)
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): FirStatement {
-        transformMemberDeclaration(simpleFunction)
-        return simpleFunction
+    override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): FirStatement {
+        transformMemberDeclaration(namedFunction)
+        return namedFunction
     }
 
     // --------------------------- other ---------------------------
-    override fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?): FirAnonymousInitializer {
-        return anonymousInitializer
+
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+        file.transformDeclarations(this, data)
+        return file
+    }
+
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        // To prevent entering anonymous initializer's body, delegate field's body,
+        // and other unnecessary elements
+        return element
     }
 
     // ------------------------------------------------------
 
     fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
-        if (!memberDeclaration.isActual) return
         val actualSymbol = memberDeclaration.symbol
 
         // Regardless of whether any `expect` symbols are found for `memberDeclaration`, it must be assigned an `expectForActual` map.
@@ -94,9 +109,8 @@ open class FirExpectActualMatcherTransformer(
         val expectForActualData = FirExpectActualResolver.findExpectForActual(
             actualSymbol,
             session,
-            scopeSession,
             expectActualMatchingContext,
-        ) ?: mapOf()
+        )
         memberDeclaration.expectForActual = expectForActualData
     }
 }

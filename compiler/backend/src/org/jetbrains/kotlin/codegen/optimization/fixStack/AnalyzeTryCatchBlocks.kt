@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.inline.isCatchStoreInstruction
 import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.hasOpcode
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
@@ -100,12 +102,14 @@ private fun insertSaveRestoreStackMarkers(
                 if (!doneHandlerLabels.contains(handlerStartLabel)) {
                     doneHandlerLabels.add(handlerStartLabel)
 
-                    val storeNode = handlerStartLabel.findNextOrNull { it.hasOpcode() }!!
-                    assert(storeNode.opcode == Opcodes.ASTORE) { "${methodNode.instructions.indexOf(storeNode)}: handler should start with ASTORE" }
+                    val firstInstruction = handlerStartLabel.findNextOrNull { it.hasOpcode() }!!
+                    assert(isCatchStoreInstruction(firstInstruction)) {
+                        "${methodNode.instructions.indexOf(firstInstruction)}: handler should start with ASTORE"
+                    }
 
                     val restoreStackMarker = PseudoInsn.RESTORE_STACK_IN_TRY_CATCH.createInsnNode()
                     restoreStackToSaveMarker[restoreStackMarker] = saveStackMarker
-                    methodNode.instructions.insert(storeNode, restoreStackMarker)
+                    methodNode.instructions.insert(firstInstruction, restoreStackMarker)
                 }
             }
         }

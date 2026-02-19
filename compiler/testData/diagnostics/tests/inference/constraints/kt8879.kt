@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Inv<I>
 interface Inv2<I>
@@ -10,3 +11,6 @@ fun <X> bar(): Inv<X> = null!!
 fun test() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>())
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint,
+typeParameter */

@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/simple.js
--output-dir
-$TEMP_DIR$/min
--Xprint-reachability-info

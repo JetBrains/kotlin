@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Simple {
     operator fun invoke(): String = "invoke"
 }
@@ -5,3 +6,6 @@ class Simple {
 fun test(s: Simple) {
     val result = s()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, operator, propertyDeclaration,
+stringLiteral */

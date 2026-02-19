@@ -1,0 +1,40 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final var p // /C.p|{}p[0]
+        final fun <get-p>(): kotlin/Int // /C.p.<get-p>|<get-p>(){}[0]
+        final fun <set-p>(kotlin/Int) // /C.p.<set-p>|<set-p>(kotlin.Int){}[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    final fun get(kotlin/Int): kotlin/Int // /C.get|get(kotlin.Int){}[0]
+    final fun set(kotlin/Int, kotlin/Int) // /C.set|set(kotlin.Int;kotlin.Int){}[0]
+}
+final object /O { // /O|null[0]
+    final var p // /O.p|{}p[0]
+        final fun <get-p>(): kotlin/Int // /O.p.<get-p>|<get-p>(){}[0]
+        final fun <set-p>(kotlin/Int) // /O.p.<set-p>|<set-p>(kotlin.Int){}[0]
+    final fun get(kotlin/Int): kotlin/Int // /O.get|get(kotlin.Int){}[0]
+    final fun set(kotlin/Int, kotlin/Int) // /O.set|set(kotlin.Int;kotlin.Int){}[0]
+}
+final val /arr // /arr|{}arr[0]
+    final fun <get-arr>(): kotlin/IntArray // /arr.<get-arr>|<get-arr>(){}[0]
+final var /p // /p|{}p[0]
+    final fun <get-p>(): kotlin/Int // /p.<get-p>|<get-p>(){}[0]
+    final fun <set-p>(kotlin/Int) // /p.<set-p>|<set-p>(kotlin.Int){}[0]
+final fun /testArrayPostfix() // /testArrayPostfix|testArrayPostfix(){}[0]
+final fun /testArrayPrefix() // /testArrayPrefix|testArrayPrefix(){}[0]
+final fun /testClassOperatorPostfix() // /testClassOperatorPostfix|testClassOperatorPostfix(){}[0]
+final fun /testClassOperatorPrefix() // /testClassOperatorPrefix|testClassOperatorPrefix(){}[0]
+final fun /testClassPropPostfix() // /testClassPropPostfix|testClassPropPostfix(){}[0]
+final fun /testClassPropPrefix() // /testClassPropPrefix|testClassPropPrefix(){}[0]
+final fun /testObjectOperatorPostfix() // /testObjectOperatorPostfix|testObjectOperatorPostfix(){}[0]
+final fun /testObjectOperatorPrefix() // /testObjectOperatorPrefix|testObjectOperatorPrefix(){}[0]
+final fun /testObjectPropPostfix() // /testObjectPropPostfix|testObjectPropPostfix(){}[0]
+final fun /testObjectPropPrefix() // /testObjectPropPrefix|testObjectPropPrefix(){}[0]
+final fun /testPropPostfix() // /testPropPostfix|testPropPostfix(){}[0]
+final fun /testPropPrefix() // /testPropPrefix|testPropPrefix(){}[0]
+final fun /testVarPostfix() // /testVarPostfix|testVarPostfix(){}[0]
+final fun /testVarPrefix() // /testVarPrefix|testVarPrefix(){}[0]

@@ -1,0 +1,17 @@
+<caret_1>:
+  KDocName(121,140): 'WithGenerics.intExt'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in test) fun test.WithGenerics<kotlin.Int>.intExt()
+
+<caret_2>:
+  KDocName(146,168): 'WithGenerics.stringExt'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in test) fun test.WithGenerics<kotlin.String>.stringExt()

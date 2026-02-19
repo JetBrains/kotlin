@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p/I.java
 
@@ -25,3 +27,6 @@ fun test() {
     s.get(0)
     s!!.get(0)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+localProperty, propertyDeclaration */

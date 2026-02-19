@@ -1,0 +1,9 @@
+expression: function::apply
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    in KaTypeParameterType:
+      annotations: []
+      type: T
+  ]
+  type: java/util/function/Consumer<in T>

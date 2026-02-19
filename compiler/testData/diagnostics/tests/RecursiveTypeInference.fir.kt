@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 // FILE: a.kt
@@ -40,3 +41,5 @@ package c
         fun foo() : Int = bazz()
 
         fun bar() = foo()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration */

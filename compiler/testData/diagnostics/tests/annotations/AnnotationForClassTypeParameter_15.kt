@@ -1,4 +1,5 @@
-// !LANGUAGE: -ClassTypeParameterAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ClassTypeParameterAnnotations
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class A1
 
@@ -12,3 +13,6 @@ class TopLevelClass<<!UNSUPPORTED_FEATURE, WRONG_ANNOTATION_TARGET!>@A1<!> <!UNS
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localClass,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

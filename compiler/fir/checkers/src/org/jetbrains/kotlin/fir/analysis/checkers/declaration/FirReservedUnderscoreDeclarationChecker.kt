@@ -8,51 +8,49 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
-import org.jetbrains.kotlin.fir.analysis.checkers.checkUnderscoreDiagnostics
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isCatchParameter
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.name.SpecialNames
 
-object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (
             declaration is FirRegularClass ||
-            declaration is FirTypeParameter ||
             declaration is FirProperty && declaration.isCatchParameter != true ||
             declaration is FirTypeAlias
         ) {
-            reportIfUnderscore(declaration, context, reporter)
+            reportIfUnderscore(declaration)
+        } else if (declaration is FirTypeParameter) {
+            reportIfUnderscore(declaration)
+            declaration.bounds.forEach {
+                checkTypeRefForUnderscore(it)
+            }
         } else if (declaration is FirFunction) {
-            if (declaration is FirSimpleFunction) {
-                reportIfUnderscore(declaration, context, reporter)
+            if (declaration is FirNamedFunction) {
+                reportIfUnderscore(declaration)
             }
 
             val isSingleUnderscoreAllowed = declaration is FirAnonymousFunction || declaration is FirPropertyAccessor
             for (parameter in declaration.valueParameters) {
                 reportIfUnderscore(
                     parameter,
-                    context,
-                    reporter,
                     isSingleUnderscoreAllowed = isSingleUnderscoreAllowed
                 )
             }
         } else if (declaration is FirFile) {
             for (import in declaration.imports) {
-                checkUnderscoreDiagnostics(import.aliasSource, context, reporter, isExpression = false)
+                checkUnderscoreDiagnostics(import.aliasSource, isExpression = false)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportIfUnderscore(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         isSingleUnderscoreAllowed: Boolean = false
     ) {
         val declarationSource = declaration.source
@@ -65,30 +63,19 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
                 if (rawName?.isUnderscore == true && !(isSingleUnderscoreAllowed && rawName == "_")) {
                     reporter.reportOn(
                         declarationSource,
-                        FirErrors.UNDERSCORE_IS_RESERVED,
-                        context
+                        FirErrors.UNDERSCORE_IS_RESERVED
                     )
                 }
             }
         }
 
-        val returnOrReceiverTypeRef = when (declaration) {
-            is FirValueParameter -> declaration.returnTypeRef
-            is FirFunction -> declaration.receiverParameter?.typeRef
-            else -> null
-        }
-
-        if (returnOrReceiverTypeRef is FirResolvedTypeRef) {
-            val delegatedTypeRef = returnOrReceiverTypeRef.delegatedTypeRef
-            if (delegatedTypeRef is FirUserTypeRef) {
-                for (qualifierPart in delegatedTypeRef.qualifier) {
-                    checkUnderscoreDiagnostics(qualifierPart.source, context, reporter, isExpression = true)
-
-                    for (typeArgument in qualifierPart.typeArgumentList.typeArguments) {
-                        checkUnderscoreDiagnostics(typeArgument.source, context, reporter, isExpression = true)
-                    }
-                }
+        when (declaration) {
+            is FirValueParameter -> checkTypeRefForUnderscore(declaration.returnTypeRef)
+            is FirFunction -> {
+                checkTypeRefForUnderscore(declaration.returnTypeRef)
+                checkTypeRefForUnderscore(declaration.receiverParameter?.typeRef)
             }
+            else -> {}
         }
     }
 }

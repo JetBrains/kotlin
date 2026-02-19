@@ -1,7 +1,4 @@
-// IGNORE_DIAGNOSTIC_API
-// IGNORE_REVERSED_RESOLVE
-// Ignore reason: KT-58786
-
+// RUN_PIPELINE_TILL: BACKEND
 interface Diagnostic {
     val name: String
 }
@@ -21,3 +18,6 @@ fun foo(conflicting: List<Diagnostic>) {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, interfaceDeclaration, lambdaLiteral, localProperty,
+propertyDeclaration */

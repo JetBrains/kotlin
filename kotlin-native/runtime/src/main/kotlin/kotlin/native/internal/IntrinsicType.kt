@@ -8,8 +8,6 @@ internal class IntrinsicType {
         const val TIMES                 = "TIMES"
         const val SIGNED_DIV            = "SIGNED_DIV"
         const val SIGNED_REM            = "SIGNED_REM"
-        const val UNSIGNED_DIV          = "UNSIGNED_DIV"
-        const val UNSIGNED_REM          = "UNSIGNED_REM"
         const val INC                   = "INC"
         const val DEC                   = "DEC"
         const val UNARY_PLUS            = "UNARY_PLUS"
@@ -28,7 +26,6 @@ internal class IntrinsicType {
         const val FLOAT_EXTEND          = "FLOAT_EXTEND"
         const val SIGNED_TO_FLOAT       = "SIGNED_TO_FLOAT"
         const val UNSIGNED_TO_FLOAT     = "UNSIGNED_TO_FLOAT"
-        const val FLOAT_TO_SIGNED       = "FLOAT_TO_SIGNED"
         const val SIGNED_COMPARE_TO     = "SIGNED_COMPARE_TO"
         const val UNSIGNED_COMPARE_TO   = "UNSIGNED_COMPARE_TO"
         const val NOT                   = "NOT"
@@ -44,16 +41,18 @@ internal class IntrinsicType {
         const val OBJC_CREATE_SUPER_STRUCT      = "OBJC_CREATE_SUPER_STRUCT"
         const val OBJC_INIT_BY                  = "OBJC_INIT_BY"
         const val OBJC_GET_SELECTOR             = "OBJC_GET_SELECTOR"
+        const val BLOCK_PTR_TO_FUNCTION_OBJECT = "BLOCK_PTR_TO_FUNCTION_OBJECT"
 
         // Other
         const val INTEROP_READ_BITS             = "INTEROP_READ_BITS"
         const val INTEROP_WRITE_BITS            = "INTEROP_WRITE_BITS"
         const val CREATE_UNINITIALIZED_INSTANCE = "CREATE_UNINITIALIZED_INSTANCE"
+        const val CREATE_UNINITIALIZED_ARRAY    = "CREATE_UNINITIALIZED_ARRAY"
+        const val CREATE_EMPTY_STRING           = "CREATE_EMPTY_STRING"
         const val IDENTITY                      = "IDENTITY"
         const val IMMUTABLE_BLOB                = "IMMUTABLE_BLOB"
         const val INIT_INSTANCE                 = "INIT_INSTANCE"
         const val IS_SUBTYPE                    = "IS_SUBTYPE"
-        const val IS_EXPERIMENTAL_MM            = "IS_EXPERIMENTAL_MM"
         const val THE_UNIT_INSTANCE             = "THE_UNIT_INSTANCE"
 
         // Enums
@@ -64,6 +63,8 @@ internal class IntrinsicType {
         // Coroutines
         const val GET_CONTINUATION              = "GET_CONTINUATION"
         const val RETURN_IF_SUSPENDED           = "RETURN_IF_SUSPENDED"
+        const val SAVE_COROUTINE_STATE          = "SAVE_COROUTINE_STATE"
+        const val RESTORE_COROUTINE_STATE       = "RESTORE_COROUTINE_STATE"
 
         // Interop
         const val INTEROP_READ_PRIMITIVE        = "INTEROP_READ_PRIMITIVE"
@@ -90,10 +91,6 @@ internal class IntrinsicType {
         const val COMPARE_AND_EXCHANGE_FIELD    = "COMPARE_AND_EXCHANGE_FIELD"
         const val GET_AND_SET_FIELD             = "GET_AND_SET_FIELD"
         const val GET_AND_ADD_FIELD             = "GET_AND_ADD_FIELD"
-        const val COMPARE_AND_SET               = "COMPARE_AND_SET"
-        const val COMPARE_AND_EXCHANGE          = "COMPARE_AND_EXCHANGE"
-        const val GET_AND_SET                   = "GET_AND_SET"
-        const val GET_AND_ADD                   = "GET_AND_ADD"
         const val ATOMIC_GET_ARRAY_ELEMENT      = "ATOMIC_GET_ARRAY_ELEMENT"
         const val ATOMIC_SET_ARRAY_ELEMENT      = "ATOMIC_SET_ARRAY_ELEMENT"
         const val COMPARE_AND_EXCHANGE_ARRAY_ELEMENT = "COMPARE_AND_EXCHANGE_ARRAY_ELEMENT"

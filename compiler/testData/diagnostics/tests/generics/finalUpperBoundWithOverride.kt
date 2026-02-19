@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 // Issues: KT-25105
 
@@ -96,3 +97,7 @@ object MessageManager15 : Manager<Int> {
         get() = 10
         set(value) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, enumDeclaration, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, nullableType, objectDeclaration, override, primaryConstructor, propertyDeclaration,
+propertyWithExtensionReceiver, sealed, setter, typeConstraint, typeParameter */

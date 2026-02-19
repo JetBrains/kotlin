@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // WITH_STDLIB
 // SKIP_TXT
@@ -28,3 +27,15 @@ enum class ReversedExplicitlyDuplicated {
     SECOND,
     THIRD
 }
+
+const val X = "THI"
+const val Y = "RD"
+
+@Serializable
+enum class WithConstants {
+    <!DUPLICATE_SERIAL_NAME_ENUM!>@SerialName(X + Y)<!>
+    FIRST,
+    SECOND,
+    THIRD
+}
+

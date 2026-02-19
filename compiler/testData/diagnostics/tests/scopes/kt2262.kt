@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package kt2262
 
@@ -15,3 +16,5 @@ class Bar : Foo() {
         val j = i
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, propertyDeclaration, stringLiteral */

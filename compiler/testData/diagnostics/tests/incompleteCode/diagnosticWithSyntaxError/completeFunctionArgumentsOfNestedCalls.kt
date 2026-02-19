@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package c
 
@@ -7,3 +8,6 @@ fun demo() {
     val foo = 3;
     bar <!NONE_APPLICABLE!>+<!> map { foo }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, lambdaLiteral, localFunction,
+localProperty, propertyDeclaration */

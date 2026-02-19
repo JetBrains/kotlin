@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.isJs
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -65,10 +64,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
             handleIntrinsicMethods(irFunction) -> return
             receiver.mustBeHandledAsReflection(call) -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
-            receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
+            receiver is Primitive -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             // TODO try to save fields in Primitive -> then it is possible to move up next branch
             // TODO try to create backing field if it is missing
-            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> callStack.pushCompoundInstruction(irFunction.createGetField())
+            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() ->
+                callStack.pushCompoundInstruction(irFunction.createGetFieldOfCorrespondingProperty())
             irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction, args)
             else -> defaultAction()
         }
@@ -92,11 +92,8 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
-                val propertyName = irClass.inlineClassRepresentation?.underlyingPropertyName
-                val propertySymbol = irClass.declarations.filterIsInstance<IrProperty>()
-                    .single { it.name == propertyName && it.getter?.extensionReceiverParameter == null }
-                    .symbol
-                callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
+                val newState = convertToPrimitive((args.single() as Primitive).value, irClass.defaultType)
+                callStack.rewriteState(constructorCall.getThisReceiver(), newState)
             }
             else -> defaultAction()
         }
@@ -130,7 +127,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override fun interceptJavaStaticField(expression: IrGetField) {
         val field = expression.symbol.owner
         verify(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
-        verify(field.initializer?.expression !is IrConst<*>)
+        verify(field.initializer?.expression !is IrConst)
         callStack.pushState(environment.convertToState(Wrapper.getStaticGetter(field).invokeWithArguments(), field.type))
     }
 
@@ -158,8 +155,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             else -> property.name.asString()
         }
 
-        val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
-        val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map { it.fqNameWithNullability() }
+        val argsType = irFunction.parameters.map { it.type.fqNameWithNullability() }
         val argsValues = args.wrap(this, irFunction)
 
         withExceptionHandler(environment) {
@@ -171,21 +167,6 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     }
 
     private fun interpretBuiltinFunction(signature: Signature): Any? {
-        if (environment.configuration.platform.isJs()) {
-            if (signature.name == "toString") return signature.args[0].value.specialToStringForJs()
-            if (signature.name == "toFloat") signature.name = "toDouble"
-            signature.args
-                .filter { it.value is Float || it.type == "kotlin.Float" || it.type == "kotlin.Float?" }
-                .forEach {
-                    it.type = when (it.type) {
-                        "kotlin.Float" -> "kotlin.Double"
-                        "kotlin.Float?" -> "kotlin.Double?"
-                        else -> it.type
-                    }
-                    it.value = it.value.toString().toDouble()
-                }
-        }
-
         val name = signature.name
         val args = signature.args
         return when (args.size) {
@@ -199,11 +180,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun calculateRangeTo(type: IrType, args: List<State>) {
         val constructor = type.classOrNull!!.owner.constructors.first()
         val constructorCall = constructor.createConstructorCall()
-        val constructorValueParameters = constructor.valueParameters.map { it.symbol }
+        val constructorValueParameters = constructor.parameters.map { it.symbol }
 
-        val primitiveValueParameters = args.map { it as Primitive<*> }
+        val primitiveValueParameters = args.map { it as Primitive }
         primitiveValueParameters.forEachIndexed { index, primitive ->
-            constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
+            constructorCall.arguments[index] = primitive.value.toIrConst(constructorValueParameters[index].owner.type)
         }
 
         callStack.pushCompoundInstruction(constructorCall)
@@ -217,6 +198,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             is Short -> irBuiltIns.shortType
             is Int -> irBuiltIns.intType
             is Long -> irBuiltIns.longType
+            is UByte -> irBuiltIns.ubyteType
+            is UShort -> irBuiltIns.ushortType
+            is UInt -> irBuiltIns.uintType
+            is ULong -> irBuiltIns.ulongType
             is String -> irBuiltIns.stringType
             is Float -> irBuiltIns.floatType
             is Double -> irBuiltIns.doubleType

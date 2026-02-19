@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-13110 Strange type mismatch error on class literal with integer receiver expression
 
@@ -10,3 +11,5 @@ fun test() {
     f((40 + 2)::class)
     42::toInt
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classReference, functionDeclaration, integerLiteral, outProjection */

@@ -1,5 +1,6 @@
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // FULL_JDK
 
 // FILE: MapLike.java
@@ -35,3 +36,6 @@ fun main3() {
     val x2 = A<<!UPPER_BOUND_VIOLATED!>Int?<!>>()
     val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!> = A3<<!UPPER_BOUND_VIOLATED_WARNING!>Int?<!>>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, localProperty, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

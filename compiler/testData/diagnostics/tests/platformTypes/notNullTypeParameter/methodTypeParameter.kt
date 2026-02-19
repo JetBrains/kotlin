@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: A.java
 
@@ -17,3 +18,5 @@ fun test() {
     A.bar<String?>(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")
     A.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>, A.platformString())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, nullableType, stringLiteral */

@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // NI_EXPECTED_FILE
 
 val x get() = <!DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>x<!>
@@ -17,3 +18,6 @@ class A {
 
 fun <E> id(x: E) = x
 fun <E> l(x: E): List<E> = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

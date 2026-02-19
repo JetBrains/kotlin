@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class Outer {
     inner open class A protected constructor(x: Int) {
         protected constructor() : this(1)
@@ -18,3 +19,4 @@ open class Outer {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, primaryConstructor, secondaryConstructor, stringLiteral */

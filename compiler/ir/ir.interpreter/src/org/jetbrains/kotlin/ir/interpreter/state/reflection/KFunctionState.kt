@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.putArgument
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
-import org.jetbrains.kotlin.ir.interpreter.stack.Field
-import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
@@ -23,6 +21,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
@@ -37,36 +37,74 @@ internal class KFunctionState(
     val irFunction: IrFunction,
     override val irClass: IrClass,
     environment: IrInterpreterEnvironment,
-    override val fields: Fields = mutableMapOf()
+    /**
+     * Non-null values in [boundValues] are always passed as arguments to [irFunction].
+     * Other arguments have to be provided at call-site when invoking [invokeSymbol].
+     */
+    boundValues: List<State?> = emptyList(),
 ) : ReflectionState(), StateWithClosure {
+    constructor(
+        functionReference: IrFunctionReference,
+        environment: IrInterpreterEnvironment,
+        boundValues: List<State?>,
+    ) : this(
+        functionReference.symbol.owner,
+        functionReference.type.classOrNull!!.owner,
+        environment,
+        boundValues,
+    )
+
+    constructor(
+        functionReference: IrRichFunctionReference,
+        environment: IrInterpreterEnvironment,
+        boundValues: List<State?>,
+    ) : this(
+        functionReference.invokeFunction,
+        functionReference.type.classOrNull!!.owner,
+        environment,
+        boundValues,
+    )
+
     override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
+    val invokeSymbol: IrFunctionSymbol
+
+    init {
+        val boundParameters = mutableSetOf<IrValueParameter>()
+        for ((param, value) in (irFunction.parameters zip boundValues)) {
+            if (value != null) {
+                boundParameters += param
+                setField(param.symbol, value)
+                // bound parameters are used in comparison of two functions in KFunctionProxy
+                upValues += param.symbol to Variable(value)
+            }
+        }
+
+        invokeSymbol = environment.getCachedFunction(irFunction.symbol, boundParameters) ?: environment.setCachedFunction(
+            irFunction.symbol, boundParameters,
+            newFunction = createInvokeFunction(irFunction, irClass, boundParameters).symbol
+        )
+    }
 
     var funInterface: IrType? = null
         set(value) {
             field = value ?: return
             val samFunction = value.classOrNull!!.owner.getSingleAbstractMethod()
-            if (samFunction.extensionReceiverParameter != null) {
-                // this change of parameter is needed because of difference in `invoke` and sam calls
-                invokeSymbol.owner.extensionReceiverParameter = invokeSymbol.owner.valueParameters[0]
-                invokeSymbol.owner.valueParameters = invokeSymbol.owner.valueParameters.drop(1)
+            if (samFunction.parameters.any { it.kind == IrParameterKind.ExtensionReceiver }) {
+                // this change of parameter is needed because of difference in `invoke` and sam calls.
+                // TODO: probably needs adjustment to support context parameters.
+                invokeSymbol.owner.parameters
+                    .first { it.kind == IrParameterKind.Regular}
+                    .kind = IrParameterKind.ExtensionReceiver
             }
         }
+
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null
 
-    val invokeSymbol: IrFunctionSymbol = run {
-        val hasDispatchReceiver = irFunction.dispatchReceiverParameter?.let { getField(it.symbol) } != null
-        val hasExtensionReceiver = irFunction.extensionReceiverParameter?.let { getField(it.symbol) } != null
-        environment.getCachedFunction(irFunction.symbol, hasDispatchReceiver, hasExtensionReceiver) ?: environment.setCachedFunction(
-            irFunction.symbol, hasDispatchReceiver, hasExtensionReceiver,
-            newFunction = createInvokeFunction(irFunction, irClass, hasDispatchReceiver, hasExtensionReceiver).symbol
-        )
-    }
-
     companion object {
         private fun createInvokeFunction(
-            irFunction: IrFunction, irClass: IrClass, hasDispatchReceiver: Boolean, hasExtensionReceiver: Boolean
+            irFunction: IrFunction, irClass: IrClass, boundParameters: Set<IrValueParameter>
         ): IrSimpleFunction {
             val invokeFunction = irClass.declarations
                 .filterIsInstance<IrSimpleFunction>()
@@ -78,35 +116,30 @@ internal class KFunctionState(
             val newFunctionToInvoke = createTempFunction(
                 OperatorNameConventions.INVOKE, irFunction.returnType, TEMP_FUNCTION_FOR_INTERPRETER
             ).apply impl@{
+                copyTypeParametersFrom(irFunction)
                 parent = functionClass
                 overriddenSymbols = listOf(invokeFunction.symbol)
 
-                dispatchReceiverParameter = invokeFunction.dispatchReceiverParameter?.deepCopyWithSymbols(initialParent = this)
-                val newValueParameters = mutableListOf<IrValueParameter>()
+                invokeFunction.dispatchReceiverParameter?.let {
+                    parameters += it.deepCopyWithSymbols(initialParent = this)
+                }
 
                 val call = when (irFunction) {
                     is IrSimpleFunction -> irFunction.createCall()
                     is IrConstructor -> irFunction.createConstructorCall()
-                    else -> TODO("Unsupported symbol $symbol for invoke")
                 }.apply {
-                    val dispatchParameter = irFunction.dispatchReceiverParameter
-                    val extensionParameter = irFunction.extensionReceiverParameter
-
-                    if (dispatchParameter != null) {
-                        dispatchReceiver = dispatchParameter.createGetValue()
-                        if (!hasDispatchReceiver) newValueParameters += dispatchParameter
-                    }
-                    if (extensionParameter != null) {
-                        extensionReceiver = extensionParameter.createGetValue()
-                        if (!hasExtensionReceiver) newValueParameters += extensionParameter
-                    }
-                    irFunction.valueParameters.forEach {
-                        putArgument(it, it.createGetValue())
-                        newValueParameters += it
+                    irFunction.parameters.forEach { oldParam ->
+                        val newParam: IrValueParameter
+                        if (oldParam in boundParameters) {
+                            newParam = oldParam
+                        } else {
+                            newParam = oldParam.copyTo(this@impl, kind = IrParameterKind.Regular)
+                            parameters += newParam
+                        }
+                        arguments[oldParam] = newParam.createGetValue()
                     }
                 }
 
-                valueParameters = newValueParameters
                 body = listOf(this.createReturn(call)).wrapWithBlockBody()
             }
             functionClass.declarations += newFunctionToInvoke
@@ -124,23 +157,6 @@ internal class KFunctionState(
         }
     }
 
-    constructor(
-        functionReference: IrFunctionReference,
-        environment: IrInterpreterEnvironment,
-        dispatchReceiver: Field?,
-        extensionReceiver: Field?
-    ) : this(
-        functionReference.symbol.owner,
-        functionReference.type.classOrNull!!.owner,
-        environment,
-        listOfNotNull(dispatchReceiver, extensionReceiver).toMap().toMutableMap()
-    ) {
-        dispatchReceiver?.let { (symbol, state) -> setField(symbol, state) }
-        extensionReceiver?.let { (symbol, state) -> setField(symbol, state) }
-        // receivers are used in comparison of two functions in KFunctionProxy
-        upValues += fields.map { it.key to Variable(it.value) }
-    }
-
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         if (isCallToNonAbstractMethodOfFunInterface(expression)) return expression.symbol.owner.resolveFakeOverride()
         if (isCallToInvokeOrMethodFromFunInterface(expression)) return invokeSymbol.owner
@@ -150,13 +166,16 @@ internal class KFunctionState(
     fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!
         val kParameterIrClass = callInterceptor.environment.kParameterClass.owner
-        var index = 0
-        val instanceParameter = irFunction.dispatchReceiverParameter
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), callInterceptor) }
-        val extensionParameter = irFunction.extensionReceiverParameter
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), callInterceptor) }
-        _parameters = listOfNotNull(instanceParameter, extensionParameter) +
-                irFunction.valueParameters.map { KParameterProxy(KParameterState(kParameterIrClass, it, index++), callInterceptor) }
+        val unboundParameters = irFunction.parameters.filter { getField(it.symbol) == null }
+        _parameters = unboundParameters.map { param ->
+            val kind = when (param.kind) {
+                IrParameterKind.DispatchReceiver -> KParameter.Kind.INSTANCE
+                IrParameterKind.Context -> KParameter.Kind.VALUE // TODO: context parameter
+                IrParameterKind.ExtensionReceiver -> KParameter.Kind.EXTENSION_RECEIVER
+                IrParameterKind.Regular -> KParameter.Kind.VALUE
+            }
+            KParameterProxy(KParameterState(kParameterIrClass, param, param.indexInParameters, kind), callInterceptor)
+        }
         return _parameters!!
     }
 

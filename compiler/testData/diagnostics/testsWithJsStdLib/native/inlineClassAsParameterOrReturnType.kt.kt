@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, -JsAllowValueClassesInExternals
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses, -JsAllowValueClassesInExternals, -JsExternalPropertyParameters
+// DIAGNOSTICS: -OPT_IN_USAGE, -INLINE_CLASS_DEPRECATED
 
 // FILE: uint.kt
 

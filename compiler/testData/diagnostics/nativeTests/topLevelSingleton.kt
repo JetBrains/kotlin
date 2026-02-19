@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: annotation.kt
 package kotlin.native.concurrent
 

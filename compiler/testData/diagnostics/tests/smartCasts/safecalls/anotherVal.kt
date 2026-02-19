@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun calc(x: List<String>?, y: Int?): Int {
     x?.get(y!! - 1) 
@@ -5,3 +6,6 @@ fun calc(x: List<String>?, y: Int?): Int {
     val yy: Int = <!TYPE_MISMATCH!>y<!>
     return  yy + (x?.size ?: 0)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, elvisExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, safeCall */

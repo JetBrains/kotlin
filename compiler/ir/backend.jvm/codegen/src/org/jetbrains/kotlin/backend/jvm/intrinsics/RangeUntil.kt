@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-object RangeUntil : IntrinsicMethod() {
+object RangeUntil : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen
     ): IntrinsicFunction {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 //FILE:a.kt
 package a
@@ -54,3 +55,5 @@ fun test() {
 }
 
 fun f(unused: Any) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration */

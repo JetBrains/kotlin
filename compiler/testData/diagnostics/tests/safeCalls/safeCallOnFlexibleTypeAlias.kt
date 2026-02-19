@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57190
 // FILE: MyFunction.java
@@ -21,3 +22,6 @@ fun countElementsByXpathAsync(promise: MyPromise<JsExpressionResult>, t: JsExpre
 }
 
 fun String.foo() {}
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaType, lambdaLiteral,
+nullableType, safeCall, samConversion, typeAliasDeclaration */

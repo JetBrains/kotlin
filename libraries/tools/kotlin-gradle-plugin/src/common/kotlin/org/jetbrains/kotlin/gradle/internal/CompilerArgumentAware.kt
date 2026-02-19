@@ -78,6 +78,9 @@ interface CompilerArgumentAware<T : CommonToolArguments> : KotlinCompilerArgumen
     )
 }
 
+@Suppress("DEPRECATION")
+internal typealias DeprecatedCompilerArgumentAware<T> = CompilerArgumentAware<T>
+
 private val includedArgumentTypes = setOf(
     ArgumentType.Primitive,
     ArgumentType.PluginClasspath,

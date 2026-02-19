@@ -1,0 +1,13 @@
+KtNameReferenceExpression(84,90): 'Nested'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: true
+    usesContextSensitiveResolution: false
+    symbols:
+      (in AA.Nested) companion object
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

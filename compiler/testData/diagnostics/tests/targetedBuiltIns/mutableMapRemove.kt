@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -PARAMETER_NAME_CHANGED_ON_OVERRIDE
 // FULL_JDK
 
 class KotlinMap1<K, V> : java.util.AbstractMap<K, V>() {
@@ -28,3 +29,6 @@ fun foo(x: MutableMap<String, Int>, y: java.util.HashMap<String, Int>, z: java.u
     z.remove("", <!TYPE_MISMATCH!>""<!>)
     z.remove("", null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, nullableType, override,
+propertyDeclaration, stringLiteral, typeParameter */

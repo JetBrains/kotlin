@@ -1,0 +1,43 @@
+/kt78942.kt:11:23: error: type mismatch: inferred type is () -> String but String was expected
+    val bar: String = foo {
+                      ^^^^^
+/kt78942.kt:12:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+        ^^^^^^^^^^
+/kt78942.kt:12:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+                ^^
+/kt78942.kt:16:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+        ^^^^^^^^^^
+/kt78942.kt:16:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+                ^^
+/kt78942.kt:20:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+        ^^^^^^^^^^
+/kt78942.kt:24:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it
+        ^^^^^^^^^^
+/kt78942.kt:28:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it
+        ^^^^^^^^^^
+/kt78942.kt:28:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it
+                ^^
+/kt78942.kt:32:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+        ^^^^^^^^^^^^^^^^^^^^^
+/kt78942.kt:32:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+                ^^^^^^^^^^^^^
+/kt78942.kt:35:32: error: type mismatch: inferred type is () -> String but String was expected
+    val barDifferent: String = fooDifferent { it: Int ->
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^
+/kt78942.kt:36:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+        ^^^^^^^^^^^^^^^^^^^^^
+/kt78942.kt:36:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+                ^^^^^^^^^^^^^
+

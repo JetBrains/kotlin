@@ -24,7 +24,6 @@ fun <T : Iterable<*>> test(iterable: T): String {
 // 0 component1
 // 0 component2
 
-// JVM_IR_TEMPLATES
 // 3 ILOAD
 // 3 ISTORE
 // 1 IADD

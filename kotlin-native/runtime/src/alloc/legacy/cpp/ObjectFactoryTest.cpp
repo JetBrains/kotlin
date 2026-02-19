@@ -6,7 +6,9 @@
 #include "ObjectFactory.hpp"
 
 #include <atomic>
+#include <cstdlib>
 #include <type_traits>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -15,11 +17,9 @@
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
-#include "std_support/CStdlib.hpp"
-#include "std_support/Vector.hpp"
 
 // ObjectFactory is not used by custom allocator
 using namespace kotlin;
@@ -30,8 +30,8 @@ namespace {
 
 class SimpleAllocator {
 public:
-    void* Alloc(size_t size) noexcept { return std_support::calloc(1, size); }
-    static void Free(void* instance, size_t size) noexcept { std_support::free(instance); }
+    void* Alloc(size_t size) noexcept { return std::calloc(1, size); }
+    static void Free(void* instance, size_t size) noexcept { std::free(instance); }
 };
 
 struct DataSizeProvider {
@@ -50,8 +50,8 @@ template <typename Storage>
 using Consumer = typename Storage::Consumer;
 
 template <size_t DataAlignment>
-std_support::vector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
-    std_support::vector<void*> result;
+std::vector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
+    std::vector<void*> result;
     for (auto& node : storage.LockForIter()) {
         result.push_back(node.Data());
     }
@@ -59,8 +59,8 @@ std_support::vector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage)
 }
 
 template <typename T, size_t DataAlignment>
-std_support::vector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
-    std_support::vector<T> result;
+std::vector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
+    std::vector<T> result;
     for (auto& node : storage.LockForIter()) {
         result.push_back(*reinterpret_cast<T*>(node.Data()));
     }
@@ -68,8 +68,8 @@ std_support::vector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
 }
 
 template <typename T, size_t DataAlignment>
-std_support::vector<T> Collect(Consumer<ObjectFactoryStorage<DataAlignment>>& consumer) {
-    std_support::vector<T> result;
+std::vector<T> Collect(Consumer<ObjectFactoryStorage<DataAlignment>>& consumer) {
+    std::vector<T> result;
     for (auto& node : consumer) {
         result.push_back(*reinterpret_cast<T*>(node.Data()));
     }
@@ -489,6 +489,40 @@ TEST(ObjectFactoryStorageTest, MoveAll) {
     EXPECT_THAT(consumer.size(), 3);
 }
 
+TEST(ObjectFactoryStorageTest, Pop) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.LockForIter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
+        }
+    }
+
+    std::vector<int> popped;
+    while (auto element = consumer.Pop()) {
+        popped.push_back(element->Data<int>());
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::IsEmpty());
+    EXPECT_THAT(actualConsumer, testing::IsEmpty());
+    EXPECT_THAT(popped, testing::ElementsAre(1, 2, 3));
+    EXPECT_THAT(storage.GetSizeUnsafe(), 0);
+    EXPECT_THAT(producer.size(), 0);
+    EXPECT_THAT(consumer.size(), 0);
+}
+
 TEST(ObjectFactoryStorageTest, MergeWith) {
     ObjectFactoryStorageRegular storage;
     Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
@@ -641,8 +675,8 @@ TEST(ObjectFactoryStorageTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std_support::vector<ScopedThread> threads;
-    std_support::vector<int> expected;
+    std::vector<ScopedThread> threads;
+    std::vector<int> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
@@ -672,8 +706,8 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    std_support::vector<int> expectedBefore;
-    std_support::vector<int> expectedAfter;
+    std::vector<int> expectedBefore;
+    std::vector<int> expectedAfter;
     Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_back(i);
@@ -685,7 +719,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -700,7 +734,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
         });
     }
 
-    std_support::vector<int> actualBefore;
+    std::vector<int> actualBefore;
     {
         auto iter = storage.LockForIter();
         while (readyCount < kThreadCount) {
@@ -730,7 +764,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    std_support::vector<int> expectedAfter;
+    std::vector<int> expectedAfter;
     Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
     for (int i = 0; i < kStartCount; ++i) {
         if (i % 2 == 0) {
@@ -743,7 +777,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -793,9 +827,9 @@ public:
     MOCK_METHOD(void*, Alloc, (size_t));
     MOCK_METHOD(void, Free, (void*, size_t));
 
-    void* DefaultAlloc(size_t size) { return std_support::calloc(1, size); }
+    void* DefaultAlloc(size_t size) { return std::calloc(1, size); }
 
-    void DefaultFree(void* instance, size_t size) { std_support::free(instance); }
+    void DefaultFree(void* instance, size_t size) { std::free(instance); }
 };
 
 class GlobalMockAllocator {
@@ -851,8 +885,8 @@ public:
 using ObjectFactory = alloc::ObjectFactory<ObjectFactoryTraits>;
 
 struct Payload {
-    ObjHeader* field1;
-    ObjHeader* field2;
+    mm::RefField field1;
+    mm::RefField field2;
 
     static constexpr std::array kFields{
             &Payload::field1,
@@ -1067,7 +1101,7 @@ TEST(ObjectFactoryTest, RunFinalizers) {
     ObjectFactory::ThreadQueue threadQueue(objectFactory, GlobalMockAllocator());
     ObjectFactory::FinalizerQueue finalizerQueue;
 
-    std_support::vector<ObjHeader*> objects;
+    std::vector<ObjHeader*> objects;
     EXPECT_CALL(allocator, Alloc(_)).Times(10);
     for (int i = 0; i < 10; ++i) {
         objects.push_back(threadQueue.CreateObject(objectType.typeInfo()));
@@ -1100,9 +1134,9 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     std::mutex expectedMutex;
-    std_support::vector<ObjHeader*> expected;
+    std::vector<ObjHeader*> expected;
 
     EXPECT_CALL(allocator, Alloc(_)).Times(kThreadCount);
     for (int i = 0; i < kThreadCount; ++i) {
@@ -1127,7 +1161,7 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     threads.clear();
 
     auto iter = objectFactory.LockForIter();
-    std_support::vector<ObjHeader*> actual;
+    std::vector<ObjHeader*> actual;
     for (auto it = iter.begin(); it != iter.end(); ++it) {
         actual.push_back(it->GetObjHeader());
     }

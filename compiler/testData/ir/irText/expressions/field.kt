@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 var testSimple: Int = 0
     set(value) {
         field = value

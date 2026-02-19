@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -61,3 +62,6 @@ public @interface J5 {
     int x() default 239;
     String y() default "OK";
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, integerLiteral, javaType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */

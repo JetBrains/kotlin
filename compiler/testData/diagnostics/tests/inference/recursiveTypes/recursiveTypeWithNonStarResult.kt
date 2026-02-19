@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface A<T: A<T>>
 interface C<T> : A<C<T>>
@@ -11,3 +12,6 @@ fun test(c: C<String>, d: D<String>) {
     val v = select(c, d)
     <!DEBUG_INFO_EXPRESSION_TYPE("A<C<kotlin.String>>")!>v<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, localProperty, nullableType, propertyDeclaration,
+typeConstraint, typeParameter, vararg */

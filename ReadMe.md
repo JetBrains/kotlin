@@ -2,12 +2,12 @@
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_KotlinPublic_Compiler.svg)](https://teamcity.jetbrains.com/buildConfiguration/Kotlin_KotlinPublic_Compiler?branch=%3Cdefault%3E&buildTypeTab=overview&mode=builds)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
+[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
 
 # Kotlin Programming Language
 
 Welcome to [Kotlin](https://kotlinlang.org/)!   
-It is an open-source, statically typed programming language supported and developed by [JetBrains](https://www.jetbrains.com/) and open-source contributors.
+Kotlin is a concise multiplatform language developed by [JetBrains](https://www.jetbrains.com/) and [contributors](https://kotlinlang.org/docs/contribute.html).
 
 Some handy links:
 
@@ -23,13 +23,14 @@ Some handy links:
  * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
  * [Public Slack channel](https://slack.kotlinlang.org/)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
+ * [Kotlin Foundation](https://kotlinfoundation.org/)
 
 ## Kotlin Multiplatform capabilities
 
 Support for multiplatform programming is one of Kotlin’s key benefits. It reduces time spent writing and maintaining the same code for [different platforms](https://kotlinlang.org/docs/reference/mpp-supported-platforms.html) while retaining the flexibility and benefits of native programming.
 
- * [Kotlin Multiplatform Mobile](https://kotlinlang.org/lp/mobile/) for sharing code between Android and iOS
- * [Getting Started with Kotlin Multiplatform Mobile Guide](https://kotlinlang.org/docs/mobile/create-first-app.html)
+ * [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) and [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) for sharing business logic and UI between Android, iOS, desktop, and web.
+ * [Get started with Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
  * [Kotlin Multiplatform Benefits](https://kotlinlang.org/docs/reference/multiplatform.html)
  * [Share code on all platforms](https://kotlinlang.org/docs/reference/mpp-share-on-platforms.html#share-code-on-all-platforms)
  * [Share code on similar platforms](https://kotlinlang.org/docs/reference/mpp-share-on-platforms.html#share-code-on-similar-platforms)
@@ -43,30 +44,12 @@ Support for multiplatform programming is one of Kotlin’s key benefits. It redu
 ## Build environment requirements
 
 This repository is using [Gradle toolchains](https://docs.gradle.org/current/userguide/toolchains.html) feature
-to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project. 
-
-Unfortunately [AdoptOpenJdk](https://adoptopenjdk.net) project does not provide required JDK 1.6 and 1.7 images,
-so you could either download them manually and provide path to installation via `JDK_1_6` and `JDK_1_7` environment variables or
-use following SDK managers:
-- [Asdf-vm](https://asdf-vm.com/)
-- [Jabba](https://github.com/shyiko/jabba)
-- [SDKMAN!](https://sdkman.io/)
+to select and auto-provision required JDKs from [Eclipse Adoptium](https://adoptium.net) project.
 
 Alternatively, it is still possible to only provide required JDKs via environment variables 
 (see [gradle.properties](./gradle.properties#L5) for supported variable names). To ensure Gradle uses only JDKs 
 from environmental variables - disable Gradle toolchain auto-detection by passing `-Porg.gradle.java.installations.auto-detect=false` option
 (or put it into `$GRADLE_USER_HOME/gradle.properties`).
-
-For local development, if you're not working on the standard library, it's OK to avoid installing JDK 1.6 and JDK 1.7.
-Add `kotlin.build.isObsoleteJdkOverrideEnabled=true` to the `local.properties` file, so build will only use JDK 1.8+. Note, that in this
-case, build will have Gradle remote build cache misses for some tasks. 
-
-Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
-
-```bash
-$ brew tap homebrew/cask-versions
-$ brew install --cask java6
-```
 
 On Windows you might need to add long paths setting to the repo:
 
@@ -83,7 +66,7 @@ or the following command on Windows:
 
     gradlew <tasks-and-options>
 
-On the first project configuration gradle will download and setup the dependencies on
+On the first project configuration gradle will download and setup the dependencies on:
 
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
@@ -117,8 +100,7 @@ It is recommended to use the latest released version of Intellij IDEA (Community
 
 After cloning the project, import the project in IntelliJ by choosing the project directory in the Open project dialog.
 
-For handy work with compiler tests it's recommended to use [
-Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin)
+For handy work with compiler tests it's recommended to use [Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin).
 
 ### Dependency verification
 
@@ -140,29 +122,30 @@ sed -i -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
 - Re-generate dependencies with Gradle's `--write-verification-metadata` command (verify update relates to your changes)
 
 ```bash
-./gradlew -i --write-verification-metadata sha256,md5 -Pkotlin.native.enabled=true resolveDependencies
+./gradlew --write-verification-metadata sha256,md5 -Pkotlin.native.enabled=true resolveDependencies
 ```
 
-*`resolveDependencies` task resolves dependencies for all platforms including dependencies downloaded by plugins*
+*`resolveDependencies` task resolves dependencies for all platforms including dependencies downloaded by plugins.*
 
-- If you’re adding a dependency with OS mentioning in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add them to 
+You can also use `./scripts/update-verification-metadata.sh` script which includes both of these steps
+
+Keep in mind:
+
+- If you’re adding a dependency with OS mentioned in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add them to 
   `implicitDependencies` configuration or update `resolveDependencies` task if needed. `resolveDependencies` should resolve all dependencies
   including dependencies for different platforms.
+- If you have a `local.properties` file in your Kotlin project folder, make sure that it doesn't contain `kotlin.native.enabled=false`.
+  Otherwise, native-only dependencies may not be added to the verification metadata. This is because `local.properties` has higher 
+  precedence than the `-Pkotlin.native.enabled=true` specified in the Gradle command.
 
-## Using -dev and -SNAPSHOT versions
+## Using -dev versions
 
-We publish `-dev` and `-SNAPSHOT` versions frequently.
+We publish `-dev` versions frequently.
 
-For `-dev` versions you can use the [list of available versions](https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
-
-```kotlin
-maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
-```
-
-For `-SNAPSHOT` versions that are updated daily, you can use the [list of available versions](https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
+For `-dev` versions you can use the [list of available versions](https://redirector.kotlinlang.org/maven/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
 
 ```kotlin
-maven("https://oss.sonatype.org/content/repositories/snapshots/")
+maven("https://redirector.kotlinlang.org/maven/bootstrap")
 ```
 
 # License
@@ -171,3 +154,7 @@ Kotlin is distributed under the terms of the Apache License (Version 2.0). See [
 # Contributing
 
 Please be sure to review Kotlin's [contributing guidelines](docs/contributing.md) to learn how to help the project.
+
+# Kotlin Foundation
+
+The Kotlin Foundation is a non-profit organization whose mission is to promote and advance the Kotlin ecosystem. You can learn more about the structure and goals of the Kotlin Foundation on its [official website](https://kotlinfoundation.org/).

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.utils.COMMONIZER_OBJC_INTEROP_CALLABLE_ANNOTATION_ID
 import org.jetbrains.kotlin.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
@@ -20,16 +21,50 @@ object AnnotationsCommonizer : AssociativeCommonizer<List<CirAnnotation>> {
         val firstAnnotations = first.associateBy { it.type.classifierId }
         val secondAnnotations = second.associateBy { it.type.classifierId }
 
-        return setOfNotNull(
-            commonizedObjcCallableAnnotation(first, second),
-            commonizedDeprecatedAnnotation(firstAnnotations, secondAnnotations)
-        ).plus(commonizedSimpleAnnotations(firstAnnotations, secondAnnotations)).toList()
+        return buildList {
+            addAll(commonizedObjcCallableAnnotation(first, second))
+            commonizedDeprecatedAnnotation(firstAnnotations, secondAnnotations)?.let { add(it) }
+            addAll(commonizedSimpleAnnotations(firstAnnotations, secondAnnotations))
+        }.distinct()
     }
 
-    private fun commonizedObjcCallableAnnotation(first: List<CirAnnotation>, second: List<CirAnnotation>): CirAnnotation? {
-        return if (first.any { it.type.classifierId.isObjCInteropCallableAnnotation } &&
-            second.any { it.type.classifierId.isObjCInteropCallableAnnotation }
-        ) objCCallableAnnotation else null
+    private fun commonizedObjcCallableAnnotation(firstAnnotations: List<CirAnnotation>, secondAnnotations: List<CirAnnotation>): List<CirAnnotation> {
+        val firstObjCCallable = firstAnnotations.filter { it.type.classifierId.isObjCInteropCallableAnnotation }
+        val secondObjCCallable = secondAnnotations.filter { it.type.classifierId.isObjCInteropCallableAnnotation }
+        return buildList {
+            if (firstObjCCallable.isNotEmpty() && secondObjCCallable.isNotEmpty()) {
+                add(objCCallableAnnotation)
+                firstObjCCallable.forEach { first ->
+                    secondObjCCallable.forEach loop@{ second ->
+                        if (first.type.classifierId == second.type.classifierId) {
+                            val annotation = CirAnnotation.createInterned(
+                                CirClassType.createInterned(
+                                    classId = first.type.classifierId,
+                                    outerType = null, arguments = emptyList(), isMarkedNullable = false
+                                ),
+                                buildMap {
+                                    for ((key, value) in first.constantValueArguments) {
+                                        if (second.constantValueArguments[key] == value) {
+                                            put(key, value)
+                                            continue
+                                        }
+                                        when (key.name) {
+                                            "selector", "initSelector" -> return@loop
+                                            "encoding" -> put(key, CirConstantValue.StringValue(""))
+                                            "designated" -> put(key, CirConstantValue.BooleanValue(false))
+                                            "isStret" -> {}
+                                            else -> error("No default is known for $key")
+                                        }
+                                    }
+                                },
+                                emptyMap()
+                            )
+                            add(annotation)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun commonizedSimpleAnnotations(first: Annotations, second: Annotations): List<CirAnnotation> {

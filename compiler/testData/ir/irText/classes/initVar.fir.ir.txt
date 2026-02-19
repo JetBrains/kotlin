@@ -1,0 +1,157 @@
+FILE fqName:<root> fileName:/initVar.kt
+  CLASS CLASS name:TestInitVarFromParameter modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestInitVarFromParameter
+    PROPERTY name:x visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          GET_VAR 'x: kotlin.Int declared in <root>.TestInitVarFromParameter.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarFromParameter
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitVarFromParameter'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestInitVarFromParameter declared in <root>.TestInitVarFromParameter.<get-x>' type=<root>.TestInitVarFromParameter origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarFromParameter
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.TestInitVarFromParameter declared in <root>.TestInitVarFromParameter.<set-x>' type=<root>.TestInitVarFromParameter origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestInitVarFromParameter.<set-x>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.TestInitVarFromParameter [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInitVarFromParameter modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:TestInitVarInClass modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestInitVarInClass
+    PROPERTY name:x visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInClass
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitVarInClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestInitVarInClass declared in <root>.TestInitVarInClass.<get-x>' type=<root>.TestInitVarInClass origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInClass
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.TestInitVarInClass declared in <root>.TestInitVarInClass.<set-x>' type=<root>.TestInitVarInClass origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestInitVarInClass.<set-x>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.TestInitVarInClass [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInitVarInClass modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:TestInitVarInInitBlock modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestInitVarInInitBlock
+    PROPERTY name:x visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInInitBlock
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitVarInInitBlock'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock.<get-x>' type=<root>.TestInitVarInInitBlock origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInInitBlock
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock.<set-x>' type=<root>.TestInitVarInInitBlock origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestInitVarInInitBlock.<set-x>' type=kotlin.Int origin=null
+    ANONYMOUS_INITIALIZER isStatic=false
+      BLOCK_BODY
+        CALL 'public final fun <set-x> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.TestInitVarInInitBlock' type=kotlin.Unit origin=EQ
+          ARG <this>: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock' type=<root>.TestInitVarInInitBlock origin=IMPLICIT_ARGUMENT
+          ARG <set-?>: CONST Int type=kotlin.Int value=0
+    CONSTRUCTOR visibility:public returnType:<root>.TestInitVarInInitBlock [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInitVarInInitBlock modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:TestInitVarWithCustomSetter modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestInitVarWithCustomSetter
+    PROPERTY name:x visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarWithCustomSetter
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitVarWithCustomSetter'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestInitVarWithCustomSetter declared in <root>.TestInitVarWithCustomSetter.<get-x>' type=<root>.TestInitVarWithCustomSetter origin=null
+      FUN name:<set-x> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarWithCustomSetter
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
+            receiver: GET_VAR '<this>: <root>.TestInitVarWithCustomSetter declared in <root>.TestInitVarWithCustomSetter.<set-x>' type=<root>.TestInitVarWithCustomSetter origin=IMPLICIT_ARGUMENT
+            value: GET_VAR 'value: kotlin.Int declared in <root>.TestInitVarWithCustomSetter.<set-x>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.TestInitVarWithCustomSetter [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInitVarWithCustomSetter modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any

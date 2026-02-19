@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-38400
 
 interface IWithToString {
@@ -15,3 +16,6 @@ class A : IWithToString, B() {
     override fun foo(): String = super.foo() // resolve to B.foo()
     override fun bar(): String = super.<!ABSTRACT_SUPER_CALL!>bar<!>() // should be an error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral,
+superExpression */

@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
@@ -47,19 +45,20 @@ fun generateTemporaryVariable(
     name: Name,
     initializer: FirExpression,
     typeRef: FirTypeRef? = null,
-    extractedAnnotations: Collection<FirAnnotation>? = null
+    extractedAnnotations: Collection<FirAnnotation>? = null,
+    origin: FirDeclarationOrigin? = null
 ): FirProperty =
     buildProperty {
         this.source = source
         this.moduleData = moduleData
-        origin = FirDeclarationOrigin.Source
+        this.origin = origin ?: FirDeclarationOrigin.Source
         returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
-        symbol = FirPropertySymbol(name)
+        symbol = FirLocalPropertySymbol()
         isVar = false
-        isLocal = true
         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+        isLocal = true
         if (extractedAnnotations != null) {
             // LT extracts annotations ahead.
             // PSI extracts annotations on demand. Use a similar util in [PsiConversionUtils]
@@ -78,25 +77,20 @@ fun generateExplicitReceiverTemporaryVariable(
             // Exceptions: ResolvedQualifiers, ThisReceivers, and SuperReference as they can't have side effects when called.
             it !is FirResolvedQualifier
                     && it !is FirThisReceiverExpression
-                    && !(it is FirQualifiedAccessExpression && it.calleeReference is FirSuperReference)
+                    && it !is FirSuperReceiverExpression
         }
         ?.let { receiver ->
             // val <receiver> = x
+            @OptIn(UnresolvedExpressionTypeAccess::class)
             generateTemporaryVariable(
                 moduleData = session.moduleData,
                 source = source,
                 name = SpecialNames.RECEIVER,
                 initializer = receiver,
-                typeRef = receiver.coneTypeOrNull?.let {
-                    buildResolvedTypeRef {
-                        type = it
-                        this.source = source
-                    }
-                }
+                typeRef = receiver.coneTypeOrNull?.toFirResolvedTypeRef(source)
             ).also { property ->
                 // Change the expression from x.a to <receiver>.a
-                val newReceiverAccess =
-                    property.toQualifiedAccess(fakeSource = receiver.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement))
+                val newReceiverAccess = property.toQualifiedAccess(fakeSource = receiver.source)
 
                 if (expression.explicitReceiver == expression.dispatchReceiver) {
                     expression.replaceDispatchReceiver(newReceiverAccess)

@@ -1,3 +1,4 @@
+// JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
 // FILE: javaDefaultInterfaceMember.kt
 interface KFoo2 : JIFoo

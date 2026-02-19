@@ -1,322 +1,418 @@
+import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.jvm.toolchain.internal.NoToolchainAvailableException
-import org.jetbrains.kotlin.pill.PillExtension
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import java.nio.file.Paths
 
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("jps-compatible")
-}
-
-pill {
-    variant = PillExtension.Variant.FULL
+    id("android-sdk-provisioner")
+    id("gradle-plugin-published-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
 }
 
 testsJar()
 
-kotlin.sourceSets.all {
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        optIn.addAll(
+            "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
+            "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+            "kotlin.io.path.ExperimentalPathApi",
+        )
+        freeCompilerArgs.addAll(
+            // Avoid having to use JvmSerializableLambda in build script injections
+            "-Xlambdas=class",
+            "-Xmulti-dollar-interpolation",
+        )
+    }
+}
+
+tasks.withType(AbstractKotlinCompile::class.java).configureEach {
+    friendPaths.from(
+        configurations.testCompileClasspath.map { configuration ->
+            configuration.incoming.artifacts.artifacts.filter { artifact ->
+                (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin" ||
+                        (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":gradle:kotlin-gradle-ecosystem-plugin"
+            }.also { assert(it.isNotEmpty()) }.map { artifact ->
+                artifact.file
+            }
+        }
+    )
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
+val configurationToBeConsumedInTests: MutableMap<String, Configuration> = mutableMapOf()
+
+fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: String) {
+    configurationToBeConsumedInTests[name] = configurations.detachedConfiguration(
+        dependencies.create(dependencies.project(dependencyProject))
+    ).also { it.isTransitive = false }
+}
+
+createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
+createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
+
 dependencies {
-    testImplementation(project(":kotlin-gradle-plugin")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
-        }
+    testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
+        (this as ModuleDependency).isTransitive = false
     }
-    testImplementation(project(":kotlin-allopen")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-allopen-common")
-        }
-    }
-    testImplementation(project(":kotlin-noarg")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-noarg-common")
-        }
-    }
-    testImplementation(project(":kotlin-lombok")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-lombok-common")
-        }
-    }
-    testImplementation(project(":kotlin-sam-with-receiver")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
-        }
-    }
-    testImplementation(project(":kotlin-assignment")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-assignment-common")
-        }
-    }
-    testImplementation(project(":atomicfu")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:atomicfu-common")
-        }
-    }
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(project(":kotlin-gradle-plugin"))
+    testImplementation(project(":kotlin-allopen"))
+    testImplementation(project(":kotlin-noarg"))
+    testImplementation(project(":kotlin-power-assert"))
+    testImplementation(project(":kotlin-sam-with-receiver"))
+    testImplementation(project(":kotlin-assignment"))
+    testImplementation(project(":atomicfu"))
 
     testImplementation(project(":kotlin-gradle-compiler-types"))
     testImplementation(project(":kotlin-gradle-plugin-idea"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+    testImplementation(project(":gradle:kotlin-gradle-ecosystem-plugin"))
+    testImplementation(project(":kotlin-gradle-statistics"))
 
-    testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(project(":kotlin-gradle-build-metrics"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
-    testImplementation(project(":kotlin-test:kotlin-test-jvm"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(project(":kotlin-util-klib"))
 
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
-    testImplementation(project(":kotlin-compiler-embeddable"))
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
-    testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    testImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+    testRuntimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
+    testImplementation(project(":kotlin-compiler-embeddable"))
+    testImplementation(intellijJDom())
+    testImplementation(intellijPlatformUtil())
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))
     testRuntimeOnly(project(":kotlin-gradle-plugin-test-utils-embeddable")) { isTransitive = false }
 
+    configurationToBeConsumedInTests.values.forEach {
+        it.dependencies.all {
+            testCompileOnly(this) { (this as ModuleDependency).isTransitive = false }
+        }
+    }
+
+    // AGP classes for buildScriptInjection's
+    testImplementation(libs.android.gradle.plugin.gradle.api) {
+        overrideTargetJvmVersion(11)
+        isTransitive = false
+    }
+    testImplementation(libs.android.gradle.plugin.gradle) {
+        overrideTargetJvmVersion(11)
+        isTransitive = false
+    }
+    testImplementation(libs.android.gradle.plugin.builder.model) {
+        overrideTargetJvmVersion(11)
+        isTransitive = false
+    }
+
     testImplementation(project(path = ":examples:annotation-processor-example"))
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(project(":kotlin-parcelize-compiler"))
-    testImplementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
+    testImplementation(libs.kotlinx.serialization.json)
     testImplementation(libs.ktor.client.cio)
-    testImplementation(libs.ktor.client.mock)
     testImplementation(libs.ktor.server.core)
-    testImplementation(libs.ktor.server.netty)
-    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.ktor.server.cio)
 
     testImplementation(gradleApi())
+    testImplementation(gradleKotlinDsl())
     testImplementation(gradleTestKit())
     testImplementation(commonDependency("com.google.code.gson:gson"))
-    testApiJUnit5(vintageEngine = true, jupiterParams = true)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.oshi.core)
 
-    testRuntimeOnly(project(":compiler:tests-mutes"))
+    testImplementation(project(":compiler:tests-mutes:mutes-junit5"))
 
-    // Workaround for missing transitive import of the common(project `kotlin-test-common`
-    // for `kotlin-test-jvm` into the IDE:
-    testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
-    testCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    testCompileOnly(libs.intellij.asm)
+
+    testImplementation(project(":compose-compiler-gradle-plugin"))
 }
 
-// Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
-val shortenTempRootName = project.providers.systemProperty("os.name").get().contains("Windows")
-
-val splitGradleIntegrationTestTasks =
-    project.providers.gradleProperty("gradle.integration.tests.split.tasks").orNull?.toBoolean()
-        ?: project.kotlinBuildProperties.isTeamcityBuild
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.io.path.ExperimentalPathApi"
-}
-
-val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
+tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
     description = "Deletes temporary Gradle TestKit cache"
 
-    delete(project.buildDir.resolve("testKitCache"))
+    delete(layout.buildDirectory.dir("testKitCache"))
+    delete(layout.buildDirectory.dir("kgpTestInfra"))
 }
 
-fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
-    addAll(listOf("*Multiplatform*", "*Mpp*", "*Android*"))
-}
+val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
+    description = "Only runs on CI. " +
+            "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
 
-fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
-    addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*"))
-}
+    val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
+    onlyIf("Build is running on TeamCity") { isTeamCityBuild.get() }
 
-fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
-    if (splitGradleIntegrationTestTasks) {
-        val filter = if (include)
-            filter.includePatterns
-        else
-            filter.excludePatterns
-        filter.patterns()
+    val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
+    delete(userHomeKonanDir)
+
+    doLast {
+        logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
     }
 }
 
-fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "8.1.1"
-    systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
-}
+fun Test.applyKotlinNativeConfiguration() {
+    // This directory is used as a shared konan cache across IT runs
+    systemProperty(
+        "konanDataDirForIntegrationTests",
+        project.rootDir
+            .resolve(".kotlin")
+            .resolve("konan-for-gradle-tests").absolutePath
+    )
 
-// additional configuration in tasks.withType<Test> below
-projectTest(
-    "test",
-    shortenTempRootName = shortenTempRootName,
-    jUnitMode = JUnitMode.JUnit5
-) {
-    includeMppAndAndroid(false)
-    includeNative(false)
-}
-
-projectTest(
-    "testAdvanceGradleVersion",
-    shortenTempRootName = shortenTempRootName,
-    jUnitMode = JUnitMode.JUnit5
-) {
-    advanceGradleVersion()
-    includeMppAndAndroid(false)
-    includeNative(false)
-}
-
-if (splitGradleIntegrationTestTasks) {
-    projectTest(
-        "testNative",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        includeNative(true)
+    // Install K/N into Maven Local for local test runs with enabled K/N
+    if (project.kotlinBuildProperties.isKotlinNativeEnabled.get() && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
+        dependsOn(":kotlin-native:install")
+        // This is the version that K/N bundle is assumed to be published with
+        systemProperties["kotlinNativeVersion"] = project.kotlinBuildProperties.defaultSnapshotVersion.orNull
     }
 
-    projectTest(
-        "testAdvanceGradleVersionNative",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        advanceGradleVersion()
-        includeNative(true)
-    }
-
-    projectTest(
-        "testMppAndAndroid",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        includeMppAndAndroid(true)
-    }
-
-    projectTest(
-        "testAdvanceGradleVersionMppAndAndroid",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        advanceGradleVersion()
-        includeMppAndAndroid(true)
+    val kotlinNativeVersionForTestRuns = project.kotlinBuildProperties.stringProperty("kotlinNativeVersionForGradleIT").orNull
+    // FIXME: Remove reading system property once the TC build script starts passing the gradle property
+        ?: System.getProperty("kotlinNativeVersionForGradleIT")
+    // This version is passed by TC build for runs with snapshot KN
+    kotlinNativeVersionForTestRuns?.let {
+        systemProperty("kotlinNativeVersion", it)
     }
 }
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
+
+// Disabling test task as it does nothing
+tasks.test {
+    enabled = false
+    group = null
+    description = "Disabled - use KGP specific tasks in the '$KGP_TEST_TASKS_GROUP' group instead."
+}
+
 val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
 
-val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
+// Must be in sync with TestVersions.kt KTI-1612
+val gradleVersions = listOf(
+    "7.4.2", // check org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion
+    "7.6.3",
+    "8.0.2",
+    "8.1.1",
+    "8.2.1",
+    "8.3",
+    "8.4",
+    "8.5",
+    "8.6",
+    "8.7",
+    "8.8",
+    "8.9",
+    "8.10.2",
+    "8.11.1",
+    "8.12.1",
+    "8.13",
+    "8.14",
+    "9.0.0",
+    "9.1.0",
+    "9.2.1",
+    "9.3.0",
+)
+
+// Keep in sync with testTags.kt
+enum class JunitTag {
+    JvmKGP,
+    DaemonsKGP,
+    JsKGP,
+    NativeKGP,
+    MppKGP,
+    AndroidKGP,
+    OtherKGP,
+    SwiftExportKGP,
+    SwiftPMImportKGP
+}
+
+if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
+    val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
+    val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
+
+    junitTags.forEach { junitTag ->
+        val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
+        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
+            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+                group = gradleVersionTaskGroup
+                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                maxParallelForks = maxParallelTestForks
+
+                classpath = sourceSets["test"].runtimeClasspath
+                testClassesDirs = sourceSets["test"].output.classesDirs
+                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+
+                useJUnitPlatform {
+                    includeTags(junitTag)
+                    excludeTags(*(junitTags - junitTag).toTypedArray())
+                }
+            }
+        }
+
+        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+            group = gradleVersionTaskGroup
+            dependsOn(tasksByGradleVersion)
+        }
+    }
+}
+
+tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
-
     maxParallelForks = maxParallelTestForks
 
+    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["test"].output.classesDirs
     useJUnitPlatform {
-        excludeTags("DaemonsKGP")
-        includeEngines("junit-jupiter")
+        excludeTags(JunitTag.DaemonsKGP.name)
     }
 }
 
-val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run tests for Kotlin/JVM part of Gradle plugin"
-    maxParallelForks = maxParallelTestForks
-    useJUnitPlatform {
-        includeTags("JvmKGP")
-        excludeTags("JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
-        includeEngines("junit-jupiter")
+class TaskConfiguration(
+    val description: String,
+    val taskName: String,
+    val junitTag: JunitTag,
+    val maxParallelForks: Int,
+)
+
+fun JunitTag.taskConfiguration(
+    description: String,
+    taskName: String,
+    maxParallelForks: Int = maxParallelTestForks,
+) = TaskConfiguration(description, taskName, this, maxParallelForks)
+
+val perTagJunitTasks = JunitTag.values().map { junitTag ->
+    when (junitTag) {
+        JunitTag.JvmKGP -> junitTag.taskConfiguration(
+            "Run tests for Kotlin/JVM part of Gradle plugin",
+            "kgpJvmTests",
+        )
+        JunitTag.SwiftExportKGP -> junitTag.taskConfiguration(
+            "Run Swift Export Kotlin Gradle plugin tests",
+            "kgpSwiftExportTests",
+        )
+        JunitTag.SwiftPMImportKGP -> junitTag.taskConfiguration(
+            "Run SwiftPM import Kotlin Gradle plugin tests",
+            "kgpSwiftPMImportTests",
+        )
+        JunitTag.JsKGP -> junitTag.taskConfiguration(
+            "Run tests for Kotlin/JS part of Gradle plugin",
+            "kgpJsTests",
+        )
+        JunitTag.NativeKGP -> junitTag.taskConfiguration(
+            "Run tests for Kotlin/Native part of Gradle plugin",
+            "kgpNativeTests",
+        )
+        JunitTag.MppKGP -> junitTag.taskConfiguration(
+            "Run Multiplatform Kotlin Gradle plugin tests",
+            "kgpMppTests",
+        )
+        JunitTag.AndroidKGP -> junitTag.taskConfiguration(
+            "Run Android Kotlin Gradle plugin tests",
+            "kgpAndroidTests",
+        )
+        JunitTag.OtherKGP -> junitTag.taskConfiguration(
+            "Run tests for all support plugins, such as kapt, allopen, etc",
+            "kgpOtherTests",
+        )
+        JunitTag.DaemonsKGP -> junitTag.taskConfiguration(
+            "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin",
+            "kgpDaemonTests",
+            maxParallelForks = 1,
+        )
     }
-}
+}.map { junitTask ->
+    tasks.register<Test>(junitTask.taskName) {
+        group = KGP_TEST_TASKS_GROUP
+        description = junitTask.description
+        maxParallelForks = junitTask.maxParallelForks
 
-val jsTestsTask = tasks.register<Test>("kgpJsTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run tests for Kotlin/JS part of Gradle plugin"
-    maxParallelForks = maxParallelTestForks
-    useJUnitPlatform {
-        includeTags("JsKGP")
-        excludeTags("JvmKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
-        includeEngines("junit-jupiter")
-    }
-}
-
-val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run tests for Kotlin/Native part of Gradle plugin"
-    maxParallelForks = maxParallelTestForks
-    useJUnitPlatform {
-        includeTags("NativeKGP")
-        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
-        includeEngines("junit-jupiter")
-    }
-}
-
-// Daemon tests could run only sequentially as they could not be shared between parallel test builds
-val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin"
-    maxParallelForks = 1
-
-    useJUnitPlatform {
-        includeTags("DaemonsKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "OtherKGP", "MppKGP", "AndroidKGP")
-        includeEngines("junit-jupiter")
-    }
-}
-
-val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run tests for all support plugins, such as kapt, allopen, etc"
-    maxParallelForks = maxParallelTestForks
-    useJUnitPlatform {
-        includeTags("OtherKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP")
-        includeEngines("junit-jupiter")
-    }
-}
-
-val mppTestsTask = tasks.register<Test>("kgpMppTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run Multiplatform Kotlin Gradle plugin tests"
-    maxParallelForks = maxParallelTestForks
-    useJUnitPlatform {
-        includeTags("MppKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP")
-        includeEngines("junit-jupiter")
-    }
-}
-
-val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run Android Kotlin Gradle plugin tests"
-    maxParallelForks = maxParallelTestForks
-    useJUnitPlatform {
-        includeTags("AndroidKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP")
-        includeEngines("junit-jupiter")
+        useJUnitPlatform {
+            includeTags(junitTask.junitTag.name)
+            excludeTags(*JunitTag.values().filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
+        }
     }
 }
 
 tasks.named<Task>("check") {
-    dependsOn("testAdvanceGradleVersion")
-    dependsOn(jvmTestsTask, jsTestsTask, nativeTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
-    if (splitGradleIntegrationTestTasks) {
-        dependsOn("testAdvanceGradleVersionMppAndAndroid")
-        dependsOn("testMppAndAndroid")
-        dependsOn("testNative")
-        dependsOn("testAdvanceGradleVersionNative")
+    dependsOn(perTagJunitTasks)
+}
+
+/**
+ * The JVM toolchain is configured to version 17.
+ * However, that breaks buildscript injection for tests that are ran on JDK 8.
+ * Such setup allows to use new Java API in the test infrastructure.
+ */
+fun configureJvmTarget8() {
+    tasks.compileTestJava {
+        sourceCompatibility = "8"
+        targetCompatibility = "8"
+    }
+
+    tasks.compileTestKotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_1_8
+        }
     }
 }
 
-tasks.withType<Test> {
+configureJvmTarget8()
+
+val kgpTestingUtilities = configurations.detachedConfiguration(
+    dependencies.create(dependencies.testFixtures(dependencies.project(":kotlin-gradle-plugin")))
+).also {
+    // We don't want to influence target build script's classpath; only take the test fixtures jar
+    it.isTransitive = false
+}
+
+tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
+    applyKotlinNativeConfiguration()
 
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
+
+    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["test"].output.classesDirs
+
+    /**
+     * Gradle needs these opens to serialize CC and adds them implicitly:
+     * - https://github.com/gradle/gradle/blob/2c7035c5fc5c18c044d2de45764f88ada143e4a7/platforms/core-runtime/base-services/src/main/java/org/gradle/internal/jvm/JpmsConfiguration.java#L41
+     * - https://github.com/gradle/gradle/blob/2c7035c5fc5c18c044d2de45764f88ada143e4a7/platforms/core-runtime/client-services/src/main/java/org/gradle/launcher/daemon/client/DefaultDaemonStarter.java#L142
+     *
+     * Since runs withDebug will happen in-process, add these to make sure IT that run with CC are debuggable
+     */
+    jvmArgs(
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.net=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+    )
+
+    // Keep in sync with the default value for [enableGradleDaemonMemoryLimitInMb] in testDsl.kt for runs withDebug to not OOM
+    maxHeapSize = "1024m"
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
@@ -325,65 +421,99 @@ tasks.withType<Test> {
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
+    dependsOn(cleanUserHomeKonanDir)
+    configurationToBeConsumedInTests.values.forEach {
+        dependsOn(it)
+    }
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
+    systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
+    systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
+
+    val classpathVariables = configurationToBeConsumedInTests
+        .mapKeys { (configurationName, _) -> "${configurationName}Classpath" }
+        .mapValues { (_, configuration) -> provider { configuration.files.joinToString(":") } }
+
+    doFirst {
+        for ((variableName, classpath) in classpathVariables) {
+            systemProperty(
+                variableName,
+                classpath.get(),
+            )
+        }
+    }
+
+    // Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE
+    val autoDebugIT = kotlinBuildProperties.booleanProperty("kotlin.gradle.autoDebugIT", true).get()
+    if (autoDebugIT) {
+        systemProperty("kotlin.gradle.autoDebugIT", autoDebugIT)
+    }
+
+    val runAllIntegrationTestsOnMacos = kotlinBuildProperties.booleanProperty("runAllIntegrationTestsOnMacos", false).get()
+    if (runAllIntegrationTestsOnMacos) {
+        systemProperty("runAllIntegrationTestsOnMacos", runAllIntegrationTestsOnMacos)
+    }
+    /**
+     * We run all tests on macOS once a week and this property makes sure that tests that are correctly marked @BrokenOnMacosTest are skipped in this run
+     */
+    val skipIntegrationTestsMarkedBroken = kotlinBuildProperties.booleanProperty("skipIntegrationTestsMarkedBroken", false).get()
+    if (skipIntegrationTestsMarkedBroken) {
+        systemProperty("skipIntegrationTestsMarkedBroken", skipIntegrationTestsMarkedBroken)
+    }
 
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {
         systemProperty("installCocoapods", installCocoapods)
     }
 
+    systemProperty(
+        "kotlin.gradle.maximumSupportedGradleVariant.artifactSuffix",
+        GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT.sourceSetName,
+    )
+
+    // Gradle 8.10 requires running on at least JDK 17
+    javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0)).disallowChanges()
+
     val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
-    val jdk9Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_9_0)
-    val jdk10Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_10_0)
     val jdk11Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_11_0)
-    val jdk16Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_16_0)
     val jdk17Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
+    val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
-    // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
-    // names should follow "jdk\\d+Home" regex where number is a major JDK version
+    // This is a classpath that the injections will see
+    val buildScriptInjectionsClasspath = files(
+        kgpTestingUtilities,
+        kotlin.target.compilations.getByName("test").output.classesDirs,
+    )
+    doFirst {
+        systemProperty("buildScriptInjectionsClasspath", buildScriptInjectionsClasspath.joinToString(":"))
+    }
+
+    // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase.
+    // Names should follow "jdk\\d+Home" regex where number is a major JDK version.
+    // On any change 'jdkHelpers.kt' should be updated as well.
     doFirst {
         systemProperty("jdk8Home", jdk8Provider.get())
-        systemProperty("jdk9Home", jdk9Provider.get())
-        systemProperty("jdk10Home", jdk10Provider.get())
         systemProperty("jdk11Home", jdk11Provider.get())
-        systemProperty("jdk16Home", jdk16Provider.get())
         systemProperty("jdk17Home", jdk17Provider.get())
-        // jdk21Provider.isPresent throws NoToolchainAvailableException, so, we have to check for the exception
-        // Storing jdk21Provider in a field leads to "Configuration cache state could not be cached" error,
-        // since it tries to resolve the toolchain as well.
-        try {
-            systemProperty("jdk21Home", project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0).get())
-        } catch (_: NoToolchainAvailableException) {}
+        systemProperty("jdk21Home", jdk21Provider.get())
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }
     }
 
-    useAndroidSdk()
+    androidSdkProvisioner {
+        provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
+    }
 
-    val shouldApplyJunitPlatform = name !in setOf(
-        allParallelTestsTask.name,
-        jvmTestsTask.name,
-        jsTestsTask.name,
-        nativeTestsTask.name,
-        daemonsTestsTask.name,
-        otherPluginsTestTask.name,
-        mppTestsTask.name,
-        androidTestsTask.name
-    )
-    if (shouldApplyJunitPlatform) {
-        maxHeapSize = "512m"
-        useJUnitPlatform {
-            includeEngines("junit-vintage")
-        }
+    useJUnitPlatform {
+        includeEngines("junit-jupiter")
     }
 
     testLogging {
         // set options for log level LIFECYCLE
-        events("passed", "skipped", "failed", "standardOut")
+        events("started", "passed", "skipped", "failed", "standardOut")
         showExceptions = true
         exceptionFormat = TestExceptionFormat.FULL
         showCauses = true
@@ -415,3 +545,5 @@ tasks.withType<Test> {
         })
     }
 }
+
+excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()

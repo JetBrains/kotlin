@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 fun baz(f: (Int) -> String) {}
 
@@ -9,3 +10,5 @@ object Foo {
         baz({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> "" }) // should be an error
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, objectDeclaration, stringLiteral, vararg */

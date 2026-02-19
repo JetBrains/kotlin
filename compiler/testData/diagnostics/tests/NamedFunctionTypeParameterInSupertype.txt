@@ -23,3 +23,20 @@ public final class C : (x: kotlin.Int) -> kotlin.Unit {
     public open override /*1*/ fun invoke(/*0*/ p1: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final class D : (Int: kotlin.Int) -> kotlin.Unit {
+    public constructor D()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun invoke(/*0*/ p1: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class E : ((k: kotlin.String) -> kotlin.Unit) -> kotlin.Unit {
+    public constructor E()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun invoke(/*0*/ p1: (k: kotlin.String) -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

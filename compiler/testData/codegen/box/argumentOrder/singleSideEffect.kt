@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 fun box(): String {
     var x = "c"
     val call = test(c = x, b = { x = "a"; "b" }(), a = x)

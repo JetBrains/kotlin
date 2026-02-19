@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: p/My.java
 
 package p;
@@ -25,3 +26,6 @@ fun test(x: String?): Any {
     y!!.hashCode()
     return z
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, javaFunction, localProperty, nullableType,
+propertyDeclaration, safeCall */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -REDECLARATION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -REDECLARATION
 
 package<!SYNTAX!><!>
 
@@ -24,3 +25,6 @@ object<!SYNTAX!><!> {
 enum class<!SYNTAX!><!> {}
 
 annotation class<!SYNTAX!><!> {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, objectDeclaration, propertyDeclaration */

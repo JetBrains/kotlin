@@ -22,7 +22,7 @@
 // This function replaces `__cxa_demangle` defined in GNU libstdc++
 // by adding `--defsym` flag in `konan.properties`.
 // This allows to avoid linking `__cxa_demangle` and its dependencies, thus reducing binary size.
-RUNTIME_USED RUNTIME_WEAK extern "C" char* Konan_cxa_demangle(
+RUNTIME_EXPORT RUNTIME_WEAK extern "C" char* Konan_cxa_demangle(
     const char* __mangled_name, char* __output_buffer,
     size_t* __length, int* __status
 ) {

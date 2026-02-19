@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_DEXING
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // MODULE: lib
 // FILE: lib.kt
@@ -54,12 +54,18 @@ class C {
 fun box(): String {
     val a = C().one()
     assertEquals(Int::class, a.kClass)
-    assertEquals(
-        """@kotlin.Metadata(bytecodeVersion=[1, 0, 3], data1=[], data2=[], extraInt=0, extraString=, kind=1, metadataVersion=[], packageName=)""",
+    assertContains(
+        listOf(
+            """@kotlin.Metadata(kind=1, metadataVersion=[], bytecodeVersion=[1, 0, 3], data1=[], data2=[], extraString=, packageName=, extraInt=0)""", // K2
+            """@kotlin.Metadata(bytecodeVersion=[1, 0, 3], data1=[], data2=[], extraInt=0, extraString=, kind=1, metadataVersion=[], packageName=)""", // K1
+        ),
         C().two().toString()
     )
-    assertEquals(
-        """@kotlin.Deprecated(level=WARNING, message=foo, replaceWith=@kotlin.ReplaceWith(expression=, imports=[]))""",
+    assertContains(
+        listOf(
+            """@kotlin.Deprecated(message=foo, replaceWith=@kotlin.ReplaceWith(expression=, imports=[]), level=WARNING)""", // K2
+            """@kotlin.Deprecated(level=WARNING, message=foo, replaceWith=@kotlin.ReplaceWith(expression=, imports=[]))""", // K1
+        ),
         C().three().toString()
     )
     val otherArraysStr = C().four().toString()

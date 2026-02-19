@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 tailrec fun String.foo1() {
     "".foo1()
@@ -12,3 +13,6 @@ tailrec fun String.foo2() {
         <!NON_TAIL_RECURSIVE_CALL!>foo3<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, lambdaLiteral, stringLiteral, tailrec,
+thisExpression */

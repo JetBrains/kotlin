@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
 fun checkIsString(x: Any): Boolean {
@@ -15,3 +16,6 @@ fun test(x: Any) {
         x.<!UNRESOLVED_REFERENCE!>length<!> // Error
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression,
+lambdaLiteral, smartcast */

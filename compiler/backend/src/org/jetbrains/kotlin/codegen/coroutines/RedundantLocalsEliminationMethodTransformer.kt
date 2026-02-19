@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import org.jetbrains.kotlin.codegen.asSequence
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer

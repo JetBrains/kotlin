@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 open class A {
     companion object {
         fun bar() = 1
@@ -36,3 +37,6 @@ class D: B() {
         val b: String = bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, init,
+integerLiteral, localProperty, objectDeclaration, propertyDeclaration, stringLiteral */

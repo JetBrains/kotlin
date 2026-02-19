@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.descriptors.ValueClassKind.Inline
 import org.jetbrains.kotlin.descriptors.ValueClassKind.MultiField
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
-sealed class ValueClassRepresentation<Type : SimpleTypeMarker> {
+sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
     abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
     abstract fun containsPropertyWithName(name: Name): Boolean
     abstract fun getPropertyTypeByName(name: Name): Type?
@@ -25,7 +26,7 @@ sealed class ValueClassRepresentation<Type : SimpleTypeMarker> {
 
 enum class ValueClassKind { Inline, MultiField }
 
-fun <Type : SimpleTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKind(
+fun <Type : RigidTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKind(
     fields: List<Pair<Name, Type>>,
 ): ValueClassKind = when {
     fields.size > 1 -> MultiField
@@ -42,7 +43,7 @@ fun <Type : SimpleTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringK
     }
 }
 
-fun <Type : SimpleTypeMarker> createValueClassRepresentation(context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>) =
+fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>) =
     when (context.valueClassLoweringKind(fields)) {
         Inline -> InlineClassRepresentation(fields[0].first, fields[0].second)
         MultiField -> MultiFieldValueClassRepresentation(fields)

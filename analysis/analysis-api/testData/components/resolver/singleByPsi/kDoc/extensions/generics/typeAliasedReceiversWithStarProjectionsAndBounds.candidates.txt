@@ -1,0 +1,71 @@
+<caret_1>:
+  KDocName(731,756): 'ChildGenericAliasInt.ext1'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(762,787): 'ChildGenericAliasInt.ext2'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(793,818): 'ChildGenericAliasInt.ext3'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(824,849): 'ChildGenericAliasInt.ext4'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(855,880): 'ChildGenericAliasInt.ext5'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(886,911): 'ChildGenericAliasInt.ext6'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(917,942): 'ChildGenericAliasAny.ext1'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(948,973): 'ChildGenericAliasAny.ext2'
+    NO_CANDIDATES
+
+<caret_9>:
+  KDocName(979,1004): 'ChildGenericAliasAny.ext3'
+    NO_CANDIDATES
+
+<caret_10>:
+  KDocName(1010,1035): 'ChildGenericAliasAny.ext4'
+    NO_CANDIDATES
+
+<caret_11>:
+  KDocName(1041,1066): 'ChildGenericAliasAny.ext5'
+    NO_CANDIDATES
+
+<caret_12>:
+  KDocName(1072,1097): 'ChildGenericAliasAny.ext6'
+    NO_CANDIDATES
+
+<caret_13>:
+  KDocName(1103,1143): 'ChildGenericAliasIntWithOneArgument.ext1'
+    NO_CANDIDATES
+
+<caret_14>:
+  KDocName(1149,1189): 'ChildGenericAliasIntWithOneArgument.ext2'
+    NO_CANDIDATES
+
+<caret_15>:
+  KDocName(1195,1235): 'ChildGenericAliasIntWithOneArgument.ext3'
+    NO_CANDIDATES
+
+<caret_16>:
+  KDocName(1241,1281): 'ChildGenericAliasIntWithOneArgument.ext4'
+    NO_CANDIDATES
+
+<caret_17>:
+  KDocName(1287,1327): 'ChildGenericAliasIntWithOneArgument.ext5'
+    NO_CANDIDATES
+
+<caret_18>:
+  KDocName(1333,1373): 'ChildGenericAliasIntWithOneArgument.ext6'
+    NO_CANDIDATES

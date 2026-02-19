@@ -1,4 +1,5 @@
-// !LANGUAGE: -ExtendedMainConvention
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ExtendedMainConvention
 
 // ### INVALID
 
@@ -111,3 +112,5 @@ package valid8
 package valid8
 typealias S = String
 <!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<S>)<!> {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, suspend, typeAliasDeclaration, vararg */

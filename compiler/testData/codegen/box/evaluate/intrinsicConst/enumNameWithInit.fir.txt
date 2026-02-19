@@ -1,0 +1,36 @@
+FILE: enumNameWithInit.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final var result: R|kotlin/String| = String(OK)
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        private [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+            super<R|kotlin/Enum<EnumClass>|>()
+        }
+
+        public final static [ContainingClassKey=EnumClass] enum entry OK: R|EnumClass|
+        init {
+            R|/result| = String(Fail)
+        }
+
+        public final static [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(Q|EnumClass|.R|/EnumClass.OK|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>|.R|/id|<R|kotlin/String|>(), String(OK)) ->  {
+                ^box String(Fail 1)
+            }
+        }
+
+        ^box R|/result|
+    }

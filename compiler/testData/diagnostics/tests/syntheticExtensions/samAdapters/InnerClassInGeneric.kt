@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<Int>): Int {
     val inner = javaClass.createInner<String>()
@@ -14,3 +15,6 @@ public class JavaClass<T> {
         public T doSomething(T t, X x, Runnable runnable);
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral, localProperty,
+propertyDeclaration, samConversion, stringLiteral */

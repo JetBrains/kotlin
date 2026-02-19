@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 class KotlinClass {
     public fun getSomething(): Int = 1
@@ -18,3 +19,6 @@ fun useInt(i: Int) {}
 public class JavaClass {
     public int getSomething() { return 1; }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaProperty,
+javaType */

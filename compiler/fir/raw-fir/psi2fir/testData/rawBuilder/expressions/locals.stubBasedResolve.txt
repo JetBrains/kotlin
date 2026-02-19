@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] locals.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withLocals([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }

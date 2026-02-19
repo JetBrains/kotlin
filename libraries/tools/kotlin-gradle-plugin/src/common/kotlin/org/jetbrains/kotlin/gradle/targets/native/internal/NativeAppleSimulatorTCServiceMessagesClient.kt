@@ -7,28 +7,32 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.api.provider.Provider
-import org.gradle.process.ProcessForkOptions
-import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
+import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.slf4j.Logger
 
 internal class NativeAppleSimulatorTCServiceMessagesTestExecutionSpec(
-    forkOptions: ProcessForkOptions,
-    args: List<String>,
+    processLaunchOpts: ProcessLaunchOptions,
+    processArgs: List<String>,
     checkExitCode: Boolean,
     clientSettings: TCServiceMessagesClientSettings,
     dryRunArgs: List<String>?,
     private val standaloneMode: Provider<Boolean>,
-) : TCServiceMessagesTestExecutionSpec(forkOptions, args, checkExitCode, clientSettings, dryRunArgs) {
+) : TCServiceMessagesTestExecutionSpec(
+    processLaunchOpts,
+    processArgs,
+    checkExitCode,
+    clientSettings,
+    dryRunArgs,
+) {
     override fun createClient(
         testResultProcessor: TestResultProcessor,
         log: Logger,
-        testReporter: MppTestReportHelper
     ): TCServiceMessagesClient {
-        return NativeAppleSimulatorTCServiceMessagesClient(testResultProcessor, clientSettings, log, testReporter, standaloneMode)
+        return NativeAppleSimulatorTCServiceMessagesClient(testResultProcessor, clientSettings, log, standaloneMode)
     }
 }
 
@@ -36,10 +40,9 @@ internal class NativeAppleSimulatorTCServiceMessagesClient(
     results: TestResultProcessor,
     settings: TCServiceMessagesClientSettings,
     log: Logger,
-    testReporter: MppTestReportHelper,
-    private val standaloneMode: Provider<Boolean>
-) : TCServiceMessagesClient(results, settings, log, testReporter) {
-    override fun testFailedMessage(execHandle: ExecHandle, exitValue: Int) = when {
+    private val standaloneMode: Provider<Boolean>,
+) : TCServiceMessagesClient(results, settings, log) {
+    override fun testFailedMessage(execHandle: ExecAsyncHandle, exitValue: Int) = when {
         !standaloneMode.get() && exitValue == 149 -> """
                 You have standalone simulator tests run mode disabled and tests have failed to run.
                 The problem can be that you have not booted the required device or have configured the task to a different simulator. Please check the task output and its device configuration.

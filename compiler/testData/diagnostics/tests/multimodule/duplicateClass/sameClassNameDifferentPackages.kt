@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // MODULE: m1
 // FILE: a.kt
 
@@ -19,3 +20,5 @@ class A
 fun test() {
     val a: A = <!TYPE_MISMATCH!>B().a<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

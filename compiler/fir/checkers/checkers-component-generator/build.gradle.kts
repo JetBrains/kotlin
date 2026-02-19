@@ -1,12 +1,12 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     application
 }
 
 dependencies {
     implementation(project(":generators"))
     implementation(project(":compiler:fir:tree"))
+    implementation(project(":generators:tree-generator-common"))
     implementation(project(":compiler:fir:tree:tree-generator"))
     implementation(project(":compiler:resolution.common"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -18,7 +18,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
 }
 
 application {

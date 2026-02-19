@@ -1,4 +1,6 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+// FILE: lib.kt
 import kotlin.contracts.*
 
 inline fun foo(x: () -> String, y: () -> String): String {
@@ -9,6 +11,7 @@ inline fun foo(x: () -> String, y: () -> String): String {
     return x() + y()
 }
 
+// FILE: main.kt
 fun box(): String {
     val y = { "K" }
     return foo({ "O" }, y)

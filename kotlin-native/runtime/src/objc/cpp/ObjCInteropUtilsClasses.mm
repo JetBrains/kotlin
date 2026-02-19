@@ -6,11 +6,14 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
+
+#include "ExternalRCRef.hpp"
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
 #import "ObjCExportPrivate.h"
 #import "ObjCInteropUtilsPrivate.h"
+
+using namespace kotlin;
 
 // TODO: rework the interface to reduce the number of virtual calls
 // in Kotlin_Interop_createKotlinObjectHolder and Kotlin_Interop_unwrapKotlinObjectHolder
@@ -20,23 +23,18 @@
 @end
 
 @implementation KotlinObjectHolder {
-  KRefSharedHolder refHolder;
+  mm::OwningExternalRCRef refHolder;
 };
 
 -(id)initWithRef:(KRef)ref {
   if (self = [super init]) {
-    refHolder.init(ref);
+    refHolder.reset(ref);
   }
   return self;
 }
 
 -(KRef)ref {
-  return refHolder.ref<ErrorPolicy::kTerminate>();
-}
-
--(void)dealloc {
-  refHolder.dispose();
-  [super dealloc];
+  return refHolder.ref();
 }
 
 @end
@@ -108,8 +106,13 @@ static OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
 }
 
 static void Konan_ObjCInterop_initWeakReference(KRef ref, id objcPtr) {
-  KotlinObjCWeakReference* objcRef = [KotlinObjCWeakReference new];
-  objc_storeWeak(&objcRef->referred, objcPtr);
+  KotlinObjCWeakReference* objcRef;
+  {
+    // objc_storeWeak can grab a global lock, so it needs Native state to avoid dealdlocks.
+    ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    objcRef = [KotlinObjCWeakReference new];
+    objc_storeWeak(&objcRef->referred, objcPtr);
+  }
   ref->SetAssociatedObject(objcRef);
 }
 

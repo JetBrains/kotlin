@@ -1,0 +1,2 @@
+MyAnno()
+  psi: KtAnnotationEntry

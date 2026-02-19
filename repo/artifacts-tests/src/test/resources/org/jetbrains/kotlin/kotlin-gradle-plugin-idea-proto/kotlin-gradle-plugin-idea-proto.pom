@@ -9,7 +9,7 @@
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
@@ -26,6 +26,12 @@
     <url>https://github.com/JetBrains/kotlin</url>
   </scm>
   <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-tooling-core</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-gradle-plugin-idea</artifactId>

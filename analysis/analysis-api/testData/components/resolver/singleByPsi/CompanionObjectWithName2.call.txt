@@ -1,0 +1,2 @@
+KtNameReferenceExpression(58,64): 'sample'
+  null

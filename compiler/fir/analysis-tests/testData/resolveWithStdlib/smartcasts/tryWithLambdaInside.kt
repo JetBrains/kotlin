@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 // FULL_JDK
 
 fun <T> List<T>.notInPlaceFilter(block: (T) -> Boolean): List<T> = this
@@ -14,3 +15,6 @@ fun testNotInPlace(list: List<Boolean>) =
     try {
         list.notInPlaceFilter { it }
     } finally {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+thisExpression, tryExpression, typeParameter */

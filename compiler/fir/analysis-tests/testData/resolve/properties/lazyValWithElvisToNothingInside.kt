@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-54668
 
@@ -12,3 +13,6 @@ val x by lazy {
         it
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+propertyDeclaration, propertyDelegate, stringLiteral */

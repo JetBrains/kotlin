@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 // KJS_WITH_FULL_RUNTIME
 
 fun demo(): Unit {}

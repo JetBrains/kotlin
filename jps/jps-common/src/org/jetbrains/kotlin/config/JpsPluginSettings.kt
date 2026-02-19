@@ -15,5 +15,12 @@ class JpsPluginSettings : Freezable() {
             field = value
         }
 
+    @Suppress("unused") // Used in Kotlin plugin
+    var externalSystemId: String = ""
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun copyOf(): Freezable = copyJpsPluginSettings(this, JpsPluginSettings())
 }

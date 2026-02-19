@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // VAL
 class A(
@@ -42,3 +43,6 @@ class D {
         fun foo() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localFunction, localProperty, primaryConstructor,
+propertyDeclaration */

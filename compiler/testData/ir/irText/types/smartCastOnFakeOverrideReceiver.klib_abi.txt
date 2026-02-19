@@ -1,0 +1,29 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /A { // /A|null[0]
+    final val aVal // /A.aVal|{}aVal[0]
+        final fun <get-aVal>(): kotlin/Int // /A.aVal.<get-aVal>|<get-aVal>(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun f(): kotlin/Int // /A.f|f(){}[0]
+    final fun testA1(kotlin/Any): kotlin/Int? // /A.testA1|testA1(kotlin.Any){}[0]
+    final fun testA2(kotlin/Any): kotlin/Int? // /A.testA2|testA2(kotlin.Any){}[0]
+}
+final class /B : /A { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    final fun testB1(kotlin/Any): kotlin/Int? // /B.testB1|testB1(kotlin.Any){}[0]
+    final fun testB2(kotlin/Any): kotlin/Int? // /B.testB2|testB2(kotlin.Any){}[0]
+}
+open class <#A: kotlin/Any?> /GA { // /GA|null[0]
+    final val aVal // /GA.aVal|{}aVal[0]
+        final fun <get-aVal>(): kotlin/Int // /GA.aVal.<get-aVal>|<get-aVal>(){}[0]
+    constructor <init>() // /GA.<init>|<init>(){}[0]
+    final fun f(): kotlin/Int // /GA.f|f(){}[0]
+}
+final class <#A: kotlin/Any?, #B: kotlin/Any?> /GB : /GA<#A> { // /GB|null[0]
+    constructor <init>() // /GB.<init>|<init>(){}[0]
+    final fun testGB1(kotlin/Any) // /GB.testGB1|testGB1(kotlin.Any){}[0]
+}

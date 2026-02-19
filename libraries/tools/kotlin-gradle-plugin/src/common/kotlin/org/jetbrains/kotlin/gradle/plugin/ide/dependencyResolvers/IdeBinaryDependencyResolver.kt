@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.*
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isOpaqueFileDependency
@@ -21,15 +23,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver.ArtifactResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
+import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
@@ -51,10 +54,27 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
  * from the given [KotlinCompilationConfigurationsContainer.compileDependencyConfiguration]
  */
 @ExternalKotlinTargetApi
-class IdeBinaryDependencyResolver @JvmOverloads constructor(
+class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
+    private val importLogger: IdeMultiplatformImportLogger?,
     private val binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
     private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation(),
 ) : IdeDependencyResolver {
+    private val logWarning: (String) -> Unit = {
+        if (importLogger != null) {
+            importLogger.warn(it)
+        } else {
+            logger.warn(it)
+        }
+    }
+
+    constructor(
+        binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+        artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation(),
+    ) : this(
+        importLogger = null,
+        binaryType = binaryType,
+        artifactResolutionStrategy = artifactResolutionStrategy,
+    )
 
     @ExternalKotlinTargetApi
     sealed class ArtifactResolutionStrategy {
@@ -113,46 +133,102 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
             override val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
             internal val dependencySubstitution: ((DependencySubstitutions) -> Unit)? = null,
             override val dependencyFilter: ((Dependency) -> Boolean)? = null,
+            internal val withDependencies: (DependencySet.(DependencyHandler) -> Unit)? = null
         ) : ArtifactResolutionStrategy()
     }
 
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val artifacts = artifactResolutionStrategy.createArtifactView(sourceSet.internal)?.artifacts ?: return emptySet()
 
-        val unresolvedDependencies = artifacts.failures
-            .onEach { reason -> sourceSet.project.logger.info("Failed to resolve platform dependency on ${sourceSet.name}", reason) }
-            .map { reason ->
+        // Safe handle for gradle bug https://github.com/gradle/gradle/issues/36284
+        fun Throwable.safeWrap(): Throwable {
+            val maybeMessage = runCatching { message }
+            return if (maybeMessage.isFailure) {
+                RuntimeException(
+                    "Got ${this.javaClass} error when trying to resolve Artifact, but explanation message can't be displayed because it " +
+                            "failed with ${maybeMessage.exceptionOrNull()!!.javaClass}. For details please visit https://github.com/gradle/gradle/issues/36284",
+                    maybeMessage.exceptionOrNull()!!
+                )
+            } else {
+                this
+            }
+        }
 
-                val selector = (reason as? ModuleVersionResolveException)?.selector as? ModuleComponentSelector
-                /* Can't figure out the dependency here :( */
-                    ?: return@map IdeaKotlinUnresolvedBinaryDependency(
-                        coordinates = null, cause = reason.message?.takeIf { it.isNotBlank() }, extras = mutableExtrasOf()
+        val unresolvedDependencies = artifacts.failures
+            .onEach { reason ->
+                sourceSet.project.logger.info(
+                    "Failed to resolve platform dependency on ${sourceSet.name}",
+                    reason.safeWrap()
+                )
+            }
+            .mapNotNull { reason ->
+                val selector = (reason as? ModuleVersionResolveException)?.selector
+
+                /* We failed to resolve a library module (e.g., from a remote repository) */
+                if (selector is ModuleComponentSelector)
+                    return@mapNotNull IdeaKotlinUnresolvedBinaryDependency(
+                        coordinates = IdeaKotlinBinaryCoordinates(selector.group, selector.module, selector.version, null),
+                        cause = reason.safeWrap().message,
+                        extras = mutableExtrasOf()
                     )
 
+                /*
+                We failed to resolve the same project as the SourceSet was declared to in a
+                'PlatformLikeSourceSet' mode: We ignore this error:
+                https://youtrack.jetbrains.com/issue/KT-59020/
+                It seems like 'detachedConfiguration' causes an issue resolving to its project.
+                */
+                if (selector is ProjectComponentSelector &&
+                    selector.projectPath == sourceSet.project.path &&
+                    artifactResolutionStrategy is ArtifactResolutionStrategy.PlatformLikeSourceSet
+                ) {
+                    return@mapNotNull null
+                }
+
+                /* Can't figure out the dependency here :( */
                 IdeaKotlinUnresolvedBinaryDependency(
-                    coordinates = IdeaKotlinBinaryCoordinates(selector.group, selector.module, selector.version, null),
-                    cause = reason.message?.takeIf { it.isNotBlank() },
-                    extras = mutableExtrasOf()
+                    coordinates = null, cause = reason.message?.takeIf { it.isNotBlank() }, extras = mutableExtrasOf()
                 )
             }.toSet()
 
+        val buildIdentifierAccessor = sourceSet.project.variantImplementationFactoryProvider<BuildIdentifierAccessor.Factory>()
         val resolvedDependencies = artifacts.artifacts.mapNotNull { artifact ->
             when (val componentId = artifact.id.componentIdentifier) {
                 is ProjectComponentIdentifier -> {
                     IdeaKotlinProjectArtifactDependency(
                         type = IdeaKotlinSourceDependency.Type.Regular,
-                        coordinates = IdeaKotlinProjectCoordinates(componentId)
+                        coordinates = IdeaKotlinProjectCoordinates(componentId, buildIdentifierAccessor)
                     ).apply {
                         artifactsClasspath.add(artifact.file)
                     }
                 }
 
                 is ModuleComponentIdentifier -> {
-                    IdeaKotlinResolvedBinaryDependency(
-                        coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
-                        binaryType = binaryType,
-                        classpath = IdeaKotlinClasspath(artifact.file),
-                    )
+                    /**
+                     * Without disambiguation by [sourceSetName] IDE incorrectly creates one Library per GAV with one of the resolution
+                     * artifacts from the Uklib and reuses it in inappropriate IDE Modules
+                     */
+                    if (artifact.isFromUklib) {
+                        val selectedUklibTarget = artifact.variant.attributes.getAttribute(uklibViewAttribute)
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(
+                                group = componentId.group,
+                                module = componentId.module,
+                                version = componentId.version,
+                                sourceSetName = selectedUklibTarget,
+                                capabilities = artifact.variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+                                attributes = IdeaKotlinBinaryAttributes(artifact.variant.attributes)
+                            ),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    } else {
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    }
                 }
 
                 is LibraryBinaryIdentifier -> {
@@ -169,8 +245,14 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 is OpaqueComponentArtifactIdentifier -> {
-                    /* Files within the build directory  still require a custom resolver */
-                    if (artifact.file.absoluteFile.startsWith(sourceSet.project.buildDir.absoluteFile)) return@mapNotNull null
+                    /* Files within the build directory still require a custom resolver */
+                    if (
+                        artifact.file.absoluteFile.startsWith(
+                            sourceSet.project.layout.buildDirectory.get().asFile.absoluteFile
+                        )
+                    ) {
+                        return@mapNotNull null
+                    }
 
                     IdeaKotlinResolvedBinaryDependency(
                         binaryType = binaryType, coordinates = IdeaKotlinBinaryCoordinates(
@@ -186,7 +268,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 else -> {
-                    logger.warn("Unhandled componentId: ${componentId.javaClass}")
+                    logWarning("Unhandled componentId: ${componentId.javaClass}")
                     null
                 }
             }?.also { dependency ->
@@ -213,7 +295,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         Refuse resolution. Write your own code if you really want to do this!
          */
         if (compilation is KotlinMetadataCompilation<*>) {
-            logger.warn("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
+            logWarning("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
             return null
         }
 
@@ -229,10 +311,16 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         if (sourceSet !is DefaultKotlinSourceSet) return null
         val project = sourceSet.project
 
-        val platformLikeCompileDependenciesConfiguration = project.configurations.detachedConfiguration()
-        platformLikeCompileDependenciesConfiguration.markResolvable()
+        val platformLikeCompileDependenciesConfiguration = project.configurations.detachedResolvable()
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
+        platformLikeCompileDependenciesConfiguration.dependencyConstraints.addAll(sourceSet.resolvableMetadataConfiguration.allDependencyConstraints)
+
+        if (withDependencies != null) {
+            platformLikeCompileDependenciesConfiguration.withDependencies { deps ->
+                withDependencies.invoke(deps, project.dependencies)
+            }
+        }
 
         if (dependencySubstitution != null) {
             platformLikeCompileDependenciesConfiguration.resolutionStrategy.dependencySubstitution(dependencySubstitution)

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 
 inline private fun a() {}
 
@@ -46,3 +47,5 @@ interface B {
 
     <!DECLARATION_CANT_BE_INLINED!>inline<!> fun wrong7()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, interfaceDeclaration */

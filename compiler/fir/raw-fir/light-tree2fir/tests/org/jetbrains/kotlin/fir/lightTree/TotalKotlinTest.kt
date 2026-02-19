@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,15 +10,13 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.KtSourceFileLinesMapping
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
+import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
 import java.io.File
@@ -42,7 +40,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         text: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping
     ) {
         if (onlyLightTree) {
-            val lightTree = LightTree2Fir.buildLightTree(text, null)
+            val lightTree = KotlinLightParser.buildLightTree(text, sourceFile, errorListener = null)
             DebugUtil.lightTreeToString(lightTree, false)
         } else {
             val firFile = converter.buildFirFile(text, sourceFile, linesMapping)
@@ -55,6 +53,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         var counter = 0
         var time = 0L
 
+        @OptIn(ObsoleteTestInfrastructure::class)
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactoryHelper.createEmptySession(),
             scopeProvider = StubFirScopeProvider,
@@ -65,8 +64,8 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $path")
         path.walkTopDown {
             val sourceFile = KtIoFileSourceFile(it)
-            val (code, linesMapping) = with(it.inputStream().reader(Charsets.UTF_8)) {
-                this.readSourceFileWithMapping()
+            val (code, linesMapping) = it.inputStream().reader(Charsets.UTF_8).use {
+                it.readSourceFileWithMapping()
             }
             time += measureNanoTime {
                 generateFirFromLightTree(onlyLightTree, lightTreeConverter, code, sourceFile, linesMapping)

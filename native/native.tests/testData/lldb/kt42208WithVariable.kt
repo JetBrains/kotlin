@@ -1,5 +1,9 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: kt42208WithVariable.txt
+// FREE_COMPILER_ARGS: -Xklib-ir-inliner=disabled
+
+
+
+
 // FILE: kt42208-1.kt
 fun main() {
     val a = foo()

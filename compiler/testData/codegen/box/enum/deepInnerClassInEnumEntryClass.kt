@@ -1,3 +1,4 @@
+
 enum class A {
     X {
         val x = "OK"

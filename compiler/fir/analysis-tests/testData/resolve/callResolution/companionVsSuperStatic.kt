@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -15,3 +16,6 @@ class A : JavaClass() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>FIELD<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, javaType,
+objectDeclaration, propertyDeclaration */

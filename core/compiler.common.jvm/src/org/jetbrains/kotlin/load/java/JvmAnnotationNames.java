@@ -31,6 +31,7 @@ public final class JvmAnnotationNames {
     public static final int METADATA_STRICT_VERSION_SEMANTICS_FLAG = 1 << 3;
     public static final int METADATA_JVM_IR_FLAG = 1 << 4;
     public static final int METADATA_JVM_IR_STABLE_ABI_FLAG = 1 << 5;
+    @SuppressWarnings("unused")
     public static final int METADATA_FIR_FLAG = 1 << 6;
     public static final int METADATA_PUBLIC_ABI_FLAG = 1 << 7;
 
@@ -43,12 +44,15 @@ public final class JvmAnnotationNames {
     public static final FqName DEPRECATED_ANNOTATION = new FqName(Deprecated.class.getName());
     public static final FqName DOCUMENTED_ANNOTATION = new FqName(Documented.class.getName());
     public static final FqName REPEATABLE_ANNOTATION = new FqName("java.lang.annotation.Repeatable");
+    public static final FqName INHERITED_ANNOTATION = new FqName("java.lang.annotation.Inherited");
     public static final FqName OVERRIDE_ANNOTATION = new FqName(Override.class.getName());
 
     public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = new FqName("org.jetbrains.annotations.NotNull");
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
     public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
     public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
+    public static final FqName JETBRAINS_UNMODIFIABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Unmodifiable");
+    public static final FqName JETBRAINS_UNMODIFIABLE_VIEW_ANNOTATION = new FqName("org.jetbrains.annotations.UnmodifiableView");
 
     public static final FqName READONLY_ANNOTATION = new FqName("kotlin.annotations.jvm.ReadOnly");
     public static final FqName MUTABLE_ANNOTATION = new FqName("kotlin.annotations.jvm.Mutable");

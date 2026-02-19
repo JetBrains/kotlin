@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface G<T> {
     fun build(): G<T>
@@ -13,3 +14,6 @@ fun forReference(ref: Any?) {}
 fun test() {
     forReference(G<Int?>::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, vararg */

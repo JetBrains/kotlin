@@ -1,3 +1,5 @@
+// LANGUAGE: -ForbidParenthesizedLhsInAssignments
+
 var holder = ""
 var globalA: A = A(-1)
     get(): A {

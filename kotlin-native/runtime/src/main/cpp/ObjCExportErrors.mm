@@ -16,15 +16,13 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSDictionary.h>
-#import <Foundation/NSError.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 
 #import "Exceptions.h"
 #import "ObjCExport.h"
 #import "Porting.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 
 #import "ObjCExportErrors.h"
 

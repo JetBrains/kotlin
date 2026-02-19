@@ -1,4 +1,3 @@
-
 // expected: rv: 2
 inline fun foo(l: (Int) -> Int ): Int {
     return l(1)

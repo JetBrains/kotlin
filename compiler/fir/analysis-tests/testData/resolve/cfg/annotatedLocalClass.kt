@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 
 annotation class Ann
 
@@ -14,3 +15,6 @@ fun foo(b: Boolean) {
 }
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, ifExpression, localClass,
+primaryConstructor */

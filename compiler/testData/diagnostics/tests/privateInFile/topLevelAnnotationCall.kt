@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: 1.kt
 package pp
 
@@ -25,3 +26,6 @@ val p2 = ""
 
 @<!INVISIBLE_MEMBER, INVISIBLE_REFERENCE!>A<!>(<!INVISIBLE_MEMBER!>foo<!>)
 class C2
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, functionDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

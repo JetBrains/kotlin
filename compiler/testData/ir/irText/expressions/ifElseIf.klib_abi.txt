@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test(kotlin/Int): kotlin/Int // /test|test(kotlin.Int){}[0]
+final fun /testEmptyBranches1(kotlin/Boolean) // /testEmptyBranches1|testEmptyBranches1(kotlin.Boolean){}[0]
+final fun /testEmptyBranches2(kotlin/Boolean) // /testEmptyBranches2|testEmptyBranches2(kotlin.Boolean){}[0]
+final fun /testEmptyBranches3(kotlin/Boolean) // /testEmptyBranches3|testEmptyBranches3(kotlin.Boolean){}[0]

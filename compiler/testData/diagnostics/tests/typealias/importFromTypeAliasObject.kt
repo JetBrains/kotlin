@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: 1.kt
 package bar
 
@@ -14,3 +14,5 @@ import bar.HostAlias.foo
 fun test() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, typeAliasDeclaration */

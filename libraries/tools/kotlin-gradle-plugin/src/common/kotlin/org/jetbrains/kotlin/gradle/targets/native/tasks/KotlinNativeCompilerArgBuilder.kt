@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -20,7 +19,6 @@ internal class CompilerPluginData(
 )
 
 internal class SharedCompilationData(
-    val manifestFile: File,
     val refinesPaths: FileCollection,
 )
 
@@ -38,7 +36,6 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
 
     processTests: Boolean,
     entryPoint: String?,
-    embedBitcode: BitcodeEmbeddingMode,
     linkerOpts: List<String>,
     binaryOptions: Map<String, String>,
     isStaticFramework: Boolean,
@@ -51,11 +48,6 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
 
     addKey("-tr", processTests)
     addArgIfNotNull("-entry", entryPoint)
-    when (embedBitcode) {
-        BitcodeEmbeddingMode.MARKER -> add("-Xembed-bitcode-marker")
-        BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
-        else -> Unit
-    }
     linkerOpts.forEach { addArg("-linker-option", it) }
     binaryOptions.forEach { (name, value) -> add("-Xbinary=$name=$value") }
     addKey("-Xstatic-framework", isStaticFramework)
@@ -95,7 +87,7 @@ private fun buildKotlinNativeCommonArgs(
     addKey("-no-endorsed-libs", true)
 
     compilerPlugins.forEach { plugin ->
-        plugin.files.map { it.canonicalPath }.sorted().forEach { add("-Xplugin=$it") }
+        plugin.files.map { it.absolutePath }.sorted().forEach { add("-Xplugin=$it") }
         addArgs("-P", plugin.options.arguments)
     }
 

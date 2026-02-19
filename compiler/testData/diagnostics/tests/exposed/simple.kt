@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTICS_FULL_TEXT
 private interface My
 
 private open class Base
@@ -20,4 +22,6 @@ public class Derived<<!EXPOSED_TYPE_PARAMETER_BOUND!>T: My<!>>(<!EXPOSED_PARAMET
     fun <!EXPOSED_RECEIVER_TYPE!>My<!>.<!EXPOSED_FUNCTION_RETURN_TYPE!>bar<!>(): My = this
 }
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, funWithExtensionReceiver, functionDeclaration, getter,
+integerLiteral, interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+propertyWithExtensionReceiver, secondaryConstructor, thisExpression, typeConstraint, typeParameter */

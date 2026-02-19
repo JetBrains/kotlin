@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // https://youtrack.jetbrains.com/issue/KT-48157
 
@@ -22,3 +23,5 @@ fun test() {
     val x6 = Function
     val x7 = Enum
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

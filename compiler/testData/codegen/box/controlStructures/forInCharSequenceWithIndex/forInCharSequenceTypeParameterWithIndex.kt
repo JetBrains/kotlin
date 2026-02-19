@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val cs: CharSequence = "abcd"
@@ -5,7 +6,7 @@ val cs: CharSequence = "abcd"
 fun <T : CharSequence> test(charSequence: T): String {
     val s = StringBuilder()
 
-    for ((index, x) in charSequence.withIndex()) {
+    for ([index, x] in charSequence.withIndex()) {
         s.append("$index:$x;")
     }
 

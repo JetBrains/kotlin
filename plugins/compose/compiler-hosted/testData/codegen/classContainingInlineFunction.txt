@@ -1,0 +1,8 @@
+public final class com/example/myModule/OtherModule {
+    // source: 'main.kt'
+    public final static field $stable: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method giveMeString(): java.lang.String
+    public final method secret(): java.lang.String
+}

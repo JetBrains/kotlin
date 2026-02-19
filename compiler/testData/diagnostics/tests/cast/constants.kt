@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 fun asCall() {
     1 <!USELESS_CAST!>as Int<!>
     1 <!CAST_NEVER_SUCCEEDS!>as<!> Byte
@@ -49,3 +51,5 @@ fun asSafe() {
     1f <!CAST_NEVER_SUCCEEDS!>as?<!> Double
     1f <!USELESS_CAST!>as? Float<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral */

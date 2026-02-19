@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: AliasFor.java
 
 public @interface AliasFor {
@@ -18,3 +19,5 @@ public @interface Service {
 
 @Service(value = "Your")
 class My
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, stringLiteral */

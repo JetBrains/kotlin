@@ -1,3 +1,0 @@
-Resolved to:
-0: (in Foo) operator fun invoke(a: kotlin.Any)
-1: (in Foo) operator fun invoke(a: kotlin.Any)

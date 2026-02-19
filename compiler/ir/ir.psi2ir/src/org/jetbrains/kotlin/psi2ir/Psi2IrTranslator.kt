@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.linkage.IrDeserializer
-import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -58,6 +59,7 @@ class Psi2IrTranslator(
     fun createGeneratorContext(
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
+        compilerConfiguration: CompilerConfiguration,
         symbolTable: SymbolTable,
         extensions: GeneratorExtensions = GeneratorExtensions(),
         fragmentContext: FragmentContext? = null
@@ -68,6 +70,7 @@ class Psi2IrTranslator(
         )
         return GeneratorContext(
             configuration,
+            compilerConfiguration,
             moduleDescriptor,
             bindingContext,
             languageVersionSettings,
@@ -83,7 +86,6 @@ class Psi2IrTranslator(
         context: GeneratorContext,
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
-        linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
         fragmentInfo: EvaluatorFragmentInfo? = null
     ): IrModuleFragment {
 
@@ -94,7 +96,7 @@ class Psi2IrTranslator(
         val irModule = moduleGenerator.generateModuleFragment(ktFiles)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
-        deserializers.forEach { it.init(irModule, linkerExtensions) }
+        deserializers.forEach { it.init(irModule) }
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 

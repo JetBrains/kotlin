@@ -6,9 +6,6 @@
 package kotlin.concurrent
 
 import kotlin.native.internal.*
-import kotlin.reflect.*
-import kotlin.concurrent.*
-import kotlin.native.concurrent.*
 import kotlin.internal.RequireKotlin
 import kotlin.internal.RequireKotlinVersionKind
 
@@ -682,7 +679,7 @@ internal external fun <T> Array<T>.atomicSet(index: Int, newValue: T)
  * NOTE: Ensure that the provided [index] does not exceed the size of the [array][this]. Exceeding the array size may result in undefined behavior.
  */
 @TypedIntrinsic(IntrinsicType.GET_AND_SET_ARRAY_ELEMENT)
-internal external fun <T> Array<T>.getAndSet(index: Int, value: T): T
+internal external fun <T> Array<T>.getAndSet(index: Int, newValue: T): T
 
 /**
  * Atomically sets the value of the [Array<T>][this] element at the given [index] to the [new value][newValue]

@@ -1,15 +1,19 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class Foo {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
     fun bar(): String
-    <!INCOMPATIBLE_MATCHING{JVM}!>fun bas(f: Int)<!>
-}<!>
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>bas<!>(f: Int)
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> {
-    fun bar(): String = "bar"
-    fun bas(g: Int) {}
+actual class Foo {
+    fun <!ACTUAL_MISSING!>bar<!>(): String = "bar"
+    fun <!ACTUAL_MISSING!>bas<!>(g: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, stringLiteral */

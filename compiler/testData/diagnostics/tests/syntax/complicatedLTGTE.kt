@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 // ISSUE: KT-52684
@@ -7,3 +8,5 @@ fun test(x: Int, y: Int) {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral */

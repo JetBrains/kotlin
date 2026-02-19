@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 
 fun simpleTypeAndNumberType(b: Comparable<*>?) {
     if (b is Byte?) {
@@ -35,3 +36,6 @@ object SeparateTypes {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, nestedClass, nullableType, objectDeclaration, smartcast, starProjection, typeParameter */

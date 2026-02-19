@@ -18,7 +18,6 @@ package kotlin.text
  * @sample samples.text.Chars.digitToInt
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToInt(): Int {
     return digitOf(this, 10).also {
         if (it < 0) throw IllegalArgumentException("Char $this is not a decimal digit")
@@ -39,7 +38,6 @@ public fun Char.digitToInt(): Int {
  * @sample samples.text.Chars.digitToInt
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToInt(radix: Int): Int {
     return digitToIntOrNull(radix) ?: throw IllegalArgumentException("Char $this is not a digit in the given radix=$radix")
 }
@@ -54,7 +52,6 @@ public fun Char.digitToInt(radix: Int): Int {
  * @sample samples.text.Chars.digitToIntOrNull
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(): Int? {
     return digitOf(this, 10).takeIf { it >= 0 }
 }
@@ -73,7 +70,6 @@ public fun Char.digitToIntOrNull(): Int? {
  * @sample samples.text.Chars.digitToIntOrNull
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(radix: Int): Int? {
     checkRadix(radix)
     return digitOf(this, radix).takeIf { it >= 0 }
@@ -88,7 +84,6 @@ public fun Char.digitToIntOrNull(radix: Int): Int? {
  * @sample samples.text.Chars.digitToChar
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Int.digitToChar(): Char {
     if (this in 0..9) {
         return '0' + this
@@ -106,7 +101,6 @@ public fun Int.digitToChar(): Char {
  * @sample samples.text.Chars.digitToChar
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Int.digitToChar(radix: Int): Char {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
@@ -125,7 +119,7 @@ public fun Int.digitToChar(radix: Int): Char {
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use lowercaseChar() instead.", ReplaceWith("lowercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public expect fun Char.toLowerCase(): Char
 
 /**
@@ -138,7 +132,6 @@ public expect fun Char.toLowerCase(): Char
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.lowercaseChar(): Char
 
 /**
@@ -152,14 +145,13 @@ public expect fun Char.lowercaseChar(): Char
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.lowercase(): String
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use uppercaseChar() instead.", ReplaceWith("uppercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public expect fun Char.toUpperCase(): Char
 
 /**
@@ -172,7 +164,6 @@ public expect fun Char.toUpperCase(): Char
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.uppercaseChar(): Char
 
 /**
@@ -186,7 +177,6 @@ public expect fun Char.uppercaseChar(): Char
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.uppercase(): String
 
 /**
@@ -335,7 +325,12 @@ public expect fun Char.isTitleCase(): Boolean
 public expect fun Char.isISOControl(): Boolean
 
 /**
- * Determines whether a character is whitespace according to the Unicode standard.
+ * Determines whether a character is whitespace.
+ *
+ * A character is considered whitespace if either its Unicode [category][Char.category]
+ * is one of [CharCategory.SPACE_SEPARATOR], [CharCategory.LINE_SEPARATOR], [CharCategory.PARAGRAPH_SEPARATOR],
+ * or it is a [CharCategory.CONTROL] character in range `U+0009..U+000D` or `U+001C..U+001F`.
+ *
  * Returns `true` if the character is whitespace.
  *
  * @sample samples.text.Chars.isWhitespace

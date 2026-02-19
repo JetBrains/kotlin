@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,22 +7,27 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.runtime.components.*
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectJavaClassFinder
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClassFinder
+import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeErrorReporter
+import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeSourceElementFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
+import org.jetbrains.kotlin.load.kotlin.makeDeserializationComponentsForJava
+import org.jetbrains.kotlin.load.kotlin.makeLazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.toMetadataVersion
+import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.ClassLoaderByConfiguration
 
@@ -51,7 +56,7 @@ class PackageFragmentFromClassLoaderProviderExtension(
             PackagePartFromClassLoaderProvider(
                 classLoader,
                 languageVersionSettings,
-                compilerConfiguration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+                compilerConfiguration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             )
 
         val lazyJavaPackageFragmentProvider =
@@ -66,7 +71,7 @@ class PackageFragmentFromClassLoaderProviderExtension(
             makeDeserializationComponentsForJava(
                 module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
                 reflectKotlinClassFinder, deserializedDescriptorResolver, RuntimeErrorReporter,
-                languageVersionSettings.languageVersion.toMetadataVersion()
+                languageVersionSettings.languageVersion.toJvmMetadataVersion()
             )
 
         deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)

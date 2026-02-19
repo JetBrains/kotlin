@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-1031 Can't infer type of `it` with two lambdas
 package i
@@ -21,3 +22,7 @@ fun a() {
     checkSubtype<() -> Iterable<Int>>(z)
     checkSubtype<() -> Iterable<String>>(yielder)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, localProperty, multiplicativeExpression, nullableType,
+propertyDeclaration, rangeExpression, typeParameter, typeWithExtension */

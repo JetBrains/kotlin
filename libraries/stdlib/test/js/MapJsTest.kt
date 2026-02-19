@@ -403,10 +403,11 @@ abstract class MapJsTest {
         assertFalse(entries.any { it.value == value2 })
 
         val entry = map.entries.first()
+        val (key3, value3) = entry
         entries -= entry
-        assertFalse(entry.key in map, "remove from entries")
-        assertFalse(entry.key in keys)
-        assertFalse(entry.value in values)
+        assertFalse(key3 in map, "remove from entries")
+        assertFalse(key3 in keys)
+        assertFalse(value3 in values)
 
         val entry2 = map.entries.first()
         entry2.setValue(100)

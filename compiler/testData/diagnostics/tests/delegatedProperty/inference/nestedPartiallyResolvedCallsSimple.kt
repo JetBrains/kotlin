@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57543
 
@@ -14,3 +15,6 @@ class A(
 }
 
 fun <E> select(e: E, f: E): E = TODO()
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, typeParameter */

@@ -1,28 +1,29 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // WITH_STDLIB
-// !OPT_IN: kotlin.ExperimentalMultiplatform
+// OPT_IN: kotlin.ExperimentalMultiplatform
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
-@OptionalExpectation
+@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
 expect annotation class A()
 
-fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>) = a.toString()
+fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>) = a.toString()
 
-<!WRONG_ANNOTATION_TARGET, WRONG_ANNOTATION_TARGET{JVM}!>@OptionalExpectation<!>
+<!WRONG_ANNOTATION_TARGET{JVM}!>@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!><!>
 expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>NotAnAnnotationClass<!>
 
-<!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, OPTIONAL_EXPECTATION_NOT_ON_EXPECTED{JVM}!>@OptionalExpectation<!>
+<!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED{JVM}!>@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!><!>
 annotation class NotAnExpectedClass
 
-annotation class InOtherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>)
+annotation class InOtherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>)
 
-@InOtherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>())
+@InOtherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>())
 fun useInOtherAnnotation() {}
 
 expect class C {
-    @OptionalExpectation
+    @<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
     annotation class Nested
 }
 
@@ -42,3 +43,6 @@ fun useInAnotherAnnotation() {}
 actual class C {
     actual annotation class Nested
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass,
+nullableType, primaryConstructor, propertyDeclaration */

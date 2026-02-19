@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Outer.java
 
@@ -15,3 +16,5 @@ class OuterDerived: Outer() {
     // valid, My and Your have better visibility
     override fun foo(my: Outer.My) = Outer.Your()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nestedClass, override */

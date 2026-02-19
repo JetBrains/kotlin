@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_VARIABLE -DEPRECATION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +NullableNothingInReifiedPosition
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_VARIABLE -DEPRECATION
 
 inline fun<reified T> foo(block: () -> T): String = block().toString()
 
@@ -14,3 +16,7 @@ fun box() {
 
     val f = javaClass<<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Nothing<!>>()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classReference, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified, stringLiteral, typeConstraint,
+typeParameter */

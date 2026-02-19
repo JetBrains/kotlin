@@ -1,4 +1,5 @@
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 package test
 
 enum class Sample {
@@ -15,9 +16,9 @@ fun trivial(s: Sample): Int {
 
 fun shouldNotWork(s: Sample): Int {
     return when {
-        s == <!UNRESOLVED_REFERENCE!>FIRST<!> -> 1
-        s == <!UNRESOLVED_REFERENCE!>SECOND<!> -> 2
-        s == <!UNRESOLVED_REFERENCE!>THIRD<!> -> 3
+        s == FIRST -> 1
+        s == SECOND -> 2
+        s == THIRD -> 3
         else -> 0
     }
 }
@@ -29,10 +30,12 @@ class Container {
         val FIRST = test.Sample.THIRD
         return when (s) {
             FIRST -> 3
-            SECOND -> 2
+            <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>SECOND<!> -> 2
             test.Sample.FIRST -> 1
             else -> 0
         }
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

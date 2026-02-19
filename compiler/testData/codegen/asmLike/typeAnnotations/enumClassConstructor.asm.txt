@@ -7,9 +7,13 @@ final class foo/Kotlin$A : foo/Kotlin {
 
 Ljava/lang/Enum<Lfoo/Kotlin;>;
 public class foo/Kotlin : java/lang/Enum {
+    private final static kotlin.enums.EnumEntries $ENTRIES
+
     private final static foo.Kotlin[] $VALUES
 
     public final static foo.Kotlin A
+
+    private final static foo.Kotlin[] $values()
 
     static void <clinit>()
 
@@ -19,7 +23,11 @@ public class foo/Kotlin : java/lang/Enum {
 
     public void <init>(java.lang.String $enum$name, int $enum$ordinal, java.lang.String s, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
-    public static foo.Kotlin valueOf(java.lang.String p0)
+    ()Lkotlin/enums/EnumEntries<Lfoo/Kotlin;>;
+    public static kotlin.enums.EnumEntries getEntries()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+
+    public static foo.Kotlin valueOf(java.lang.String value)
 
     public static foo.Kotlin[] values()
 }

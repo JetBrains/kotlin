@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /FooWorker : /SimpleRibCoroutineWorker<#A>, kotlin/Function1<kotlin/String, kotlin/Unit> { // /FooWorker|null[0]
+    constructor <init>() // /FooWorker.<init>|<init>(){}[0]
+    final fun invoke(kotlin/String) // /FooWorker.invoke|invoke(kotlin.String){}[0]
+    final suspend fun onStart(#A) // /FooWorker.onStart|onStart(1:0){}[0]
+}
+abstract interface /MyInterface // /MyInterface|null[0]
+abstract fun interface <#A: kotlin/Any?> /SimpleRibCoroutineWorker { // /SimpleRibCoroutineWorker|null[0]
+    abstract suspend fun onStart(#A) // /SimpleRibCoroutineWorker.onStart|onStart(1:0){}[0]
+}
+final fun <#A: kotlin/Any?> /bar(kotlin/Array<out /SimpleRibCoroutineWorker<#A>>...) // /bar|bar(kotlin.Array<out|SimpleRibCoroutineWorker<0:0>>...){0§<kotlin.Any?>}[0]
+final fun /createNewPlugin(): /SimpleRibCoroutineWorker</MyInterface> // /createNewPlugin|createNewPlugin(){}[0]
+final fun <#A: kotlin/Any?> /foo(/SimpleRibCoroutineWorker<#A>) // /foo|foo(SimpleRibCoroutineWorker<0:0>){0§<kotlin.Any?>}[0]
+final fun /main() // /main|main(){}[0]

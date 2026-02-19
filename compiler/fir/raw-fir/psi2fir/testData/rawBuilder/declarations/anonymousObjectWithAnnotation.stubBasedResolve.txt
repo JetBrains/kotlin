@@ -1,0 +1,3 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] anonymousObjectWithAnnotation.kt
+    public final [ResolvedTo(CONTRACTS)] val prop: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>

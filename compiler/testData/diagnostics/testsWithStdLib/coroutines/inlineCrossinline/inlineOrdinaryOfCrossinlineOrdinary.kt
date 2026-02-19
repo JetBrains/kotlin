@@ -1,5 +1,6 @@
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_COROUTINES
 // SKIP_TXT
 import kotlin.coroutines.*
@@ -32,3 +33,7 @@ fun box() {
         <!ILLEGAL_SUSPEND_FUNCTION_CALL!>calculate<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, companionObject, crossinline,
+functionDeclaration, functionalType, inline, lambdaLiteral, localProperty, nullableType, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, safeCall, stringLiteral, suspend, thisExpression, typeParameter */

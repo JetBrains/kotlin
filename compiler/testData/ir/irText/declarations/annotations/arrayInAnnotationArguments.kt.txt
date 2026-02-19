@@ -1,26 +1,26 @@
 open annotation class TestAnnWithIntArray : Annotation {
+  val x: IntArray
+    field = x
+    get
+
   constructor(x: IntArray) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: IntArray
-    field = x
-    get
-
 }
 
 open annotation class TestAnnWithStringArray : Annotation {
+  val x: Array<String>
+    field = x
+    get
+
   constructor(x: Array<String>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: Array<String>
-    field = x
-    get
 
 }
 
@@ -33,3 +33,4 @@ fun test1() {
 @TestAnnWithStringArray(x = ["d", "e", "f"])
 fun test2() {
 }
+

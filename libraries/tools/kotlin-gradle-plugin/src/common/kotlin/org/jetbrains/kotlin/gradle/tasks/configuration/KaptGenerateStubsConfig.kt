@@ -10,13 +10,13 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isUseK2
+import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
@@ -34,23 +34,25 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
 
         configureTask { kaptGenerateStubsTask ->
             // Syncing compiler options from related KotlinJvmCompile task
-            val jvmCompilerOptions = compilation.compilerOptions.options as KotlinJvmCompilerOptions
-            KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
-                from = jvmCompilerOptions,
-                into = kaptGenerateStubsTask.compilerOptions
-            )
+            @Suppress("DEPRECATION") val jvmCompilerOptions = compilation.compilerOptions.options as KotlinJvmCompilerOptions
+            syncOptionsFromCompileTask(jvmCompilerOptions, kaptGenerateStubsTask)
         }
     }
 
-    constructor(project: Project, ext: KotlinTopLevelExtension, kaptExtension: KaptExtension) : super(project, ext) {
+    constructor(
+        project: Project,
+        explicitApiMode: Provider<ExplicitApiMode>,
+        kaptExtension: KaptExtensionConfig
+    ) : super(project, explicitApiMode) {
         configureFromExtension(kaptExtension)
     }
 
-    private fun configureFromExtension(kaptExtension: KaptExtension) {
+    private fun configureFromExtension(kaptExtension: KaptExtensionConfig) {
         configureTask { task ->
             task.verbose.set(KaptTask.queryKaptVerboseProperty(project))
-            task.pluginOptions.add(buildOptions(kaptExtension, task))
-            task.useK2Kapt.value(project.isUseK2()).finalizeValueOnRead()
+            if (kaptExtension is KaptExtension) {
+                task.pluginOptions.add(buildOptions(kaptExtension, task))
+            }
 
             if (!isIncludeCompileClasspath(kaptExtension)) {
                 task.onlyIf {
@@ -60,8 +62,8 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         }
     }
 
-    private fun isIncludeCompileClasspath(kaptExtension: KaptExtension) =
-        kaptExtension.includeCompileClasspath ?: project.isIncludeCompileClasspath()
+    private fun isIncludeCompileClasspath(kaptExtension: KaptExtensionConfig) =
+        kaptExtension.includeCompileClasspath ?: KaptProperties.isIncludeCompileClasspath(project).get()
 
     private fun buildOptions(kaptExtension: KaptExtension, task: KaptGenerateStubsTask): Provider<CompilerPluginOptions> {
         val javacOptions = project.provider { kaptExtension.getJavacOptions() }
@@ -129,6 +131,23 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
                     }
                 }
             }
+        }
+
+        internal fun syncOptionsFromCompileTask(
+            taskCompilerOptions: KotlinJvmCompilerOptions,
+            kaptGenerateStubsTask: KaptGenerateStubsTask,
+        ) {
+            // Syncing compiler options from related KotlinJvmCompile task
+            KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
+                from = taskCompilerOptions,
+                into = kaptGenerateStubsTask.compilerOptions
+            )
+
+            // This task should not sync any freeCompilerArgs from relevant KotlinCompile task
+            // when someone explicitly configures any value for this task as well.
+            // Here we reset any configured value and say that use KotlinCompile freeCompilerArgs as convention
+            kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.value(null as Iterable<String>?)
+            kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.convention(taskCompilerOptions.freeCompilerArgs)
         }
     }
 }

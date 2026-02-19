@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -NOTHING_TO_INLINE
 // SKIP_TXT
 // WITH_COROUTINES
 import kotlin.coroutines.*
@@ -39,3 +40,8 @@ fun box() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, companionObject, crossinline,
+functionDeclaration, functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, override, primaryConstructor, propertyDeclaration, safeCall, stringLiteral, suspend, thisExpression,
+typeParameter */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
@@ -23,3 +24,6 @@ fun <R> Inv<@Exact R>.select(first: R, second: R): R = TODO()
 fun test2(derived: Derived, other: Other) {
     Inv(derived).select(derived, <!TYPE_MISMATCH!>other<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

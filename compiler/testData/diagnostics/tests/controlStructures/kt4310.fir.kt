@@ -1,11 +1,14 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package f
 
 fun test(a: Boolean, b: Boolean): Int {
-    return <!RETURN_TYPE_MISMATCH!>if(a) {
+    return if(a) {
         1
     } else {
-        if (b) {
+        <!INVALID_IF_AS_EXPRESSION!>if<!> (b) {
             3
         }
-    }<!>
+    }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral */

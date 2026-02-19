@@ -28,7 +28,7 @@ class JvmIrBuilder(
     endOffset
 ) {
     val irSymbols: JvmSymbols
-        get() = backendContext.ir.symbols
+        get() = backendContext.symbols
 }
 
 fun JvmBackendContext.createJvmIrBuilder(

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-32462
 
 fun <K> select(x: K, y: K): K = x
@@ -24,3 +25,6 @@ fun test_2() {
         A::toC
     )<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+typeParameter */

@@ -30,7 +30,7 @@ class ClassicTypeSystemContextForCS(
         return this.defaultType
     }
 
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
+    override fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker {
         require(this is NewTypeVariable, this::errorMessage)
         return this.freshTypeConstructor
     }
@@ -99,7 +99,11 @@ class ClassicTypeSystemContextForCS(
         return isContainedInInvariantOrContravariantPositions
     }
 
-    override fun newTypeCheckerState(errorTypesEqualToAnything: Boolean, stubTypesEqualToAnything: Boolean): TypeCheckerState {
+    override fun newTypeCheckerState(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean,
+        dnnTypesEqualToFlexible: Boolean,
+    ): TypeCheckerState {
         return createClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,

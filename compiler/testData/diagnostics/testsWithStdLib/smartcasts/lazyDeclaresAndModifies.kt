@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My(val x: Int?) {
     val y: Int? by lazy {
         var z = x
@@ -9,3 +10,7 @@ class My(val x: Int?) {
         return@lazy null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, equalityExpression, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate,
+smartcast, whileLoop */

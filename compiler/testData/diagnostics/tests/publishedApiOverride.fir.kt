@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: lib1
 
 // FILE: DemoClassInternal1.kt
@@ -28,3 +29,5 @@ fun test() {
     MyDemo1().<!INVISIBLE_REFERENCE!>demo<!>()
     MyDemo2().<!INVISIBLE_REFERENCE!>demo<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, superExpression */

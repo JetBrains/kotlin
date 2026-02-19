@@ -1,0 +1,1 @@
+@java.lang.Deprecated[Unresolved]() public final [ResolvedTo(RAW_FIR)] typealias AAA = String

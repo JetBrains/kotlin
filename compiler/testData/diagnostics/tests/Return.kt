@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package <!SYNTAX!>return<!>
 
 class A {
@@ -15,3 +16,6 @@ class A {
         return@outer
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+localFunction */

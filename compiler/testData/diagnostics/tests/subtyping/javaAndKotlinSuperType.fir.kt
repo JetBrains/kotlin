@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: A.java
 public interface A<T> {
 }
@@ -40,3 +41,5 @@ fun test2(w: W) {
     eatAString(w)
     eatAStringN(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType */

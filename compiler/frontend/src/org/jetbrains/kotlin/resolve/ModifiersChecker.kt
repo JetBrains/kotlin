@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -117,25 +118,13 @@ object ModifierCheckerCore {
     private fun checkTarget(trace: BindingTrace, node: ASTNode, actualTargets: List<KotlinTarget>): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
 
-        val possibleTargets = possibleTargetMap[modifier] ?: emptySet()
-        if (!actualTargets.any { it in possibleTargets }) {
+        val possibleTargets = possibleTargetPredicateMap[modifier]
+        if (actualTargets.none { possibleTargets?.isAllowed(it, LanguageVersionSettingsImpl.DEFAULT) == true }) {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
-        val deprecatedModifierReplacement = deprecatedModifierMap[modifier]
-        val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
         when {
-            deprecatedModifierReplacement != null ->
-                trace.report(Errors.DEPRECATED_MODIFIER.on(node.psi, modifier, deprecatedModifierReplacement))
-            actualTargets.any { it in deprecatedTargets } ->
-                trace.report(
-                    Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(
-                        node.psi,
-                        modifier,
-                        actualTargets.firstOrNull()?.description ?: "this"
-                    )
-                )
             actualTargets.any { it in redundantTargets } ->
                 trace.report(
                     Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(
@@ -237,9 +226,6 @@ object ModifierCheckerCore {
 
             val diagnosticData = dependency to languageVersionSettings
             when (featureSupport) {
-                LanguageFeature.State.ENABLED_WITH_WARNING -> {
-                    trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
-                }
                 LanguageFeature.State.DISABLED -> {
                     trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
                     return false

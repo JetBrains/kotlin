@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface A {
     fun foo(): A
     fun bar(x: String): A
@@ -22,3 +23,6 @@ fun test_3(x: A?, y: String?) {
         y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral */

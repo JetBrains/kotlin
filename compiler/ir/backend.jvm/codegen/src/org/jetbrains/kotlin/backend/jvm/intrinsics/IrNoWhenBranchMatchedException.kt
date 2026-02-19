@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-object IrNoWhenBranchMatchedException : IntrinsicMethod() {
+object IrNoWhenBranchMatchedException : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {

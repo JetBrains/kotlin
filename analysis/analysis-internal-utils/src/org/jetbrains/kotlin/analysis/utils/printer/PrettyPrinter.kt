@@ -23,20 +23,25 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     @PublishedApi
     internal var indent: Int = 0
 
-    override fun append(seq: CharSequence): Appendable = apply {
+    override fun append(nullableSeq: CharSequence?): Appendable = apply {
+        val seq = nullableSeq ?: "null"
         if (seq.isEmpty()) return@apply
         printPrefixes()
         seq.split('\n').forEachIndexed { index, line ->
             if (index > 0) {
                 builder.append('\n')
             }
-            appendIndentIfNeeded()
-            builder.append(line)
+
+            // Skip indents if the line is empty.
+            if (line.isNotEmpty()) {
+                appendIndentIfNeeded()
+                builder.append(line)
+            }
         }
     }
 
-    override fun append(seq: CharSequence, start: Int, end: Int): Appendable = apply {
-        append(seq.subSequence(start, end))
+    override fun append(nullableSeq: CharSequence?, start: Int, end: Int): Appendable = apply {
+        append((nullableSeq ?: "null").subSequence(start, end))
     }
 
     override fun append(c: Char): Appendable = apply {
@@ -131,6 +136,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     }
 
     public inline fun checkIfPrinted(render: () -> Unit): Boolean {
+        contract { callsInPlace(render, InvocationKind.EXACTLY_ONCE) }
         val initialSize = builder.length
         render()
         return initialSize != builder.length

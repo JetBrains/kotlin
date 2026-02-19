@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Host { // /Host|null[0]
+    final val castGenericMemberExtVal // /Host.castGenericMemberExtVal|@0:0{0§<kotlin.Any?>}castGenericMemberExtVal[0]
+        final fun <#A2: kotlin/Any?> (#A2).<get-castGenericMemberExtVal>(): #A2 // /Host.castGenericMemberExtVal.<get-castGenericMemberExtVal>|<get-castGenericMemberExtVal>@0:0(){0§<kotlin.Any?>}[0]
+    final val castMemberExtVal // /Host.castMemberExtVal|@kotlin.Any{}castMemberExtVal[0]
+        final fun (kotlin/Any).<get-castMemberExtVal>(): #A // /Host.castMemberExtVal.<get-castMemberExtVal>|<get-castMemberExtVal>@kotlin.Any(){}[0]
+    constructor <init>() // /Host.<init>|<init>(){}[0]
+    final fun <#A1: kotlin/Any?> (kotlin/Any).castGenericMemberExtFun(): #A1 // /Host.castGenericMemberExtFun|castGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> castGenericMemberFun(kotlin/Any): #A1 // /Host.castGenericMemberFun|castGenericMemberFun(kotlin.Any){0§<kotlin.Any?>}[0]
+    final fun (kotlin/Any).castMemberExtFun(): #A // /Host.castMemberExtFun|castMemberExtFun@kotlin.Any(){}[0]
+    final fun castMemberFun(kotlin/Any): #A // /Host.castMemberFun|castMemberFun(kotlin.Any){}[0]
+}
+final val /castExtVal // /castExtVal|@0:0{0§<kotlin.Any?>}castExtVal[0]
+    final fun <#A1: kotlin/Any?> (#A1).<get-castExtVal>(): #A1 // /castExtVal.<get-castExtVal>|<get-castExtVal>@0:0(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> (kotlin/Any)./castExtFun(): #A // /castExtFun|castExtFun@kotlin.Any(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /castFun(kotlin/Any): #A // /castFun|castFun(kotlin.Any){0§<kotlin.Any?>}[0]

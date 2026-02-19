@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// EXPECTED_REACHABLE_NODES: 1292
 // KT-60785
 
 import kotlin.coroutines.*

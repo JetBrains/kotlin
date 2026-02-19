@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun example() {
     val a = if (true) true else false
@@ -31,3 +32,6 @@ fun example() {
 
     return <!TYPE_MISMATCH!>if (true) true else {}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, lambdaLiteral, localFunction, localProperty,
+propertyDeclaration */

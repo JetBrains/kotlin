@@ -18,17 +18,39 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.signatures
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType.BOOLEAN
 
 class TypeEnhancementInfo(val map: Map<Int, JavaTypeQualifiers>) {
     constructor(vararg pairs: Pair<Int, JavaTypeQualifiers>) : this(mapOf(*pairs))
+
+    fun copyForWarnings(): TypeEnhancementInfo =
+        TypeEnhancementInfo(this.map.mapValues {
+            it.value.copy(
+                isNullabilityQualifierForWarning = true,
+                isMutabilityQualifierForWarning = true,
+            )
+        })
 }
 
 class PredefinedFunctionEnhancementInfo(
     val returnTypeInfo: TypeEnhancementInfo? = null,
-    val parametersInfo: List<TypeEnhancementInfo?> = emptyList()
-)
+    val parametersInfo: List<TypeEnhancementInfo?> = emptyList(),
+    // `null` means that it's enabled for any language version
+    val errorsSinceLanguageVersion: String? = null,
+    val returnValueStatus: ReturnValueStatus? = null,
+) {
+    val warningModeClone: PredefinedFunctionEnhancementInfo? =
+        if (errorsSinceLanguageVersion != null)
+            PredefinedFunctionEnhancementInfo(
+                returnTypeInfo?.copyForWarnings(),
+                parametersInfo.map { it?.copyForWarnings() },
+                errorsSinceLanguageVersion = null
+            )
+        else
+            null
+}
 
 /** Type is always nullable: `T?` */
 private val NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NULLABLE, null, definitelyNotNull = false)
@@ -38,7 +60,7 @@ private val NOT_PLATFORM = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, nul
 private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, definitelyNotNull = true)
 
 @Suppress("LocalVariableName")
-val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
+val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFunctionEnhancementInfo> = signatures {
     val JLObject = javaLang("Object")
     val JFPredicate = javaFunction("Predicate")
     val JFFunction = javaFunction("Function")
@@ -58,6 +80,7 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
         forClass(javaLang("Iterable")) {
             function("spliterator") {
                 returns(javaUtil("Spliterator"), NOT_PLATFORM, NOT_PLATFORM)
+                mustUseReturnValue()
             }
         }
         forClass(javaUtil("Collection")) {
@@ -67,14 +90,77 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
             }
             function("stream") {
                 returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
+                mustUseReturnValue()
             }
             function("parallelStream") {
                 returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
+                mustUseReturnValue()
             }
         }
+        // See duplications here and in the LinkedList section
+        // Currently it looks redundant to try avoiding duplicated code here
+        @Suppress("DuplicatedCode")
         forClass(javaUtil("List")) {
             function("replaceAll") {
                 parameter(JFUnaryOperator, NOT_PLATFORM, NOT_PLATFORM)
+            }
+
+            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("addLast", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+        }
+        // Signatures' duplication is necessary because for JDKs < 21, there's no relevant methods in `MutableList` declaration.
+        // But we still want to report preventing warnings (and eventually errors) for usages that would be treated as error since JDK 21
+        @Suppress("DuplicatedCode")
+        forClass(javaUtil("LinkedList")) {
+            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("addLast", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+        }
+        forClass(javaUtil("LinkedHashSet")) {
+            function("addFirst", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+            function("addLast", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+            function("removeFirst", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("removeLast", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("getFirst", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+                mustUseReturnValue()
+            }
+            function("getLast", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+                mustUseReturnValue()
             }
         }
         forClass(javaUtil("Map")) {
@@ -125,20 +211,36 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
                 returns(JLObject, NULLABLE)
             }
         }
+        forClass(javaUtil("LinkedHashMap")) {
+            function("putFirst", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(JLObject, NULLABLE)
+            }
+            function("putLast", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(JLObject, NULLABLE)
+            }
+        }
         forClass(JUOptional) {
             function("empty") {
                 returns(JUOptional, NOT_PLATFORM, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("of") {
                 parameter(JLObject, NOT_NULLABLE)
                 returns(JUOptional, NOT_PLATFORM, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("ofNullable") {
                 parameter(JLObject, NULLABLE)
                 returns(JUOptional, NOT_PLATFORM, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("get") {
                 returns(JLObject, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("ifPresent") {
                 parameter(JFConsumer, NOT_PLATFORM, NOT_NULLABLE)
@@ -207,13 +309,21 @@ private class SignatureEnhancementBuilder {
         ClassEnhancementBuilder(internalName).block()
 
     inner class ClassEnhancementBuilder(val className: String) {
-        fun function(name: String, block: FunctionEnhancementBuilder.() -> Unit) {
-            signatures += FunctionEnhancementBuilder(name).apply(block).build()
+        fun function(
+            name: String,
+            errorsSinceLanguageVersion: String? = null,
+            block: FunctionEnhancementBuilder.() -> Unit
+        ) {
+            signatures += FunctionEnhancementBuilder(name, errorsSinceLanguageVersion).apply(block).build()
         }
 
-        inner class FunctionEnhancementBuilder(val functionName: String) {
+        inner class FunctionEnhancementBuilder(
+            val functionName: String,
+            val errorsSinceLanguageVersion: String? = null,
+        ) {
             private val parameters = mutableListOf<Pair<String, TypeEnhancementInfo?>>()
             private var returnType: Pair<String, TypeEnhancementInfo?> = "V" to null
+            private var returnValueStatus: ReturnValueStatus? = null
 
             fun parameter(type: String, vararg pairs: Pair<Int, JavaTypeQualifiers>) {
                 parameters += type to
@@ -241,9 +351,20 @@ private class SignatureEnhancementBuilder {
                 returnType = type.desc to null
             }
 
+            // It is possible to also enhance methods with ExplicitlyIgnorable information (KT-80180),
+            // but it is not really necessary for checker to work correctly.
+            fun mustUseReturnValue() {
+                returnValueStatus = ReturnValueStatus.MustUse
+            }
+
             fun build() = with(SignatureBuildingComponents) {
                 signature(className, jvmDescriptor(functionName, parameters.map { it.first }, returnType.first)) to
-                        PredefinedFunctionEnhancementInfo(returnType.second, parameters.map { it.second })
+                        PredefinedFunctionEnhancementInfo(
+                            returnType.second,
+                            parameters.map { it.second },
+                            errorsSinceLanguageVersion,
+                            returnValueStatus
+                        )
             }
         }
 

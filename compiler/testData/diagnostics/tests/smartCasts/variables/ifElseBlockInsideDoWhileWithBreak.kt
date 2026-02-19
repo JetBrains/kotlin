@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun foo(xx: Any): Int {
     var x = xx
     do {
@@ -14,3 +15,6 @@ public fun foo(xx: Any): Int {
     // We could have smart cast here but with break it's hard to detect
     return x.<!UNRESOLVED_REFERENCE!>length<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, doWhileLoop, functionDeclaration, ifExpression, isExpression, localProperty,
+propertyDeclaration, smartcast, stringLiteral */

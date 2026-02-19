@@ -1,0 +1,21 @@
+BEFORE MODIFICATION:
+CODE FRAGMENT: {
+    local final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/x] x: R|kotlin/Int|): R|<local>/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            this@R|<local>/Foo|.R|<local>/foo|()
+        }
+
+    }
+
+    R|<local>/Foo.Foo|(Int(1))
+}
+
+AFTER MODIFICATION:
+CODE FRAGMENT: { LAZY_BLOCK }

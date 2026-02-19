@@ -6,9 +6,9 @@
 package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.experimental.ExperimentalObjCEnum
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
-import kotlin.reflect.KClass
 
 /**
  * [SymbolName] is a dangerous deprecated and internal annotation. Please avoid using it.
@@ -52,19 +52,18 @@ internal annotation class RetainForTarget(val target: String)
 
 
 /** @suppress */
-@Deprecated("Use common kotlin.Throws annotation instead.", ReplaceWith("kotlin.Throws"), DeprecationLevel.WARNING)
+@Deprecated("Use common kotlin.Throws annotation instead.", ReplaceWith("kotlin.Throws"), DeprecationLevel.ERROR)
 public typealias Throws = kotlin.Throws
 
 /** @suppress */
 @Deprecated("Use kotlin.native.concurrent.ThreadLocal instead.", ReplaceWith("ThreadLocal", "kotlin.native.concurrent.ThreadLocal"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
 /** @suppress */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("This annotation is redundant and has no effect")
-@DeprecatedSinceKotlin(warningSince = "1.9")
-// Not @FreezingIsDeprecated: Lots of usages. Usages will trigger INFO reports in the frontend.
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 
 /**
@@ -80,6 +79,15 @@ public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 @ExperimentalStdlibApi
 @Deprecated("This annotation is a temporal migration assistance and may be removed in the future releases, please consider filing an issue about the case where it is needed")
 public annotation class EagerInitialization
+
+/**
+ * Forbids inlining of this function/property with the dedicated K/N inliner.
+ * Note: this has nothing to do with the inline keyword, it's a separate inlining phase
+ * meant for optimizations. The function/property still could be inlined by LLVM though.
+ */
+@ExperimentalNativeApi
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+public annotation class NoInline
 
 /**
  * Makes top level function available from C/C++ code with the given name.
@@ -108,6 +116,20 @@ public actual annotation class CName(actual val externName: String = "", actual 
 @ExperimentalObjCName
 @SinceKotlin("1.8")
 public actual annotation class ObjCName(actual val name: String = "", actual val swiftName: String = "", actual val exact: Boolean = false)
+
+/**
+ * Instructs the Kotlin compiler to generate a NS_ENUM typedef for the annotated enum class. The name of the generated type will
+ * be the name of the enum type with "NSEnum" appended. This name can be overridden with the "name" parameter, which is treated
+ * as an exact name. Additionally, a separate name for Swift can be specified using the swiftName parameter.
+ * The enum literals will be prefixed with the type name, as they live in a global namespace.
+ * Swift naming will remove these disambiguation prefixes. The NSEnum values are accessible via the "nsEnum" property.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@ExperimentalObjCEnum
+@SinceKotlin("2.3")
+public actual annotation class ObjCEnum(actual val name: String = "", actual val swiftName: String = "")
 
 /**
  * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.

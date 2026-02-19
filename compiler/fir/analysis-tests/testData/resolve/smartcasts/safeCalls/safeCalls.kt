@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun String.foo(b: Boolean): String = ""
 
 fun String.let(block: () -> Unit) {}
@@ -36,3 +37,6 @@ fun test_5(x: A?) {
     x?.let { return }?.boo(x.bool())
     x<!UNSAFE_CALL!>.<!>id()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, safeCall, smartcast, stringLiteral */

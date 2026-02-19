@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class SomeEnum {
     A, B
 }
@@ -31,3 +32,6 @@ fun test_3(enum: SomeEnum) {
         SomeEnum.A -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

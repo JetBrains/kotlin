@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 data class Pair<A, B>(val first: A, val second: B)
 
@@ -17,3 +18,8 @@ fun test() {
         Pair("OK", "fail").max
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, data, disjunctionExpression, equalityExpression,
+flexibleType, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, getter, ifExpression, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, propertyWithExtensionReceiver, smartcast, stringLiteral, thisExpression, typeParameter */

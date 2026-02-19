@@ -1,0 +1,43 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@ReadOnlyComposable
+@Composable
+fun getSomeValue(a: Int): Int {
+    if (a < 100) return 0
+    return 1
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@ReadOnlyComposable
+@Composable
+fun getSomeValue(a: Int, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(getSomeValue):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (a < 100) {
+    val tmp1_return = 0
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp1_return
+  }
+  val tmp0 = 1
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

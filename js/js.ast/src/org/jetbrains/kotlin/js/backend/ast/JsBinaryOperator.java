@@ -89,26 +89,6 @@ public enum JsBinaryOperator implements JsOperator {
   }
 
   @Override
-  public boolean isPrecedenceLessThan(JsOperator other) {
-    return precedence < other.getPrecedence();
-  }
-
-  @Override
-  public boolean isValidInfix() {
-    return (mask & INFIX) != 0;
-  }
-
-  @Override
-  public boolean isValidPostfix() {
-    return (mask & POSTFIX) != 0;
-  }
-
-  @Override
-  public boolean isValidPrefix() {
-    return (mask & PREFIX) != 0;
-  }
-
-  @Override
   public String toString() {
     return symbol;
   }

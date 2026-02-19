@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !API_VERSION: 1.2
+// API_VERSION: 1.2
 
 import java.io.InputStream
 
@@ -8,3 +9,5 @@ fun InputStream.test() {
 
     readBytes(1)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral */

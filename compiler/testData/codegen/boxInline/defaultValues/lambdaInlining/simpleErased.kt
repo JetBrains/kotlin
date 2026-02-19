@@ -7,8 +7,7 @@ inline fun inlineFun(capturedParam: String, lambda: () -> Any = { capturedParam 
 }
 
 // FILE: 2.kt
-// CHECK_CONTAINS_NO_CALLS: box except=throwCCE;isType TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: box except=THROW_CCE;isObject IGNORED_BACKENDS=JS
+// CHECK_CONTAINS_NO_CALLS: box except=THROW_CCE;isObject
 
 import test.*
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: 1.kt
 package something
@@ -17,3 +18,5 @@ import something.TWC
 
 val test1 = T.hashCode()
 val test2 = TWC.hashCode()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

@@ -1,0 +1,7 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
+language = Objective-C
+package = platform.Symbols
+
+modules = Symbols
+compilerOpts = -framework Symbols
+linkerOpts = -framework Symbols

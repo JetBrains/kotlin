@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 // FILE: fakeOverridesForJavaNonStaticMembers.kt
@@ -12,7 +13,7 @@ import a.Base
 class Test2 : Base()
 
 // FILE: a/Base.java
-package a
+package a;
 
 public class Base {
     public void publicMethod() {}

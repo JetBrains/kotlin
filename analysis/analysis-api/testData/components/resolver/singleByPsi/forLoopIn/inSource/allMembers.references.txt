@@ -1,0 +1,9 @@
+KtForExpression(23,37): 'for(i in f) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      0: (in Foo) operator fun iterator(): Iterator
+      1: (in Iterator) operator fun hasNext(): kotlin.Boolean
+      2: (in Iterator) operator fun next(): kotlin.Any

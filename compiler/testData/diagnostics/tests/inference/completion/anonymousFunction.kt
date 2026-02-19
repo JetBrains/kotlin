@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun take(fn: () -> List<String>) {}
 fun <L> inferFromLambda(fn: () -> L): L = TODO()
@@ -21,3 +22,6 @@ fun testNestedCalls() {
     id<String>(inferFromLambda(fun() = materialize()))
     id<String>(inferFromLambda2(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun<!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>()<!> = materialize()<!>))
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+typeParameter */

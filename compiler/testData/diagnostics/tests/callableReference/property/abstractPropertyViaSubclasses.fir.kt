@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 import kotlin.reflect.KProperty1
 
@@ -34,3 +35,7 @@ fun test() {
     checkSubtype<KProperty1<B, Number>>(b)
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>b.get(C())<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, interfaceDeclaration, localProperty, nullableType, override, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

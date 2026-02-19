@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 
 
 // FILE: test.kt
@@ -20,27 +20,6 @@ fun testExpressionBody(nullable: String?) =
     nullable != null &&
             // Some comment
             nullable.length == 2
-
-// EXPECTATIONS JVM
-// test.kt:7 box
-// test.kt:16 test
-// test.kt:14 test
-// test.kt:7 box
-
-// test.kt:8 box
-// test.kt:16 test
-// test.kt:14 test
-// test.kt:8 box
-
-// test.kt:9 box
-// test.kt:22 testExpressionBody
-// test.kt:9 box
-
-// test.kt:10 box
-// test.kt:22 testExpressionBody
-// test.kt:10 box
-
-// test.kt:11 box
 
 // EXPECTATIONS JVM_IR
 // test.kt:7 box
@@ -67,6 +46,32 @@ fun testExpressionBody(nullable: String?) =
 
 // test.kt:11 box
 
+// EXPECTATIONS NATIVE
+// test.kt:7 box
+// test.kt:13 test
+// test.kt:14 test
+// test.kt:16 test
+// test.kt:16 test
+// test.kt:17 test
+// test.kt:7 box
+// test.kt:8 box
+// test.kt:13 test
+// test.kt:14 test
+// test.kt:16 test
+// test.kt:17 test
+// test.kt:8 box
+// test.kt:9 box
+// test.kt:19 testExpressionBody
+// test.kt:20 testExpressionBody
+// test.kt:22 testExpressionBody
+// test.kt:22 testExpressionBody
+// test.kt:9 box
+// test.kt:10 box
+// test.kt:19 testExpressionBody
+// test.kt:20 testExpressionBody
+// test.kt:22 testExpressionBody
+// test.kt:11 box
+
 // EXPECTATIONS JS_IR
 // test.kt:7 box
 // test.kt:14 test
@@ -77,3 +82,24 @@ fun testExpressionBody(nullable: String?) =
 // test.kt:10 box
 // test.kt:22 testExpressionBody
 // test.kt:11 box
+
+// EXPECTATIONS WASM
+// test.kt:7 $box (9, 4)
+// test.kt:14 $test (11)
+// test.kt:16 $test (12, 21, 31, 12)
+// test.kt:14 $test (4)
+// test.kt:7 $box (4)
+// test.kt:8 $box (9, 4)
+// test.kt:14 $test (11)
+// test.kt:16 $test (12)
+// test.kt:14 $test (4)
+// test.kt:8 $box (4)
+// test.kt:9 $box (23, 4)
+// test.kt:20 $testExpressionBody (4)
+// test.kt:22 $testExpressionBody (12, 21, 31, 12, 32)
+// test.kt:9 $box (4)
+// test.kt:10 $box (23, 4)
+// test.kt:20 $testExpressionBody (4)
+// test.kt:22 $testExpressionBody (12, 32)
+// test.kt:10 $box (4)
+// test.kt:11 $box (1)

@@ -1,7 +1,11 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
+// FILE: lib.kt
+inline fun <reified T> Any?.isCheck() = this is T
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class AsAny(val a: Any?) {
     fun myEq(other: Any?): Boolean {
@@ -15,8 +19,6 @@ value class AsInt(val a: Int) {
         return other is AsInt && other.a == a
     }
 }
-
-inline fun <reified T> Any?.isCheck() = this is T
 
 object Reference {
     fun isNullable(a: AsAny) = a is AsAny?

@@ -1,0 +1,17 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-61101
+
+open class A {
+    var x: Int = 0
+        private set
+}
+
+class B : A()
+
+fun test() {
+    val b = B()
+    b<!UNREACHABLE_CODE!>.x =<!> throw Exception()
+}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

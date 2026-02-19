@@ -1,10 +1,11 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun box(): String {
     val arr = Array(4) { arrayOf("x$it") }
 
     var s = ""
-    for ((i, sarr) in arr.withIndex()) {
+    for ([i, sarr] in arr.withIndex()) {
         s += "$i:${sarr.toList()}"
     }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package foo
 
 import kotlin.reflect.KProperty
@@ -19,3 +20,6 @@ class MyProperty<R : A, T> {
         throw Exception("$thisRef $desc")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, propertyWithExtensionReceiver, starProjection, stringLiteral, typeConstraint, typeParameter */

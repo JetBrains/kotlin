@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -58,3 +59,7 @@ val test7 = generate {
 val test8 = generate {
     safeExtension()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, outProjection, propertyDeclaration,
+stringLiteral, suspend, typeParameter, typeWithExtension */

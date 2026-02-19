@@ -3,3 +3,4 @@ text: companion object {
         val K: Int = 58
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -1,0 +1,17 @@
+KT element: KtClass
+KT element text:
+public abstract class Foo<T : Foo.T> public constructor() {
+    public interface T {
+    }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public abstract [ResolvedTo(BODY_RESOLVE)] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|Foo.T|> : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=true] interface T : R|kotlin/Any| {
+    }
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|Foo.T|>(): R|Foo<T>|
+
+}

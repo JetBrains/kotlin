@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-2225 Object expression delegation parameter should be checked with data flow info
 
 interface A {
@@ -13,3 +14,7 @@ fun foo(b: B?) : Int {
     }
     return o.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, inheritanceDelegation, integerLiteral, interfaceDeclaration, localProperty, nullableType, override,
+propertyDeclaration, smartcast */

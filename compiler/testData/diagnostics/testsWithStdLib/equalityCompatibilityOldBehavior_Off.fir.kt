@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ReportErrorsForComparisonOperators
 
 fun nullableNothingIdentity(a: Int, b: Nothing?) {
-    <!FORBIDDEN_IDENTITY_EQUALS, SENSELESS_COMPARISON!>a === b<!>
+    <!SENSELESS_COMPARISON!>a === b<!>
 }
 
 fun samePrimitiveIdentity(a: Int, b: Int) {
@@ -36,3 +37,6 @@ fun <A> compareTypeParameterWithEnum(a: A) where A: I1, A: I2 {
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a == E1.A<!>
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a == E3.A<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, interfaceDeclaration,
+nullableType, typeConstraint, typeParameter */

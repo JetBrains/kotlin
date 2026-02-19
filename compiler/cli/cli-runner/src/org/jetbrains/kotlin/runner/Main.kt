@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.runner
@@ -45,7 +34,7 @@ object Main {
             val validValues = "${GUESS.argName} (default), ${CLASSFILE.argName}, ${JAR.argName}, ${SCRIPT.argName} (or .<script filename extension>)"
 
             fun fromArg(name: String): HowToRun? =
-                HowToRun.values().find { it.argName == name }
+                HowToRun.entries.find { it.argName == name }
         }
     }
 
@@ -120,6 +109,11 @@ object Main {
                     restAsArguments()
                     break
                 }
+                "-repl" == arg || "-Xrepl" == arg -> {
+                    setRunner(ReplRunner())
+                    compilerArguments.add("-Xrepl")
+                    break
+                }
                 "-no-stdlib" == arg -> {
                     noStdLib = true
                     compilerArguments.add(arg)
@@ -130,6 +124,10 @@ object Main {
                 }
                 arg.startsWith("-X") -> {
                     compilerArguments.add(arg)
+                }
+                arg.startsWith("-P") -> {
+                    compilerArguments.add(arg)
+                    compilerArguments.add(next())
                 }
                 "-language-version" == arg -> {
                     compilerArguments.add(arg)
@@ -202,12 +200,25 @@ object Main {
     fun main(args: Array<String>) {
         try {
             run(args)
-        }
-        catch (e: RunnerException) {
+        } catch (e: RunnerException) {
             System.err.println("error: " + e.message)
             exitProcess(1)
+        } catch (e: Throwable) {
+            for (exception in generateSequence(e, Throwable::cause)) {
+                exception.stackTrace = sanitizeStackTrace(exception.stackTrace)
+            }
+            throw e
         }
     }
+
+    private fun sanitizeStackTrace(trace: Array<StackTraceElement>): Array<StackTraceElement> =
+        trace.dropLastWhile {
+            val name = it.className
+            name.startsWith("org.jetbrains.kotlin.runner.") ||
+                    name.startsWith("java.lang.reflect.") ||
+                    name.startsWith("sun.reflect.") ||
+                    name.startsWith("jdk.internal.reflect.")
+        }.toTypedArray()
 
     private fun printUsageAndExit() {
         println("""kotlin: run Kotlin programs, scripts or REPL.
@@ -234,7 +245,7 @@ or, in case of guess, according to the following rules:
                              (compiler arguments are ignored and no Kotlin stdlib is added to the classpath)
   script.kts                 Compiles and runs the given script, passing <arguments> to it
   -expression (-e) '2+2'     Evaluates the expression and prints the result, passing <arguments> to it
-  <no command>               Runs Kotlin REPL
+  -repl                      Runs Kotlin REPL
 arguments are passed to the main function when running class or jar file, and for standard script definitions
 as the 'args' parameter when running script or expression
 """)

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // SCOPE_DUMP: C:getName;setName;name, D:getName;setName;name
 // FILE: A.java
 public interface A {
@@ -23,3 +25,5 @@ fun test(d: D) {
     val name = d.name
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, localProperty, nullableType,
+override, primaryConstructor, propertyDeclaration */

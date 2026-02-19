@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_REFLECT
 import kotlin.reflect.KProperty0
@@ -28,3 +29,7 @@ fun main() {
         y = { ::bodywt }
     )
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, reified,
+starProjection, stringLiteral, typeParameter, typeWithExtension */

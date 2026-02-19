@@ -1,5 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE, WASM
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:1.9
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // FILE: common.kt

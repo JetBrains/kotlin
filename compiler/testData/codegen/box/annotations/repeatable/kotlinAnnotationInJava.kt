@@ -1,4 +1,4 @@
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // WITH_STDLIB

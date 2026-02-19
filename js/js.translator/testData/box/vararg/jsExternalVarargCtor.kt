@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 //KT-42357
 
 // FILE: main.kt

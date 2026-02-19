@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 object Outer {
     private var x
         get() = object : CharSequence {
@@ -33,3 +34,7 @@ object Outer {
         y.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, infix, integerLiteral, nullableType, objectDeclaration, operator, override,
+propertyDeclaration, setter, stringLiteral, typeParameter, typeWithExtension */

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 interface ConstraintStorage {
     val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
     val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
-    val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>>
     val initialConstraints: List<InitialConstraint>
     val maxTypeDepthFromInitialConstraints: Int
     val errors: List<ConstraintSystemError>
@@ -48,10 +48,41 @@ interface ConstraintStorage {
     val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
 
+    /**
+     * For a type variable X (its type constructor) as a key, the map contains a set of type variables
+     * that may have constraints referring to X (containing it inside the type).
+     *
+     * Mostly, this property is necessary for the sake of incorporation optimizations.
+     *
+     * Note that the resulting set might contain some false positives, i.e., there might be some variables that actually don't contain
+     * the constraints containing the requested variable X. That situation might occur due to a situation
+     * when constraints have been added and then removed during a transaction rollback.
+     */
+    val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>>
+
+    val approximatorCaches: TypeApproximatorCachesPerConfiguration
+
+    /**
+     *  Outer system for a call means some set of variables defined beside it/its arguments
+     *
+     *  In case some candidate's CS is built in the context of some outer CS, first [outerSystemVariablesPrefixSize] in the list
+     *  of [allTypeVariables] belong to the outer CS.
+     *
+     *  That information is very limitedly used in a couple of cases when we need to separate those kinds of variables
+     *   - When completing `provideDelegate` calls, we assume outer variables as proper types
+     *   (see fixInnerVariablesForProvideDelegateIfNeeded).
+     *   - When checking consistency of collected variables for the inner candidate
+     *   (see checkNotFixedTypeVariablesCountConsistency).
+     *
+     *  Also, see docs/fir/delegated_property_inference.md
+     */
+    val outerSystemVariablesPrefixSize: Int
+
+    val usesOuterCs: Boolean
+
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
-        override val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>> get() = emptyList()
         override val initialConstraints: List<InitialConstraint> get() = emptyList()
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
         override val errors: List<ConstraintSystemError> get() = emptyList()
@@ -61,6 +92,15 @@ interface ConstraintStorage {
         override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> = emptyMap()
         override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap()
         override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
+
+        override val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>> get() = emptyMap()
+
+        override val outerSystemVariablesPrefixSize: Int get() = 0
+
+        override val usesOuterCs: Boolean get() = false
+
+        override val approximatorCaches: TypeApproximatorCachesPerConfiguration
+            get() = mutableMapOf()
     }
 }
 
@@ -73,6 +113,9 @@ enum class ConstraintKind {
     fun isUpper(): Boolean = this == UPPER
     fun isEqual(): Boolean = this == EQUALITY
 
+    // For EQUALITY, we effectively have both directions
+    fun impliesLower(): Boolean = !isUpper() // this == LOWER || this == EQUALITY
+
     fun opposite() = when (this) {
         LOWER -> UPPER
         UPPER -> LOWER
@@ -82,16 +125,24 @@ enum class ConstraintKind {
 
 class Constraint(
     val kind: ConstraintKind,
-    val type: KotlinTypeMarker, // flexible types here is allowed
+    val type: KotlinTypeMarker, // flexible types are allowed here
     val position: IncorporationConstraintPosition,
     val typeHashCode: Int = type.hashCode(),
+    // Collection of all \alpha variables which led to the creation of this constraint via
+    // incorporation of a form "\alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>".
+    // (see `org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator.insideOtherConstraint`)
+    //
+    // For all cases of incorporation, it's a union of `derivedFrom` for the original constraints.
+    // This property is used to avoid infinitely recursive constraint creation.
     val derivedFrom: Set<TypeVariableMarker>,
     // This value is true for constraints of the form `Nothing? <: Tv`
-    // that have been created during incorporation phase of the constraint of the form `Kv? <: Tv` (where `Kv` another type variable).
-    // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that variable is ready for completion).
+    // that has been created during the incorporation phase for the constraint of the form `Kv? <: Tv` (where `Kv` is another type variable).
+    // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that the variable is ready for completion).
     // And also, there is additional logic in K1 that doesn't allow to fix variable into `Nothing?` if we had only that kind of lower constraints
     val isNullabilityConstraint: Boolean,
-    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null
+    // Can only be true in K2
+    val isNoInfer: Boolean,
+    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -115,6 +166,11 @@ class Constraint(
 interface VariableWithConstraints {
     val typeVariable: TypeVariableMarker
     val constraints: List<Constraint>
+
+    /**
+     * Only necessary for incorporation optimization
+     */
+    fun getConstraintsContainedSpecifiedTypeVariable(typeVariableConstructor: TypeConstructorMarker): Collection<Constraint>
 }
 
 class InitialConstraint(
@@ -142,14 +198,12 @@ class InitialConstraint(
 //    return checkConstraint(newB as KotlinTypeMarker, constraintKind, newA as KotlinTypeMarker)
 //}
 
+context(context: TypeCheckerProviderContext)
 fun checkConstraint(
-    context: TypeCheckerProviderContext,
     constraintType: KotlinTypeMarker,
     constraintKind: ConstraintKind,
     resultType: KotlinTypeMarker
 ): Boolean {
-
-
     val typeChecker = AbstractTypeChecker
     return when (constraintKind) {
         ConstraintKind.EQUALITY -> typeChecker.equalTypes(context, constraintType, resultType)
@@ -157,6 +211,3 @@ fun checkConstraint(
         ConstraintKind.UPPER -> typeChecker.isSubtypeOf(context, resultType, constraintType)
     }
 }
-
-fun Constraint.replaceType(newType: KotlinTypeMarker) =
-    Constraint(kind, newType, position, typeHashCode, derivedFrom, isNullabilityConstraint, inputTypePositionBeforeIncorporation)

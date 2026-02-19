@@ -1,5 +1,6 @@
-// !LANGUAGE: -UnitConversionsOnArbitraryExpressions
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -UnitConversionsOnArbitraryExpressions
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun foo(f: () -> Unit) {}
 
@@ -20,3 +21,6 @@ fun test(f: () -> String, g: () -> Nothing, h: () -> Nothing?, s: SubInt) {
     foo(<!UNSUPPORTED_FEATURE!>f<!>)
     foo(<!UNSUPPORTED_FEATURE!>s<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter */

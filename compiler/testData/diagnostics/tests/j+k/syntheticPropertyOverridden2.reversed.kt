@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-57166
 
 // FILE: Modality.kt
@@ -31,3 +32,6 @@ class DeserializedClassDescriptor2 : ClassDescriptor {
 
     override fun getModality() = modality
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, javaType, objectDeclaration,
+override, propertyDeclaration */

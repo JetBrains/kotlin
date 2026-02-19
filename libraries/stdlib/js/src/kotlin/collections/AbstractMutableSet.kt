@@ -9,7 +9,6 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the set. The set is invariant in its element type.
  */
-@AllowDifferentMembersInActual // New 'AbstractMutableCollection` supertype is added compared to the expect declaration
 public actual abstract class AbstractMutableSet<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableSet<E> {
 
     /**

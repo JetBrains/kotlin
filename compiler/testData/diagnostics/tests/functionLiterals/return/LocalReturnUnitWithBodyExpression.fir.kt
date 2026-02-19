@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: +UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: +UNUSED_EXPRESSION
+// WITH_EXTRA_CHECKERS
 
 val flag = true
 
@@ -7,3 +9,5 @@ val a = b@ { // () -> Unit
     if (flag) return@b
     else 54
 }
+
+/* GENERATED_FIR_TAGS: ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FULL_JDK
 
 import java.util.*
@@ -78,3 +79,6 @@ fun concurrentHashMapTest() {
 
     val b8: Int? = x.get("")
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+nullableType, propertyDeclaration, stringLiteral */

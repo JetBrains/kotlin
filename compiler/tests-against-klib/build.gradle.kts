@@ -1,31 +1,40 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import java.io.File
-
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("project-tests-convention")
+    id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 dependencies {
     api(kotlinStdlib())
-    testApi(projectTests(":generators:test-generator"))
-    testApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 
-    testCompileOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
+    testFixturesApi("org.junit.jupiter:junit-jupiter")
+    testCompileOnly(libs.junit4)
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 sourceSets {
     "main" { }
-    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
-testsJar {}
+projectTests {
+    // only 2 files are really needed:
+    // - compiler/testData/codegen/boxKlib/properties.kt
+    // - compiler/testData/codegen/boxKlib/simple.kt
+    testData(project(":compiler").isolated, "testData/codegen/boxKlib")
 
-projectTest(parallel = true) {
-    dependsOn(":kotlin-stdlib:jsJar")
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    withJvmStdlibAndReflect()
+
+    testTask(jUnitMode = JUnitMode.JUnit5)
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt", generateTestsInBuildDirectory = true)
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt")
+optInToK1Deprecation()

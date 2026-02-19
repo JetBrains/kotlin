@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // FILE: JavaClass.java
 public class JavaClass {
     public String getFoo() {
@@ -19,3 +20,7 @@ fun bar(a: A) {
 fun JavaClass.bar(a: A) {
     a.foo checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, getter, infix,
+integerLiteral, interfaceDeclaration, javaType, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter, typeWithExtension */

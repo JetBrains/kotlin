@@ -1,0 +1,385 @@
+FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 19, 45, 105, 121, 140, 151, 175, 219, 220, 236, 279, 280, 302, 303, 356, 357, 408, 435, 458, 488, 513, 539, 571, 604, 636, 650, 681, 691, 709, 749, 759, 765, 801, 843, 845, 846]
+  PROPERTY[280, 301] name:globalCounter visibility:public modality:FINAL [var]
+    FIELD[280, 301] PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY[300, 301]
+        CONST[300, 301] Int type=kotlin.Int value=0
+    FUN[280, 297] DEFAULT_PROPERTY_ACCESSOR name:<get-globalCounter> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[280, 301] name:globalCounter visibility:public modality:FINAL [var]
+      BLOCK_BODY[280, 297]
+        RETURN[280, 297] type=kotlin.Nothing from='public final fun <get-globalCounter> (): kotlin.Int declared in <root>'
+          GET_FIELD[280, 297] 'FIELD PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN[280, 297] DEFAULT_PROPERTY_ACCESSOR name:<set-globalCounter> visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER[280, 297] kind:Regular name:<set-?> index:0 type:kotlin.Int
+      correspondingProperty: PROPERTY[280, 301] name:globalCounter visibility:public modality:FINAL [var]
+      BLOCK_BODY[280, 297]
+        SET_FIELD[280, 297] 'FIELD PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR[280, 297] '<set-?>: kotlin.Int declared in <root>.<set-globalCounter>' type=kotlin.Int origin=null
+  CLASS[236, 278] CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[236, 278] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Pair<T of <root>.Pair>
+    TYPE_PARAMETER[247, 248] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY[250, 262] name:first visibility:public modality:FINAL [val]
+      FIELD[250, 262] PROPERTY_BACKING_FIELD name:first type:T of <root>.Pair visibility:private [final]
+        EXPRESSION_BODY[250, 262]
+          GET_VAR[250, 262] 'first: T of <root>.Pair declared in <root>.Pair.<init>' type=T of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[250, 262] DEFAULT_PROPERTY_ACCESSOR name:<get-first> visibility:public modality:FINAL returnType:T of <root>.Pair
+        VALUE_PARAMETER[250, 262] kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<T of <root>.Pair>
+        correspondingProperty: PROPERTY[250, 262] name:first visibility:public modality:FINAL [val]
+        BLOCK_BODY[250, 262]
+          RETURN[250, 262] type=kotlin.Nothing from='public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair'
+            GET_FIELD[250, 262] 'FIELD PROPERTY_BACKING_FIELD name:first type:T of <root>.Pair visibility:private [final]' type=T of <root>.Pair origin=null
+              receiver: GET_VAR[250, 262] '<this>: <root>.Pair<T of <root>.Pair> declared in <root>.Pair.<get-first>' type=<root>.Pair<T of <root>.Pair> origin=null
+    PROPERTY[264, 277] name:second visibility:public modality:FINAL [val]
+      FIELD[264, 277] PROPERTY_BACKING_FIELD name:second type:T of <root>.Pair visibility:private [final]
+        EXPRESSION_BODY[264, 277]
+          GET_VAR[264, 277] 'second: T of <root>.Pair declared in <root>.Pair.<init>' type=T of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[264, 277] DEFAULT_PROPERTY_ACCESSOR name:<get-second> visibility:public modality:FINAL returnType:T of <root>.Pair
+        VALUE_PARAMETER[264, 277] kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<T of <root>.Pair>
+        correspondingProperty: PROPERTY[264, 277] name:second visibility:public modality:FINAL [val]
+        BLOCK_BODY[264, 277]
+          RETURN[264, 277] type=kotlin.Nothing from='public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair'
+            GET_FIELD[264, 277] 'FIELD PROPERTY_BACKING_FIELD name:second type:T of <root>.Pair visibility:private [final]' type=T of <root>.Pair origin=null
+              receiver: GET_VAR[264, 277] '<this>: <root>.Pair<T of <root>.Pair> declared in <root>.Pair.<get-second>' type=<root>.Pair<T of <root>.Pair> origin=null
+    CONSTRUCTOR[249, 278] visibility:public returnType:<root>.Pair<T of <root>.Pair> [primary]
+      VALUE_PARAMETER[250, 262] kind:Regular name:first index:0 type:T of <root>.Pair
+      VALUE_PARAMETER[264, 277] kind:Regular name:second index:1 type:T of <root>.Pair
+      BLOCK_BODY[249, 278]
+        DELEGATING_CONSTRUCTOR_CALL[236, 278] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[236, 278] classDescriptor='CLASS CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[236, 278] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[236, 278] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[236, 278] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN[236, 278] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[236, 278] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN[236, 278] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[236, 278] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  FUN[364, 844] name:bar visibility:public modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER[372, 399] kind:Regular name:test index:0 type:kotlin.Function0<kotlin.Int> [crossinline]
+    BLOCK_BODY[406, 844]
+      VAR[412, 434] name:outsideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
+        CONSTRUCTOR_CALL[433, 434] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+          TYPE_ARG (of class) T: kotlin.Int
+          ARG element: CONST[433, 434] Int type=kotlin.Int value=0
+      VAR[439, 764] name:x type:<root>.Pair<<root>.bar.<no name provided>> [val]
+        BLOCK[447, 764] type=<root>.Pair<<root>.bar.<no name provided>> origin=null
+          CLASS[504, 690] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+            thisReceiver: VALUE_PARAMETER[504, 690] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.bar.<no name provided>
+            FIELD[504, 690] FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final]
+            CONSTRUCTOR[504, 690] visibility:private returnType:<root>.bar.<no name provided> [primary]
+              VALUE_PARAMETER[-1, -1] BOUND_VALUE_PARAMETER kind:Regular name:$insideCounter index:0 type:kotlin.internal.SharedVariableBox<kotlin.Int>
+              BLOCK_BODY[504, 690]
+                SET_FIELD[-1, -1] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.bar.<no name provided>' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                  receiver: GET_VAR[-1, -1] '<this>: <root>.bar.<no name provided> declared in <root>.bar.<no name provided>' type=<root>.bar.<no name provided> origin=null
+                  value: GET_VAR[-1, -1] '$insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar.<no name provided>.<init>' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                DELEGATING_CONSTRUCTOR_CALL[504, 690] 'public constructor <init> () declared in kotlin.Any'
+                INSTANCE_INITIALIZER_CALL[504, 690] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
+            FUN[504, 690] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+              VALUE_PARAMETER[504, 690] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              VALUE_PARAMETER[504, 690] kind:Regular name:other index:1 type:kotlin.Any?
+              overridden:
+                public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+            FUN[504, 690] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+              VALUE_PARAMETER[504, 690] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              overridden:
+                public open fun hashCode (): kotlin.Int declared in kotlin.Any
+            FUN[504, 690] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+              VALUE_PARAMETER[504, 690] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              overridden:
+                public open fun toString (): kotlin.String declared in kotlin.Any
+            FUN[525, 649] name:count visibility:public modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER[525, 649] kind:DispatchReceiver name:<this> index:0 type:<root>.bar.<no name provided>
+              BLOCK_BODY[537, 649]
+                TYPE_OP[555, 570] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  BLOCK[555, 570] type=kotlin.Int origin=POSTFIX_INCR
+                    VAR[555, 570] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+                      CALL[555, 568] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+                    CALL[555, 570] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+                      ARG <set-?>: CALL[568, 570] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                        ARG <this>: GET_VAR[555, 570] 'val tmp_0: kotlin.Int declared in <root>.bar.<no name provided>.count' type=kotlin.Int origin=null
+                    GET_VAR[555, 570] 'val tmp_0: kotlin.Int declared in <root>.bar.<no name provided>.count' type=kotlin.Int origin=null
+                TYPE_OP[587, 603] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  BLOCK[587, 603] type=kotlin.Int origin=POSTFIX_INCR
+                    VAR[587, 603] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+                      CALL[587, 601] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=POSTFIX_INCR
+                        ARG <this>: GET_VAR[587, 601] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                    CALL[587, 603] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=POSTFIX_INCR
+                      ARG <this>: GET_VAR[587, 603] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                      ARG <set-?>: CALL[601, 603] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                        ARG <this>: GET_VAR[587, 603] 'val tmp_1: kotlin.Int declared in <root>.bar.<no name provided>.count' type=kotlin.Int origin=null
+                    GET_VAR[587, 603] 'val tmp_1: kotlin.Int declared in <root>.bar.<no name provided>.count' type=kotlin.Int origin=null
+                TYPE_OP[620, 635] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  BLOCK[620, 635] type=kotlin.Int origin=POSTFIX_INCR
+                    VAR[620, 635] IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+                      CALL[620, 633] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=POSTFIX_INCR
+                        ARG <this>: GET_FIELD[620, 633] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.bar.<no name provided>' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                          receiver: GET_VAR[620, 633] '<this>: <root>.bar.<no name provided> declared in <root>.bar.<no name provided>.count' type=<root>.bar.<no name provided> origin=null
+                    CALL[620, 635] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=POSTFIX_INCR
+                      ARG <this>: GET_FIELD[620, 635] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.bar.<no name provided>' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                        receiver: GET_VAR[620, 635] '<this>: <root>.bar.<no name provided> declared in <root>.bar.<no name provided>.count' type=<root>.bar.<no name provided> origin=null
+                      ARG <set-?>: CALL[633, 635] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                        ARG <this>: GET_VAR[620, 635] 'val tmp_2: kotlin.Int declared in <root>.bar.<no name provided>.count' type=kotlin.Int origin=null
+                    GET_VAR[620, 635] 'val tmp_2: kotlin.Int declared in <root>.bar.<no name provided>.count' type=kotlin.Int origin=null
+            FUN[662, 680] name:foo visibility:public modality:FINAL returnType:kotlin.Int
+              VALUE_PARAMETER[662, 680] kind:DispatchReceiver name:<this> index:0 type:<root>.bar.<no name provided>
+              BLOCK_BODY[674, 680]
+                RETURN[680, 680] type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.bar.<no name provided>'
+                  CALL[674, 680] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
+                    ARG <this>: GET_VAR[674, 678] 'test: kotlin.Function0<kotlin.Int> declared in <root>.bar' type=kotlin.Function0<kotlin.Int> origin=VARIABLE_AS_FUNCTION
+          RETURNABLE_BLOCK[447, 764] type=<root>.Pair<<root>.bar.<no name provided>> origin=null
+            INLINED_BLOCK[447, 764]->[310, 355] type=<root>.Pair<<root>.bar.<no name provided>> origin=null
+              inlinedFunctionSymbol: public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>
+              inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+              RETURN[355, 355] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                TYPE_OP[341, 355] type=<root>.Pair<<root>.bar.<no name provided>> origin=IMPLICIT_CAST typeOperand=<root>.Pair<<root>.bar.<no name provided>>
+                  CONSTRUCTOR_CALL[341, 355] 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<kotlin.Any?> origin=null
+                    TYPE_ARG (of class) T: kotlin.Any?
+                    ARG first: RETURNABLE_BLOCK[346, 349] type=kotlin.Any? origin=null
+                      INLINED_BLOCK[346, 349]->[456, 764] type=kotlin.Any? origin=null
+                        inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+                        VAR[466, 487] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
+                          CONSTRUCTOR_CALL[486, 487] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                            TYPE_ARG (of class) T: kotlin.Int
+                            ARG element: CONST[486, 487] Int type=kotlin.Int value=0
+                        VAR[496, 690] name:r type:<root>.bar.<no name provided> [val]
+                          BLOCK[504, 690] type=<root>.bar.<no name provided> origin=OBJECT_LITERAL
+                            COMPOSITE[504, 690] type=kotlin.Unit origin=null
+                            CONSTRUCTOR_CALL[504, 690] 'private constructor <init> ($insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int>) declared in <root>.bar.<no name provided>' type=<root>.bar.<no name provided> origin=OBJECT_LITERAL
+                              ARG $insideCounter: GET_VAR[504, 690] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                        CALL[701, 708] 'public final fun count (): kotlin.Unit declared in <root>.bar.<no name provided>' type=kotlin.Unit origin=null
+                          ARG <this>: GET_VAR[699, 700] 'val r: <root>.bar.<no name provided> declared in <root>.bar' type=<root>.bar.<no name provided> origin=null
+                        CALL[717, 748] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=PLUSEQ
+                          ARG <this>: GET_VAR[717, 748] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                          ARG <set-?>: CALL[717, 748] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                            ARG <this>: CALL[717, 731] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=PLUSEQ
+                              ARG <this>: GET_VAR[717, 731] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                            ARG other: CALL[735, 748] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=null
+                              ARG <this>: GET_VAR[735, 748] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                        RETURN[758, 758] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                          TYPE_OP[757, 758] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                            GET_VAR[757, 758] 'val r: <root>.bar.<no name provided> declared in <root>.bar' type=<root>.bar.<no name provided> origin=null
+                    ARG second: RETURNABLE_BLOCK[351, 354] type=kotlin.Any? origin=null
+                      INLINED_BLOCK[351, 354]->[456, 764] type=kotlin.Any? origin=null
+                        inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+                        VAR[466, 487] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
+                          CONSTRUCTOR_CALL[486, 487] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                            TYPE_ARG (of class) T: kotlin.Int
+                            ARG element: CONST[486, 487] Int type=kotlin.Int value=0
+                        VAR[496, 690] name:r type:<root>.bar.<no name provided> [val]
+                          BLOCK[504, 690] type=<root>.bar.<no name provided> origin=OBJECT_LITERAL
+                            COMPOSITE[504, 690] type=kotlin.Unit origin=null
+                            CONSTRUCTOR_CALL[504, 690] 'private constructor <init> ($insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int>) declared in <root>.bar.<no name provided>' type=<root>.bar.<no name provided> origin=OBJECT_LITERAL
+                              ARG $insideCounter: GET_VAR[504, 690] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                        CALL[701, 708] 'public final fun count (): kotlin.Unit declared in <root>.bar.<no name provided>' type=kotlin.Unit origin=null
+                          ARG <this>: GET_VAR[699, 700] 'val r: <root>.bar.<no name provided> declared in <root>.bar' type=<root>.bar.<no name provided> origin=null
+                        CALL[717, 748] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=PLUSEQ
+                          ARG <this>: GET_VAR[717, 748] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                          ARG <set-?>: CALL[717, 748] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                            ARG <this>: CALL[717, 731] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=PLUSEQ
+                              ARG <this>: GET_VAR[717, 731] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                            ARG other: CALL[735, 748] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=null
+                              ARG <this>: GET_VAR[735, 748] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                        RETURN[758, 758] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                          TYPE_OP[757, 758] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                            GET_VAR[757, 758] 'val r: <root>.bar.<no name provided> declared in <root>.bar' type=<root>.bar.<no name provided> origin=null
+      CALL[769, 800] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
+        ARG <set-?>: CALL[769, 800] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+          ARG <this>: CALL[769, 782] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
+          ARG other: CALL[786, 800] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=null
+            ARG <this>: GET_VAR[786, 800] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+      RETURN[805, 842] type=kotlin.Nothing from='public final fun bar (test: kotlin.Function0<kotlin.Int>): kotlin.Int declared in <root>'
+        CALL[812, 842] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          ARG <this>: CALL[820, 825] 'public final fun foo (): kotlin.Int declared in <root>.bar.<no name provided>' type=kotlin.Int origin=null
+            ARG <this>: CALL[814, 819] 'public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<no name provided> origin=GET_PROPERTY
+              ARG <this>: GET_VAR[812, 813] 'val x: <root>.Pair<<root>.bar.<no name provided>> declared in <root>.bar' type=<root>.Pair<<root>.bar.<no name provided>> origin=null
+          ARG other: CALL[837, 842] 'public final fun foo (): kotlin.Int declared in <root>.bar.<no name provided>' type=kotlin.Int origin=null
+            ARG <this>: CALL[830, 836] 'public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<no name provided> origin=GET_PROPERTY
+              ARG <this>: GET_VAR[828, 829] 'val x: <root>.Pair<<root>.bar.<no name provided>> declared in <root>.bar' type=<root>.Pair<<root>.bar.<no name provided>> origin=null
+  FUN[310, 355] name:runTwice visibility:public modality:FINAL returnType:<root>.Pair<T of <root>.runTwice> [inline]
+    TYPE_PARAMETER[315, 316] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[327, 337] kind:Regular name:f index:0 type:kotlin.Function0<T of <root>.runTwice>
+    BLOCK_BODY[341, 355]
+      RETURN[355, 355] type=kotlin.Nothing from='public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>'
+        CONSTRUCTOR_CALL[341, 355] 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<T of <root>.runTwice> origin=null
+          TYPE_ARG (of class) T: T of <root>.runTwice
+          ARG first: CALL[346, 349] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
+            ARG <this>: GET_VAR[346, 347] 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
+          ARG second: CALL[351, 354] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
+            ARG <this>: GET_VAR[351, 352] 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
+FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 53, 73, 100, 151, 219, 235, 237]
+  FUN[53, 236] name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[71, 236]
+      VAR[77, 99] name:result type:kotlin.Int [val]
+        RETURNABLE_BLOCK[90, 99] type=kotlin.Int origin=null
+          INLINED_BLOCK[90, 99]->[364, 844] type=kotlin.Int origin=null
+            inlinedFunctionSymbol: public final fun bar (test: kotlin.Function0<kotlin.Int>): kotlin.Int declared in <root>
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[412, 434] name:outsideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
+              CONSTRUCTOR_CALL[433, 434] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                TYPE_ARG (of class) T: kotlin.Int
+                ARG element: CONST[433, 434] Int type=kotlin.Int value=0
+            VAR[439, 764] name:x type:<root>.Pair<<root>.box.<no name provided>> [val]
+              BLOCK[447, 764] type=<root>.Pair<<root>.box.<no name provided>> origin=null
+                CLASS[504, 690] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+                  thisReceiver: VALUE_PARAMETER[504, 690] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.box.<no name provided>
+                  FIELD[504, 690] FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final]
+                  CONSTRUCTOR[504, 690] visibility:private returnType:<root>.box.<no name provided> [primary]
+                    VALUE_PARAMETER[-1, -1] BOUND_VALUE_PARAMETER kind:Regular name:$insideCounter index:0 type:kotlin.internal.SharedVariableBox<kotlin.Int>
+                    BLOCK_BODY[504, 690]
+                      SET_FIELD[-1, -1] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.box.<no name provided>' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                        receiver: GET_VAR[-1, -1] '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null
+                        value: GET_VAR[-1, -1] '$insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box.<no name provided>.<init>' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                      DELEGATING_CONSTRUCTOR_CALL[504, 690] 'public constructor <init> () declared in kotlin.Any'
+                      INSTANCE_INITIALIZER_CALL[504, 690] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
+                  FUN[504, 690] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+                    VALUE_PARAMETER[504, 690] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                    VALUE_PARAMETER[504, 690] kind:Regular name:other index:1 type:kotlin.Any?
+                    overridden:
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+                  FUN[504, 690] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+                    VALUE_PARAMETER[504, 690] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                    overridden:
+                      public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                  FUN[504, 690] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+                    VALUE_PARAMETER[504, 690] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                    overridden:
+                      public open fun toString (): kotlin.String declared in kotlin.Any
+                  FUN[525, 649] name:count visibility:public modality:FINAL returnType:kotlin.Unit
+                    VALUE_PARAMETER[525, 649] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>
+                    BLOCK_BODY[537, 649]
+                      TYPE_OP[555, 570] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                        BLOCK[555, 570] type=kotlin.Int origin=POSTFIX_INCR
+                          VAR[555, 570] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+                            CALL[555, 568] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+                          CALL[555, 570] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+                            ARG <set-?>: CALL[568, 570] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                              ARG <this>: GET_VAR[555, 570] 'val tmp_0: kotlin.Int declared in <root>.box.<no name provided>.count' type=kotlin.Int origin=null
+                          GET_VAR[555, 570] 'val tmp_0: kotlin.Int declared in <root>.box.<no name provided>.count' type=kotlin.Int origin=null
+                      TYPE_OP[587, 603] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                        BLOCK[587, 603] type=kotlin.Int origin=POSTFIX_INCR
+                          VAR[587, 603] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+                            CALL[587, 601] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=POSTFIX_INCR
+                              ARG <this>: GET_VAR[587, 601] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                          CALL[587, 603] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=POSTFIX_INCR
+                            ARG <this>: GET_VAR[587, 603] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                            ARG <set-?>: CALL[601, 603] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                              ARG <this>: GET_VAR[587, 603] 'val tmp_1: kotlin.Int declared in <root>.box.<no name provided>.count' type=kotlin.Int origin=null
+                          GET_VAR[587, 603] 'val tmp_1: kotlin.Int declared in <root>.box.<no name provided>.count' type=kotlin.Int origin=null
+                      TYPE_OP[620, 635] type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                        BLOCK[620, 635] type=kotlin.Int origin=POSTFIX_INCR
+                          VAR[620, 635] IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+                            CALL[620, 633] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=POSTFIX_INCR
+                              ARG <this>: GET_FIELD[620, 633] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.box.<no name provided>' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                                receiver: GET_VAR[620, 633] '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.count' type=<root>.box.<no name provided> origin=null
+                          CALL[620, 635] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=POSTFIX_INCR
+                            ARG <this>: GET_FIELD[620, 635] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.box.<no name provided>' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                              receiver: GET_VAR[620, 635] '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.count' type=<root>.box.<no name provided> origin=null
+                            ARG <set-?>: CALL[633, 635] 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                              ARG <this>: GET_VAR[620, 635] 'val tmp_2: kotlin.Int declared in <root>.box.<no name provided>.count' type=kotlin.Int origin=null
+                          GET_VAR[620, 635] 'val tmp_2: kotlin.Int declared in <root>.box.<no name provided>.count' type=kotlin.Int origin=null
+                  FUN[662, 680] name:foo visibility:public modality:FINAL returnType:kotlin.Int
+                    VALUE_PARAMETER[662, 680] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>
+                    BLOCK_BODY[674, 680]
+                      RETURN[680, 680] type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.box.<no name provided>'
+                        RETURNABLE_BLOCK[674, 680] type=kotlin.Int origin=null
+                          INLINED_BLOCK[674, 680]->[94, 99] type=kotlin.Int origin=null
+                            inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
+                            RETURN[97, 97] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                              CONST[96, 97] Int type=kotlin.Int value=5
+                RETURNABLE_BLOCK[447, 764] type=<root>.Pair<<root>.box.<no name provided>> origin=null
+                  INLINED_BLOCK[447, 764]->[310, 355] type=<root>.Pair<<root>.box.<no name provided>> origin=null
+                    inlinedFunctionSymbol: public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>
+                    inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+                    RETURN[355, 355] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                      TYPE_OP[341, 355] type=<root>.Pair<<root>.box.<no name provided>> origin=IMPLICIT_CAST typeOperand=<root>.Pair<<root>.box.<no name provided>>
+                        CONSTRUCTOR_CALL[341, 355] 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<kotlin.Any?> origin=null
+                          TYPE_ARG (of class) T: kotlin.Any?
+                          ARG first: RETURNABLE_BLOCK[346, 349] type=kotlin.Any? origin=null
+                            INLINED_BLOCK[346, 349]->[456, 764] type=kotlin.Any? origin=null
+                              inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+                              VAR[466, 487] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
+                                CONSTRUCTOR_CALL[486, 487] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                                  TYPE_ARG (of class) T: kotlin.Int
+                                  ARG element: CONST[486, 487] Int type=kotlin.Int value=0
+                              VAR[496, 690] name:r type:<root>.box.<no name provided> [val]
+                                BLOCK[504, 690] type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+                                  COMPOSITE[504, 690] type=kotlin.Unit origin=null
+                                  CONSTRUCTOR_CALL[504, 690] 'private constructor <init> ($insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int>) declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+                                    ARG $insideCounter: GET_VAR[504, 690] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                              CALL[701, 708] 'public final fun count (): kotlin.Unit declared in <root>.box.<no name provided>' type=kotlin.Unit origin=null
+                                ARG <this>: GET_VAR[699, 700] 'val r: <root>.box.<no name provided> declared in <root>.box' type=<root>.box.<no name provided> origin=null
+                              CALL[717, 748] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=PLUSEQ
+                                ARG <this>: GET_VAR[717, 748] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                                ARG <set-?>: CALL[717, 748] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                                  ARG <this>: CALL[717, 731] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=PLUSEQ
+                                    ARG <this>: GET_VAR[717, 731] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                                  ARG other: CALL[735, 748] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=null
+                                    ARG <this>: GET_VAR[735, 748] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                              RETURN[758, 758] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                                TYPE_OP[757, 758] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                                  GET_VAR[757, 758] 'val r: <root>.box.<no name provided> declared in <root>.box' type=<root>.box.<no name provided> origin=null
+                          ARG second: RETURNABLE_BLOCK[351, 354] type=kotlin.Any? origin=null
+                            INLINED_BLOCK[351, 354]->[456, 764] type=kotlin.Any? origin=null
+                              inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+                              VAR[466, 487] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
+                                CONSTRUCTOR_CALL[486, 487] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                                  TYPE_ARG (of class) T: kotlin.Int
+                                  ARG element: CONST[486, 487] Int type=kotlin.Int value=0
+                              VAR[496, 690] name:r type:<root>.box.<no name provided> [val]
+                                BLOCK[504, 690] type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+                                  COMPOSITE[504, 690] type=kotlin.Unit origin=null
+                                  CONSTRUCTOR_CALL[504, 690] 'private constructor <init> ($insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int>) declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
+                                    ARG $insideCounter: GET_VAR[504, 690] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                              CALL[701, 708] 'public final fun count (): kotlin.Unit declared in <root>.box.<no name provided>' type=kotlin.Unit origin=null
+                                ARG <this>: GET_VAR[699, 700] 'val r: <root>.box.<no name provided> declared in <root>.box' type=<root>.box.<no name provided> origin=null
+                              CALL[717, 748] 'public final fun <set-element> (<set-?>: T of kotlin.internal.SharedVariableBox): kotlin.Unit declared in kotlin.internal.SharedVariableBox' type=kotlin.Unit origin=PLUSEQ
+                                ARG <this>: GET_VAR[717, 748] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                                ARG <set-?>: CALL[717, 748] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                                  ARG <this>: CALL[717, 731] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=PLUSEQ
+                                    ARG <this>: GET_VAR[717, 731] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                                  ARG other: CALL[735, 748] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=null
+                                    ARG <this>: GET_VAR[735, 748] 'val insideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+                              RETURN[758, 758] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                                TYPE_OP[757, 758] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                                  GET_VAR[757, 758] 'val r: <root>.box.<no name provided> declared in <root>.box' type=<root>.box.<no name provided> origin=null
+            CALL[769, 800] 'public final fun <set-globalCounter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
+              ARG <set-?>: CALL[769, 800] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                ARG <this>: CALL[769, 782] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
+                ARG other: CALL[786, 800] 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR[786, 800] 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> declared in <root>.box' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
+            RETURN[805, 842] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              CALL[812, 842] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                ARG <this>: CALL[820, 825] 'public final fun foo (): kotlin.Int declared in <root>.box.<no name provided>' type=kotlin.Int origin=null
+                  ARG <this>: CALL[814, 819] 'public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair' type=<root>.box.<no name provided> origin=GET_PROPERTY
+                    ARG <this>: GET_VAR[812, 813] 'val x: <root>.Pair<<root>.box.<no name provided>> declared in <root>.box' type=<root>.Pair<<root>.box.<no name provided>> origin=null
+                ARG other: CALL[837, 842] 'public final fun foo (): kotlin.Int declared in <root>.box.<no name provided>' type=kotlin.Int origin=null
+                  ARG <this>: CALL[830, 836] 'public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair' type=<root>.box.<no name provided> origin=GET_PROPERTY
+                    ARG <this>: GET_VAR[828, 829] 'val x: <root>.Pair<<root>.box.<no name provided>> declared in <root>.box' type=<root>.Pair<<root>.box.<no name provided>> origin=null
+      WHEN[104, 150] type=kotlin.Unit origin=IF
+        BRANCH[108, 150]
+          if: CALL[108, 123] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[108, 123] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: GET_VAR[108, 114] 'val result: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+              ARG arg1: CALL[118, 123] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                ARG <this>: CONST[118, 119] Int type=kotlin.Int value=5
+                ARG other: CONST[122, 123] Int type=kotlin.Int value=5
+          then: RETURN[125, 150] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION[132, 150] type=kotlin.String
+              CONST[133, 142] String type=kotlin.String value="result = "
+              GET_VAR[143, 149] 'val result: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+      WHEN[155, 218] type=kotlin.Unit origin=IF
+        BRANCH[159, 218]
+          if: CALL[159, 177] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[159, 177] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL[159, 172] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+              ARG arg1: CONST[176, 177] Int type=kotlin.Int value=6
+          then: RETURN[179, 218] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION[186, 218] type=kotlin.String
+              CONST[187, 203] String type=kotlin.String value="globalCounter = "
+              CALL[204, 217] 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      RETURN[223, 234] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST[230, 234] String type=kotlin.String value="OK"

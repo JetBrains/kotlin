@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // FILE: Call.java
 
@@ -21,3 +22,6 @@ fun <D : Any> Call<D>.testForEach() {
         it.value.length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, inProjection, javaProperty, javaType,
+lambdaLiteral, samConversion, typeConstraint, typeParameter */

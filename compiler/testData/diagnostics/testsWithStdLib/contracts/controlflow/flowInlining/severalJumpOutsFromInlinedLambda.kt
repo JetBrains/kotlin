@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -77,3 +78,7 @@ fun nonLocalReturnAndOrdinaryExit(b: Boolean) {
     x.inc()
     s.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, equalityExpression, functionDeclaration,
+functionalType, ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+smartcast, stringLiteral, typeParameter */

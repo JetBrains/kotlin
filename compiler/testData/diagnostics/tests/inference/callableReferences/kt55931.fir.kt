@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-55931
 // SKIP_TXT
 
@@ -21,3 +22,6 @@ fun foo(b: Boolean) {
         val x5 = if (b) { ::fun1 } else { ::fun2 }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, propertyDeclaration */

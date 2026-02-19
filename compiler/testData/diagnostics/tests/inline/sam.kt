@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -NON_LOCAL_RETURN_NOT_ALLOWED
+// DIAGNOSTICS: -NON_LOCAL_RETURN_NOT_ALLOWED
 // FILE: Run.java
 public interface Run {
     public int run();
@@ -57,3 +58,6 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit, ext: Int.(
         11
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, integerLiteral,
+javaFunction, javaType, lambdaLiteral, noinline, samConversion, thisExpression, typeWithExtension */

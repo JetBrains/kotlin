@@ -3,9 +3,9 @@ public final enum class test/E {
     // source: 'test.kt'
     public final enum static field A: test.E
     public final enum static field B: test.E
-    public static method values(): test.E[]
-    public static method valueOf(p0: java.lang.String): test.E
     public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): test.E
+    public static method values(): test.E[]
 }
 @kotlin.Metadata
 public final class test/Test {

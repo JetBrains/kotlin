@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 const val ONE = 1
 
 annotation class Foo(
@@ -11,13 +12,16 @@ fun getOne() = ONE
 fun getTwo() = TWO
 
 annotation class Bar(
-        val a: IntArray = [TWO],
-        val b: IntArray = [1, TWO],
-        val c: IntArray = [getOne(), getTwo()]
+        val a: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[TWO]<!>,
+        val b: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[1, TWO]<!>,
+        val c: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[getOne(), getTwo()]<!>
 )
 
 annotation class Baz(
         val a: IntArray = [<!NULL_FOR_NONNULL_TYPE!>null<!>],
         val b: IntArray = [1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 2],
-        val c: IntArray = [<!NO_THIS!>this<!>]
+        val c: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>]<!>
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, const, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, thisExpression */

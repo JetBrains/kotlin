@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 class Outer {
@@ -25,3 +26,6 @@ class Outer {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, nestedClass, propertyDeclaration,
+stringLiteral, thisExpression */

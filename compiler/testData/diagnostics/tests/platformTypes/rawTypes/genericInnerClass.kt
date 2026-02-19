@@ -1,5 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -33,3 +35,5 @@ fun main() {
     rawInner.bar().foo("")
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration, stringLiteral */

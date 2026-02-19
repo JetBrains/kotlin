@@ -30,7 +30,7 @@ fun test3() {
 }
 
 fun testLrmFoo1(ints: List<Int>) {
-  ints.forEach<Int>(action = local fun <anonymous>(it: Int) {
+  forEach<Int>(/* <this> = ints, */ action = local fun <anonymous>(it: Int) {
     when {
       EQEQ(arg0 = it, arg1 = 0) -> return Unit
     }
@@ -40,7 +40,7 @@ fun testLrmFoo1(ints: List<Int>) {
 }
 
 fun testLrmFoo2(ints: List<Int>) {
-  ints.forEach<Int>(action = local fun <anonymous>(it: Int) {
+  forEach<Int>(/* <this> = ints, */ action = local fun <anonymous>(it: Int) {
     when {
       EQEQ(arg0 = it, arg1 = 0) -> return Unit
     }
@@ -48,3 +48,4 @@ fun testLrmFoo2(ints: List<Int>) {
   }
 )
 }
+

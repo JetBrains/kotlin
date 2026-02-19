@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
@@ -54,3 +55,5 @@ fun use3() {
     e2()
     <!OPT_IN_USAGE!>e3<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration */

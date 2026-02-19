@@ -1,0 +1,19 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun Test(text: String) {
+    if (Local.current) return
+    if (text.isEmpty()) return
+
+    Text(text)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):5:5 -> m$<key>

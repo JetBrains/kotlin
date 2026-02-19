@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: p1/BaseClass.java
 
@@ -23,3 +24,6 @@ class Foo : BaseClass() {
 
     private val v1: BaseClass.ProtSubClass = ProtSubClass()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, propertyDeclaration,
+superExpression */

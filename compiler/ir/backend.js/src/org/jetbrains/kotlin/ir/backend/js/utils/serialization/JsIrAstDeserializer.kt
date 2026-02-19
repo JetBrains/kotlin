@@ -1,20 +1,24 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
-import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramTestEnvironment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsTemplateStringLiteral
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.*
 
-fun deserializeJsIrProgramFragment(input: ByteArray): List<JsIrProgramFragment> {
+fun deserializeJsIrProgramFragment(input: ByteArray): JsIrProgramFragments {
     return JsIrAstDeserializer(input).readFragments()
 }
 
@@ -44,12 +48,20 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return buffer.double
     }
 
-    private fun readString(): String {
+    private inline fun <R> readBytes(transform: (offset: Int, length: Int) -> R): R {
         val length = readInt()
         val offset = buffer.position()
-        val result = String(source, offset, length, SerializationCharset)
+        val result = transform(offset, length)
         buffer.position(offset + length)
         return result
+    }
+
+    private fun readByteArray(): ByteArray = readBytes { offset, length ->
+        source.copyOfRange(offset, offset + length)
+    }
+
+    private fun readString(): String = readBytes { offset, length ->
+        String(source, offset, length, SerializationCharset)
     }
 
     private inline fun <reified T> readArray(readElement: () -> T): Array<T> {
@@ -76,8 +88,8 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return if (readBoolean()) then() else null
     }
 
-    fun readFragments(): List<JsIrProgramFragment> {
-        return readList { readFragment() }
+    fun readFragments(): JsIrProgramFragments {
+        return JsIrProgramFragments(readFragment(), ifTrue { readFragment() })
     }
 
     fun readFragment(): JsIrProgramFragment {
@@ -94,6 +106,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
 
             readRepeated { declarations.statements += readStatement() }
             readRepeated { initializers.statements += readStatement() }
+            readRepeated { eagerInitializers.statements += readStatement() }
             readRepeated { exports.statements += readStatement() }
             readRepeated { polyfills.statements += readStatement() }
 
@@ -101,10 +114,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { optionalCrossModuleImports.add(stringTable[readInt()]) }
             readRepeated { classes[nameTable[readInt()]] = readIrIcClassModel() }
 
-            ifTrue { testFunInvocation = readStatement() }
-            ifTrue { mainFunction = readStatement() }
+            ifTrue { mainFunctionTag = readString() }
+            ifTrue { testEnvironment = readTestEnvironment() }
             ifTrue { dts = TypeScriptFragment(readString()) }
-            ifTrue { suiteFn = nameTable[readInt()] }
 
             readRepeated { definitions += stringTable[readInt()] }
         }
@@ -115,6 +127,10 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { preDeclarationBlock.statements += readStatement() }
             readRepeated { postDeclarationBlock.statements += readStatement() }
         }
+    }
+
+    private fun readTestEnvironment(): JsIrProgramTestEnvironment {
+        return JsIrProgramTestEnvironment(stringTable[readInt()], stringTable[readInt()])
     }
 
     private fun readStatement(): JsStatement {
@@ -202,7 +218,17 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         FOR_IN -> {
                             JsForIn(
-                                ifTrue { nameTable[readInt()] },
+                                ifTrue { jsVarVariants[readInt()] },
+                                ifTrue { readAssignable() as JsAssignable.Named },
+                                ifTrue { readExpression() },
+                                readExpression(),
+                                readStatement()
+                            )
+                        }
+                        FOR_OF -> {
+                            JsForOf(
+                                ifTrue { jsVarVariants[readInt()] },
+                                ifTrue { readAssignable() },
                                 ifTrue { readExpression() },
                                 readExpression(),
                                 readStatement()
@@ -212,7 +238,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsTry(
                                 readBlock(),
                                 readList {
-                                    JsCatch(nameTable[readInt()]).apply {
+                                    JsCatch(readAssignable()).apply {
                                         body = readBlock()
                                     }
                                 },
@@ -223,6 +249,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsExport(
                                 when (val type = readByte().toInt()) {
                                     ExportType.ALL -> JsExport.Subject.All
+                                    ExportType.DEFAULT -> JsExport.Subject.Default(nameTable[readInt()].makeRef())
                                     ExportType.ITEMS -> JsExport.Subject.Elements(readList {
                                         JsExport.Element(
                                             nameTable[readInt()].makeRef(),
@@ -238,6 +265,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsImport(
                                 readString(),
                                 when (val type = readByte().toInt()) {
+                                    ImportType.EFFECT -> JsImport.Target.Effect
                                     ImportType.ALL -> JsImport.Target.All(nameTable[readInt()].makeRef())
                                     ImportType.DEFAULT -> JsImport.Target.Default(nameTable[readInt()].makeRef())
                                     ImportType.ITEMS -> JsImport.Target.Elements(readList {
@@ -269,10 +297,11 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         }
     }
 
-    private val sideEffectKindValues = SideEffectKind.values()
-    private val jsBinaryOperatorValues = JsBinaryOperator.values()
-    private val jsUnaryOperatorValues = JsUnaryOperator.values()
-    private val jsFunctionModifiersValues = JsFunction.Modifier.values()
+    private val sideEffectKindValues get() = SideEffectKind.entries
+    private val jsBinaryOperatorValues get() = JsBinaryOperator.entries
+    private val jsUnaryOperatorValues get() = JsUnaryOperator.entries
+    private val jsFunctionModifiersValues get() = JsFunction.Modifier.entries
+    private val jsVarVariants get() = JsVars.Variant.entries
 
     private fun readExpression(): JsExpression {
         return withComments {
@@ -297,6 +326,18 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         STRING_LITERAL -> {
                             JsStringLiteral(stringTable[readInt()])
                         }
+                        TEMPLATE_STRING_LITERAL -> {
+                            JsTemplateStringLiteral(
+                                ifTrue { readExpression() },
+                                readList { readExpression() as JsTemplateStringLiteral.Segment }
+                            )
+                        }
+                        TEMPLATE_ELEMENT_STRING -> {
+                            JsTemplateStringLiteral.Segment.StringLiteral(stringTable[readInt()])
+                        }
+                        TEMPLATE_ELEMENT_INTERPOLATION -> {
+                            JsTemplateStringLiteral.Segment.Interpolation(readExpression())
+                        }
                         REG_EXP -> {
                             JsRegExp().apply {
                                 pattern = stringTable[readInt()]
@@ -309,12 +350,25 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         DOUBLE_LITERAL -> {
                             JsDoubleLiteral(readDouble())
                         }
+                        BIGINT_LITERAL -> {
+                            JsBigIntLiteral(BigInteger(readByteArray()))
+                        }
                         ARRAY_LITERAL -> {
                             JsArrayLiteral(readList { readExpression() })
                         }
                         OBJECT_LITERAL -> {
                             JsObjectLiteral(
-                                readList { JsPropertyInitializer(readExpression(), readExpression()) },
+                                readList {
+                                    when (readInt()) {
+                                        PropertyInitializerKinds.KEY_VALUE -> {
+                                            JsPropertyInitializer.KeyValue(readExpression(), readExpression())
+                                        }
+                                        PropertyInitializerKinds.SPREAD -> {
+                                            JsPropertyInitializer.Spread(readExpression())
+                                        }
+                                        else -> error("Unknown property initializer kind: $id")
+                                    }
+                                },
                                 readBoolean()
                             )
                         }
@@ -383,6 +437,15 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         NEW -> {
                             JsNew(readExpression(), readList { readExpression() })
                         }
+                        YIELD -> {
+                            JsYield(ifTrue { readExpression() })
+                        }
+                        YIELD_STAR -> {
+                            JsYieldStar(ifTrue { readExpression() })
+                        }
+                        SPREAD -> {
+                            JsSpread(readExpression())
+                        }
                         else -> error("Unknown expression id: $id")
                     }
                 }
@@ -399,7 +462,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { parameters += readParameter() }
             readRepeated { modifiers += jsFunctionModifiersValues[readInt()] }
             ifTrue { name = nameTable[readInt()] }
+            ifTrue { computedName = readExpression() }
             isLocal = readBoolean()
+            isEs6Arrow = readBoolean()
         }
     }
 
@@ -412,7 +477,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readParameter(): JsParameter {
-        return JsParameter(nameTable[readInt()]).apply {
+        return JsParameter(readAssignable(), ifTrue { readExpression() }, readBoolean()).apply {
             hasDefaultValue = readBoolean()
         }
     }
@@ -430,17 +495,49 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readVars(): JsVars {
-        return JsVars(readBoolean()).apply {
+        val variant = jsVarVariants[readInt()]
+        return JsVars(variant, readBoolean()).apply {
             readRepeated {
                 vars += withLocation {
-                    JsVars.JsVar(nameTable[readInt()], ifTrue { readExpression() })
+                    JsVars.JsVar(readAssignable(), ifTrue { readExpression() })
                 }
             }
             ifTrue { exportedPackage = stringTable[readInt()] }
         }
     }
 
-    private val specialFunctionValues = SpecialFunction.values()
+    private fun readAssignable(): JsAssignable {
+        return when (val id = readByte().toInt()) {
+            AssignableIds.NAMED -> {
+                JsAssignable.Named(nameTable[readInt()])
+            }
+            AssignableIds.ARRAY_PATTERN -> {
+                JsAssignable.ArrayPattern(readList {
+                    when (val id = readByte().toInt()) {
+                        ArrayPatternItemKinds.ELEMENT -> JsBindingArrayItem.Element(readBindingElement())
+                        ArrayPatternItemKinds.HOLE -> JsBindingArrayItem.Hole()
+                        else -> error("Unknown array pattern element id: $id")
+                    }
+                })
+            }
+            AssignableIds.OBJECT_PATTERN -> {
+                JsAssignable.ObjectPattern(readList {
+                    JsBindingProperty(ifTrue { readExpression() }, readBindingElement())
+                })
+            }
+            else -> error("Unknown assignable id: $id")
+        }
+    }
+
+    private fun readBindingElement(): JsBindingElement {
+        return JsBindingElement(
+            readAssignable(),
+            ifTrue { readExpression() },
+            readBoolean()
+        )
+    }
+
+    private val specialFunctionValues get() = SpecialFunction.entries
 
     private fun readName(): JsName {
         val identifier = stringTable[readInt()]
@@ -449,6 +546,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         } ?: JsDynamicScope.declareName(identifier)
         ifTrue { name.localAlias = readLocalAlias() }
         ifTrue { name.imported = true }
+        ifTrue { name.constant = true }
         ifTrue { name.specialFunction = specialFunctionValues[readInt()] }
         return name
     }

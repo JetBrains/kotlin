@@ -25,6 +25,10 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
         compilationFactory = CompilationFactory(::PrototypeAndroidCompilation)
         compileTaskName = camelCase("prototype", "compile", targetName, name)
 
+        friendArtifactResolver = ExternalKotlinCompilationDescriptor.FriendArtifactResolver { compilation ->
+            compilation.extraFriendPaths
+        }
+
         /*
         Replace Kotlin's compilation association (main <-> test) with noop,
         since Android goes through adding a dependency on the project itself
@@ -41,14 +45,26 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
         configure { compilation ->
             /* Setup attributes for the compile dependencies */
             compilation.configurations.compileDependencyConfiguration.apply {
-                attributes.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+                attributes.attributeProvider(
+                    ARTIFACT_TYPE,
+                    project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+                )
+                attributes.attributeProvider(
+                    TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                    project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                )
             }
 
             /* Setup attributes for the runtime dependencies */
             compilation.configurations.runtimeDependencyConfiguration?.apply {
-                attributes.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+                attributes.attributeProvider(
+                    ARTIFACT_TYPE,
+                    project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+                )
+                attributes.attributeProvider(
+                    TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                    project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                )
             }
         }
     }

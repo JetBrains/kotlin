@@ -14,32 +14,37 @@ import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsIrLinkMetrics
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinWasmIrLinkMetrics
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import javax.inject.Inject
 
+/**
+ * Compile executable JS or Wasm files from KLibs.
+ */
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     project: Project,
+    target: KotlinPlatformType,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
 ) : Kotlin2JsCompile(
-    objectFactory.newInstance(KotlinJsCompilerOptionsDefault::class.java).configureExperimentalTryK2(project),
+    objectFactory.KotlinJsCompilerOptionsDefault(project),
     objectFactory,
     workerExecutor
-) {
+), UsesBuildFusService {
 
     init {
         // Not check sources, only klib module
@@ -48,6 +53,13 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     @get:Internal
     override val sources: FileCollection = super.sources
+
+    /**
+     * [K2MultiplatformStructure] is not required for JS IR link
+     */
+    @InternalKotlinGradlePluginApi
+    @get:Internal
+    override val multiplatformStructure: K2MultiplatformStructure get() = super.multiplatformStructure
 
     override fun skipCondition(): Boolean {
         return !entryModule.get().asFile.exists()
@@ -58,10 +70,16 @@ abstract class KotlinJsIrLink @Inject constructor(
     internal val propertiesProvider = PropertiesProvider(project)
 
     @get:Input
-    internal val incrementalJsIr: Boolean = propertiesProvider.incrementalJsIr
+    var incrementalJsIr: Boolean = propertiesProvider.incrementalJsIr
+
+    @get:Input
+    var incrementalWasm: Boolean = propertiesProvider.incrementalWasm
 
     @get:Input
     val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
+
+    @get:Input
+    internal val delegateTranspilationToExternalTool: Boolean = propertiesProvider.delegateTranspilationToExternalTool
 
     // Incremental stuff of link task is inside compiler
     @get:Internal
@@ -69,7 +87,10 @@ abstract class KotlinJsIrLink @Inject constructor(
         get() = super.taskBuildCacheableOutputDirectory
 
     @get:Internal
-    @get:Deprecated("Please use modeProperty instead.")
+    @get:Deprecated(
+        "Internal development property. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     var mode: KotlinJsBinaryMode
         get() = modeProperty.get()
         set(value) {
@@ -96,10 +117,12 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
     }
 
-    override fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
-        super.contributeAdditionalCompilerArguments(context)
+    override fun isIncrementalCompilationEnabled(): Boolean = false
 
+    override fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
         context.primitive { args ->
+            args.irProduceJs = true
+
             // moduleName can start with @ for group of NPM packages
             // but args parsing @ as start of argfile
             // so WA we provide moduleName as one parameter
@@ -108,42 +131,45 @@ abstract class KotlinJsIrLink @Inject constructor(
                 args.moduleName = null
             }
 
-            args.includes = entryModule.get().asFile.canonicalPath
+            args.includes = entryModule.get().asFile.absolutePath
 
             if (usingCacheDirectory()) {
                 args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
             }
+
+            if (isWasmPlatform && modeProperty.get() == DEVELOPMENT) {
+                args.debuggerCustomFormatters = true
+            }
+
+            if (delegateTranspilationToExternalTool && !isWasmPlatform) {
+                // If the delegated transpilation used, we should compile to the latest supported JS version
+                // so that the third-party transpilation tool (swc) will transpile it by the rules defined by users
+                args.target = JsPlatforms.latestSupportedTarget
+                // Also, right now the module system should be defined explicitly, until we introduce package information
+                // saving for ES modules, so that it will be compatible with the other module systems,
+                // and we can delegate module system transpilation to SWC too
+                if (args.moduleKind == null) {
+                    args.moduleKind = JsModuleKind.MODULE_UMD.kind
+                }
+            }
         }
     }
 
+    private val isWasmPlatform: Boolean =
+        target == KotlinPlatformType.wasm
+
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
-        KotlinBuildStatsService.applyIfInitialised {
-            it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
-            val newArgs = K2JSCompilerArguments()
-            parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
-            it.report(
-                StringMetrics.JS_OUTPUT_GRANULARITY,
-                if (newArgs.irPerModule)
-                    KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCaseAsciiOnly()
-                else
-                    KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
-            )
+        if (!isWasmPlatform) {
+            buildFusService.orNull?.reportFusMetrics {
+                CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
+            }
+        } else {
+            buildFusService.orNull?.reportFusMetrics {
+                CompileKotlinWasmIrLinkMetrics.collectMetrics(incrementalWasm, it)
+            }
         }
     }
 
     private fun usingCacheDirectory() =
-        incrementalJsIr && modeProperty.get() == DEVELOPMENT
+        (if (isWasmPlatform) incrementalWasm else incrementalJsIr) && modeProperty.get() == DEVELOPMENT
 }
-
-val KotlinPlatformType.fileExtension
-    get() = when (this) {
-        KotlinPlatformType.wasm -> {
-            ".mjs"
-        }
-
-        KotlinPlatformType.js -> {
-            ".js"
-        }
-
-        else -> error("Only JS and WASM supported for KotlinJsTest")
-    }

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // KT-3496 Type inference bug on y[""]
 
 class B<T> {
@@ -8,3 +9,6 @@ class B<T> {
     }
     operator fun <S> get(s : String): S = throw Exception()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, operator, propertyDeclaration,
+stringLiteral, typeParameter */

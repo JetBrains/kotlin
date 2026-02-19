@@ -1,8 +1,11 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
 inline fun ok(): String {
     return foo(1, 1.0, 1.0f, 1L, "O", C(if (bar()) return "zap" else "K"))
 }
+
+// FILE: main.kt
 
 fun box(): String {
     val ok = ok()

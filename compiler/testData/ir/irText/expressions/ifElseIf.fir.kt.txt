@@ -24,10 +24,10 @@ fun testEmptyBranches2(flag: Boolean) {
     else -> true
   } /*~> Unit */
   when {
-    flag -> true /*~> Unit */
+    flag -> true
     else -> { // BLOCK
     }
-  }
+  } /*~> Unit */
 }
 
 fun testEmptyBranches3(flag: Boolean) {
@@ -37,4 +37,3 @@ fun testEmptyBranches3(flag: Boolean) {
     else -> true
   } /*~> Unit */
 }
-

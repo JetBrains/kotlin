@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun stringVararg(vararg args: String) {}
 fun intVararg(vararg args: Int) {}
@@ -26,3 +27,6 @@ fun test() {
     useMixedStringArgs3(<!TYPE_MISMATCH("(String, Array<String>, String) -> Unit; KFunction1<Array<out String>, Unit>")!>::stringVararg<!>)
     useTwoStringArrays(<!TYPE_MISMATCH("(Array<String>, Array<String>) -> Unit; KFunction1<Array<out String>, Unit>")!>::stringVararg<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, outProjection,
+stringLiteral, vararg */

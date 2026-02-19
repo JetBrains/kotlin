@@ -1,9 +1,9 @@
 public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
-  public static final C.Companion Companion;
+  public static final @org.jetbrains.annotations.NotNull() C.Companion Companion;
 
   @org.jetbrains.annotations.NotNull()
-  public static final C.Factory Factory;
+  public static final @org.jetbrains.annotations.NotNull() C.Factory Factory;
 
   public  C();//  .ctor()
 

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.typeApproximator
@@ -16,28 +19,54 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 
 @NoMutableState
-class InferenceComponents(val session: FirSession) : FirSessionComponent {
+class InferenceComponents(override val session: FirSession) : FirSessionComponent, SessionHolder {
     private val typeContext: ConeInferenceContext = session.typeContext
     private val approximator = session.typeApproximator
 
-    val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(typeContext)
-    private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle, ConeConstraintSystemUtilContext)
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle =
+        TrivialConstraintTypeInferenceOracle.create(typeContext)
+    private val incorporator =
+        ConstraintIncorporator(
+            approximator,
+            trivialConstraintTypeInferenceOracle,
+            ConeConstraintSystemUtilContext,
+            session.languageVersionSettings,
+            session.inferenceLogger,
+        )
     private val injector = ConstraintInjector(
         incorporator,
         approximator,
         session.languageVersionSettings,
+        session.inferenceLogger,
     )
-    val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
-    val variableFixationFinder = VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
-    val postponedArgumentInputTypesResolver =
+    val resultTypeResolver: ResultTypeResolver =
+        ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
+    val variableFixationFinder: VariableFixationFinder = run {
+        val variableReadinessCalculatorBuilder =
+            ::VariableReadinessCalculator.takeIf { LanguageFeature.LexicographicVariableReadinessCalculation.isEnabled() }
+                ?: ::LegacyVariableReadinessCalculator
+
+        VariableFixationFinder.Default(
+            session.languageVersionSettings,
+            variableReadinessCalculatorBuilder(
+                trivialConstraintTypeInferenceOracle,
+                session.languageVersionSettings,
+                session.inferenceLogger,
+            ),
+        )
+    }
+    val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver =
         PostponedArgumentInputTypesResolver(
-            resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext, session.languageVersionSettings
+            resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext
         )
 
-    val constraintSystemFactory = ConstraintSystemFactory()
+    val constraintSystemFactory: ConstraintSystemFactory = ConstraintSystemFactory()
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
-        return NewConstraintSystemImpl(injector, typeContext, session.languageVersionSettings)
+        return NewConstraintSystemImpl(
+            injector, typeContext,
+            session.languageVersionSettings,
+        )
     }
 
     inner class ConstraintSystemFactory {

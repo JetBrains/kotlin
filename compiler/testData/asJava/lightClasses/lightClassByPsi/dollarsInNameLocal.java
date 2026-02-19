@@ -16,12 +16,12 @@ public final class C$D /* null*/ {
   public  C$D();//  .ctor()
 }
 
+public final class G$G$ /* null*/ {
+  public  G$G$();//  .ctor()
+}
+
 public final class Foo /* c.b.a.Foo*/ {
   public  Foo();//  .ctor()
 
   public final void bar();//  bar()
-}
-
-public final class G$G$ /* null*/ {
-  public  G$G$();//  .ctor()
 }

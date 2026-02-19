@@ -17,10 +17,10 @@ interface Fir2IrTypeParametersContainer : IrTypeParametersContainer, Fir2IrCompo
     fun prepareTypeParameters() {
         typeParameters = fir.typeParameters.mapIndexedNotNull { index, typeParameter ->
             if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
-            classifierStorage.getIrTypeParameter(typeParameter, index, symbol).apply {
+            classifierStorage.getIrTypeParameter(typeParameter, index).apply {
                 parent = this@Fir2IrTypeParametersContainer
                 if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(typeConverter) }
+                    superTypes = typeParameter.bounds.map { it.toIrType() }
                 }
             }
         }

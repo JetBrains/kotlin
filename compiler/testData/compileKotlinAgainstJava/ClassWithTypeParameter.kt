@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JVM, JVM_IR
+// ISSUE: KT-70764 (apt failure)
+// IGNORE_BACKEND: JVM_IR
 
 package test
 

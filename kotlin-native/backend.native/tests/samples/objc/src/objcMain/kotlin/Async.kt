@@ -64,7 +64,6 @@ object Continuator {
         val id = Any()
         map[id] = Pair(0, after)
         return {
-            initRuntimeIfNeeded()
             operation()
             executeAsync(NSOperationQueue.mainQueue) {
                 Pair(id, { id: Any -> Continuator.execute(id) })
@@ -77,7 +76,6 @@ object Continuator {
         val id = Any()
         map[id] = Pair(1, block)
         return {
-            initRuntimeIfNeeded()
             // Note, that operation here must return detachable value (for example, frozen).
             executeAsync(NSOperationQueue.mainQueue) {
                 Pair(Pair(id, operation()), { it: Pair<Any, P> ->

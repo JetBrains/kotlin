@@ -12,6 +12,5 @@ package kotlin.reflect
  * even if the type in the source code is annotated. Support for type annotations might be added in a future version.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <reified T> typeOf(): KType =
     throw UnsupportedOperationException("This function is implemented as an intrinsic on all supported platforms.")

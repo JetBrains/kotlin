@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.ExtensionRegistryLite
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.*
 
 class ModuleMapping private constructor(
-    val version: JvmMetadataVersion,
+    val version: MetadataVersion,
     val packageFqName2Parts: Map<String, PackageParts>,
     val moduleData: BinaryModuleData,
     private val debugName: String
@@ -30,10 +31,10 @@ class ModuleMapping private constructor(
         const val MAPPING_FILE_EXT: String = "kotlin_module"
 
         @JvmField
-        val EMPTY: ModuleMapping = ModuleMapping(JvmMetadataVersion.INSTANCE, emptyMap(), emptyBinaryData(), "EMPTY")
+        val EMPTY: ModuleMapping = ModuleMapping(MetadataVersion.INSTANCE, emptyMap(), emptyBinaryData(), "EMPTY")
 
         @JvmField
-        val CORRUPTED: ModuleMapping = ModuleMapping(JvmMetadataVersion.INSTANCE, emptyMap(), emptyBinaryData(), "CORRUPTED")
+        val CORRUPTED: ModuleMapping = ModuleMapping(MetadataVersion.INSTANCE, emptyMap(), emptyBinaryData(), "CORRUPTED")
 
         const val STRICT_METADATA_VERSION_SEMANTICS_FLAG = 1 shl 0
 
@@ -53,8 +54,8 @@ class ModuleMapping private constructor(
             debugName: String,
             skipMetadataVersionCheck: Boolean,
             isJvmPackageNameSupported: Boolean,
-            metadataVersionFromLanguageVersion: JvmMetadataVersion = JvmMetadataVersion.INSTANCE,
-            reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit,
+            metadataVersionFromLanguageVersion: MetadataVersion = MetadataVersion.INSTANCE,
+            reportIncompatibleVersionError: (MetadataVersion) -> Unit,
         ): ModuleMapping {
             if (bytes == null) {
                 return EMPTY
@@ -63,7 +64,7 @@ class ModuleMapping private constructor(
             val stream = DataInputStream(ByteArrayInputStream(bytes))
 
             val versionNumber = readVersionNumber(stream) ?: return CORRUPTED
-            val preVersion = JvmMetadataVersion(*versionNumber)
+            val preVersion = MetadataVersion(*versionNumber)
             if (!skipMetadataVersionCheck && !preVersion.isCompatible(metadataVersionFromLanguageVersion)) {
                 reportIncompatibleVersionError(preVersion)
                 return EMPTY
@@ -72,14 +73,14 @@ class ModuleMapping private constructor(
             // Since Kotlin 1.4, we write integer flags between the version and the proto
             val flags = if (isKotlin1Dot4OrLater(preVersion)) stream.readInt() else 0
 
-            val version = JvmMetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
+            val version = MetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
             if (!skipMetadataVersionCheck && !version.isCompatible(metadataVersionFromLanguageVersion)) {
                 reportIncompatibleVersionError(version)
                 return EMPTY
             }
 
             // "Builtin" extension registry is needed in order to deserialize annotations on optional annotation classes and their members.
-            val extensions = ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions)
+            val extensions = ExtensionRegistryLite(BuiltInsProtoBuf::registerAllExtensions)
             val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream, extensions) ?: return EMPTY
             val result = linkedMapOf<String, PackageParts>()
 

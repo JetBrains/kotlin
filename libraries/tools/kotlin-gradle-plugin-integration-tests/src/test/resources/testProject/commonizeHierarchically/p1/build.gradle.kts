@@ -24,7 +24,6 @@ kotlin {
         }
     }
 
-    js()
     jvm()
 
     linuxX64()

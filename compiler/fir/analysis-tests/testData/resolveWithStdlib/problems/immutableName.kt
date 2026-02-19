@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: ImplDerived:foo, DerivedImpl:foo
 // FILE: Base.java
 
@@ -34,3 +35,5 @@ abstract class ImplDerived : Impl(), Derived {
 abstract class DerivedImpl : Derived, Impl() {
     abstract override fun foo(name: String?): Derived
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, thisExpression */

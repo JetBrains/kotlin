@@ -5,5 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+/**
+ * Marks a [KotlinTarget] with the `@DslMarker`.
+ *
+ * @see DslMarker
+ */
 @DslMarker
 annotation class KotlinTargetsDsl

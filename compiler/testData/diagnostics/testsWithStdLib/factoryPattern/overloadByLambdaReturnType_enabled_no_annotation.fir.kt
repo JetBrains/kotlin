@@ -1,5 +1,6 @@
-// !LANGUAGE: +OverloadResolutionByLambdaReturnType
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +OverloadResolutionByLambdaReturnType
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
 fun create(f: (Int) -> Int): Int = 1
@@ -34,3 +35,6 @@ fun test_5() {
     val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { 1 }
     takeInt(x)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

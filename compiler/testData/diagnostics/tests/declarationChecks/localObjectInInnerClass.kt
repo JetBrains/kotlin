@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface I1
 interface I2
 
@@ -28,3 +29,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType, inner,
+interfaceDeclaration, lambdaLiteral, nullableType, operator, propertyDeclaration, propertyDelegate, typeParameter */

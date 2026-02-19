@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 group = "org.jetbrains.kotlin.fir"
@@ -16,44 +15,39 @@ repositories {
 
 dependencies {
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:psi:psi-impl"))
+    implementation(project(":compiler:psi:parser"))
     implementation(kotlinxCollectionsImmutable())
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 
-    testImplementation(commonDependency("junit:junit"))
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
+    testFixturesApi(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
 
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompileOnly(kotlinTest("junit"))
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-
-    testCompileOnly(intellijCore())
-    testRuntimeOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
+    testImplementation(intellijCore())
 }
-
-val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {
     "main" { projectDefault() }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
     }
-}
 
-projectTest {
-    workingDir = rootDir
+    testGenerator("org.jetbrains.kotlin.fir.lightTree.TestGeneratorForLightTree2FirKt")
 }
 
 testsJar()

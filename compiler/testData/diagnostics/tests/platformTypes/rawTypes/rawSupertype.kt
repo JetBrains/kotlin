@@ -1,5 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -35,3 +37,6 @@ fun main() {
     rawA.x = strList
     rawA.foo("", strList)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, javaFunction, javaType,
+localProperty, nullableType, propertyDeclaration, stringLiteral */

@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val a // /A.a|{}a[0]
+        final fun <get-a>(): kotlin/Int // /A.a.<get-a>|<get-a>(){}[0]
+    final var invertedTypes // /A.invertedTypes|{}invertedTypes[0]
+        final fun <get-invertedTypes>(): kotlin/Int // /A.invertedTypes.<get-invertedTypes>|<get-invertedTypes>(){}[0]
+        final fun <set-invertedTypes>(kotlin/Int) // /A.invertedTypes.<set-invertedTypes>|<set-invertedTypes>(kotlin.Int){}[0]
+    final val it // /A.it|{}it[0]
+        final fun <get-it>(): kotlin/Number // /A.it.<get-it>|<get-it>(){}[0]
+    final val p // /A.p|{}p[0]
+        final fun <get-p>(): kotlin/Int // /A.p.<get-p>|<get-p>(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}

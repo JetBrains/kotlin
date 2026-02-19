@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55096
 // SKIP_TXT
 
@@ -27,9 +28,9 @@ fun unoverriddenEquals(a: Any?) {
     var b: Any?
     b = c
     if (b == c.also { b = a }) {
-        a.x // bad (b#0 is C, b#1 = a)
-        b.x // bad (b#0 is C, this is b#1)
-        if (<!USELESS_IS_CHECK!>b is C<!>) { // b#1
+        a.<!UNRESOLVED_REFERENCE!>x<!> // bad (b#0 is C, b#1 = a)
+        b.<!UNRESOLVED_REFERENCE!>x<!> // bad (b#0 is C, this is b#1)
+        if (b is C) { // b#1
             a.x // ok (b#1 = a)
             b.x // ok
         }
@@ -46,6 +47,11 @@ fun safeCall() {
 fun contractFunction() {
     var x: String? = ""
     if (isNotNullAlsoCall(x) { x = null }) {
-        x.length // bad (#2 == true => x#0 != null; but this is x#1 = null)
+        x<!UNSAFE_CALL!>.<!>length // bad (#2 == true => x#0 != null; but this is x#1 = null)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, classReference, contractCallsEffect, contractConditionalEffect,
+contracts, disjunctionExpression, equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast,
+stringLiteral */

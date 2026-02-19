@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 
 fun <T : CharSequence> bar1(x: T) {}
 fun bar2(x: CharSequence) {}
@@ -49,3 +50,7 @@ fun <T : CharSequence?> foo(x: T) {
         bar3(<!TYPE_MISMATCH!>y<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, dnnType, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, intersectionType, isExpression, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, typeConstraint, typeParameter */

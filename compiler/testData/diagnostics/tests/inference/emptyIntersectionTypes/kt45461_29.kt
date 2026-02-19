@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class Foo<T>
 
@@ -14,3 +15,6 @@ fun <K : Inv<A>> main() {
     val foo = Foo<K>()
     Bar<Inv<B>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, interfaceDeclaration, intersectionType,
+localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

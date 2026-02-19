@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 import java.lang.annotation.*
 
 annotation 

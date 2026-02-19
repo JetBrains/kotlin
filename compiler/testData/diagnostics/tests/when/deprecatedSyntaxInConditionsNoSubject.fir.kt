@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitConfusingSyntaxInWhenBranches
 // DIAGNOSTICS: -INCOMPATIBLE_TYPES, -NON_EXHAUSTIVE_WHEN_STATEMENT, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // ISSUE: KT-48385
@@ -39,12 +40,12 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         y ?: x -> {}
         x in x -> {}
         x !in x -> {}
-        x is String -> {}
-        x !is String -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>><!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><=<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>>=<!> x -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
+        x < x -> {}
+        x > x -> {}
+        x <= x -> {}
+        x >= x -> {}
         x == x -> {}
         x != x -> {}
         <!DEPRECATED_IDENTITY_EQUALS!>x === x<!> -> {}
@@ -59,3 +60,8 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         b-- -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, comparisonExpression,
+disjunctionExpression, elvisExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, intersectionType, isExpression, localProperty, multiplicativeExpression, nullableType,
+operator, propertyDeclaration, rangeExpression, safeCall, smartcast, whenExpression, whenWithSubject */

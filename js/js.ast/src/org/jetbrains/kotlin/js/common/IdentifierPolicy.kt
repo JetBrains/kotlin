@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.js.common
 
+import kotlin.math.abs
+
 private fun Char.isAllowedLatinLetterOrSpecial(): Boolean {
     return this in 'a'..'z' || this in 'A'..'Z' || this == '_' || this == '$'
 }
@@ -70,3 +72,39 @@ val RESERVED_KEYWORDS: Set<String> = SPECIAL_KEYWORDS + setOf(
     // disallowed as variable names in strict mode
     "eval", "arguments",
 )
+
+fun makeValidES5Identifier(name: String, withHash: Boolean = true): String {
+    if (name.isValidES5Identifier()) return name
+    if (name.isEmpty()) return "_"
+
+    // 7 = _ + MAX_INT.toString(Character.MAX_RADIX)
+    val builder = StringBuilder(name.length + if (withHash) 7 else 0)
+
+    val first = name.first()
+
+    builder.append(first.mangleIfNot(Char::isES5IdentifierStart))
+
+    for (idx in 1..name.lastIndex) {
+        val c = name[idx]
+        builder.append(c.mangleIfNot(Char::isES5IdentifierPart))
+    }
+
+    return if (withHash) {
+        "${builder}_${abs(name.hashCode()).toString(Character.MAX_RADIX)}"
+    } else {
+        builder.toString()
+    }
+}
+
+private inline fun Char.mangleIfNot(predicate: Char.() -> Boolean) =
+    if (predicate()) this else '_'
+
+val String.safeModuleName: String
+    get() {
+        var result = this
+
+        if (result.startsWith('<')) result = result.substring(1)
+        if (result.endsWith('>')) result = result.substring(0, result.length - 1)
+
+        return makeValidES5Identifier("kotlin_$result", false)
+    }

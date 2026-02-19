@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // FILE: A.kt
 open class A {
     open fun getScope(): String? = null
@@ -21,3 +22,6 @@ fun test(b: B) {
     val s = b.getScope()
     b.setScope(s)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, thisExpression */

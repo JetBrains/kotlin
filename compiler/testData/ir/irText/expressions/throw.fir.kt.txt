@@ -1,9 +1,0 @@
-fun test1() {
-  throw Throwable()
-}
-
-fun testImplicitCast(a: Any) {
-  when {
-    a is Throwable -> throw a /*as Throwable */
-  }
-}

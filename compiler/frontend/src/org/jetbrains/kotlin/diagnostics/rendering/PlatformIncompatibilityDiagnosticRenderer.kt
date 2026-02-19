@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
+import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualMemberDiff
 import java.text.MessageFormat
 
 class PlatformIncompatibilityDiagnosticRenderer(
@@ -68,9 +68,9 @@ class IncompatibleExpectedActualClassScopesRenderer(
 
 class ExpectActualScopeDiffsRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode,
-) : DiagnosticParameterRenderer<Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>> {
+) : DiagnosticParameterRenderer<Set<K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>> {
     override fun render(
-        obj: Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>,
+        obj: Set<K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>,
         renderingContext: RenderingContext,
     ): String {
         check(obj.isNotEmpty())
@@ -90,9 +90,9 @@ class ExpectActualScopeDiffsRenderer(
     }
 }
 
-object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
+object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
     override fun render(
-        obj: ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>,
+        obj: K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>,
         renderingContext: RenderingContext,
     ): String = MessageFormat.format(
         obj.kind.rawMessage,

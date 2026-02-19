@@ -37,5 +37,5 @@ FILE: enumEntryUse.kt
         R|/useEnum|(Q|TestEnum|.R|/TestEnum.SECOND|)
         R|/useEnum|(Q|TestEnum|.R|/TestEnum.THIRD|)
         R|/useVararg|(vararg(Q|TestEnum|.R|/TestEnum.FIRST|, Q|TestEnum|.R|/TestEnum.SECOND|))
-        R|/useVararg<Inapplicable(INAPPLICABLE): /useVararg>#|(Int(1), Int(2), Int(3), Int(4), Int(5))
+        R|/useVararg<Inapplicable(INAPPLICABLE): /useVararg>#|(vararg(Int(1), Int(2), Int(3), Int(4), Int(5)))
     }

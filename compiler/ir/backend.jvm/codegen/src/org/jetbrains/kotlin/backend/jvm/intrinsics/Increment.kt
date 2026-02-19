@@ -17,16 +17,20 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genIncrement
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-class Increment(private val myDelta: Int) : IntrinsicMethod() {
+class Increment(private val myDelta: Int) : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {
-        return IntrinsicFunction.create(expression, signature, classCodegen) {
-            genIncrement(signature.returnType, myDelta, it)
+        return IntrinsicFunction.create(expression, signature, classCodegen) { v ->
+            val operationType = AsmUtil.numberFunctionOperandType(signature.returnType)
+            AsmUtil.numConst(myDelta, operationType, v)
+            v.add(operationType)
+            StackValue.coerce(operationType, signature.returnType, v)
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,19 +11,19 @@ import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 @NoMutableState
 class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
@@ -36,7 +36,10 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         val declarations = annotations.flatMapTo(mutableSetOf()) {
             cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it]
         }
-        return declarations.filter { matches(predicate, it) }.map { it.symbol }
+        return declarations
+            .filter { matches(predicate, it) }
+            .map { it.symbol }
+            .onEach { session.lookupTracker?.recordDirtyDeclaration(it) }
     }
 
     override fun fileHasPluginAnnotations(file: FirFile): Boolean {
@@ -207,11 +210,10 @@ fun FirAnnotation.markedWithMetaAnnotation(
 ): Boolean {
     containingDeclaration.symbol.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
     return annotationTypeRef.coneTypeSafe<ConeKotlinType>()
-        ?.toRegularClassSymbol(session)
         .markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself, mutableSetOf())
 }
 
-fun FirRegularClassSymbol?.markedWithMetaAnnotationImpl(
+fun ConeKotlinType?.markedWithMetaAnnotationImpl(
     session: FirSession,
     metaAnnotations: Set<AnnotationFqn>,
     includeItself: Boolean,
@@ -219,9 +221,10 @@ fun FirRegularClassSymbol?.markedWithMetaAnnotationImpl(
     resolvedCompilerAnnotations: (FirRegularClassSymbol) -> List<FirAnnotation> = FirBasedSymbol<*>::resolvedCompilerAnnotationsWithClassIds,
 ): Boolean {
     if (this == null) return false
-    if (!visited.add(this)) return false
-    if (this.classId.asSingleFqName() in metaAnnotations) return includeItself
-    return resolvedCompilerAnnotations(this)
-        .mapNotNull { it.annotationTypeRef.coneTypeSafe<ConeKotlinType>()?.toRegularClassSymbol(session) }
+    val symbol = toSymbol(session) as? FirRegularClassSymbol ?: return false
+    if (!visited.add(symbol)) return false
+    if (symbol.classId.asSingleFqName() in metaAnnotations) return includeItself
+    return resolvedCompilerAnnotations(symbol)
+        .mapNotNull { it.annotationTypeRef.coneTypeSafe<ConeKotlinType>() }
         .any { it.markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself = true, visited, resolvedCompilerAnnotations) }
 }

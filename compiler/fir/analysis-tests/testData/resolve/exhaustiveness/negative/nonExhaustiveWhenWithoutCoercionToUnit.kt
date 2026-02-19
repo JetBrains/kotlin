@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> run(block: () -> T): T = block()
 
 fun test(a: Any) {
@@ -8,3 +9,6 @@ fun test(a: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, isExpression, lambdaLiteral, nullableType,
+typeParameter, whenExpression, whenWithSubject */

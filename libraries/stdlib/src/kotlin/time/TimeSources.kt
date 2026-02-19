@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -94,7 +94,10 @@ public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) :
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-@Deprecated("Using AbstractDoubleTimeSource is no longer recommended, use AbstractLongTimeSource instead.")
+@Deprecated(
+    "Using AbstractDoubleTimeSource is no longer recommended, use AbstractLongTimeSource instead.",
+    level = DeprecationLevel.ERROR
+)
 public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit) : TimeSource.WithComparableMarks {
     /**
      * This protected method should be overridden to return the current reading of the time source expressed as a [Double] number
@@ -102,8 +105,13 @@ public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit)
      */
     protected abstract fun read(): Double
 
-    @Suppress("DEPRECATION")
-    private class DoubleTimeMark(private val startedAt: Double, private val timeSource: AbstractDoubleTimeSource, private val offset: Duration) : ComparableTimeMark {
+
+    private class DoubleTimeMark(
+        private val startedAt: Double,
+        @Suppress("DEPRECATION_ERROR")
+        private val timeSource: AbstractDoubleTimeSource,
+        private val offset: Duration
+    ) : ComparableTimeMark {
         override fun elapsedNow(): Duration = (timeSource.read() - startedAt).toDuration(timeSource.unit) - offset
         override fun plus(duration: Duration): ComparableTimeMark = DoubleTimeMark(startedAt, timeSource, offset + duration)
 
@@ -147,6 +155,9 @@ public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit)
  * Implementation note: the current reading value is stored as a [Long] number of nanoseconds,
  * thus it's capable to represent a time range of approximately ±292 years.
  * Should the reading value overflow as the result of [plusAssign] operation, an [IllegalStateException] is thrown.
+ *
+ * @sample samples.time.MeasureTime.explicitMeasureTimeSample
+ * @sample samples.time.MeasureTime.explicitMeasureTimedValueSample
  */
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalTime::class)
@@ -154,7 +165,7 @@ public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSEC
     private var reading: Long = 0L
 
     init {
-        markNow() // fix zero reading in the super time source
+        val _ = markNow() // fix zero reading in the super time source
     }
 
     override fun read(): Long = reading

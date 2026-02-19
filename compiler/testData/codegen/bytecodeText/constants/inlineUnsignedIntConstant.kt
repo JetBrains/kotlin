@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: uint.kt

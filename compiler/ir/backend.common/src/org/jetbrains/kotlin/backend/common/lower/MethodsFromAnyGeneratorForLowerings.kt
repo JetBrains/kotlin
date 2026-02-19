@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
-class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irClass: IrClass, val origin: IrDeclarationOrigin) {
+class MethodsFromAnyGeneratorForLowerings(val context: LoweringContext, val irClass: IrClass, val origin: IrDeclarationOrigin) {
     private fun IrClass.addSyntheticFunction(name: String, returnType: IrType) =
         addFunction(name, returnType, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
 
@@ -46,18 +46,20 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
 }
 
 open class LoweringDataClassMemberGenerator(
-    val backendContext: BackendContext,
+    val loweringContext: LoweringContext,
+    symbolTable: ReferenceSymbolTable,
     irClass: IrClass,
     origin: IrDeclarationOrigin,
     forbidDirectFieldAccess: Boolean = false
 ) :
     IrBasedDataClassMembersGenerator(
-        IrGeneratorContextBase(backendContext.irBuiltIns),
-        backendContext.ir.symbols.externalSymbolTable,
+        IrGeneratorContextBase(loweringContext.irBuiltIns),
+        symbolTable,
         irClass,
         irClass.kotlinFqName,
         origin,
         forbidDirectFieldAccess,
+        generateBodies = true,
     ) {
 
     override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
@@ -82,8 +84,3 @@ open class LoweringDataClassMemberGenerator(
         }
     }
 }
-
-
-
-
-

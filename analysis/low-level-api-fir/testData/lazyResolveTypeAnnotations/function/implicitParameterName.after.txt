@@ -1,0 +1,10 @@
+@R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long
+  context -> FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test
+  anchor -> []
+
+@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int
+  context -> FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test
+  anchor -> []
+
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public? final? [ResolvedTo(TYPES)] fun test([ResolvedTo(TYPES)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-40851
 
 fun error(): Nothing = throw Exception()
@@ -11,3 +11,6 @@ class Some() {
         x = 1;
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, integerLiteral, primaryConstructor,
+propertyDeclaration */

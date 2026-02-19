@@ -5,21 +5,41 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.STRONG_WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
 @MppGradlePluginTests
 class MppDiagnosticsIt : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            compilerArgumentsLogLevel = null,
+            ignoreWarningModeSeverityOverride = true
+        )
+
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
         project("diagnosticsRenderingSmoke", gradleVersion) {
             build {
-                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
+                // with isolated projects enabled, the order of diagnostics blocks is non-deterministic
+                // and depends on the subproject evaluation order, so the easiest way to assert that all diagnostics blocks are present
+                // is to compare blocks ignoring the order
+                assertBlocksEqual(
+                    expectedOutputFile().extractBlocksFromExpectedOutput(),
+                    extractProjectsAndTheirDiagnosticsInBlocks(),
+                )
             }
         }
     }
@@ -71,17 +91,16 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @TestMetadata("errorDiagnosticBuildFails")
     fun testErrorDiagnosticBuildFailsWithConfigurationCache(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildFails", gradleVersion) {
-            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = true)) {
+            buildAndFail("assemble") {
                 assertConfigurationCacheStored()
                 assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
             }
 
             // fails again
-            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = true)) {
+            buildAndFail("assemble") {
                 assertConfigurationCacheReused()
                 assertEqualsToFile(expectedOutputFile("assemble-cache-reused"), extractProjectsAndTheirDiagnostics())
             }
@@ -111,6 +130,18 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testKt64121(gradleVersion: GradleVersion) {
+        project(
+            "kt64121",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            build("assemble")
+        }
+    }
+
+    @GradleTest
     fun testSuppressGradlePluginWarnings(gradleVersion: GradleVersion) {
         project("suppressGradlePluginWarnings", gradleVersion) {
             build("assemble") {
@@ -123,17 +154,19 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginFatals(gradleVersion: GradleVersion) {
         project("suppressGradlePluginFatals", gradleVersion) {
             buildAndFail("assemble") {
-                // Gradle 8.0+ for some reason renders exception twice in the build log
-                val testDataSuffixIfAny = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "gradle-6.8.3" else null
-
-                assertEqualsToFile(expectedOutputFile(testDataSuffixIfAny), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
     }
 
     @GradleTest
     fun testErrorsFailOnlyRelevantProjects(gradleVersion: GradleVersion) {
-        project("errorsFailOnlyRelevantProjects", gradleVersion) {
+        project(
+            "errorsFailOnlyRelevantProjects",
+            gradleVersion,
+            // CC should be explicitly disabled because it hides the warning on subsequent builds: KT-75750
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             buildAndFail("brokenProjectA:assemble") {
                 assertEqualsToFile(expectedOutputFile("brokenA"), extractProjectsAndTheirDiagnostics())
             }
@@ -168,7 +201,12 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @GradleTest
     fun testDiagnosticsRenderingWithStacktraceOption(gradleVersion: GradleVersion) {
-        project("diagnosticsRenderingWithStacktraceOption", gradleVersion) {
+        project(
+            "diagnosticsRenderingWithStacktraceOption",
+            gradleVersion,
+            // CC should be explicitly disabled because it hides the warning on subsequent builds: KT-75750
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             // KGP sets showDiagnosticsStacktrace=false and --full-stacktrace by default in tests,
             // need to override that to mimic real-life scenarios
             val options = buildOptions.copy(showDiagnosticsStacktrace = null, stacktraceMode = null)
@@ -182,6 +220,89 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
             build("help", "--full-stacktrace", buildOptions = options) {
                 assertEqualsToFile(expectedOutputFile("with-full-stacktrace"), extractProjectsAndTheirDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
+    fun testErrorDiagnosticUpToDateIfNoErrors(gradleVersion: GradleVersion) {
+        project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
+            build("assemble") {
+                assertTasksSkipped(":checkKotlinGradlePluginConfigurationErrors")
+            }
+        }
+    }
+
+    internal object StrongWarningDiagnostic : ToolingDiagnosticFactory(STRONG_WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() =
+            build {
+                title("Foo")
+                    .descriptionBuilder {
+                        if (org.slf4j.LoggerFactory.getLogger(StrongWarningDiagnostic::class.java).isInfoEnabled) {
+                            info
+                        } else {
+                            standard
+                        }
+                    }
+                    .solution("baz")
+            }
+
+        val standard = "StrongWarningDiagnostic_STANDARD"
+        val info = "StrongWarningDiagnostic_INFO"
+    }
+    @GradleTest
+    fun testStrongWarningDiagnostic(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                }
+                project.reportDiagnostic(StrongWarningDiagnostic())
+            }
+            build(
+                ":checkKotlinGradlePluginConfigurationErrors",
+                buildOptions = defaultBuildOptions.copy(logLevel = org.gradle.api.logging.LogLevel.LIFECYCLE),
+            ) {
+                assertHasDiagnostic(StrongWarningDiagnostic)
+                assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
+                assertOutputContains(StrongWarningDiagnostic.standard)
+            }
+            build(
+                ":checkKotlinGradlePluginConfigurationErrors",
+                buildOptions = defaultBuildOptions.copy(logLevel = org.gradle.api.logging.LogLevel.INFO),
+            ) {
+                assertConfigurationCacheReused()
+                assertHasDiagnostic(StrongWarningDiagnostic)
+                assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
+                assertOutputContains(StrongWarningDiagnostic.info)
+            }
+        }
+    }
+
+    @DisplayName("checkKotlinGradlePluginConfigurationErrors does not cause a false positive configuration cache warning")
+    @GradleTest
+    fun testKt63165(gradleVersion: GradleVersion) {
+        // the false positive warning is https://github.com/gradle/gradle/issues/22481
+        project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
+            //language=Gradle
+            settingsGradleKts.appendText(
+                """
+
+                enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+                """.trimIndent()
+            )
+            settingsGradleKts.modify {
+                val pluginApplyString = "id(\"org.jetbrains.kotlin.test.gradle-warnings-detector\")"
+                val startingIndex = it.lastIndexOf(pluginApplyString)
+                // workaround for a Gradle bug: https://github.com/gradle/gradle/issues/28533
+                it.replaceRange(startingIndex, startingIndex + pluginApplyString.length, "")
+            }
+            build("assemble") {
+                // expect no deprecation warnings failing the build
+                assertTasksSkipped(":checkKotlinGradlePluginConfigurationErrors")
             }
         }
     }

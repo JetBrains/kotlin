@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: JavaInterface.java
 
@@ -17,3 +18,5 @@ interface SubtraitWithFakeOverride : JavaInterface
 class Subclass : SubtraitWithFakeOverride {
     override fun foo(otherKotlinName: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, override */

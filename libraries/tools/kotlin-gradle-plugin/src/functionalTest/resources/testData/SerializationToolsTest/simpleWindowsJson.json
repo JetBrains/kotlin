@@ -1,0 +1,16 @@
+{
+  "modules": [
+    {
+      "files": {
+        "swiftApi": "\\A\\SwiftFile.swift",
+        "kotlinBridges": "\\A\\KotlinBridge.kt",
+        "cHeaderBridges": "\\A\\Header.h"
+      },
+      "bridgeName": "Bridge_A",
+      "name": "Module_A",
+      "type": "BRIDGES_TO_KOTLIN",
+      "dependencies": []
+    }
+  ],
+  "timestamp": 1721919536167
+}

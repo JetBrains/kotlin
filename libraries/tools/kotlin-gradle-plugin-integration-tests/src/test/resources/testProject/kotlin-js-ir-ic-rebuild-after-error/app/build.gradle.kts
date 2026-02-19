@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 kotlin {
@@ -8,7 +8,7 @@ kotlin {
         }
         binaries.executable()
         tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile> {
-            kotlinOptions.freeCompilerArgs += "-Xpartial-linkage=disable"
+            compilerOptions.freeCompilerArgs.add("-Xpartial-linkage=disable")
         }
     }
 }

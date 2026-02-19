@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ContextParameters
 // FILE: kotlin.kt
 package kotlin.native
 
@@ -17,6 +19,7 @@ open class KotlinClass {
     @ObjCName("objCProperty")
     open var kotlinProperty: Int = 0
     @ObjCName(swiftName = "swiftFunction")
+    context(@ObjCName("objCContext") c: Int)
     open fun @receiver:ObjCName("objCReceiver") Int.kotlinFunction(
         @ObjCName("objCParam") kotlinParam: Int
     ): Int = this + kotlinParam
@@ -27,6 +30,7 @@ class KotlinSubClass: KotlinClass() {
     <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCProperty")<!>
     override var kotlinProperty: Int = 1
     <!INAPPLICABLE_OBJC_NAME!>@ObjCName(swiftName = "swiftFunction")<!>
+    context(<!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCContext")<!> c: Int)
     override fun <!INAPPLICABLE_OBJC_NAME!>@receiver:ObjCName("objCReceiver")<!> Int.kotlinFunction(
         <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCParam")<!> kotlinParam: Int
     ): Int = this + kotlinParam * 2
@@ -186,15 +190,26 @@ open class Derived2 : Derived() {
     override fun foo() {}
 }
 
+interface I1 {
+    @ObjCName("foo1")
+    fun foo()
+}
+
+interface DerivedI1 : I1 {
+    override fun foo()
+}
+
+abstract class KT64276 : Base(), DerivedI1 {}
+
 private const val exact = false
 private const val objcName = "nonLiteralArgsObjC"
 
 @ObjCName(
-    <!NON_LITERAL_OBJC_NAME_ARG!>objcName<!>,
-    <!NON_LITERAL_OBJC_NAME_ARG!>"nonLiteralArgs" + "Swift"<!>,
-    <!NON_LITERAL_OBJC_NAME_ARG!>exact<!>
+    objcName,
+    "nonLiteralArgs" + "Swift",
+    exact
 )
 val nonLiteralArgs: Int = 0
 
-@ObjCName("invalidArgsObjC", <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>, <!TYPE_MISMATCH!>"not a boolean"<!>)
+@ObjCName("invalidArgsObjC", <!ARGUMENT_TYPE_MISMATCH!>false<!>, <!ARGUMENT_TYPE_MISMATCH!>"not a boolean"<!>)
 val invalidArgs: Int = 0

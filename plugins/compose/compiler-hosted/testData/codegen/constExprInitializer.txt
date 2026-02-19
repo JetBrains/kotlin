@@ -1,0 +1,4 @@
+public final class home/MainKt {
+    // source: 'main.kt'
+    public final static method preview(p0: data.PodcastWithExtraInfo): void
+}

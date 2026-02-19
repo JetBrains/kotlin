@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class Outer<in E> {
     inner class Inner {
@@ -38,3 +39,7 @@ fun main() {
 
     outer.set(infer<Any>(""))
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+in, infix, inner, localProperty, nullableType, propertyDeclaration, starProjection, stringLiteral, thisExpression,
+typeParameter, typeWithExtension */

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -44,9 +44,9 @@ class FileScopeFactory(
     private val components: ImportResolutionComponents
 ) {
     private val defaultImports =
-        analyzerServices.getDefaultImports(components.languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
+        analyzerServices.defaultImportsProvider.getDefaultImports(includeLowPriorityImports = false).map(::DefaultImportImpl)
 
-    private val defaultLowPriorityImports = analyzerServices.defaultLowPriorityImports.map(::DefaultImportImpl)
+    private val defaultLowPriorityImports = analyzerServices.defaultImportsProvider.defaultLowPriorityImports.map(::DefaultImportImpl)
 
     private class DefaultImportImpl(private val importPath: ImportPath) : KtImportInfo {
         override val isAllUnder: Boolean get() = importPath.isAllUnder
@@ -95,7 +95,7 @@ class FileScopeFactory(
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames,
-            excludedImports = analyzerServices.excludedImports
+            excludedImports = analyzerServices.defaultImportsProvider.excludedImports
         )
         val lowPriority = createDefaultImportResolver(
             makeAllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->
@@ -257,7 +257,7 @@ class FileScopeFactory(
         parentScope: ImportingScope
     ): ImportingScope {
         val scope = packageView.memberScope
-        val names by lazy(LazyThreadSafetyMode.PUBLICATION) { scope.computeAllNames()?.let(::THashSet) }
+        val names by lazy(LazyThreadSafetyMode.PUBLICATION) { scope.computeAllNames()?.let(::ObjectOpenHashSet) }
         val packageName = packageView.fqName
         val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
 

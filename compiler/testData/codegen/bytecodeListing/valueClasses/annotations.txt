@@ -95,7 +95,7 @@ final class C$z$2 {
     inner (anonymous) class C$z$2
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): A
+    public final method invoke(): A
     public synthetic bridge method invoke(): java.lang.Object
 }
 

@@ -1,16 +1,27 @@
 /*
- * Copyright 2010-20211 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
 
 package kotlin.wasm.internal
 
 import kotlin.UnsupportedOperationException
 import kotlin.reflect.*
+import kotlin.internal.throwIrLinkageError
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
-internal open class KProperty0Impl<out R>(override val name: String, val returnType: KType, val getter: () -> R) : KProperty0<R> {
+internal abstract class KPropertyImplBase(private val reflectionTargetLinkageError: String?) {
+    protected fun maybeThrowPLError(): Nothing? {
+        reflectionTargetLinkageError?.let {
+            throwIrLinkageError(it)
+        }
+        return null
+    }
+}
+
+internal abstract class KProperty0ImplBase<out R>(reflectionTargetLinkageError: String?) : KPropertyImplBase(reflectionTargetLinkageError), KProperty0<R> {
+    abstract val getter: KFunction0<R>
+
     override fun get(): R {
         return getter()
     }
@@ -18,23 +29,38 @@ internal open class KProperty0Impl<out R>(override val name: String, val returnT
     override fun invoke(): R {
         return getter()
     }
+}
+
+@UsedFromCompilerGeneratedCode
+internal final class KProperty0Impl<out R>(
+    private val _name: String?,
+    reflectionTargetLinkageError: String?,
+    override val getter: KFunction0<R>,
+) : KProperty0ImplBase<R>(reflectionTargetLinkageError) {
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
+        maybeThrowPLError()
         val otherKProperty = other as? KProperty0Impl<*>
         if (otherKProperty == null) return false
+        otherKProperty.maybeThrowPLError()
         return name == otherKProperty.name && getter == otherKProperty.getter
     }
 
     override fun hashCode(): Int {
+        maybeThrowPLError()
         return name.hashCode() * 31 + getter.hashCode()
     }
 
     override fun toString(): String {
+        maybeThrowPLError()
         return "property $name (Kotlin reflection is not available)"
     }
 }
 
-internal open class KProperty1Impl<T, out R>(override val name: String, val returnType: KType, val getter: (T) -> R) : KProperty1<T, R> {
+internal abstract class KProperty1ImplBase<T, out R>(reflectionTargetLinkageError: String?) : KPropertyImplBase(reflectionTargetLinkageError), KProperty1<T, R> {
+    abstract val getter: KFunction1<T, R>
+
     override fun get(receiver: T): R {
         return getter(receiver)
     }
@@ -42,24 +68,39 @@ internal open class KProperty1Impl<T, out R>(override val name: String, val retu
     override fun invoke(p1: T): R {
         return getter(p1)
     }
+}
+
+@UsedFromCompilerGeneratedCode
+internal class KProperty1Impl<T, out R>(
+    private val _name: String?,
+    reflectionTargetLinkageError: String?,
+    override val getter: KFunction1<T, R>,
+) : KProperty1ImplBase<T, R>(reflectionTargetLinkageError) {
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
+        maybeThrowPLError()
         val otherKProperty = other as? KProperty1Impl<*, *>
         if (otherKProperty == null) return false
+        otherKProperty.maybeThrowPLError()
         return name == otherKProperty.name && getter == otherKProperty.getter
     }
 
     override fun hashCode(): Int {
+        maybeThrowPLError()
         return name.hashCode() * 31 + getter.hashCode()
     }
 
     override fun toString(): String {
+        maybeThrowPLError()
         return "property $name (Kotlin reflection is not available)"
     }
 }
 
-internal open class KProperty2Impl<T1, T2, out R>(override val name: String, val returnType: KType, val getter: (T1, T2) -> R) :
-    KProperty2<T1, T2, R> {
+
+internal abstract class KProperty2ImplBase<T1, T2, out R>(reflectionTargetLinkageError: String?) : KPropertyImplBase(reflectionTargetLinkageError), KProperty2<T1, T2, R> {
+    abstract val getter: KFunction2<T1, T2, R>
+
     override fun get(receiver1: T1, receiver2: T2): R {
         return getter(receiver1, receiver2)
     }
@@ -67,86 +108,133 @@ internal open class KProperty2Impl<T1, T2, out R>(override val name: String, val
     override fun invoke(p1: T1, p2: T2): R {
         return getter(p1, p2)
     }
+}
+
+@UsedFromCompilerGeneratedCode
+internal class KProperty2Impl<T1, T2, out R>(
+    private val _name: String?,
+    reflectionTargetLinkageError: String?,
+    override val getter: KFunction2<T1, T2, R>,
+) : KProperty2ImplBase<T1, T2, R>(reflectionTargetLinkageError) {
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
+        maybeThrowPLError()
         val otherKProperty = other as? KProperty2Impl<*, *, *>
         if (otherKProperty == null) return false
+        otherKProperty.maybeThrowPLError()
         return name == otherKProperty.name && getter == otherKProperty.getter
     }
 
     override fun hashCode(): Int {
+        maybeThrowPLError()
         return name.hashCode() * 31 + getter.hashCode()
     }
 
     override fun toString(): String {
+        maybeThrowPLError()
         return "property $name (Kotlin reflection is not available)"
     }
 }
 
-internal class KMutableProperty0Impl<R>(name: String, returnType: KType, getter: () -> R, val setter: (R) -> Unit) :
-    KProperty0Impl<R>(name, returnType, getter), KMutableProperty0<R> {
+
+@UsedFromCompilerGeneratedCode
+internal class KMutableProperty0Impl<R>(
+    private val _name: String?,
+    reflectionTargetLinkageError: String?,
+    override val getter: KFunction0<R>,
+    val setter: (R) -> Unit
+) : KProperty0ImplBase<R>(reflectionTargetLinkageError), KMutableProperty0<R> {
+    override val name: String get() = _name!!
+
     override fun set(value: R): Unit {
         setter(value)
     }
 
     override fun equals(other: Any?): Boolean {
+        maybeThrowPLError()
         val otherKProperty = other as? KMutableProperty0Impl<*>
         if (otherKProperty == null) return false
+        otherKProperty.maybeThrowPLError()
         return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
     }
 
     override fun hashCode(): Int {
+        maybeThrowPLError()
         return (name.hashCode() * 31 + getter.hashCode()) * 31 + setter.hashCode()
     }
 
     override fun toString(): String {
+        maybeThrowPLError()
         return "property $name (Kotlin reflection is not available)"
     }
 }
 
-internal class KMutableProperty1Impl<T, R>(name: String, returnType: KType, getter: (T) -> R, val setter: (T, R) -> Unit) :
-    KProperty1Impl<T, R>(name, returnType, getter), KMutableProperty1<T, R> {
+@UsedFromCompilerGeneratedCode
+internal class KMutableProperty1Impl<T, R>(
+    private val _name: String?,
+    reflectionTargetLinkageError: String?,
+    override val getter: KFunction1<T, R>,
+    val setter: (T, R) -> Unit,
+) : KProperty1ImplBase<T, R>(reflectionTargetLinkageError), KMutableProperty1<T, R> {
+    override val name: String get() = _name!!
+
     override fun set(receiver: T, value: R): Unit {
         setter(receiver, value)
     }
 
     override fun equals(other: Any?): Boolean {
+        maybeThrowPLError()
         val otherKProperty = other as? KMutableProperty1Impl<*, *>
         if (otherKProperty == null) return false
+        otherKProperty.maybeThrowPLError()
         return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
     }
 
     override fun hashCode(): Int {
+        maybeThrowPLError()
         return (name.hashCode() * 31 + getter.hashCode()) * 31 + setter.hashCode()
     }
 
     override fun toString(): String {
+        maybeThrowPLError()
         return "property $name (Kotlin reflection is not available)"
     }
 }
 
-internal class KMutableProperty2Impl<T1, T2, R>(name: String, returnType: KType, getter: (T1, T2) -> R, val setter: (T1, T2, R) -> Unit) :
-    KProperty2Impl<T1, T2, R>(name, returnType, getter), KMutableProperty2<T1, T2, R> {
+@UsedFromCompilerGeneratedCode
+internal class KMutableProperty2Impl<T1, T2, R>(
+    private val _name: String?,
+    reflectionTargetLinkageError: String?,
+    override val getter: KFunction2<T1, T2, R>,
+    val setter: (T1, T2, R) -> Unit,
+) : KProperty2ImplBase<T1, T2, R>(reflectionTargetLinkageError), KMutableProperty2<T1, T2, R> {
+    override val name: String get() = _name!!
+
     override fun set(receiver1: T1, receiver2: T2, value: R): Unit {
         setter(receiver1, receiver2, value)
     }
 
     override fun equals(other: Any?): Boolean {
+        maybeThrowPLError()
         val otherKProperty = other as? KMutableProperty2Impl<*, *, *>
         if (otherKProperty == null) return false
+        otherKProperty.maybeThrowPLError()
         return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
     }
 
     override fun hashCode(): Int {
+        maybeThrowPLError()
         return (name.hashCode() * 31 + getter.hashCode()) * 31 + setter.hashCode()
     }
 
     override fun toString(): String {
+        maybeThrowPLError()
         return "property $name (Kotlin reflection is not available)"
     }
 }
 
-internal open class KLocalDelegatedPropertyImpl<out R>(override val name: String, val returnType: KType) : KProperty0<R> {
+internal abstract class KLocalDelegatedPropertyImplBase<out R> : KProperty0<R> {
     override fun get(): R {
         throw UnsupportedOperationException("Not supported for local property reference.")
     }
@@ -154,14 +242,18 @@ internal open class KLocalDelegatedPropertyImpl<out R>(override val name: String
     override fun invoke(): R {
         throw UnsupportedOperationException("Not supported for local property reference.")
     }
+}
 
+@UsedFromCompilerGeneratedCode
+internal class KLocalDelegatedPropertyImpl<out R>(override val name: String) : KLocalDelegatedPropertyImplBase<R>() {
     override fun toString(): String {
         return "property $name (Kotlin reflection is not available)"
     }
 }
 
-internal class KLocalDelegatedMutablePropertyImpl<R>(name: String, returnType: KType) : KLocalDelegatedPropertyImpl<R>(name, returnType),
-    KMutableProperty0<R> {
+@UsedFromCompilerGeneratedCode
+internal class KLocalDelegatedMutablePropertyImpl<R>(override val name: String) :
+    KLocalDelegatedPropertyImplBase<R>(), KMutableProperty0<R> {
     override fun set(value: R): Unit {
         throw UnsupportedOperationException("Not supported for local property reference.")
     }

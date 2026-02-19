@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -24,3 +25,6 @@ fun foo(dir: Direction): Int {
     }
     return res
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

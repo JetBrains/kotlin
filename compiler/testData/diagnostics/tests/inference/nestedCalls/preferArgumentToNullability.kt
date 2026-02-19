@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class Cls
 
@@ -13,3 +14,6 @@ fun <D> transform(transformer: In<D>, data: D): Unit = TODO()
 fun test(subIn: SubIn) {
     transform(subIn, materialize()) // D should be inferred to Cls?, not Nothing?
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inline, nullableType, reified, typeConstraint,
+typeParameter */

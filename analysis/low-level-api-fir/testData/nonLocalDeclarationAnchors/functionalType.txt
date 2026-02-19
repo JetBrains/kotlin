@@ -1,0 +1,3 @@
+/* anchor --> */class A/* <-- */
+
+/* anchor --> */typealias F = A.(A) -> A/* <-- */

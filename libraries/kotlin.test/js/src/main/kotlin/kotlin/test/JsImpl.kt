@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
  *
  * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
-actual fun todo(block: () -> Unit) {
+public actual fun todo(block: () -> Unit) {
     // println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
     println("TODO at " + block)
 }
@@ -24,10 +24,10 @@ internal actual inline fun AssertionErrorWithCause(message: String?, cause: Thro
 
 
 @PublishedApi
-internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Unit>): T {
+internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Any?>): T {
     blockResult.fold(
-        onSuccess = {
-            asserter.fail(messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was completed successfully.")
+        onSuccess = { v ->
+            asserter.fail(messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, ${formatResultMessage(v)}")
         },
         onFailure = { e ->
             if (exceptionClass.isInstance(e)) {

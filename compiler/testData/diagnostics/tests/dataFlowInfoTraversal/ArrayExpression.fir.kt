@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(arr: Array<out Number>): Int {
     @Suppress("UNCHECKED_CAST")
@@ -6,3 +7,7 @@ fun foo(arr: Array<out Number>): Int {
     checkSubtype<Array<Int>>(arr)
     return result
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, localProperty, nullableType, outProjection, propertyDeclaration, smartcast, stringLiteral,
+typeParameter, typeWithExtension */

@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 
 abstract class Foo<out E>: Collection<E> {
     abstract fun foo(element: @UnsafeVariance E): Boolean

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class B(open val parentProp: Int)
 val global: Int = 1
 class A : B {
@@ -23,3 +24,7 @@ class A : B {
 
     fun foo(x: Int, y: Int, z: Int) = x
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral,
+multiplicativeExpression, override, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral,
+superExpression */

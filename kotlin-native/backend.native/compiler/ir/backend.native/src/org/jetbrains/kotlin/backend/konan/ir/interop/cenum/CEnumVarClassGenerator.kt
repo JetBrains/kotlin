@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cenum
 
-import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -20,20 +20,21 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.irBuilder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.resolve.annotations.getArgumentValueOrNull
 
 private val typeSizeAnnotation = FqName("kotlinx.cinterop.internal.CEnumVarTypeSize")
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumVarClassGenerator(
         context: GeneratorContext,
-        private val symbols: KonanSymbols
+        private val symbols: BackendNativeSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
@@ -61,11 +62,11 @@ internal class CEnumVarClassGenerator(
         val irConstructor = createConstructor(enumVarClass.descriptor.unsubstitutedPrimaryConstructor!!)
         val classSymbol = symbolTable.descriptorExtension.referenceClass(enumVarClass.descriptor)
         postLinkageSteps.add {
-            irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+            irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                     startOffset, endOffset, context.irBuiltIns.unitType, symbols.enumVarConstructorSymbol
                 ).also {
-                    it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
+                    it.arguments[0] = irGet(irConstructor.parameters[0])
                 }
                 +irInstanceInitializer(classSymbol)
             }
@@ -85,12 +86,12 @@ internal class CEnumVarClassGenerator(
         val classSymbol = symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
             postLinkageSteps.add {
-                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                it.body = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                         startOffset, endOffset, context.irBuiltIns.unitType,
-                        symbols.primitiveVarPrimaryConstructor
+                        symbols.primitiveVarTypePrimaryConstructor
                     ).also {
-                        it.putValueArgument(0, irInt(typeSize))
+                        it.arguments[0] = irInt(typeSize)
                     }
                     +irInstanceInitializer(classSymbol)
                 }

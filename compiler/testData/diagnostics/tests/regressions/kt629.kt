@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-629 Assignments are parsed as expressions.
 
@@ -22,3 +23,6 @@ fun box2() : Boolean {
     var c = A()
     return (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>c.p = "yeah"<!>) && true
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, classDeclaration, equalityExpression, functionDeclaration,
+localProperty, multiplicativeExpression, operator, primaryConstructor, propertyDeclaration, stringLiteral */

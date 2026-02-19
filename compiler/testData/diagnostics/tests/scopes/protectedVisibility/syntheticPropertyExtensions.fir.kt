@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: abc/A.java
 package abc;
 public class A {
@@ -41,3 +42,6 @@ fun baz(a: A) {
     a.<!INVISIBLE_REFERENCE!>foo<!>
     a.<!INVISIBLE_SETTER!>bar<!> = a.bar + ""
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, flexibleType, functionDeclaration, ifExpression,
+isExpression, javaProperty, javaType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

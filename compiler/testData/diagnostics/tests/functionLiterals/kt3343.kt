@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-3343 Type mismatch when function literal consists of try-catch with Int returning call, and Unit is expected
 
@@ -24,3 +25,6 @@ fun print(obj: Any) {}
 fun String.prt(action : (String) -> Unit){
     action(this)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, thisExpression, tryExpression */

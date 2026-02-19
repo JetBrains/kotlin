@@ -3,22 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+package org.jetbrains.kotlin.fir.analysis.native.checkers
+
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGetClassCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
-import org.jetbrains.kotlin.fir.analysis.native.checkers.forwardDeclarationKindOrNull
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 
-object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker() {
-    override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol(context.session) ?: return
+object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker(MppCheckerKind.Platform) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirGetClassCall) {
+        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol() ?: return
 
         if (expression.arguments.firstOrNull() !is FirResolvedQualifier) {
             return
@@ -28,8 +31,7 @@ object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker()
             reporter.reportOn(
                 expression.source,
                 FirNativeErrors.FORWARD_DECLARATION_AS_CLASS_LITERAL,
-                expression.argument.resolvedType,
-                context,
+                expression.argument.resolvedType
             )
         }
     }

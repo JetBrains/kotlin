@@ -1,5 +1,5 @@
 FILE: statusResolveForTypealiasAsSuperClass.kt
-    public final class A : R|Foo| {
+    public final class A : R|{Foo=} B| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface I<F, G>
 
 val aImpl: A.Companion.Interface
@@ -23,3 +24,6 @@ class B {
         interface Interface
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, getter, inheritanceDelegation,
+interfaceDeclaration, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

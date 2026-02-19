@@ -5,28 +5,24 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.labelName
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValueForScript
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValueForScriptOrSnippet
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirScriptDeclarationsScope
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 
 class TowerElementsForScript(
-    val implicitReceivers: List<ImplicitReceiverValueForScript>,
+    val implicitReceivers: List<ImplicitReceiverValueForScriptOrSnippet>,
     val staticScope: FirScope?,
 )
 
-fun SessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElementsForScript {
+fun SessionAndScopeSessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElementsForScript {
     owner.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-    val contextReceivers = owner.contextReceivers.mapIndexed { index, receiver ->
-        ImplicitReceiverValueForScript(
-            owner.symbol, receiver.typeRef.coneType, receiver.labelName, session, scopeSession,
-            contextReceiverNumber = index,
-        )
-    }
+    val contextReceivers = owner.receivers.mapIndexed { index, receiver ->
+        ImplicitReceiverValueForScriptOrSnippet(receiver.symbol, receiver.typeRef.coneType, session, scopeSession)
+    }.asReversed()
 
     return TowerElementsForScript(
         contextReceivers,

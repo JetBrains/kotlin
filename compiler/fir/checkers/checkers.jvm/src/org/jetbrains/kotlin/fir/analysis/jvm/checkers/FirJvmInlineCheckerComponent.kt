@@ -9,57 +9,35 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecificComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalDeclaredInBlock
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 
 class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent() {
-    override fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
-        // local inline functions are prohibited
-        return if (declaration.isLocalMember && context.containingDeclarations.lastOrNull() !is FirScript) {
-            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local inline functions", context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun isGenerallyOk(declaration: FirFunction): Boolean {
+        return if (declaration.isLocalDeclaredInBlock && context.containingDeclarations.lastOrNull() !is FirScriptSymbol) {
+            reporter.reportOn(declaration.source, FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION)
             false
         } else {
             true
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkSuspendFunctionalParameterWithDefaultValue(
         param: FirValueParameter,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         reporter.reportOn(
             param.source,
             FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
-            "Suspend functional parameters with default values",
-            context
+            "Suspend functional parameters with default values"
         )
     }
 
-    override fun checkFunctionalParametersWithInheritedDefaultValues(
-        function: FirSimpleFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        overriddenSymbols: List<FirCallableSymbol<out FirCallableDeclaration>>,
-    ) {
-        val paramsWithDefaults = overriddenSymbols.flatMap {
-            if (it !is FirFunctionSymbol<*>) return@flatMap emptyList<Int>()
-            it.valueParameterSymbols.mapIndexedNotNull { idx, param ->
-                idx.takeIf { param.hasDefaultValue }
-            }
-        }.toSet()
-        function.valueParameters.forEachIndexed { idx, param ->
-            if (param.defaultValue == null && paramsWithDefaults.contains(idx)) {
-                reporter.reportOn(
-                    param.source,
-                    FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
-                    "Functional parameters with inherited default values",
-                    context
-                )
-            }
-        }
-    }
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun shouldReportRegularOverridesWithDefaultParameters(): Boolean =
+        true
 }

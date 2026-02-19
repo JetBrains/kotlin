@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // ISSUE: KT-45814
 
@@ -21,3 +22,6 @@ fun test_2(foo: Foo?) {
     }
     foo.bar?.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, lambdaLiteral, nullableType,
+primaryConstructor, propertyDeclaration, safeCall, smartcast */

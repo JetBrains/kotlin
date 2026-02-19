@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test1() {
     run {
         if (true) {
@@ -8,3 +9,5 @@ fun test1() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral */

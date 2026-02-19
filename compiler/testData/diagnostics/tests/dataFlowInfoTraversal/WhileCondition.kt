@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun simpleWhile(x: Int?, y0: Int) {
     var y = y0
@@ -24,3 +25,7 @@ fun whileWithNoCondition(x: Int?) {
     }
     checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, classDeclaration, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, incrementDecrementExpression, infix, localProperty,
+nullableType, propertyDeclaration, smartcast, typeParameter, typeWithExtension, whileLoop */

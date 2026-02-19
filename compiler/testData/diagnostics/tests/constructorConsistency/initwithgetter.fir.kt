@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My {
     val x: Int
         get() = field + if (z != "") 1 else 0
@@ -17,3 +18,6 @@ class My {
 
     val z = "1"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, equalityExpression, getter, ifExpression, init,
+integerLiteral, propertyDeclaration, stringLiteral, thisExpression */

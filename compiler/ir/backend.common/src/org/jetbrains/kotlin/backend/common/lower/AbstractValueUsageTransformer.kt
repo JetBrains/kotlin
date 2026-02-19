@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 
 /**
@@ -34,7 +35,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * TODO: consider making this visitor non-recursive to make it more general.
  */
 abstract class AbstractValueUsageTransformer(
-    protected val irBuiltIns: IrBuiltIns
+    protected val irBuiltIns: IrBuiltIns,
+    private val replaceTypesInsideInlinedFunctionBlock: Boolean = false
 ) : IrElementTransformerVoid() {
 
     protected open fun IrExpression.useAs(type: IrType): IrExpression = this
@@ -46,20 +48,11 @@ abstract class AbstractValueUsageTransformer(
 
     protected open fun IrExpression.useAsValue(value: IrValueDeclaration): IrExpression = this.useAs(value.type)
 
-    protected open fun IrExpression.useAsArgument(parameter: IrValueParameter): IrExpression =
-        this.useAsValue(parameter)
-
-    protected open fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression =
-        this.useAsArgument(expression.symbol.owner.dispatchReceiverParameter!!)
-
-    protected open fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression =
-        this.useAsArgument(expression.symbol.owner.extensionReceiverParameter!!)
-
     protected open fun IrExpression.useAsValueArgument(
         expression: IrFunctionAccessExpression,
         parameter: IrValueParameter
     ): IrExpression =
-        this.useAsArgument(parameter)
+        this.useAsValue(parameter)
 
     private fun IrExpression.useForVariable(variable: IrVariable): IrExpression =
         this.useAsValue(variable)
@@ -79,28 +72,13 @@ abstract class AbstractValueUsageTransformer(
 
     protected open fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression = element
 
-    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-        TODO()
-    }
-
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
-        TODO()
-    }
-
-  //  override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-  //      TODO()
-  //  }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
         with(expression) {
-            dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(expression)
-            extensionReceiver = extensionReceiver?.useAsExtensionReceiver(expression)
-            for (index in 0 until valueArgumentsCount) {
-                val argument = getValueArgument(index) ?: continue
-                val parameter = symbol.owner.valueParameters[index]
-                putValueArgument(index, argument.useAsValueArgument(expression, parameter))
+            for (index in 0 until minOf(arguments.size, symbol.owner.parameters.size)) {
+                arguments[index] = arguments[index]?.useAsValueArgument(expression, symbol.owner.parameters[index])
             }
         }
 
@@ -119,12 +97,15 @@ abstract class AbstractValueUsageTransformer(
         return body
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-        if (expression is IrInlinedFunctionBlock) {
-            expression.transformChildrenVoid(this)
-            return expression
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        if (!replaceTypesInsideInlinedFunctionBlock) {
+            inlinedBlock.transformChildrenVoid(this)
+            return inlinedBlock
         }
+        return super.visitInlinedFunctionBlock(inlinedBlock)
+    }
 
+    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
         if (expression.statements.isEmpty()) {
@@ -257,10 +238,10 @@ abstract class AbstractValueUsageTransformer(
     override fun visitFunction(declaration: IrFunction): IrStatement {
         declaration.transformChildrenVoid(this)
 
-        declaration.valueParameters.forEach { parameter ->
+        declaration.parameters.forEach { parameter ->
             val defaultValue = parameter.defaultValue
             if (defaultValue is IrExpressionBody) {
-                defaultValue.expression = defaultValue.expression.useAsArgument(parameter)
+                defaultValue.expression = defaultValue.expression.useAsValue(parameter)
             }
         }
 

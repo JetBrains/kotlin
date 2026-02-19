@@ -40,7 +40,7 @@ abstract class GenerateArtifactPodspecTask : DefaultTask() {
     abstract val specName: Property<String>
 
     @get:Input
-    abstract val specVersion: Property<String?>
+    abstract val specVersion: Property<String>
 
     @get:OutputDirectory
     abstract val destinationDir: DirectoryProperty
@@ -134,8 +134,8 @@ abstract class GenerateArtifactPodspecTask : DefaultTask() {
                 put(specNameKey, specName.get())
             }
 
-            if (!attributes.get().containsKey(specVersionKey)) {
-                specVersion.get()?.let { put(specVersionKey, it) }
+            if (!attributes.get().containsKey(specVersionKey) && specVersion.isPresent) {
+                put(specVersionKey, specVersion.get())
             }
 
             if (vendoredKeys.none { attributes.get().containsKey(it) }) {

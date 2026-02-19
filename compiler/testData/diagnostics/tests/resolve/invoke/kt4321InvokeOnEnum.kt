@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-4321 invoke() on enum doesn't work
 
@@ -34,3 +35,6 @@ fun main() {
     val cls = DOMElementTestClasses.cls2
     cls()
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration, localProperty, operator,
+propertyDeclaration */

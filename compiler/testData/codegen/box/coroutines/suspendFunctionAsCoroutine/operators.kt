@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
@@ -75,7 +76,7 @@ var a = A("O")
 //}
 
 suspend fun foo2() {
-    val (y) = a
+    val [y] = a
     if (y != "OK") throw RuntimeException("fail 3")
 }
 

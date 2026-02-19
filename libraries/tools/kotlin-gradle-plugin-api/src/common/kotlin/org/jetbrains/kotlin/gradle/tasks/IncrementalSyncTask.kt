@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
@@ -31,6 +32,12 @@ interface IncrementalSyncTask : Task {
     val from: ConfigurableFileCollection
 
     /**
+     * Duplicates strategy for CopySpec inside the task
+     */
+    @get:Input
+    var duplicatesStrategy: DuplicatesStrategy
+
+    /**
      * The directory where the set of files are copied to.
      */
     @get:OutputDirectory
@@ -40,7 +47,11 @@ interface IncrementalSyncTask : Task {
      * @suppress
      */
     @get:Internal
-    @Deprecated("Use destinationDirProperty with Provider API", ReplaceWith("destinationDirProperty.get()"))
+    @Deprecated(
+        "Scheduled for removal in Kotlin 2.3. Use destinationDirectory with Provider API",
+        ReplaceWith("destinationDirectory.get()"),
+        level = DeprecationLevel.ERROR
+    )
     val destinationDir: File
         get() = destinationDirectory.get()
 }

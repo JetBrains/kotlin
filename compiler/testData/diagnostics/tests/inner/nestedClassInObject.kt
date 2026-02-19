@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 object Object {
     class NestedClass {
@@ -15,3 +16,6 @@ object Object {
     object OuterObject
     class OuterClass
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nestedClass, objectDeclaration,
+propertyDeclaration */

@@ -1,5 +1,5 @@
-// FILE: 1.kt
 
+// FILE: 1.kt
 package zzz
 
 public class A(val a: Int, val b: Int)

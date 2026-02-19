@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: weatherForecast/Weather.java
 package weatherForecast;
@@ -20,3 +21,5 @@ public class A {
 package a
 
 fun test() = A().getWeather().test()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

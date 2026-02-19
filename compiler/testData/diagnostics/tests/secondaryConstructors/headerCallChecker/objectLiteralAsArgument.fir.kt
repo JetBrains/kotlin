@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun A.foobar() = 3
 
@@ -6,7 +7,10 @@ class A {
     fun foo() = 1
     constructor(x: Any?)
     constructor() : this(object {
-        fun bar() = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo<!>() <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>.foo() +
+        fun bar() = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo<!>() + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>.foo() +
                     <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foobar<!>() + super<!UNRESOLVED_LABEL!>@A<!>.hashCode()
     })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, nullableType, secondaryConstructor, thisExpression */

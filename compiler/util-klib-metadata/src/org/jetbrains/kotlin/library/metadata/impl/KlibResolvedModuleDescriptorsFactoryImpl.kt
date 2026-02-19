@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -57,7 +58,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
         // Build module descriptors.
         resolvedLibraries.forEach { library, packageAccessHandler ->
-            profile("Loading ${library.libraryName}") {
+            profile("Loading ${library.location}") {
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(
@@ -249,18 +250,5 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     override fun getMemberScope(): MemberScope = memberScope
 }
 
-
-@Deprecated(
-    level = DeprecationLevel.ERROR,
-    message = "This class was moved to org.jetbrains.kotlin.name.NativeStandardInteropNames.ForwardDeclarations",
-)
-object ForwardDeclarationsFqNames {
-
-    internal val cInterop = NativeStandardInteropNames.cInteropPackage
-
-    internal val cNamesStructs = NativeStandardInteropNames.ForwardDeclarations.cNamesStructsPackage
-    internal val objCNamesClasses = NativeStandardInteropNames.ForwardDeclarations.objCNamesClassesPackage
-    internal val objCNamesProtocols = NativeStandardInteropNames.ForwardDeclarations.objCNamesProtocolsPackage
-
-    val syntheticPackages = NativeStandardInteropNames.ForwardDeclarations.syntheticPackages
-}
+val ModuleDescriptor.isForwardDeclarationModule: Boolean
+    get() = name == FORWARD_DECLARATIONS_MODULE_NAME

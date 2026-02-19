@@ -1,0 +1,5 @@
+imported_from_cinterop.main/Derived.<init>|<init>(){}[0]
+imported_from_cinterop.main/Derived.overriddenFunction|overriddenFunction(){}[0]
+imported_from_cinterop.main/Derived.overriddenProperty|overriddenProperty(){}[0]
+imported_from_cinterop.main/Derived.setOverriddenProperty|setOverriddenProperty(kotlin.Int){}[0]
+imported_from_cinterop.main/Derived|null[0]

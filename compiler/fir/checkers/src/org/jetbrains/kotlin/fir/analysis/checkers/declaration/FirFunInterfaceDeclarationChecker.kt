@@ -5,34 +5,46 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WITH_SUSPEND_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
-import org.jetbrains.kotlin.fir.declarations.utils.isFun
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
 
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
+    object Regular : FirFunInterfaceDeclarationChecker(MppCheckerKind.Platform) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirRegularClass) {
+            if (declaration.isExpect) return
+            super.check(declaration)
+        }
+    }
+
+    object ForExpectClass : FirFunInterfaceDeclarationChecker(MppCheckerKind.Common) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirRegularClass) {
+            if (!declaration.isExpect) return
+            super.check(declaration)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (!declaration.isInterface || !declaration.isFun) return
 
-        val scope = declaration.unsubstitutedScope(context)
+        val scope = declaration.unsubstitutedScope()
         val classSymbol = declaration.symbol
 
         var abstractFunctionSymbol: FirNamedFunctionSymbol? = null
@@ -46,7 +58,7 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
                     if (abstractFunctionSymbol == null) {
                         abstractFunctionSymbol = function
                     } else {
-                        reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, context)
+                        reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS)
                     }
                 }
             }
@@ -55,47 +67,35 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
                 val firProperty = property as? FirPropertySymbol ?: continue
                 if (firProperty.isAbstract) {
                     val source =
-                        if (firProperty.getContainingClassSymbol(context.session) != classSymbol)
+                        if (firProperty.getContainingClassSymbol() != classSymbol)
                             declaration.source
                         else
                             firProperty.source
 
-                    reporter.reportOn(source, FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, context)
+                    reporter.reportOn(source, FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES)
                 }
             }
         }
 
         if (abstractFunctionSymbol == null) {
-            reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, context)
+            reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS)
             return
         }
 
-        val inFunInterface = abstractFunctionSymbol.getContainingClassSymbol(context.session) === classSymbol
+        val inFunInterface = abstractFunctionSymbol.getContainingClassSymbol() === classSymbol
 
-        when {
-            abstractFunctionSymbol.typeParameterSymbols.isNotEmpty() ->
-                reporter.reportOn(
-                    if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
-                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS,
-                    context
-                )
-
-            abstractFunctionSymbol.isSuspend ->
-                if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionsInFunInterfaces)) {
-                    reporter.reportOn(
-                        if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
-                        FUN_INTERFACE_WITH_SUSPEND_FUNCTION,
-                        context
-                    )
-                }
+        if (abstractFunctionSymbol.typeParameterSymbols.isNotEmpty()) {
+            reporter.reportOn(
+                if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
+                FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
+            )
         }
 
         abstractFunctionSymbol.valueParameterSymbols.forEach {
             if (it.hasDefaultValue) {
                 reporter.reportOn(
                     if (inFunInterface) it.source else declaration.source,
-                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE,
-                    context
+                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
                 )
             }
         }

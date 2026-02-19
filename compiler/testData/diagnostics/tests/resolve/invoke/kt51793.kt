@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-51793
 interface Key
@@ -16,3 +17,6 @@ fun A.main() {
         k()
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration, localFunction,
+operator, propertyDeclaration, propertyWithExtensionReceiver */

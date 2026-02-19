@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-4827 UOE at PackageType.throwException()
 // EA-53605
 
@@ -14,3 +15,5 @@ fun f() {
     <!INTERFACE_AS_FUNCTION!>TestInterface<!>()
     C.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>I<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, interfaceDeclaration */

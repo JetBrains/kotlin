@@ -6,16 +6,13 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.InteropFqNames
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -24,40 +21,41 @@ internal fun dce(
         context: Context,
         irModule: IrModuleFragment,
         moduleDFG: ModuleDFG,
-        devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
-): Set<IrFunction> {
-    val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
-
+): Set<IrSimpleFunction> {
     val callGraph = CallGraphBuilder(
             context,
             irModule,
             moduleDFG,
-            externalModulesDFG,
-            devirtualizationAnalysisResult,
-            // For DCE we don't wanna miss any potentially reachable function.
-            nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
+            // Do not devirtualize anything to keep the graph smaller (albeit less precise which is fine for DCE).
+            devirtualizedCallSitesUnfoldFactor = -1,
+            nonDevirtualizedCallSitesUnfoldFactor = -1,
     ).build()
+    val referencedFunctions = mutableSetOf<IrSimpleFunction>()
 
-    val referencedFunctions = mutableSetOf<IrFunction>()
-    callGraph.rootExternalFunctions.forEach {
-        if (!it.isStaticFieldInitializer)
-            referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
+    fun referenceFunction(functionSymbol: DataFlowIR.FunctionSymbol) {
+        val irFunction = functionSymbol.irFunction ?: error("No IR for: $functionSymbol")
+        referencedFunctions.add(irFunction)
+        // Need to keep the bridges' targets to not get them DCE-ed, as they are used during classes layout construction.
+        irFunction.bridgeTarget?.let { referencedFunctions.add(it) }
     }
+
+    callGraph.rootExternalFunctions.forEach { referenceFunction(it) }
     for (node in callGraph.directEdges.values) {
         if (!node.symbol.isStaticFieldInitializer)
-            referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
-        node.callSites.forEach {
-            assert (!it.isVirtual) { "There should be no virtual calls in the call graph, but was: ${it.actualCallee}" }
-            referencedFunctions.add(it.actualCallee.irFunction ?: error("No IR for: ${it.actualCallee}"))
+            referenceFunction(node.symbol)
+
+        for (callSite in node.callSites) {
+            if (!callSite.isVirtual)
+                referenceFunction(callSite.actualCallee)
         }
     }
 
-    irModule.acceptChildrenVoid(object: IrElementVisitorVoid {
+    irModule.acceptChildrenVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
 
-        override fun visitFunction(declaration: IrFunction) {
+        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
             // TODO: Generalize somehow, not that graceful.
             if (declaration.name == OperatorNameConventions.INVOKE
                     && declaration.parent.let { it is IrClass && it.defaultType.isFunction() }) {
@@ -65,31 +63,21 @@ internal fun dce(
             }
             super.visitFunction(declaration)
         }
-
-        override fun visitConstructor(declaration: IrConstructor) {
-            // TODO: NativePointed is the only inline class for which the field's type and
-            //       the constructor parameter's type are different.
-            //       Thus we need to conserve the constructor no matter if it was actually referenced somehow or not.
-            //       See [IrTypeInlineClassesSupport.getInlinedClassUnderlyingType] why.
-            if (declaration.parentAsClass.name.asString() == InteropFqNames.nativePointedName && declaration.isPrimary)
-                referencedFunctions.add(declaration)
-            super.visitConstructor(declaration)
-        }
     })
 
-    irModule.transformChildrenVoid(object: IrElementTransformerVoid() {
+    irModule.transformChildrenVoid(object : IrElementTransformerVoid() {
         override fun visitFile(declaration: IrFile): IrFile {
             declaration.declarations.removeAll {
-                (it is IrFunction && !referencedFunctions.contains(it))
+                (it is IrSimpleFunction && !referencedFunctions.contains(it))
             }
             return super.visitFile(declaration)
         }
 
         override fun visitClass(declaration: IrClass): IrStatement {
-            if (declaration == context.ir.symbols.nativePointed)
+            if (declaration == context.symbols.nativePointed)
                 return super.visitClass(declaration)
             declaration.declarations.removeAll {
-                (it is IrFunction && it.isReal && !referencedFunctions.contains(it))
+                (it is IrSimpleFunction && it.isReal && !referencedFunctions.contains(it))
             }
             return super.visitClass(declaration)
         }
@@ -107,4 +95,3 @@ internal fun dce(
 
     return referencedFunctions
 }
-

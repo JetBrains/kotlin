@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 
 class Incrementer : (Int) -> Int by Int::inc
 

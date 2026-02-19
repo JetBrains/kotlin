@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 dependencies {
@@ -9,14 +9,17 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-frontend-utils"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
 
     compileOnly(intellijCore())
+    compileOnly(project(":compiler:cli-base"))
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {

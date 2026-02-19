@@ -26,6 +26,7 @@
 #pragma once
 
 #include <atomic>
+#include <optional>
 
 #include "Utils.hpp"
 #include "ManuallyScoped.hpp"
@@ -34,14 +35,12 @@ namespace kotlin {
 
 /**
  * A fixed-size concurrent multi-producer/multi-consumer queue.
- * @tparam kCapacity must be a power of 2.
+ * @tparam kCapacity is suggested to set to a power of 2.
  */
 template<typename T, std::size_t kCapacity>
 class BoundedQueue : private Pinned {
 public:
     BoundedQueue() {
-        static_assert((kCapacity >= 2) && ((kCapacity & (kCapacity - 1)) == 0), "Queue capacity must be a power of 2");
-
         for (size_t i = 0; i < kCapacity; ++i) {
             buffer_[i].sequence_.store(i, std::memory_order_relaxed);
         }
@@ -53,7 +52,7 @@ public:
         Cell* cell;
         std::size_t pos = enqueuePos_.load(std::memory_order_relaxed);
         while (true) {
-            cell = &buffer_[pos & (kCapacity - 1)];
+            cell = &buffer_[pos % kCapacity];
             std::size_t seq = cell->sequence_.load(std::memory_order_acquire);
             std::intptr_t dif = static_cast<std::intptr_t>(seq) - static_cast<std::intptr_t>(pos);
             if (dif == 0) {
@@ -75,7 +74,7 @@ public:
         Cell* cell;
         std::size_t pos = dequeuePos_.load(std::memory_order_relaxed);
         while (true) {
-            cell = &buffer_[pos & (kCapacity - 1)];
+            cell = &buffer_[pos % kCapacity];
             std::size_t seq = cell->sequence_.load(std::memory_order_acquire);
             std::intptr_t dif = static_cast<std::intptr_t>(seq) - static_cast<std::intptr_t>(pos + 1);
             if (dif == 0) {
@@ -92,6 +91,11 @@ public:
         cell->data_.destroy();
         cell->sequence_.store(pos + kCapacity, std::memory_order_release);
         return std::move(result);
+    }
+
+    /** Returns the number of items ever added to the queue: both present in the queue and already dequeed. */
+    size_t cumulativeThroughput() const noexcept {
+        return enqueuePos_.load();
     }
 
 private:

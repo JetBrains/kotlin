@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// DUMP_IR
 
 import kotlin.test.assertEquals
 

@@ -1,0 +1,3 @@
+error: incorrect value for boolean argument '-Xallow-kotlin-package'. Only 'true' and 'false' are allowed.
+info: use -help for more information
+COMPILATION_ERROR

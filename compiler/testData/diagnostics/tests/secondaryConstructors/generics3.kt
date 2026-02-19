@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class B<X, Y : X> {
     constructor(x: X, y: Y)
     constructor(x: X, s: String)
@@ -15,3 +16,6 @@ class A<T1, T2 : T1> : B<T1, T2> {
     constructor(x: T1, z: String, z1: String, z2: String, z3: String): super(x, "")
     constructor(x: T1, z: String, z1: String, z2: String, z3: String, z4: String): <!NONE_APPLICABLE!>super<!>(x, 1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, secondaryConstructor, stringLiteral,
+typeConstraint, typeParameter */

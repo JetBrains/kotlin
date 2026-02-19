@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class Inv<T>
 
@@ -20,7 +21,7 @@ fun test(
     invOut.onlyOut(42)
     invOut.onlyOut(1L)
 
-    invOut.onlyOutUB(<!ARGUMENT_TYPE_MISMATCH!>"str"<!>)
+    invOut.onlyOutUB(<!MEMBER_PROJECTED_OUT!>"str"<!>)
     invStar.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOutUB<!>(0)
     invOut.onlyOutUB(42)
     invOut.onlyOutUB(1L)
@@ -70,3 +71,8 @@ class Test5 {
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, capturedType, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, integerLiteral, intersectionType,
+localProperty, nullableType, outProjection, propertyDeclaration, safeCall, setter, smartcast, starProjection,
+stringLiteral, typeConstraint, typeParameter */

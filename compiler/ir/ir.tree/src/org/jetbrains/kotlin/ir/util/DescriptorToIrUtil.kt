@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isValueClass
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
 val ParameterDescriptor.indexOrMinusOne: Int
@@ -52,5 +53,6 @@ fun IrFactory.createIrClassFromDescriptor(
     isValue = descriptor.isValueClass(),
     isExpect = descriptor.isExpect,
     isFun = descriptor.isFun,
+    hasEnumEntries = descriptor is DeserializedClassDescriptor && descriptor.hasEnumEntriesMetadataFlag,
     source = descriptor.source,
 )

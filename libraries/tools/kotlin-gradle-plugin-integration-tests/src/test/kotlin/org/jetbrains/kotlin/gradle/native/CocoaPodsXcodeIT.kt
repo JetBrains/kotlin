@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -15,16 +16,13 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
-import kotlin.io.path.exists
+import java.nio.file.Paths
 import kotlin.io.path.name
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K/N tests cocoapods with xcodebuild")
 @NativeGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @OptIn(EnvironmentalVariablesOverride::class)
 class CocoaPodsXcodeIT : KGPBaseTest() {
 
@@ -117,6 +115,8 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
                 """
                     framework {
                         baseName = "kotlin-library"
+                        // KT-81727 Failing CocoaPodsXcodeIT test
+                        freeCompilerArgs += "-Xbinary=bundleId=kotlin.library"
                     }
                     name = "kotlin-library"
                     podfile = project.file("ios-app/Podfile")
@@ -192,16 +192,11 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mode: ImportMode,
         iosAppLocation: String?,
         subprojectsToFrameworkNamesMap: Map<String, String?>,
-        arch: String = "x86_64",
+        arch: String = "arm64",
         podInstall: (taskPrefix: String, iosAppPath: Path) -> Unit = ::gradlePodInstall,
     ) {
 
-        gradleProperties
-            .takeIf(Path::exists)
-            ?.let {
-                it.append("kotlin_version=${defaultBuildOptions.kotlinVersion}")
-                it.append("test_fixes_version=${defaultBuildOptions.kotlinVersion}")
-            }
+        prepareForXcodebuild()
 
         for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
 
@@ -211,12 +206,6 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
             frameworkName?.let {
                 useCustomCocoapodsFrameworkName(subproject, it, iosAppLocation)
             }
-
-            val buildOptions = defaultBuildOptions.copy(
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    cocoapodsGenerateWrapper = true
-                )
-            )
 
             // Generate podspec.
             build("$taskPrefix:podspec", buildOptions = buildOptions)
@@ -230,21 +219,14 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
                 podInstall(taskPrefix, iosAppPath)
 
                 // Run Xcode build.
-                val xcodebuildResult = runProcess(
-                    cmd = listOf(
-                        "xcodebuild",
-                        "-sdk", "iphonesimulator",
-                        "-configuration", "Release",
-                        "-workspace", "${iosAppPath.name}.xcworkspace",
-                        "-scheme", iosAppPath.name,
-                        "-arch", arch
-                    ),
-                    environmentVariables = environmentVariables.environmentalVariables,
-                    workingDir = iosAppPath.toFile(),
+                xcodebuild(
+                    workspace = Paths.get("${iosAppPath.name}.xcworkspace"),
+                    scheme = iosAppPath.name,
+                    configuration = "Release",
+                    sdk = "iphonesimulator",
+                    arch = arch,
+                    workingDir = iosAppPath,
                 )
-                assertProcessRunResult(xcodebuildResult) {
-                    assertEquals(0, exitCode, "Exit code mismatch for `xcodebuild`.")
-                }
             }
         }
     }

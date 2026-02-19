@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 fun bar() {
@@ -8,3 +9,5 @@ fun bar() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localFunction */

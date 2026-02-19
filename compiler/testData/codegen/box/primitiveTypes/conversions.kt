@@ -42,10 +42,10 @@ fun box(): String {
                             65534.0, 65535.0, 65536.0,
                             2147483647.0, 2147483648.0, 2147483649.0,
                             Double.MAX_VALUE, Double.POSITIVE_INFINITY)) {
-        assertEquals(d.toInt().toChar(), d.toChar())
+        assertEquals(d.toInt().toInt().toChar(), d.toInt().toChar())
 
         val f = d.toFloat()
-        assertEquals(f.toInt().toChar(), f.toChar())
+        assertEquals(f.toInt().toInt().toChar(), f.toInt().toChar())
     }
 
     return "OK"

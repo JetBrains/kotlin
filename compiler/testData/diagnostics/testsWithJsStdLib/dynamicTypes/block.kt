@@ -1,4 +1,6 @@
-// !MARK_DYNAMIC_CALLS
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-63071
+// MARK_DYNAMIC_CALLS
 
 fun test() {
     dynamic {
@@ -7,7 +9,7 @@ fun test() {
     }
 }
 
-fun <T> dynamic(<!UNUSED_PARAMETER!>body<!>: dynamic.() -> T): T {
+fun <T> dynamic(body: dynamic.() -> T): T {
     val topLevel = null
-    return topLevel.<!UNRESOLVED_REFERENCE!>body<!>()
+    return topLevel.<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>body<!>()
 }

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForScript
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
@@ -35,15 +35,13 @@ internal class SymbolLightScriptMainParameter(
 
     override fun hashCode(): Int = containingMethod.hashCode().times(31).plus(name.hashCode())
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
         )
     }
 
-    override fun hasModifierProperty(name: String): Boolean = _modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
 
     override fun isVarArgs(): Boolean = false
 }

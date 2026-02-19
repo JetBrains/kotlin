@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /IHost { // /IHost|null[0]
+    open fun (kotlin/String).extLength(): kotlin/Int // /IHost.extLength|extLength@kotlin.String(){}[0]
+}
+final class /Ref { // /Ref|null[0]
+    final var value // /Ref.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // /Ref.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/Int) // /Ref.value.<set-value>|<set-value>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int) // /Ref.<init>|<init>(kotlin.Int){}[0]
+}
+final fun /box() // /box|box(){}[0]
+final fun (kotlin/Int)./foo(): kotlin/Int // /foo|foo@kotlin.Int(){}[0]
+final fun /test1(kotlin/String?): kotlin/Int? // /test1|test1(kotlin.String?){}[0]
+final fun /test2(kotlin/String?): kotlin/Int? // /test2|test2(kotlin.String?){}[0]
+final fun /test3(kotlin/String?, kotlin/Any?): kotlin/Boolean? // /test3|test3(kotlin.String?;kotlin.Any?){}[0]
+final fun /test4(/Ref?) // /test4|test4(Ref?){}[0]
+final fun (/IHost)./test5(kotlin/String?): kotlin/Int? // /test5|test5@IHost(kotlin.String?){}[0]

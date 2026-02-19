@@ -1,6 +1,0 @@
-FILE: multipleOperators.kt
-    public final fun foo(): R|kotlin/Unit| {
-        lvar x: R|kotlin/Int| = Int(0)
-        lvar y: R|kotlin/Int| = Int(0)
-        R|<local>/x| = R|<local>/x|.R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.plus|(Int(5))
-    }

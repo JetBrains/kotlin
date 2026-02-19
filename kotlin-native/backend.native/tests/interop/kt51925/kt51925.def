@@ -1,9 +1,0 @@
-strictEnums = E
----
-enum E {
-    X = 1, Y = 2, Z = 42
-};
-
-typedef struct {
-    int d;
-} Struct;

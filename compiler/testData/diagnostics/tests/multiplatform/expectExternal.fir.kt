@@ -1,20 +1,22 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-expect <!EXPECTED_EXTERNAL_DECLARATION!>external<!> fun foo()
+expect <!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}!>external<!> fun foo()
 expect fun bar()
 
-expect <!EXPECTED_EXTERNAL_DECLARATION, WRONG_MODIFIER_TARGET!>external<!> var prop: String
+expect <!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}, WRONG_MODIFIER_TARGET!>external<!> var prop: String
 
 expect var getAndSet: String
-    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> get
-    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> set
+    <!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}!>external<!> get
+    <!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}!>external<!> set
 
-<!EXPECTED_EXTERNAL_DECLARATION, WRONG_MODIFIER_TARGET!>external<!> expect val explicitGetter: String
-    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> get
+<!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}, WRONG_MODIFIER_TARGET!>external<!> expect val explicitGetter: String
+    <!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}!>external<!> get
 
-expect <!EXPECTED_EXTERNAL_DECLARATION, WRONG_MODIFIER_TARGET!>external<!> class A {
-    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> fun foo()
+expect <!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}, WRONG_MODIFIER_TARGET!>external<!> class A {
+    <!EXPECTED_EXTERNAL_DECLARATION, EXPECTED_EXTERNAL_DECLARATION{METADATA}!>external<!> fun foo()
     fun bar()
 }
 
@@ -36,3 +38,5 @@ actual class A {
     actual external fun foo()
     actual external fun bar()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, external, functionDeclaration, propertyDeclaration */

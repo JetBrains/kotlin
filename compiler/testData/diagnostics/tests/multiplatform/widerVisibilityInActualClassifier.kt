@@ -1,7 +1,9 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-59355
 
 // MODULE: common
-internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Some<!> {
+internal expect open class Some {
     protected class ProtectedNested
     internal class InternalNested
 
@@ -10,7 +12,7 @@ internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Some<!> {
     protected fun protectedFun()
 }
 
-internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Other<!> {
+internal expect open class Other {
     protected class ProtectedNested
     internal class InternalNested
 }
@@ -32,3 +34,4 @@ public open class PlatformOther { // should be allowed
 
 <!ACTUAL_WITHOUT_EXPECT!>internal<!> actual typealias Other = PlatformOther // should be allowed
 
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, typeAliasDeclaration */

@@ -26,11 +26,11 @@ FILE: bareWithSubjectTypeAlias.kt
 
     }
     public final typealias TA = R|A<kotlin/CharSequence>|
-    public final fun bar(): R|TA| {
+    public final fun bar(): R|{TA=} A<kotlin/CharSequence>| {
         ^bar R|kotlin/TODO|()
     }
     public final fun foo(): R|kotlin/Unit| {
-        when (lval a: R|TA| = R|/bar|()) {
+        when (lval a: R|{TA=} A<kotlin/CharSequence>| = R|/bar|()) {
             ($subj$ is R|A.B<kotlin/CharSequence>|) ->  {
                 R|<local>/a|.R|SubstitutionOverride</A.B.x: R|kotlin/CharSequence|>|.R|kotlin/CharSequence.length|
             }

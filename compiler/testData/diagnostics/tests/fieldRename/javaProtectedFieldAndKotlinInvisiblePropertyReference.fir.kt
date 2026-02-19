@@ -1,4 +1,5 @@
-// FILE: BaseJava.java
+// RUN_PIPELINE_TILL: FRONTEND
+// FILE: base/BaseJava.java
 
 package base;
 
@@ -7,6 +8,10 @@ public class BaseJava {
 
     String b = "";
 }
+
+// FILE: base/DerivedJava.java
+
+package base;
 
 class DerivedJava extends BaseKotlin {
     protected String a = "";
@@ -19,11 +24,11 @@ package base
 abstract class BaseKotlin
 
 open class Intermediate : BaseJava() {
-    private val a = ""
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> = ""
 }
 
 class Derived : Intermediate() {
-    fun foo() = this::a // Same package
+    fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!> // Same package
 }
 
 private class DerivedFromDerivedJava : DerivedJava() {
@@ -37,43 +42,43 @@ package derived
 import base.BaseJava
 
 open class Intermediate : BaseJava() {
-    private val a = ""
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> = ""
 
     private val b = ""
 }
 
 open class IntermediateWithoutField : BaseJava() {
-    private val a get() = ""
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> get() = ""
 }
 
 open class IntermediatePublic : BaseJava() {
-    val a = ""
+    val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> = ""
 }
 
 class Derived : Intermediate() {
     // This should be the first erroneous place (only in K2)
-    fun foo() = this::a
+    fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
 
-    fun bar() = a // Non-reference
+    fun bar() = <!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!> // Non-reference
 
-    fun baz() = this::<!UNRESOLVED_REFERENCE!>b<!> // Non-protected
+    fun baz() = this::<!INVISIBLE_REFERENCE!>b<!> // Non-protected
 }
 
 typealias Alias = Intermediate
 
 class DerivedAlias : Alias() {
     // This should be the second erroneous place (only in K2)
-    fun foo() = this::a
+    fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
 }
 
 fun local() {
     open class LocalIntermediate : BaseJava() {
-        private val a = ""
+        private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> = ""
     }
 
     class LocalDerived : LocalIntermediate() {
         // This should be the third and the last erroneous place (only in K2)
-        fun foo() = this::a
+        fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
     }
 }
 
@@ -90,5 +95,9 @@ class DirectlyDerived : BaseJava() {
 }
 
 fun test(d: Derived) {
-    d::<!UNRESOLVED_REFERENCE!>a<!> // Field is also invisible
+    d::<!INVISIBLE_REFERENCE!>a<!> // Field is also invisible
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, getter,
+javaCallableReference, javaProperty, javaType, localClass, propertyDeclaration, stringLiteral, thisExpression,
+typeAliasDeclaration */

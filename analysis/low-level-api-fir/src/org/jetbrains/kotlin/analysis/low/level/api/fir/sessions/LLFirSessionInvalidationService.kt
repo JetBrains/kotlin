@@ -1,104 +1,51 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
-import org.jetbrains.kotlin.analysis.providers.topics.*
+import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventListener
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
- * [LLFirSessionInvalidationService] listens to [modification events][KotlinTopics] and invalidates [LLFirSession]s which depend on the
- * modified [KtModule]. Its invalidation functions should always be invoked in a **write action** because invalidation affects multiple
- * sessions in [LLFirSessionCache] and the cache has to be kept consistent.
+ * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent]
+ * and invalidates [LLFirSession]s which depend on the modified [KaModule].
  */
-class LLFirSessionInvalidationService(private val project: Project) : Disposable {
-    /**
-     * Subscribes to all [modification events][KotlinTopics] via the [analysisMessageBus].
-     *
-     * [subscribeToModificationEvents] must be invoked during setup to allow [LLFirSessionInvalidationService] to listen to events.
-     * Subscribing in `init` is not an option because services are created on demand and there is no guarantee that this service is going to
-     * be requested.
-     */
-    fun subscribeToModificationEvents() {
-        val busConnection = project.analysisMessageBus.connect(this)
-
-        // All modification events the invalidation service subscribes to are guaranteed to be published in a write action. This ensures
-        // that invalidation functions are only called in a write action, per the contract of `LLFirSessionInvalidationService`.
-        busConnection.subscribe(
-            KotlinTopics.MODULE_STATE_MODIFICATION,
-            KotlinModuleStateModificationListener { module, _ -> invalidate(module) },
-        )
-        busConnection.subscribe(
-            KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION,
-            KotlinModuleOutOfBlockModificationListener { module -> invalidate(module) },
-        )
-        busConnection.subscribe(
-            KotlinTopics.GLOBAL_MODULE_STATE_MODIFICATION,
-            KotlinGlobalModuleStateModificationListener { invalidateAll(includeLibraryModules = true) }
-        )
-        busConnection.subscribe(
-            KotlinTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
-            KotlinGlobalSourceModuleStateModificationListener { invalidateAll(includeLibraryModules = false) },
-        )
-        busConnection.subscribe(
-            KotlinTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION,
-            KotlinGlobalSourceOutOfBlockModificationListener { invalidateAll(includeLibraryModules = false) },
-        )
-    }
-
-    /**
-     * Invalidates the session(s) associated with [module].
-     *
-     * Per the contract of [LLFirSessionInvalidationService], [invalidate] may only be called from a write action.
-     */
-    fun invalidate(module: KtModule) {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
-        val sessionCache = LLFirSessionCache.getInstance(project)
-        val didSessionExist = sessionCache.removeSession(module)
-
-        // We don't have to invalidate dependent sessions if the root session does not exist in the cache. It is true that sessions can be
-        // created without their dependency sessions being created, as session dependencies are lazy. So some of the root session's
-        // dependents might exist. But if the root session does not exist, its dependent sessions won't contain any elements resolved by the
-        // root session, so they effectively don't depend on the root session at that moment and don't need to be invalidated.
-        if (!didSessionExist) return
-
-        KotlinModuleDependentsProvider.getInstance(project).getTransitiveDependents(module).forEach(sessionCache::removeSession)
-
-        // Due to a missing IDE implementation for script dependents (see KTIJ-25620), script sessions need to be invalidated globally:
-        //  - A script may include other scripts, so a script modification may affect any other script.
-        //  - Script dependencies are also not linked via dependents yet, so any script dependency modification may affect any script.
-        //  - Scripts may depend on libraries, and the IDE module dependents provider doesn't provide script dependents for libraries yet.
-        if (module is KtScriptModule || module is KtScriptDependencyModule || module is KtLibraryModule) {
-            sessionCache.removeAllScriptSessions()
+@KaImplementationDetail
+class LLFirSessionInvalidationService(private val project: Project) {
+    internal class LLKotlinModificationEventListener(val project: Project) : KotlinModificationEventListener {
+        override fun onModification(event: KotlinModificationEvent) {
+            getInstance(project).invalidate(event)
         }
     }
 
-    private fun invalidateAll(includeLibraryModules: Boolean) {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
-        // When anchor modules are configured and `includeLibraryModules` is `false`, we get a situation where the anchor module session
-        // will be invalidated (because it is a source session), while its library dependents won't be invalidated. But such library
-        // sessions also need to be invalidated because they depend on the anchor module.
-        //
-        // Invalidating anchor modules before all source sessions has the advantage that `invalidate`'s session existence check will work,
-        // so we do not have to invalidate dependent sessions if the anchor module does not exist in the first place.
-        if (!includeLibraryModules) {
-            val anchorModules = KotlinAnchorModuleProvider.getInstance(project)?.getAllAnchorModules()
-            anchorModules?.forEach(::invalidate)
+    internal class LLPsiModificationTrackerListener(val project: Project) : PsiModificationTracker.Listener {
+        override fun modificationCountChanged() {
+            getInstance(project).invalidator.invalidateUnstableDanglingFileSessions()
         }
-
-        LLFirSessionCache.getInstance(project).removeAllSessions(includeLibraryModules)
     }
 
-    override fun dispose() {
+    private val invalidator by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLFirSessionCacheStorageInvalidator(project, LLFirSessionCache.getInstance(project).storage)
+    }
+
+    /**
+     * @see LLFirSessionCacheStorageInvalidator.invalidate
+     */
+    fun invalidate(event: KotlinModificationEvent) {
+        invalidator.invalidate(event)
+    }
+
+    /**
+     * @see LLFirSessionCacheStorageInvalidator.invalidateAll
+     */
+    fun invalidateAll(includeLibraryModules: Boolean, diagnosticInformation: String? = null) {
+        invalidator.invalidateAll(includeLibraryModules, diagnosticInformation)
     }
 
     companion object {

@@ -20,24 +20,26 @@ import org.gradle.api.tasks.util.PatternSet
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
+import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
 import org.jetbrains.kotlin.gradle.utils.property
 import javax.inject.Inject
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constructor(
     objectFactory: ObjectFactory,
 ) : DefaultTask(),
     KotlinCompileTool,
     KotlinCompilerArgumentsProducer,
-    CompilerArgumentAware<T>,
+    DeprecatedCompilerArgumentAware<T>,
     TaskWithLocalState {
 
     @Internal
@@ -49,7 +51,8 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
         )
     }
 
-    private val sourceFiles = objectFactory.fileCollection()
+    @get:Internal
+    internal val sourceFiles = objectFactory.fileCollection()
 
     override val sources: FileCollection = objectFactory.fileCollection()
         .from(
@@ -61,7 +64,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     }
 
     override fun setSource(vararg sources: Any) {
-        sourceFiles.from(sources)
+        sourceFiles.setFrom(sources)
     }
 
     fun disallowSourceChanges() {
@@ -115,7 +118,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     }
 
     @get:Internal
-    final override val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+    final override val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     /**
@@ -129,6 +132,9 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
 
     @get:Internal
     internal abstract val runViaBuildToolsApi: Property<Boolean>
+
+    @get:Internal
+    internal abstract val generateCompilerRefIndex: Property<Boolean>
 
     protected fun validateCompilerClasspath() {
         // Note that the check triggers configuration resolution

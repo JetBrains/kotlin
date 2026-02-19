@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A
 
 fun test(a: A, block: A.() -> Int) {
@@ -15,3 +16,6 @@ class C {
         block()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, typeWithExtension */

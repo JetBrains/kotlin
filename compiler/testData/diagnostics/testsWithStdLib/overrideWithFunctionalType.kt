@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Derived.java
 import kotlin.jvm.functions.Function0;
@@ -16,3 +17,6 @@ interface Base {
 fun main() {
     Derived().foo<String> { "" }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, interfaceDeclaration, javaFunction, javaType,
+lambdaLiteral, nullableType, stringLiteral, typeConstraint, typeParameter */

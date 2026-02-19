@@ -6,7 +6,7 @@ description = "kotlin-gradle-statistics"
 plugins {
     `java-library`
     id("org.jetbrains.kotlin.jvm")
-    id("jps-compatible")
+    id("project-tests-convention")
     `maven-publish`
 }
 
@@ -15,14 +15,19 @@ configureCommonPublicationSettingsForGradle(signLibraryPublication)
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
 dependencies {
-    compileOnly(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly(kotlin("stdlib", coreDepsVersion))
 
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(commonDependency("junit"))
+    testImplementation(libs.junit4)
+    testImplementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("test", coreDepsVersion))
+    testRuntimeOnly(kotlin("test-junit", coreDepsVersion))
 }
 
-projectTest {
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 publishing {

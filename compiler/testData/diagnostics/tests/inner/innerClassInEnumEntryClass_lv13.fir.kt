@@ -1,4 +1,5 @@
-// !LANGUAGE: +InnerClassInEnumEntryClass +NestedClassesInEnumEntryShouldBeInner
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InnerClassInEnumEntryClass +NestedClassesInEnumEntryShouldBeInner
 
 enum class Enum {
     ENTRY_WITH_CLASS {
@@ -17,3 +18,5 @@ enum class Enum {
         <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {}
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

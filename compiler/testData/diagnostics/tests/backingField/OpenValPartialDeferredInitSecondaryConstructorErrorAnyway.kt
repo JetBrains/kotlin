@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 // LANGUAGE:-ProhibitOpenValDeferredInitialization
 open class Foo {
@@ -10,3 +10,6 @@ open class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, ifExpression, integerLiteral,
+propertyDeclaration, secondaryConstructor */

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.Translation
+
+modules = Translation
+compilerOpts = -framework Translation
+linkerOpts = -framework Translation
+#Disabled: Swift-only framework

@@ -6,22 +6,27 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import javax.inject.Inject
 
-interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
+@Suppress("DEPRECATION")
+interface KotlinMetadataCompilation<T : KotlinAnyOptionsDeprecated> : KotlinCompilation<T>
 
+@Suppress("DEPRECATION")
 open class KotlinCommonCompilation @Inject internal constructor(compilation: KotlinCompilationImpl) :
-    AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
-    KotlinMetadataCompilation<KotlinCommonOptions> {
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR") AbstractKotlinCompilation<KotlinAnyOptionsDeprecated>(compilation),
+    KotlinMetadataCompilation<KotlinAnyOptionsDeprecated> {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
     override val compileKotlinTask: KotlinCompileCommon
         get() = compilation.compileKotlinTask as KotlinCompileCommon
 
@@ -30,8 +35,7 @@ open class KotlinCommonCompilation @Inject internal constructor(compilation: Kot
         get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>
 
     internal val isKlibCompilation: Boolean
-        get() = target.project.isKotlinGranularMetadataEnabled && !forceCompilationToKotlinMetadata
+        get() = !forceCompilationToKotlinMetadata
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
 }
-

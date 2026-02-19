@@ -1,0 +1,26 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /IdeWizard { // /IdeWizard|null[0]
+    final var projectTemplate // /IdeWizard.projectTemplate|{}projectTemplate[0]
+        final fun <get-projectTemplate>(): kotlin/Int? // /IdeWizard.projectTemplate.<get-projectTemplate>|<get-projectTemplate>(){}[0]
+        final fun <set-projectTemplate>(kotlin/Int?) // /IdeWizard.projectTemplate.<set-projectTemplate>|<set-projectTemplate>(kotlin.Int?){}[0]
+    constructor <init>() // /IdeWizard.<init>|<init>(){}[0]
+}
+final class <#A: kotlin/Any, #B: /SettingType<#A>> /SettingReference { // /SettingReference|null[0]
+    final var t // /SettingReference.t|{}t[0]
+        final fun <get-t>(): #B // /SettingReference.t.<get-t>|<get-t>(){}[0]
+        final fun <set-t>(#B) // /SettingReference.t.<set-t>|<set-t>(1:1){}[0]
+    final var v // /SettingReference.v|{}v[0]
+        final fun <get-v>(): #A // /SettingReference.v.<get-v>|<get-v>(){}[0]
+        final fun <set-v>(#A) // /SettingReference.v.<set-v>|<set-v>(1:0){}[0]
+    constructor <init>(#B, #A) // /SettingReference.<init>|<init>(1:1;1:0){}[0]
+}
+final class <#A: out kotlin/Any> /SettingType { // /SettingType|null[0]
+    final val type // /SettingType.type|{}type[0]
+        final fun <get-type>(): kotlin.reflect/KClass<out #A> // /SettingType.type.<get-type>|<get-type>(){}[0]
+    constructor <init>(kotlin.reflect/KClass<out #A>) // /SettingType.<init>|<init>(kotlin.reflect.KClass<out|1:0>){}[0]
+}

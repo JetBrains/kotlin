@@ -1,0 +1,46 @@
+class Foo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  internal fun internalFun() {
+    return Unit
+  }
+
+  protected fun protectedFun() {
+    return Unit
+  }
+
+  @Suppress(names = ["NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR"])
+  inline fun publicInline() {
+    <this>.protectedFun()
+    <this>.internalFun()
+  }
+
+}
+
+open class OpenFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  internal fun internalFun() {
+    return Unit
+  }
+
+  protected fun protectedFun() {
+    return Unit
+  }
+
+  @Suppress(names = ["NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR"])
+  inline fun publicInline() {
+    <this>.protectedFun()
+    <this>.internalFun()
+  }
+
+}
+

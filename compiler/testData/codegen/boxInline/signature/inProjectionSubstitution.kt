@@ -1,6 +1,7 @@
 // WITH_REFLECT
 // NO_CHECK_LAMBDA_INLINING
 // TARGET_BACKEND: JVM
+
 // FILE: 1.kt
 package test
 

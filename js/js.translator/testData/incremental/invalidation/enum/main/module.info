@@ -5,6 +5,7 @@ STEP 0:
     added file: m.kt, testEnumEntries.kt, testEnumValues.kt
 STEP 1:
     dependencies: lib1
+    updated imports <wasm>: testEnumValues.kt
 STEP 2:
     dependencies: lib1
     added file: m.kt, testEnumEntries.kt, testEnumValues.kt

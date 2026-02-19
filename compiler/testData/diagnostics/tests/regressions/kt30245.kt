@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: +LexicographicVariableReadinessCalculation
 
 class Sample
 
@@ -133,3 +135,8 @@ open class A(a: () -> Unit) {
 }
 
 class B: A({ s -> "1" })
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, classDeclaration, enumDeclaration, enumEntry,
+equalityExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral, thisExpression, typeAliasDeclaration,
+typeParameter, typeWithExtension, whenExpression, whenWithSubject */

@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm
@@ -38,3 +39,6 @@ value class TestRecursionInUpperBounds<T : TestRecursionInUpperBounds<T>>(val x:
 value class Id<T>(val x: T)
 @JvmInline
 value class TestRecursionThroughId(val x: Id<TestRecursionThroughId>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+typeConstraint, typeParameter, value */

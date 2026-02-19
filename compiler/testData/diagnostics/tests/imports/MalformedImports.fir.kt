@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 import some.<!SYNTAX!><!>
@@ -7,3 +8,5 @@ import kotlin.<!SYNTAX!><!>
 import<!SYNTAX!><!>
 import <!SYNTAX!>.<!>
 import <!SYNTAX!>*<!>
+
+/* GENERATED_FIR_TAGS:  */

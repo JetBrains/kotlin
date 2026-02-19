@@ -1,0 +1,29 @@
+KT element: KtClass
+KT element text:
+public final class Foo public constructor() {
+    public final val explicitInt: suspend (kotlin.Int, suspend (kotlin.String) -> kotlin.Int) -> kotlin.Int /* from: test.MySuspendAlias<kotlin.Int> */ /* compiled code */
+        public final get() { /* compiled code */ }
+
+    public final val explicitAny: suspend (kotlin.Int, suspend (kotlin.String) -> kotlin.Any?) -> kotlin.Any? /* from: test.MySuspendAlias<kotlin.Any?> */ /* compiled code */
+        public final get() { /* compiled code */ }
+
+    public final val explicitStar: suspend (kotlin.Int, suspend (kotlin.String) -> kotlin.Any?) -> kotlin.Any? /* from: test.MySuspendAlias<*> */ /* compiled code */
+        public final get() { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val explicitAny: R|{test/MySuspendAlias<kotlin/Any?>=} suspend (kotlin/Int, suspend (kotlin/String) -> kotlin/Any?) -> kotlin/Any?|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|{test/MySuspendAlias<kotlin/Any?>=} suspend (kotlin/Int, suspend (kotlin/String) -> kotlin/Any?) -> kotlin/Any?|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val explicitInt: R|{test/MySuspendAlias<kotlin/Int>=} suspend (kotlin/Int, suspend (kotlin/String) -> kotlin/Int) -> kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|{test/MySuspendAlias<kotlin/Int>=} suspend (kotlin/Int, suspend (kotlin/String) -> kotlin/Int) -> kotlin/Int|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val explicitStar: R|{test/MySuspendAlias<*>=} suspend (kotlin/Int, suspend (kotlin/String) -> kotlin/Any?) -> kotlin/Any?|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|{test/MySuspendAlias<*>=} suspend (kotlin/Int, suspend (kotlin/String) -> kotlin/Any?) -> kotlin/Any?|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|test/Foo|
+
+}

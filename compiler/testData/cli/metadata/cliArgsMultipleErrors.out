@@ -1,0 +1,5 @@
+error: no value passed for argument -Xname-based-destructuring
+error: no value is expected for argument '-Xwhen-guards'.
+error: no value is expected for argument '-Xnested-type-aliases'.
+info: use -help for more information
+COMPILATION_ERROR

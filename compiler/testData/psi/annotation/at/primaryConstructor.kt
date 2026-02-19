@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class A1 @Ann1("") ()
 
 class A2 @Ann2("")(x: Int) : B {

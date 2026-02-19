@@ -1,3 +1,4 @@
 expression: BINARY_EXPRESSION
 text: i + i
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

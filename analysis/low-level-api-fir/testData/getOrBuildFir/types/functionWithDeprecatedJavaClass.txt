@@ -1,0 +1,17 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|JavaClass?|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public open [ResolvedTo(STATUS)] class KotlinClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|JavaClass?| { LAZY_BLOCK }
+
+    }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //FILE:a.kt
 //KT-1080 Don't use previously imported packages while resolving import references
 
@@ -17,3 +18,5 @@ class Some: <!UNRESOLVED_REFERENCE!>Test<!>()
 package b.d
 
 public open class Test
+
+/* GENERATED_FIR_TAGS: classDeclaration */

@@ -1,8 +1,8 @@
 // FIR_IDENTICAL
-// ALLOW_KOTLIN_PACKAGE
 // JSPECIFY_STATE: strict
+// ALLOW_KOTLIN_PACKAGE
 
-// FILE: sandbox/test/module-info.java
+// FILE: sandbox/module-info.java
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked

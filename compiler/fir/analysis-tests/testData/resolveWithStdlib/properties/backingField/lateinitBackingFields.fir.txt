@@ -1,6 +1,6 @@
 FILE: lateinitBackingFields.kt
     public final var that: R|kotlin/Int|
-        private <explicit backing field>: R|kotlin/String|
+        private final lateinit backing field field: R|kotlin/String|
         public get(): R|kotlin/Int| {
             ^ F|/that|.R|kotlin/String.length|
         }
@@ -12,22 +12,22 @@ FILE: lateinitBackingFields.kt
         R|kotlin/io/println|(R|/that|)
     }
     public final lateinit var number: R|kotlin/Number|
-        private <explicit backing field>: R|kotlin/Int| = Int(4)
+        private final backing field field: R|kotlin/Int| = Int(4)
         public get(): R|kotlin/Number|
         public set(value: R|kotlin/Number|): R|kotlin/Unit| {
             F|/number| = Int(10)
         }
     public final val something: R|kotlin/Number|
-        private <explicit backing field>: R|kotlin/Int| = Int(4)
+        private final lateinit backing field field: R|kotlin/Int| = Int(4)
         public get(): R|kotlin/Number|
     public final lateinit var oneMore: R|kotlin/Number|
-        private <explicit backing field>: R|kotlin/Int| = Int(4)
+        private final lateinit backing field field: R|kotlin/Int| = Int(4)
         public get(): R|kotlin/Number|
         public set(value: R|kotlin/Number|): R|kotlin/Unit| {
             F|/oneMore| = Int(10)
         }
     public final var thingWithNullableField: R|kotlin/Number|
-        private <explicit backing field>: R|kotlin/String?|
+        private final lateinit backing field field: R|kotlin/String?|
         public get(): R|kotlin/Number| {
             ^ Int(20)
         }

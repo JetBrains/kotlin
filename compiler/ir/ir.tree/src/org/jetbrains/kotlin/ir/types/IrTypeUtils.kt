@@ -1,79 +1,56 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.ir.util.superTypes
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.isStrictSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.getArrayElementType
+import org.jetbrains.kotlin.ir.util.toArrayOrPrimitiveArrayType
+import org.jetbrains.kotlin.ir.util.isBoxedArray
 
-fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
-    is IrClassSymbol -> owner.superTypes
-    is IrTypeParameterSymbol -> owner.superTypes
-    is IrScriptSymbol -> emptyList()
-}
+@Deprecated("Use `kotlin.ir.util.superTypes` instead", ReplaceWith("kotlin.ir.util.superTypes"))
+fun IrClassifierSymbol.superTypes(): List<IrType> =
+    superTypes()
 
+@Deprecated("Use `kotlin.ir.util.isSubtypeOfClass` instead", ReplaceWith("kotlin.ir.util.isSubtypeOfClass"))
 fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
-    FqNameEqualityChecker.areEqual(this, superClass) || isStrictSubtypeOfClass(superClass)
+    isSubtypeOfClass(superClass)
 
+@Deprecated("Use `kotlin.ir.util.isStrictSubtypeOfClass` instead", ReplaceWith("kotlin.ir.util.isStrictSubtypeOfClass"))
 fun IrClassifierSymbol.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
-    superTypes().any { it.isSubtypeOfClass(superClass) }
+    isStrictSubtypeOfClass(superClass)
 
+@Deprecated("Use `kotlin.ir.util.isSubtypeOfClass` instead", ReplaceWith("kotlin.ir.util.isSubtypeOfClass"))
 fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
-    this is IrSimpleType && classifier.isSubtypeOfClass(superClass)
+    isSubtypeOfClass(superClass)
 
+@Deprecated("Use `kotlin.ir.util.isStrictSubtypeOfClass` instead", ReplaceWith("kotlin.ir.util.isStrictSubtypeOfClass"))
 fun IrType.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
-    this is IrSimpleType && classifier.isStrictSubtypeOfClass(superClass)
+    isStrictSubtypeOfClass(superClass)
 
+@Deprecated("Use `kotlin.ir.util.isSubtypeOf` instead", ReplaceWith("kotlin.ir.util.isSubtypeOf"))
 fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Boolean =
-    AbstractTypeChecker.isSubtypeOf(createIrTypeCheckerState(typeSystem), this, superType)
+    isSubtypeOf(superType, typeSystem)
 
+@Deprecated("Use `kotlin.ir.util.isNullable` instead", ReplaceWith("kotlin.ir.util.isNullable"))
 fun IrType.isNullable(): Boolean =
-    when (this) {
-        is IrSimpleType -> when (val classifier = classifier) {
-            is IrClassSymbol -> nullability == SimpleTypeNullability.MARKED_NULLABLE
-            is IrTypeParameterSymbol -> when (nullability) {
-                SimpleTypeNullability.MARKED_NULLABLE -> true
-                // here is a bug, there should be .all check (not .any),
-                // but fixing it is a breaking change, see KT-31545 for details
-                SimpleTypeNullability.NOT_SPECIFIED -> classifier.owner.superTypes.any(IrType::isNullable)
-                SimpleTypeNullability.DEFINITELY_NOT_NULL -> false
-            }
-            is IrScriptSymbol -> nullability == SimpleTypeNullability.MARKED_NULLABLE
-        }
-        is IrDynamicType -> true
-        is IrErrorType -> this.isMarkedNullable
-        else -> false
-    }
+    isNullable()
 
-val IrType.isBoxedArray: Boolean
-    get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.array.toSafe()
+@Deprecated("Use `kotlin.ir.util.isBoxedArray` instead", ReplaceWith("kotlin.ir.util.isBoxedArray"))
+val IrType.isBoxedArray: Boolean by IrType::isBoxedArray
 
+@Deprecated("Use `kotlin.ir.util.getArrayElementType` instead", ReplaceWith("kotlin.ir.util.getArrayElementType"))
 fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
-    if (isBoxedArray) {
-        when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
-            is IrTypeProjection ->
-                argument.type
-            is IrStarProjection ->
-                irBuiltIns.anyNType
-            null ->
-                error("Unexpected array argument type: null")
-        }
-    } else {
-        val classifier = this.classOrNull!!
-        irBuiltIns.primitiveArrayElementTypes[classifier]
-            ?: irBuiltIns.unsignedArraysElementTypes[classifier]
-            ?: throw AssertionError("Primitive array expected: $classifier")
-    }
+    getArrayElementType(irBuiltIns)
 
+@Deprecated("Use `kotlin.ir.util.toArrayOrPrimitiveArrayType` instead", ReplaceWith("kotlin.ir.util.toArrayOrPrimitiveArrayType"))
 fun IrType.toArrayOrPrimitiveArrayType(irBuiltIns: IrBuiltIns): IrType =
-    if (isPrimitiveType()) {
-        irBuiltIns.primitiveArrayForType[this]?.defaultType
-            ?: throw AssertionError("$this not in primitiveArrayForType")
-    } else {
-        irBuiltIns.arrayClass.typeWith(this)
-    }
+    toArrayOrPrimitiveArrayType(irBuiltIns)

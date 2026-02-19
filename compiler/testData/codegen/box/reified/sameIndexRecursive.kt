@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 inline fun<reified T1, reified T2> createArray(n: Int, crossinline block: () -> Pair<T1, T2>): Pair<Array<T1>, Array<T2>> {
     return Pair(Array(n) { block().first }, Array(n) { block().second })
 }
@@ -10,6 +11,7 @@ inline fun<T1, T2, T3, T4, T5, T6, reified R> recursive(
     return createArray(5) { Pair(block(), block()) }
 }
 
+// FILE: main.kt
 fun box(): String {
     val y = createArray(5) { Pair(1, "test") }
     val x = recursive<Int, Int, Int, Int, Int, Int, String>(){ "abc" }

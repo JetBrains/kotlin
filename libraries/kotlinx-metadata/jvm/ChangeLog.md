@@ -1,5 +1,42 @@
 # kotlinx-metadata-jvm
 
+## 2.0.0 and higher
+
+Starting with Kotlin 2.0, kotlin-metadata-jvm library is promoted to stable, and is a part of Kotlin distribution now. 
+It means that it has the same versioning as Kotlin compiler and Kotlin standard library, and the same release cycle.
+To achieve this, coordinates of the library were changed: it is now in `org.jetbrains.kotlin` group with `kotlin-metadata-jvm` id (notice
+the drop of `X` from the coordinates).
+This also means that the root package was changed from `kotlinx.metadata` to `kotlin.metadata`.
+
+Among other noticeable changes, all previously deprecated declarations were removed from the library.
+In case you need to perform a migration with aid, migrate your project to 0.9.0 version first using [migration guide](Migration.md).
+
+This is the last entry of this changelog. General changelog for Kotlin's `Libraries` subsystem is available in the `ChangeLog.md` at the repository root.
+
+## 0.9.0
+
+The main purpose of this release is to promote all previous deprecations to ERROR level if they were not already.
+Please refer to the [migration guide](Migration.md) if you are using deprecated functions.
+Also, this release includes several bugfixes. It still uses Kotlin 1.9, but is able to read or write metadata of version 2.0.
+
+- Add missing documentation to `KmVersionRequirement.toString`
+- Raise all deprecations in kotlinx-metadata-jvm to ERROR ([KT-63157](https://youtrack.jetbrains.com/issue/KT-63157))
+- Do not allow writing metadata versions that are too high ([KT-64230](https://youtrack.jetbrains.com/issue/KT-64230))
+- Add `KmVersionRequirementKind.UNKNOWN` ([KT-60870](https://youtrack.jetbrains.com/issue/KT-60870))
+
+## 0.8.0
+
+This release concludes our API overhaul: it features last significant API changes, as well as raised deprecations to ERROR level almost everywhere.
+To help with migration, we've prepared a special [guide](Migration.md#migrating-from-070-to-080). 
+It still uses Kotlin 1.9, but is able to read or write metadata of version 2.0.
+
+- Provide a separate class for representing metadata version in kotlinx-metadata: `JvmMetadataVersion`
+- Unify write() method and make it a member of `KotlinClassMetadata` (also `KotlinModuleMetadata`)
+- Split `KotlinClassMetadata.read` into `readStrict` and `readLenient`
+- Promote most deprecations in kotlinx-metadata-jvm to ERROR, including Flags API and Visitors API.
+- Deprecate `KmProperty.hasGetter(hasSetter)` in favor of `KmProperty.getter(setter)`
+- Add missing delegation in `KmDeclarationContainerVisitor.visitExtensions` for consistency
+
 ## 0.7.0
 
 This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md#migrating-from-06x-to-070).

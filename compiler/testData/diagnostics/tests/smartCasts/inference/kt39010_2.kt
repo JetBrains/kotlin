@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 open class A<E> {
 }
@@ -15,3 +16,6 @@ fun KI.bar() {
         <!SMARTCAST_IMPOSSIBLE!>a<!>.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, nullableType, propertyDeclaration, smartcast, starProjection, typeParameter */

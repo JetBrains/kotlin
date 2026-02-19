@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 class In<in T>() {
     fun f(t : T) : Unit {}
@@ -51,3 +52,7 @@ fun testInOut() {
 
     Inv<Int>().outf(<!TOO_MANY_ARGUMENTS!>1<!>) // Wrong Arg
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, in, inProjection, infix, integerLiteral, nullableType, out, outProjection, primaryConstructor,
+starProjection, stringLiteral, typeParameter, typeWithExtension */

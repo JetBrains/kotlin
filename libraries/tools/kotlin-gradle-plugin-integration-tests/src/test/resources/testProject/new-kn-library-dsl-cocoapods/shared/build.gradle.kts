@@ -14,6 +14,7 @@ kotlin {
     iosSimulatorArm64()
 }
 
+@Suppress("DEPRECATION_ERROR")
 kotlinArtifacts {
     Native.Library("mylib") {
         target = linuxX64
@@ -58,7 +59,6 @@ kotlinArtifacts {
         modes(DEBUG, RELEASE)
         target = iosArm64
         isStatic = false
-        embedBitcode = EmbedBitcodeMode.MARKER
 
         withPodspec {
             attribute("prefix_header_file", "false")
@@ -68,11 +68,9 @@ kotlinArtifacts {
         modes(DEBUG, RELEASE)
         target = iosArm64
         isStatic = false
-        embedBitcode = EmbedBitcodeMode.MARKER
     }
     Native.FatFramework("myfatframe") {
         targets(iosX64, iosSimulatorArm64)
-        embedBitcode = EmbedBitcodeMode.DISABLE
         toolOptions {
             suppressWarnings.set(true)
         }

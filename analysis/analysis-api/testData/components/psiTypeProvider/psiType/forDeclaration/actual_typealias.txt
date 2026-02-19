@@ -1,2 +1,0 @@
-KtType: Foo
-PsiType: PsiType:int

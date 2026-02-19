@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 class AbstractSelector<S, I>
 class SelectorFor<S>
@@ -27,3 +28,7 @@ fun test(s: SelectorFor<State>): Double {
 
     return null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inline, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+typeParameter, typeWithExtension */

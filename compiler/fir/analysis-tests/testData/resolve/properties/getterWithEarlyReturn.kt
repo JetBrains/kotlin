@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-53349
 
@@ -9,3 +10,5 @@ val SomeClass.lore: List<String>
             return emptyList()
         }
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, lambdaLiteral, propertyDeclaration, propertyWithExtensionReceiver */

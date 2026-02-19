@@ -11,7 +11,4 @@ class BSamePackage: A() {
     fun onlyTestCallSite() = test()
 }
 
-// JVM_TEMPLATES
-// 2 INVOKESTATIC a/BSamePackage.access
-// JVM_IR_TEMPLATES
 // 0 INVOKESTATIC a/BSamePackage.access

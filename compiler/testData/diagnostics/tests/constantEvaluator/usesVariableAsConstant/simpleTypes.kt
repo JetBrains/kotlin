@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 // val prop1: false
@@ -21,3 +22,4 @@ package test
 // val prop7: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop7 = 5464564L<!>
 
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, stringLiteral */

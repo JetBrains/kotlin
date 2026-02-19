@@ -1,11 +1,45 @@
-    @Primitives(boolean = true, byte = 7.toByte(), char = \u0025 ('%'), double = -3.14.toDouble(), float = 2.72.toFloat(), int = 239017, long = 123456789123456789.toLong(), short = 239.toShort()) class C constructor()
-    annotation class Primitives constructor(byte: Byte, char: Char, short: Short, int: Int, long: Long, float: Float, double: Double, boolean: Boolean) : Annotation {
-        val boolean: Boolean
-        val byte: Byte
-        val char: Char
-        val double: Double
-        val float: Float
-        val int: Int
-        val long: Long
-        val short: Short
+library {
+  // module name: <primitives.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+    // class name: test/Primitives
+
+    @test/Primitives(byte = 7.toByte(), char = '%', short = 239.toShort(), int = 239017, long = 123456789123456789L, float = 2.72f, double = -3.14, boolean = true)
+    public final class test/C : kotlin/Any {
+
+      public constructor()
     }
+
+    public final annotation class test/Primitives : kotlin/Annotation {
+
+      public constructor(byte: kotlin/Byte, char: kotlin/Char, short: kotlin/Short, int: kotlin/Int, long: kotlin/Long, float: kotlin/Float, double: kotlin/Double, boolean: kotlin/Boolean)
+
+      public final val boolean: kotlin/Boolean
+        public final get
+
+      public final val byte: kotlin/Byte
+        public final get
+
+      public final val char: kotlin/Char
+        public final get
+
+      public final val double: kotlin/Double
+        public final get
+
+      public final val float: kotlin/Float
+        public final get
+
+      public final val int: kotlin/Int
+        public final get
+
+      public final val long: kotlin/Long
+        public final get
+
+      public final val short: kotlin/Short
+        public final get
+    }
+  }
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 open class Wise {
 
@@ -18,3 +19,6 @@ class My {
 }
 
 fun bar(wise: Wise): Int = wise.x
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration,
+integerLiteral, localProperty, override, propertyDeclaration, superExpression, thisExpression */

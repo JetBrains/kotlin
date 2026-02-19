@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER, -INLINE_CLASS_DEPRECATED
 
 interface A {
     val goodSize: Int
@@ -33,3 +33,6 @@ inline class Foo(val x: Int) : A, B {
 
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>lateinit var lateinitProperty: String<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, integerLiteral, interfaceDeclaration, lateinit, override,
+primaryConstructor, propertyDeclaration, setter */

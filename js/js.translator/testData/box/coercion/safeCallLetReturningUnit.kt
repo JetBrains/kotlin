@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1282
 var log = ""
 
 fun test(param: Any?) {

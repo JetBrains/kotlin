@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class Ann1(vararg val a: String)
 annotation class Ann2(val a: IntArray)
 annotation class Ann3(val a: Array<String>)
@@ -29,3 +30,6 @@ class Class {
 )
 @Ann3(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arr<!>)
 fun test() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, collectionLiteral, const,
+functionDeclaration, integerLiteral, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, vararg */

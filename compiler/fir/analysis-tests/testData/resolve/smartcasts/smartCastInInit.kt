@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface I
 interface S : I {
     fun foo()
@@ -13,3 +14,6 @@ class Main {
         x.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, interfaceDeclaration,
+propertyDeclaration, smartcast */

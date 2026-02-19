@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Issue: KT-25114
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class WithPrivateCompanion {
     private companion object {
@@ -28,3 +29,6 @@ class WithPrivateCompanion {
         fun staticFunction() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, annotationUseSiteTargetPropertySetter, classDeclaration,
+companionObject, functionDeclaration, getter, integerLiteral, objectDeclaration, propertyDeclaration, setter */

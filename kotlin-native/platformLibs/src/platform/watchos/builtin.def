@@ -4,6 +4,7 @@ headerFilter = **
 language = C
 
 excludedFunctions.watchos_arm32 = builtin_clear_cache
+excludedFunctions.watchos_device_arm64 = builtin_clear_cache
 ---
 // See https://github.com/llvm-mirror/clang/blob/master/include/clang/Basic/Builtins.def
 // TODO: autogenerate from machine format.

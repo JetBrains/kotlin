@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy
+// STRING_CONCAT: indy
 // JVM_TARGET: 11
 data class A(val i: Int, val b: Byte, val c: Char, val s: Short, val f: Float, val d: Double, val bo: Boolean, val l: Long)
 

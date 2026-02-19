@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> listOf(): List<T> = null!!
 
 fun <T> materialize(): T = null!!
@@ -39,3 +40,6 @@ class Foo {
 
     class Result
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, localProperty, nestedClass, nullableType,
+propertyDeclaration, typeParameter */

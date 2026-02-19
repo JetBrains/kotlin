@@ -21,9 +21,11 @@ internal class KotlinPresetEntry(
     val alsoBlockAfterConfiguration: String? = null,
     // Extra declarations will be inserted before functions are generated
     val extraTopLevelDeclarations: List<String> = emptyList(),
+    val kdoc: String? = null,
 ) {
     class Deprecation(
         val message: String,
+        val messageIsTheCode: Boolean,
         val level: DeprecationLevel,
         val replaceWithOtherPreset: String? = null // when set, it will generate ReplaceWith with related argument names
     )
@@ -58,29 +60,13 @@ internal val androidTargetPresetEntry = KotlinPresetEntry(
     typeName("$MPP_PACKAGE.KotlinAndroidTargetPreset"),
     typeName("$MPP_PACKAGE.KotlinAndroidTarget"),
     entityName = "android",
-)
-
-internal val androidPresetEntry = KotlinPresetEntry(
-    "android",
-    typeName("$MPP_PACKAGE.KotlinAndroidTargetPreset"),
-    typeName("$MPP_PACKAGE.KotlinAndroidTarget"),
-    deprecation = KotlinPresetEntry.Deprecation(
-        message = "ANDROID_TARGET_MIGRATION_MESSAGE",
-        level = DeprecationLevel.WARNING,
-        replaceWithOtherPreset = "androidTarget"
-    ),
-    extraTopLevelDeclarations = listOf(
-        "private const val ANDROID_TARGET_MIGRATION_MESSAGE" +
-                " = \"Please use androidTarget() instead. Learn more here: https://kotl.in/android-target-dsl\""
-    ),
-    alsoBlockAfterConfiguration = """
-            it.project.logger.warn(
-                ""${'"'}
-                    w: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
-                    See the details here: https://kotl.in/android-target-dsl
-                ""${'"'}.trimIndent()
-            )
-    """.trimIndent()
+    kdoc = """
+    The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+    from Android Gradle Plugin version 9.0.0.
+    
+    Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+    The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+    """.trimIndent(),
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
@@ -91,7 +77,6 @@ private val nativeTargetsWithSimulatorTests =
         KonanTarget.IOS_X64,
         KonanTarget.IOS_SIMULATOR_ARM64,
 
-        KonanTarget.WATCHOS_X86,
         KonanTarget.WATCHOS_X64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
 
@@ -113,6 +98,7 @@ internal val nativePresetEntries = HostManager().targets
 
         val deprecation = KotlinPresetEntry.Deprecation(
             message = "DEPRECATED_TARGET_MESSAGE",
+            messageIsTheCode = true,
             level = if (target in KonanTarget.toleratedDeprecatedTargets) DeprecationLevel.WARNING else DeprecationLevel.ERROR
         ).takeIf { target in KonanTarget.deprecatedTargets }
         KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType), deprecation)
@@ -121,5 +107,4 @@ internal val nativePresetEntries = HostManager().targets
 internal val allPresetEntries = listOf(
     jvmPresetEntry,
     androidTargetPresetEntry,
-    androidPresetEntry
 ) + nativePresetEntries

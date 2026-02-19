@@ -1,0 +1,13 @@
+PairList.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final class PairList<T> public constructor(items: kotlin.collections.List<T>) {
+      public final val items: kotlin.collections.List<T> /* compiled code */
+  }
+
+WithDestructuringDeclarationKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public operator fun <T> PairList<T>?.component1(): T { contract { /* compiled contract */ }; /* compiled code */ }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun foo(f: Boolean): Int {
     val i: Int
@@ -5,3 +6,5 @@ fun foo(f: Boolean): Int {
     i = 3
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration */

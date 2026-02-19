@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // SKIP_TXT
 import kotlin.coroutines.coroutineContext
 
@@ -10,3 +12,5 @@ fun test() {
 suspend fun test2() {
     c()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, propertyDeclaration, suspend */

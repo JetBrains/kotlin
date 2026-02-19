@@ -5,11 +5,23 @@
 
 package org.jetbrains.kotlin.fir.references
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+
+val FirReference.symbol: FirBasedSymbol<*>?
+    get() = when (this) {
+        is FirThisReference -> boundSymbol as FirBasedSymbol<*>?
+        is FirResolvedNamedReference -> resolvedSymbol
+        is FirNamedReferenceWithCandidateBase -> candidateSymbol
+        else -> null
+    }
 
 val FirReference.resolved: FirResolvedNamedReference? get() = this as? FirResolvedNamedReference
 
@@ -17,11 +29,10 @@ val FirReference.resolved: FirResolvedNamedReference? get() = this as? FirResolv
 inline fun <reified T : FirBasedSymbol<*>> FirReference.toResolvedSymbol(
     discardErrorReference: Boolean = false
 ): @kotlin.internal.NoInfer T? {
-    val resolvedReference = resolved ?: return null
-    if (discardErrorReference && resolvedReference is FirResolvedErrorReference) {
+    if (discardErrorReference && this is FirResolvedErrorReference) {
         return null
     }
-    return resolvedReference.resolvedSymbol as? T
+    return resolved?.resolvedSymbol as? T
 }
 
 fun FirReference.toResolvedBaseSymbol(discardErrorReference: Boolean = false): FirBasedSymbol<*>? {
@@ -75,3 +86,9 @@ fun FirReference.isError(): Boolean {
     }
 }
 
+fun buildErrorNamedReferenceWithNoName(diagnostic: ConeDiagnostic, source: KtSourceElement? = null): FirErrorNamedReference =
+    buildErrorNamedReference {
+        this.diagnostic = diagnostic
+        this.source = source
+        this.name = Name.special("<${diagnostic.reason}>")
+    }

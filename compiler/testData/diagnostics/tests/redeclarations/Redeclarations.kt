@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package redeclarations
   object <!PACKAGE_OR_CLASSIFIER_REDECLARATION, REDECLARATION!>A<!> {
@@ -13,3 +14,5 @@ package redeclarations
 // FILE: b.kt
   package redeclarations.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
     class A {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, objectDeclaration, propertyDeclaration */

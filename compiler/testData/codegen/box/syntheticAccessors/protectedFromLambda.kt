@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
+// ^^^ Cannot split to two modules due to cyclic import
 // FILE: A.kt
 
 package first

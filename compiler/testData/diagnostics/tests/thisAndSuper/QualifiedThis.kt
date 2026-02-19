@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: f.kt
 class A() {
   fun foo() : Unit {
@@ -10,3 +11,5 @@ class A() {
   val y = this.<!DEBUG_INFO_LEAKING_THIS!>foo<!>()
   val z = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, thisExpression */

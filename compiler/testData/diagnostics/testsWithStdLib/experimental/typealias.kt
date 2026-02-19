@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
@@ -13,3 +14,5 @@ annotation class ExperimentalAPI
 class Foo
 
 typealias Bar = <!OPT_IN_USAGE_ERROR!>Foo<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, typeAliasDeclaration */

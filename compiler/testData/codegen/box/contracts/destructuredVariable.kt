@@ -1,5 +1,5 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: JS
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 
 import kotlin.contracts.*
@@ -13,7 +13,7 @@ fun runOnce(action: () -> Unit) {
 
 fun ok(): String {
     val res: String
-    val (o, _) = "OK" to "FAIL"
+    val [o, _] = "OK" to "FAIL"
     runOnce {
         res = o
     }

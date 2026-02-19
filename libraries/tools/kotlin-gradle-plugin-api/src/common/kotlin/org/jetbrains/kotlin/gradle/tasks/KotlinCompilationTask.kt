@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 
 /**
  * Represents a Kotlin task compiling using configurable [compilerOptions].
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
  *
  * @see [KotlinCommonCompilerOptions]
  */
+@KotlinGradlePluginDsl
 interface KotlinCompilationTask<out CO : KotlinCommonCompilerOptions> : Task {
 
     /**

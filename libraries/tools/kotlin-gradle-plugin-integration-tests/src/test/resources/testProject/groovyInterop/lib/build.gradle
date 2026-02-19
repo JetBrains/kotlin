@@ -8,5 +8,5 @@ repositories {
 }
 
 dependencies {
-    api 'org.codehaus.groovy:groovy-all:2.5.3'
+    api 'org.codehaus.groovy:groovy-all:2.5.23'
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-3007 Kotlin plugin 0.4.126 does not compile KAnnotator revision ba0a93eb
 package a
@@ -42,3 +43,6 @@ fun Iterable<Int>.someInt() {
 
 //from standard library
 fun <T,R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType, thisExpression, typeParameter */

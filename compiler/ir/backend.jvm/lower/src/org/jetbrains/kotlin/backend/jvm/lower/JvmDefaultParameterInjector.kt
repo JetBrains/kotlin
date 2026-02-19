@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterInjector
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
@@ -20,10 +21,10 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.explicitParametersCount
 import org.jetbrains.kotlin.ir.util.render
 
-class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameterInjector<JvmBackendContext>(
+@PhasePrerequisites(FunctionReferenceLowering::class, PrepareCallableReferencesForInlining::class)
+internal class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameterInjector<JvmBackendContext>(
     context = context,
     factory = JvmDefaultArgumentFunctionFactory(context),
     skipInline = false,
@@ -56,22 +57,19 @@ class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameter
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
 
-        val realArgumentsNumber = declaration.valueParameters.filterNot { it.isMovedReceiver() }.size
-        val maskValues = IntArray((realArgumentsNumber + 31) / 32)
+        val defaultableParametersSize = declaration.parameters.count { it.canHaveDefaultValue() }
+        val maskValues = IntArray((defaultableParametersSize + 31) / 32)
 
-        val oldArguments: Map<IrValueParameter, IrExpression?> = buildMap {
-            declaration.dispatchReceiverParameter?.let { put(it, expression.dispatchReceiver) }
-            declaration.extensionReceiverParameter?.let { put(it, expression.extensionReceiver) }
-            putAll(declaration.valueParameters.mapIndexed { index, parameter -> parameter to expression.getValueArgument(index) })
-        }
-
-        val indexes = declaration.valueParameters.filterNot { it.isMovedReceiver() }.withIndex().associate { it.value to it.index }
+        var defaultableParameterIndex = -1
         val mainArguments = this@JvmDefaultParameterInjector.context.multiFieldValueClassReplacements
             .mapFunctionMfvcStructures(this, stubFunction, declaration) { sourceParameter: IrValueParameter, targetParameterType: IrType ->
-                val valueArgument = oldArguments[sourceParameter]
+                if (sourceParameter.canHaveDefaultValue()) {
+                    ++defaultableParameterIndex
+                }
+                val valueArgument = expression.arguments[sourceParameter.indexInParameters]
                 if (valueArgument == null) {
-                    val index = indexes[sourceParameter]!!
-                    maskValues[index / 32] = maskValues[index / 32] or (1 shl (index % 32))
+                    maskValues[defaultableParameterIndex / 32] =
+                        maskValues[defaultableParameterIndex / 32] or (1 shl (defaultableParameterIndex % 32))
                 }
                 valueArgument ?: IrCompositeImpl(
                     expression.startOffset,
@@ -83,14 +81,14 @@ class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameter
             }
 
 
-        assert(stubFunction.explicitParametersCount - mainArguments.size - maskValues.size in listOf(0, 1)) {
-            "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
-                    "got ${stubFunction.explicitParametersCount} total in ${stubFunction.render()}"
+        assert(stubFunction.parameters.size - (mainArguments.size + maskValues.size) in 0..1) {
+            "argument count mismatch: expected $defaultableParametersSize arguments + ${maskValues.size} masks + optional handler/marker, " +
+                    "got ${stubFunction.parameters.size} total in ${stubFunction.render()}"
         }
 
         return buildMap {
             putAll(mainArguments)
-            val restParameters = stubFunction.valueParameters.filterNot { it in mainArguments }
+            val restParameters = stubFunction.parameters.filterNot { it in mainArguments }
             for ((maskParameter, maskValue) in restParameters zip maskValues.asList()) {
                 put(maskParameter, IrConstImpl.int(startOffset, endOffset, maskParameter.type, maskValue))
             }

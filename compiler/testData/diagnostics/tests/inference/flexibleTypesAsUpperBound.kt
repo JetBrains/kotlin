@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: 1.kt
 fun <S> Array<S>.plus(): Array<S> {
@@ -12,3 +13,6 @@ public class Arrays {
         return (T[]) null;
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral, javaFunction,
+localProperty, nullableType, propertyDeclaration, thisExpression, typeParameter */

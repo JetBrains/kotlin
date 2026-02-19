@@ -1,7 +1,5 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
-
-// SKIP_SIGNATURE_DUMP
-// ^ Nullability is different for raw types in K1 and K2
 
 // FILE: rawTypeInSignature.kt
 

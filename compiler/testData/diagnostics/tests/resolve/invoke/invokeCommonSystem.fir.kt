@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-58259
 
 interface Box<T> {
@@ -18,3 +19,6 @@ fun foo(p: Box<Res>) {
     // Error in K1, OK in K2
     p.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, interfaceDeclaration, nullableType, operator, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

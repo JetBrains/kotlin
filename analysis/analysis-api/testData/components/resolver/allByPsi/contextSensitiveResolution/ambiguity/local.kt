@@ -1,0 +1,91 @@
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
+
+package foo
+
+sealed class Sealed {
+    data object A : Sealed()
+    data class B(val x: Int) : Sealed()
+    data object C : Sealed()
+    data class D(val y: Int) : Sealed()
+    data class String(val t: kotlin.String) : Sealed()
+
+    companion object {
+        val CompanionA: Sealed = Sealed.A
+        val CompanionB: Sealed = Sealed.A
+    }
+}
+
+fun test(s: Sealed): Int {
+    class B
+    val CompanionB: Int = 0
+
+    return when (s) {
+        is B -> 2
+        C -> 3
+        is D -> 4
+        is String -> 5
+        CompanionB -> 7
+        else -> 100
+    }
+}
+
+fun testSealed(s: Sealed): Int {
+    class B
+    val CompanionB: Int = 0
+
+    return when (s) {
+        is Sealed.B -> 2
+        Sealed.C -> 3
+        is Sealed.D -> 4
+        is Sealed.String -> 5
+        Sealed.CompanionB -> 7
+        else -> 100
+    }
+}
+
+class Test {
+    object A
+    class B
+
+    object CompanionA
+    val CompanionB: Int = 0
+
+    fun test(s: Sealed): Int {
+        return when (s) {
+            A -> 1
+            is B -> 2
+            C -> 3
+            is D -> 4
+            is String -> 5
+            CompanionA -> 6
+            CompanionB -> 7
+            else -> 100
+        }
+    }
+
+    fun testClass(s: Sealed): Int {
+        return when (s) {
+            Test.A -> 1
+            is Test.B -> 2
+            Sealed.C -> 3
+            is Sealed.D -> 4
+            is kotlin.String -> 5
+            Test.CompanionA -> 6
+            this.CompanionB -> 7
+            else -> 100
+        }
+    }
+
+    fun testSealed(s: Sealed): Int {
+        return when (s) {
+            Sealed.A -> 1
+            is Sealed.B -> 2
+            Sealed.C -> 3
+            is Sealed.D -> 4
+            is Sealed.String -> 5
+            Sealed.CompanionA -> 6
+            Sealed.CompanionB -> 7
+            else -> 100
+        }
+    }
+}

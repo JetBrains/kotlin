@@ -1,3 +1,4 @@
+
 // TARGET_BACKEND: JVM_IR
 
 annotation class Ann1(val value: UByte = 41u)

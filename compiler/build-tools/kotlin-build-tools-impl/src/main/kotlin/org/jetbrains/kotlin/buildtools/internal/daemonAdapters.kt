@@ -3,15 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import java.io.File
 import java.io.Serializable
 import java.rmi.server.UnicastRemoteObject
 
@@ -19,63 +26,63 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
     get() {
         val ktsExtensionsAsArray = if (kotlinScriptFilenameExtensions.isEmpty()) null else kotlinScriptFilenameExtensions.toTypedArray()
         val reportCategories = arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
-        val reportSeverity = ReportSeverity.INFO.code // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
-        val requestedCompilationResults = emptyArray<Int>() // TODO: automagically compute the value, related to DaemonCompilationResults
+        val reportSeverity = if (logger.isDebugEnabled) {
+            ReportSeverity.DEBUG.code
+        } else {
+            ReportSeverity.INFO.code
+        }
         val aggregatedIcConfiguration = aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
-                val params = aggregatedIcConfiguration.parameters as ClasspathSnapshotBasedIncrementalCompilationApproachParameters
-                val snapshotFiles =
-                    ClasspathSnapshotFiles(params.newClasspathSnapshotFiles, params.shrunkClasspathSnapshot.parentFile)
+                val requestedCompilationResults = arrayOf(
+                    CompilationResultCategory.IC_COMPILE_ITERATION.code,
+                )
+
+                @Suppress("UNCHECKED_CAST")
+                val classpathChanges =
+                    (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
                 IncrementalCompilationOptions(
-                    areFileChangesKnown = sourcesChanges is SourcesChanges.Known,
-                    modifiedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.modifiedFiles else null,
-                    deletedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.removedFiles else null,
-                    classpathChanges = when {
-                        !params.shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
-                            snapshotFiles
-                        )
-                        options.forcedNonIncrementalMode -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
-                            snapshotFiles
-                        )
-                        options.assuredNoClasspathSnapshotsChanges -> ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(
-                            snapshotFiles
-                        )
-                        else -> {
-                            ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler(snapshotFiles)
-                        }
-                    },
+                    sourcesChanges,
+                    classpathChanges = classpathChanges,
                     workingDir = aggregatedIcConfiguration.workingDir,
                     compilerMode = CompilerMode.INCREMENTAL_COMPILER,
                     targetPlatform = CompileService.TargetPlatform.JVM,
                     reportCategories = reportCategories,
                     reportSeverity = reportSeverity,
                     requestedCompilationResults = requestedCompilationResults,
-                    usePreciseJavaTracking = options.preciseJavaTrackingEnabled,
                     outputFiles = options.outputDirs,
                     multiModuleICSettings = null, // required only for the build history approach
                     modulesInfo = null, // required only for the build history approach
                     rootProjectDir = options.rootProjectDir,
                     buildDir = options.buildDir,
                     kotlinScriptExtensions = ktsExtensionsAsArray,
-                    withAbiSnapshot = false,
-                    preciseCompilationResultsBackup = options.preciseCompilationResultsBackupEnabled,
-                    keepIncrementalCompilationCachesInMemory = options.incrementalCompilationCachesKeptInMemory,
+                    icFeatures = options.extractIncrementalCompilationFeatures(),
+                    useJvmFirRunner = options.isUsingFirRunner,
                 )
             }
-            else -> CompilationOptions(
+            // no IC configuration -> non-incremental compilation
+            null -> CompilationOptions(
                 compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM,
                 reportCategories = reportCategories,
                 reportSeverity = reportSeverity,
-                requestedCompilationResults = requestedCompilationResults,
+                requestedCompilationResults = emptyArray(),
                 kotlinScriptExtensions = ktsExtensionsAsArray,
+            )
+            else -> error(
+                "Unexpected incremental compilation configuration: $options. " +
+                        "In this version, it must be an instance of ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration " +
+                        "for incremental compilation, or null for non-incremental compilation."
             )
         }
     }
 
-internal class DaemonCompilationResults : CompilationResults,
+internal class DaemonCompilationResults(
+    private val kotlinLogger: KotlinLogger,
+    private val rootProjectDir: File?,
+    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
+) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,
         LoopbackNetworkInterface.clientLoopbackSocketFactory,
@@ -89,13 +96,49 @@ internal class DaemonCompilationResults : CompilationResults,
      * 4. [CompilationResultCategory.BUILD_METRICS.code]              -> a [BuildMetrics] instance
      **/
     override fun add(compilationResultCategory: Int, value: Serializable) {
-        // TODO propagate the values to the caller via callbacks, requires to make metrics a part of the API
-        println("Result category=$compilationResultCategory value=$value")
+        when (compilationResultCategory) {
+            CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
+                kotlinLogger.debug(value as? CompileIterationResult, rootProjectDir)
+                val compileIterationResult = value as? CompileIterationResult
+                if (compileIterationResult != null) {
+                    val sourceFiles = compileIterationResult.sourceFiles
+                    if (sourceFiles.any()) {
+                        buildMetricsReporter.addMetric(COMPILE_ITERATION, 1)
+                    }
+                }
+            }
+            CompilationResultCategory.BUILD_METRICS.code -> @Suppress("UNCHECKED_CAST") (value as? BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>)?.let {
+                buildMetricsReporter.addMetrics(it)
+            }
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code,
+            CompilationResultCategory.BUILD_REPORT_LINES.code -> @Suppress("UNCHECKED_CAST") (value as? List<String>)?.let {
+                for (line in value) {
+                    kotlinLogger.debug(line)
+                }
+            }
+            else -> kotlinLogger.debug("Result category=$compilationResultCategory value=$value")
+        }
     }
 }
 
 internal val clientIsAliveFile by lazy {
     makeAutodeletingFlagFile()
+}
+
+// logging used by tests
+internal fun KotlinLogger.debug(compileIterationResult: CompileIterationResult?, rootProjectDir: File?) {
+    if (compileIterationResult != null && isDebugEnabled) {
+        if (compileIterationResult.sourceFiles.any()) {
+            val sourceFiles = compileIterationResult.sourceFiles
+                .let { files ->
+                    files.map {
+                        val relativePath = if (rootProjectDir != null) it.relativeToOrNull(rootProjectDir)?.path else null
+                        return@map relativePath ?: it.normalize().absolutePath
+                    }
+                }
+            debug("[KOTLIN] compile iteration: ${sourceFiles.joinToString()}")
+        }
+    }
 }
 
 internal fun createSessionIsAliveFlagFile() = makeAutodeletingFlagFile(keyword = "compilation-session")

@@ -7,10 +7,16 @@ package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+abstract class DeclarationResolver {
+    abstract fun resolve(type: WasmHeapType.Type): WasmTypeDeclaration
+    abstract fun resolve(type: WasmImmediate.TypeIdx): WasmTypeDeclaration
+    abstract fun resolve(global: WasmImmediate.GlobalIdx): WasmGlobal
+    abstract fun resolve(function: WasmImmediate.FuncIdx): WasmFunction
+}
 
 class WasmModule(
-    val functionTypes: List<WasmFunctionType> = emptyList(),
-    val recGroupTypes: List<WasmTypeDeclaration> = emptyList(),
+    val resolver: DeclarationResolver,
+    val recGroups: List<List<WasmTypeDeclaration>> = emptyList(),
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
     val importedMemories: List<WasmMemory> = emptyList(),
@@ -39,19 +45,21 @@ sealed class WasmNamedModuleField {
 
 sealed class WasmFunction(
     override val name: String,
-    val type: WasmSymbolReadOnly<WasmFunctionType>
+    val type: WasmHeapType.Type.FunctionType,
 ) : WasmNamedModuleField() {
     class Defined(
         name: String,
-        type: WasmSymbolReadOnly<WasmFunctionType>,
+        type: WasmHeapType.Type.FunctionType,
         val locals: MutableList<WasmLocal> = mutableListOf(),
-        val instructions: MutableList<WasmInstr> = mutableListOf()
+        val instructions: MutableList<WasmInstr> = mutableListOf(),
+        val startLocation: SourceLocation = SourceLocation.IgnoredLocation,
+        val endLocation: SourceLocation = SourceLocation.IgnoredLocation,
     ) : WasmFunction(name, type)
 
     class Imported(
         name: String,
-        type: WasmSymbolReadOnly<WasmFunctionType>,
-        val importPair: WasmImportDescriptor
+        type: WasmHeapType.Type.FunctionType,
+        val importPair: WasmImportDescriptor,
     ) : WasmFunction(name, type)
 }
 
@@ -66,7 +74,7 @@ sealed class WasmDataMode {
         val offset: MutableList<WasmInstr>
     ) : WasmDataMode() {
         constructor(memoryIdx: Int, offset: Int) : this(memoryIdx, mutableListOf<WasmInstr>().also<MutableList<WasmInstr>> {
-            WasmIrExpressionBuilder(it).buildConstI32(offset, SourceLocation.NoLocation("Offset value for WasmDataMode.Active "))
+            WasmExpressionBuilder(it).buildConstI32(offset, SourceLocation.NoLocation("Offset value for WasmDataMode.Active "))
         })
     }
 
@@ -107,13 +115,9 @@ class WasmElement(
 }
 
 class WasmTag(
-    val type: WasmFunctionType,
+    val type: WasmHeapType.Type.FunctionType,
     val importPair: WasmImportDescriptor? = null
-) : WasmNamedModuleField() {
-    init {
-        assert(type.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
-    }
-}
+) : WasmNamedModuleField()
 
 class WasmLocal(
     val id: Int,
@@ -155,7 +159,8 @@ data class WasmFunctionType(
 class WasmStructDeclaration(
     name: String,
     val fields: List<WasmStructFieldDeclaration>,
-    val superType: WasmSymbolReadOnly<WasmTypeDeclaration>?
+    val superType: WasmHeapType.Type?,
+    val isFinal: Boolean
 ) : WasmTypeDeclaration(name)
 
 class WasmArrayDeclaration(
@@ -169,31 +174,6 @@ class WasmStructFieldDeclaration(
     val isMutable: Boolean
 )
 
-sealed class WasmInstr(
-    val operator: WasmOp,
-    val immediates: List<WasmImmediate> = emptyList()
-) {
-    abstract val location: SourceLocation?
-}
-
-class WasmInstrWithLocation(
-    operator: WasmOp,
-    immediates: List<WasmImmediate>,
-    override val location: SourceLocation
-) : WasmInstr(operator, immediates) {
-    constructor(
-        operator: WasmOp,
-        location: SourceLocation
-    ) : this(operator, emptyList(), location)
-}
-
-class WasmInstrWithoutLocation(
-    operator: WasmOp,
-    immediates: List<WasmImmediate> = emptyList(),
-) : WasmInstr(operator, immediates) {
-    override val location: SourceLocation? get() = null
-}
-
 data class WasmLimits(
     val minSize: UInt,
     val maxSize: UInt?
@@ -201,5 +181,11 @@ data class WasmLimits(
 
 data class WasmImportDescriptor(
     val moduleName: String,
-    val declarationName: String
+    val declarationName: WasmSymbolReadOnly<String>
+)
+
+data class JsBuiltinDescriptor(
+    val moduleName: String,
+    val declarationName: String,
+    val polyfillImpl: String
 )

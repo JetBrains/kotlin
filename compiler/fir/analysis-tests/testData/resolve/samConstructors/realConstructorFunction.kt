@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: MyRunnable.java
 public interface MyRunnable {
     boolean foo(int x);
@@ -20,3 +21,6 @@ fun main() {
 
     foo(<!ARGUMENT_TYPE_MISMATCH!>MyRunnable(x)<!>)
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, functionalType, integerLiteral, javaType,
+lambdaLiteral, localProperty, propertyDeclaration */

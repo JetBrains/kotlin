@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun foo(x: Any) {
@@ -18,7 +18,7 @@ fun box() {
     foo(1)
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:16 box
 // test.kt:5 foo
 // test.kt:6 foo
@@ -38,11 +38,63 @@ fun box() {
 // test.kt:13 foo
 // test.kt:19 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS NATIVE
 // test.kt:16 box
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:7 foo
 // test.kt:13 foo
 // test.kt:17 box
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:8 foo
+// test.kt:9 foo
 // test.kt:13 foo
 // test.kt:18 box
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:8 foo
+// test.kt:11 foo
 // test.kt:13 foo
 // test.kt:19 box
+
+// EXPECTATIONS JS_IR
+// test.kt:16 box
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:9 foo
+// test.kt:13 foo
+// test.kt:17 box
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:9 foo
+// test.kt:13 foo
+// test.kt:18 box
+// test.kt:6 foo
+// test.kt:7 foo
+// test.kt:9 foo
+// test.kt:13 foo
+// test.kt:19 box
+
+// EXPECTATIONS WASM
+// test.kt:16 $box (8, 4)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:7 $foo (12)
+// test.kt:13 $foo (1)
+// test.kt:17 $box (8, 4)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:8 $foo (8)
+// test.kt:9 $foo (12)
+// test.kt:13 $foo (1)
+// test.kt:18 $box (8, 4)
+// test.kt:5 $foo (10)
+// test.kt:6 $foo (8)
+// test.kt:8 $foo (8)
+// test.kt:11 $foo (12)
+// test.kt:13 $foo (1)
+// test.kt:19 $box (1)

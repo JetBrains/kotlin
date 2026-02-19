@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // FILE: a.kt
 
 package first
@@ -30,3 +31,6 @@ fun main() {
 
     checkSubtype<KFunction1<A, Unit>>(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

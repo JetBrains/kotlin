@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 @file:Suppress("DuplicatedCode", "unused")
 
@@ -14,36 +17,21 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
-import org.jetbrains.kotlin.fir.expressions.builder.FirAbstractFunctionCallBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.*
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
 
 @FirBuilderDsl
 open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override val contextArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
-    override var dispatchReceiver: FirExpression = FirNoReceiverExpression
-    override var extensionReceiver: FirExpression = FirNoReceiverExpression
+    override var dispatchReceiver: FirExpression? = null
+    override var extensionReceiver: FirExpression? = null
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
@@ -55,7 +43,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
         return FirFunctionCallImpl(
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments.toMutableOrEmpty(),
+            contextArguments.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,
@@ -73,7 +61,28 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
 @OptIn(ExperimentalContracts::class)
 inline fun buildFunctionCall(init: FirFunctionCallBuilder.() -> Unit): FirFunctionCall {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirFunctionCallBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
+inline fun buildFunctionCallCopy(original: FirFunctionCall, init: FirFunctionCallBuilder.() -> Unit): FirFunctionCall {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirFunctionCallBuilder()
+    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.contextArguments.addAll(original.contextArguments)
+    copyBuilder.typeArguments.addAll(original.typeArguments)
+    copyBuilder.explicitReceiver = original.explicitReceiver
+    copyBuilder.dispatchReceiver = original.dispatchReceiver
+    copyBuilder.extensionReceiver = original.extensionReceiver
+    copyBuilder.source = original.source
+    copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
+    copyBuilder.argumentList = original.argumentList
+    copyBuilder.calleeReference = original.calleeReference
+    copyBuilder.origin = original.origin
+    return copyBuilder.apply(init).build()
 }

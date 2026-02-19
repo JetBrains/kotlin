@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -69,7 +69,7 @@ object AbstractTypeMapper {
 
         val typeConstructor = type.typeConstructor()
 
-        if (type is SimpleTypeMarker) {
+        if (type is RigidTypeMarker) {
             val builtInType = mapBuiltInType(type, AsmTypeFactory, mode)
             if (builtInType != null) {
                 val asmType = boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
@@ -93,12 +93,19 @@ object AbstractTypeMapper {
         return when {
             typeConstructor.isTypeParameter() -> {
                 val typeParameter = typeConstructor.asTypeParameter()
-                val upperBound = typeParameter.representativeUpperBound()
-                val upperBoundIsPrimitiveOrInlineClass =
-                    upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
-                val newType = if (upperBoundIsPrimitiveOrInlineClass && type.isNullableType())
-                    upperBound.makeNullable()
-                else upperBound
+                val newType = if (mode.ignoreTypeArgumentsBounds) {
+                    nullableAnyType()
+                } else {
+                    val upperBound = typeParameter.representativeUpperBound()
+                    val upperBoundIsPrimitiveOrInlineClass =
+                        upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
+
+                    if (upperBoundIsPrimitiveOrInlineClass && type.isNullableType()) {
+                        upperBound.makeNullable()
+                    } else {
+                        upperBound
+                    }
+                }
 
                 val asmType = mapType(context, newType, mode, null, materialized)
                 sw?.writeTypeVariable(typeParameter.getName(), asmType)
@@ -124,7 +131,7 @@ object AbstractTypeMapper {
     }
 
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapSuspendFunctionType(
-        type: SimpleTypeMarker,
+        type: RigidTypeMarker,
         context: TypeMappingContext<Writer>,
         mode: TypeMappingMode,
         sw: Writer?,
@@ -144,7 +151,7 @@ object AbstractTypeMapper {
     }
 
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayType(
-        type: SimpleTypeMarker,
+        type: RigidTypeMarker,
         sw: Writer?,
         context: TypeMappingContext<Writer>,
         mode: TypeMappingMode,
@@ -154,12 +161,13 @@ object AbstractTypeMapper {
         val variance: Variance
         val memberType: KotlinTypeMarker
 
-        if (typeArgument.isStarProjection()) {
+        val type = typeArgument.getType()
+        if (type == null) {
             variance = Variance.OUT_VARIANCE
             memberType = nullableAnyType()
         } else {
             variance = typeArgument.getVariance().toVariance()
-            memberType = typeArgument.getType()
+            memberType = type
         }
 
         val arrayElementType: Type
@@ -177,14 +185,14 @@ object AbstractTypeMapper {
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapClassType(
         typeConstructor: TypeConstructorMarker,
         mode: TypeMappingMode,
-        type: SimpleTypeMarker,
+        type: RigidTypeMarker,
         context: TypeMappingContext<Writer>,
         sw: Writer?,
         materialized: Boolean
     ): Type {
         if (typeConstructor.isInlineClass() && !mode.needInlineClassWrapping) {
             val expandedType = computeExpandedTypeForInlineClass(type)
-            require(expandedType is SimpleTypeMarker?)
+            require(expandedType is RigidTypeMarker?)
             if (expandedType != null) {
                 return mapType(context, expandedType, mode.wrapInlineClassesMode(), sw, materialized)
             }
@@ -213,8 +221,22 @@ object AbstractTypeMapper {
         type: KotlinTypeMarker
     ): Boolean = context.typeContext.isPrimitiveBacked(type)
 
-    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(type: KotlinTypeMarker): Boolean =
-        !type.isNullableType() &&
-                (type is SimpleTypeMarker && type.isPrimitiveType() ||
-                        type.typeConstructor().getValueClassProperties()?.singleOrNull()?.let { isPrimitiveBacked(it.second) } == true)
+    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(
+        type: KotlinTypeMarker,
+        visited: HashSet<TypeConstructorMarker> = hashSetOf()
+    ): Boolean {
+        if (type.isNullableType()) {
+            return false
+        }
+
+        if (type is SimpleTypeMarker && type.isPrimitiveType()) {
+            return true
+        }
+
+        val typeConstructor = type.typeConstructor()
+
+        return visited.add(typeConstructor) &&
+                typeConstructor.getValueClassProperties()?.singleOrNull()
+                    ?.let { isPrimitiveBacked(it.second, visited) } == true
+    }
 }

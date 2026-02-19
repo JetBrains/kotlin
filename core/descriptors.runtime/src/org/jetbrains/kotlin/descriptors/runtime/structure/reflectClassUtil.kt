@@ -61,7 +61,7 @@ val Class<*>.classId: ClassId
         isArray -> throw IllegalArgumentException("Can't compute ClassId for array type: $this")
         enclosingMethod != null || enclosingConstructor != null || simpleName.isEmpty() -> {
             val fqName = FqName(name)
-            ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), /* local = */ true)
+            ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), isLocal = true)
         }
         else -> declaringClass?.classId?.createNestedClassId(Name.identifier(simpleName)) ?: ClassId.topLevel(FqName(name))
     }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Generator.java
 
 import org.jetbrains.annotations.NotNull;
@@ -15,3 +16,6 @@ open class Value(val s: String)
 val generator = Generator()
 
 val y = generator.createValue("Omega") <!USELESS_CAST!>as Value<!>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, javaFunction, javaType, primaryConstructor,
+propertyDeclaration, stringLiteral */

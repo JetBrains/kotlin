@@ -1,5 +1,10 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class Test1 : <!CLASS_CANNOT_BE_EXTENDED_DIRECTLY!>Enum<Test1><!>("", 0)
+
+typealias TA<T> = Enum<T>
+
+class TestTa : <!CLASS_CANNOT_BE_EXTENDED_DIRECTLY!>TA<TestTa><!>("", 0)
 
 class Outer {
     class Test2 : <!CLASS_CANNOT_BE_EXTENDED_DIRECTLY!>Enum<Test2><!>("", 0)
@@ -8,3 +13,6 @@ class Outer {
 fun outer() {
     class Test3 : <!CLASS_CANNOT_BE_EXTENDED_DIRECTLY!>Enum<Test3><!>("", 0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localClass, nestedClass, nullableType,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -1,9 +1,10 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTIC_ARGUMENTS
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER
 
 fun f1(x: String) {}
 fun f2(f: () -> Unit) {}
-fun test1() = f2(::<!UNRESOLVED_REFERENCE("f1")!>f1<!>)
+fun test1() = f2(::<!INAPPLICABLE_CANDIDATE("fun f1(x: String): Unit")!>f1<!>)
 
 
 @Target(AnnotationTarget.TYPE_PARAMETER,  AnnotationTarget.TYPE)
@@ -12,14 +13,17 @@ annotation class Ann
 fun <@Ann R : @Ann Any> f3(a: Array<@Ann R>): Array<@Ann R?> =  null!!
 
 fun test2(a: @Ann Array<in @Ann Int>) {
-    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("kotlin/Array<@R|Ann|()  R>; @R|Ann|()  kotlin/Array<CapturedType(in @R|Ann|()  kotlin/Int)>")!>a<!>)
+    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("Array<CapturedType(in Int)>; Array<Int>")!>a<!>)
 }
 
 
 var test3: Int = 0
-    set(s: <!WRONG_SETTER_PARAMETER_TYPE("kotlin/Int; @R|Ann|()  kotlin/String")!>@Ann String<!>) {}
+    set(s: <!WRONG_SETTER_PARAMETER_TYPE("Int; String")!>@Ann String<!>) {}
 
 
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
-val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("kotlin/Function2<@R|Ann|()  kotlin/Int, @R|Ann|()  kotlin/Int, kotlin/Unit>; kotlin/Function1<@R|Ann|()  kotlin/Int, kotlin/Unit>")!>{ single -> }<!>
+val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("(Int) -> Unit; (Int, Int) -> Unit")!>{ single -> }<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, functionDeclaration, functionalType, inProjection,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, setter, typeConstraint, typeParameter */

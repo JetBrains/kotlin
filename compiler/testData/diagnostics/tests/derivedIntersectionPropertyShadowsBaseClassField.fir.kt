@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FIR_DUMP
 // FILE: Base.java
@@ -13,7 +14,7 @@ interface Proxy {
 }
 
 open class Intermediate : Base() {
-    val x get() = " "
+    val <!PROPERTY_HIDES_JAVA_FIELD!>x<!> get() = " "
 }
 
 class Derived : Proxy, Intermediate() {
@@ -21,3 +22,6 @@ class Derived : Proxy, Intermediate() {
         x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, javaType,
+propertyDeclaration, stringLiteral */

@@ -1,6 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
-
+// FILE: lib.kt
 import kotlin.coroutines.*
 
 interface Flow<out T> {
@@ -25,6 +24,10 @@ public inline fun <T, R: Any> Flow<T>.mapNotNull(crossinline transform: suspend 
     val transformed = transform(value) ?: return@transform
     return@transform emit(transformed)
 }
+
+// FILE: main.kt
+
+import kotlin.coroutines.*
 
 internal fun Flow<List<Data>>.aggregate(aggregation: (List<Double>) -> Double): Flow<Data> = mapNotNull {
     Data(

@@ -17,9 +17,6 @@ open class OpenBody {
 @Serializable
 abstract class AbstractConstructor(var optional: String = "foo")
 
-// TODO: test fails for K2 if places of 'color' and 'name' are swapped
-// because of https://youtrack.jetbrains.com/issue/KT-54792 (KT-20980)
-// and serialization proto extension is not available in K2.
 @Serializable
 open class Vehicle {
     var color: String? = null

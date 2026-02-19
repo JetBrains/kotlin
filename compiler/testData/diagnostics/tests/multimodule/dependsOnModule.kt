@@ -1,5 +1,7 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // MODULE: m1
 // FILE: a.kt
@@ -54,3 +56,5 @@ fun test3() {
     inst.a()
     inst.B()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

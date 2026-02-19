@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-57076
 // WITH_STDLIB
@@ -17,3 +18,5 @@ open class C01 {
 fun main(){
     C02().some() // K2: x = -1 y = 2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, stringLiteral */

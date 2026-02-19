@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class A {
     abstract protected fun foo(): String
     abstract protected val bar: String
@@ -14,3 +15,6 @@ fun test(x: A) {
         x.bar
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, propertyDeclaration, smartcast */

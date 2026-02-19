@@ -2,14 +2,14 @@ package foo
 
 // From KT-10772 Problem with daemon on Idea 15.0.3 & 1-dev-25
 
-/*p:foo*/fun <T> identity(): (T) -> T = /*p:kotlin(Function1) p:kotlin(Nothing)*/null as (T) -> T
+/*p:foo*/fun <T> identity(): /*p:kotlin(Function1)*/(/*p:foo*/T) -> /*p:foo*/T = null as /*p:kotlin(Function1)*/(/*p:foo*/T) -> /*p:foo*/T
 
-/*p:foo*/fun <T> compute(f: () -> T) {
-    val result = f()
+/*p:foo*/fun <T> compute(f: /*p:kotlin(Function0)*/() -> /*p:foo*/T) {
+    val result = /*p:kotlin(Function0) p:kotlin.Function0(invoke)*/f()
 }
 
-/*p:foo*/class Bar<T>(val t: T) {
+/*p:foo*/class Bar<T>(val t: /*p:foo*/T) {
     init {
-        val a = /*c:foo.Bar c:foo.Bar(T)*/t
+        val a = /*p:foo.Bar*/t
     }
 }

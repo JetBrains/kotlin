@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
@@ -25,3 +26,6 @@ actual open class Foo : Base() {
 
     override fun existingMethodInBase() {} // override from super
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, override,
+primaryConstructor, propertyDeclaration */

@@ -1,4 +1,4 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 
 fun test(a: Any) =
     when (val subject = a) {

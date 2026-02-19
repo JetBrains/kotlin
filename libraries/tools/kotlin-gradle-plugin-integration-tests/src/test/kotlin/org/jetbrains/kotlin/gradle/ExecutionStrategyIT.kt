@@ -4,33 +4,49 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
-import java.io.File
+import kotlin.io.path.appendText
 
 @DisplayName("Kotlin JS compile execution strategy")
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+
     override fun setupProject(project: TestProject) {
         super.setupProject(project)
 
-        project.subProject("app").buildGradle.modify {
+        // transform the project into a multiplatform project with JS target
+        val appSubProject = project.subProject("app")
+        appSubProject.buildGradle.modify {
             it.replace(
                 "id \"org.jetbrains.kotlin.jvm\"",
-                "id \"org.jetbrains.kotlin.js\""
+                "id \"org.jetbrains.kotlin.multiplatform\""
             ) +
                     """
                     |
                     |kotlin {
                     |    js {
+                    |        nodejs()
+                    |    }
                     |    
+                    |    sourceSets {
+                    |        jsMain {
+                    |           kotlin.srcDir("src/main")
+                    |        }
                     |    }
                     |}
                     |
                     |afterEvaluate {
                     |    tasks.named('compileKotlinJs') {
-                    |        kotlinOptions.outputFile = "${'$'}{project.projectDir}/web/js/"
+                    |        destinationDirectory = new File(project.projectDir, "web/js/")
                     |    }
                     |}
                     |
@@ -49,6 +65,11 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 
 @DisplayName("Kotlin JVM compile execution strategy")
 class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
+    override val expectedOutOfProcessDiagnostics: Set<ToolingDiagnosticFactory> = setOf(
+        KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi,
+        KotlinToolingDiagnostics.OutOfProcessExecutionStrategyUsage,
+    )
+
     override fun BuildResult.checkOutput(project: TestProject) {
         with(project) {
             val classesDir = subProject("app").kotlinClassesDir().resolve("foo")
@@ -69,9 +90,7 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 }
 
 abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
-        logLevel = LogLevel.DEBUG
-    )
+    internal open val expectedOutOfProcessDiagnostics: Set<ToolingDiagnosticFactory>? = null
 
     @DisplayName("Compilation via Kotlin daemon")
     @GradleTest
@@ -101,6 +120,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
             addHeapDumpOptions = false,
+            enableKotlinDaemonMemoryLimitInMb = null,
             buildOptions = defaultBuildOptions.copy(
                 useDaemonFallbackStrategy = false,
                 compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON,
@@ -112,7 +132,9 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 "build",
                 "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
             ) {
-                assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
+                assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
+                assertOutputContains("Failed to compile with Kotlin daemon.")
+                assertOutputContains("Fallback strategy (compiling without Kotlin daemon) is turned off.")
             }
         }
     }
@@ -123,6 +145,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         project(
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
             addHeapDumpOptions = false
         ) {
             setupProject(this)
@@ -144,7 +167,9 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 "build",
                 "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
             ) {
-                assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
+                assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
+                assertOutputContains("Failed to compile with Kotlin daemon.")
+                assertOutputContains("Fallback strategy (compiling without Kotlin daemon) is turned off.")
             }
         }
     }
@@ -160,16 +185,11 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             // This task configuration action is registered before all the KGP configuration actions,
             // so this test also checks if KGP doesn't override value that is set before KGP configuration actions
             // KT-53617
-            //language=Gradle
-            buildGradle.append(
-                """
-                subprojects {
-                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).configureEach {
-                        compilerExecutionStrategy = org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy.IN_PROCESS
-                    }
+            subProject("app").buildScriptInjection {
+                project.tasks.withType<AbstractKotlinCompile<*>>().configureEach { task ->
+                    task.compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS)
                 }
-                """.trimIndent()
-            )
+            }
         }
     }
 
@@ -182,12 +202,41 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @DisplayName("KT-75820: The legacy in-process mode properly reports compilation warnings/errors")
+    @GradleTest
+    fun testInProcessWithCompilationWarning(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinBuiltins",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
+                runViaBuildToolsApi = false,
+            )
+        ) {
+            subProject("app").kotlinSourcesDir().resolve("classes.kt").modify {
+                it.replace(
+                    //language=kotlin
+                    "class A",
+                    //language=kotlin
+                    "@Deprecated(\"deprecated for test\") class A",
+                )
+            }
+            build("build") {
+                val mainKt = subProject("app").kotlinSourcesDir().resolve("main.kt")
+                // ensure warnings are properly parsed
+                assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+            }
+        }
+    }
+
     @DisplayName("Compilation via separate compiler process")
     @GradleTest
     fun testOutOfProcess(gradleVersion: GradleVersion) {
+        @Suppress("DEPRECATION")
         doTestExecutionStrategy(
             gradleVersion,
-            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS,
+            expectDiagnostics = expectedOutOfProcessDiagnostics
         )
     }
 
@@ -197,44 +246,65 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         addHeapDumpOptions: Boolean = true,
         testFallbackStrategy: Boolean = false,
         shouldConfigureStrategyViaGradleProperty: Boolean = true,
+        expectDiagnostics: Set<ToolingDiagnosticFactory>? = null,
         additionalProjectConfiguration: TestProject.() -> Unit = {},
     ) {
         project(
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
             addHeapDumpOptions = addHeapDumpOptions,
+            enableKotlinDaemonMemoryLimitInMb = if (shouldConfigureStrategyViaGradleProperty) null else 1024,
+            enableGradleDaemonMemoryLimitInMb = null, // We need to make an assertion based on default Gradle Daemon JDK configuration
             buildOptions = defaultBuildOptions.copy(
                 useDaemonFallbackStrategy = testFallbackStrategy,
                 compilerExecutionStrategy = if (shouldConfigureStrategyViaGradleProperty) {
                     executionStrategy
                 } else {
                     null
-                }
+                },
+                logLevel = if (!testFallbackStrategy && executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
+                    LogLevel.DEBUG // used daemon JVM options are reported only to the DEBUG logs
+                } else {
+                    defaultBuildOptions.logLevel
+                },
             )
         ) {
             setupProject(this)
             additionalProjectConfiguration()
+
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.jvm.target.validation.mode=ignore
+                """.trimMargin()
+            )
 
             val args = if (testFallbackStrategy) {
                 arrayOf("-Pkotlin.daemon.jvmargs=-Xmxqwerty")
             } else {
                 emptyArray()
             }
-            val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
+            @Suppress("DEPRECATION") val expectedFinishStrategy = when {
+                testFallbackStrategy && this@ExecutionStrategyIT is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.IN_PROCESS
+                testFallbackStrategy && this@ExecutionStrategyIT !is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+                else -> executionStrategy
+            }
             val finishMessage = expectedFinishStrategy.asFinishLogMessage
 
             build("build", *args) {
                 assertOutputContains(expectedFinishStrategy.asFinishLogMessage)
+                expectDiagnostics?.forEach { assertHasDiagnostic(it) }
                 checkOutput(this@project)
-                assertNoBuildWarnings()
 
                 if (testFallbackStrategy) {
+                    assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
                     assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")
                 } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
                     // 256m is the default value for Gradle 5.0+
-                    val defauldJvmSettingsForGivenGradleVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "256" else "384"
+                    val defaultJvmSettingsForGivenGradleVersion =
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "256" else "384"
                     assertKotlinDaemonJvmOptions(
-                        listOf("-XX:MaxMetaspaceSize=${defauldJvmSettingsForGivenGradleVersion}m", "-ea")
+                        listOf("-XX:MaxMetaspaceSize=${defaultJvmSettingsForGivenGradleVersion}m", "-ea")
                     )
                 }
             }
@@ -246,7 +316,6 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             build("build", *args) {
                 assertOutputContains(finishMessage)
                 checkOutputAfterChange(this@project)
-                assertNoBuildWarnings()
             }
         }
     }

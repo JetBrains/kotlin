@@ -47,13 +47,13 @@ fun display() {
 
 fun initialize() {
     // select projection matrix
-    glMatrixMode(GL_PROJECTION)
+    glMatrixMode(GL_PROJECTION.toUInt())
 
     // set the viewport
     glViewport(0, 0, windowWidth, windowHeight)
 
     // set matrix mode
-    glMatrixMode(GL_PROJECTION)
+    glMatrixMode(GL_PROJECTION.toUInt())
 
     // reset projection matrix
     glLoadIdentity()
@@ -63,29 +63,29 @@ fun initialize() {
     gluPerspective(45.0, aspect, 1.0, 500.0)
 
     // specify which matrix is the current matrix
-    glMatrixMode(GL_MODELVIEW)
-    glShadeModel(GL_SMOOTH)
+    glMatrixMode(GL_MODELVIEW.toUInt())
+    glShadeModel(GL_SMOOTH.toUInt())
 
     // specify the clear value for the depth buffer
     glClearDepth(1.0)
-    glEnable(GL_DEPTH_TEST)
-    glDepthFunc(GL_LEQUAL)
+    glEnable(GL_DEPTH_TEST.toUInt())
+    glDepthFunc(GL_LEQUAL.toUInt())
 
     // specify implementation-specific hints
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT.toUInt(), GL_NICEST.toUInt())
 
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, cValuesOf(0.1f, 0.1f, 0.1f, 1.0f))
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, cValuesOf(0.6f, 0.6f, 0.6f, 1.0f))
-    glLightfv(GL_LIGHT0, GL_SPECULAR, cValuesOf(0.7f, 0.7f, 0.3f, 1.0f))
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT.toUInt(), cValuesOf(0.1f, 0.1f, 0.1f, 1.0f))
+    glLightfv(GL_LIGHT0.toUInt(), GL_DIFFUSE.toUInt(), cValuesOf(0.6f, 0.6f, 0.6f, 1.0f))
+    glLightfv(GL_LIGHT0.toUInt(), GL_SPECULAR.toUInt(), cValuesOf(0.7f, 0.7f, 0.3f, 1.0f))
 
-    glEnable(GL_LIGHT0)
-    glEnable(GL_COLOR_MATERIAL)
-    glShadeModel(GL_SMOOTH)
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE)
-    glDepthFunc(GL_LEQUAL)
-    glEnable(GL_DEPTH_TEST)
-    glEnable(GL_LIGHTING)
-    glEnable(GL_LIGHT0)
+    glEnable(GL_LIGHT0.toUInt())
+    glEnable(GL_COLOR_MATERIAL.toUInt())
+    glShadeModel(GL_SMOOTH.toUInt())
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE.toUInt(), GL_FALSE)
+    glDepthFunc(GL_LEQUAL.toUInt())
+    glEnable(GL_DEPTH_TEST.toUInt())
+    glEnable(GL_LIGHTING.toUInt())
+    glEnable(GL_LIGHT0.toUInt())
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 }
 

@@ -1,5 +1,4 @@
-// IGNORE_REVERSED_RESOLVE
-// IGNORE_CONTRACT_VIOLATIONS
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Bar.java
 
@@ -20,3 +19,6 @@ class Baz {
         const val BAZ = Bar.BAR + 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, const, integerLiteral, javaProperty,
+objectDeclaration, propertyDeclaration */

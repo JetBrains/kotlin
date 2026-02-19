@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Foo<T : Number>(var x: T) {
     fun setX1(y: T): T {
         this.x = y
@@ -77,3 +78,7 @@ fun test4() {
 
     foo.x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, capturedType, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+starProjection, stringLiteral, thisExpression, typeConstraint, typeParameter */

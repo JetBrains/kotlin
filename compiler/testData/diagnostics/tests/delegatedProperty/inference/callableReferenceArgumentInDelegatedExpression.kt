@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
 
@@ -15,3 +16,7 @@ class Version(val version: Int)
 class Sample {
     var version: Version by create(::Version)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter,
+starProjection, typeParameter */

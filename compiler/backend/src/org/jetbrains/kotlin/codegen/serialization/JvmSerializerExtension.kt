@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.codegen.serialization
 
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultNoCompatibilityAnnotation
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultWithCompatibilityAnnotation
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -41,26 +41,26 @@ import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
-class JvmSerializerExtension @JvmOverloads constructor(
+class JvmSerializerExtension(
     private val bindings: JvmSerializationBindings,
     state: GenerationState,
-    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
+    private val typeMapper: KotlinTypeMapperBase,
 ) : SerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
-    private val codegenBinding = state.bindingContext
     override val stringTable = JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
-    private val languageVersionSettings = state.languageVersionSettings
+    private val languageVersionSettings = state.config.languageVersionSettings
     private val isParamAssertionsDisabled = state.config.isParamAssertionsDisabled
     private val unifiedNullChecks = state.config.unifiedNullChecks
     private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled
     override val metadataVersion = state.config.metadataVersion
-    private val jvmDefaultMode = state.jvmDefaultMode
+    private val jvmDefaultMode = state.config.jvmDefaultMode
     private val approximator = state.typeApproximator
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
+    private val localDelegatedProperties = state.localDelegatedProperties
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
 
@@ -75,20 +75,19 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (isInterface(descriptor) && !jvmDefaultMode.forAllMethodsWithBody) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
+            if (isInterface(descriptor) && !jvmDefaultMode.isEnabled) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 
-        if (jvmDefaultMode.forAllMethodsWithBody && isInterface(descriptor)) {
-            proto.setExtension(
-                JvmProtoBuf.jvmClassFlags,
-                JvmFlags.getClassFlags(
-                    jvmDefaultMode.forAllMethodsWithBody,
-                    (JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode && !descriptor.hasJvmDefaultNoCompatibilityAnnotation()) ||
-                            (JvmDefaultMode.ALL_INCOMPATIBLE == jvmDefaultMode && descriptor.hasJvmDefaultWithCompatibilityAnnotation())
-                )
-            )
+        if (jvmDefaultMode.isEnabled && isInterface(descriptor)) {
+            proto.setExtension(JvmProtoBuf.jvmClassFlags, JvmFlags.getClassFlags(true, isInCompatibilityMode(descriptor)))
         }
+    }
+
+    private fun isInCompatibilityMode(descriptor: ClassDescriptor): Boolean {
+        val annotations = descriptor.annotations
+        return (jvmDefaultMode == JvmDefaultMode.ENABLE && !annotations.hasAnnotation(JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME)) ||
+                (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY && annotations.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME))
     }
 
     // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
@@ -99,7 +98,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (isInterface(classDescriptor)) {
-            if (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
+            if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) {
                 builder.addVersionRequirement(
                     writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
                 )
@@ -122,9 +121,8 @@ class JvmSerializerExtension @JvmOverloads constructor(
         classAsmType: Type,
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
-        val localVariables = CodegenBinding.getLocalDelegatedProperties(codegenBinding, classAsmType) ?: return
-
-        for (localVariable in localVariables) {
+        for (localVariable in localDelegatedProperties[classAsmType].orEmpty()) {
+            if (localVariable !is LocalVariableDescriptor) continue
             val propertyDescriptor = createFreeFakeLocalPropertyDescriptor(localVariable, approximator)
             val serializer = DescriptorSerializer.createForLambda(this, languageVersionSettings)
             proto.addExtension(extension, serializer.propertyProto(propertyDescriptor)?.build() ?: continue)
@@ -149,13 +147,13 @@ class JvmSerializerExtension @JvmOverloads constructor(
     override fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
         for (annotation in type.nonSourceAnnotations) {
-            proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
         }
     }
 
     override fun serializeTypeParameter(typeParameter: TypeParameterDescriptor, proto: ProtoBuf.TypeParameter.Builder) {
         for (annotation in typeParameter.nonSourceAnnotations) {
-            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
         }
     }
 

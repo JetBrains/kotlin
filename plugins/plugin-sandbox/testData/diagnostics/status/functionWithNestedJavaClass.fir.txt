@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun function(): R|kotlin/Unit| {
+        Q|JavaClass|.R|/JavaClass.Nested.Nested<CS errors: /JavaClass.Nested.Nested>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+    }

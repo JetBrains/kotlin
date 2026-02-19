@@ -3,12 +3,3 @@ public final class CodeFragment {
     public method <init>(): void
     public final static method run(p0: Foo): void
 }
-
-public final class Foo {
-    // source: 'localFunctionContainingClassClosure.kt'
-    public method <init>(): void
-    private final static method test$call(p0: Foo): void
-    public final method test(): void
-}
-
-public final class LocalFunctionContainingClassClosureKt

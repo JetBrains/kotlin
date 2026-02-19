@@ -1,0 +1,10 @@
+expression: []
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    out KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyEnum
+  ]
+  type: kotlin/Array<out MyEnum>

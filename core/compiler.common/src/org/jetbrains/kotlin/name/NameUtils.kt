@@ -53,6 +53,17 @@ object NameUtils {
         Name.identifier(NameUtils.getPackagePartClassNamePrefix(filePath.substringAfterLast('/').substringBeforeLast('.')))
 
     @JvmStatic
+    fun getScriptTargetClassName(originalName: Name): Name = getSnippetOrScriptTargetClassName(originalName, "script-")
+
+    @JvmStatic
+    fun getSnippetTargetClassName(originalName: Name): Name = getSnippetOrScriptTargetClassName(originalName, "snippet-")
+
+    private fun getSnippetOrScriptTargetClassName(originalName: Name, prefix: String): Name =
+        if (originalName.isSpecial) {
+            getScriptNameForFile(originalName.asStringStripSpecialMarkers().removePrefix(prefix))
+        } else originalName
+
+    @JvmStatic
     fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS
 
     @JvmStatic

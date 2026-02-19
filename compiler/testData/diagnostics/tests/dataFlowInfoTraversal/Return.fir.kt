@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 fun bar(x: Int): Int = x + 1
 
 fun foo(): Int {
@@ -15,3 +16,6 @@ fun foo(): Int {
 
     return <!RETURN_TYPE_MISMATCH!>z<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

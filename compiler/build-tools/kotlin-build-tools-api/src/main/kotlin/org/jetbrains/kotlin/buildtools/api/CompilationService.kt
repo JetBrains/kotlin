@@ -3,13 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.api.CompilationService.Companion.loadImplementation
+import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.PreKotlin220Wrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import java.io.File
-import java.util.*
 
 /**
  * A facade for invoking compilation and related stuff (such as [calculateClasspathSnapshot]) in Kotlin compiler.
@@ -24,12 +28,38 @@ import java.util.*
  *
  * This interface is not intended to be implemented by the API consumers. An instance of [CompilationService] is expected to be obtained from [loadImplementation].
  */
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 @ExperimentalBuildToolsApi
 public interface CompilationService {
     /**
-     * TODO KT-57565
+     * Calculates JVM classpath snapshot for [classpathEntry] used for detecting changes in incremental compilation with specified [granularity].
+     *
+     * The [ClassSnapshotGranularity.CLASS_LEVEL] granularity should be preferred for rarely changing dependencies as more lightweight in terms of the resulting snapshot size.
+     *
+     * @param classpathEntry path to existent classpath entry
+     * @param granularity determines granularity of tracking.
+     * @param parseInlinedLocalClasses enables extended snapshotting mode for inline methods and accessors
      */
-    public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        parseInlinedLocalClasses: Boolean,
+    ): ClasspathEntrySnapshot
+
+    /**
+     * Calculates JVM classpath snapshot for [classpathEntry] used for detecting changes in incremental compilation with specified [granularity].
+     *
+     * The [ClassSnapshotGranularity.CLASS_LEVEL] granularity should be preferred for rarely changing dependencies as more lightweight in terms of the resulting snapshot size.
+     *
+     * @param classpathEntry path to existent classpath entry
+     * @param granularity determines granularity of tracking.
+     *
+     * This is equivalent to calling the three-argument version of [calculateClasspathSnapshot] with parseInlinedLocalClasses=true.
+     */
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+    ): ClasspathEntrySnapshot
 
     /**
      * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.
@@ -46,11 +76,14 @@ public interface CompilationService {
     /**
      * Compiles Kotlin code targeting JVM platform and using specified options.
      *
+     * Note that [sources] should include .java files too so that Kotlin compiler could properly resolve references to Java code and track changes in them.
+     * However, Kotlin compiler would not compile the .java files.
+     *
      * The [finishProjectCompilation] must be called with the same [projectId] after the entire project is compiled.
      * @param projectId The unique identifier of the project to be compiled. It may be the same for different modules of the project.
      * @param strategyConfig an instance of [CompilerExecutionStrategyConfiguration] initially obtained from [makeCompilerExecutionStrategyConfiguration]
      * @param compilationConfig an instance of [JvmCompilationConfiguration] initially obtained from [makeJvmCompilationConfiguration]
-     * @param sources a list of all sources of the compilation unit
+     * @param sources all sources list of the compilation unit. This includes Java source files.
      * @param arguments a list of Kotlin JVM compiler arguments
      */
     public fun compileJvm(
@@ -58,7 +91,7 @@ public interface CompilationService {
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
-        arguments: List<String>
+        arguments: List<String>,
     ): CompilationResult
 
     /**
@@ -78,10 +111,27 @@ public interface CompilationService {
      */
     public fun getCustomKotlinScriptFilenameExtensions(classpath: List<File>): Collection<String>
 
+    /**
+     * Returns the version of the Kotlin compiler used to run compilation.
+     *
+     * @return A string representing the version of the Kotlin compiler, for example `2.0.0-Beta4`.
+     */
+    public fun getCompilerVersion(): String
+
     @ExperimentalBuildToolsApi
+    @Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
     public companion object {
         @JvmStatic
-        public fun loadImplementation(classLoader: ClassLoader): CompilationService =
-            loadImplementation(CompilationService::class, classLoader)
+        public fun loadImplementation(classLoader: ClassLoader): CompilationService  {
+            val baseImplementation = loadImplementation(CompilationService::class, classLoader)
+            val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
+
+            return when {
+                kotlinCompilerVersion <= KotlinCompilerVersion(2, 1, 255, null) -> {
+                    PreKotlin220Wrapper(baseImplementation)
+                }
+                else -> baseImplementation
+            }
+        }
     }
 }

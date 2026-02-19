@@ -1,0 +1,69 @@
+package
+
+@kotlin.js.JsExport public abstract class AbstractClass : Interface1 {
+    public constructor AbstractClass()
+    public open override /*1*/ var x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public interface GenericInterface1</*0*/ T> {
+    public abstract var x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public interface GenericInterface2</*0*/ T> {
+    public abstract var x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public interface Interface1 {
+    public abstract var x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public interface Interface2 {
+    public abstract var x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public open class OpenClass1 : AbstractClass, Interface2 {
+    public constructor OpenClass1()
+    public open override /*2*/ /*fake_override*/ var x: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public open class OpenClass2 : AbstractClass, GenericInterface1<kotlin.Int> {
+    public constructor OpenClass2()
+    public open override /*2*/ /*fake_override*/ var x: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public open class OpenClass3 : AbstractClass, GenericInterface2<kotlin.String> {
+    public constructor OpenClass3()
+    public open override /*2*/ /*fake_override*/ var x: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public open class OpenClass4 : AbstractClass, Interface1, Interface2, GenericInterface1<kotlin.Int>, GenericInterface2<kotlin.String> {
+    public constructor OpenClass4()
+    public open override /*5*/ /*fake_override*/ var x: kotlin.String
+    public open override /*5*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*5*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*5*/ /*fake_override*/ fun toString(): kotlin.String
+}

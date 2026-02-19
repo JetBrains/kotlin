@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun String?.foo(): String {
     return this ?: ""
@@ -11,3 +12,6 @@ class MyClass {
         return s.foo()
     }    
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, elvisExpression, funWithExtensionReceiver, functionDeclaration,
+nullableType, propertyDeclaration, stringLiteral, thisExpression */

@@ -286,7 +286,11 @@ class BasicAssertionsTest {
 
     @Test
     fun testAssertNull() {
-        assertNull(null)
+        val s: String? = null
+        assertNull(s)
+
+        @Suppress("UnusedVariable")
+        val smartCastDueToContract: Nothing? = s
     }
 
     @Test

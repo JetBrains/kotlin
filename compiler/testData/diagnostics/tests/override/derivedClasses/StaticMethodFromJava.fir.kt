@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: lib
-// FILE: test/J.java
+
+// FILE: test/Foo.java
 package test;
 
 class Foo<T> {
@@ -7,6 +9,9 @@ class Foo<T> {
         return null;
     }
 }
+
+// FILE: test/Bar.java
+package test;
 
 public class Bar extends Foo<String> {}
 
@@ -17,3 +22,5 @@ import test.Bar
 fun test() {
     <!DEBUG_INFO_CALLABLE_OWNER("test.Foo.getValue in test.Foo")!>Bar.getValue("bar")<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, stringLiteral */

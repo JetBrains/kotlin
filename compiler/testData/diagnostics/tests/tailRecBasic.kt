@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
     <!NON_TAIL_RECURSIVE_CALL!>foo1<!>()
@@ -78,3 +79,5 @@ tailrec fun foo7_return() {
     return "hello ${<!NON_TAIL_RECURSIVE_CALL!>foo11<!>()}"
 }
 
+/* GENERATED_FIR_TAGS: break, classDeclaration, continue, functionDeclaration, ifExpression, integerLiteral, localClass,
+localFunction, localProperty, propertyDeclaration, stringLiteral, tailrec, whileLoop */

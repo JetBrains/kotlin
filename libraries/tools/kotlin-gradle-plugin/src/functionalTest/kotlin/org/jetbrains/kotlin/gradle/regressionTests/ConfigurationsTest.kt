@@ -17,20 +17,19 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.gradle.utils.toMap
+import org.junit.jupiter.api.Disabled
 import java.util.*
 import kotlin.test.*
 
@@ -102,7 +101,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         commonMainApi.assertHasDependency("project notation of :lib:outputConfiguration") {
             this is ProjectDependency &&
-            dependencyProject == lib &&
+            path == lib.path &&
             targetConfiguration == "outputConfiguration"
         }
 
@@ -131,6 +130,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     @Test
     fun `consumable configurations except sourcesElements with platform target are marked with Category LIBRARY`() {
         kotlin.linuxX64()
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.iosX64()
         kotlin.iosArm64()
         kotlin.jvm()
@@ -144,6 +144,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         project.evaluate()
 
         project.configurations
+            .filter { it.isCanBeConsumed }
             .filter { configuration ->
                 configuration.attributes.contains(KotlinPlatformType.attribute) ||
                         configuration.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name in KotlinUsages.values
@@ -175,14 +176,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         val targetSpecificConfigurationsToCheck = listOf(
             "ApiElements",
             "RuntimeElements",
-
-            "MainApiDependenciesMetadata",
-            "MainCompileOnlyDependenciesMetadata",
-            "MainImplementationDependenciesMetadata",
-
-            "TestApiDependenciesMetadata",
-            "TestCompileOnlyDependenciesMetadata",
-            "TestImplementationDependenciesMetadata",
         )
 
         // WASM
@@ -196,23 +189,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             "All WASM configurations should not contain KotlinJsCompilerAttribute"
         )
 
-        val commonSourceSetsConfigurationsToCheck = listOf(
-            "ApiDependenciesMetadata",
-            "CompileOnlyDependenciesMetadata",
-            "ImplementationDependenciesMetadata",
-        )
-
-        // commonMain
-        val actualCommonMainConfigurations = commonSourceSetsConfigurationsToCheck
-            .map { project.configurations.getByName("commonMain$it") }
-            .filter { it.attributes.contains(KotlinJsCompilerAttribute.jsCompilerAttribute) }
-
-        assertEquals(
-            emptyList(),
-            actualCommonMainConfigurations,
-            "commonMain configurations should not contain KotlinJsCompilerAttribute"
-        )
-
     }
 
     @Test
@@ -221,6 +197,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             kotlin {
                 js()
                 targets.withType<KotlinJsIrTarget> {
+                    @Suppress("DEPRECATION")
                     compilations.getByName("main").dependencies {
                         api("test:compilation-dependency")
                     }
@@ -254,23 +231,12 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm()
                 js()
                 linuxX64("linux")
+                @Suppress("DEPRECATION")
                 androidTarget()
             }
         }
 
         project.evaluate()
-
-        fun HasKotlinDependencies.allDependenciesConfigurationNames() = listOfNotNull(
-            apiConfigurationName,
-            implementationConfigurationName,
-            compileOnlyConfigurationName,
-            runtimeOnlyConfigurationName
-        )
-
-        fun KotlinCompilation<*>.allCompilationDependenciesConfigurationNames() = allDependenciesConfigurationNames() + listOfNotNull(
-            compileDependencyConfigurationName,
-            runtimeDependencyConfigurationName,
-        )
 
         project.kotlinExtension.targets.flatMap { it.compilations }.forEach { compilation ->
             val compilationSourceSets = compilation.allKotlinSourceSets
@@ -319,8 +285,9 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         }
     }
 
+    @Disabled("withJava() is no longer supported since Gradle 9.0")
     class TestDisambiguationAttributePropagation {
-        private val disambiguationAttribute = org.gradle.api.attributes.Attribute.of("disambiguationAttribute", String::class.java)
+        private val disambiguationAttribute = Attribute.of("disambiguationAttribute", String::class.java)
 
         private val mppProject
             get() = buildProjectWithMPP {
@@ -330,6 +297,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     }
 
                     jvm("jvmWithJava") {
+                        @Suppress("DEPRECATION")
                         withJava()
                         attributes { attribute(disambiguationAttribute, "jvmWithJava") }
                     }
@@ -351,7 +319,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         )
 
         @Test
-        fun `test that jvm target attributes are propagated to java configurations`() {
+        fun `test that jvm target attributes are propagated to java configurations in plain Jvm project`() {
             val kotlinJvmConfigurations = listOf(
                 "jvmWithJavaCompileClasspath",
                 "jvmWithJavaRuntimeClasspath",
@@ -361,11 +329,67 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 "jvmWithJavaCompilationRuntimeOnly",
             )
 
+            val javaWithJavaJvmConfigurations = listOf(
+                "jvmWithJavaMainApi",
+                "jvmWithJavaMainCompileClasspath",
+                "jvmWithJavaMainCompileOnly",
+                "jvmWithJavaMainImplementation",
+                "jvmWithJavaMainRuntimeClasspath",
+                "jvmWithJavaMainRuntimeOnly",
+                "jvmWithJavaTestApi",
+                "jvmWithJavaTestCompileOnly",
+                "jvmWithJavaTestImplementation",
+                "jvmWithJavaTestRuntimeOnly",
+            )
+
+            val javaPlainJvmConfigurations = listOf(
+                "plainJvmMainApi",
+                "plainJvmMainCompileClasspath",
+                "plainJvmMainCompileOnly",
+                "plainJvmMainImplementation",
+                "plainJvmMainRuntimeClasspath",
+                "plainJvmMainRuntimeOnly",
+                "plainJvmTestApi",
+                "plainJvmTestCompileClasspath",
+                "plainJvmTestCompileOnly",
+                "plainJvmTestImplementation",
+                "plainJvmTestRuntimeClasspath",
+                "plainJvmTestRuntimeOnly",
+            )
+
+            // These configurations are only created in a projects with more than one KotlinJvmTarget
+            // which are prohibited for users
+            val jvmWithJavaPlainJvmConfigurations = listOf(
+                "jvmWithJavaPlainJvmMainApi",
+                "jvmWithJavaPlainJvmMainCompilationApi",
+                "jvmWithJavaPlainJvmMainCompilationCompileOnly",
+                "jvmWithJavaPlainJvmMainCompilationImplementation",
+                "jvmWithJavaPlainJvmMainCompilationRuntimeOnly",
+                "jvmWithJavaPlainJvmMainCompileClasspath",
+                "jvmWithJavaPlainJvmMainCompileOnly",
+                "jvmWithJavaPlainJvmMainImplementation",
+                "jvmWithJavaPlainJvmMainRuntimeClasspath",
+                "jvmWithJavaPlainJvmMainRuntimeOnly",
+                "jvmWithJavaPlainJvmTestApi",
+                "jvmWithJavaPlainJvmTestCompilationApi",
+                "jvmWithJavaPlainJvmTestCompilationCompileOnly",
+                "jvmWithJavaPlainJvmTestCompilationImplementation",
+                "jvmWithJavaPlainJvmTestCompilationRuntimeOnly",
+                "jvmWithJavaPlainJvmTestCompileClasspath",
+                "jvmWithJavaPlainJvmTestCompileOnly",
+                "jvmWithJavaPlainJvmTestImplementation",
+                "jvmWithJavaPlainJvmTestRuntimeClasspath",
+                "jvmWithJavaPlainJvmTestRuntimeOnly",
+            )
+
             val outgoingConfigurations = listOf(
                 "jvmWithJavaApiElements",
                 "jvmWithJavaRuntimeElements",
                 "jvmWithJavaSourcesElements",
             )
+
+            // They are created together with target.kotlinComponents
+            val outgoingPublishedConfigurations = outgoingConfigurations.map { "$it-published" }
 
             val testJavaConfigurations = listOf(
                 "testCompileClasspath",
@@ -386,7 +410,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
             val expectedConfigurationsWithDisambiguationAttribute = javaConfigurations +
                     kotlinJvmConfigurations +
+                    javaWithJavaJvmConfigurations +
+                    javaPlainJvmConfigurations +
+                    jvmWithJavaPlainJvmConfigurations +
                     outgoingConfigurations +
+                    outgoingPublishedConfigurations +
                     testJavaConfigurations +
                     jvmWithJavaTestConfigurations
 
@@ -438,7 +466,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     dependencies {
                         api(
                             // Deprecated in KT-58759, remove test after deletion
-                            @Suppress("DEPRECATION")
+                            @Suppress("DEPRECATION_ERROR")
                             platform("test:platform-dependency:1.0.0")
                         )
                     }
@@ -465,7 +493,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     dependencies {
                         implementation(
                             // Deprecated in KT-58759, remove test after deletion
-                            @Suppress("DEPRECATION")
+                            @Suppress("DEPRECATION_ERROR")
                             enforcedPlatform("test:enforced-platform-dependency")
                         )
                     }
@@ -504,6 +532,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 kotlin {
                     jvm()
                     js().nodejs()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
                     iosArm64()
                 }
@@ -518,8 +547,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     extensions.asMap.keys,
                     kotlin.sourceSets.names,
                     kotlin.targets.names,
-                    @Suppress("DEPRECATION")
-                    kotlin.presets.names,
+                    @Suppress("DEPRECATION_ERROR")
+                    kotlin.presetFunctions.presets.names,
                 ).flatten()
             }
 
@@ -575,10 +604,12 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm { attributes { attribute(distinguishingAttribute, "jvm") } }
                 jvm("jvm2") { attributes { attribute(distinguishingAttribute, "jvm2") } }
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 macosX64 {
                     binaries.framework("main", listOf(NativeBuildType.DEBUG))
                 }
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
                     binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
@@ -626,6 +657,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             plugins.apply("maven-publish")
             kotlin {
                 jvm()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     attributes { attribute(attribute, "foo") }
                 }
@@ -648,5 +680,20 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         val iosArm64MetadataElements = project.configurations.getByName("iosArm64MetadataElements")
         assertEquals("bar", iosArm64HostSpecificMetadataDependencies.attributes.getAttribute(attribute))
         assertEquals("bar", iosArm64MetadataElements.attributes.getAttribute(attribute))
+    }
+
+    @Test
+    fun compileClasspathConfigurationHasCorrectNameForJvmWithJavaLibraryProject() {
+        val project = buildProjectWithJvm {
+            project.plugins.apply("java-library")
+        }
+        assertEquals("Compile classpath for 'main'.", project.configurations.getByName("compileClasspath").description)
+    }
+
+    @Test
+    fun `kotlinBouncyCastleConfiguration not created when not needed`() {
+        kotlin.jvm()
+        project.evaluate()
+        assertTrue { project.configurations.none { it.name == "kotlinBouncyCastleConfiguration" } }
     }
 }

@@ -8,7 +8,6 @@ package kotlin.collections
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The map is invariant in its value type.
  */
-@AllowDifferentMembersInActual // New 'AbstractMap` supertype is added compared to the expect declaration
 @SinceKotlin("1.1")
 public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
     /**
@@ -16,6 +15,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
+    @IgnorableReturnValue
     actual abstract override fun put(key: K, value: V): V?
 
 
@@ -25,6 +25,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         }
     }
 
+    @IgnorableReturnValue
     actual override fun remove(key: K): V? {
         val iter = entries.iterator()
         while (iter.hasNext()) {

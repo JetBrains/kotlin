@@ -14,10 +14,11 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.android.*
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -37,47 +38,54 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     }
 
     init {
-        android.compileSdk = 31
+        android.configureDefaults()
     }
 
     @Test
     fun `test - main SourceSet - is called 'androidMain'`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         assertEquals("androidMain", project.getKotlinSourceSetOrFail(android.sourceSets.main).name)
     }
 
     @Test
     fun `test - main SourceSet name - with custom targetName`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget("foo")
         assertEquals("fooMain", project.getKotlinSourceSetOrFail(android.sourceSets.main).name)
     }
 
     @Test
     fun `test - unitTest SourceSet - is called 'androidUnitTest'`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         assertEquals("androidUnitTest", project.getKotlinSourceSetOrFail(android.sourceSets.test).name)
     }
 
     @Test
     fun `test - unitTest SourceSet name - with custom targetName`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget("foo")
         assertEquals("fooUnitTest", project.getKotlinSourceSetOrFail(android.sourceSets.test).name)
     }
 
     @Test
     fun `test - instrumentedTest SourceSet - is called 'androidInstrumentedTest'`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         assertEquals("androidInstrumentedTest", project.getKotlinSourceSetOrFail(android.sourceSets.androidTest).name)
     }
 
     @Test
     fun `test instrumentedTest SourceSet - with custom targetName`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget("foo")
         assertEquals("fooInstrumentedTest", project.getKotlinSourceSetOrFail(android.sourceSets.androidTest).name)
     }
 
     @Test
     fun `test SourceSet names - with two flavorDimensions`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
@@ -114,6 +122,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - all source directories - are disjoint in source sets`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
@@ -147,6 +156,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - default dependsOn edges`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         project.evaluate()
 
@@ -183,6 +193,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - kotlin source directories - are in sync between KotlinSourceSet and AndroidSourceSet`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         project.forAllAndroidVariants { variant ->
@@ -211,6 +222,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - kotlin source directories - supports AGP default location`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         project.forAllAndroidVariants { variant ->
@@ -228,6 +240,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - main - default AndroidManifest location`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         assertEquals(
@@ -250,6 +263,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         android.sourceSets.main.manifest.srcFile(customManifestFile)
 
         /* Then: Setup Kotlin/Android target */
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         assertEquals(
@@ -260,6 +274,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - defaultKotlinSourceSetName - is determined for all compilations`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
@@ -269,9 +284,12 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         android.productFlavors.create("free").dimension = "price"
         project.evaluate()
 
+        @Suppress("DEPRECATION")
         kotlin.androidTarget().compilations.all { compilation ->
+            @Suppress("DEPRECATION") val androidVariant = compilation.androidVariant
+                ?: throw IllegalStateException("'androidVariant' is 'null' for ${compilation.name} compilation")
             val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming
-                .defaultKotlinSourceSetName(kotlin.androidTarget(), compilation.androidVariant)
+                .defaultKotlinSourceSetName(kotlin.androidTarget(), androidVariant)
 
             assertNotNull(
                 defaultKotlinSourceSetName,
@@ -280,6 +298,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
             val kotlinSourceSet = kotlin.sourceSets.getByName(defaultKotlinSourceSetName)
 
+            @Suppress("DEPRECATION")
             assertEquals(
                 setOf(compilation.androidVariant.name), kotlinSourceSet.androidSourceSetInfo.androidVariantNames,
                 "Expected KotlinSourceSet ${kotlinSourceSet.name} to only mention androidVariant ${compilation.androidVariant.name}"
@@ -289,6 +308,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - defaultKotlinSourceSetName`() {
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
@@ -298,31 +318,37 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         android.productFlavors.create("free").dimension = "price"
         project.evaluate()
 
+        @Suppress("DEPRECATION")
         assertEquals(
             "androidGermanFreeDebug",
             kotlin.androidTarget().compilations.getByName("germanFreeDebug").defaultSourceSet.name
         )
 
+        @Suppress("DEPRECATION")
         assertEquals(
             "androidUsaFreeDebug",
             kotlin.androidTarget().compilations.getByName("usaFreeDebug").defaultSourceSet.name
         )
 
+        @Suppress("DEPRECATION")
         assertEquals(
             "androidGermanPaidRelease",
             kotlin.androidTarget().compilations.getByName("germanPaidRelease").defaultSourceSet.name
         )
 
+        @Suppress("DEPRECATION")
         assertEquals(
             "androidUsaPaidRelease",
             kotlin.androidTarget().compilations.getByName("usaPaidRelease").defaultSourceSet.name
         )
 
+        @Suppress("DEPRECATION")
         assertEquals(
             "androidUnitTestGermanFreeDebug",
             kotlin.androidTarget().compilations.getByName("germanFreeDebugUnitTest").defaultSourceSet.name
         )
 
+        @Suppress("DEPRECATION")
         assertEquals(
             "androidInstrumentedTestGermanFreeDebug",
             kotlin.androidTarget().compilations.getByName("germanFreeDebugAndroidTest").defaultSourceSet.name

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private const val KOTLIN = "kotlin"
 private const val GET = "get"
@@ -39,7 +39,7 @@ internal fun buildCall(
     type: IrType? = null,
     origin: IrStatementOrigin? = null,
     typeArguments: List<IrType> = emptyList(),
-    valueArguments: List<IrExpression?> = emptyList()
+    arguments: List<IrExpression?> = emptyList()
 ): IrCall =
     IrCallImpl(
         startOffset,
@@ -47,15 +47,10 @@ internal fun buildCall(
         type ?: target.owner.returnType,
         target,
         typeArguments.size,
-        valueArguments.size,
         origin
     ).apply {
-        typeArguments.let {
-            it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
-        }
-        valueArguments.let {
-            it.withIndex().forEach { (i, arg) -> putValueArgument(i, arg) }
-        }
+        this.typeArguments.assignFrom(typeArguments)
+        this.arguments.assignFrom(arguments)
     }
 
 internal fun IrFactory.buildBlockBody(statements: List<IrStatement>) =
@@ -74,8 +69,7 @@ internal fun IrPluginContext.buildSetField(
         receiver,
         value,
         irBuiltIns.unitType,
-        IrStatementOrigin.GET_PROPERTY,
-        superQualifierSymbol
+        superQualifierSymbol = superQualifierSymbol
     )
 
 internal fun buildGetField(
@@ -90,8 +84,7 @@ internal fun buildGetField(
         symbol,
         type ?: symbol.owner.type,
         receiver,
-        IrStatementOrigin.GET_PROPERTY,
-        superQualifierSymbol
+        superQualifierSymbol = superQualifierSymbol
     )
 
 internal fun buildSimpleType(
@@ -119,15 +112,10 @@ internal fun buildGetValue(
 
 internal fun IrPluginContext.buildConstNull() = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.anyNType)
 
-internal fun IrExpression.isConstNull() = this is IrConst<*> && this.kind.asString == "Null"
+internal fun IrExpression.isConstNull() = this is IrConst && this.kind.asString == "Null"
 
 internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
-
-internal fun IrFunctionAccessExpression.getValueArguments() =
-    (0 until valueArgumentsCount).map { i ->
-        getValueArgument(i)
-    }
 
 internal fun IrValueParameter.capture() = buildGetValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol)
 
@@ -181,8 +169,8 @@ internal fun IrPluginContext.buildArrayElementAccessor(
     val returnType = if (isSetter) irBuiltIns.unitType else valueType
     val name = if (isSetter) arrayField.setterName() else arrayField.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
-        val valueParameter = buildValueParameter(this, name, 0, valueType)
-        this.valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        val valueParameter = buildValueParameter(this, name, valueType)
+        this.parameters = if (isSetter) listOf(valueParameter) else emptyList()
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {
@@ -192,10 +180,8 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = setSymbol,
                         type = irBuiltIns.unitType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(index, valueParameter.capture())
-                    ).apply {
-                        this.dispatchReceiver = arrayGetter
-                    }
+                        arguments = listOf(arrayGetter, index, valueParameter.capture())
+                    )
                 } else {
                     val getField = buildGetField(arrayField, arrayGetter.dispatchReceiver)
                     val getSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType), GET)
@@ -204,10 +190,8 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = getSymbol,
                         type = valueType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(index)
-                    ).apply {
-                        dispatchReceiver = getField
-                    }
+                        arguments = listOf(getField, index)
+                    )
                 }
             )
         )
@@ -231,8 +215,8 @@ internal fun IrPluginContext.buildFieldAccessor(
     val returnType = if (isSetter) irBuiltIns.unitType else valueType
     val name = if (isSetter) field.setterName() else field.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
-        val valueParameter = buildValueParameter(this, name, 0, valueType)
-        valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        val valueParameter = buildValueParameter(this, name, valueType)
+        if (isSetter) parameters += valueParameter
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {
@@ -257,54 +241,52 @@ internal fun IrCall.getBackingField(): IrField =
         propertySymbol.owner.backingField ?: error("Property expected to have backing field")
     } ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
 
-@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.referencePackageFunction(
     packageName: String,
     name: String,
     predicate: (IrFunctionSymbol) -> Boolean = { true }
 ): IrSimpleFunctionSymbol = try {
-        referenceFunctions(FqName("$packageName.$name")).single(predicate)
-    } catch (e: RuntimeException) {
-        error("Exception while looking for the function `$name` in package `$packageName`: ${e.message}")
-    }
+    finderForBuiltins().findFunctions(CallableId(FqName(packageName), Name.identifier(name))).single(predicate)
+} catch (e: RuntimeException) {
+    error("Exception while looking for the function `$name` in package `$packageName`: ${e.message}")
+}
 
-@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, functionName: String): IrSimpleFunctionSymbol {
-    val functionId = FqName("$KOTLIN.${classSymbol.owner.name}.$functionName")
+    val functionId = CallableId(FqName("$KOTLIN.${classSymbol.owner.name}"), Name.identifier(functionName))
     return try {
-        referenceFunctions(functionId).single()
+        finderForBuiltins().findFunctions(functionId).single()
     } catch (e: RuntimeException) {
         error("Exception while looking for the function `$functionId`: ${e.message}")
     }
 }
 
-@OptIn(FirIncompatiblePluginAPI::class)
 private fun IrPluginContext.referenceArrayClass(irType: IrSimpleType): IrClassSymbol {
-    val jsArrayName = irType.getArrayClassFqName()
-    return referenceClass(jsArrayName) ?: error("Array class $jsArrayName was not found in the context")
+    val jsArrayName = irType.getArrayClassClassId()
+    return finderForBuiltins().findClass(jsArrayName) ?: error("Array class $jsArrayName was not found in the context")
 }
 
-@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.getArrayConstructorSymbol(
     irType: IrSimpleType,
     predicate: (IrConstructorSymbol) -> Boolean = { true }
 ): IrConstructorSymbol {
-    val jsArrayName = irType.getArrayClassFqName()
+    val jsArrayName = irType.getArrayClassClassId()
     return try {
-        referenceConstructors(jsArrayName).single(predicate)
-    } catch (e: RuntimeException) {
+        finderForBuiltins().findConstructors(jsArrayName).single(predicate)
+    } catch (_: RuntimeException) {
         error("Array constructor $jsArrayName matching the predicate was not found in the context")
     }
 }
 
-private fun IrSimpleType.getArrayClassFqName(): FqName =
-    classifier.signature?.let { signature ->
+private fun IrSimpleType.getArrayClassClassId(): ClassId {
+    val fqName = classifier.signature?.let { signature ->
         signature.getDeclarationNameBySignature().let { name ->
             AFU_ARRAY_CLASSES[name]?.let { jsArrayName ->
                 FqName("$KOTLIN.$jsArrayName")
             }
         }
     } ?: error("Unexpected array type ${this.render()}")
+    return ClassId.topLevel(fqName)
+}
 
 internal fun IdSignature.getDeclarationNameBySignature(): String? {
     val commonSignature = if (this is IdSignature.AccessorSignature) accessorSignature else asPublic()

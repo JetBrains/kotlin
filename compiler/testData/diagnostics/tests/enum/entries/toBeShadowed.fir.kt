@@ -1,4 +1,5 @@
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
 // ISSUE: KT-56587
 
@@ -8,7 +9,7 @@ enum class E05 {
 }
 
 fun test05() {
-    println(<!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>E05.entries<!>)
+    println(<!DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER!>E05.entries<!>)
 }
 
 enum class E07(val entries: String) {
@@ -44,3 +45,6 @@ enum class E10 : I01 {
         println(entries)
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, functionDeclaration, getter, interfaceDeclaration, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

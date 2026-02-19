@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 val x1: (String) -> Unit = run {
     lambda@{ foo ->
@@ -27,3 +28,6 @@ val x4: (String) -> Unit = run {
 
 fun bar(s: String) {}
 fun <R> run(block: () -> R): R = block()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, propertyDeclaration,
+typeParameter */

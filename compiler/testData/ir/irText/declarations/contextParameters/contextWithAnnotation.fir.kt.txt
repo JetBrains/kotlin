@@ -1,0 +1,50 @@
+@Target(allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER])
+open annotation class Ann : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Target(allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY])
+open annotation class AnnotationWithConstructor : Annotation {
+  val k: String
+    field = k
+    get
+
+  constructor(k: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+context(@Ann a: @Ann String)
+fun annotationOnContext() {
+}
+
+context(@AnnotationWithConstructor(k = "") a: @AnnotationWithConstructor(k = "") String)
+fun annotationWithConstructor() {
+}
+
+fun functionType(f: Function1<@Ann String, Unit>) {
+}
+
+fun functionTypeWithConstructor(f: Function1<@AnnotationWithConstructor(k = "") String, Unit>) {
+}
+
+val annotationOnContextProperty: String
+  context(@Ann a: @Ann String)
+  get(): String {
+    return ""
+  }
+
+val annotationWithConstructorProperty: String
+  context(@AnnotationWithConstructor(k = "") a: @AnnotationWithConstructor(k = "") String)
+  get(): String {
+    return ""
+  }
+

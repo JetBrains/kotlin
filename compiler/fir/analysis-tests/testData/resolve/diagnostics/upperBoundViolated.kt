@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A
 
 class B<T> where T : A
@@ -15,7 +16,7 @@ fun test() {
     val b2 = B<C>()
     val b3 = B<<!UPPER_BOUND_VIOLATED!>Any?<!>>()
     val b4 = B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>>()<!UNRESOLVED_REFERENCE!>NL<!><!SYNTAX!><<!>Int<!SYNTAX!><!SYNTAX!>><!>()<!>NumberPhile<!SYNTAX!><!>
-    val b5 = B<<!UPPER_BOUND_VIOLATED!>B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>><!>>()
+    val b5 = B<<!UPPER_BOUND_VIOLATED("A; B<??? (Unresolved qualified name: UnexistingType)>")!>B<<!UNRESOLVED_REFERENCE("UnexistingType")!>UnexistingType<!>><!>>()
     fest<<!UPPER_BOUND_VIOLATED!>Boolean<!>>()
     fest<C>()
     fest<HHH>()
@@ -45,11 +46,11 @@ fun <K, L : K> rest() {
 class NumColl<T : Collection<Number>>
 typealias NL<K> = NumColl<List<K>>
 val test7 = NL<Int>()<!UNRESOLVED_REFERENCE!>NumberPhile<!><!SYNTAX!><!>
-val test8 = <!UPPER_BOUND_VIOLATED!>NL<String>()<!>
+val test8 = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>NL<String>()<!>
 
 class NumberPhile<T: Number>(x: T)
 val np1 = NumberPhile(10)
-val np2 = NumberPhile(<!ARGUMENT_TYPE_MISMATCH!>"Test"<!>)
+val np2 = <!CANNOT_INFER_PARAMETER_TYPE!>NumberPhile<!>(<!ARGUMENT_TYPE_MISMATCH!>"Test"<!>)
 
 class Test1<S1 : Test1<S1, K>, K : Any>
 class Test2<S2 : Test1<S2, *>>
@@ -70,4 +71,7 @@ abstract class Base<T : Base<T>> {}
 class DerivedOut<out O : Base<out O>> {}
 class DerivedIn<in I : Base<in I>> {}
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, in, inProjection, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, out, outProjection, primaryConstructor, propertyDeclaration,
+starProjection, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

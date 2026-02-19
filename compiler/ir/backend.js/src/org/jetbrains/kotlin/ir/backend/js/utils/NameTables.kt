@@ -9,41 +9,19 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.js.common.isES5IdentifierPart
-import org.jetbrains.kotlin.js.common.isES5IdentifierStart
-import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
-import kotlin.collections.set
 import kotlin.math.abs
-
-// TODO remove direct usages of [mapToKey] from [NameTable] & co and move it to scripting & REPL infrastructure. Review usages.
-private fun <T> mapToKey(declaration: T): String {
-    return with(JsManglerIr) {
-        if (declaration is IrDeclaration) {
-            try {
-                declaration.hashedMangle(compatibleMode = false).toString()
-            } catch (e: Throwable) {
-                // FIXME: We can't mangle some local declarations. But
-                "wrong_key"
-            }
-        } else if (declaration is String) {
-            declaration.hashMangle.toString()
-        } else {
-            error("Key is not generated for " + declaration?.let { it::class.simpleName })
-        }
-    }
-}
 
 abstract class NameScope {
     abstract fun isReserved(name: String): Boolean
@@ -55,8 +33,7 @@ abstract class NameScope {
 
 class NameTable<T>(
     val parent: NameScope = EmptyScope,
-    val reserved: MutableSet<String> = mutableSetOf(),
-    val mappedNames: MutableMap<String, String>? = null,
+    val reserved: MutableSet<String> = hashSetOf(),
 ) : NameScope() {
     val names = mutableMapOf<T, String>()
 
@@ -69,11 +46,10 @@ class NameTable<T>(
     fun declareStableName(declaration: T, name: String) {
         names[declaration] = name
         reserved.add(name)
-        mappedNames?.set(mapToKey(declaration), name)
     }
 
     fun declareFreshName(declaration: T, suggestedName: String): String {
-        val freshName = findFreshName(sanitizeName(suggestedName))
+        val freshName = findFreshName(makeValidES5Identifier(suggestedName))
         declareStableName(declaration, freshName)
         return freshName
     }
@@ -126,17 +102,28 @@ private fun List<IrType>.joinTypes(context: JsIrBackendContext): String {
 
 private fun IrFunction.findOriginallyContainingModule(): IrModuleFragment? {
     if (JsLoweredDeclarationOrigin.isBridgeDeclarationOrigin(origin)) {
-        val thisSimpleFunction = this as? IrSimpleFunction ?: error("Bridge must be IrSimpleFunction")
-        val bridgeFrom = thisSimpleFunction.overriddenSymbols.firstOrNull() ?: error("Couldn't find the overridden function for the bridge")
+        val thisSimpleFunction = this as? IrSimpleFunction
+            ?: irError("Bridge must be IrSimpleFunction") {
+                withIrEntry("this", this@findOriginallyContainingModule)
+            }
+        val bridgeFrom = thisSimpleFunction.overriddenSymbols.firstOrNull()
+            ?: irError("Couldn't find the overridden function for the bridge") {
+                withIrEntry("thisSimpleFunction", thisSimpleFunction)
+            }
         return bridgeFrom.owner.findOriginallyContainingModule()
     }
     return (getPackageFragment() as? IrFile)?.module
 }
 
-fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
-    val declarationName = declaration.nameIfPropertyAccessor() ?: declaration.getJsNameOrKotlinName().asString()
-
+fun calculateJsFunctionSignature(
+    symbolKey: String?,
+    declaration: IrFunction,
+    context: JsIrBackendContext
+): String {
     val nameBuilder = StringBuilder()
+    val declarationName = symbolKey ?: declaration.nameIfPropertyAccessor() ?: declaration.getJsNameOrKotlinName().asString()
+    if (symbolKey != null) nameBuilder.append("_\$js_s_")
+
     nameBuilder.append(declarationName)
 
     if (declaration.visibility === INTERNAL && declaration.parentClassOrNull != null) {
@@ -153,15 +140,24 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
             nameBuilder.append("_").append(typeParam.name.asString()).append(typeParam.superTypes.joinTypes(context))
         }
     }
-    declaration.extensionReceiverParameter?.let {
-        val superTypes = it.type.superTypes().joinTypes(context)
-        nameBuilder.append("_r$${it.type.asString(context)}$superTypes")
-    }
-    declaration.valueParameters.ifNotEmpty {
-        joinTo(nameBuilder, "") {
-            val defaultValueSign = if (it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER) "?" else ""
-            val superTypes = it.type.superTypes().joinTypes(context)
-            "_${it.type.asString(context)}$superTypes$defaultValueSign"
+
+    for (parameter in declaration.parameters) {
+        when (parameter.kind) {
+            IrParameterKind.DispatchReceiver -> continue
+            IrParameterKind.ExtensionReceiver -> {
+                nameBuilder.append("_r$")
+            }
+            IrParameterKind.Context -> {
+                nameBuilder.append("_c$")
+            }
+            IrParameterKind.Regular -> {
+                nameBuilder.append("_")
+            }
+        }
+        nameBuilder.append(parameter.type.asString(context))
+        nameBuilder.append(parameter.type.superTypes().joinTypes(context))
+        if (parameter.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER) {
+            nameBuilder.append("?")
         }
     }
     declaration.returnType.let {
@@ -175,15 +171,15 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
     val signature = abs(nameBuilder.toString().hashCode()).toString(Character.MAX_RADIX)
 
     // TODO: Use better hashCode
-    val sanitizedName = sanitizeName(declarationName, withHash = false)
-    return context.globalInternationService.string("${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX")
+    val sanitizedName = makeValidES5Identifier(declarationName, withHash = false)
+    return context.globalIrInterner.string("${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX")
 }
 
 fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
-
-    if (declaration.hasStableJsName(context)) {
+    val symbol = declaration.getJsSymbolForOverriddenDeclaration()
+    if (symbol == null && declaration.hasStableJsName(context)) {
         val declarationName = declaration.getJsNameOrKotlinName().asString()
         // TODO: Handle reserved suffix in FE
         require(!declarationName.endsWith(RESERVED_MEMBER_NAME_SUFFIX)) {
@@ -193,10 +189,10 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): S
     }
 
     val declarationSignature = (declaration as? IrSimpleFunction)?.resolveFakeOverride() ?: declaration
-    return calculateJsFunctionSignature(declarationSignature, context)
+    return calculateJsFunctionSignature(symbol, declarationSignature, context)
 }
 
-class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElementVisitorVoid {
+class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrVisitorVoid() {
     val localLoopNames = NameTable<IrLoop>()
     val localReturnableBlockNames = NameTable<IrReturnableBlock>()
 
@@ -271,29 +267,6 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
     }
 }
 
-fun sanitizeName(name: String, withHash: Boolean = true): String {
-    if (name.isValidES5Identifier()) return name
-    if (name.isEmpty()) return "_"
-
-    // 7 = _ + MAX_INT.toString(Character.MAX_RADIX)
-    val builder = StringBuilder(name.length + if (withHash) 7 else 0)
-
-    val first = name.first()
-
-    builder.append(first.mangleIfNot(Char::isES5IdentifierStart))
-
-    for (idx in 1..name.lastIndex) {
-        val c = name[idx]
-        builder.append(c.mangleIfNot(Char::isES5IdentifierPart))
-    }
-
-    return if (withHash) {
-        "${builder}_${abs(name.hashCode()).toString(Character.MAX_RADIX)}"
-    } else {
-        builder.toString()
-    }
-}
-
 fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
     if (this is IrSimpleFunction) {
         return when {
@@ -303,7 +276,9 @@ fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
                 val prefix = when (this) {
                     property.getter -> "get_"
                     property.setter -> "set_"
-                    else -> error("")
+                    else -> irError("") {
+                        withIrEntry("this", this@nameIfPropertyAccessor)
+                    }
                 }
                 prefix + name
             }
@@ -319,9 +294,6 @@ fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
     }
     return null
 }
-
-private inline fun Char.mangleIfNot(predicate: Char.() -> Boolean) =
-    if (predicate()) this else '_'
 
 private const val SYNTHETIC_LOOP_LABEL = "\$l\$loop"
 private const val SYNTHETIC_BLOCK_LABEL = "\$l\$block"

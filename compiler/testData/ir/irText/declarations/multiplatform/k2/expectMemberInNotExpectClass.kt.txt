@@ -1,0 +1,30 @@
+// FILE: common.kt
+
+class C2 : C1 {
+  constructor() /* primary */ {
+    super/*C1*/()
+    /* <init>() */
+
+  }
+
+}
+
+// FILE: platform.kt
+
+open class C1 {
+  val p: Int
+    field = 42
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun f(): String {
+    return "O"
+  }
+
+}
+

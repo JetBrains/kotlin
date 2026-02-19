@@ -389,7 +389,7 @@ class CandidateResolver(
                         }
                     }
                 }
-                argumentTypes.add(resultingType)
+                if (resultingType != null) argumentTypes.add(resultingType)
                 candidateCall.recordArgumentMatchStatus(argument, matchStatus)
             }
         }

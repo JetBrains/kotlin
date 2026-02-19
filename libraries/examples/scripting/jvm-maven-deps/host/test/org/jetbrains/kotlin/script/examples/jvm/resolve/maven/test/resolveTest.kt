@@ -14,6 +14,16 @@ import kotlin.script.experimental.api.ResultWithDiagnostics
 class ResolveTest {
 
     @Test
+    fun testNoDeps() {
+        val res = evalFile(File("testData/hello-no-deps.scriptwithdeps.kts"))
+
+        Assert.assertTrue(
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            res is ResultWithDiagnostics.Success
+        )
+    }
+
+    @Test
     fun testResolveJunit() {
         val res = evalFile(File("testData/hello-maven-resolve-junit.scriptwithdeps.kts"))
 
@@ -28,10 +38,10 @@ class ResolveTest {
         val res = evalFile(File("testData/hello-unresolved-junit.scriptwithdeps.kts"))
 
         Assert.assertTrue(
-            "test failed - expecting a failure with the message \"Unresolved reference: junit\" but received " +
+            "test failed - expecting a failure with the message \"Unresolved reference 'junit'\" but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
                     ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference: junit") })
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference 'junit'.") })
     }
 
     @Test

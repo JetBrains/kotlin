@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 const val u0 = 1u
@@ -13,3 +14,5 @@ const val u7 = 1uL
 const val u8 = 1UL
 const val u9 = 1UL
 const val u10 = 0xFFFF_FFFF_FFFFuL
+
+/* GENERATED_FIR_TAGS: const, propertyDeclaration, unsignedLiteral */

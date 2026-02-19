@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57446
 
@@ -12,3 +13,5 @@ fun test2() : suspend (Int) -> Unit = when {
 }
 
 suspend fun foo(x: Int) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, suspend, whenExpression */

@@ -33,8 +33,8 @@ internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: (IrFunctionAcce
     put(from, to)
 }
 
-internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: IrSimpleFunctionSymbol, dispatchReceiverAsFirstArgument: Boolean = false) {
-    put(from) { call -> irCall(call, to, dispatchReceiverAsFirstArgument) }
+internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: IrSimpleFunctionSymbol) {
+    put(from) { call -> irCall(call, to) }
 }
 
 internal fun <K> MutableMap<K, (IrFunctionAccessExpression) -> IrExpression>.addWithPredicate(
@@ -48,7 +48,7 @@ internal fun <K> MutableMap<K, (IrFunctionAccessExpression) -> IrExpression>.add
 internal typealias MemberToTransformer = HashMap<SimpleMemberKey, (IrFunctionAccessExpression) -> IrExpression>
 
 internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrSimpleFunctionSymbol) {
-    add(type, name) { irCall(it, v, receiversAsArguments = true) }
+    add(type, name) { irCall(it, v) }
 }
 
 internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrSimpleFunction) {
@@ -60,21 +60,3 @@ internal fun MemberToTransformer.add(type: IrType, name: Name, v: (IrFunctionAcc
 }
 
 internal data class SimpleMemberKey(val klass: IrType, val name: Name)
-
-enum class PrimitiveType {
-    FLOATING_POINT_NUMBER,
-    INTEGER_NUMBER,
-    STRING,
-    BOOLEAN,
-    OTHER
-}
-
-fun IrType.getPrimitiveType() = makeNotNull().run {
-    when {
-        isBoolean() -> PrimitiveType.BOOLEAN
-        isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER
-        isFloat() || isDouble() -> PrimitiveType.FLOATING_POINT_NUMBER
-        isString() -> PrimitiveType.STRING
-        else -> PrimitiveType.OTHER
-    }
-}

@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: JavaImpl.java
 
 public class JavaImpl implements KotlinInterface {
@@ -20,7 +21,6 @@ public @interface JavaAnnotation {
 }
 
 // FILE: kt25489.kt
-// TARGET_BACKEND: JVM
 // Note: if you wish to reproduce KT-25489, turn UL classes OFF
 
 @JavaAnnotation(`as` = JavaImpl::class)

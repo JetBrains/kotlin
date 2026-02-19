@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuringInsideCallChain.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun main([ResolvedTo(ANNOTATION_ARGUMENTS)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 private object Case1 {
     interface Validator<in T>
@@ -31,3 +32,7 @@ private object Case2 {
 
     fun <T> listOf(vararg elements: T): List<T> = TODO()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, localProperty, nestedClass, nullableType, objectDeclaration, out, outProjection,
+primaryConstructor, propertyDeclaration, typeParameter, vararg */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // API_VERSION: 1.5
 // LANGUAGE: +JvmRecordSupport
@@ -19,3 +20,5 @@ fun foo(mr: MyRecord) {
     takeString(mr.x)
     takeString(mr.x())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType */

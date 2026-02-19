@@ -1,6 +1,8 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
+
 
 @file:Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
 

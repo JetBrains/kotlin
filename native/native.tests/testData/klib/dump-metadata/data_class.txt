@@ -1,16 +1,53 @@
-    data class DataClass constructor(intProp: Int, stringProp: String) {
-        val intProp: Int
-        val nonConstructorProp: Int = 0
-        val stringProp: String
-        operator fun component1(): Int
-        operator fun component2(): String
-        fun copy(intProp: Int = ..., stringProp: String = ...): DataClass
-        override fun equals(other: Any?): Boolean
-        override fun hashCode(): Int
-        override fun toString(): String
+library {
+  // module name: <data_class.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/DataClass
+    // class name: test/DataObject
+
+    public final data class test/DataClass : kotlin/Any {
+
+      public constructor(intProp: kotlin/Int, stringProp: kotlin/String)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      public final /* synthesized */ fun copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
+
+      // must-use return value
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      // must-use return value
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      // must-use return value
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val intProp: kotlin/Int
+        public final get
+
+      public final val nonConstructorProp: kotlin/Int /* = ... */
+        public final get
+
+      public final val stringProp: kotlin/String
+        public final get
     }
-    data object DataObject {
-        override fun equals(other: Any?): Boolean
-        override fun hashCode(): Int
-        override fun toString(): String
+
+    public final data object test/DataObject : kotlin/Any {
+
+      private constructor()
+
+      // must-use return value
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      // must-use return value
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      // must-use return value
+      public open /* synthesized */ fun toString(): kotlin/String
     }
+  }
+}

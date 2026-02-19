@@ -1,0 +1,8 @@
+BODY_RESOLVE:
+TARGET: public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|library/TopLevelClass|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|library/TopLevelClass| = R|library/TopLevelClass.TopLevelClass|(String(arg))
+    }

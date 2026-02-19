@@ -1,5 +1,6 @@
-// !LANGUAGE: -ProhibitInnerClassesOfGenericClassExtendingThrowable
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitInnerClassesOfGenericClassExtendingThrowable
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
 
 class OuterGeneric<T> {
@@ -39,3 +40,6 @@ fun <T> genericFoo() {
 
     val errorkAnonymousObjectExnInGenericFun = <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>object<!> : Exception() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass,
+localProperty, nestedClass, nullableType, propertyDeclaration, typeParameter */

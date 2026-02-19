@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
 
@@ -45,9 +46,12 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         run<dynamic> { "" }
     }
 
-    if (iUnit is String) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>iUnit is String<!>) {
         launch {
-            run(A.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>flexible<!>(iUnit)) { 42 }
+            run(A.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>flexible<!>(iUnit)) { 42 }
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, functionalType, ifExpression, integerLiteral,
+intersectionType, isExpression, javaFunction, lambdaLiteral, nullableType, smartcast, stringLiteral, typeParameter */

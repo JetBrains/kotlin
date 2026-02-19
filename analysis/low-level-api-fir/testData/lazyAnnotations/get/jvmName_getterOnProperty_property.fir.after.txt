@@ -1,0 +1,2 @@
+public? final? [ResolvedTo(RAW_FIR)] val property: Int
+    @PROPERTY_GETTER:JvmName[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): Int

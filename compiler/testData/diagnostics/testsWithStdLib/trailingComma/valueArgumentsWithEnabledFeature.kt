@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -UNUSED_ANONYMOUS_PARAMETER
-// !LANGUAGE: +TrailingCommas
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -UNUSED_ANONYMOUS_PARAMETER
+// LANGUAGE: +TrailingCommas
 
 @Target(AnnotationTarget.TYPE)
 annotation class Anno1(val x: IntArray)
@@ -67,3 +68,7 @@ fun main2(x: A1) {
     <!UNREACHABLE_CODE!>val x1 =<!> x[object {}, return, ]
     <!UNREACHABLE_CODE!>val x2 = x[fun () {}, throw Exception(), /**/]<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, anonymousObjectExpression, classDeclaration,
+collectionLiteral, functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty,
+operator, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, vararg */

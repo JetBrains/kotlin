@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> getT() {}
 fun <A, B> getTT() {}
 fun <A, B, C> getTTT(x : Any) {}
@@ -11,3 +12,5 @@ public fun main() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>getTT<!><Int, <!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
     foo(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>getTTT<!><Int, <!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>, Int>(1))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter */

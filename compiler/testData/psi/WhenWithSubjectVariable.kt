@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test() {
     when (val x1 = foo) {}
     when (val x2t: T) {}

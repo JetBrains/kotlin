@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 // val p1: true
@@ -10,7 +11,9 @@ val p2 = -1.toLong()
 val p3 = -1.toByte()
 
 // val p4: false
-val p4 = -1.toInt()
+val p4 = -1L.toInt()
 
 // val p5: false
 val p5 = -1.toShort()
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, unaryExpression */

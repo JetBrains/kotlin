@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 
-class BuildExecutionData(
+data class BuildExecutionData(
+    val metrics: List<BuildPerformanceMetric>,
     val startParameters: BuildStartParameters,
     val failureMessages: List<String?>,
-    val buildOperationRecord: Collection<BuildOperationRecord>
+    val buildOperationRecord: Collection<BuildOperationRecord>,
 ) {
-    val aggregatedMetrics by lazy {
-        BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>().also { acc ->
-            buildOperationRecord.forEach { acc.addAll(it.buildMetrics) }
-        }
+    val aggregatedMetrics = BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>().also { acc ->
+        buildOperationRecord.forEach { acc.addAll(it.buildMetrics) }
     }
+
 }

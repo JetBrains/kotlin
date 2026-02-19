@@ -1,0 +1,2 @@
+KtLabelReferenceExpression(76,80): '@Foo'
+  NO_CANDIDATES

@@ -1,3 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
+// In K2, the name collision detector is weakened, because the backend started to resolve such collisions.
+// K1 was not changed since it's in maintenance mode.
+
 interface I {
     @JsName("bar")
     fun foo()
@@ -13,9 +17,7 @@ interface J {
 }
 
 class A : I, J {
-    // Duplicate diagnostics are expected here, since `bar()` function gets both `foo` and `bar` names and clashes with both
-    // names of `foo()` function.
-    <!JS_NAME_CLASH, JS_NAME_CLASH!>override fun bar()<!> {}
+    override fun bar() {}
 
-    <!JS_NAME_CLASH, JS_NAME_CLASH!>override fun foo()<!> {}
+    override fun foo() {}
 }

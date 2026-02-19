@@ -1,0 +1,28 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /DeepCopyIrTreeWithSymbols { // /DeepCopyIrTreeWithSymbols|null[0]
+    constructor <init>(/TypeRemapper) // /DeepCopyIrTreeWithSymbols.<init>|<init>(TypeRemapper){}[0]
+    final fun (/IrTypeParametersContainer).copyTypeParametersFrom(/IrTypeParametersContainer) // /DeepCopyIrTreeWithSymbols.copyTypeParametersFrom|copyTypeParametersFrom@IrTypeParametersContainer(IrTypeParametersContainer){}[0]
+}
+abstract interface /IrDeclaration // /IrDeclaration|null[0]
+abstract interface /IrDeclarationParent // /IrDeclarationParent|null[0]
+abstract interface /IrType // /IrType|null[0]
+abstract interface /IrTypeParameter : /IrDeclaration { // /IrTypeParameter|null[0]
+    abstract val superTypes // /IrTypeParameter.superTypes|{}superTypes[0]
+        abstract fun <get-superTypes>(): kotlin.collections/MutableList</IrType> // /IrTypeParameter.superTypes.<get-superTypes>|<get-superTypes>(){}[0]
+}
+abstract interface /IrTypeParametersContainer : /IrDeclaration, /IrDeclarationParent { // /IrTypeParametersContainer|null[0]
+    abstract var typeParameters // /IrTypeParametersContainer.typeParameters|{}typeParameters[0]
+        abstract fun <get-typeParameters>(): kotlin.collections/List</IrTypeParameter> // /IrTypeParametersContainer.typeParameters.<get-typeParameters>|<get-typeParameters>(){}[0]
+        abstract fun <set-typeParameters>(kotlin.collections/List</IrTypeParameter>) // /IrTypeParametersContainer.typeParameters.<set-typeParameters>|<set-typeParameters>(kotlin.collections.List<IrTypeParameter>){}[0]
+}
+abstract interface /TypeRemapper { // /TypeRemapper|null[0]
+    abstract fun enterScope(/IrTypeParametersContainer) // /TypeRemapper.enterScope|enterScope(IrTypeParametersContainer){}[0]
+    abstract fun leaveScope() // /TypeRemapper.leaveScope|leaveScope(){}[0]
+    abstract fun remapType(/IrType): /IrType // /TypeRemapper.remapType|remapType(IrType){}[0]
+}
+final inline fun <#A: kotlin/Any?> (/TypeRemapper)./withinScope(/IrTypeParametersContainer, kotlin/Function0<#A>): #A // /withinScope|withinScope@TypeRemapper(IrTypeParametersContainer;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]

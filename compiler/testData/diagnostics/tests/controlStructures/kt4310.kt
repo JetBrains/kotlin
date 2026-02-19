@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package f
 
 fun test(a: Boolean, b: Boolean): Int {
@@ -9,3 +10,5 @@ fun test(a: Boolean, b: Boolean): Int {
         }
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral */

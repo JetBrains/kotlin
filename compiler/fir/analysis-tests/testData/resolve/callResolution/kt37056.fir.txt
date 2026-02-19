@@ -7,7 +7,7 @@ FILE: kt37056.kt
         }
         ) }
         Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
-        Q|Case1|.R|/Case1.Companion.invoke|(a = R|/A.A|())
+        Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
     }
     public final class Case1 : R|kotlin/Any| {
         private constructor(a: R|A|): R|Case1| {
@@ -31,7 +31,7 @@ FILE: kt37056.kt
     }
     public final fun case2(a: R|A|): R|kotlin/Unit| {
         Q|Case2|.R|/Case2.Companion.invoke|(R|<local>/a|)
-        Q|Case2|.R|/Case2.Companion.invoke|(a = R|<local>/a|)
+        Q|Case2|.R|/Case2.Companion.invoke|(R|<local>/a|)
     }
     public final class Case2 : R|kotlin/Any| {
         public constructor(): R|Case2| {

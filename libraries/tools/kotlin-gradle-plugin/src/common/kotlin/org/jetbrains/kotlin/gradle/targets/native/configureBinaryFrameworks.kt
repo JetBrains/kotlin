@@ -9,21 +9,15 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.utils.copyAttributes
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.markConsumable
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
@@ -35,7 +29,7 @@ private data class FrameworkGroupDescription(
     val frameworkName: String,
     val targetFamilyName: String,
     val baseName: String,
-    val buildType: NativeBuildType
+    val buildType: NativeBuildType,
 )
 
 private val Framework.frameworkGroupDescription
@@ -46,20 +40,26 @@ private val Framework.frameworkGroupDescription
         buildType = buildType
     )
 
+/**
+ * These consumable configurations are only used by the Apple Gradle plugin. When it is sunset (see KT-74503) we should remove this code.
+ */
 internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTask: TaskProvider<KotlinNativeLink>) {
-    val frameworkConfiguration = configurations.getOrCreate(binaryFramework.binaryFrameworkConfigurationName, invokeWhenCreated = {
-        it.markConsumable()
-        it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
-        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
-            copyAttributes(binaryFramework.attributes, it.attributes)
+    val frameworkConfiguration = configurations.findConsumable(binaryFramework.binaryFrameworkConfigurationName)
+        ?: configurations.createConsumable(binaryFramework.binaryFrameworkConfigurationName).also {
+            it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
+            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
+                binaryFramework.copyAttributesTo(project.providers, dest = it)
+            }
         }
-    })
 
-    addFrameworkArtifact(frameworkConfiguration, linkTask.flatMap { it.outputFile })
+    // Can't use flatMap here because of https://github.com/gradle/gradle/issues/25645
+    val linkTaskOutputProvider = linkTask.map { it.outputFile.get() }
+    addFrameworkArtifact(frameworkConfiguration, linkTaskOutputProvider)
 }
 
-internal fun KotlinMultiplatformExtension.createFatFrameworks() {
-    val frameworkGroups = targets
+internal val CreateFatFrameworksSetupAction = KotlinProjectSetupCoroutine {
+    KotlinPluginLifecycle.Stage.FinaliseDsl.await()
+    val frameworkGroups = multiplatformExtension.targets
         .filterIsInstance<KotlinNativeTarget>()
         .filter { FatFrameworkTask.isSupportedTarget(it) }
         .flatMap { it.binaries }
@@ -78,26 +78,30 @@ private val FrameworkGroupDescription.fatFrameworkConfigurationName get() = lowe
 private fun Configuration.applyBinaryFrameworkGroupAttributes(
     project: Project,
     frameworkDescription: FrameworkGroupDescription,
-    targets: List<KotlinNativeTarget>
+    targets: List<KotlinNativeTarget>,
 ) {
     with(attributes) {
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attribute(project.artifactTypeAttribute, KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK)
-        attribute(KotlinNativeTarget.kotlinNativeBuildTypeAttribute, frameworkDescription.buildType.name)
-        attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, frameworkDescription.frameworkName)
-        attribute(Framework.frameworkTargets, targets.map { it.konanTarget.name }.toSet())
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.attribute(KotlinNativeTarget.kotlinNativeBuildTypeAttribute, frameworkDescription.buildType.name)
+        attributes.attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, frameworkDescription.frameworkName)
+        setAttributeProvider(project.providers, Framework.frameworkTargets) {
+            targets.map { it.konanTarget.name }.toSet()
+        }
     }
 }
 
 private fun Project.addFrameworkArtifact(configuration: Configuration, artifactFile: Provider<File>) {
-    val frameworkArtifact = artifacts.add(configuration.name, artifactFile) { artifact ->
-        artifact.name = name
-        artifact.extension = "framework"
-        artifact.type = "binary"
-        artifact.classifier = "framework"
+    tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure { assemble ->
+        assemble.dependsOn(artifactFile)
     }
-    project.extensions.getByType(org.gradle.api.internal.plugins.DefaultArtifactPublicationSet::class.java)
-        .addCandidate(frameworkArtifact)
+
+    configuration.outgoing.registerArtifact(
+        artifactProvider = artifactFile,
+        name = name,
+        type = KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK,
+        extension = "framework",
+        classifier = "framework"
+    )
 }
 
 private fun Project.createFatFramework(groupDescription: FrameworkGroupDescription, frameworks: List<Framework>) {
@@ -110,7 +114,7 @@ private fun Project.createFatFramework(groupDescription: FrameworkGroupDescripti
     } else {
         tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
             it.baseName = groupDescription.baseName
-            it.destinationDir = it.destinationDir.resolve(groupDescription.buildType.name.toLowerCaseAsciiOnly())
+            it.destinationDirProperty.set(it.defaultDestinationDir.dir(groupDescription.buildType.name.toLowerCaseAsciiOnly()))
         }
     }
 
@@ -122,10 +126,9 @@ private fun Project.createFatFramework(groupDescription: FrameworkGroupDescripti
         }
     }
 
-    val fatFrameworkConfiguration = project.configurations.getOrCreate(fatFrameworkConfigurationName, invokeWhenCreated = {
-        it.markConsumable()
+    val fatFrameworkConfiguration = project.configurations.maybeCreateConsumable(fatFrameworkConfigurationName).also {
         it.applyBinaryFrameworkGroupAttributes(project, groupDescription, targets = frameworks.map(Framework::target))
-    })
+    }
 
     addFrameworkArtifact(fatFrameworkConfiguration, fatFrameworkTask.map { it.fatFramework })
 }

@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 import java.util.*
-import kotlin.collections.HashMap
 
-class BuildPerformanceMetrics<T: BuildPerformanceMetric> : Serializable {
+class BuildPerformanceMetrics<T : BuildPerformanceMetric> : Serializable {
     companion object {
         const val serialVersionUID = 0L
     }
 
     private val myBuildMetrics = HashMap<T, Long>()
 
-    fun addAll(other: BuildPerformanceMetrics<T>) {
-        for ((bt, timeNs) in other.myBuildMetrics) {
-            add(bt, timeNs)
+    fun addAll(other: BuildPerformanceMetrics<out T>) {
+        for ((bt, value) in other.myBuildMetrics) {
+            addLong(bt, value)
         }
     }
 
-    fun add(metric: T, value: Long = 1) {
+    fun addLong(metric: T, value: Long = 1) {
         myBuildMetrics[metric] = myBuildMetrics.getOrDefault(metric, 0) + value
     }
 

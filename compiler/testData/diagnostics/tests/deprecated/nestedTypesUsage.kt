@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class TopLevel {
     @Deprecated("Nested")
@@ -17,3 +18,6 @@ fun useNested() {
     TopLevel.<!DEPRECATION!>Nested<!>.Nested2()
     TopLevel.<!DEPRECATION!>Nested<!>.<!UNRESOLVED_REFERENCE!>CompanionNested2<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration, stringLiteral */

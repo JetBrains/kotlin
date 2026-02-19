@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.collections.map as map1
 import kotlin.Array as KotlinArray
 
@@ -7,3 +8,5 @@ fun f() {
 }
 
 fun g(a1: KotlinArray<Int>, a2: <!UNRESOLVED_REFERENCE!>Array<!><Int>){}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

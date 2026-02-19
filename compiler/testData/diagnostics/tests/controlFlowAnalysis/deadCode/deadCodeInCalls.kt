@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testArgumentInCall() {
     fun bar(i: Int, s: String, x: Any) {}
@@ -11,3 +12,5 @@ fun testArgumentInVariableAsFunctionCall(f: (Any) -> Unit) {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, localFunction, stringLiteral */

@@ -2,7 +2,7 @@ interface T {
     fun getX() = 1
 }
 
-interface C : T {
-    <!ACCIDENTAL_OVERRIDE!>val x: Int
-        get() = 1<!>
+<!CONFLICTING_JVM_DECLARATIONS!><!>interface C : T {
+    val x: Int
+        <!ACCIDENTAL_OVERRIDE!>get() = 1<!>
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Module
 
 fun getModule(): Module? = null
@@ -19,3 +20,6 @@ fun test_2() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

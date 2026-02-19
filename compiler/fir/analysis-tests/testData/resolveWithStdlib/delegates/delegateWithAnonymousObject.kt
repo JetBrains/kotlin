@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -26,3 +27,7 @@ class IssuesListUserProfile : DelegateProvider<IssuesListUserProfile>() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, in, lambdaLiteral, nullableType, operator, override, propertyDeclaration,
+propertyDelegate, setter, starProjection, typeConstraint, typeParameter */

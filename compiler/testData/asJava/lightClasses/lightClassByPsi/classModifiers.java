@@ -1,7 +1,3 @@
-public static final class Nested /* pkg.Season.Nested*/ extends pkg.Season {
-  public  Nested();//  .ctor()
-}
-
 public class Open /* pkg.Open*/ {
   public  Open();//  .ctor()
 
@@ -12,10 +8,6 @@ public class Open /* pkg.Open*/ {
   class StaticInternal ...
 }
 
-public final class OuterInternal /* pkg.OuterInternal*/ {
-  public  OuterInternal();//  .ctor()
-}
-
 private static final class Private /* pkg.Open.Private*/ extends pkg.Open {
   public  Private();//  .ctor()
 }
@@ -24,22 +16,30 @@ protected final class Private2 /* pkg.Open.Private2*/ {
   public  Private2();//  .ctor()
 }
 
+public static final class StaticInternal /* pkg.Open.StaticInternal*/ {
+  public  StaticInternal();//  .ctor()
+}
+
+public final class OuterInternal /* pkg.OuterInternal*/ {
+  public  OuterInternal();//  .ctor()
+}
+
 public abstract class SealedWithArgs /* pkg.SealedWithArgs*/ {
   private final int a;
 
-  protected  SealedWithArgs(int);//  .ctor(int)
+  private  SealedWithArgs(int);//  .ctor(int)
 
   public final int getA();//  getA()
 }
 
 public abstract class Season /* pkg.Season*/ {
-  protected  Season();//  .ctor()
+  private  Season();//  .ctor()
 
   class Nested ...
 }
 
-public static final class StaticInternal /* pkg.Open.StaticInternal*/ {
-  public  StaticInternal();//  .ctor()
+public static final class Nested /* pkg.Season.Nested*/ extends pkg.Season {
+  public  Nested();//  .ctor()
 }
 
 final class TopLevelPrivate /* pkg.TopLevelPrivate*/ {

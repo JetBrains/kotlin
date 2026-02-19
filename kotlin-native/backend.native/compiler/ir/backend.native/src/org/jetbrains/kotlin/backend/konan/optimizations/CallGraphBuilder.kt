@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.forEachBit
+import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DirectedGraph
@@ -37,7 +37,8 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
 
 internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>,
                          val reversedEdges: Map<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>,
-                         val rootExternalFunctions: List<DataFlowIR.FunctionSymbol>)
+                         val rootExternalFunctions: List<DataFlowIR.FunctionSymbol>,
+                         val rootSet: Set<DataFlowIR.FunctionSymbol.Declared>)
     : DirectedGraph<DataFlowIR.FunctionSymbol.Declared, CallGraphNode> {
 
     override val nodes get() = directEdges.values
@@ -57,47 +58,32 @@ internal class CallGraphBuilder(
         val context: Context,
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
-        val externalModulesDFG: ExternalModulesDFG,
-        val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
+        val devirtualizedCallSitesUnfoldFactor: Int,
         val nonDevirtualizedCallSitesUnfoldFactor: Int
 ) {
-
-    private val devirtualizedCallSites = devirtualizationAnalysisResult.devirtualizedCallSites
-
-    private fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
-        if (this is DataFlowIR.FunctionSymbol.External)
-            return externalModulesDFG.publicFunctions[this.hash] ?: this
-        return this
-    }
-
     private val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>()
     private val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>()
     private val externalRootFunctions = mutableListOf<DataFlowIR.FunctionSymbol>()
-    private val callGraph = CallGraph(directEdges, reversedEdges, externalRootFunctions)
+    private val wholeRootSet = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
+    private val callGraph = CallGraph(directEdges, reversedEdges, externalRootFunctions, wholeRootSet)
 
     private data class HandleFunctionParams(val caller: DataFlowIR.FunctionSymbol.Declared?,
                                             val calleeFunction: DataFlowIR.Function)
     private val functionStack = mutableListOf<HandleFunctionParams>()
 
     fun build(): CallGraph {
-        val rootSet = DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG, externalModulesDFG)
-        for (symbol in rootSet) {
-            val function = moduleDFG.functions[symbol]
-            if (function == null)
-                externalRootFunctions.add(symbol)
-            else
-                functionStack.push(HandleFunctionParams(null, function))
-        }
+        val rootSet = DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG)
+        rootSet.forEach { handleRoot(it) }
 
         while (functionStack.isNotEmpty()) {
             val (caller, calleeFunction) = functionStack.pop()
             val callee = calleeFunction.symbol as DataFlowIR.FunctionSymbol.Declared
-            val gotoCallee = !directEdges.containsKey(callee)
-            if (gotoCallee)
+            val newFunction = !directEdges.containsKey(callee)
+            if (newFunction)
                 addNode(callee)
             if (caller != null)
                 callGraph.addReversedEdge(caller, callee)
-            if (gotoCallee)
+            if (newFunction)
                 handleFunction(callee, calleeFunction)
         }
         return callGraph
@@ -145,25 +131,42 @@ internal class CallGraphBuilder(
             }
 
     private fun staticCall(caller: DataFlowIR.FunctionSymbol.Declared, call: DataFlowIR.Node.Call, node: DataFlowIR.Node, callee: DataFlowIR.FunctionSymbol) {
-        val resolvedCallee = callee.resolved()
-        val callSite = CallGraphNode.CallSite(call, node, false, resolvedCallee)
-        val function = moduleDFG.functions[resolvedCallee]
+        val callSite = CallGraphNode.CallSite(call, node, false, callee)
+        val function = moduleDFG.functions[callee]
         callGraph.addEdge(caller, callSite)
         if (function != null)
             functionStack.push(HandleFunctionParams(caller, function))
     }
 
+    private fun handleRoot(symbol: DataFlowIR.FunctionSymbol) {
+        val function = moduleDFG.functions[symbol]
+        if (function == null)
+            externalRootFunctions.add(symbol)
+        else {
+            wholeRootSet.add(symbol as DataFlowIR.FunctionSymbol.Declared)
+            functionStack.push(HandleFunctionParams(null, function))
+        }
+    }
+
     private fun handleFunction(symbol: DataFlowIR.FunctionSymbol.Declared, function: DataFlowIR.Function) {
         val body = function.body
         body.forEachCallSite { call, node ->
-            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.let { devirtualizedCallSites[it] }
+            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.irCallSite?.devirtualizedCallSite
             when {
                 call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, call, node, call.callee)
 
                 devirtualizedCallSite != null -> {
-                    devirtualizedCallSite.possibleCallees.forEach {
-                        staticCall(symbol, call, node, it.callee)
+                    if (devirtualizedCallSite.possibleCallees.size <= devirtualizedCallSitesUnfoldFactor)
+                        devirtualizedCallSite.possibleCallees.forEach {
+                            staticCall(symbol, call, node, it.callee)
+                        }
+                    else {
+                        val callSite = CallGraphNode.CallSite(call, node, true, call.callee)
+                        callGraph.addEdge(symbol, callSite)
+
+                        devirtualizedCallSite.possibleCallees.forEach { handleRoot(it.callee) }
                     }
+
                 }
 
                 call.receiverType == DataFlowIR.Type.Virtual -> {
@@ -173,9 +176,9 @@ internal class CallGraphBuilder(
                 else -> {
                     // Callsite has not been devirtualized - conservatively assume the worst:
                     // any inheritor of the receiver type is possible here.
-                    val typeHierarchy = devirtualizationAnalysisResult.typeHierarchy
+                    val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
                     val allPossibleCallees = mutableListOf<DataFlowIR.FunctionSymbol>()
-                    typeHierarchy.inheritorsOf(call.receiverType as DataFlowIR.Type.Declared).forEachBit {
+                    typeHierarchy.inheritorsOf(call.receiverType).forEachBit {
                         val receiverType = typeHierarchy.allTypes[it]
                         if (receiverType.isAbstract) return@forEachBit
                         // TODO: Unconservative way - when we can use it?
@@ -197,11 +200,7 @@ internal class CallGraphBuilder(
                         val callSite = CallGraphNode.CallSite(call, node, true, call.callee)
                         callGraph.addEdge(symbol, callSite)
 
-                        allPossibleCallees.forEach {
-                            val callee = moduleDFG.functions[it]
-                            if (callee != null)
-                                functionStack.push(HandleFunctionParams(null, callee))
-                        }
+                        allPossibleCallees.forEach { handleRoot(it) }
                     }
                 }
             }

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 interface Receiver
 interface Parameter
@@ -43,3 +44,7 @@ val staticWithExplicitType: LambdaWithReceiver
             method(param)
         }
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

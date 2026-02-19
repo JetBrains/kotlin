@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface UsageInfo {
     val usage: PsiElement
 }
@@ -21,3 +22,7 @@ fun foo(element: PsiElement, usages: Array<UsageInfo>) {
         it.usage is KtLightMethod
     } else usages.toList()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, interfaceDeclaration,
+isExpression, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, thisExpression,
+typeParameter */

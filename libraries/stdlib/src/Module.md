@@ -17,10 +17,6 @@ Core functions and types, available on all supported platforms.
 
 Library support for the Kotlin annotation facility.
 
-# Package kotlin.browser
-
-Access to top-level properties (`document`, `window` etc.) in the browser environment.
-
 # Package kotlin.collections
 
 Collection types, such as [Iterable][kotlin.collections.Iterable], [Collection][kotlin.collections.Collection],
@@ -28,11 +24,15 @@ Collection types, such as [Iterable][kotlin.collections.Iterable], [Collection][
 
 # Package kotlin.comparisons
 
-Helper functions for creating [Comparator][java.util.Comparator] instances.
+Helper functions for creating [Comparator][kotlin.Comparator] instances.
 
 # Package kotlin.concurrent
 
-Utility functions for concurrent programming.
+Low-level building blocks and utility functions for concurrent programming.
+
+# Package kotlin.concurrent.atomics
+
+Atomic scalar and array types and utilities for working with them.
 
 # Package kotlin.contracts
 
@@ -47,11 +47,11 @@ Basic primitives for creating and suspending coroutines: [Continuation][kotlin.c
 
 Low-level building blocks for libraries that provide coroutine-based APIs.
 
-# Package kotlin.dom
+# Package kotlin.coroutines.cancellation
 
-Utility functions for working with the browser DOM.
+Provides exceptions arising on suspended coroutine cancellation. 
 
-# Package kotlin.enum
+# Package kotlin.enums
 
 Utilities for working with Kotlin enum classes.
 
@@ -67,9 +67,17 @@ IO API for working with files and streams.
 
 Convenient extensions for working with file system using [java.nio.file.Path][java.nio.file.Path].
 
+# Package kotlin.io.encoding
+
+API for encoding and decoding data using various encoding schemes, such as [Base64][kotlin.io.encoding.Base64].
+
 # Package kotlin.js
 
 Functions and other APIs specific to the JavaScript platform.
+
+# Package kotlin.js.collections
+
+JavaScript-specific collection types, such as [JsArray][kotlin.js.collections.JsArray] and [JsReadonlyMap][kotlin.js.collections.JsReadonlyMap].
 
 # Package kotlin.jvm
 
@@ -84,6 +92,23 @@ Convenience extension functions for `java.util.Optional` to simplify Kotlin-Java
 Mathematical functions and constants. 
 
 The functions include trigonometric, hyperbolic, exponentiation and power, logarithmic, rounding, sign and absolute value.
+
+# Package kotlin.native
+
+Provides functions and types specific to Kotlin/Native, as well as means for interoperability with an underlying platform
+and other languages.
+
+# Package kotlin.native.concurrent
+
+Kotlin/Native-specific concurrency primitives and utility functions for concurrent programming.
+
+# Package kotlin.native.ref
+
+API for object life-cycle and references management.
+
+# Package kotlin.native.runtime
+
+Allows to query information from and interact with the Kotlin/Native runtime. 
 
 # Package kotlin.properties
 
@@ -153,55 +178,19 @@ API for measuring time intervals and calculating durations.
 
 For more information, see our [Time measurement](https://kotlinlang.org/docs/time-measurement.html) guide.
 
-# Package org.khronos.webgl
+# Package kotlin.uuid
 
-Kotlin JavaScript wrappers for the WebGL API.
+Multiplatform `Uuid` class and utility functions for working with UUIDs.
 
-# Package org.w3c.dom
+# Package kotlin.wasm
 
-Kotlin JavaScript wrappers for the DOM API.
+Provides Wasm-platform interoperability support. 
 
-# Package org.w3c.dom.css
+# Package kotlin.wasm.unsafe
 
-Kotlin JavaScript wrappers for the DOM CSS API.
+API for working with Wasm linear memory. 
 
-# Package org.w3c.dom.events
+# Package kotlinx.cinterop
 
-Kotlin JavaScript wrappers for the DOM events API.
-
-# Package org.w3c.dom.parsing
-
-Kotlin JavaScript wrappers for the DOM parsing API.
-
-# Package org.w3c.dom.svg
-
-Kotlin JavaScript wrappers for the DOM SVG API.
-
-# Package org.w3c.dom.url
-
-Kotlin JavaScript wrappers for the DOM URL API.
-
-# Package org.w3c.fetch
-
-Kotlin JavaScript wrappers for the [W3C fetch API](https://fetch.spec.whatwg.org).
-
-# Package org.w3c.files
-
-Kotlin JavaScript wrappers for the [W3C file API](https://www.w3.org/TR/FileAPI/).
-
-# Package org.w3c.notifications
-
-Kotlin JavaScript wrappers for the [Web Notifications API](https://www.w3.org/TR/notifications/).
-
-# Package org.w3c.performance
-
-Kotlin JavaScript wrappers for the [Navigation Timing API](https://www.w3.org/TR/navigation-timing/).
-
-# Package org.w3c.workers
-
-Kotlin JavaScript wrappers for the [Web Workers API](https://www.w3.org/TR/workers/).
-
-# Package org.w3c.xhr
-
-Kotlin JavaScript wrappers for the [XMLHttpRequest API](https://www.w3.org/TR/XMLHttpRequest/).
-
+Experimental API for working with unmanaged and foreign memory, as well as for interoperability with other languages,
+such as Objective-C and C.

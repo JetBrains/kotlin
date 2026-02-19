@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // AssertionError for nested ifs with lambdas and Nothing as results
 // NI_EXPECTED_FILE
@@ -11,3 +12,5 @@ else if (true) {
 else {
     null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, ifExpression, lambdaLiteral, propertyDeclaration */

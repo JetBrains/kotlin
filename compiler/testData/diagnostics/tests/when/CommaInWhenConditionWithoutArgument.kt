@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -17,3 +18,6 @@ fun bar(x: Int): Int =
             0 -> 0
             else -> 1
         }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, disjunctionExpression, equalityExpression, functionDeclaration,
+integerLiteral, whenExpression, whenWithSubject */

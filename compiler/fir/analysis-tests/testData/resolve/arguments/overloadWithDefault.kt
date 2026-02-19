@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A {
     fun foo(b: Boolean = false): A
     fun foo(block: () -> Boolean): A
@@ -6,3 +7,5 @@ interface A {
 fun test(a: A) {
     a.foo { true }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral */

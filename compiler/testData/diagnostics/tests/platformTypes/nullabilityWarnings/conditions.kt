@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -45,3 +46,6 @@ fun test() {
     <!UNSAFE_CALL!>!<!>platformN
     !platformJ
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, doWhileLoop, flexibleType, functionDeclaration,
+ifExpression, javaProperty, localProperty, nullableType, propertyDeclaration, whileLoop */

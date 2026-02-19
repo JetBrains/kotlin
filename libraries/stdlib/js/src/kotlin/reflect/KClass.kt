@@ -37,6 +37,13 @@ public actual interface KClass<T : Any> : KClassifier {
     public actual fun isInstance(value: Any?): Boolean
 
     /**
+     * Returns `true` if this [KClass] instance represents a Kotlin interface.
+     */
+    @ExperimentalStdlibApi
+    @SinceKotlin("2.2")
+    public val isInterface: Boolean
+
+    /**
      * Returns `true` if this [KClass] instance represents the same Kotlin class as the class represented by [other].
      * On JVM this means that all of the following conditions are satisfied:
      *

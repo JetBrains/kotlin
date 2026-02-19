@@ -26,20 +26,20 @@ public class Foo {
 
 // FILE: main.kt
 fun main(a: Defaults, x: Foo): Unit {
-    a.everythingNotNullable(null).foo()
+    a.everythingNotNullable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).foo()
     a.everythingNotNullable(x).foo()
 
-    a.everythingNullable(null).foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.everythingNullable(null)<!>.foo()
 
     a.everythingUnknown(null).foo()
 
-    a.mixed(null).foo()
-    a.mixed(x).foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.mixed(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)<!>.foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.mixed(x)<!>.foo()
 
     a.explicitlyNullnessUnspecified(x).foo()
     a.explicitlyNullnessUnspecified(null).foo()
 
     a.defaultField.foo()
 
-    a.field.foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.foo()
 }

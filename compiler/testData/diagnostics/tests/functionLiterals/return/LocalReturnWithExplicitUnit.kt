@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 val flag = true
 
@@ -15,3 +16,5 @@ val b = l@ { // () -> Any
 val c = l@ { // () -> Unit
     if (flag) return@l Unit
 }
+
+/* GENERATED_FIR_TAGS: ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

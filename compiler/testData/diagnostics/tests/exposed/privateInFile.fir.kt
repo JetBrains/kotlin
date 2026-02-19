@@ -1,4 +1,5 @@
-// !LANGUAGE: +PrivateInFileEffectiveVisibility
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +PrivateInFileEffectiveVisibility
 
 class Public {
     private open class NestedPrivate
@@ -28,3 +29,6 @@ private interface PrivateInFile {
 
 // Exposes 'PrivateInFile$Private' via 'expose'
 class Derived : PrivateInFile
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+nestedClass, propertyDeclaration */

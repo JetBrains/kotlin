@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,63 +10,41 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.common.isES5IdentifierPart
 import org.jetbrains.kotlin.js.common.isES5IdentifierStart
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-private val FirBasedSymbol<*>.isExternal
-    get() = when (this) {
-        is FirCallableSymbol<*> -> isExternal
-        is FirClassSymbol<*> -> isExternal
-        else -> false
-    }
-
-fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
-    if (fir is FirMemberDeclaration && isExternal) return true
-
-    if (this is FirPropertyAccessorSymbol) {
-        val property = propertySymbol
-        if (property.isEffectivelyExternal(session)) return true
-    }
-
-    if (this is FirPropertySymbol) {
-        if (getterSymbol?.isExternal == true && (!isVar || setterSymbol?.isExternal == true)) {
-            return true
-        }
-    }
-
-    return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
-}
-
 fun FirBasedSymbol<*>.isEffectivelyExternalMember(session: FirSession): Boolean {
     return fir is FirMemberDeclaration && isEffectivelyExternal(session)
 }
 
-fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffectivelyExternal(context.session)
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.isEffectivelyExternal(): Boolean = isEffectivelyExternal(context.session)
 
-fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
+context(context: CheckerContext)
+fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(): Boolean {
     if (!isSubstitutionOrIntersectionOverride && modality == Modality.ABSTRACT) return false
 
-    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctions(context) ?: return false
+    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctionsSafe() ?: return false
 
-    for (overriddenFunction in overridden.filter { it.isEffectivelyExternal(context) }) {
+    for (overriddenFunction in overridden.filter { it.isEffectivelyExternal() }) {
         if (overriddenFunction.valueParameterSymbols.any { it.hasDefaultValue }) return true
     }
 
@@ -84,27 +62,23 @@ fun sanitizeName(name: String): String {
     return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
 }
 
-fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
-    if (hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsNative, session) || isEffectivelyExternal(session)) {
-        return true
-    }
-
-    if (this is FirPropertyAccessorSymbol) {
-        val property = propertySymbol
-        return property.hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsNative, session)
-    }
-
-    return false
+fun FirBasedSymbol<*>.isLibraryObject(session: FirSession): Boolean {
+    return hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsLibrary, session)
 }
 
-fun FirBasedSymbol<*>.isNativeInterface(session: FirSession): Boolean {
-    return isNativeObject(session) && (fir as? FirClass)?.isInterface == true
-}
+fun FirBasedSymbol<*>.isPresentInGeneratedCode(session: FirSession): Boolean = !isNativeObject(session) && !isLibraryObject(session)
 
-private val FirBasedSymbol<*>.isExpect
+internal val FirBasedSymbol<*>.isExpect
     get() = when (this) {
         is FirCallableSymbol<*> -> isExpect
         is FirClassSymbol<*> -> isExpect
+        else -> false
+    }
+
+internal val FirBasedSymbol<*>.isActual
+    get() = when (this) {
+        is FirCallableSymbol<*> -> isActual
+        is FirClassSymbol<*> -> isActual
         else -> false
     }
 
@@ -112,7 +86,7 @@ fun FirBasedSymbol<*>.isPredefinedObject(session: FirSession): Boolean {
     if (fir is FirMemberDeclaration && isExpect) return true
     if (isEffectivelyExternalMember(session)) return true
 
-    for (annotation in PredefinedAnnotation.values()) {
+    for (annotation in PredefinedAnnotation.entries) {
         if (hasAnnotationOrInsideAnnotatedClass(annotation.classId, session)) {
             return true
         }
@@ -133,67 +107,44 @@ fun FirBasedSymbol<*>.isExportedObject(session: FirSession): Boolean {
 
     return when {
         hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExportIgnore, session) -> false
-        hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExport, session) -> true
-        else -> getContainingFile(session)?.hasAnnotation(JsStandardClassIds.Annotations.JsExport, session) == true
+        hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExport, session) ||
+                getAnnotationBooleanParameter(JsStandardClassIds.Annotations.JsImplicitExport, session) == true ||
+                hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExportDefault, session)
+            -> true
+        else -> getContainingFile()?.symbol?.hasAnnotation(JsStandardClassIds.Annotations.JsExport, session) ?: false
     }
 }
 
-internal fun FirBasedSymbol<*>.getContainingFile(session: FirSession): FirFile? {
+internal fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
     return when (this) {
-        is FirCallableSymbol<*> -> session.firProvider.getFirCallableContainerFile(this)
-        is FirClassLikeSymbol<*> -> session.firProvider.getFirClassifierContainerFileIfAny(this)
-        else -> return null
+        is FirCallableSymbol<*> -> moduleData.session.firProvider.getFirCallableContainerFile(this)
+        is FirClassLikeSymbol<*> -> moduleData.session.firProvider.getFirClassifierContainerFileIfAny(this)
+        else -> null
     }
 }
 
-fun FirBasedSymbol<*>.isNativeObject(context: CheckerContext) = isNativeObject(context.session)
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.isNativeObject(): Boolean = isNativeObject(context.session)
 
-fun FirBasedSymbol<*>.isNativeInterface(context: CheckerContext) = isNativeInterface(context.session)
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.isNativeInterface(): Boolean = isNativeInterface(context.session)
 
-fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefinedObject(context.session)
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.isPredefinedObject(): Boolean = isPredefinedObject(context.session)
 
-fun FirBasedSymbol<*>.isExportedObject(context: CheckerContext) = isExportedObject(context.session)
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.isExportedObject(): Boolean = isExportedObject(context.session)
+
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.isLibraryObject(): Boolean = isLibraryObject(context.session)
 
 internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
     .filterNot { it.isAny || it.isNullableAny }
     .find { it.toSymbol(session)?.classKind == ClassKind.CLASS }
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 internal fun getRootClassLikeSymbolOrSelf(symbol: FirBasedSymbol<*>, session: FirSession): FirBasedSymbol<*> {
-    return symbol.getContainingClassSymbol(session)?.let { getRootClassLikeSymbolOrSelf(it, session) } ?: symbol
+    return symbol.getContainingClassSymbol()?.let { getRootClassLikeSymbolOrSelf(it, session) } ?: symbol
 }
-
-internal fun FirBasedSymbol<*>.getStableNameInJavaScript(session: FirSession): String? {
-    val jsName = getJsName(session)
-    if (jsName != null) {
-        return jsName
-    }
-    val hasStableNameInJavaScript = when {
-        isEffectivelyExternal(session) -> true
-        isExportedObject(session) -> true
-        else -> false
-    }
-
-    // TODO: rethink in KT-60554
-    val hasPublicName = when (this) {
-        is FirClassLikeSymbol -> !isLocal
-        is FirCallableSymbol -> {
-            val parentClass = getContainingClassSymbol(session)
-            if (parentClass != null) {
-                when (visibility) {
-                    is Visibilities.Public -> true
-                    is Visibilities.Protected -> !parentClass.isFinal && parentClass.visibility.isPublicAPI
-                    else -> false
-                }
-            } else {
-                !callableId.isLocal && effectiveVisibility.publicApi
-            }
-        }
-        else -> false
-    }
-
-    if (hasStableNameInJavaScript || hasPublicName) {
-        return (fir as? FirMemberDeclaration)?.nameOrSpecialName?.identifierOrNullIfSpecial
-    }
-    return null
-}
-

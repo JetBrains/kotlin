@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.internal.testing.tcsmc
 
 import jetbrains.buildServer.messages.serviceMessages.*
-import org.junit.Test
+import kotlin.test.Test
 
 class Complex : TCServiceMessagesClientTest() {
     @Test

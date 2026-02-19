@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
 // FILE: p/G.java
@@ -48,3 +50,6 @@ abstract class K: C<P>() {
 abstract class AL: java.util.ArrayList<P>() {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType,
+typeParameter */

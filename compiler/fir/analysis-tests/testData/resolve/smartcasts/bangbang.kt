@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 interface A {
     fun foo(): Boolean
 }
@@ -50,3 +51,6 @@ fun <X : A?> test_6(x: X) {
 fun <X : A> test_7(x: X?) {
     x!!.foo()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, checkNotNullCall, disjunctionExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, nullableType, smartcast, typeConstraint, typeParameter */

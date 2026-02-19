@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KProperty
 
 class FreezableVar<T>(private var value: T)  {
@@ -25,3 +26,7 @@ fun test() {
     var x: Boolean by LocalFreezableVar(true)
     var y by LocalFreezableVar("")
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral, thisExpression,
+typeParameter */

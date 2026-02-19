@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 class A<T>(val a: T)
 class B(val b: Any)
@@ -42,3 +44,7 @@ context(A<Int>, A<String>, B) val C.p: Int
         this.c
         return 1
     }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, setter, thisExpression,
+typeParameter */

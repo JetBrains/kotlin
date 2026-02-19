@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public interface ITest {
     public var prop : Int
         get() = 12
@@ -27,3 +28,6 @@ fun main() {
     val itest: ITest = test
     itest.prop = 12 // No error here
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+localProperty, override, propertyDeclaration, setter */

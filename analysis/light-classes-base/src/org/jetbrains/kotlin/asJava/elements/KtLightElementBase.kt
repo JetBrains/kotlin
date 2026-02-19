@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,9 +11,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtElement
+import javax.swing.Icon
 
 abstract class KtLightElementBase(private var parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE) {
-    override fun toString() = "${this.javaClass.simpleName} of $parent"
+    override fun toString() = "${this::class.simpleName.orEmpty()} of $parent"
     override fun getParent(): PsiElement = parent
 
     abstract val kotlinOrigin: KtElement?
@@ -23,10 +24,12 @@ abstract class KtLightElementBase(private var parent: PsiElement) : LightElement
         parent = newParent
     }
 
+    override fun getElementIcon(flags: Int): Icon? = null
+
     override fun getText() = kotlinOrigin?.text ?: ""
-    override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
-    override fun getTextOffset() = kotlinOrigin?.textOffset ?: 0
-    override fun getStartOffsetInParent() = kotlinOrigin?.startOffsetInParent ?: 0
+    override fun getTextRange(): TextRange? = kotlinOrigin?.textRange
+    override fun getTextOffset(): Int = kotlinOrigin?.textOffset ?: -1
+    override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: -1
     override fun isWritable() = kotlinOrigin?.isWritable ?: false
     override fun getNavigationElement() = kotlinOrigin?.navigationElement ?: this
     override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()

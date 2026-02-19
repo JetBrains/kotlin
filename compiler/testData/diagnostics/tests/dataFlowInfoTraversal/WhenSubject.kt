@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(x: Number) {
     when (x as Int) {
@@ -6,3 +7,6 @@ fun foo(x: Number) {
     }
     checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+nullableType, smartcast, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

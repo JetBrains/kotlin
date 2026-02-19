@@ -1,0 +1,1 @@
+val a: Iterator<Int>

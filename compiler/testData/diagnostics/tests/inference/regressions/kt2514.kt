@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2514 Type inference fails when using extension function literal
 package kt2514
@@ -15,3 +16,6 @@ fun main() {
     Thread().use<Unit> { }      // compiles okay
     Thread().use<Int> { 5 + 5 } // compiles okay
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, javaFunction,
+lambdaLiteral, nullableType, thisExpression, typeConstraint, typeParameter, typeWithExtension */

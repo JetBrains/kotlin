@@ -1,0 +1,11 @@
+main
+  org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0
+  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
+  org.jetbrains:annotations
+  test:lib:1.0
+test
+  org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0
+  org.jetbrains.kotlin:kotlin-stdlib-jdk8:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0

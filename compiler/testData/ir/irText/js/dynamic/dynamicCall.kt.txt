@@ -4,10 +4,10 @@ fun test1(d: dynamic): dynamic {
 
 fun test2(d: dynamic): dynamic {
   return { // BLOCK
-    val tmp0_safe_receiver: dynamic = d
+    val tmp_0: dynamic = d
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.member(1, 2, 3)
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.member(1, 2, 3)
     }
   }
 }

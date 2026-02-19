@@ -1,5 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1238
-// MODULE_KIND: COMMON_JS
+// JS_MODULE_KIND: COMMON_JS
 // FILE: bar.kt
 @file:JsModule("lib")
 @file:JsQualifier("foo")

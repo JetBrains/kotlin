@@ -1,8 +1,10 @@
 // DONT_TARGET_EXACT_BACKEND: NATIVE
-// NATIVE error: error: compilation failed: IrClassPublicSymbolImpl for box.sameFileInSourceAndDependencies.nestedClassDeclaration/Host|null[0] is already bound: CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
+// NATIVE error: error: compilation failed: IrClassSymbolImpl for box.sameFileInSourceAndDependencies.nestedClassDeclaration/Host|null[0] is already bound: CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// JS_IR error: IrClassPublicSymbolImpl for /Host|null[0] is already bound: CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
-// IGNORE_BACKEND: WASM
+// JS_IR error: IrClassSymbolImpl for /Host|null[0] is already bound: CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 // MODULE: lib
 // FILE: 2.kt

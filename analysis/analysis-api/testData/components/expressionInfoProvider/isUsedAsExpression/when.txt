@@ -4,3 +4,4 @@ text: when(b) {
         else -> 0
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUES: KT-2491, KT-4785, KT-63741, KT-59400
+
 interface T {
     fun foo()
 }
@@ -9,3 +12,6 @@ open class C {
 class <!CANNOT_INFER_VISIBILITY!>E<!> : C(), T
 
 val z: T = <!CANNOT_INFER_VISIBILITY!>object<!> : C(), T {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+propertyDeclaration */

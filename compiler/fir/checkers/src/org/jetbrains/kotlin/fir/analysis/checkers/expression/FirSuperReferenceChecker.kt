@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -16,8 +17,9 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 
-object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker() {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val superReference = (expression.calleeReference as? FirSuperReference)?.takeIf { it.hadExplicitTypeInSource() } ?: return
 
         val superTypeRef = superReference.superTypeRef
@@ -29,7 +31,7 @@ object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker() {
             typeArgumentList.typeArguments.isNotEmpty() &&
             superType.typeArguments.all { it !is ConeErrorType }
         ) {
-            reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, context)
+            reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER)
         }
     }
 }

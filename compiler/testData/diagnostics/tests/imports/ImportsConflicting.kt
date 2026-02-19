@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:a.kt
 package a
@@ -14,3 +15,5 @@ fun foo() = 2
 package c
 
 fun foo() = 1
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

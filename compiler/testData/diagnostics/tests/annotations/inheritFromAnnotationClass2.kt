@@ -1,6 +1,7 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -SUPERTYPES_FOR_ANNOTATION_CLASS -VIRTUAL_MEMBER_HIDDEN -FINAL_SUPERTYPE -MISSING_DEPENDENCY_SUPERCLASS
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -SUPERTYPES_FOR_ANNOTATION_CLASS -VIRTUAL_MEMBER_HIDDEN -FINAL_SUPERTYPE -MISSING_DEPENDENCY_SUPERCLASS
 // These errors need to be suppressed to cause light class generation
+// LANGUAGE: +ProhibitExtendingAnnotationClasses
 // FILE: test.kt
 
 annotation class Ann : Target()
@@ -24,3 +25,6 @@ import kotlin.annotation.Target;
 public interface J extends Target {
     Collection<String> foo();
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, javaType,
+outProjection, override, primaryConstructor, propertyDeclaration, vararg */

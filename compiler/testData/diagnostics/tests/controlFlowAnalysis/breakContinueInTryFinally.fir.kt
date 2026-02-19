@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo() {
     outer@while (true) {
         try {
@@ -22,3 +23,5 @@ fun bar(): String {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, continue, functionDeclaration, stringLiteral, tryExpression, whileLoop */

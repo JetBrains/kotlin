@@ -1,4 +1,5 @@
-// !LANGUAGE: -EnumEntries
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -EnumEntries, -PrioritizedEnumEntries
 // WITH_STDLIB
 
 package pckg
@@ -12,6 +13,9 @@ enum class A {
 val <T> T.entries: Int get() = 0
 
 fun test() {
-    A.<!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable"), DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
+    val i: Int = A.<!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable"), DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
     A.Companion.<!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable")!>entries<!>
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, getter, integerLiteral, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

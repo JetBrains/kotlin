@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-51003
 
@@ -22,3 +23,6 @@ fun test_2() {
     // FE 1.0 infers type of `x` to `Long`
     // FIR infers it to `Number` as `CST(Long, Int)`
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

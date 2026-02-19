@@ -1,0 +1,4 @@
+public abstract interface annotation class cases/annotations/Foo : java/lang/annotation/Annotation {
+	public abstract fun i ()I
+}
+

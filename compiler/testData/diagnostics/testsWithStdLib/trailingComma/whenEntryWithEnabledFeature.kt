@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -NAME_SHADOWING
-// !LANGUAGE: +TrailingCommas
+// DIAGNOSTICS: -UNUSED_VARIABLE -NAME_SHADOWING
+// LANGUAGE: +TrailingCommas
 
 fun foo1(x: Any) = when (x) {
     Comparable::class,
@@ -49,3 +50,7 @@ fun foo7(x: Boolean?) = when (x) {
     true, false,/**/ -> println(1)
     null,/**/ -> println(1)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classReference, disjunctionExpression, equalityExpression, functionDeclaration,
+functionalType, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

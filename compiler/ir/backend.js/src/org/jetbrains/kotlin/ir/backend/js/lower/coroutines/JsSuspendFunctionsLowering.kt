@@ -5,14 +5,22 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.lower.coroutines.loweredSuspendFunctionReturnType
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -23,33 +31,128 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
-class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx) {
-
-    val coroutineSymbols = ctx.coroutineSymbols
-
-    private val coroutineImplExceptionPropertyGetter = coroutineSymbols.coroutineImplExceptionPropertyGetter
-    private val coroutineImplExceptionPropertySetter = coroutineSymbols.coroutineImplExceptionPropertySetter
-    private val coroutineImplExceptionStatePropertyGetter = coroutineSymbols.coroutineImplExceptionStatePropertyGetter
-    private val coroutineImplExceptionStatePropertySetter = coroutineSymbols.coroutineImplExceptionStatePropertySetter
-    private val coroutineImplLabelPropertySetter = coroutineSymbols.coroutineImplLabelPropertySetter
-    private val coroutineImplLabelPropertyGetter = coroutineSymbols.coroutineImplLabelPropertyGetter
-    private val coroutineImplResultSymbolGetter = coroutineSymbols.coroutineImplResultSymbolGetter
-    private val coroutineImplResultSymbolSetter = coroutineSymbols.coroutineImplResultSymbolSetter
-
-    private var coroutineId = 0
+/**
+ * Transforms suspend function into a `CoroutineImpl` instance and builds a state machine.
+ */
+class JsSuspendFunctionsLowering(
+    ctx: JsCommonBackendContext
+) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx), BodyLoweringPass {
+    private val coroutineImplExceptionPropertyGetter = ctx.symbols.coroutineImplExceptionPropertyGetter.owner
+    private val coroutineImplExceptionPropertySetter = ctx.symbols.coroutineImplExceptionPropertySetter.owner
+    private val coroutineImplExceptionStatePropertyGetter = ctx.symbols.coroutineImplExceptionStatePropertyGetter.owner
+    private val coroutineImplExceptionStatePropertySetter = ctx.symbols.coroutineImplExceptionStatePropertySetter.owner
+    private val coroutineImplLabelPropertySetter = ctx.symbols.coroutineImplLabelPropertySetter.owner
+    private val coroutineImplLabelPropertyGetter = ctx.symbols.coroutineImplLabelPropertyGetter.owner
+    private val coroutineImplResultSymbolGetter = ctx.symbols.coroutineImplResultSymbolGetter.owner
+    private val coroutineImplResultSymbolSetter = ctx.symbols.coroutineImplResultSymbolSetter.owner
 
     override val stateMachineMethodName = Name.identifier("doResume")
-    override fun getCoroutineBaseClass(function: IrFunction) = context.ir.symbols.coroutineImpl
 
-    override fun nameForCoroutineClass(function: IrFunction) = "${function.name}COROUTINE\$${coroutineId++}".synthesizedName
+    override fun getCoroutineBaseClass(function: IrFunction) = context.symbols.coroutineImpl
+
+    override fun nameForCoroutineClass(function: IrFunction) = "${function.name}COROUTINE\$".synthesizedName
+
+    override fun lower(irModule: IrModuleFragment) {
+        if (context.compileSuspendAsJsGenerator) return
+        super.lower(irModule)
+    }
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (container is IrSimpleFunction && container.isSuspend) {
+            transformSuspendFunction(container, irBody)?.let {
+                val dc = container.parent as IrDeclarationContainer
+                dc.addChild(it)
+            }
+        }
+    }
+
+    private fun transformSuspendFunction(function: IrSimpleFunction, body: IrBody): IrClass? {
+        assert(function.isSuspend)
+
+        return when (val functionKind = getSuspendFunctionKind(context, function, body)) {
+            is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
+                null                                                            // No suspend function calls - just an ordinary function.
+            }
+
+            is SuspendFunctionKind.DELEGATING -> {                              // Calls another suspend function at the end.
+                removeReturnIfSuspendedCallAndSimplifyDelegatingCall(function, functionKind.delegatingCall)
+                null                                                            // No need in state machine.
+            }
+
+            is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
+                val isLoweredSuspendLambda = function.isOperator &&
+                        function.name == OperatorNameConventions.INVOKE &&
+                        function.parentClassOrNull?.let { it.origin === WebCallableReferenceLowering.LAMBDA_IMPL } == true
+                val coroutine = buildCoroutine(function, isLoweredSuspendLambda)      // Coroutine implementation.
+                if (isLoweredSuspendLambda)             // Suspend lambdas are called through factory method <create>,
+                    null
+                else
+                    coroutine
+            }
+        }
+    }
+
+    /**
+     * For the delegating type of suspend functions we just compile them as a regular function (not generator), so it doesn't break semantic.
+     * For the following Kotlin code:
+     * ```kotlin
+     * suspend fun bar() = 42
+     * suspend fun foo() = bar()
+     * ```
+     *
+     * Instead of
+     * ```javascript
+     * function* foo() {
+     *   return yield* bar()
+     * }
+     * ```
+     *
+     * We generate the following, so it minimizes the output size:
+     * ```javascript
+     * function foo() {
+     *   return bar()
+     * }
+     * ```
+     */
+    private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
+        val returnValue =
+            if (delegatingCall.isReturnIfSuspendedCall(context))
+                delegatingCall.arguments[0]!!
+            else delegatingCall
+
+        val body = irFunction.body as IrBlockBody
+        val statements = body.statements
+        val lastStatement = statements.last()
+
+        context.createIrBuilder(
+            irFunction.symbol,
+            startOffset = lastStatement.startOffset,
+            endOffset = lastStatement.endOffset
+        ).run {
+            assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
+
+            // Instead of returning right away, we save the value to a temporary variable and after that return that variable.
+            // This is done solely to improve the debugging experience. Otherwise, a breakpoint set to the closing brace of the function
+            // cannot be hit.
+            val tempVar = scope.createTemporaryVariable(
+                generateDelegatedCall(irFunction.returnType, returnValue),
+                irType = context.irBuiltIns.anyType,
+            )
+            statements[statements.lastIndex] = tempVar
+            statements.add(irReturn(irGet(tempVar)))
+        }
+    }
 
     override fun buildStateMachine(
         stateMachineFunction: IrFunction,
@@ -151,16 +254,18 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
         stateMachineBuilder.entryState.entryBlock.run {
             val receiver = JsIrBuilder.buildGetValue(coroutineClass.thisReceiver!!.symbol)
             val exceptionTrapId = stateMachineBuilder.rootExceptionTrap.id
-            assert(exceptionTrapId >= 0)
+            check(exceptionTrapId >= 0)
             val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
             statements.add(0, JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
-                call.dispatchReceiver = receiver
-                call.putValueArgument(0, id)
+                call.arguments[0] = receiver
+                call.arguments[1] = id
             })
         }
 
         val functionBody = context.irFactory.createBlockBody(
-            stateMachineFunction.startOffset, stateMachineFunction.endOffset, listOf(suspendResult, rootLoop)
+            stateMachineFunction.startOffset,
+            stateMachineFunction.endOffset,
+            stateMachineBuilder.allTheIntermediateLocals + suspendResult + rootLoop
         )
 
         stateMachineFunction.body = functionBody
@@ -177,7 +282,8 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
             }
         })
 
-        val liveLocals = computeLivenessAtSuspensionPoints(functionBody).values.flatten().toSet()
+        val liveLocals = LivenessAnalysis.run(functionBody, { it is IrCall && it.isSuspend })
+            .values.flatten().toSet()
 
         val localToPropertyMap = hashMapOf<IrValueSymbol, IrFieldSymbol>()
         var localCounter = 0
@@ -185,16 +291,16 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
         liveLocals.forEach {
             if (it !== suspendState && it !== suspendResult && it !== stateVar) {
                 localToPropertyMap.getOrPut(it.symbol) {
-                    coroutineClass.addField(Name.identifier("${it.name}${localCounter++}"), it.type, (it as? IrVariable)?.isVar ?: false)
+                    coroutineClass.addField(Name.identifier("${it.name}${localCounter++}"), it.type, it.isVar)
                         .symbol
                 }
             }
         }
         val isSuspendLambda = transformingFunction.parent === coroutineClass
-        val parameters = if (isSuspendLambda) simplifiedFunction.valueParameters else simplifiedFunction.explicitParameters
-        parameters.forEach {
-            localToPropertyMap.getOrPut(it.symbol) {
-                argumentToPropertiesMap.getValue(it).symbol
+        val parameters = if (isSuspendLambda) simplifiedFunction.nonDispatchParameters else simplifiedFunction.parameters
+        for (parameter in parameters) {
+            localToPropertyMap.getOrPut(parameter.symbol) {
+                argumentToPropertiesMap.getValue(parameter).symbol
             }
         }
 
@@ -213,8 +319,8 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
 
         for (state in sortedStates) {
             val condition = JsIrBuilder.buildCall(eqeqeqInt).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(subject))
-                putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.intType, state.id))
+                arguments[0] = JsIrBuilder.buildGetValue(subject)
+                arguments[1] = JsIrBuilder.buildInt(context.irBuiltIns.intType, state.id)
             }
 
             switch.branches += IrBranchImpl(state.entryBlock.startOffset, state.entryBlock.endOffset, condition, state.entryBlock)
@@ -226,24 +332,6 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
         }
 
         rootLoop.transformChildrenVoid(dispatchPointTransformer)
-    }
-
-    private fun computeLivenessAtSuspensionPoints(body: IrBody): Map<IrCall, List<IrValueDeclaration>> {
-        // TODO: data flow analysis.
-        // Just save all visible for now.
-        val result = mutableMapOf<IrCall, List<IrValueDeclaration>>()
-        body.acceptChildrenVoid(object : VariablesScopeTracker() {
-            override fun visitCall(expression: IrCall) {
-                if (!expression.isSuspend) return super.visitCall(expression)
-
-                expression.acceptChildrenVoid(this)
-                val visibleVariables = mutableListOf<IrValueDeclaration>()
-                scopeStack.forEach { visibleVariables += it }
-                result[expression] = visibleVariables
-            }
-        })
-
-        return result
     }
 
     private fun needUnboxingOrUnit(fromType: IrType, toType: IrType): Boolean {
@@ -262,7 +350,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
 
         return irComposite(resultType = expectedType) {
             val tmp = createTmpVariable(delegatingCall, irType = functionReturnType)
-            val coroutineSuspended = irCall(coroutineSymbols.coroutineSuspendedGetter)
+            val coroutineSuspended = irCall(this@JsSuspendFunctionsLowering.context.symbols.coroutineSuspendedGetter)
             val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
             +irIfThen(context.irBuiltIns.unitType, condition, irReturn(irGet(tmp)))
             +irImplicitCast(irGet(tmp), expectedType)
@@ -272,17 +360,101 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         val dispatchReceiverVar = createTmpVariable(receiver, irType = receiver.type)
         +irCall(coroutineImplResultSymbolSetter).apply {
-            dispatchReceiver = irGet(dispatchReceiverVar)
-            putValueArgument(0, irGetObject(context.irBuiltIns.unitClass))
+            arguments[0] = irGet(dispatchReceiverVar)
+            arguments[1] = irGetObject(context.irBuiltIns.unitClass)
         }
         +irCall(coroutineImplExceptionPropertySetter).apply {
-            dispatchReceiver = irGet(dispatchReceiverVar)
-            putValueArgument(0, irNull())
+            arguments[0] = irGet(dispatchReceiverVar)
+            arguments[1] = irNull()
         }
         val call = irCall(invokeSuspendFunction.symbol).apply {
-            dispatchReceiver = irGet(dispatchReceiverVar)
+            arguments[0] = irGet(dispatchReceiverVar)
         }
         val functionReturnType = scope.scopeOwnerSymbol.assertedCast<IrSimpleFunctionSymbol> { "Expected function symbol" }.owner.returnType
         +irReturn(generateDelegatedCall(functionReturnType, call))
     }
 }
+
+internal sealed class SuspendFunctionKind {
+    object NO_SUSPEND_CALLS : SuspendFunctionKind()
+    class DELEGATING(val delegatingCall: IrCall) : SuspendFunctionKind()
+    object NEEDS_STATE_MACHINE : SuspendFunctionKind()
+}
+
+internal fun getSuspendFunctionKind(
+    context: CommonBackendContext,
+    function: IrSimpleFunction,
+    body: IrBody,
+    includeSuspendLambda: Boolean = true,
+    suspensionIntrinsic: IrSimpleFunctionSymbol? = null
+): SuspendFunctionKind {
+
+    fun IrSimpleFunction.isSuspendLambda() =
+        name.asString() == "invoke" && parentClassOrNull?.let { it.origin === WebCallableReferenceLowering.LAMBDA_IMPL } == true
+
+    if (function.isSuspendLambda() && includeSuspendLambda)
+        return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
+
+    var numberOfSuspendCalls = 0
+    body.acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            expression.acceptChildrenVoid(this)
+            if (expression.isSuspend || expression.symbol == suspensionIntrinsic)
+                ++numberOfSuspendCalls
+        }
+    })
+    // It is important to optimize the case where there is only one suspend call and it is the last statement
+    // because we don't need to build a fat coroutine class in that case.
+    // This happens a lot in practice because of suspend functions with default arguments.
+    // TODO: use collectTailSuspendCalls.
+    val lastCall = when (val lastStatement = (body as IrBlockBody).statements.lastOrNull()) {
+        is IrCall ->
+            // Delegation to call without return can only be performed to Unit-returning function call from Unit-returning function
+            if (lastStatement.type == context.irBuiltIns.unitType && function.returnType == context.irBuiltIns.unitType)
+                lastStatement
+            else
+                null
+        is IrReturn -> {
+            fun IrTypeOperatorCall.isImplicitCast(): Boolean {
+                return this.operator == IrTypeOperator.IMPLICIT_CAST || this.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+            }
+
+            var value: IrElement = lastStatement
+            /*
+             * Check if matches this pattern:
+             * block/return {
+             *     block/return {
+             *         .. suspendCall()
+             *     }
+             * }
+             */
+            loop@ while (true) {
+                value = when {
+                    value is IrBlock && value.statements.size == 1 -> value.statements.first()
+                    value is IrReturn -> value.value
+                    value is IrTypeOperatorCall && value.isImplicitCast() -> value.argument
+                    else -> break@loop
+                }
+            }
+            value as? IrCall
+        }
+        else -> null
+    }
+    val suspendCallAtEnd = lastCall != null && lastCall.isSuspend    // Suspend call.
+    return when {
+        numberOfSuspendCalls == 0 -> SuspendFunctionKind.NO_SUSPEND_CALLS
+        numberOfSuspendCalls == 1
+                && suspendCallAtEnd -> SuspendFunctionKind.DELEGATING(lastCall)
+        else -> SuspendFunctionKind.NEEDS_STATE_MACHINE
+    }
+}
+
+// Suppress since it is used in native
+@Suppress("MemberVisibilityCanBePrivate")
+internal fun IrCall.isReturnIfSuspendedCall(context: JsCommonBackendContext) =
+    symbol == context.symbols.returnIfSuspended
+

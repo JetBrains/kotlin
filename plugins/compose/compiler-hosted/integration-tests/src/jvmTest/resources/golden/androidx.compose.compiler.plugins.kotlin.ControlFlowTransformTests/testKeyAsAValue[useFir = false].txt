@@ -1,0 +1,40 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    val y = key(x) { R() }
+    P(y)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<P(y)>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val y = <block>{
+    %composer.startMovableGroup(<>, x)
+    sourceInformation(%composer, "<R()>")
+    val tmp0 = R(%composer, 0)
+    %composer.endMovableGroup()
+    tmp0
+  }
+  P(y, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

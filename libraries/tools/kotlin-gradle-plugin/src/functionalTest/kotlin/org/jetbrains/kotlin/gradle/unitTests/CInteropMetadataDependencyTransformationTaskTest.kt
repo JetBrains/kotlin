@@ -11,8 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.TaskInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedCInteropMetadataLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde
@@ -137,14 +136,12 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
                 nativeMain as DefaultKotlinSourceSet
             ) ?: fail("Expected transformation task registered for '$nativeMain'")
             val cinteropTransformationTask = cinteropTransformationTaskProvider.get()
-            val projectRootDir = rootDir
             return cinteropTransformationTask
                 .outputs
                 .files
-                .map { it.relativeTo(projectRootDir) }
                 .toSet()
-                // common root directory where all transformations stored
-                .minus(File(".gradle/kotlin/kotlinTransformedCInteropMetadataLibraries"))
+                // Shared output directory itself is always present in every task output
+                .minus(kotlinTransformedCInteropMetadataLibraryDirectoryForIde)
         }
 
         suspend fun assertTasksOutputsDoesntIntersect(a: Project, b: Project) {

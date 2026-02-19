@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,7 +60,7 @@ inline fun KotlinExceptionWithAttachments.buildAttachment(
 
 inline fun Logger.logErrorWithAttachment(
     message: String,
-    cause: Exception? = null,
+    cause: Throwable? = null,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
@@ -69,7 +69,7 @@ inline fun Logger.logErrorWithAttachment(
 
 inline fun buildErrorWithAttachment(
     message: String,
-    cause: Exception? = null,
+    cause: Throwable? = null,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Throwable {
@@ -80,7 +80,7 @@ inline fun buildErrorWithAttachment(
 
 inline fun errorWithAttachment(
     message: String,
-    cause: Exception? = null,
+    cause: Throwable? = null,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Nothing {
@@ -89,11 +89,11 @@ inline fun errorWithAttachment(
 
 inline fun rethrowExceptionWithDetails(
     message: String,
-    exception: Exception,
+    exception: Throwable,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Nothing {
-    if (shouldIjPlatformExceptionBeRethrown(exception)) throw exception
+    rethrowIntellijPlatformExceptionIfNeeded(exception)
     errorWithAttachment(message, exception, attachmentName, buildAttachment)
 }
 

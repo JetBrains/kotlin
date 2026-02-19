@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface In<in T>
 interface Out<out T>
@@ -24,3 +25,6 @@ class Test<in I, out O, P>(
         type14: In<I>,
         type15: In<O>
 )
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, in, interfaceDeclaration, nullableType,
+out, primaryConstructor, propertyDeclaration, typeParameter */

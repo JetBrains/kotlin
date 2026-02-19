@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface Semigroup<T> {
     infix fun T.combine(other: T): T
@@ -33,3 +34,7 @@ fun test() {
         listOf("1", "2", "3").sum()
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, functionalType, infix, inline, integerLiteral, interfaceDeclaration, lambdaLiteral,
+nullableType, objectDeclaration, override, propertyDeclaration, stringLiteral, thisExpression, typeParameter, vararg */

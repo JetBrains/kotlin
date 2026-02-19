@@ -7,50 +7,21 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 fun createExpectActualTypeParameterSubstitutor(
-    expectedTypeParameters: List<FirTypeParameterSymbol>,
-    actualTypeParameters: List<FirTypeParameterSymbol>,
+    expectActualTypeParameters: List<Pair<FirTypeParameterSymbol, FirTypeParameterSymbol>>,
     useSiteSession: FirSession,
     parentSubstitutor: ConeSubstitutor? = null
 ): ConeSubstitutor {
-    val substitution = expectedTypeParameters.zip(actualTypeParameters).associate { (expectedParameterSymbol, actualParameterSymbol) ->
-        expectedParameterSymbol to actualParameterSymbol.toLookupTag().constructType(emptyArray(), isNullable = false)
+    val substitution = expectActualTypeParameters.associate { (expectedParameterSymbol, actualParameterSymbol) ->
+        expectedParameterSymbol to actualParameterSymbol.toLookupTag().constructType()
     }
-    val substitutor = ConeSubstitutorByMap(
-        substitution,
-        useSiteSession
-    )
+    val substitutor = substitutorByMap(substitution, useSiteSession)
     if (parentSubstitutor == null) {
         return substitutor
     }
     return substitutor.chain(parentSubstitutor)
-}
-
-fun areCompatibleExpectActualTypes(
-    expectedType: ConeKotlinType?,
-    actualType: ConeKotlinType?,
-    actualSession: FirSession,
-    dynamicTypesEqualToAnything: Boolean = true
-): Boolean {
-    if (expectedType == null) return actualType == null
-    if (actualType == null) return false
-
-    if (!dynamicTypesEqualToAnything) {
-        val isExpectedDynamic = expectedType is ConeDynamicType
-        val isActualDynamic = actualType is ConeDynamicType
-        if (isExpectedDynamic && !isActualDynamic || !isExpectedDynamic && isActualDynamic) {
-            return false
-        }
-    }
-
-    return AbstractTypeChecker.equalTypes(
-        actualSession.typeContext,
-        expectedType,
-        actualType
-    )
 }

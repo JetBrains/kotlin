@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: +DataObjects
 
@@ -42,3 +43,6 @@ data object OverridenInSuper: Super() {
         return super.equals(other)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, data, functionDeclaration, integerLiteral, nullableType,
+objectDeclaration, operator, override, superExpression */

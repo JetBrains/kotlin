@@ -14,6 +14,7 @@ import java.nio.file.Path
  * @param transform function receiving current file content and outputting new file content
  */
 fun Path.modify(transform: (currentContent: String) -> String) {
+    assert(Files.exists(this)) { "$this doesn't exist" }
     assert(Files.isRegularFile(this)) { "$this is not a regular file!" }
 
     val file = toFile()

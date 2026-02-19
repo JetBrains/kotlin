@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> assertEquals(a: T, b: T) {
     if (a != b) throw AssertionError("$a != $b")
 }
@@ -18,3 +19,6 @@ fun main() {
     (-128).toByte()
     -128.toByte()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter, unaryExpression */

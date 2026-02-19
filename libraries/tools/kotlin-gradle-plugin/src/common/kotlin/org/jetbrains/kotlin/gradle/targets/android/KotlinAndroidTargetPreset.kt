@@ -7,8 +7,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpWithBuiltInKotlinAppliedCheck.checkIfNewDslIsUsed
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpWithBuiltInKotlinAppliedCheck.reportKotlinAndroidDeprecation
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.AndroidGradlePluginIsMissing
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
@@ -16,12 +18,11 @@ import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTarget
 
 import javax.inject.Inject
 
-@DeprecatedTargetPresetApi
-abstract class KotlinAndroidTargetPreset @Inject constructor(
+internal abstract class KotlinAndroidTargetPreset @Inject constructor(
     private val project: Project
 ) : InternalKotlinTargetPreset<KotlinAndroidTarget> {
 
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createTargetInternal(name: String): KotlinAndroidTarget {
 
@@ -33,11 +34,18 @@ abstract class KotlinAndroidTargetPreset @Inject constructor(
             > Could not generate a decorated class for type KotlinAndroidTarget.
             > com/android/build/gradle/api/BaseVariant
          */
-        project.findAppliedAndroidPluginIdOrNull() ?: project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
+        val androidPluginId = project.findAppliedAndroidPluginIdOrNull()
+        if (androidPluginId == null) {
+            project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
+        } else {
+            project.checkIfNewDslIsUsed(isKmpProject = true)
+            project.reportKotlinAndroidDeprecation(
+                KotlinToolingDiagnostics.NonKmpAgpIsDeprecated(androidPluginId)
+            )
+        }
 
-        return project.objects.newInstance(KotlinAndroidTarget::class.java, name, project).apply {
-            @Suppress("DEPRECATION")
-            preset = this@KotlinAndroidTargetPreset
+        return project.objects.KotlinAndroidTarget(project, name, true).apply {
+            targetPreset = this@KotlinAndroidTargetPreset
             project.dynamicallyApplyWhenAndroidPluginIsApplied({ this })
         }
     }

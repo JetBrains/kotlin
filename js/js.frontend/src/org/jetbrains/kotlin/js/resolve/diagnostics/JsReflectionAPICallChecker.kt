@@ -18,19 +18,15 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.storage.StorageManager
-
-private val ADDITIONAL_ALLOWED_CLASSES = setOf(
-    FqName("kotlin.reflect.AssociatedObjectKey"),
-    FqName("kotlin.reflect.ExperimentalAssociatedObjects")
-)
 
 class JsReflectionAPICallChecker(
     reflectionTypes: ReflectionTypes,
@@ -45,8 +41,8 @@ class JsReflectionAPICallChecker(
         context: CallCheckerContext
     ): Boolean {
         return super.isAllowedReflectionApi(descriptor, containingClass, context) ||
-                containingClass.fqNameSafe in ADDITIONAL_ALLOWED_CLASSES ||
-                descriptor.name.asString() == "findAssociatedObject"
+                containingClass.classId in StandardClassIds.Annotations.associatedObjectAnnotations ||
+                descriptor.name == StandardNames.FqNames.findAssociatedObject.shortName()
     }
 
     override fun report(element: PsiElement, context: CallCheckerContext) {

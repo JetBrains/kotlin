@@ -21,7 +21,7 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
     /**
      * The key that defines *the* context interceptor.
      */
-    companion object Key : CoroutineContext.Key<ContinuationInterceptor>
+    public companion object Key : CoroutineContext.Key<ContinuationInterceptor>
 
     /**
      * Returns continuation that wraps the original [continuation], thus intercepting all resumptions.

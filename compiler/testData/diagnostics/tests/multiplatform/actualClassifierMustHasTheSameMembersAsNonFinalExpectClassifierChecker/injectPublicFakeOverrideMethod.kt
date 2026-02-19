@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -13,7 +15,9 @@ open class Injector {
     fun injectedMethod() {}
 }
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> : Injector() {
+actual open class Foo : Injector() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration */

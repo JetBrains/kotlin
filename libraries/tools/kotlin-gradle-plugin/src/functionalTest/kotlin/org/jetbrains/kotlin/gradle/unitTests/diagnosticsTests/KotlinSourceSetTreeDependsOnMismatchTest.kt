@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -20,8 +21,11 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
             kotlin {
                 project.androidApplication { compileSdk = 32 }
                 applyDefaultHierarchyTemplate()
+                @Suppress("DEPRECATION")
                 androidTarget()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64(); iosArm64(); iosSimulatorArm64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 macosX64(); macosArm64()
 
                 configure()

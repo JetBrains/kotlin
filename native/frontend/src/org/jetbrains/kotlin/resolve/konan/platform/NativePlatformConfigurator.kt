@@ -30,12 +30,15 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
         NativeObjCNameChecker, NativeObjCNameOverridesChecker,
         NativeObjCRefinementChecker, NativeObjCRefinementAnnotationChecker,
         NativeObjCRefinementOverridesChecker, NativeHiddenFromObjCInheritanceChecker,
-    )
+        NativeObjcOverrideApplicabilityChecker,
+    ),
+    platformSpecificCastChecker = NativePlatformSpecificCastChecker
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NativeInliningRule)
         container.useImpl<NativeIdentifierChecker>()
         container.useImpl<NativeForwardDeclarationRttiChecker>()
+        container.useInstance(NativeConflictingOverloadsDispatcher)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

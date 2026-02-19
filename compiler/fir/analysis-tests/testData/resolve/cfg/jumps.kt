@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun test_1(x: Int?) {
     val y = if (x == null) {
         throw Exception()
@@ -51,3 +52,7 @@ fun test_6() {
         return@run
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, break, continue, doWhileLoop, equalityExpression, functionDeclaration,
+functionalType, ifExpression, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+whileLoop */

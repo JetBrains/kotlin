@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 //KT-2838 Type inference failed on passing null as a nullable argument
 package a
 
@@ -17,3 +18,5 @@ fun test1(a: Int) {
 fun test2(a: Int) {
     bar(a, throw Exception())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, safeCall, typeParameter */

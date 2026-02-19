@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
 fun <T> takeFun(f: (T) -> Unit) {}
 fun <T, R> callFun(f: (T) -> R): R = TODO()
@@ -22,3 +23,7 @@ fun test() {
 
     callFun<Int, Wrapper<Int>>(::createWrapper).baz(::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, inProjection, intersectionType, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeConstraint, typeParameter */

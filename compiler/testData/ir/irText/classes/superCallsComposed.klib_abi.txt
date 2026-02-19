@@ -1,0 +1,23 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /Base { // /Base|null[0]
+    open val bar // /Base.bar|{}bar[0]
+        open fun <get-bar>(): kotlin/String // /Base.bar.<get-bar>|<get-bar>(){}[0]
+    constructor <init>() // /Base.<init>|<init>(){}[0]
+    open fun foo() // /Base.foo|foo(){}[0]
+}
+abstract interface /BaseI { // /BaseI|null[0]
+    abstract val bar // /BaseI.bar|{}bar[0]
+        abstract fun <get-bar>(): kotlin/String // /BaseI.bar.<get-bar>|<get-bar>(){}[0]
+    abstract fun foo() // /BaseI.foo|foo(){}[0]
+}
+final class /Derived : /Base, /BaseI { // /Derived|null[0]
+    final val bar // /Derived.bar|{}bar[0]
+        final fun <get-bar>(): kotlin/String // /Derived.bar.<get-bar>|<get-bar>(){}[0]
+    constructor <init>() // /Derived.<init>|<init>(){}[0]
+    final fun foo() // /Derived.foo|foo(){}[0]
+}

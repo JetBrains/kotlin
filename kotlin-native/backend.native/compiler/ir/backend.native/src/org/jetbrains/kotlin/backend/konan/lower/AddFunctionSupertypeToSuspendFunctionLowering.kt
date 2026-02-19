@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  */
 internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irFile.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 // Don't need to iterate through children. All local classes are already moved to the top level by this moment.
             }
@@ -70,7 +70,7 @@ internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Contex
                     it.isSuspendFunction() && it.classOrNull?.owner?.name?.toString() != "SuspendFunction"
                 }.toSet()
 
-                val continuationClassSymbol = context.ir.symbols.continuationClass
+                val continuationClassSymbol = context.symbols.continuationClass
 
                 fun IrSimpleType.getClassAt(index: Int) = (this.arguments.getOrNull(index) as? IrTypeProjection)?.type?.classOrNull
 
@@ -89,7 +89,7 @@ internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Contex
                         }
                     } + context.irBuiltIns.anyNType
 
-                    val functionType = context.ir.symbols.functionN(functionClassTypeArguments.size - 1).typeWith(functionClassTypeArguments)
+                    val functionType = context.irBuiltIns.functionN(functionClassTypeArguments.size - 1).typeWith(functionClassTypeArguments)
 
                     addOverride(clazz, suspendFunctionType, functionType)
                 }
@@ -108,7 +108,7 @@ internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Contex
                         }
                     }
 
-                    val suspendFunctionType = context.ir.symbols.suspendFunctionN(suspendFunctionClassTypeArguments.size - 1).typeWith(suspendFunctionClassTypeArguments)
+                    val suspendFunctionType = context.irBuiltIns.suspendFunctionN(suspendFunctionClassTypeArguments.size - 1).typeWith(suspendFunctionClassTypeArguments)
                     addOverride(clazz, functionType, suspendFunctionType)
                 }
             }

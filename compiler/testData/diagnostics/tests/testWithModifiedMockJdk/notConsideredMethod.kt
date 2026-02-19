@@ -1,5 +1,6 @@
-// !JDK_KIND: MODIFIED_MOCK_JDK
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// JDK_KIND: MODIFIED_MOCK_JDK
+// CHECK_TYPE
 
 interface A : MutableCollection<String> {
     // Override of deprecated function could be marked as deprecated too
@@ -11,3 +12,7 @@ fun foo(x: MutableCollection<Int>, y: Collection<String>, z: A) {
     y.<!DEPRECATION!>nonExistingMethod<!>("")
     z.<!DEPRECATION!>nonExistingMethod<!>("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, override, stringLiteral, typeParameter,
+typeWithExtension */

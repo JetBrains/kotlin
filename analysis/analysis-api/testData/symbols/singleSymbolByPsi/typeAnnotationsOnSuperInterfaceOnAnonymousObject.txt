@@ -1,14 +1,18 @@
-KtAnonymousObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaAnonymousObjectSymbol:
+  annotations: []
+  classId: null
   classKind: ANONYMOUS_OBJECT
+  compilerVisibility: Local
   isActual: false
   isExpect: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
   name: null
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: [
+    KaUsualClassType:
+      annotations: [
         Anno1()
           psi: KtAnnotationEntry
         Anno2()
@@ -16,11 +20,12 @@ KtAnonymousObjectSymbol:
         Anno3()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+      typeArguments: []
+      type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
   ]
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperInterfaceOnAnonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: null

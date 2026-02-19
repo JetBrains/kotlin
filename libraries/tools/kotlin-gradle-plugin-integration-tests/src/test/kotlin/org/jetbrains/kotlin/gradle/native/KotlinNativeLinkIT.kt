@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 
 @DisplayName("KotlinNativeLink task tests")
@@ -28,7 +30,10 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
     @DisplayName("KT-56280: should propagate freeCompilerArgs from compilation")
     @GradleTest
     fun shouldUseCompilationFreeCompilerArgs(gradleVersion: GradleVersion) {
-        nativeProject("native-link-simple", gradleVersion) {
+        nativeProject(
+            "native-link-simple",
+            gradleVersion
+        ) {
             buildGradle.appendText(
                 """
                 |
@@ -47,60 +52,40 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
             )
 
             build("linkReleaseExecutableHost") {
-                val linkTaskOutput = output
-                    .substringAfter("Task :linkReleaseExecutableHost")
-                    .substringBefore("Task :linkHost")
-                assert(linkTaskOutput.isNotEmpty()) {
-                    "Could not get :linkReleaseExecutableHost task output!"
-                }
-
-                val args = linkTaskOutput
-                    .substringAfterLast("Transformed arguments = [")
-                    .substringBefore("]")
-                    .lines()
-                    .map { it.trim() }
-                assert(
-                    args.isNotEmpty() &&
-                            args.contains("-e") &&
-                            args.contains("main")
-                ) {
-                    printBuildOutput()
-                    "Link task arguments does not contain '-e main'!"
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkReleaseExecutableHost") {
+                    assertCommandLineArgumentsContain("-e", "main")
+                    assertNoDuplicates()
                 }
             }
         }
     }
 
-    @DisplayName("KT-60839: should provide correct default value for -Xpartial-linkage")
+    @DisplayName("KT-81359 IncompatibleBinaryConfiguration diagnostic is not triggered for tasks configuration")
     @GradleTest
-    @OsCondition(
-        supportedOn = [OS.LINUX, OS.MAC], // Don't run it on Windows. Caches are not supported there yet.
-        enabledOnCI = [OS.LINUX]
-    )
-    fun defaultValueForPartialLinkage(gradleVersion: GradleVersion) {
-        nativeProject(
-            "kt-60839-native-link-cache-builder",
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-                // KT-60839 only reproduces when the build cache is enabled,
-                // but we must ignore it when running this test in order to
-                // ensure we actually try to pass -Xpartial-linkage to konanc.
-                buildCacheEnabled = true,
-                freeArgs = defaultBuildOptions.freeArgs + "--rerun-tasks",
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    cacheKind = NativeCacheKind.STATIC,
-                    // Required as this only reproduces from CacheBuilder.
-                    cacheOrchestration = "gradle"
-                )
-            ),
-        ) {
+    fun testIncompatibleBinaryConfigurationDiagnostic(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxX64 {
+                        binaries.staticLib()
+                    }
 
-            // Must be an unoptimized debug build.
-            build("linkDebugTestHost") {
-                extractNativeTasksCommandLineArgumentsFromOutput(":linkDebugTestHost") {
-                    assertCommandLineArgumentsContain("-Xpartial-linkage=ENABLE")
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
+
+                project.tasks.withType<KotlinNativeLink>().configureEach { link ->
+                    link.binary.debuggable = true
+                    link.binary.optimized = true
+                }
+            }
+
+            build(":linkDebugStaticLinuxX64") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.IncompatibleBinaryTaskConfiguration)
+                assertNoDiagnostic(KotlinToolingDiagnostics.IncompatibleBinaryConfiguration)
+                assertOutputContains("w: Unsupported combination of flags: -opt and -g. Please pick one.")
             }
         }
     }

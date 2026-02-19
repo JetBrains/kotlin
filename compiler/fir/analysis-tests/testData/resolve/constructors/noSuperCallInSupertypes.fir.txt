@@ -24,9 +24,9 @@ FILE: main.kt
     }
     public final typealias QQQ = R|AKt|
     public final typealias DDD = R|C|
-    public final class CKt : R|QQQ|, R|DDD| {
+    public final class CKt : R|{QQQ=} AKt|, R|{DDD=} C| {
         public constructor(s: R|kotlin/String|): R|CKt| {
-            super<R|QQQ|>(R|<local>/s|)
+            super<R|{QQQ=} AKt|>(R|<local>/s|)
         }
 
     }

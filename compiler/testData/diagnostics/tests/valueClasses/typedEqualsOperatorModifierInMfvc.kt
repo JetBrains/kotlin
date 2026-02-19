@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
-// LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// LANGUAGE: +CustomEqualsInValueClasses, +JvmInlineMultiFieldValueClasses
 
 
 @JvmInline
@@ -20,3 +21,6 @@ value class MFVC2(val x: Int, val y: Int) {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(other: MFVC2) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, override,
+primaryConstructor, propertyDeclaration, value */

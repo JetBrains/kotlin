@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun box(c : C) {
     val a : C = c
@@ -15,3 +16,5 @@ open class B : A() {
 open class C : B() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, override, propertyDeclaration */

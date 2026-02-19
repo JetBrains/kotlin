@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class IncDec() {
   operator fun inc() : IncDec = this
@@ -45,3 +46,6 @@ fun testUnitIncDec() {
   x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>x
   x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, integerLiteral,
+intersectionType, localProperty, operator, primaryConstructor, propertyDeclaration, smartcast, thisExpression */

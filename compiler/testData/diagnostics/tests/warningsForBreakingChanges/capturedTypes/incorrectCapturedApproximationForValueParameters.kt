@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-49404
 // SKIP_TXT
 
@@ -41,3 +42,7 @@ fun B<in Any>.bar4(i: Inv<*>) {
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>ext<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, javaType, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter, typeWithExtension */

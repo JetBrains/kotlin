@@ -5,29 +5,62 @@
 
 package org.jetbrains.kotlin.types
 
-sealed class ConstantValueKind<T>(val asString: kotlin.String) {
-    object Null : ConstantValueKind<Nothing?>("Null")
-    object Boolean : ConstantValueKind<kotlin.Boolean>("Boolean")
-    object Char : ConstantValueKind<kotlin.Char>("Char")
+sealed class ConstantValueKind(val asString: kotlin.String) {
+    object Null : ConstantValueKind("Null")
+    object Boolean : ConstantValueKind("Boolean")
+    object Char : ConstantValueKind("Char")
 
-    object Byte : ConstantValueKind<kotlin.Byte>("Byte")
-    object UnsignedByte : ConstantValueKind<kotlin.Byte>("UByte")
-    object Short : ConstantValueKind<kotlin.Short>("Short")
-    object UnsignedShort : ConstantValueKind<kotlin.Short>("UShort")
-    object Int : ConstantValueKind<kotlin.Int>("Int")
-    object UnsignedInt : ConstantValueKind<kotlin.Int>("UInt")
-    object Long : ConstantValueKind<kotlin.Long>("Long")
-    object UnsignedLong : ConstantValueKind<kotlin.Long>("ULong")
+    object Byte : ConstantValueKind("Byte") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedByte
+    }
 
-    object String : ConstantValueKind<kotlin.String>("String")
+    object UnsignedByte : ConstantValueKind("UByte") {
+        override fun toSigned(): ConstantValueKind = Byte
+    }
 
-    object Float : ConstantValueKind<kotlin.Float>("Float")
-    object Double : ConstantValueKind<kotlin.Double>("Double")
+    object Short : ConstantValueKind("Short") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedShort
+    }
 
-    object Error : ConstantValueKind<Nothing>("Error")
+    object UnsignedShort : ConstantValueKind("UShort") {
+        override fun toSigned(): ConstantValueKind = Short
+    }
 
-    object IntegerLiteral : ConstantValueKind<kotlin.Long>("IntegerLiteral")
-    object UnsignedIntegerLiteral : ConstantValueKind<kotlin.Long>("UnsignedIntegerLiteral")
+    object Int : ConstantValueKind("Int") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedInt
+    }
+
+    object UnsignedInt : ConstantValueKind("UInt") {
+        override fun toSigned(): ConstantValueKind = Int
+    }
+
+    object Long : ConstantValueKind("Long") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedLong
+    }
+
+    object UnsignedLong : ConstantValueKind("ULong") {
+        override fun toSigned(): ConstantValueKind = Long
+    }
+
+    object String : ConstantValueKind("String")
+
+    object Float : ConstantValueKind("Float")
+    object Double : ConstantValueKind("Double")
+
+    object Error : ConstantValueKind("Error")
+
+    object IntegerLiteral : ConstantValueKind("IntegerLiteral") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedIntegerLiteral
+    }
+
+    object UnsignedIntegerLiteral : ConstantValueKind("UnsignedIntegerLiteral") {
+        override fun toSigned(): ConstantValueKind = IntegerLiteral
+    }
+
+    val isUnsigned: kotlin.Boolean get() = asString[0] == 'U'
+
+    open fun toSigned(): ConstantValueKind = this
+    open fun toUnsigned(): ConstantValueKind = this
 
     override fun toString() = asString
 }

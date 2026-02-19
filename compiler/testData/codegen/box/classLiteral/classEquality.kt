@@ -1,12 +1,13 @@
+// FILE: lib.kt
+inline fun <reified T> isT(a: Any) = a::class == T::class
 
+// FILE: main.kt
 open class A
 class B : A()
 
 fun compareClasses(a: Any, b: Any) = a::class == b::class
 
 fun isA(a: Any) = a::class == A::class
-
-inline fun <reified T> isT(a: Any) = a::class == T::class
 
 fun box(): String {
     if (!compareClasses("a", "b")) return "Fail 1"

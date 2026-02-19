@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Result<T> {
     fun <R> map(transform: (T) -> R): Result<R> = TODO()
@@ -19,3 +20,5 @@ fun <K1, K2, K3, K4> rules(res: Result<Any>):
     }
 }
 
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, functionDeclaration, functionalType, intersectionType,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter */

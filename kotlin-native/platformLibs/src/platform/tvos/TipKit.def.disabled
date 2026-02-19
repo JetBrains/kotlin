@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.TipKit
+
+modules = TipKit
+compilerOpts = -framework TipKit
+linkerOpts = -framework TipKit
+#Disabled: Not officially available for tvos

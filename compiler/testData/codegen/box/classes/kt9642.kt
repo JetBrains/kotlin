@@ -1,3 +1,4 @@
+
 class Outer {
     class Nested {
         fun fn(): String  {

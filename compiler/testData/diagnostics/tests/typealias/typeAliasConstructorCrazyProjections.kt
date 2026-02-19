@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 class Bound<X, Y : X>(val x: X, val y: Y)
@@ -13,3 +14,7 @@ fun <T> listOf(): List<T> = null!!
 val test1 = <!UNRESOLVED_REFERENCE!>BOutIn<!>(listOf(), null!!)
 
 val test2 = BInIn(listOf(), null!!)
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, inProjection, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

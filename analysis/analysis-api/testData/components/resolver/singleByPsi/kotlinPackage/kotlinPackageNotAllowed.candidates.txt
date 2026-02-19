@@ -1,0 +1,2 @@
+KtNameReferenceExpression(151,154): 'bar'
+  NO_CANDIDATES

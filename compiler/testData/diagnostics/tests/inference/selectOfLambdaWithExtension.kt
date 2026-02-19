@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
 
@@ -19,3 +20,7 @@ val a2 = select(
     fun CharSequence.(a: Int) { myPrint(a + this.length + 2) },
     { a: Int -> myPrint(a + this.length + 3) }
 )
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, capturedType, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, nullableType, outProjection, propertyDeclaration, thisExpression, typeAliasDeclaration,
+typeParameter, typeWithExtension, vararg */

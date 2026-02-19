@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // Issue: KT-26698
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
@@ -110,3 +111,6 @@ fun test_35(x: Inv<Number>, list: List<Inv<out Int>>) {
 fun test_36(x: Inv<Number>, list: List<Inv<out Any>>) {
     list.contains1(x)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, in,
+inProjection, nullableType, out, outProjection, stringLiteral, typeParameter */

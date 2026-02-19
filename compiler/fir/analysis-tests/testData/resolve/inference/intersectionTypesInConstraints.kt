@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: MyList.java
 public interface MyList<E> extends java.util.List<E>, I {}
 
@@ -14,3 +15,6 @@ fun test() {
 }
 
 fun <T> list(value: T): MyList<T> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration, javaType, nullableType,
+typeParameter */

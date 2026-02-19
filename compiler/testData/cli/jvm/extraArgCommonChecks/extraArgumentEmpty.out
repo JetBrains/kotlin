@@ -1,0 +1,2 @@
+error: unknown value for parameter -Xexplicit-api: ''. Value should be one of {disable, strict, warning}
+COMPILATION_ERROR

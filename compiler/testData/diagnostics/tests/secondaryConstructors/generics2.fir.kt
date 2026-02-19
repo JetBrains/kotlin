@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class B<R1, R2>(x: R1, y: R2)
 
 class A0<T1, T2> {
@@ -24,3 +25,5 @@ class A2<T1, T2> : B<T1, Int> {
     constructor(x: T1, y: T2, z: String): super(<!ARGUMENT_TYPE_MISMATCH!>y<!>, 1)
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, secondaryConstructor,
+stringLiteral, typeParameter */

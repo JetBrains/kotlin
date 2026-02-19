@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-60299
 
@@ -7,3 +8,5 @@ internal fun x(): T {
     val something = "OK"
     something.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, stringLiteral, typeAliasDeclaration */

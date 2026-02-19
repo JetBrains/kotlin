@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +UseCallsInPlaceEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -66,3 +67,7 @@ fun isPresenceOfLazy3(x: Any?, unknownBoolean: Boolean) {
     }
     println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, contractCallsEffect, contractConditionalEffect, contracts,
+functionDeclaration, functionalType, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

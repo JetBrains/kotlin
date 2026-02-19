@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
 
 // FILE: b.kt
 <!JVM_PACKAGE_NAME_CANNOT_BE_EMPTY!>@file:JvmPackageName("")<!>
@@ -25,3 +26,6 @@ fun e() {}
 @file:JvmPackageName(<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>f<!>)
 package f
 const val name = "f"
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, const, functionDeclaration, integerLiteral,
+propertyDeclaration, stringLiteral */

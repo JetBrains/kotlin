@@ -5,46 +5,38 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.backend.common.lower.parents
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
-import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
-import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticConstructorForExport
-import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticPrimaryConstructor
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6PrimaryConstructorReplacement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 val IrFile.nameWithoutExtension: String get() = name.substringBeforeLast(".kt")
 
 fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
-    return JsIrBuilder.buildCall(context.intrinsics.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE)
-        .apply { putTypeArgument(0, defaultType) }
+    return JsIrBuilder.buildCall(context.symbols.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE)
+        .apply {
+            typeArguments[0] = defaultType
+        }
 }
 
 fun IrDeclaration.isExportedMember(context: JsIrBackendContext) =
-    (this is IrDeclarationWithVisibility && visibility.isPublicAPI) &&
-            parentClassOrNull?.isExported(context) == true
+    parentClassOrNull != null && isExported(context)
 
 fun IrDeclaration?.isExportedClass(context: JsIrBackendContext) =
     this is IrClass && kind.isClass && isExported(context)
@@ -60,11 +52,17 @@ fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolea
     return target.owner.statements.lastOrNull() === this
 }
 
-fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
+fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean, isEsModules: Boolean): FqName {
     val name = getJsNameOrKotlinName()
     return when (val parent = parent) {
-        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage).child(name)
-        is IrPackageFragment -> getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier)
+        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage, isEsModules).child(name)
+        is IrPackageFragment ->
+            (getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier))
+                .butIf(isEsModules && this is IrClass && isObject && !isExternal) {
+                    // In ES modules, static members of a top-level object actually live in the <object name>.$metadata.type namespace,
+                    // rather than just the <object name> namespace.
+                    it.child(Name.identifier($$"$metadata$")).child(Name.identifier("type"))
+                }
         else -> FqName(name.identifier)
     }
 }
@@ -76,15 +74,10 @@ fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
     }
 }
 
-private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {
-    return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
+private fun IrDeclaration.getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {
+    return (getJsQualifier() ?: (parent as? IrFile)?.getJsQualifier())
+        ?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
 }
-
-val IrFunctionAccessExpression.typeArguments: List<IrType?>
-    get() = List(typeArgumentsCount) { getTypeArgument(it) }
-
-val IrFunctionAccessExpression.valueArguments: List<IrExpression?>
-    get() = List(valueArgumentsCount) { getValueArgument(it) }
 
 val IrClass.isInstantiableEnum: Boolean
     get() = isEnumClass && !isExpect && !isEffectivelyExternal()
@@ -99,7 +92,7 @@ fun IrFunctionSymbol.isUnitInstanceFunction(context: JsIrBackendContext): Boolea
 
 // TODO: the code is written to pass Repl tests, so we should understand. why in Repl tests we don't have backingField
 fun JsIrBackendContext.getVoid(): IrExpression =
-    intrinsics.void.owner.backingField?.let {
+    symbols.void.owner.backingField?.let {
         IrGetFieldImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -116,24 +109,25 @@ fun irEmpty(context: JsIrBackendContext): IrExpression {
     return JsIrBuilder.buildComposite(context.dynamicType, emptyList())
 }
 
-fun IrDeclaration.isObjectInstanceGetter(): Boolean {
-    return this is IrSimpleFunction && isObjectInstanceGetter()
-}
-
 fun IrSimpleFunction.isObjectInstanceGetter(): Boolean {
     return origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
-}
-
-fun IrDeclaration.isObjectInstanceField(): Boolean {
-    return this is IrField && isObjectInstanceField()
 }
 
 fun IrField.isObjectInstanceField(): Boolean {
     return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
 }
 
-fun JsIrBackendContext.findDefaultConstructorFor(irClass: IrClass): IrFunction? {
-    return mapping.classToItsDefaultConstructor[irClass]?.let {
-        mapping.secondaryConstructorToFactory[it] ?: it
-    }
+fun IrClass.findDefaultConstructorForReflection(): IrFunction? =
+    defaultConstructorForReflection?.let { it.constructorFactory ?: it }
+
+val IrClass.primaryConstructorReplacement: IrSimpleFunction?
+    get() = findDeclaration<IrSimpleFunction> { it.isEs6PrimaryConstructorReplacement }
+
+val IrClass.shouldGenerateObjectWithGetInstanceInEsModuleTypeScript: Boolean
+    get() = !isEffectivelyExternal() && (parent as? IrClass).let { it == null || (it.isInterface && !isCompanion) }
+
+fun IrClass.typeScriptInnerClassReference(): String {
+    val name = getJsNameOrKotlinName().identifier
+    if (parent !is IrClass) return name
+    return "${parentAsClass.typeScriptInnerClassReference()}.$name"
 }

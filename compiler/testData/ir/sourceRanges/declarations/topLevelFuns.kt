@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 package test
-
 
 fun test0() {}
 

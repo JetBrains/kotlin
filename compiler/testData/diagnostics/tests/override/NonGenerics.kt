@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package override.normal
 
 interface MyTrait {
@@ -48,3 +49,6 @@ class MyChildClass1() : MyClass() {
     override fun bar() {}
     override val prr : Unit = Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration */

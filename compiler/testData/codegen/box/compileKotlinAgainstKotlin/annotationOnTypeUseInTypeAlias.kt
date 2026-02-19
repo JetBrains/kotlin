@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+
 // MODULE: lib
 // FILE: A.kt
 @Target(AnnotationTarget.TYPE)

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNCHECKED_CAST -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNCHECKED_CAST -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER
 // ISSUE: KT-35702
 
 interface A
@@ -38,3 +39,6 @@ fun <T : A> test_4(s: String) {
         { a: A -> uncheckedCast(s) }
     )
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, ifExpression, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

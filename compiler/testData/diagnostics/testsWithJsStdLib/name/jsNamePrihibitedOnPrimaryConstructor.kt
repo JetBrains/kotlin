@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 package foo
 
 class A <!JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED!>@JsName("B")<!> constructor()

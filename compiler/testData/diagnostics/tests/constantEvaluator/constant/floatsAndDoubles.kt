@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 // val prop1: 3.4028235E38.toFloat()
@@ -22,7 +23,7 @@ package test
 <!DEBUG_INFO_CONSTANT_VALUE("2.0.toDouble()")!>val prop7: Double = 1.0 + 1.0<!>
 
 // val prop8: 2.0.toDouble()
-<!DEBUG_INFO_CONSTANT_VALUE("2.0.toDouble()")!>val prop8: Float = <!TYPE_MISMATCH!>1.0.toDouble() + 1.0<!><!>
+<!DEBUG_INFO_CONSTANT_VALUE("2.0.toDouble()")!>val prop8: Float = <!TYPE_MISMATCH!>1.0f.toDouble() + 1.0<!><!>
 
 // val prop9: -2.0.toDouble()
 <!DEBUG_INFO_CONSTANT_VALUE("-2.0.toDouble()")!>val prop9: Double = -2.0<!>
@@ -47,3 +48,5 @@ package test
 
 // val prop16: 0.0.toDouble()
 <!DEBUG_INFO_CONSTANT_VALUE("0.0.toDouble()")!>val prop16: Double = <!FLOAT_LITERAL_CONFORMS_ZERO!>1.2E-400<!><!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, javaProperty, propertyDeclaration, unaryExpression */

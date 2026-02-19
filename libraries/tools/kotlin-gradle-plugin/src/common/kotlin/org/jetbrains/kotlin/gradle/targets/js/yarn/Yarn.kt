@@ -5,53 +5,37 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.gradle.api.logging.Logger
-import org.gradle.internal.service.ServiceRegistry
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.YarnEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
-import java.io.File
+import org.gradle.api.model.ObjectFactory
+import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 
-class Yarn : NpmApi {
-    private val yarnWorkspaces = YarnWorkspaces()
-
-    override fun preparedFiles(nodeJs: NpmEnvironment): Collection<File> =
-        yarnWorkspaces.preparedFiles(nodeJs)
-
-    override fun prepareRootProject(
-        nodeJs: NpmEnvironment,
-        rootProjectName: String,
-        rootProjectVersion: String,
-        logger: Logger,
-        subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-        resolutions: Map<String, String>,
-    ) = yarnWorkspaces
-        .prepareRootProject(
-            nodeJs,
-            rootProjectName,
-            rootProjectVersion,
-            logger,
-            subProjects,
-            resolutions,
-        )
-
-    override fun resolveRootProject(
-        services: ServiceRegistry,
-        logger: Logger,
-        nodeJs: NpmEnvironment,
-        yarn: YarnEnvironment,
-        npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-        cliArgs: List<String>
-    ) {
-        yarnWorkspaces
-            .resolveRootProject(
-                services,
-                logger,
-                nodeJs,
-                yarn,
-                npmProjects,
-                cliArgs
-            )
-    }
+class Yarn internal constructor(
+    execOps: ExecOperations,
+    objects: ObjectFactory,
+) : NpmApiExecution<YarnEnvironment> by YarnWorkspaces(
+    execOps,
+    objects,
+) {
+    /**
+     * Manually creating new instances of this class is deprecated.
+     *
+     * An instance of [Yarn] can be found from the extensions
+     * [WasmYarnRootExtension][org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension]
+     * and
+     * [YarnRootExtension][org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension].
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension.packageManager
+     * @see org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension.packageManager
+     */
+    @Deprecated(
+        message = "Manually creating instances of this class is deprecated. " +
+                "An instance can be obtained via WasmYarnRootExtension or YarnRootExtension. " +
+                "Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Suppress("UNREACHABLE_CODE", "unused")
+    constructor() : this(
+        execOps = error("Cannot create instance of Npm. Constructor is deprecated."),
+        objects = error("Cannot create instance of Npm. Constructor is deprecated."),
+    )
 }

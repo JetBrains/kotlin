@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-235 Illegal assignment return type
 
 package kt235
@@ -47,3 +48,7 @@ class MyArray1() {
 class MyNumber() {
     operator fun inc(): MyNumber = MyNumber()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+incrementDecrementExpression, integerLiteral, lambdaLiteral, localProperty, operator, primaryConstructor,
+propertyDeclaration */

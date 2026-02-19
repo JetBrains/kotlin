@@ -10,52 +10,54 @@ import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
 import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker() {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val enumClass = when (declaration.classKind) {
-            ClassKind.ENUM_CLASS -> declaration as FirRegularClass
+            ClassKind.ENUM_CLASS -> (declaration as FirRegularClass).symbol
             ClassKind.ENUM_ENTRY -> context.containingDeclarations.lastIsInstanceOrNull()
             else -> null
         } ?: return
-        val companionOfEnum = enumClass.companionObjectSymbol ?: return
+        val companionOfEnum = enumClass.resolvedCompanionObjectSymbol ?: return
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
-        analyzeGraph(graph, companionOfEnum, context, reporter)
+        analyzeGraph(graph, companionOfEnum, enumClass)
         if (declaration.classKind.isEnumEntry) {
-            val constructor = declaration.declarations.firstIsInstanceOrNull<FirPrimaryConstructor>()
-            val constructorGraph = constructor?.controlFlowGraphReference?.controlFlowGraph
+            val constructor = declaration.primaryConstructorIfAny(context.session)
+            val constructorGraph = constructor?.resolvedControlFlowGraphReference?.controlFlowGraph
             if (constructorGraph != null) {
-                analyzeGraph(constructorGraph, companionOfEnum, context, reporter)
+                analyzeGraph(constructorGraph, companionOfEnum, enumClass)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun analyzeGraph(
         graph: ControlFlowGraph,
         companionSymbol: FirRegularClassSymbol,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
+        enumClass: FirRegularClassSymbol,
     ) {
         for (node in graph.nodes) {
             if (node is CFGNodeWithSubgraphs) {
@@ -63,10 +65,11 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker() {
                     when (subGraph.kind) {
                         ControlFlowGraph.Kind.AnonymousFunctionCalledInPlace,
                         ControlFlowGraph.Kind.PropertyInitializer,
-                        ControlFlowGraph.Kind.ClassInitializer -> analyzeGraph(subGraph, companionSymbol, context, reporter)
+                        ControlFlowGraph.Kind.ClassInitializer
+                            -> analyzeGraph(subGraph, companionSymbol, enumClass)
                         ControlFlowGraph.Kind.Class -> {
                             if (subGraph.declaration is FirAnonymousObject) {
-                                analyzeGraph(subGraph, companionSymbol, context, reporter)
+                                analyzeGraph(subGraph, companionSymbol, enumClass)
                             }
                         }
                         else -> {}
@@ -75,17 +78,16 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker() {
             }
             val qualifiedAccess = when (node) {
                 is QualifiedAccessNode -> node.fir
-                is FunctionCallNode -> node.fir
+                is FunctionCallExitNode -> node.fir
                 else -> continue
             }
             val matchingReceiver = qualifiedAccess.allReceiverExpressions
-                .firstOrNull { it.getClassSymbol(context.session) == companionSymbol }
+                .firstOrNull { it.unwrapSmartcastExpression().getClassSymbol(context.session) == companionSymbol }
             if (matchingReceiver != null) {
                 reporter.reportOn(
                     matchingReceiver.source ?: qualifiedAccess.source,
                     FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                    companionSymbol,
-                    context
+                    enumClass
                 )
             }
         }
@@ -96,7 +98,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker() {
             is FirResolvedQualifier -> {
                 this.resolvedType.toRegularClassSymbol(session)
             }
-            else -> (this.toReference() as? FirThisReference)?.boundSymbol
+            else -> (this.toReference(session) as? FirThisReference)?.boundSymbol
         } as? FirRegularClassSymbol
     }
 }

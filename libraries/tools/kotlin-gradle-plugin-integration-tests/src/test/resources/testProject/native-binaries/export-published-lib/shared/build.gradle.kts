@@ -1,11 +1,5 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>")
-}
-
-repositories {
-    mavenLocal()
-    maven("../repo")
-    mavenCentral()
+    kotlin("multiplatform")
 }
 
 kotlin {

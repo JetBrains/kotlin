@@ -6,39 +6,49 @@
 package org.jetbrains.kotlin.gradle.targets.jvm.tasks
 
 import org.gradle.api.internal.tasks.testing.*
+import org.gradle.api.internal.tasks.testing.detection.DefaultTestExecuter
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
-import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 @CacheableTask
-open class KotlinJvmTest : Test(), UsesVariantImplementationFactories {
+abstract class KotlinJvmTest : Test() {
     @Input
     @Optional
     var targetName: String? = null
 
-    private val testReporter = project
-        .variantImplementationFactoryProvider<MppTestReportHelper.MppTestReportHelperVariantFactory>()
-        .map { it.getInstance() }
+    override fun createTestExecuter(): TestExecuter<JvmTestExecutionSpec> {
+        val originalExecutor = super.createTestExecuter()
 
-    override fun createTestExecuter(): TestExecuter<JvmTestExecutionSpec> =
-        if (targetName != null) Executor(
-            super.createTestExecuter(),
-            targetName!!,
-            testReporter.get(),
-        )
-        else super.createTestExecuter()
+        // If the executor is not an instance of DefaultTestExecutor it means that it was created before
+        // and set to `Test.testExecuter` by Gradle plugins like test-distribution and test-retry.
+        // We can return the executor "as is" in this case as it is already wrapped with our Executor.
+        return if (targetName != null && originalExecutor is DefaultTestExecuter) {
+            Executor(originalExecutor, targetName!!)
+        } else {
+            originalExecutor
+        }
+    }
 
     class Executor(
         private val delegate: TestExecuter<JvmTestExecutionSpec>,
         private val targetName: String,
-        private val testReporter: MppTestReportHelper,
     ) : TestExecuter<JvmTestExecutionSpec> by delegate {
         override fun execute(testExecutionSpec: JvmTestExecutionSpec, testResultProcessor: TestResultProcessor) {
-            delegate.execute(testExecutionSpec, testReporter.createDelegatingTestReportProcessor(testResultProcessor, targetName))
+            delegate.execute(
+                testExecutionSpec,
+                object : TestResultProcessor by testResultProcessor {
+                    override fun started(test: TestDescriptorInternal, event: TestStartEvent) {
+                        val myTest = object : TestDescriptorInternal by test {
+                            override fun getDisplayName(): String = "${test.displayName}[$targetName]"
+                            override fun getClassName(): String? = test.className?.replace('$', '.')
+                            override fun getClassDisplayName(): String? = test.classDisplayName?.replace('$', '.')
+                        }
+                        testResultProcessor.started(myTest, event)
+                    }
+                }
+            )
         }
     }
 }

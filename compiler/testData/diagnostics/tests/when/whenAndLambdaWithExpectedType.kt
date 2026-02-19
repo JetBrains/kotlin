@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -32,3 +33,5 @@ val test4: (String) -> Boolean =
             true -> <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>s1, <!CANNOT_INFER_PARAMETER_TYPE!>s2<!><!> -> true }<!>
             else -> null!!
         }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionalType, lambdaLiteral, propertyDeclaration, whenExpression */

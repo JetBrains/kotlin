@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See KT-7813: Call to functional parameter with missing argument: no error detected but compiler crashes
 
@@ -15,3 +16,5 @@ fun bar(p: (String, Any, () -> String) -> Unit) {
     p(<!NO_VALUE_FOR_PARAMETER!>"y")<!> { "z" }
     p("v", Any()) { "w" }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

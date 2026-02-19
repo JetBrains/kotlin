@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FIR_IDENTICAL
 // ISSUE: KT-57092
@@ -19,3 +20,5 @@ class InheritsAll :
     ClassWithDefault(),
     SubInterfaceWithoutDefault,
     InterfaceWithDefault
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, override, propertyDeclaration */

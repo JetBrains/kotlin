@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package example
 
 interface T {
@@ -62,3 +63,6 @@ class ERROR<E>() : <!UNRESOLVED_REFERENCE!>UR<!> {
         <!UNRESOLVED_REFERENCE!>super<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, interfaceDeclaration, nullableType,
+primaryConstructor, superExpression, typeParameter */

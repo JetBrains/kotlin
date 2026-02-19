@@ -12,7 +12,7 @@ FILE: enumWithCompanion.kt
             }
 
             public final fun u(ec: R|EC|): R|kotlin/Boolean| {
-                ^u when (R|<local>/ec|) {
+                ^u when (lval <when-subject>: R|EC| = R|<local>/ec|) {
                     ==($subj$, R|/EC.A|) ->  {
                         Boolean(true)
                     }

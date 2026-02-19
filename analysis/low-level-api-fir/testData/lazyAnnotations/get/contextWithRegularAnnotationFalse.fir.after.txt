@@ -1,0 +1,1 @@
+[ResolvedTo(TYPES)] @R|MyAnno|[Types]() variable: R|kotlin/String|

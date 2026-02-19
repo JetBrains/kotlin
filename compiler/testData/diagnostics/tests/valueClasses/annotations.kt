@@ -1,8 +1,8 @@
-// !LANGUAGE: +ValueClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // WITH_STDLIB
 // SKIP_TXT
 // WORKS_WHEN_VALUE_CLASS
-// FIR_IDENTICAL
 
 import kotlin.reflect.KProperty
 
@@ -50,6 +50,8 @@ value class B @Ann constructor(
     fun f() = Unit
 }
 
+typealias NullableA = A?
+
 @[Ann Ann]
 class C @Ann constructor(
     @[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>]
@@ -68,6 +70,14 @@ class C @Ann constructor(
     @set:[Ann Ann]
     @setparam:[Ann Ann]
     var y: A?,
+    @[Ann Ann]
+    @param:[Ann Ann]
+    @property:[Ann Ann]
+    @field:[Ann Ann]
+    @get:[Ann Ann]
+    @set:[Ann Ann]
+    @setparam:[Ann Ann]
+    var yTa: NullableA,
 ) {
     @delegate:[Ann Ann]
     @property:[Ann Ann]
@@ -141,3 +151,11 @@ var @receiver:[Ann Ann] C.t
     get() = A(1, 2)
     @[Ann Ann]
     set(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] _) = Unit
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, annotationUseSiteTargetFieldDelegate,
+annotationUseSiteTargetParam, annotationUseSiteTargetProperty, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, annotationUseSiteTargetReceiver, annotationUseSiteTargetSetterParameter,
+callableReference, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, getter,
+ifExpression, init, integerLiteral, lambdaLiteral, localFunction, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, setter, starProjection,
+stringLiteral, typeAliasDeclaration, value */

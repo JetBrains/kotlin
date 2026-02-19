@@ -1,0 +1,5 @@
+ALL:
+  /Base.foo: Int
+DIRECT:
+  /Base.foo: Int
+INTERSECTION:

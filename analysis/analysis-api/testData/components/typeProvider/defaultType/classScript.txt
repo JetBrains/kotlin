@@ -1,0 +1,20 @@
+DEFAULT TYPE:
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    KaTypeParameterType:
+      annotations: []
+      type: A
+    KaTypeParameterType:
+      annotations: []
+      type: B
+  ]
+  type: pack/Foo<A, B>
+DEFAULT TYPE WITH STAR PROJECTIONS:
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    *
+    *
+  ]
+  type: pack/Foo<*, *>

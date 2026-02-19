@@ -19,17 +19,17 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.getArrayElementType
+import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.org.objectweb.asm.Type
 
 object ArraySet : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val dispatchReceiver = expression.dispatchReceiver!!
-        val receiver = dispatchReceiver.accept(codegen, data).materializedAt(dispatchReceiver.type)
+        val (dispatchReceiver, indexExpression, valueExpression) = expression.arguments
+        val receiver = dispatchReceiver!!.accept(codegen, data).materializedAt(dispatchReceiver.type)
         val elementType = AsmUtil.correctElementType(receiver.type)
         val elementIrType = receiver.irType.getArrayElementType(codegen.context.irBuiltIns)
-        expression.getValueArgument(0)!!.accept(codegen, data).materializeAt(Type.INT_TYPE, codegen.context.irBuiltIns.intType)
-        expression.getValueArgument(1)!!.accept(codegen, data).materializeAt(elementType, elementIrType)
+        indexExpression!!.accept(codegen, data).materializeAt(Type.INT_TYPE, codegen.context.irBuiltIns.intType)
+        valueExpression!!.accept(codegen, data).materializeAt(elementType, elementIrType)
         codegen.mv.astore(elementType)
         return codegen.unitValue
     }

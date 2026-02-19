@@ -1,0 +1,6 @@
+Classifier names:
+  Person
+
+Callable names:
+  $$result
+  foo

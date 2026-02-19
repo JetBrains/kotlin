@@ -9,26 +9,27 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
+import org.jetbrains.kotlin.fir.analysis.checkers.getReturnedExpressions
+import org.jetbrains.kotlin.fir.analysis.checkers.isPrimaryConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.renderForDebugging
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.types.*
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
-    reporter: DiagnosticReporter,
+    reporter: PendingDiagnosticReporter,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source
@@ -36,13 +37,50 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
-        val source = errorTypeRef.source
-        reportFirDiagnostic(errorTypeRef.diagnostic, source, data)
+        if (errorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data)) return
+        if (errorTypeRef.hasExpandedTypeAliasDeclarationSiteError()) return
+
+        reportFirDiagnostic(
+            errorTypeRef.diagnostic, errorTypeRef.source, data,
+            // We provide a value parameter in case errorTypeRef is a type of this parameter
+            valueParameter = data.containingElements.getOrNull(data.containingElements.lastIndex - 1) as? FirValueParameter
+        )
+    }
+
+    /**
+     * Returns true if this [FirErrorTypeRef] is the implicit return type ref of a lambda and the diagnostic doesn't need to be reported.
+     * More specifically, the diagnostic can be skipped if it's duplicated in the outer call or in a return expression of the lambda.
+     */
+    private fun FirErrorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data: CheckerContext): Boolean {
+        if (source?.kind != KtFakeSourceElementKind.ImplicitFunctionReturnType) return false
+
+        val containingDeclaration = data.containingDeclarations.lastOrNull()
+        if (containingDeclaration !is FirAnonymousFunctionSymbol || containingDeclaration.resolvedReturnTypeRef != this) return false
+
+        return containingDeclaration.getReturnedExpressions().any { it.hasDiagnostic(diagnostic) } ||
+                data.callsOrAssignments.any { it is FirExpression && it.hasDiagnostic(diagnostic) }
+    }
+
+    /**
+     * Returns true if this [FirErrorTypeRef] contains an expanded typealias type with an error,
+     * i.e., the error originates from the typealias itself.
+     * In this case, we don't need to report anything because the error will already be reported on the declaration site.
+     */
+    private fun FirErrorTypeRef.hasExpandedTypeAliasDeclarationSiteError(): Boolean {
+        val lowerBound = coneType.lowerBoundIfFlexible() as? ConeErrorType ?: return false
+        if (lowerBound.diagnostic != this.diagnostic) return false
+        return lowerBound.abbreviatedType != null
+    }
+
+    private fun FirExpression.hasDiagnostic(diagnostic: ConeDiagnostic): Boolean {
+        if ((resolvedType as? ConeErrorType)?.diagnostic == diagnostic) return true
+        if ((toReference(session) as? FirDiagnosticHolder)?.diagnostic == diagnostic) return true
+        return false
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
-        assert(resolvedTypeRef.type !is ConeErrorType) {
-            "Instead use FirErrorTypeRef for ${resolvedTypeRef.type.renderForDebugging()}"
+        assert(resolvedTypeRef.coneType !is ConeErrorType) {
+            "Instead use FirErrorTypeRef for ${resolvedTypeRef.coneType.renderForDebugging()}"
         }
     }
 
@@ -59,11 +97,15 @@ class ErrorNodeDiagnosticCollectorComponent(
         processErrorReference(resolvedErrorReference, resolvedErrorReference.diagnostic, data)
     }
 
-    private fun processErrorReference(reference: FirNamedReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
+    override fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: CheckerContext) {
+        processErrorReference(errorSuperReference, errorSuperReference.diagnostic, data)
+    }
+
+    private fun processErrorReference(reference: FirReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
         var source = reference.source
         val callOrAssignment = context.callsOrAssignments.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
-            it.calleeReference == reference
+            it.toReference(session) == reference
         }
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source?.elementType == KtNodeTypes.ANNOTATION_ENTRY && diagnostic is ConeUnresolvedNameError) return
@@ -80,34 +122,35 @@ class ErrorNodeDiagnosticCollectorComponent(
             ) return
         }
 
-        if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
-            val property = context.containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty ?: return
-            source = property.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: return
+        with(context) {
+            source = source?.delegatedPropertySourceOrThis()
         }
 
         reportFirDiagnostic(diagnostic, source, context, callOrAssignment?.source)
     }
 
     private fun FirExpression?.cannotBeResolved(): Boolean {
-        return when (val diagnostic = (this?.coneTypeOrNull as? ConeErrorType)?.diagnostic) {
+        return when (val diagnostic = (this?.resolvedType?.lowerBoundIfFlexible() as? ConeErrorType)?.diagnostic) {
             is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall, is ConeAmbiguousSuper -> true
             is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype ||
                     diagnostic.kind == DiagnosticKind.SuperNotAvailable ||
-                    diagnostic.kind == DiagnosticKind.UnresolvedLabel
+                    diagnostic.kind == DiagnosticKind.UnresolvedLabel ||
+                    diagnostic.kind == DiagnosticKind.AmbiguousLabel
             else -> false
         }
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
-        val source = errorExpression.source
         val diagnostic = errorExpression.diagnostic
-        if (source == null) {
-            // ConeSyntaxDiagnostic and DiagnosticKind.ExpressionExpected with no source (see check above) are typically symptoms of some
-            // syntax error that was already reported during parsing.
-            if (diagnostic is ConeSyntaxDiagnostic) return
-            if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ExpressionExpected) return
-        }
-        reportFirDiagnostic(diagnostic, source, data)
+
+        // Syntax errors are reported separately, no need to report them again.
+        if (diagnostic is ConeSyntaxDiagnostic) return
+
+        if (diagnostic == ConeContextParameterWithDefaultValue &&
+            data.containingDeclarations.let { it.elementAtOrNull(it.lastIndex - 1) }.isPrimaryConstructor()
+        ) return
+
+        reportFirDiagnostic(diagnostic, errorExpression.source, data)
     }
 
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
@@ -121,13 +164,16 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
+        // Only report an error on the outermost parent.
+        if (errorResolvedQualifier.explicitParent?.hasErrorOrParentWithError() == true) return
+
         val source = errorResolvedQualifier.source
         reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, data)
     }
 
-    override fun visitErrorImport(errorImport: FirErrorImport, data: CheckerContext) {
-        val source = errorImport.source
-        reportFirDiagnostic(errorImport.diagnostic, source, data)
+    private fun FirResolvedQualifier.hasErrorOrParentWithError(): Boolean {
+        if (this is FirErrorResolvedQualifier) return true
+        return explicitParent?.hasErrorOrParentWithError() == true
     }
 
     override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: CheckerContext) {
@@ -136,39 +182,61 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     override fun visitThisReference(thisReference: FirThisReference, data: CheckerContext) {
         val diagnostic = thisReference.diagnostic ?: return
-        reportFirDiagnostic(diagnostic, thisReference.source, data)
+        // FirImplicitThisReference has no source, in this case use source of containing ThisReceiverExpression
+        val source = thisReference.source ?: data.containingElements.elementAtOrNull(1)?.source
+        reportFirDiagnostic(diagnostic, source, data)
     }
 
     private fun reportFirDiagnostic(
         diagnostic: ConeDiagnostic,
         source: KtSourceElement?,
         context: CheckerContext,
-        callOrAssignmentSource: KtSourceElement? = null
+        callOrAssignmentSource: KtSourceElement? = null,
+        valueParameter: FirValueParameter? = null
     ) {
-        // Will be handled by [FirDestructuringDeclarationChecker]
-        if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-            return
-        }
+        reportFirDiagnostic(diagnostic, source, context, session, reporter, callOrAssignmentSource, valueParameter)
+    }
 
-        // Will be handled by [FirDelegatedPropertyChecker]
-        if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor &&
-            (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableWrongReceiver || diagnostic is ConeInapplicableCandidateError)
+    companion object {
+        internal fun reportFirDiagnostic(
+            diagnostic: ConeDiagnostic,
+            source: KtSourceElement?,
+            context: CheckerContext,
+            session: FirSession = context.session,
+            reporter: DiagnosticReporter,
+            callOrAssignmentSource: KtSourceElement? = null,
+            valueParameter: FirValueParameter? = null,
         ) {
-            return
-        }
+            // Will be handled by [FirDestructuringDeclarationChecker]
+            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY && source.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring) {
+                return
+            }
 
-        if (source?.kind == KtFakeSourceElementKind.ImplicitConstructor || source?.kind == KtFakeSourceElementKind.DesugaredForLoop) {
-            // See FirForLoopChecker
-            return
-        }
+            // Will be handled by [FirDelegatedPropertyChecker]
+            if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor &&
+                (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableWrongReceiver || diagnostic is ConeInapplicableCandidateError)
+            ) {
+                return
+            }
 
-        // Prefix inc/dec on array access will have two calls to .get(...), don't report for the second one.
-        if (source?.kind == KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
-            return
-        }
+            if (source?.kind == KtFakeSourceElementKind.ImplicitConstructor || source?.kind == KtFakeSourceElementKind.DesugaredForLoop) {
+                // See FirForLoopChecker
+                return
+            }
 
-        for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource)) {
-            reporter.report(coneDiagnostic, context)
+            // Prefix inc/dec on array access will have two calls to .get(...), don't report for the second one.
+            if (source?.kind is KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
+                return
+            }
+
+            // If something is wrong with the `when` subject access, then there's already an error on the `when` subject itself.
+            if (source?.kind is KtFakeSourceElementKind.UnresolvedWhenConditionSubject) {
+                return
+            }
+
+            for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource, valueParameter)) {
+                reporter.report(coneDiagnostic, context)
+            }
         }
     }
 }

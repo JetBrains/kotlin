@@ -1,7 +1,7 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -16,14 +16,15 @@ sourceSets {
     "test" { }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.addAll(
+        listOf(
+            "-Xallow-kotlin-package",
+            "-jvm-default=no-compatibility",
+        )
+    )
 }
 
 publish()
 
 standardPublicJars()
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
-}

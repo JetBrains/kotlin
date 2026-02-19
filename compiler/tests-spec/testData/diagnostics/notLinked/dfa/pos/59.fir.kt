@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
 // SKIP_TXT
 
 /*
@@ -35,14 +35,14 @@ fun case_2() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 // TESTCASE NUMBER: 3
 fun case_3() {
     var x: Any? = null
     while (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         x = x.equals(10)
     }
 }
@@ -51,7 +51,7 @@ fun case_3() {
 fun case_4() {
     var x: Any? = null
     while (x !== null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         x = x.equals(10)
     }
 }
@@ -67,7 +67,7 @@ fun case_5() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 /*
@@ -95,7 +95,7 @@ fun case_7() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 /*
@@ -123,7 +123,7 @@ fun case_9() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 /*

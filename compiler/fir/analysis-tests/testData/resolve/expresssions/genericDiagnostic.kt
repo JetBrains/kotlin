@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FULL_JDK
 // FILE: Element.java
 
@@ -55,3 +57,6 @@ fun createViaFactory(d: EmptyDiagnostic) {
     val element = casted.element
     Fix(element)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, flexibleType, functionDeclaration, javaFunction, javaProperty,
+javaType, localProperty, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

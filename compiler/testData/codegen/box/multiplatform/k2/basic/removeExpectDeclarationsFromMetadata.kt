@@ -1,11 +1,10 @@
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE, WASM
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-57250
 // WITH_STDLIB
-// !OPT_IN: kotlin.ExperimentalMultiplatform
-// !LANGUAGE: +MultiPlatformProjects
+// OPT_IN: kotlin.ExperimentalMultiplatform
+// IGNORE_HMPP: JVM_IR, JS_IR
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect class C()
@@ -29,8 +28,7 @@ actual annotation class WithActual(actual val x: Int)
 
 actual fun k() = "K"
 
-// MODULE: common2
-// TARGET_PLATFORM: Common
+// MODULE: common2(common)
 // FILE: common2.kt
 
 @WithoutActual("OK")

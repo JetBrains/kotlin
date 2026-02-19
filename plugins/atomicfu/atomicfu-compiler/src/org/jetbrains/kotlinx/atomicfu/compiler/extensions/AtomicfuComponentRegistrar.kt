@@ -18,19 +18,33 @@ package org.jetbrains.kotlinx.atomicfu.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrors
+import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuFirCheckers
 
 class AtomicfuComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        Companion.registerExtensions(this)
+        registerExtensions(this)
     }
+
+    override val pluginId: String get() = "org.jetbrains.kotlinx.atomicfu"
 
     override val supportsK2: Boolean
         get() = true
 
     companion object {
         fun registerExtensions(extensionStorage: ExtensionStorage) = with(extensionStorage) {
+            FirExtensionRegistrar.registerExtension(AtomicfuFirExtensionRegistrar())
             IrGenerationExtension.registerExtension(AtomicfuLoweringExtension())
         }
+    }
+}
+
+class AtomicfuFirExtensionRegistrar : FirExtensionRegistrar() {
+    override fun ExtensionRegistrarContext.configurePlugin() {
+        +::AtomicfuFirCheckers
+        registerDiagnosticContainers(AtomicfuErrors)
     }
 }

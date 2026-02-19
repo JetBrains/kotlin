@@ -7,21 +7,24 @@ package kotlin.native
 
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * An immutable compile-time array of bytes.
  */
 @Deprecated("Use ByteArray instead.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public final class ImmutableBlob private constructor() {
     public val size: Int
         get() = getArrayLength()
 
     // Data layout is the same as for ByteArray, so we can share native functions.
     @GCUnsafeCall("Kotlin_ByteArray_get")
+    @Escapes.Nothing
     public external operator fun get(index: Int): Byte
 
     @GCUnsafeCall("Kotlin_ByteArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -30,7 +33,7 @@ public final class ImmutableBlob private constructor() {
     }
 }
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 private class ImmutableBlobIteratorImpl(val blob: ImmutableBlob) : ByteIterator() {
     var index : Int = 0
 
@@ -50,10 +53,11 @@ private class ImmutableBlobIteratorImpl(val blob: ImmutableBlob) : ByteIterator(
  * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
  * @param endIndex the end (exclusive) of the subrange to copy, size of this blob by default.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("ImmutableBlob is deprecated. Use ByteArray instead.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @GCUnsafeCall("Kotlin_ImmutableBlob_toByteArray")
+@Escapes.Nothing
 public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
@@ -62,11 +66,12 @@ public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int
  * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
  * @param endIndex the end (exclusive) of the subrange to copy, size of this blob by default.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("ImmutableBlob is deprecated. Use ByteArray instead.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @ExperimentalUnsignedTypes
 @GCUnsafeCall("Kotlin_ImmutableBlob_toByteArray")
+@Escapes.Nothing
 public external fun ImmutableBlob.toUByteArray(startIndex: Int = 0, endIndex: Int = size): UByteArray
 
 /**
@@ -83,9 +88,9 @@ public external fun ImmutableBlob.toUByteArray(startIndex: Int = 0, endIndex: In
  * ```
  * @see kotlinx.cinterop.CPointer
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("ImmutableBlob is deprecated. Use ByteArray instead. To get a stable C pointer to a `ByteArray`, pin it first.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public fun ImmutableBlob.asCPointer(offset: Int = 0): CPointer<ByteVar> =
         interpretCPointer<ByteVar>(asCPointerImpl(offset))!!
 
@@ -103,14 +108,15 @@ public fun ImmutableBlob.asCPointer(offset: Int = 0): CPointer<ByteVar> =
  * ```
  * @see kotlinx.cinterop.CPointer
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("ImmutableBlob is deprecated. Use ByteArray instead. To get a stable C pointer to a `ByteArray`, pin it first.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public fun ImmutableBlob.asUCPointer(offset: Int = 0): CPointer<UByteVar> =
         interpretCPointer<UByteVar>(asCPointerImpl(offset))!!
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @GCUnsafeCall("Kotlin_ImmutableBlob_asCPointerImpl")
+@Escapes.Nothing // the usage site must guarantee that the receiver is kept alive long enough.
 private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.internal.NativePtr
 
 /**
@@ -121,8 +127,9 @@ private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.in
  * One element still represent one byte in the output data.
  * This is the only way to create ImmutableBlob for now.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("ImmutableBlob is deprecated. Use ByteArray instead.", ReplaceWith("byteArrayOf(*elements)"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
+@Escapes.Nothing
 public external fun immutableBlobOf(vararg elements: Short): ImmutableBlob

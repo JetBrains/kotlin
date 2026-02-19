@@ -1,0 +1,10 @@
+KT element: KtPrimaryConstructor
+KT element text:
+public constructor()
+FIR element: FirPrimaryConstructor
+FIR source kind: KtRealSourceElementKind
+FIR container source: JvmStubDeserializedContainerSource test/MyClass
+File name: MyClass.class
+
+FIR element rendered:
+public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|test/MyClass|

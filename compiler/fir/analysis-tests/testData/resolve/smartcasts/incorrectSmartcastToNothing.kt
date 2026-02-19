@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FULL_JDK
 // DUMP_CFG
@@ -13,3 +14,6 @@ fun test(cacheExtSetting: String?) {
         else -> File(cacheExtSetting)
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, javaFunction, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, smartcast, stringLiteral, whenExpression */

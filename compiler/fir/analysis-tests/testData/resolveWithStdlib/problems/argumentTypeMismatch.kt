@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Sample.java
 
 import java.util.List;
@@ -9,5 +10,7 @@ public class Sample {
 // FILE: test.kt
 
 fun main() {
-    Sample.foo(<!ARGUMENT_TYPE_MISMATCH("kotlin/collections/(Mutable)List<kotlin/collections/(Mutable)List<kotlin/String!>!>!; kotlin/String")!>"123"<!>)
+    Sample.foo(<!ARGUMENT_TYPE_MISMATCH("String; (Mutable)List<(Mutable)List<String!>!>!")!>"123"<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, stringLiteral */

@@ -1,0 +1,2 @@
+KtBinaryExpression(17,32): '"dsd" + class A'
+  null

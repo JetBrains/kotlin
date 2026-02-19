@@ -217,7 +217,8 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
         return if (classDescriptor.kind != ClassKind.ENUM_ENTRY) {
             WhenMissingCase.IsTypeCheckIsMissing(
                 classId = DescriptorUtils.getClassIdForNonLocalClass(classDescriptor),
-                isSingleton = classDescriptor.kind.isSingleton
+                isSingleton = classDescriptor.kind.isSingleton,
+                ownTypeParametersCount = classDescriptor.declaredTypeParameters.size,
             )
         } else {
             val enumClassId = classId.outerClassId ?: error("Enum should have class id")
@@ -227,7 +228,6 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
 }
 
 private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -248,7 +248,6 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
 }
 
 internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -282,10 +281,6 @@ object WhenChecker {
     )
 
     @JvmStatic
-    fun getClassIdForEnumSubject(expression: KtWhenExpression, context: BindingContext) =
-        getClassIdForTypeIfEnum(whenSubjectType(expression, context))
-
-    @JvmStatic
     fun getClassIdForTypeIfEnum(type: KotlinType?) =
         getClassDescriptorOfTypeIfEnum(type)?.classId
 
@@ -310,16 +305,6 @@ object WhenChecker {
         return when {
             subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
             subjectExpression != null -> context.get(SMARTCAST, subjectExpression)?.defaultType ?: context.getType(subjectExpression)
-            else -> null
-        }
-    }
-
-    fun whenSubjectTypeWithoutSmartCasts(expression: KtWhenExpression, context: BindingContext): KotlinType? {
-        val subjectVariable = expression.subjectVariable
-        val subjectExpression = expression.subjectExpression
-        return when {
-            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
-            subjectExpression != null -> context.getType(subjectExpression)
             else -> null
         }
     }

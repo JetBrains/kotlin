@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class MyBase protected constructor() {
     protected constructor(x: Nothing?): this()
 }
@@ -12,3 +13,5 @@ class MyDerived2a : MyBase(null)
 class MyDerived3 : MyAlias {
     constructor(x: Nothing?) : super(<!DEBUG_INFO_CONSTANT!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, secondaryConstructor, typeAliasDeclaration */

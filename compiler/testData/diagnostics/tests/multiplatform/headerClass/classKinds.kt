@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -24,3 +25,6 @@ actual object Object
 actual class Class
 
 actual enum class En { ENTRY }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, expect,
+interfaceDeclaration, objectDeclaration, primaryConstructor, propertyDeclaration */

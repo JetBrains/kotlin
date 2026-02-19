@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // MODULE: m1
 // FILE: a.kt
 
@@ -34,3 +35,4 @@ fun test() {
     inst.<!INVISIBLE_MEMBER!>B<!>()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

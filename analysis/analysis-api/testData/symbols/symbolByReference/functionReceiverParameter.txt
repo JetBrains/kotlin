@@ -1,16 +1,32 @@
-KtReceiverParameterSymbol:
-  annotationsList: [
+KaReceiverParameterSymbol:
+  annotations: [
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: <receiver>
   origin: SOURCE
-  owningCallableSymbol: KtFunctionSymbol(/foo)
-  type: KtUsualClassType:
-    annotationsList: [
+  owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
+    typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Int
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(functionReceiverParameter.kt)
+  getContainingJvmClassName: FunctionReceiverParameterKt
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

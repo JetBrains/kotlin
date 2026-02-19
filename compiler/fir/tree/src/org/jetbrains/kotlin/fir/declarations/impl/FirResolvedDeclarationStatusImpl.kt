@@ -9,30 +9,21 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 
-class FirResolvedDeclarationStatusImpl(
+open class FirResolvedDeclarationStatusImpl(
     visibility: Visibility,
     modality: Modality,
     override val effectiveVisibility: EffectiveVisibility
 ) : FirDeclarationStatusImpl(visibility, modality), FirResolvedDeclarationStatus {
 
     companion object {
-        val DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS = FirResolvedDeclarationStatusImpl(
-            Visibilities.Public,
-            Modality.FINAL,
-            EffectiveVisibility.Public
+        val DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS: FirResolvedDeclarationStatus = FirResolvedDeclarationStatusImpl(
+            visibility = Visibilities.Public,
+            modality = Modality.FINAL,
+            effectiveVisibility = EffectiveVisibility.Public
         )
-        val DEFAULT_STATUS_FOR_SUSPEND_FUNCTION_EXPRESSION = FirResolvedDeclarationStatusImpl(
-            Visibilities.Local,
-            Modality.FINAL,
-            EffectiveVisibility.Public
-        ).apply { isSuspend = true }
-        val DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION = FirResolvedDeclarationStatusImpl(
-            Visibilities.Public,
-            Modality.FINAL,
-            EffectiveVisibility.Public
-        ).apply { isSuspend = true }
     }
 
     internal constructor(
@@ -44,8 +35,38 @@ class FirResolvedDeclarationStatusImpl(
         this.flags = flags
     }
 
-    override val visibility: Visibility
-        get() = super.visibility
+    override val modality: Modality
+        get() = super.modality!!
+}
+
+class FirResolvedDeclarationStatusWithAlteredDefaults(
+    visibility: Visibility,
+    modality: Modality,
+    override val defaultVisibility: Visibility,
+    override val defaultModality: Modality,
+    effectiveVisibility: EffectiveVisibility,
+) : FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility) {
+    internal constructor(
+        visibility: Visibility,
+        modality: Modality,
+        defaultVisibility: Visibility,
+        defaultModality: Modality,
+        effectiveVisibility: EffectiveVisibility,
+        flags: Int
+    ) : this(visibility, modality, defaultVisibility, defaultModality, effectiveVisibility) {
+        this.flags = flags
+    }
+}
+
+class FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+    visibility: Visibility,
+    modality: Modality,
+    @property:FirImplementationDetail
+    val lazyEffectiveVisibility: Lazy<EffectiveVisibility>,
+) : FirDeclarationStatusImpl(visibility, modality), FirResolvedDeclarationStatus {
+    @OptIn(FirImplementationDetail::class)
+    override val effectiveVisibility: EffectiveVisibility
+        get() = lazyEffectiveVisibility.value
 
     override val modality: Modality
         get() = super.modality!!

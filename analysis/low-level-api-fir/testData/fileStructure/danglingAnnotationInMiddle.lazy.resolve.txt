@@ -1,0 +1,14 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationInMiddle.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnn : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|MyAnn| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(BODY_RESOLVE)] @R|MyAnn|[Types]() <DANGLING MODIFIER: Top level declaration expected>

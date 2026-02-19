@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 sealed class A {
     class B:A()
@@ -7,3 +8,5 @@ sealed class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, sealed, whenExpression, whenWithSubject */

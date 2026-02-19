@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(a: Any?, flag: Boolean, x: Any?) {
     if (a == null) return
     <!DEBUG_INFO_SMARTCAST!>a<!>.hashCode()
@@ -13,3 +14,6 @@ fun test(a: Any?, flag: Boolean, x: Any?) {
         b<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

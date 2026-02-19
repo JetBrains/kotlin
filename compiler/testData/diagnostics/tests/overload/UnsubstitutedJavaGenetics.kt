@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: Base.java
 public interface Base {
@@ -16,3 +17,6 @@ fun testDerived(base: Base, derived: Derived) {
     val test1: String = base.foo("")
     val test2: String = derived.foo("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration,
+stringLiteral */

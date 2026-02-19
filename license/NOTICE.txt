@@ -5,4 +5,4 @@
    =========================================================================
 
    Kotlin Compiler
-   Copyright 2010-2023 JetBrains s.r.o and respective authors and developers
+   Copyright 2010-2024 JetBrains s.r.o and respective authors and developers

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
 // MODULE: m1
 // FILE: a.kt
 
@@ -54,3 +55,5 @@ inline fun testInline() {
     inst.<!INVISIBLE_REFERENCE!>a<!>()
     inst.<!INVISIBLE_REFERENCE!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, inner, localProperty, propertyDeclaration */

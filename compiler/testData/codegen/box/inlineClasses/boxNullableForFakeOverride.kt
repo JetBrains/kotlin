@@ -1,7 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 abstract class C<T> {
     fun foo(v: T?, x: (T) -> Any?) = v?.let { x(it) }

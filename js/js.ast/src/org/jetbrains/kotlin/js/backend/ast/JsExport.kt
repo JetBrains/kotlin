@@ -16,6 +16,7 @@ class JsExport(
     sealed class Subject {
         class Elements(val elements: List<Element>) : Subject()
         object All : Subject()
+        class Default(val name: JsNameRef) : Subject()
     }
 
     class Element(val name: JsNameRef, val alias: JsName? = null)
@@ -25,10 +26,10 @@ class JsExport(
     }
 
     override fun acceptChildren(visitor: JsVisitor) {
-        if (subject is Subject.Elements) {
-            subject.elements.forEach {
-                visitor.accept(it.name)
-            }
+        when (subject) {
+            is Subject.Elements -> subject.elements.forEach { visitor.accept(it.name) }
+            is Subject.Default -> visitor.accept(subject.name)
+            is Subject.All -> {}
         }
     }
 

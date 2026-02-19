@@ -4,7 +4,7 @@ FILE: listPlusAssign.kt
         this@R|/modify| = this@R|/modify|.R|kotlin/collections/plus|<R|kotlin/String|>(String(Omega))
     }
     public final fun R|kotlin/Any|.modify(): R|kotlin/Unit| {
-        (this@R|/modify| as R|kotlin/collections/List<kotlin/Int>|) = (this@R|/modify| as R|kotlin/collections/List<kotlin/Int>|).R|kotlin/collections/plus|<R|kotlin/Int|>(Int(42))
+        (this@R|/modify| as R|kotlin/collections/List<kotlin/Int>|).R|/plusAssign<None of the following candidates is applicable because of receiver type mismatch: [/plusAssign]>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Int(42))
     }
     public final operator fun <T> R|kotlin/collections/Set<T>|.plusAssign(x: R|T|): R|kotlin/Unit| {
     }

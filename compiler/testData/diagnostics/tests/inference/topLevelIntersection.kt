@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 interface Bound1
 interface Bound2
@@ -15,3 +16,6 @@ fun test() {
     val v = Cls().property
     <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>v<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty,
+objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, vararg */

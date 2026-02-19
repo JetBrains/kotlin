@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: MyFunction.java
 public interface MyFunction<T, R> {
     R foo(T x);
@@ -36,3 +37,6 @@ fun main() {
         2
     )
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, inProjection, integerLiteral, javaType,
+lambdaLiteral, nullableType, outProjection, typeParameter */

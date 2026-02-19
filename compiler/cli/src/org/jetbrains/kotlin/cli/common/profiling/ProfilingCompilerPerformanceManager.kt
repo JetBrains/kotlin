@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.cli.common.profiling
 
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -15,7 +16,7 @@ class ProfilingCompilerPerformanceManager(
     profilerPath: String,
     val command: String,
     val outputDir: File
-) : CommonCompilerPerformanceManager("Profiling") {
+) : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Profiling") {
     private val profiler = AsyncProfilerHelper.getInstance(profilerPath)
 
     private val runDate = Date()
@@ -53,20 +54,17 @@ class ProfilingCompilerPerformanceManager(
         active = false
     }
 
-    override fun notifyRepeat(total: Int, number: Int) {
-        dumpProfile("repeat$number")
-        restartProfiling()
-    }
-
     override fun notifyCompilationFinished() {
         dumpProfile("final")
         stopProfiling()
     }
 
     companion object {
-        fun create(profileCompilerArgument: String): ProfilingCompilerPerformanceManager {
-            val (path, command, outputDir) = profileCompilerArgument.split(":", limit = 3)
-            return ProfilingCompilerPerformanceManager(path, command, File(outputDir))
+        fun create(profileCompilerArgument: String, detailedPerf: Boolean): ProfilingCompilerPerformanceManager {
+            val (path, command, outputDir) = profileCompilerArgument.split(File.pathSeparator, limit = 3)
+            return ProfilingCompilerPerformanceManager(path, command, File(outputDir)).apply {
+                this.detailedPerf = detailedPerf
+            }
         }
     }
 }

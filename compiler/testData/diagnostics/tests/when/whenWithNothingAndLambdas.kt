@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // NI_EXPECTED_FILE
 /*
@@ -49,3 +50,5 @@ val test3a: () -> Boolean = when {
     true -> { { true } }
     else -> TODO()
 }
+
+/* GENERATED_FIR_TAGS: functionalType, lambdaLiteral, propertyDeclaration, whenExpression */

@@ -1,0 +1,21 @@
+// Declared signatures: 5
+imported_from_cinterop.main/Derived.<init>|-5645683436151566731[0]
+imported_from_cinterop.main/Derived.overriddenFunction|-6472102329825707726[0]
+imported_from_cinterop.main/Derived.overriddenProperty|-7224960608403565684[0]
+imported_from_cinterop.main/Derived.setOverriddenProperty|-8479216322956180924[0]
+imported_from_cinterop.main/Derived|null[0]
+
+// Imported signatures: 13
+imported_from_cinterop.lib/Base.<init>|2170982204859394228[100]
+imported_from_cinterop.lib/Base.overriddenFunction|-6472102329825707726[100]
+imported_from_cinterop.lib/Base.overriddenProperty|-7224960608403565684[100]
+imported_from_cinterop.lib/Base.setOverriddenProperty|-8479216322956180924[100]
+imported_from_cinterop.lib/Base|null[100]
+kotlin.reflect/KClass|null[0]
+kotlin/Annotation|null[0]
+kotlin/Array|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/OptIn.<init>|2217502803210275401[0]
+kotlin/Unit|null[0]
+kotlinx.cinterop/ExperimentalForeignApi|null[0]

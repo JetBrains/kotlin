@@ -1,14 +1,14 @@
 class Ref {
+  var x: Int
+    field = x
+    get
+    set
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var x: Int
-    field = x
-    get
-    set
 
 }
 
@@ -21,3 +21,4 @@ fun test1() {
 fun test2(r: Ref) {
   r.<set-x>(<set-?> = 0)
 }
+

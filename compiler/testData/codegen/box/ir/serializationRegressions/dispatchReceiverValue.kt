@@ -1,10 +1,13 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WASM_MUTE_REASON: IGNORED_IN_JS
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND_K2: JVM_IR, NATIVE
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ IR serialization/deserialization is not tested with K1.
 // MODULE: lib
 // FILE: common.kt
 

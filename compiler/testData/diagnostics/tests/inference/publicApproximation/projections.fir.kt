@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Bound1
 interface Bound2
@@ -17,3 +18,6 @@ fun test() {
     testOut()
     testIn()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, interfaceDeclaration, intersectionType,
+nullableType, objectDeclaration, outProjection, typeConstraint, typeParameter, vararg */

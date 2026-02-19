@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.asInlinable
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.buildAssertionsDisabledField
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -22,21 +22,19 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-internal val assertionPhase = makeIrFilePhase(
-    ::AssertionLowering,
-    name = "Assertion",
-    description = "Lower assert calls depending on the assertions mode",
+/**
+ * Lowers [assert] calls depending on the assertions mode.
+ */
+@PhasePrerequisites(
     // Necessary to place the `$assertionsDisabled` field into the reference's class, not the
     // class that contains it.
-    prerequisite = setOf(functionReferencePhase)
+    FunctionReferenceLowering::class,
 )
-
-private class AssertionLowering(private val context: JvmBackendContext) :
+internal class AssertionLowering(private val context: JvmBackendContext) :
     FileLoweringPass,
-    IrElementTransformer<AssertionLowering.ClassInfo?>
-{
+    IrTransformer<AssertionLowering.ClassInfo?>() {
     // Keeps track of the $assertionsDisabled field, which we generate lazily for classes containing
     // assertions when compiled with -Xassertions=jvm.
     class ClassInfo(val irClass: IrClass, val topLevelClass: IrClass, var assertionsDisabledField: IrField? = null)
@@ -84,8 +82,8 @@ private class AssertionLowering(private val context: JvmBackendContext) :
 
         context.createIrBuilder(scopeOwnerStack.peek().symbol).run {
             at(expression)
-            val assertCondition = expression.getValueArgument(0)!!
-            val lambdaArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
+            val assertCondition = expression.arguments[0]!!
+            val lambdaArgument = if (function.parameters.size == 2) expression.arguments[1] else null
 
             return if (mode == JVMAssertionsMode.ALWAYS_ENABLE) {
                 checkAssertion(assertCondition, lambdaArgument)
@@ -102,9 +100,9 @@ private class AssertionLowering(private val context: JvmBackendContext) :
     private fun IrBuilderWithScope.checkAssertion(assertCondition: IrExpression, lambdaArgument: IrExpression?) =
         irBlock {
             val generator = lambdaArgument?.asInlinable(this)
-            val constructor = this@AssertionLowering.context.ir.symbols.assertionErrorConstructor
+            val constructor = this@AssertionLowering.context.symbols.assertionErrorConstructor
             val throwError = irThrow(irCall(constructor).apply {
-                putValueArgument(0, generator?.inline(parent) ?: irString("Assertion failed"))
+                arguments[0] = generator?.inline(parent) ?: irString("Assertion failed")
             })
             +irIfThen(irNot(assertCondition), throwError)
         }

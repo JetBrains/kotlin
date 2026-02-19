@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
-import com.intellij.reference.SoftReference
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
+import java.lang.ref.SoftReference
 
 class ClsKotlinBinaryClassCache {
     class KotlinBinaryClassHeaderData(
         val classId: ClassId,
         val kind: KotlinClassHeader.Kind,
-        val metadataVersion: JvmMetadataVersion,
+        val metadataVersion: MetadataVersion,
         val partNamesIfMultifileFacade: List<String>,
         val packageName: String?
     ) {
@@ -45,7 +45,7 @@ class ClsKotlinBinaryClassCache {
         binaryFromCache?.let {
             return it.isKotlinBinary
         }
-        return kotlinJvmBinaryClass(file, fileContent, JvmMetadataVersion.INSTANCE, binaryFromCache?.isKotlinBinary) != null
+        return kotlinJvmBinaryClass(file, fileContent, MetadataVersion.INSTANCE, binaryFromCache?.isKotlinBinary) != null
     }
 
     fun getKotlinBinaryClass(file: VirtualFile, fileContent: ByteArray? = null): KotlinJvmBinaryClass? {
@@ -57,7 +57,7 @@ class ClsKotlinBinaryClassCache {
         return kotlinJvmBinaryClass(
             file,
             fileContent,
-            cached?.headerData?.metadataVersion ?: JvmMetadataVersion.INSTANCE,
+            cached?.headerData?.metadataVersion ?: MetadataVersion.INSTANCE,
             cached?.isKotlinBinary
         )
     }
@@ -65,15 +65,16 @@ class ClsKotlinBinaryClassCache {
     private fun kotlinJvmBinaryClass(
         file: VirtualFile,
         fileContent: ByteArray?,
-        jvmMetadataVersion: JvmMetadataVersion,
+        metadataVersion: MetadataVersion,
         isKotlinBinary: Boolean?
     ): KotlinJvmBinaryClass? {
         val classFileContent = try {
+            // It looks like the class is used only in K1, don't care about performance measurement for the outdated frontend
             KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(
-                file, jvmMetadataVersion, fileContent = fileContent
+                file, metadataVersion, fileContent = fileContent, perfManager = null
             )
         } catch (e: Exception) {
-            if (e is ControlFlowException) throw e
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             return null
         }
 
@@ -84,10 +85,8 @@ class ClsKotlinBinaryClassCache {
             attributeService.writeBooleanAttribute(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE, file, isKotlinBinaryClass)
         }
 
-        if (isKotlinBinaryClass) {
-            val headerInfo = createHeaderInfo(kotlinBinaryClass!!)
-            file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
-        }
+        val headerInfo = if (isKotlinBinaryClass) createHeaderInfo(kotlinBinaryClass) else null
+        file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
 
         return kotlinBinaryClass
     }
@@ -104,7 +103,7 @@ class ClsKotlinBinaryClassCache {
         }
 
         val kotlinBinaryClass =
-            kotlinJvmBinaryClass(file, fileContent, JvmMetadataVersion.INSTANCE, kotlinBinaryData?.isKotlinBinary) ?: return null
+            kotlinJvmBinaryClass(file, fileContent, MetadataVersion.INSTANCE, kotlinBinaryData?.isKotlinBinary) ?: return null
         return createHeaderInfo(kotlinBinaryClass)
     }
 

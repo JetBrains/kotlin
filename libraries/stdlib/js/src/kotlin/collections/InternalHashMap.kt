@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
 package kotlin.collections
 
 /**
- * This is an open addressing hash map implementation.
+ * This is an open-addressing hash map implementation.
  *
  * Copied from libraries/stdlib/native-wasm/src/kotlin/collections/HashMap.kt
  */
@@ -17,7 +17,7 @@ internal class InternalHashMap<K, V> private constructor(
     private var valuesArray: Array<V>?,
     // hash of a key by its index, -1 if a key at that index was removed
     private var presenceArray: IntArray,
-    // (index + 1) of a key by its hash, 0 if there is no key with that hash, -1 if collision chain continues to the hash-1
+    // (index + 1) of a key by its hash, 0 if there is no key with that hash
     private var hashArray: IntArray,
     // max length of a collision chain
     private var maxProbeDistance: Int,
@@ -33,7 +33,7 @@ internal class InternalHashMap<K, V> private constructor(
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators of the [keys], [values] and [entries] views
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
     private var modCount: Int = 0
@@ -54,12 +54,11 @@ internal class InternalHashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
-     * When the map gets full by a certain default load factor, its capacity is expanded,
-     * which usually leads to rebuild of the internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
+     * When the map gets full, its capacity is expanded, which usually leads to rebuild of the internal
+     * data structure.
      *
      * @param initialCapacity the initial capacity of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
@@ -82,14 +81,11 @@ internal class InternalHashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
-     * Load factor is the measure of how full the map is allowed to get in relation to
-     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
      *
      * @param initialCapacity the initial capacity of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
      * @param loadFactor the load factor of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *   Note that this parameter is not used by this implementation.
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
@@ -134,11 +130,11 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     override fun remove(key: K): V? {
-        val index = removeKey(key)  // mutability gets checked here
+        checkIsMutable()
+        val index = findKey(key)
         if (index < 0) return null
-        val valuesArray = valuesArray!!
-        val oldValue = valuesArray[index]
-        valuesArray.resetAt(index)
+        val oldValue = valuesArray!![index]
+        removeEntryAt(index)
         return oldValue
     }
 
@@ -203,7 +199,7 @@ internal class InternalHashMap<K, V> private constructor(
 
     private fun ensureExtraCapacity(n: Int) {
         if (shouldCompact(extraCapacity = n)) {
-            rehash(hashSize)
+            compact(updateHashArray = true)
         } else {
             ensureCapacity(length + n)
         }
@@ -240,14 +236,19 @@ internal class InternalHashMap<K, V> private constructor(
     // Null-check for escaping extra boxing for non-nullable keys.
     private fun hash(key: K) = if (key == null) 0 else (key.hashCode() * MAGIC) ushr hashShift
 
-    private fun compact() {
+    private fun compact(updateHashArray: Boolean) {
         var i = 0
         var j = 0
         val valuesArray = valuesArray
         while (i < length) {
-            if (presenceArray[i] >= 0) {
+            val hash = presenceArray[i]
+            if (hash >= 0) {
                 keysArray[j] = keysArray[i]
                 if (valuesArray != null) valuesArray[j] = valuesArray[i]
+                if (updateHashArray) {
+                    presenceArray[j] = hash
+                    hashArray[hash] = j + 1
+                }
                 j++
             }
             i++
@@ -259,14 +260,13 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     private fun rehash(newHashSize: Int) {
+//        require(newHashSize > hashSize) { "Rehash can only be executed with a grown hash array" }
+
         registerModification()
-        if (length > _size) compact()
-        if (newHashSize != hashSize) {
-            hashArray = IntArray(newHashSize)
-            hashShift = computeShift(newHashSize)
-        } else {
-            hashArray.fill(0, 0, hashSize)
-        }
+        if (length > _size) compact(updateHashArray = false)
+        hashArray = IntArray(newHashSize)
+        hashShift = computeShift(newHashSize)
+
         var i = 0
         while (i < length) {
             if (!putRehash(i++)) {
@@ -298,7 +298,7 @@ internal class InternalHashMap<K, V> private constructor(
         while (true) {
             val index = hashArray[hash]
             if (index == 0) return TOMBSTONE
-            if (index > 0 && keysArray[index - 1] == key) return index - 1
+            if (keysArray[index - 1] == key) return index - 1
             if (--probesLeft < 0) return TOMBSTONE
             if (hash-- == 0) hash = hashSize - 1
         }
@@ -322,7 +322,7 @@ internal class InternalHashMap<K, V> private constructor(
             var probeDistance = 0
             while (true) {
                 val index = hashArray[hash]
-                if (index <= 0) { // claim or reuse hash slot
+                if (index == 0) { // claim or reuse hash slot
                     if (length >= capacity) {
                         ensureExtraCapacity(1)
                         continue@retry
@@ -348,16 +348,17 @@ internal class InternalHashMap<K, V> private constructor(
         }
     }
 
-    private fun removeKey(key: K): Int {
+    override fun removeKey(key: K): Boolean {
         checkIsMutable()
         val index = findKey(key)
-        if (index < 0) return TOMBSTONE
-        removeKeyAt(index)
-        return index
+        if (index < 0) return false
+        removeEntryAt(index)
+        return true
     }
 
-    private fun removeKeyAt(index: Int) {
+    private fun removeEntryAt(index: Int) {
         keysArray.resetAt(index)
+        valuesArray?.resetAt(index)
         removeHashAt(presenceArray[index])
         presenceArray[index] = TOMBSTONE
         _size--
@@ -366,50 +367,32 @@ internal class InternalHashMap<K, V> private constructor(
 
     private fun removeHashAt(removedHash: Int) {
         var hash = removedHash
-        var hole = removedHash // will try to patch the hole in hash array
+        var hole = removedHash // will try to patch the hole in the hash array
         var probeDistance = 0
-        var patchAttemptsLeft = (maxProbeDistance * 2).coerceAtMost(hashSize / 2) // don't spend too much effort
         while (true) {
             if (hash-- == 0) hash = hashSize - 1
-            if (++probeDistance > maxProbeDistance) {
-                // too far away -- can release the hole, bad case will not happen
-                hashArray[hole] = 0
-                return
-            }
             val index = hashArray[hash]
-            if (index == 0) {
-                // end of chain -- can release the hole, bad case will not happen
+            if (++probeDistance > maxProbeDistance) {
+                // too far away - can release the hole, a bad case will not happen
                 hashArray[hole] = 0
                 return
             }
-            if (index < 0) {
-                // TOMBSTONE FOUND
-                //   - <--- [ TS ] ------ [hole] ---> +
-                //             \------------/
-                //             probeDistance
-                // move tombstone into the hole
-                hashArray[hole] = TOMBSTONE
+            if (index == 0) {
+                // end of chain - can release the hole, a bad case will not happen
+                hashArray[hole] = 0
+                return
+            }
+            val otherHash = hash(keysArray[index - 1])
+            // Bad case:
+            //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
+            //             \------------/
+            //             probeDistance
+            if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
+                // move otherHash into the hole, move the hole
+                hashArray[hole] = index
+                presenceArray[index - 1] = hole
                 hole = hash
                 probeDistance = 0
-            } else {
-                val otherHash = hash(keysArray[index - 1])
-                // Bad case:
-                //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
-                //             \------------/
-                //             probeDistance
-                if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
-                    // move otherHash into the hole, move the hole
-                    hashArray[hole] = index
-                    presenceArray[index - 1] = hole
-                    hole = hash
-                    probeDistance = 0
-                }
-            }
-            // check how long we're patching holes
-            if (--patchAttemptsLeft < 0) {
-                // just place tombstone into the hole
-                hashArray[hole] = TOMBSTONE
-                return
             }
         }
     }
@@ -427,6 +410,7 @@ internal class InternalHashMap<K, V> private constructor(
 
     private fun contentEquals(other: Map<*, *>): Boolean = _size == other.size && containsAllEntries(other.entries)
 
+    @IgnorableReturnValue
     private fun putEntry(entry: Map.Entry<K, V>): Boolean {
         val index = addKey(entry.key)
         val valuesArray = allocateValuesArray()
@@ -442,6 +426,7 @@ internal class InternalHashMap<K, V> private constructor(
         return false
     }
 
+    @IgnorableReturnValue
     private fun putAllEntries(from: Collection<Map.Entry<K, V>>): Boolean {
         if (from.isEmpty()) return false
         ensureExtraCapacity(from.size)
@@ -459,7 +444,7 @@ internal class InternalHashMap<K, V> private constructor(
         val index = findKey(entry.key)
         if (index < 0) return false
         if (valuesArray!![index] != entry.value) return false
-        removeKeyAt(index)
+        removeEntryAt(index)
         return true
     }
 
@@ -467,7 +452,7 @@ internal class InternalHashMap<K, V> private constructor(
         checkIsMutable()
         val index = findValue(value)
         if (index < 0) return false
-        removeKeyAt(index)
+        removeEntryAt(index)
         return true
     }
 
@@ -508,7 +493,7 @@ internal class InternalHashMap<K, V> private constructor(
             checkForComodification()
             check(lastIndex != -1) { "Call next() before removing element from the iterator." }
             map.checkIsMutable()
-            map.removeKeyAt(lastIndex)
+            map.removeEntryAt(lastIndex)
             lastIndex = -1
             expectedModCount = map.modCount
         }
@@ -574,15 +559,24 @@ internal class InternalHashMap<K, V> private constructor(
 
     internal class EntryRef<K, V>(
         private val map: InternalHashMap<K, V>,
-        private val index: Int,
+        private val index: Int
     ) : MutableMap.MutableEntry<K, V> {
+        private val expectedModCount = map.modCount
+
         override val key: K
-            get() = map.keysArray[index]
+            get() {
+                checkForComodification()
+                return map.keysArray[index]
+            }
 
         override val value: V
-            get() = map.valuesArray!![index]
+            get() {
+                checkForComodification()
+                return map.valuesArray!![index]
+            }
 
         override fun setValue(newValue: V): V {
+            checkForComodification()
             map.checkIsMutable()
             val valuesArray = map.allocateValuesArray()
             val oldValue = valuesArray[index]
@@ -598,5 +592,10 @@ internal class InternalHashMap<K, V> private constructor(
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
         override fun toString(): String = "$key=$value"
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount)
+                throw ConcurrentModificationException("The backing map has been modified after this entry was obtained.")
+        }
     }
 }

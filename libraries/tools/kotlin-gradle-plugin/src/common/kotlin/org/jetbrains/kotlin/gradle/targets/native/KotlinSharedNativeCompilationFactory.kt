@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 open class KotlinSharedNativeCompilationFactory internal constructor(
     final override val target: KotlinMetadataTarget,
     private val konanTargets: Set<KonanTarget>,
-    private val defaultSourceSet: KotlinSourceSet
+    private val defaultSourceSet: KotlinSourceSet,
 ) : KotlinCompilationFactory<KotlinSharedNativeCompilation> {
 
     override val itemClass: Class<KotlinSharedNativeCompilation>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
@@ -15,11 +16,4 @@ actual fun foo(x: Int): Int {
 
 fun callFromJVM(x: Int) = foo(x)
 
-// MODULE: m3-js()()(m1-common)
-// FILE: js.kt
-
-actual fun foo(x: Int): Int {
-    return x - 1
-}
-
-fun callFromJS(x: Int) = foo(x)
+/* GENERATED_FIR_TAGS: actual, additiveExpression, expect, functionDeclaration, integerLiteral */

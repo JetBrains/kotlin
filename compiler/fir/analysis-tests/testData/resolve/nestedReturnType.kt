@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Some {
     class Nested
 
@@ -5,3 +6,5 @@ class Some {
         return Nested()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass */

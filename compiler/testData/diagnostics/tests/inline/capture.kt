@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -NON_LOCAL_RETURN_NOT_ALLOWED
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -NON_LOCAL_RETURN_NOT_ALLOWED
 
 infix fun Function1<Int, Unit>.noInlineExt(p: Int) {}
 
@@ -51,3 +52,6 @@ inline fun inlineFunWrongExtension(s: (p: Int) -> Unit) {
         <!USAGE_IS_NOT_INLINABLE!>s<!>.noInlineExt(11)
     } ()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline, integerLiteral,
+lambdaLiteral, noinline, thisExpression */

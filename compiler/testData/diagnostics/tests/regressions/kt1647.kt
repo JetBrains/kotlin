@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-1647 Pattern matching doesn't work with generics
 
@@ -10,3 +11,6 @@ fun <F : Abs> patternMatchingAndGenerics(arg : F) : String {
     }
     return "else";
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, stringLiteral, typeConstraint,
+typeParameter */

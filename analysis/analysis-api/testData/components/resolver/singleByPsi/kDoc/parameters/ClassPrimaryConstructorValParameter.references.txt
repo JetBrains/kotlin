@@ -1,0 +1,7 @@
+KDocName(8,10): 'aa'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in C) val aa: kotlin.Int

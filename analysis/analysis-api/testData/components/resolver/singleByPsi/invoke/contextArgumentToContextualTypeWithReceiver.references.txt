@@ -1,0 +1,6 @@
+KtNameReferenceExpression(118,123): 'block'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      block: context(kotlin.String) kotlin.Int.() -> kotlin.Unit

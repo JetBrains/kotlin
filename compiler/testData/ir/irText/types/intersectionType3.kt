@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitIntersectionReifiedTypeParameter
 // FIR_IDENTICAL
 
 interface In<in T>

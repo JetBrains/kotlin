@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1897 When call cannot be resolved to any function, save information about types of arguments
 
 package a
@@ -26,3 +27,5 @@ fun test() {
 
     foo(<!TYPE_MISMATCH!>""<!>, <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) <!TOO_MANY_ARGUMENTS!>{}<!> <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral */

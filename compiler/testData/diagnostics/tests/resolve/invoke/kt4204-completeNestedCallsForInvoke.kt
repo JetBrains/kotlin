@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //KT-4204 ConstraintSystem erased after resolution completion
 package c
@@ -23,3 +24,6 @@ public class Pair<out A, out B> (
     public val first: A,
     public val second: B
 )
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, nullableType, out,
+primaryConstructor, propertyDeclaration, typeParameter */

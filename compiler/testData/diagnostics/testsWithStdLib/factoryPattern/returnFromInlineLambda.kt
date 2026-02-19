@@ -1,7 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +OverloadResolutionByLambdaReturnType
+// LANGUAGE: +OverloadResolutionByLambdaReturnType
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -OPT_IN_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -OPT_IN_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
 // ISSUE: KT-11265
 
 // FILE: OverloadResolutionByLambdaReturnType.kt
@@ -51,3 +52,6 @@ fun test_2(a: Array<String>, b: Boolean) {
         it.toList()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inline, lambdaLiteral, nullableType, outProjection, stringLiteral, typeParameter */

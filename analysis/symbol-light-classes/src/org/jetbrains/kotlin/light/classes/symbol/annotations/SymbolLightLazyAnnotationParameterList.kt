@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiNameValuePair
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 
 internal class SymbolLightLazyAnnotationParameterList(
     parent: SymbolLightAbstractAnnotation,
-    private val lazyArguments: Lazy<List<KtNamedAnnotationValue>>,
+    private val lazyArguments: Lazy<List<AnnotationArgument>>,
 ) : SymbolLightAbstractAnnotationParameterList(parent) {
     private val _attributes: Collection<PsiNameValuePair> by lazyPub {
         val attributes = lazyArguments.value.map {

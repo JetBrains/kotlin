@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -16,3 +17,6 @@ fun foo() {
     }
     bar(x)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

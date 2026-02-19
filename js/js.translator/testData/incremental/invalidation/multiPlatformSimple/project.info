@@ -1,0 +1,12 @@
+MODULES: lib1, lib2, main
+
+STEP 0:
+    language: +MultiPlatformProjects
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files: lib1/l1js, lib1/l1common, lib2/l2js, lib2/l2common, main/m.export, main/m, main
+STEP 1:
+    language: +MultiPlatformProjects
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files: lib1/l1js, lib2/l2js

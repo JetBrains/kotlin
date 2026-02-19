@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// WITH_EXTRA_CHECKERS
 package kt1977
 
 //KT-1977 Wrong 'unused expression' in catch
@@ -49,3 +52,6 @@ fun foo() {
 
 fun bar() {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, tryExpression */

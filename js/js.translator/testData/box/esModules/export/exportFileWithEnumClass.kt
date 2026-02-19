@@ -1,5 +1,4 @@
-// !LANGUAGE: +EnumEntries
-// DONT_TARGET_EXACT_BACKEND: JS
+// LANGUAGE: +EnumEntries
 // ES_MODULES
 
 // MODULE: export_enum_class

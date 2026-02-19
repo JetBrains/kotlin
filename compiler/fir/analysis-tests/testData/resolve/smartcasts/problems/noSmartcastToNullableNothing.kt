@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-52424
 
 interface A
@@ -10,3 +11,6 @@ fun test(x: Int?) {
         <!ARGUMENT_TYPE_MISMATCH!>x<!> // should be no smartcast to Nothing?
     )
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType */

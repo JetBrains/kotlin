@@ -1,23 +1,29 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 dependencies {
-    testImplementation(project(":compiler:fir:entrypoint"))
-    testImplementation(project(":compiler:cli"))
-    testImplementation(intellijCore())
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-
-    // This dependency is needed only for FileComparisonFailure
-    testImplementation(intellijJavaRt())
+    testFixturesImplementation(libs.opentest4j)
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
+    testFixturesImplementation(project(":compiler:fir:entrypoint"))
+    testFixturesImplementation(project(":compiler:cli"))
+    testFixturesImplementation(project(":compiler:cli-jvm"))
+    testFixturesImplementation(intellijCore())
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation(kotlin("test"))
 }
 
 sourceSets {
     "main" { none() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar()
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
+}

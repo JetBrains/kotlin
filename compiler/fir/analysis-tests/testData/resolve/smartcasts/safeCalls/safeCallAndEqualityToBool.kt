@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun String.check(): Boolean = true
 
 fun test_1(s: String?) {
@@ -32,3 +33,6 @@ fun test_4(s: String?) {
         s.length // Should be OK
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, nullableType,
+safeCall, smartcast */

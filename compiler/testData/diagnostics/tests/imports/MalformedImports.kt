@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 import <!UNRESOLVED_REFERENCE!>some<!>.<!SYNTAX!><!>
@@ -7,3 +8,5 @@ import <!PACKAGE_CANNOT_BE_IMPORTED!>kotlin<!>.<!SYNTAX!><!>
 import<!SYNTAX!><!>
 import <!SYNTAX!>.<!>
 import <!SYNTAX!>*<!>
+
+/* GENERATED_FIR_TAGS:  */

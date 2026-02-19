@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+
 package test
 
 typealias OI = Outer.Inner
@@ -37,3 +39,6 @@ class Generic<T1> {
         constructor() : super()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nullableType, secondaryConstructor, starProjection, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: first/Some.java
 
 package first;
@@ -24,3 +25,5 @@ import second.*
 fun test() {
     Some.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

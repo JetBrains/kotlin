@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.serialization.SerializerExtension
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
-import org.jetbrains.kotlinx.serialization.compiler.resolve.findNamedCompanionAnnotation
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
-import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 class SerializationDescriptorSerializerPlugin : DescriptorSerializerPlugin {
     private val hasAnnotationFlag = Flags.HAS_ANNOTATIONS.toFlags(true)
@@ -27,7 +24,7 @@ class SerializationDescriptorSerializerPlugin : DescriptorSerializerPlugin {
     private val descriptorMetadataMap: MutableMap<ClassDescriptor, SerializableProperties> = hashMapOf()
 
     private val ClassDescriptor.needSaveProgramOrder: Boolean
-        get() = isInternalSerializable && (modality == Modality.OPEN || modality == Modality.ABSTRACT)
+        get() = shouldHaveInternalSerializer && (modality == Modality.OPEN || modality == Modality.ABSTRACT)
 
     internal fun putIfNeeded(descriptor: ClassDescriptor, properties: SerializableProperties) {
         if (!descriptor.needSaveProgramOrder) return

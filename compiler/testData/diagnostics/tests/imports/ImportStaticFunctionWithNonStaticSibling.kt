@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:a/Foo.java
 package a;
@@ -16,3 +17,5 @@ public class Foo {
 package b
 
 import a.Foo.bar
+
+/* GENERATED_FIR_TAGS:  */

@@ -1,4 +1,5 @@
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // FILE: JavaEnum.java
 
 public enum JavaEnum {
@@ -12,3 +13,6 @@ fun foo(javaEnum: JavaEnum) = when (javaEnum) {
     FIRST -> 1
     SECOND -> 2
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, javaProperty, javaType, smartcast,
+whenExpression, whenWithSubject */

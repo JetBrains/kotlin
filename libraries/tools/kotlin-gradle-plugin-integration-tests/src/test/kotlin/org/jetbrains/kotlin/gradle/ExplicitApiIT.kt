@@ -87,7 +87,7 @@ class ExplicitApiIT : KGPBaseTest() {
                 |kotlin.explicitApiWarning()
                 |
                 |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile.class).configureEach {
-                |    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+                |    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
                 |}
                 |
                 """.trimMargin()
@@ -96,7 +96,7 @@ class ExplicitApiIT : KGPBaseTest() {
             build("compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
 
-                assertCompilerArgument(":compileKotlin", "-Xcontext-receivers")
+                assertCompilerArgument(":compileKotlin", "-Xcontext-parameters")
                 assertCompilerArgument(":compileKotlin", "-Xexplicit-api=warning")
             }
         }
@@ -109,7 +109,9 @@ class ExplicitApiIT : KGPBaseTest() {
         project(
             "new-mpp-lib-and-app/sample-lib",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             buildGradle.appendText(
                 //language=groovy
@@ -143,7 +145,7 @@ class ExplicitApiIT : KGPBaseTest() {
             if (nativeTaskName != null) {
                 build(nativeTaskName) {
                     assertTasksExecuted(nativeTaskName)
-                    extractNativeTasksCommandLineArgumentsFromOutput(nativeTaskName) {
+                    extractNativeTasksCommandLineArgumentsFromOutput(nativeTaskName, logLevel = LogLevel.DEBUG) {
                         assertCommandLineArgumentsContain("-Xexplicit-api=warning")
                     }
                 }

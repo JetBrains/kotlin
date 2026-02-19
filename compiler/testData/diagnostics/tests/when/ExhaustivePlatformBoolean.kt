@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Provider.java
 
@@ -19,3 +20,5 @@ fun test_2(): Int = when (Provider.getCondition()) {
     false -> 2
     null -> 3
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, whenExpression, whenWithSubject */

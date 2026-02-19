@@ -4,10 +4,10 @@ To provide unified navigation for all parts of [kotlinlang.org](https://kotlinla
 the Kotlin Website Team uses this directory to place custom templates in this folder
 during the website build time on TeamCity.
 
-It is not practical to place these templates in the kotlinx-datetime repository because they change from time to time
+It is not practical to place these templates in the Kotlin repository because they change from time to time
 and aren't related to the plugin's release cycle.
 
 The folder is defined as a source for custom templates by the templatesDir property through Dokka's plugin configuration.
 
-[Here](https://kotlin.github.io/dokka/1.7.20/user_guide/output-formats/html/#custom-html-pages), you can
+[Here](https://kotlinlang.org/docs/dokka-html.html#templates), you can
 find more about the customization of Dokka's HTML output.

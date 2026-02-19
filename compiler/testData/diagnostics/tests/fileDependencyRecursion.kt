@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: fileDependencyRecursion.kt
 package test
@@ -14,3 +15,5 @@ import test.normal
 
 val some: Int = 1
 val fromImported: Int = normal
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun x(p: String): Boolean { return p == "abc" }
 
 public fun foo(p: String?, r: String?, q: String?): Int {
@@ -18,3 +19,6 @@ public fun foo(p: String?, r: String?, q: String?): Int {
     q.length
     return p.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast, stringLiteral, whileLoop */

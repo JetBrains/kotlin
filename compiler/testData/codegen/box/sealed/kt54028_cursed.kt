@@ -1,23 +1,19 @@
-// ALLOW_FILES_WITH_SAME_NAMES
+// KLIB_RELATIVE_PATH_BASES: a, b
 
-// The test infrastructure for Kotlin/Native doesn't allow files with same names.
-// TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
-// K2 JS_IR MUTE_REASON: java.lang.NullPointerException at org.jetbrains.kotlin.fir.backend.Fir2IrClassifierStorage.getIrClassSymbol
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^ Pre-serialization IR contains absolute paths, post-deserialization IR contains paths relative to KLIB_RELATIVE_PATH_BASES
 
 // Test that if we have two different files with the same name in the same package, KT-54028 doesn't reproduce.
 
 // MODULE: lib
 
-// FILE: cursed.kt
+// FILE: a/cursed.kt
 
 sealed interface LazyGridLayoutInfo {
     fun ok(): String
 }
 
-// FILE: cursed.kt
+// FILE: b/cursed.kt
 
 class LazyGridState {
     val layoutInfo: LazyGridLayoutInfo

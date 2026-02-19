@@ -1,17 +1,16 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -42,19 +41,16 @@ class SerialInfoImplJvmIrGenerator(
             parent = createClass(createPackage("kotlin.jvm"), "JvmClassMappingKt", ClassKind.CLASS).owner
             addGetter().apply {
                 annotations = listOf(
-                    IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
-                        putValueArgument(
-                            0,
-                            IrConstImpl.string(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                context.irBuiltIns.stringType,
-                                "getJavaClass"
-                            )
+                    IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
+                        arguments[0] = IrConstImpl.string(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            context.irBuiltIns.stringType,
+                            "getJavaClass"
                         )
                     }
                 )
-                addExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
+                parameters += createExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
                 returnType = javaLangClass.starProjectedType
             }
         }.symbol
@@ -62,7 +58,6 @@ class SerialInfoImplJvmIrGenerator(
     private val implementor = JvmAnnotationImplementationTransformer.AnnotationPropertyImplementor(
         context.irFactory,
         context.irBuiltIns,
-        context.symbols,
         javaLangClass,
         kClassJava.owner.getter!!.symbol,
         SERIALIZATION_PLUGIN_ORIGIN
@@ -80,7 +75,7 @@ class SerialInfoImplJvmIrGenerator(
             visibility = DescriptorVisibilities.PUBLIC
         }.apply {
             parent = annotationClass
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             superTypes = listOf(annotationClass.defaultType)
         }
         annotationClass.declarations.add(subclass)
@@ -95,7 +90,7 @@ class SerialInfoImplJvmIrGenerator(
     }
 
     private fun createPackage(packageName: String): IrPackageFragment =
-        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+        createEmptyExternalPackageFragment(
             moduleFragment.descriptor,
             FqName(packageName)
         )
@@ -111,7 +106,7 @@ class SerialInfoImplJvmIrGenerator(
         modality = Modality.FINAL
     }.apply {
         parent = irPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
         block(this)
     }.symbol
 }

@@ -13,9 +13,13 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.transformer.preprocessForConstTransformer
 import org.jetbrains.kotlin.ir.interpreter.transformer.runConstOptimizations
+import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 
+/**
+ * Evaluates functions that are annotated with [kotlin.internal.IntrinsicConstEvaluation].
+ */
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
     private val suppressErrors: Boolean = context.configuration.getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS),
@@ -24,14 +28,9 @@ class ConstEvaluationLowering(
     private val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
     private val evaluatedConstTracker = context.configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
     private val inlineConstTracker = context.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
-    private val mode = EvaluationMode.ONLY_INTRINSIC_CONST
+    private val mode = EvaluationMode.OnlyIntrinsicConst(isFloatingPointOptimizationDisabled = configuration.platform.isJs() || configuration.platform.isWasm())
 
     override fun lower(irFile: IrFile) {
-        val useFir = context.configuration[CommonConfigurationKeys.USE_FIR] == true
-        val preprocessedFile = if (useFir) irFile else irFile.preprocessForConstTransformer(interpreter, mode)
-        preprocessedFile.runConstOptimizations(
-            interpreter, mode, evaluatedConstTracker, inlineConstTracker, suppressErrors
-        )
+        irFile.runConstOptimizations(interpreter, mode, evaluatedConstTracker, inlineConstTracker, suppressErrors)
     }
 }
-

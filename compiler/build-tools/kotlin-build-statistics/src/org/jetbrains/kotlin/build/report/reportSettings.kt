@@ -10,10 +10,11 @@ import java.io.Serializable
 
 data class FileReportSettings(
     val buildReportDir: File,
+    val changedFileListPerLimit: Int? = null,
     val includeMetricsInReport: Boolean = false,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 1
     }
 }
 
@@ -22,9 +23,10 @@ data class HttpReportSettings(
     val password: String?,
     val user: String?,
     val verboseEnvironment: Boolean,
-    val includeGitBranchName: Boolean
+    val includeGitBranchName: Boolean,
+    val useExecutorForHttpReport: Boolean,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 1
     }
 }

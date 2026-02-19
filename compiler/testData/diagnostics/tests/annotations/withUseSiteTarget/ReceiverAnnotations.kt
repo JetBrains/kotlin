@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 annotation class Ann
 
@@ -24,3 +25,7 @@ fun @receiver:Ann String.length2() = length
 
 val @receiver:Ann String.extensionProperty: String
     get() = "A"
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetReceiver, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, localProperty, propertyDeclaration,
+propertyWithExtensionReceiver, secondaryConstructor, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.annotation.AnnotationTarget.FIELD
 
 object Some {
@@ -8,7 +9,7 @@ object Some {
         CLASS
     }
 
-    @Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT!>FIELD<!>)
+    @Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT, ARGUMENT_TYPE_MISMATCH!>FIELD<!>)
     annotation class Ann2
 
     const val FIELD = ""
@@ -36,8 +37,11 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    @<!PLUGIN_ANNOTATION_AMBIGUITY!>Target<!>(<!ARGUMENT_TYPE_MISMATCH!>AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>TYPE<!><!>)
+    @<!COMPILER_REQUIRED_ANNOTATION_AMBIGUITY!>Target<!>(<!ARGUMENT_TYPE_MISMATCH!>AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>TYPE<!><!>)
     annotation class Ann
 
     fun foo(x: <!WRONG_ANNOTATION_TARGET!>@Ann<!> String) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, enumDeclaration, enumEntry, functionDeclaration,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

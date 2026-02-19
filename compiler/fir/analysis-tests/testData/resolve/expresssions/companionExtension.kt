@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My {
     companion object {
         fun My.foo() {}
@@ -7,3 +8,6 @@ class My {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,
+objectDeclaration */

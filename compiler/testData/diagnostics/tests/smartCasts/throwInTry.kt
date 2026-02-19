@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
 
 fun throwInTry_valueInCatch_smartcastAfterTryCatch() {
     val s = try {
@@ -86,3 +87,6 @@ fun conditionalThrowInTry_rethrow_noSmartcastInFinally(a: A) {
         takeB(<!TYPE_MISMATCH!>a<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, localProperty,
+propertyDeclaration, smartcast, stringLiteral, tryExpression */

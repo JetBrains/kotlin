@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-13468, KT-13765
 
 fun basic(): String {
@@ -70,3 +71,6 @@ fun gau(flag: Boolean, arg: String?) {
 
     <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression */

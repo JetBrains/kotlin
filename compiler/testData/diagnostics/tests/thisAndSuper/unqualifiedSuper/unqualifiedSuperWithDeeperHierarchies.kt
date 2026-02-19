@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Check that it works with inherited members
 //
@@ -50,3 +51,6 @@ class DeepDerived : DeepBase(), DeepInterface {
         super<DeepInterface>.deepInterfaceFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, override,
+propertyDeclaration, superExpression */

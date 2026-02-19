@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /foo(kotlin/Int, kotlin/Int) // /foo|foo(kotlin.Int;kotlin.Int){}[0]
+final fun /noReorder1(): kotlin/Int // /noReorder1|noReorder1(){}[0]
+final fun /noReorder2(): kotlin/Int // /noReorder2|noReorder2(){}[0]
+final fun /reordered1(): kotlin/Int // /reordered1|reordered1(){}[0]
+final fun /reordered2(): kotlin/Int // /reordered2|reordered2(){}[0]
+final fun /test() // /test|test(){}[0]

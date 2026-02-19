@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-33263
 
 class A
@@ -20,3 +21,6 @@ fun test_1(foo: Foo<A>) {
 fun test_2(foo: Foo<A>) {
     test(convert(foo.create()))
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection,
+nullableType, typeParameter */

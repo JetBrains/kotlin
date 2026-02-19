@@ -8,35 +8,53 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import groovy.lang.Closure
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
-import org.gradle.process.ProcessForkOptions
-import org.gradle.process.internal.DefaultProcessForkOptions
+import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.SystemGetEnvSource.Companion.getAllEnvironmentVariables
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
-import java.util.concurrent.Callable
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class KotlinNativeTest : KotlinTest() {
-    @get:Inject
-    abstract val providerFactory: ProviderFactory
+abstract class KotlinNativeTest
+@Inject
+internal constructor(
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+    execOps: ExecOperations,
+) : KotlinTest(execOps) {
 
-    @Suppress("LeakingThis")
-    private val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    @Suppress("UNREACHABLE_CODE")
+    constructor() : this(
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
+    )
+
+    private val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
+        environment.putAll(this@KotlinNativeTest.providers.getAllEnvironmentVariables())
+    }
 
     @get:Internal
-    val executableProperty: Property<FileCollection> = project.objects.property(FileCollection::class.java)
+    abstract val executableProperty: Property<FileCollection>
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -51,7 +69,7 @@ abstract class KotlinNativeTest : KotlinTest() {
         get() = executableProperty.get().singleFile
 
     init {
-        onlyIf { executableFile.exists() }
+        super.onlyIf { executableFile.exists() }
     }
 
     @Input
@@ -67,16 +85,18 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @get:Input
     var workingDir: String
-        get() = processOptions.workingDir.canonicalPath
+        get() = processOptions.workingDir.get().asFile.absolutePath
         set(value) {
-            processOptions.workingDir = File(value)
+            processOptions.workingDir.set(File(value))
         }
 
     @get:Internal
     var environment: Map<String, Any>
-        get() = processOptions.environment
+        get() = processOptions.environment.get()
         set(value) {
-            processOptions.environment = value
+            processOptions.environment.set(providers.provider {
+                value.mapValues { it.value.toString() }
+            })
         }
 
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
@@ -84,29 +104,27 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @Suppress("unused")
     @get:Input
-    val trackedEnvironment
+    val trackedEnvironment: Map<String, Any>
         get() = environment.filterKeys(trackedEnvironmentVariablesKeys::contains)
-
-    private fun <T> Property<T>.set(providerLambda: () -> T) = set(project.provider { providerLambda() })
 
     fun executable(file: File) {
         executableProperty.set(project.files(file))
     }
 
     fun executable(path: String) {
-        executableProperty.set { project.files(path) }
+        executableProperty.set(providers.provider { project.files(path) })
     }
 
     fun executable(provider: () -> File) {
-        executableProperty.set(project.files(Callable { provider() }))
+        executableProperty.set(project.files({ provider() }))
     }
 
     fun executable(builtByTask: Task, provider: () -> File) {
-        executableProperty.set(project.files(Callable { provider() }).builtBy(builtByTask))
+        executableProperty.set(project.files({ provider() }).builtBy(builtByTask))
     }
 
     fun executable(provider: Provider<File>) {
-        executableProperty.set(provider.map { project.files(it) })
+        executableProperty.set(project.files(provider))
     }
 
     fun executable(provider: Closure<File>) {
@@ -115,7 +133,7 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @JvmOverloads
     fun environment(name: String, value: Any, tracked: Boolean = true) {
-        processOptions.environment(name, value)
+        processOptions.environment.put(name, providers.provider { value.toString() })
         if (tracked) {
             trackedEnvironmentVariablesKeys.add(name)
         }
@@ -134,9 +152,7 @@ abstract class KotlinNativeTest : KotlinTest() {
     protected abstract val testCommand: TestCommand
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
-        val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
-        processOptions.copyTo(extendedForkOptions)
-        extendedForkOptions.executable = testCommand.executable
+        processOptions.executable.set(testCommand.executable)
 
         val clientSettings = TCServiceMessagesClientSettings(
             name,
@@ -144,7 +160,6 @@ abstract class KotlinNativeTest : KotlinTest() {
             prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = false,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm,
-            escapeTCMessagesInLog = providerFactory.gradleProperty(TC_PROJECT_PROPERTY).isPresent
         )
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.
@@ -153,17 +168,23 @@ abstract class KotlinNativeTest : KotlinTest() {
 
         val cliArgs = testCommand.cliArgs("TEAMCITY", checkExitCode, includePatterns, excludePatterns, args)
 
-        return TCServiceMessagesTestExecutionSpec(extendedForkOptions, cliArgs, checkExitCode, clientSettings)
+        return TCServiceMessagesTestExecutionSpec(
+            processLaunchOptions = processOptions,
+            processArgs = cliArgs,
+            checkExitCode = checkExitCode,
+            clientSettings = clientSettings,
+        )
     }
 
-    protected abstract class TestCommand() {
+    protected abstract class TestCommand {
         abstract val executable: String
+
         abstract fun cliArgs(
             testLogger: String?,
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String>
 
         protected fun testArgs(
@@ -171,7 +192,7 @@ abstract class KotlinNativeTest : KotlinTest() {
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String> = mutableListOf<String>().also {
             // during debug from IDE executable is switched and special arguments are added
             // via Gradle task manipulation; these arguments are expected to precede test settings
@@ -201,7 +222,27 @@ abstract class KotlinNativeTest : KotlinTest() {
  * A task running Kotlin/Native tests on a host machine.
  */
 @DisableCachingByDefault
-abstract class KotlinNativeHostTest : KotlinNativeTest() {
+abstract class KotlinNativeHostTest
+@Inject
+internal constructor(
+    objects: ObjectFactory,
+    providers: ProviderFactory,
+    execOps: ExecOperations,
+) : KotlinNativeTest(
+    objects = objects,
+    providers = providers,
+    execOps = execOps,
+) {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    @Suppress("UNREACHABLE_CODE")
+    constructor() : this(
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
+    )
+
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -212,7 +253,7 @@ abstract class KotlinNativeHostTest : KotlinNativeTest() {
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String> = testArgs(testLogger, checkExitCode, testGradleFilter, testNegativeGradleFilter, userArgs)
     }
 }
@@ -221,8 +262,28 @@ abstract class KotlinNativeHostTest : KotlinNativeTest() {
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
 @DisableCachingByDefault
-abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
-    @Deprecated("Use the property 'device' instead")
+abstract class KotlinNativeSimulatorTest
+@Inject
+internal constructor(
+    objects: ObjectFactory,
+    providers: ProviderFactory,
+    execOps: ExecOperations,
+) : KotlinNativeTest(
+    objects = objects,
+    providers = providers,
+    execOps = execOps,
+) {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    @Suppress("UNREACHABLE_CODE")
+    constructor() : this(
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
+    )
+
+    @Deprecated("Use the property 'device' instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     @get:Internal
     var deviceId: String
         get() = device.get()
@@ -250,7 +311,7 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String> =
             listOfNotNull(
                 "simctl",
@@ -267,12 +328,12 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val origin = super.createTestExecutionSpec()
         return NativeAppleSimulatorTCServiceMessagesTestExecutionSpec(
-            origin.forkOptions,
-            origin.args,
-            origin.checkExitCode,
-            origin.clientSettings,
-            origin.dryRunArgs,
-            standalone,
+            processLaunchOpts = origin.processLaunchOptions,
+            processArgs = origin.processArgs,
+            checkExitCode = origin.checkExitCode,
+            clientSettings = origin.clientSettings,
+            dryRunArgs = origin.dryRunArgs,
+            standaloneMode = standalone,
         )
     }
 }

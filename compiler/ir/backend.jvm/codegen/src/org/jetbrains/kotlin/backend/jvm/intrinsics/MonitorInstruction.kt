@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-class MonitorInstruction private constructor(private val opcode: Int) : IntrinsicMethod() {
+class MonitorInstruction private constructor(private val opcode: Int) : CallBasedIntrinsicMethod() {
     companion object {
         @JvmField
         val MONITOR_ENTER: MonitorInstruction = MonitorInstruction(Opcodes.MONITORENTER)

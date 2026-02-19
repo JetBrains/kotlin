@@ -1,7 +1,8 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 

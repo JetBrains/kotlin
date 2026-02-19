@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
 // FILE: JavaEnumA.java
 
 public enum JavaEnumA {}
@@ -13,6 +13,12 @@ public enum JavaEnumB {}
 enum class KotlinEnumA
 enum class KotlinEnumB
 
-fun jj(a: JavaEnumA, b: JavaEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON!>a == b<!>
-fun jk(a: JavaEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON!>a == b<!>
-fun kk(a: KotlinEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON!>a == b<!>
+fun jj(a: JavaEnumA, b: JavaEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a == b<!>
+fun jk(a: JavaEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a == b<!>
+fun kk(a: KotlinEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a == b<!>
+
+fun jj2(a: JavaEnumA, b: JavaEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a === b<!>
+fun jk2(a: JavaEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a === b<!>
+fun kk2(a: KotlinEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a === b<!>
+
+/* GENERATED_FIR_TAGS: enumDeclaration, equalityExpression, functionDeclaration, javaType */

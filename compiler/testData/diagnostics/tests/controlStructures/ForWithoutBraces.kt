@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-552
 // KT-552 For variable unresolved if loop body is not block
@@ -7,3 +8,6 @@ fun ff() {
     for (j in 1..10)
         i += j
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, forLoop, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, rangeExpression */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_JAVAC
 // FILE: a/B.java
@@ -37,3 +38,5 @@ package b
 
 fun test() = A1().getB()
 fun test2() = A2().<!MISSING_DEPENDENCY_CLASS!>getB<!>()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

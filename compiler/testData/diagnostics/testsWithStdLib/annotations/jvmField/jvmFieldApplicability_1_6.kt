@@ -1,5 +1,6 @@
-// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses +ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +NestedClassesInAnnotations +InlineClasses +ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -INLINE_CLASS_DEPRECATED
 
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
 fun foo() {
@@ -146,3 +147,8 @@ object IObject {
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     private val r: Result<Int> = TODO()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFieldDelegate, assignment, classDeclaration,
+companionObject, const, functionDeclaration, getter, integerLiteral, interfaceDeclaration, lambdaLiteral, lateinit,
+localProperty, objectDeclaration, override, primaryConstructor, propertyDeclaration, propertyDelegate,
+secondaryConstructor, setter, stringLiteral, unsignedLiteral */

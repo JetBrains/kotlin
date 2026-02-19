@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun test_0(x: Any) {
     if (x is String) {
         x.length
@@ -61,3 +62,7 @@ fun test_4(a: Any?) {
         s.length // Should be OK
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, getter, ifExpression, interfaceDeclaration,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver, safeCall,
+smartcast, typeParameter, whenExpression */

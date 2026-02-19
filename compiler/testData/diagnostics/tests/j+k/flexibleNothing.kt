@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // FILE: TestClass.java
@@ -17,3 +18,6 @@ fun run() {
     // Should not be unreachable
     run()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

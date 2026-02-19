@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.interpreter.correspondingProperty
+import org.jetbrains.kotlin.ir.interpreter.isConst
+import org.jetbrains.kotlin.ir.interpreter.property
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
-class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
+class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor() {
     override fun visitFunction(declaration: IrFunction, data: IrInterpreterPreprocessorData): IrStatement {
         // It is useless to visit default accessor, we probably want to leave code there as it is
         if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
@@ -25,8 +28,7 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
     }
 
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
-        val function = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression, data)
-        val field = function.correspondingPropertySymbol?.owner?.backingField ?: return super.visitCall(expression, data)
+        val field = expression.correspondingProperty?.backingField ?: return super.visitCall(expression, data)
         return expression.lowerConstRead(field, data) ?: super.visitCall(expression, data)
     }
 
@@ -45,7 +47,8 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
 
         transformChildren(this@IrInterpreterConstGetterPreprocessor, data)
 
-        val getObject = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, receiver.type, receiver.type.classOrFail)
+        val fieldParent = field.parentAsClass
+        val getObject = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fieldParent.defaultType, fieldParent.symbol)
         when (this) {
             is IrCall -> this.dispatchReceiver = getObject
             is IrGetField -> this.receiver = getObject
@@ -64,6 +67,6 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
 
     fun IrField.hasConstantValue(): Boolean {
         val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && initializer != null
-        return implicitConst || correspondingPropertySymbol?.owner?.isConst == true
+        return implicitConst || property.isConst
     }
 }

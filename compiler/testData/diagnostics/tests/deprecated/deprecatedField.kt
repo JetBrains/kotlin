@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 // FILE: JavaClass.java
@@ -12,3 +13,5 @@ fun use(j: JavaClass) {
     j.<!DEPRECATION!>deprecatedField<!>
     j.regularField
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

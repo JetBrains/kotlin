@@ -1,7 +1,10 @@
-fun test1(i: Int) = { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>i<!> ->
+// RUN_PIPELINE_TILL: FRONTEND
+fun test1(i: Int) = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>i<!> ->
     i
 }(i)
 
-fun test2() = { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>i<!> -> i }<!NO_VALUE_FOR_PARAMETER!>()<!>
+fun test2() = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>i<!> -> i }<!NO_VALUE_FOR_PARAMETER!>()<!>
 
-fun test3() = { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>i<!> -> i }(1)
+fun test3() = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>i<!> -> i }(1)
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

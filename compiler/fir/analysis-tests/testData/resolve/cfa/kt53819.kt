@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-53819
 fun bar() {
     class Foo {
@@ -12,3 +13,5 @@ fun bar() {
     }
 }
 
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, localClass, propertyDeclaration,
+secondaryConstructor, thisExpression */

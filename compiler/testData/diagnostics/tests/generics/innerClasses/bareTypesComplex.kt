@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 open class SuperOuter<E> {
     inner open class SuperInner<F>
@@ -13,3 +14,6 @@ fun bare(x: SuperOuter<*>.SuperInner<*>, y: Any?) {
         return
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, inner, isExpression, nullableType,
+starProjection, typeParameter */

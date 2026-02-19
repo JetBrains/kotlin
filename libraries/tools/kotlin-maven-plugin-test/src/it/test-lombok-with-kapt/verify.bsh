@@ -1,4 +1,4 @@
-source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLineThatContains("Applied plugin: 'lombok'");
 //Temporary muted because of KT-47945

@@ -4,4 +4,4 @@ package = platform.WidgetKit
 modules = WidgetKit
 compilerOpts = -framework WidgetKit
 linkerOpts = -framework WidgetKit
-#Disabled: Swift-only framework
+# The framework has no ObjC API surface

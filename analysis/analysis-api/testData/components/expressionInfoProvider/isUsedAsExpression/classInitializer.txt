@@ -3,3 +3,4 @@ text: init {
         "value"
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

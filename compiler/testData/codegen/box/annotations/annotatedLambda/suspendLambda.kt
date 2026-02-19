@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// Only implemented in the IR backend.
-// IGNORE_BACKEND: JVM
 
 import java.lang.reflect.Method
 import kotlin.test.assertEquals

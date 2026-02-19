@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface I
 
@@ -17,13 +18,13 @@ open class S(
 class A : I by S(
         foo(),
         Nested(),
-        <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>(),
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>(),
         CONST,
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        <!UNRESOLVED_REFERENCE!>a<!>,
-        <!UNRESOLVED_REFERENCE!>b<!>()
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>a<!>,
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
 ) {
 
     class Nested {
@@ -48,3 +49,7 @@ class A : I by S(
         fun foo(): Nested = null!!
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, const, functionDeclaration,
+inheritanceDelegation, inner, integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration */

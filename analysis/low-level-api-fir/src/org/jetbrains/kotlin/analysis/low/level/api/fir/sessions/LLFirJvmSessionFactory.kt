@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,41 +7,42 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.LLLibraryScopeAwareCallConflictResolverFactory
-import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
-import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.callConflictResolverFactory
+import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.registerJavaComponents
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
-
-    override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
+    override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module, FirKotlinScopeProvider(::wrapScopeWithJvmMapped)) { context ->
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
-            registerJavaSpecificResolveComponents()
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOfNotNull(
                         context.firProvider.symbolProvider,
@@ -57,14 +58,13 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         }
     }
 
-    override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
-            registerJavaSpecificResolveComponents()
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.contentScope)
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOf(
                         context.firProvider.symbolProvider,
@@ -75,53 +75,67 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
             )
             register(JavaSymbolProvider::class, javaSymbolProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
-            registerLibraryScopeAwareCallConflictResolverFactory()
         }
     }
 
-    override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
-            registerJavaSpecificResolveComponents()
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
-            registerLibraryScopeAwareCallConflictResolverFactory()
         }
     }
 
-    private fun FirSession.registerLibraryScopeAwareCallConflictResolverFactory() {
-        register(ConeCallConflictResolverFactory::class, LLLibraryScopeAwareCallConflictResolverFactory(callConflictResolverFactory))
+    override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
+        return doCreateDanglingFileSession(module, contextSession) { context ->
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
+
+            val contextJavaSymbolProvider = contextSession.nullableJavaSymbolProvider
+            if (contextJavaSymbolProvider != null) {
+                register(JavaSymbolProvider::class, contextJavaSymbolProvider)
+            }
+
+            register(
+                FirSymbolProvider::class,
+                LLModuleWithDependenciesSymbolProvider(
+                    this,
+                    providers = listOfNotNull(
+                        firProvider.symbolProvider,
+                        context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
+                        contextJavaSymbolProvider
+                    ),
+                    context.dependencyProvider
+                )
+            )
+
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+        }
     }
 
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
-        builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
-            val firJavaFacade = LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
-            val deserializedSymbolProviderFactory = project.getService(JvmFirDeserializedSymbolProviderFactory::class.java)
+            val javaClassFinder = project.createJavaClassFinder(scope, session.javaAnnotationProvider)
+            val firJavaFacade = LLFirJavaFacadeForBinaries(session, javaClassFinder)
+            val deserializedSymbolProviderFactory = LLLibrarySymbolProviderFactory.fromSettings(project)
             addAll(
-                deserializedSymbolProviderFactory.createJvmFirDeserializedSymbolProviders(
-                    project,
+                deserializedSymbolProviderFactory.createJvmLibrarySymbolProvider(
                     session,
-                    moduleData,
-                    kotlinScopeProvider,
-                    moduleDataProvider,
                     firJavaFacade,
                     packagePartProvider,
-                    scope
+                    scope,
                 )
             )
             addIfNotNull(
                 OptionalAnnotationClassesProvider.createIfNeeded(
                     session,
                     moduleDataProvider,
-                    kotlinScopeProvider,
+                    session.kotlinScopeProvider,
                     packagePartProvider
                 )
             )

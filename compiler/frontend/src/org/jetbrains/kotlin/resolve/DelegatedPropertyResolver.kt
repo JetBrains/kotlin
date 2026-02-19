@@ -651,8 +651,8 @@ class DelegatedPropertyResolver(
             val constructor = innerType.constructor
             if (constructor is NewTypeVariableConstructor) {
                 if (substitutionMap == null) substitutionMap = hashMapOf()
-                if (innerType !in substitutionMap!!) {
-                    substitutionMap!![innerType] = StubTypeForProvideDelegateReceiver(constructor, innerType.isMarkedNullable)
+                if (innerType !in substitutionMap) {
+                    substitutionMap[innerType] = StubTypeForProvideDelegateReceiver(constructor, innerType.isMarkedNullable)
                 }
             }
 

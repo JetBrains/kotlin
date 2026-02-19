@@ -61,7 +61,7 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
                 descriptor.friendArtifactResolver?.let { declaredResolver ->
                     DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver { compilation ->
                         @Suppress("unchecked_cast")
-                        declaredResolver.resolveFriendPaths(compilation as T)
+                        declaredResolver.resolveFriendPaths(compilation.decoratedInstance as T)
                     }
                 }
             )
@@ -72,7 +72,7 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
     val decoratedCompilation = descriptor.compilationFactory.create(Delegate(compilationImpl))
 
     decoratedCompilation.sourceSetTreeClassifier = descriptor.sourceSetTreeClassifierV2
-        ?: @Suppress("DEPRECATION") SourceSetTreeClassifierWrapper(descriptor.sourceSetTreeClassifier)
+        ?: @Suppress("DEPRECATION_ERROR") SourceSetTreeClassifierWrapper(descriptor.sourceSetTreeClassifier)
 
     descriptor.configure?.invoke(decoratedCompilation)
     this.delegate.compilations.add(decoratedCompilation)

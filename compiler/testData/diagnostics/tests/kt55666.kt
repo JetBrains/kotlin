@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 inline fun l2f1(p: () -> Unit) {}
@@ -17,3 +18,5 @@ fun label2simple1() {
 fun main() {
     label2simple1()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral, localFunction */

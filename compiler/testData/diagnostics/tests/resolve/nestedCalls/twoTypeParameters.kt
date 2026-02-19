@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class ResolutionCandidate<A>
 
@@ -15,3 +16,6 @@ public class ResolutionTaskHolder<F, G : F> {
         tasks.add(ResolutionTask(candidate))
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

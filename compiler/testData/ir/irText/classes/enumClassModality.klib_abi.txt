@@ -1,0 +1,63 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /IFoo { // /IFoo|null[0]
+    abstract fun foo() // /IFoo.foo|foo(){}[0]
+}
+abstract enum class /TestAbstractEnum1 : kotlin/Enum</TestAbstractEnum1> { // /TestAbstractEnum1|null[0]
+    final val entries // /TestAbstractEnum1.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestAbstractEnum1> // /TestAbstractEnum1.entries.<get-entries>|<get-entries>#static(){}[0]
+    abstract fun foo() // /TestAbstractEnum1.foo|foo(){}[0]
+    final fun valueOf(kotlin/String): /TestAbstractEnum1 // /TestAbstractEnum1.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestAbstractEnum1> // /TestAbstractEnum1.values|values#static(){}[0]
+    enum entry X1 // /TestAbstractEnum1.X1|null[0]
+}
+abstract enum class /TestAbstractEnum2 : /IFoo, kotlin/Enum</TestAbstractEnum2> { // /TestAbstractEnum2|null[0]
+    final val entries // /TestAbstractEnum2.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestAbstractEnum2> // /TestAbstractEnum2.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /TestAbstractEnum2 // /TestAbstractEnum2.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestAbstractEnum2> // /TestAbstractEnum2.values|values#static(){}[0]
+    enum entry X1 // /TestAbstractEnum2.X1|null[0]
+}
+final enum class /TestFinalEnum1 : kotlin/Enum</TestFinalEnum1> { // /TestFinalEnum1|null[0]
+    final val entries // /TestFinalEnum1.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestFinalEnum1> // /TestFinalEnum1.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /TestFinalEnum1 // /TestFinalEnum1.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestFinalEnum1> // /TestFinalEnum1.values|values#static(){}[0]
+    enum entry X1 // /TestFinalEnum1.X1|null[0]
+}
+final enum class /TestFinalEnum2 : kotlin/Enum</TestFinalEnum2> { // /TestFinalEnum2|null[0]
+    final val entries // /TestFinalEnum2.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestFinalEnum2> // /TestFinalEnum2.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val x // /TestFinalEnum2.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestFinalEnum2.x.<get-x>|<get-x>(){}[0]
+    final fun valueOf(kotlin/String): /TestFinalEnum2 // /TestFinalEnum2.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestFinalEnum2> // /TestFinalEnum2.values|values#static(){}[0]
+    enum entry X1 // /TestFinalEnum2.X1|null[0]
+}
+final enum class /TestFinalEnum3 : kotlin/Enum</TestFinalEnum3> { // /TestFinalEnum3|null[0]
+    final val entries // /TestFinalEnum3.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestFinalEnum3> // /TestFinalEnum3.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun doStuff() // /TestFinalEnum3.doStuff|doStuff(){}[0]
+    final fun valueOf(kotlin/String): /TestFinalEnum3 // /TestFinalEnum3.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestFinalEnum3> // /TestFinalEnum3.values|values#static(){}[0]
+    enum entry X1 // /TestFinalEnum3.X1|null[0]
+}
+open enum class /TestOpenEnum1 : kotlin/Enum</TestOpenEnum1> { // /TestOpenEnum1|null[0]
+    final val entries // /TestOpenEnum1.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestOpenEnum1> // /TestOpenEnum1.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /TestOpenEnum1 // /TestOpenEnum1.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestOpenEnum1> // /TestOpenEnum1.values|values#static(){}[0]
+    enum entry X1 // /TestOpenEnum1.X1|null[0]
+}
+open enum class /TestOpenEnum2 : kotlin/Enum</TestOpenEnum2> { // /TestOpenEnum2|null[0]
+    final val entries // /TestOpenEnum2.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestOpenEnum2> // /TestOpenEnum2.entries.<get-entries>|<get-entries>#static(){}[0]
+    open fun foo() // /TestOpenEnum2.foo|foo(){}[0]
+    final fun valueOf(kotlin/String): /TestOpenEnum2 // /TestOpenEnum2.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestOpenEnum2> // /TestOpenEnum2.values|values#static(){}[0]
+    enum entry X1 // /TestOpenEnum2.X1|null[0]
+}

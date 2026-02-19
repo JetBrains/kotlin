@@ -1,0 +1,10 @@
+DEFAULT TYPE:
+KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: foo/<no name provided>
+DEFAULT TYPE WITH STAR PROJECTIONS:
+KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: foo/<no name provided>

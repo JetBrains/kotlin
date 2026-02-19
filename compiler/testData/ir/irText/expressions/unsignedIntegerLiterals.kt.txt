@@ -23,17 +23,18 @@ val testULongWithExpectedType: ULong
   get
 
 val testToUByte: UByte
-  field = 1.toUByte()
+  field = toUByte(/* <this> = 1 */)
   get
 
 val testToUShort: UShort
-  field = 1.toUShort()
+  field = toUShort(/* <this> = 1 */)
   get
 
 val testToUInt: UInt
-  field = 1.toUInt()
+  field = toUInt(/* <this> = 1 */)
   get
 
 val testToULong: ULong
-  field = 1.toULong()
+  field = toULong(/* <this> = 1 */)
   get
+

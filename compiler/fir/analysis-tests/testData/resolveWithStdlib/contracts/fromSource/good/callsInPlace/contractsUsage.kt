@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)
@@ -36,3 +37,6 @@ fun foo(x: () -> Unit, y: () -> Unit) {
 
     bar(x)
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, thisExpression */

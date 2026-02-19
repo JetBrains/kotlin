@@ -6,23 +6,22 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirTypeAnnotationChecker : FirTypeRefChecker() {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef) return
-
+object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         for (annotation in typeRef.annotations) {
             if (annotation.source == null) continue
             val useSiteTarget = annotation.useSiteTarget
@@ -33,21 +32,26 @@ object FirTypeAnnotationChecker : FirTypeRefChecker() {
             if (useSiteTarget != null) {
                 reporter.reportOn(
                     annotation.source, FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
-                    "type usage", useSiteTarget.renderName, context
+                    "type usage", useSiteTarget.renderName, annotationTargets
                 )
             } else if (KotlinTarget.TYPE !in annotationTargets) {
-                reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", context)
+                reporter.reportOn(
+                    annotation.source,
+                    FirErrors.WRONG_ANNOTATION_TARGET,
+                    "type usage",
+                    annotationTargets
+                )
             }
             if (annotation.toAnnotationClassId(context.session) == StandardClassIds.Annotations.ExtensionFunctionType) {
-                if (!typeRef.type.isSomeFunctionType(context.session)) {
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidExtensionFunctionTypeOnNonFunctionTypes)) {
-                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
+                if (!typeRef.coneType.isSomeFunctionType(context.session)) {
+                    if (LanguageFeature.ForbidExtensionFunctionTypeOnNonFunctionTypes.isEnabled()) {
+                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE)
                     } else {
-                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING, context)
+                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING)
                     }
 
-                } else if (typeRef.type.typeArguments.size <= 1) {
-                    reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
+                } else if (typeRef.coneType.typeArguments.size <= 1) {
+                    reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE)
                 }
             }
         }

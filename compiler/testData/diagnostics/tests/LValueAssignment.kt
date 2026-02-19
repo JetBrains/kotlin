@@ -1,3 +1,6 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
+// RUN_PIPELINE_TILL: FRONTEND
+
 package lvalue_assignment
 
 open class B() {
@@ -104,6 +107,11 @@ class Test() {
         l@ (<!VARIABLE_EXPECTED!>1<!>) = 123
     }
 
+    fun testIllegalTypeRef(): Any {
+        <!UNREACHABLE_CODE!>Char=<!>
+            return ""
+    }
+
     fun testIncompleteSyntax() {
         val s = "s"
         <!DEBUG_INFO_MISSING_UNRESOLVED!>++<!>s.<!SYNTAX!><!>
@@ -160,3 +168,7 @@ fun Array<Int>.checkThis() {
 abstract class Ab {
     abstract fun getArray() : Array<Int>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, asExpression, assignment, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, incrementDecrementExpression, inner, integerLiteral, isExpression,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral, superExpression, thisExpression */

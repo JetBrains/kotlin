@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface SuspendRunnable {
     suspend fun invoke()
@@ -20,3 +21,6 @@ fun test() {
 
     foo1(::bar3) // Should be ambiguity
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
+samConversion, stringLiteral, suspend */

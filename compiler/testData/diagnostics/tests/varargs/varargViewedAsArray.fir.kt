@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun stringVararg(vararg args: String) {}
 fun intVararg(vararg args: Int) {}
@@ -20,9 +21,12 @@ fun test() {
     useStringArray(::stringVararg)
     useIntArray(::numberVararg)
     usePrimitiveIntArray(::intVararg)
-    useIntArray(::<!UNRESOLVED_REFERENCE!>intVararg<!>)
-    useMixedStringArgs1(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
-    useMixedStringArgs2(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
-    useMixedStringArgs3(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
-    useTwoStringArrays(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
+    useIntArray(::<!INAPPLICABLE_CANDIDATE!>intVararg<!>)
+    useMixedStringArgs1(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useMixedStringArgs2(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useMixedStringArgs3(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useTwoStringArrays(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, outProjection,
+stringLiteral, vararg */

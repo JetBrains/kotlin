@@ -48,7 +48,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
         private var changes = false
 
         fun run(): Boolean {
-            if (methodNode.instructions.toArray().none { it.isOptimizable() }) return false
+            if (methodNode.instructions.none { it.isOptimizable() }) return false
 
             val nullabilityAssumptions = NullabilityAssumptionsBuilder().injectNullabilityAssumptions()
 
@@ -477,7 +477,7 @@ internal fun AbstractInsnNode.isCheckNotNullWithMessage() =
     }
 
 fun MethodNode.usesLocalExceptParameterNullCheck(index: Int): Boolean =
-    instructions.toArray().any {
+    instructions.any {
         it is VarInsnNode && it.opcode == Opcodes.ALOAD && it.`var` == index && !it.isParameterCheckedForNull()
     }
 

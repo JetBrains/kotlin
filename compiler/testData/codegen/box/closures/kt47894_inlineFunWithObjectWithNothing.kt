@@ -1,3 +1,4 @@
+// FILE: lib.kt
 interface Kla6 {
     fun fu32()
 }
@@ -15,6 +16,7 @@ class Kla7 {
         fu33 { f(1) }
 }
 
+// FILE: main.kt
 fun box(): String = try {
     Kla7().fu34 {}
     "Fail"

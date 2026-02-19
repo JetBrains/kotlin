@@ -1,0 +1,4 @@
+native/native.tests/cli-tests/testData/cli/syntaxError.kt:1:10: error: expecting '}'
+fun a() {
+         ^
+COMPILATION_ERROR

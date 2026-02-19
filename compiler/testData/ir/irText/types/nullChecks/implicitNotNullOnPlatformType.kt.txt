@@ -1,17 +1,9 @@
-fun f(s: String) {
-}
-
 class MySet : Set<String> {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  override val size: Int
-    override get(): Int {
-      return TODO()
-    }
 
   override operator fun contains(element: String): Boolean {
     return TODO()
@@ -29,6 +21,14 @@ class MySet : Set<String> {
     return TODO()
   }
 
+  override val size: Int
+    override get(): Int {
+      return TODO()
+    }
+
+}
+
+fun f(s: String) {
 }
 
 fun test() {

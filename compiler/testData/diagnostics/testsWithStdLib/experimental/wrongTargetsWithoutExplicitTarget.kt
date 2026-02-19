@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 
 @RequiresOptIn
 annotation class SomeOptInMarker
@@ -24,3 +25,6 @@ fun foo() {
     <!OPT_IN_MARKER_ON_WRONG_TARGET!>@OtherOptInMarker<!>
     val value = 2
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, equalityExpression, functionDeclaration, getter,
+integerLiteral, localProperty, multiplicativeExpression, primaryConstructor, propertyDeclaration */

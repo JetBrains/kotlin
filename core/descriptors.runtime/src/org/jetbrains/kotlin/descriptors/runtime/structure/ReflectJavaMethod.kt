@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 
 class ReflectJavaMethod(override val member: Method) : ReflectJavaMember(), JavaMethod {
     override val valueParameters: List<JavaValueParameter>
@@ -33,4 +34,7 @@ class ReflectJavaMethod(override val member: Method) : ReflectJavaMember(), Java
 
     override val typeParameters: List<ReflectJavaTypeParameter>
         get() = member.typeParameters.map(::ReflectJavaTypeParameter)
+
+    override val isNative: Boolean
+        get() = Modifier.isNative(member.modifiers)
 }

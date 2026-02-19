@@ -92,4 +92,9 @@ object JvmAbi {
         val c = name[IS_PREFIX.length]
         return !('a' <= c && c <= 'z')
     }
+
+    @JvmStatic
+    fun isFakeLocalVariableForInline(name: String): Boolean {
+        return name.startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
+    }
 }

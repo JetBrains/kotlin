@@ -7,25 +7,28 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isOptionalAnnotationClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.isMetadataCompilation
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
-object FirOptionalExpectationExpressionChecker : FirFunctionCallChecker() {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirOptionalExpectationExpressionChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
-        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session) ?: return
+        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol() ?: return
         if (!declarationClass.isOptionalAnnotationClass(context.session)) return
 
-        if (!context.session.moduleData.isCommon) {
-            reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, context)
+        if (!context.session.isMetadataCompilation && !context.session.moduleData.isCommon) {
+            reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE)
         }
 
-        reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, context)
+        reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY)
     }
 }

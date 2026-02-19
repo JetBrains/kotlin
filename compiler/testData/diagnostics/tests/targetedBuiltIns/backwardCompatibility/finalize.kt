@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 enum class TestEnum {
     ENTRY;
@@ -9,3 +10,5 @@ enum class TestEnum {
 class TestFinalize {
     fun finalize() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, override */

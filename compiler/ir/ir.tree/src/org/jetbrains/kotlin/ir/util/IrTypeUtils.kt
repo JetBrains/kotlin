@@ -5,50 +5,74 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
-val kotlinEnumsPackageFqn = kotlinPackageFqn.child(Name.identifier("enums"))
 private val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
 private val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 
-fun IrType.isFunctionMarker(): Boolean = classifierOrNull?.isClassWithName("Function", kotlinPackageFqn) == true
-fun IrType.isFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("Function", kotlinPackageFqn) == true
-fun IrType.isKFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn) == true
-fun IrType.isSuspendFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn) == true
-fun IrType.isKSuspendFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn) == true
+fun IrType.isFunctionMarker(): Boolean = classifierOrNull?.isFunctionMarker() == true
+fun IrType.isFunction(): Boolean = classifierOrNull?.isFunction() == true
+fun IrType.isKFunction(): Boolean = classifierOrNull?.isKFunction() == true
+fun IrType.isSuspendFunction(): Boolean = classifierOrNull?.isSuspendFunction() == true
+fun IrType.isKSuspendFunction(): Boolean = classifierOrNull?.isKSuspendFunction() == true
+
+fun IrType.isKProperty(): Boolean = classifierOrNull?.isClassWithNamePrefix("KProperty", kotlinReflectionPackageFqn) == true
+fun IrType.isKMutableProperty(): Boolean = classifierOrNull?.isClassWithNamePrefix("KMutableProperty", kotlinReflectionPackageFqn) == true
 
 fun IrClassifierSymbol.isFunctionMarker(): Boolean = this.isClassWithName("Function", kotlinPackageFqn)
 fun IrClassifierSymbol.isFunction(): Boolean = this.isClassWithNamePrefix("Function", kotlinPackageFqn)
 fun IrClassifierSymbol.isKFunction(): Boolean = this.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn)
 fun IrClassifierSymbol.isSuspendFunction(): Boolean = this.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn)
 fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
+fun IrClassifierSymbol.isFunctional(): Boolean = isFunction() || isKFunction() || isSuspendFunction() || isKSuspendFunction()
 
-private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean {
-    val declaration = owner as IrDeclarationWithName
-    return name == declaration.name.asString() && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
+private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean =
+    checkNameAndPackage({ it == name }, { it == packageFqName.asString() })
+
+private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean =
+    checkNameAndPackage({ it.startsWith(prefix) }, { it == packageFqName.asString() })
+
+private inline fun IrClassifierSymbol.checkNameAndPackage(checkName: (String) -> Boolean, checkPackage: (String) -> Boolean): Boolean {
+    return if (isBound) {
+        val classifier = owner as IrDeclarationWithName
+        if (!checkName(classifier.name.asString())) return false
+        val packageFqName = (classifier.parent as? IrPackageFragment)?.packageFqName?.asString() ?: return false
+        checkPackage(packageFqName)
+    } else {
+        val commonSignature = signature as? IdSignature.CommonSignature ?: return false
+        checkName(commonSignature.declarationFqName) && checkPackage(commonSignature.packageFqName)
+    }
 }
 
-private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
-    val declaration = owner as IrDeclarationWithName
-    return declaration.name.asString().startsWith(prefix) && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
+fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
+    is IrClassSymbol -> owner.superTypes
+    is IrTypeParameterSymbol -> owner.superTypes
+    is IrScriptSymbol -> emptyList()
 }
+
+fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    FqNameEqualityChecker.areEqual(this, superClass) || isStrictSubtypeOfClass(superClass)
+
+fun IrClassifierSymbol.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    superTypes().any { it.isSubtypeOfClass(superClass) }
 
 fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: emptyList()
 
@@ -118,6 +142,60 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
     )
 }
 
+fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    this is IrSimpleType && classifier.isSubtypeOfClass(superClass)
+
+fun IrType.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    this is IrSimpleType && classifier.isStrictSubtypeOfClass(superClass)
+
+fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Boolean =
+    AbstractTypeChecker.isSubtypeOf(createIrTypeCheckerState(typeSystem), this, superType)
+
+fun IrType.isNullable(): Boolean =
+    when (this) {
+        is IrSimpleType -> when (val classifier = classifier) {
+            is IrClassSymbol -> nullability == SimpleTypeNullability.MARKED_NULLABLE
+            is IrTypeParameterSymbol -> when (nullability) {
+                SimpleTypeNullability.MARKED_NULLABLE -> true
+                // here is a bug, there should be .all check (not .any),
+                // but fixing it is a breaking change, see KT-31545 for details
+                SimpleTypeNullability.NOT_SPECIFIED -> classifier.owner.superTypes.any(IrType::isNullable)
+                SimpleTypeNullability.DEFINITELY_NOT_NULL -> false
+            }
+            is IrScriptSymbol -> nullability == SimpleTypeNullability.MARKED_NULLABLE
+        }
+        is IrDynamicType -> true
+        is IrErrorType -> this.isMarkedNullable
+    }
+
+val IrType.isBoxedArray: Boolean
+    get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.array.toSafe()
+
+fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
+    if (isBoxedArray) {
+        when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
+            is IrTypeProjection ->
+                argument.type
+            is IrStarProjection ->
+                irBuiltIns.anyNType
+            null ->
+                error("Unexpected array argument type: null")
+        }
+    } else {
+        val classifier = this.classOrNull!!
+        irBuiltIns.primitiveArrayElementTypes[classifier]
+            ?: irBuiltIns.unsignedArraysElementTypes[classifier]
+            ?: throw AssertionError("Primitive array expected: $classifier")
+    }
+
+fun IrType.toArrayOrPrimitiveArrayType(irBuiltIns: IrBuiltIns): IrType =
+    if (isPrimitiveType()) {
+        irBuiltIns.primitiveArrayForType[this]?.defaultType
+            ?: throw AssertionError("$this not in primitiveArrayForType")
+    } else {
+        irBuiltIns.arrayClass.typeWith(this)
+    }
+
 private fun getImmediateSupertypes(irType: IrSimpleType): List<IrSimpleType> {
     val irClass = irType.getClass()
         ?: throw AssertionError("Not a class type: ${irType.render()}")
@@ -170,3 +248,6 @@ fun IrClass.getAllSuperclasses(): Set<IrClass> {
     collectAllSuperclasses(this, result)
     return result
 }
+
+val IrType.isReifiedTypeParameter: Boolean
+    get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true

@@ -1,4 +1,4 @@
-// !LANGUAGE: +AbstractClassMemberNotImplementedWithIntermediateAbstractClass
+// RUN_PIPELINE_TILL: FRONTEND
 
 abstract class ALeft {
     abstract fun foo()
@@ -39,3 +39,5 @@ abstract class AIBase : IBase
 abstract class AIIntermediate : AIBase(), IBaseEx
 
 class Impl : AIIntermediate()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

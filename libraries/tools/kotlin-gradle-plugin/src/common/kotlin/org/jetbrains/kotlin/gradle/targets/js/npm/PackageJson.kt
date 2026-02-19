@@ -35,7 +35,7 @@ class PackageJson(
 
     var workspaces: Collection<String>? = null
 
-    var resolutions: Map<String, String>? = null
+    var overrides: Map<String, String>? = null
 
     var types: String? = null
 
@@ -122,6 +122,7 @@ internal fun packageJson(
     name: String,
     version: String,
     main: String,
+    types: String? = null,
     npmDependencies: Collection<NpmDependencyDeclaration>,
     packageJsonHandlers: List<Action<PackageJson>>
 ): PackageJson {
@@ -132,6 +133,7 @@ internal fun packageJson(
     )
 
     packageJson.main = main
+    packageJson.types = types
 
     val dependencies = mutableMapOf<String, String>()
 

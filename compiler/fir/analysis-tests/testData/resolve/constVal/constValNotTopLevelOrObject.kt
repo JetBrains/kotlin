@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 const val a = 1
 
 object B {
@@ -40,3 +41,6 @@ object F {
 fun foo() {
     <!WRONG_MODIFIER_TARGET!>const<!> val a = "2"
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, const, functionDeclaration,
+integerLiteral, localProperty, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-57880, KT-58076
 // DIAGNOSTICS: -UNUSED_VARIABLE, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
@@ -32,3 +33,6 @@ fun main() {
 }
 
 fun String.hello() = this
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+lateinit, localProperty, propertyDeclaration, stringLiteral, thisExpression, typeWithExtension */

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-1029 Wrong type inference
 package i
@@ -18,3 +19,7 @@ fun a() {
 
     checkSubtype<Iterable<Int>>(odd)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, localProperty, multiplicativeExpression, nullableType,
+propertyDeclaration, rangeExpression, typeParameter, typeWithExtension */

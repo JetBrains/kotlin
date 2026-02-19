@@ -1,12 +1,14 @@
-group 'org.jetbrains.qa.combompp'
-version publishing_version
+group = 'org.jetbrains.qa.combompp'
+version = publishing_version
 
 apply plugin: 'kotlin-multiplatform'
 apply plugin: 'maven-publish'
 
 kotlin {
-    compilerOptions {
-        optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
+    sourceSets.all {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
     }
 
     js() {
@@ -15,7 +17,7 @@ kotlin {
     }
     linuxX64("linux")
     macosX64("macos")
-    ios()
+    iosX64()
     jvm()
 
     sourceSets {

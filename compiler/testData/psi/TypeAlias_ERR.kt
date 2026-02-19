@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 typealias
 typealias foo
 typealias foo =

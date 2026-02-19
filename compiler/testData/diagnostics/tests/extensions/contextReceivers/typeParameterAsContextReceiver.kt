@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K2: JVM_IR
+// LANGUAGE: +ContextReceivers
 
 context(T)
 fun <T> useContext(block: (T) -> Unit) { }
@@ -11,3 +12,5 @@ fun test() {
     }
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, functionalType, integerLiteral,
+lambdaLiteral, nullableType, typeParameter */

@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
 import org.jetbrains.kotlin.scripting.definitions.LazyScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
+open class CliScriptDefinitionProvider(
+    private val skipDefaultDefinition: Boolean = false
+) : LazyScriptDefinitionProvider() {
     private val definitionsLock = ReentrantLock()
     private val definitionsFromSources: MutableList<Sequence<ScriptDefinition>> = arrayListOf()
     private val definitions: MutableList<ScriptDefinition> = arrayListOf()
@@ -20,7 +21,8 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
     override val currentDefinitions: Sequence<ScriptDefinition>
         get() {
             val base = definitions.asSequence() + definitionsFromSources.asSequence().flatMap { it }
-            return base + getDefaultDefinition()
+            return if (skipDefaultDefinition) base
+            else base + getDefaultDefinition()
         }
 
     fun setScriptDefinitions(newDefinitions: List<ScriptDefinition>) {
@@ -34,7 +36,8 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
         }
     }
 
-    fun setScriptDefinitionsSources(newSources: List<ScriptDefinitionsSource>) {
+    @Suppress("DEPRECATION") //KT-82551
+    fun setScriptDefinitionsSources(newSources: List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>) {
         definitionsLock.withLock {
             definitionsFromSources.clear()
             for (it in newSources) {

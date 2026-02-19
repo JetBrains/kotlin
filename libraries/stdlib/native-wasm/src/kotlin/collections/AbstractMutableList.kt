@@ -17,7 +17,6 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
-@AllowDifferentMembersInActual // New 'removeRange', 'modCount' members are added compared to the expect declaration
 public actual abstract class AbstractMutableList<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableList<E> {
     /**
      * The number of times this list is structurally modified.
@@ -26,25 +25,27 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators returned by [iterator] and [listIterator]
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
-    protected var modCount: Int = 0
+    protected actual var modCount: Int = 0
 
     abstract override fun add(index: Int, element: E): Unit
-    abstract override fun removeAt(index: Int): E
-    abstract override fun set(index: Int, element: E): E
+    @IgnorableReturnValue abstract override fun removeAt(index: Int): E
+    @IgnorableReturnValue abstract override fun set(index: Int, element: E): E
 
     /**
      * Adds the specified element to the end of this list.
      *
      * @return `true` because the list is always modified as the result of this operation.
      */
+    @IgnorableReturnValue
     override actual fun add(element: E): Boolean {
         add(size, element)
         return true
     }
 
+    @IgnorableReturnValue
     override actual fun addAll(index: Int, elements: Collection<E>): Boolean {
         AbstractList.checkPositionIndex(index, size)
 
@@ -61,7 +62,9 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         removeRange(0, size)
     }
 
+    @IgnorableReturnValue
     override actual fun removeAll(elements: Collection<E>): Boolean = removeAll { it in elements }
+    @IgnorableReturnValue
     override actual fun retainAll(elements: Collection<E>): Boolean = removeAll { it !in elements }
 
 
@@ -82,14 +85,24 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     /**
      * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
      */
-    protected open fun removeRange(fromIndex: Int, toIndex: Int) {
+    protected actual open fun removeRange(fromIndex: Int, toIndex: Int) {
         val iterator = listIterator(fromIndex)
         repeat(toIndex - fromIndex) {
-            iterator.next()
+            val _ = iterator.next()
             iterator.remove()
         }
     }
 
+    /**
+     * Checks if the two specified lists are *structurally* equal to one another.
+     *
+     * Two lists are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+     * Elements are compared for equality using the [equals][Any.equals] function.
+     * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+     *
+     * @param other the list to compare with this list.
+     * @return `true` if [other] is a [List] that is structurally equal to this list, `false` otherwise.
+     */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is List<*>) return false
@@ -222,11 +235,28 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             return list.set(fromIndex + index, element)
         }
 
+        override fun removeRange(fromIndex: Int, toIndex: Int) {
+            checkForComodification()
+            list.removeRange(this.fromIndex + fromIndex, this.fromIndex + toIndex)
+            _size -= toIndex - fromIndex
+            modCount = list.modCount
+        }
+
         override val size: Int
             get() {
                 checkForComodification()
                 return _size
             }
+
+        override fun iterator(): MutableIterator<E> {
+            checkForComodification()
+            return super.iterator()
+        }
+
+        override fun listIterator(index: Int): MutableListIterator<E> {
+            checkForComodification()
+            return super.listIterator(index)
+        }
 
         private fun checkForComodification() {
             if (list.modCount != modCount)

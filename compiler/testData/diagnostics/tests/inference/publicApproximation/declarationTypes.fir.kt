@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 interface Bound1
 interface Bound2 
@@ -56,3 +57,7 @@ fun test(cls: Cls, obj: Obj) {
     obj.publicProperty
     obj.publicMemberFunction()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+intersectionType, localFunction, localProperty, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver,
+typeConstraint, typeParameter, vararg */

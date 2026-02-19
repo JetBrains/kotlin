@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 // The code in this test should be prohibited in the frontend, see KT-36188.
 
@@ -6,6 +6,7 @@
 // but the behavior would probably not match the JVM backend even if
 // the test passed. Compare with kt46389_jvmDefault.
 
+// FILE: lib.kt
 interface I {
     fun h(x: String = "O"): Any
 }
@@ -18,6 +19,7 @@ open class A {
 
 class B : A(), I2
 
+// FILE: main.kt
 fun box(): String {
     return "${(B() as I).h()}${B().h()}"
 }

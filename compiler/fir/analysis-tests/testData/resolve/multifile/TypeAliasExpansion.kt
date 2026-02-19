@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: B.kt
 
 package b
@@ -13,3 +14,5 @@ package a
 import b.TA
 
 class MyClass : <!FINAL_SUPERTYPE!>TA<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, typeAliasDeclaration */

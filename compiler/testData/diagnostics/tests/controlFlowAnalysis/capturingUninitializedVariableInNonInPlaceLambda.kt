@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
 
@@ -69,3 +70,7 @@ class A {
 
     val x = 10
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, classReference, contractCallsEffect, contracts,
+functionDeclaration, functionalType, init, inline, integerLiteral, lambdaLiteral, localFunction, nullableType,
+propertyDeclaration, stringLiteral */

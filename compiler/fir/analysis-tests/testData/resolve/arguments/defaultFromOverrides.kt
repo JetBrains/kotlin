@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface I1 {
     fun foo(x: Int = 1)
 }
@@ -20,3 +21,6 @@ fun foo(a: A) {
     a.bar(y = 1)
     a.bar("", 2)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override,
+stringLiteral */

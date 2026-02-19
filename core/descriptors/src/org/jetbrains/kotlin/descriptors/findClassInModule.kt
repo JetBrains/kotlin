@@ -54,7 +54,7 @@ fun ModuleDescriptor.findNonGenericClassAcrossDependencies(classId: ClassId, not
     if (existingClass != null) return existingClass
 
     // Take a list of N zeros, where N is the number of class names in the given ClassId
-    val typeParametersCount = generateSequence(classId, ClassId::getOuterClassId).map { 0 }.toList()
+    val typeParametersCount = generateSequence(classId, ClassId::outerClassId).map { 0 }.toList()
 
     return notFoundClasses.getClass(classId, typeParametersCount)
 }

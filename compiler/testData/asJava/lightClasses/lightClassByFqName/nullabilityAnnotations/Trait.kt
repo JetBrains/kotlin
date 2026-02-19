@@ -1,4 +1,5 @@
 // Trait
+// LIBRARY_PLATFORMS: JVM
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
@@ -18,5 +19,3 @@ interface Trait {
     val notNullVal: String
     var notNullVar: String
 }
-
-// FIR_COMPARISON

@@ -26,7 +26,7 @@ class ModuleTests : IndexerTests() {
             }
         """.trimIndent())
 
-        val modulesInfo = getModulesInfo(compilationIncluding(files.directory), listOf("Foo"))
+        val modulesInfo = getModulesInfo(compilationIncluding(files.directory), listOf("Foo"), skipNonImportableModules = false)
         assertEquals(setOf(header.absolutePath), modulesInfo.ownHeaders)
         assertEquals(listOf(header.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
     }
@@ -47,7 +47,7 @@ class ModuleTests : IndexerTests() {
             }
         """.trimIndent())
 
-        val modulesInfo = getModulesInfo(compilationIncluding(files.directory), listOf("Foo"))
+        val modulesInfo = getModulesInfo(compilationIncluding(files.directory), listOf("Foo"), skipNonImportableModules = false)
         assertEquals(setOf(fooH.absolutePath, barH.absolutePath), modulesInfo.ownHeaders)
         assertEquals(listOf(fooH.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
     }
@@ -71,7 +71,7 @@ class ModuleTests : IndexerTests() {
             }
         """.trimIndent())
 
-        val modulesInfo = getModulesInfo(compilationIncluding(files.directory), listOf("Foo"))
+        val modulesInfo = getModulesInfo(compilationIncluding(files.directory), listOf("Foo"), skipNonImportableModules = false)
         assertEquals(setOf(fooH.absolutePath), modulesInfo.ownHeaders)
         assertEquals(listOf(fooH.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
     }
@@ -93,9 +93,57 @@ class ModuleTests : IndexerTests() {
             }
         """.trimIndent())
 
-        val modulesInfo = getModulesInfo(compilation("-F${files.directory}"), listOf("Foo"))
+        val modulesInfo = getModulesInfo(compilation("-F${files.directory}"), listOf("Foo"), skipNonImportableModules = false)
         assertEquals(setOf(fooH.absolutePath, barH.absolutePath, bazH.absolutePath), modulesInfo.ownHeaders)
         assertEquals(listOf(fooH.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
+    }
+
+    @Test
+    fun testModuleImport() {
+        val files = TempFiles("testModuleImport")
+        val fooH = files.file("Foo.h", "@import Bar;")
+        files.file("Bar.h", "")
+        files.file("module.modulemap", """
+            module Foo {
+              header "Foo.h"
+            }
+            module Bar {
+              header "Bar.h"
+            }
+        """.trimIndent())
+
+        //without '-fmodules'
+        val error = assertFails {
+            getModulesInfo(compilation("-I${files.directory}"), listOf("Foo"), skipNonImportableModules = false)
+        }
+        assertContains(
+                error.message.orEmpty(),
+                """
+                    use of '@import' when modules are disabled
+                    header: '${fooH.absolutePath}'
+                    module name: 'Bar'
+                """.trimIndent()
+        )
+
+        //with '-fmodules'
+        val modulesInfo = getModulesInfo(compilation("-I${files.directory}", "-fmodules"), listOf("Foo"), skipNonImportableModules = false)
+        assertEquals(setOf(fooH.absolutePath), modulesInfo.ownHeaders)
+        assertEquals(listOf(fooH.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
+    }
+
+    @Test
+    fun testModulesImportWithExplicitModuleReference() {
+        val files = TempFiles("testModulesImportWithExplicitModuleReference")
+        val bar = files.file("bar.h", "")
+        val fooModule = files.file("foo.modulemap", """
+            module foo {
+              header "bar.h"
+            }
+        """.trimIndent())
+
+        val modulesInfo = getModulesInfo(compilation("-fmodule-map-file=${fooModule.absolutePath}", "-fmodules"), listOf("foo"), skipNonImportableModules = false)
+        assertEquals(setOf(bar.absolutePath), modulesInfo.ownHeaders)
+        assertEquals(listOf(bar.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
     }
 
     @Test
@@ -105,7 +153,7 @@ class ModuleTests : IndexerTests() {
         val compilation = compilationIncluding(files.directory)
 
         val error = assertFails {
-            getModulesInfo(compilation, modules = listOf("Foo"))
+            getModulesInfo(compilation, modules = listOf("Foo"), skipNonImportableModules = false)
         }
 
         assertContains(error.message.orEmpty(), "fatal error: module 'Foo' not found")
@@ -124,7 +172,7 @@ class ModuleTests : IndexerTests() {
         val compilation = compilationIncluding(files.directory)
 
         val error = assertFails {
-            getModulesInfo(compilation, modules = listOf("Foo"))
+            getModulesInfo(compilation, modules = listOf("Foo"), skipNonImportableModules = false)
         }
 
         assertContains(error.message.orEmpty(), "error: header 'Foo.h' not found")
@@ -147,10 +195,10 @@ class ModuleTests : IndexerTests() {
         val compilation = compilationIncluding(files.directory)
 
         val error = assertFails {
-            getModulesInfo(compilation, modules = listOf("Foo"))
+            getModulesInfo(compilation, modules = listOf("Foo"), skipNonImportableModules = false)
         }
 
-        assertContains(error.message.orEmpty(), "testModuleWithBadCode/Foo.h:1:1: error: unknown type name 'bad'")
+        assertContains(error.message.orEmpty(), "testModuleWithBadCode${File.separator}Foo.h:1:1: error: unknown type name 'bad'")
     }
 
     private fun List<IncludeInfo>.canonicalize(): List<String> = this.map { File(it.headerPath).canonicalPath }

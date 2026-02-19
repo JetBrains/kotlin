@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // It's relevant only for Java constructor calls
 
@@ -35,3 +36,6 @@ class Bar<T, K: Any> {
     val foos18 = J<<!UPPER_BOUND_VIOLATED!>T<!>>()
     val foos19 = J<<!UPPER_BOUND_VIOLATED!>T?<!>>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, javaFunction, javaType, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

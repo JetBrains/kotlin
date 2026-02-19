@@ -7,22 +7,40 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
-interface RuntimeAware {
+internal interface RuntimeAware {
     val runtime: Runtime
 }
 
-class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
-    val llvmModule: LLVMModuleRef = parseBitcodeFile(llvmContext, bitcodeFile)
+internal class Runtime(
+        phaseContext: NativeBackendPhaseContext,
+        private val llvmContext: LLVMContextRef,
+        bitcodeFile: String
+) {
+    val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.messageCollector, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
-    private fun getStructTypeOrNull(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")
-    private fun getStructType(name: String) = getStructTypeOrNull(name)
-            ?: error("struct.$name is not found in the Runtime module.")
+    private fun getStructTypeOrNull(name: String, isClass: Boolean = false) =
+            LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")
+                    ?: LLVMGetNamedGlobal(llvmModule, "touch$name")?.let(::LLVMGlobalGetValueType)
 
+    private fun getStructType(name: String, isClass: Boolean = false) = getStructTypeOrNull(name, isClass)
+            ?: error("type $name is not found in the Runtime module.")
+
+    private fun createStructType(name: String, vararg fieldTypes: LLVMTypeRef): LLVMTypeRef {
+        val result = LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
+        LLVMStructSetBody(result, fieldTypes.toList().toCValues(), fieldTypes.size, 0)
+        return result
+    }
+
+    private fun createOpaqueStructType(name: String): LLVMTypeRef =
+            LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
+
+    val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
@@ -30,11 +48,12 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
     val associatedObjectTableRecordType = getStructType("AssociatedObjectTableRecord")
 
     val objHeaderType = getStructType("ObjHeader")
-    val objHeaderPtrType = pointerType(objHeaderType)
-    val objHeaderPtrPtrType = pointerType(objHeaderType)
     val arrayHeaderType = getStructType("ArrayHeader")
+    val stringHeaderType = getStructType("StringHeader")
 
     val frameOverlayType = getStructType("FrameOverlay")
+
+    val initNodeType = getStructType("InitNode")
 
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 
@@ -50,27 +69,54 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
     val kotlinToObjCMethodAdapter by lazy { getStructType("KotlinToObjCMethodAdapter") }
     val typeInfoObjCExportAddition by lazy { getStructType("TypeInfoObjCExportAddition") }
 
-    val objCClassObjectType by lazy { getStructType("_class_t") }
-    val objCCache by lazy { getStructType("_objc_cache") }
-    val objCClassRoType by lazy { getStructType("_class_ro_t") }
-    val objCMethodType by lazy { getStructType("_objc_method") }
-    val objCMethodListType by lazy { getStructType("__method_list_t") }
-    val objCProtocolListType by lazy { getStructType("_objc_protocol_list") }
-    val objCIVarListType by lazy { getStructType("_ivar_list_t") }
-    val objCPropListType by lazy { getStructType("_prop_list_t") }
+    val objCClassObjectType: LLVMTypeRef by lazy {
+        createStructType(
+                "_class_t",
+                pointerType, // _class_t*
+                pointerType, // _class_t*
+                pointerType, // _objc_cache*
+                pointerType, // char* (*)(char*, char*)
+                pointerType, // _class_ro_t*
+        )
+    }
+    val objCCache by lazy { createOpaqueStructType("_objc_cache") }
+    val objCClassRoType by lazy {
+        createStructType(
+                "_class_ro_t",
+                i32,
+                i32,
+                i32,
+                pointerType, // char*
+                pointerType, // char*
+                pointerType, // __method_list_t*
+                pointerType, // _objc_protocol_list*
+                pointerType, // _ivar_list_t*
+                pointerType, // char*
+                pointerType, // _prop_list_t*
+        )
+    }
+    val objCMethodType by lazy {
+        createStructType("_objc_method", pointerType, pointerType, pointerType)
+    }
 
-    val kRefSharedHolderType by lazy { LLVMGetTypeByName(llvmModule, "class.KRefSharedHolder")!! }
+    private val i32 = LLVMInt32TypeInContext(llvmContext)!!
+
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
     val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
 
-    val pointerSize: Int by lazy {
-        LLVMABISizeOfType(targetData, objHeaderPtrType).toInt()
-    }
+    fun sizeOf(type: LLVMTypeRef) = LLVMABISizeOfType(targetData, type).toInt()
+    fun alignOf(type: LLVMTypeRef) = LLVMABIAlignmentOfType(targetData, type)
+    fun offsetOf(type: LLVMTypeRef, index: Int) = LLVMOffsetOfElement(targetData, type, index).toInt()
 
-    val pointerAlignment: Int by lazy {
-        LLVMABIAlignmentOfType(targetData, objHeaderPtrType)
+    val pointerSize: Int by lazy { sizeOf(pointerType) }
+    val pointerAlignment: Int by lazy { alignOf(pointerType) }
+
+    val stringHeaderExtraSize: Int by lazy {
+        offsetOf(stringHeaderType, LLVMCountStructElementTypes(stringHeaderType) - 1) - sizeOf(arrayHeaderType)
     }
 
     // Must match kObjectAlignment in runtime
     val objectAlignment = 8
+
+    val isBigEndian: Boolean by lazy { LLVMByteOrder(targetData) == LLVMByteOrdering.LLVMBigEndian }
 }

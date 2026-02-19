@@ -3,6 +3,10 @@ package
 public final enum class A : kotlin.Enum<A> {
     enum entry name
 
+    enum entry ordinal
+
+    enum entry entries
+
     private constructor A()
     @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

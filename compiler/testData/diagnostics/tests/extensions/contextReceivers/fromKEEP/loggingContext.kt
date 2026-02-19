@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface Params
 interface Logger {
@@ -13,3 +14,6 @@ context(LoggingContext)
 fun performSomeBusinessOperation(withParams: Params) {
     log.info("Operation has started")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, interfaceDeclaration, propertyDeclaration,
+stringLiteral */

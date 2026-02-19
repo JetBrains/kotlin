@@ -422,6 +422,30 @@ class StringTest {
 
     }
 
+    @Test fun substringWithInvalidIndices() {
+        // String.substring behavior on JS diverges from other targets: KT-17831
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".substring(-3, -1) }
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".substring(-1, 3) }
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".substring(-1) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".substring(0, 42) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".substring(42, 43) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".substring(42) }
+        assertFailsWith<IndexOutOfBoundsException> { "dlrow olleh".substring(3, 1) }
+    }
+
+    @Test fun subsequenceWithInvalidIndices() {
+        // String.subSequence behavior on JS diverges from other targets: KT-17831
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".subSequence(-3, -1) }
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".subSequence(-1, 3) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".subSequence(0, 42) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".subSequence(42, 43) }
+        assertFailsWith<IndexOutOfBoundsException> { "dlrow olleh".subSequence(3, 1) }
+    }
+
     @Test fun replaceDelimited() {
         val s = "/user/folder/file.extension"
         // chars
@@ -682,9 +706,35 @@ class StringTest {
         val string = arg1("first line\rsecond line\nthird line\r\nlast line")
         assertEquals(listOf("first line", "second line", "third line", "last line"), string.lines())
 
+        val singleLine = arg1("single line")
+        assertEquals(listOf("single line"), singleLine.lines())
+
+        val emptyLine = arg1("")
+        assertEquals(listOf(""), emptyLine.lines())
+
+        val multipleSeparators = arg1("\r\rfirst\r\n\rsecond\n\n\nthird\n\r\n\r")
+        assertEquals(listOf("", "", "first", "", "second", "", "", "third", "", "", ""), multipleSeparators.lines())
+
+        val onlySeparator = arg1("\n")
+        assertEquals(listOf("", ""), onlySeparator.lines())
+    }
+
+    @Test fun splitToLineSequence() = withOneCharSequenceArg { arg1 ->
+        val string = arg1("first line\rsecond line\nthird line\r\nlast line")
+        assertContentEquals(sequenceOf("first line", "second line", "third line", "last line"), string.lineSequence())
 
         val singleLine = arg1("single line")
-        assertEquals(listOf(singleLine.toString()), singleLine.lines())
+        assertContentEquals(sequenceOf("single line"), singleLine.lineSequence())
+
+        val emptyLine = arg1("")
+        assertContentEquals(sequenceOf(""), emptyLine.lineSequence())
+
+        val multipleSeparators = arg1("\r\rfirst\r\n\rsecond\n\n\nthird\n\r\n\r")
+        assertContentEquals(sequenceOf("", "", "first", "", "second", "", "", "third", "", "", ""),
+            multipleSeparators.lineSequence())
+
+        val onlySeparator = arg1("\n")
+        assertContentEquals(sequenceOf("", ""), onlySeparator.lineSequence())
     }
 
     @Test fun splitIllegalLimit() = withOneCharSequenceArg("test string") { string ->

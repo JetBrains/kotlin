@@ -1,11 +1,18 @@
-annotationsList: []
-classId: kotlin/Unit
-classSymbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
-nullability: NON_NULLABLE
-ownTypeArguments: []
-qualifiers: [
-  qualifier:
-    name: Unit
-    symbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
-    typeArguments: []
-]
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Unit
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Unit
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Unit)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.Unit

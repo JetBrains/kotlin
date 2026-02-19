@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 val flag = true
 
@@ -16,3 +17,6 @@ val b /*:String */ = foo {
 
     "Ok"
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeParameter */

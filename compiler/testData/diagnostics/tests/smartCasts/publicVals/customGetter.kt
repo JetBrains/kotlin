@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 public class X {
     private val x : String? = null
@@ -12,3 +13,5 @@ public class X {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, getter, ifExpression, integerLiteral,
+nullableType, propertyDeclaration, safeCall, smartcast */

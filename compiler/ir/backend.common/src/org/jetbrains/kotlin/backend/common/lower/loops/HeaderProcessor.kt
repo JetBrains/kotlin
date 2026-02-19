@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -41,10 +42,22 @@ interface ForLoopHeader {
      */
     val consumesLoopVariableComponents: Boolean
 
-    /** Statements used to initialize an iteration of the loop (e.g., assign loop variable). */
+    /**
+     * Statements used to initialize an iteration of the loop (e.g., assign loop variable).
+     *
+     * Note: `loopVariables` is a list (not a single variable) to support name-based destructuring in `for` loops.
+     * With name-based destructuring, a single element can initialize several user-declared variables by name, e.g.:
+     *
+     *   for ((a = index, b = value, c = value) in list.withIndex()) {
+     *       ...
+     *   }
+     *
+     * In such cases, all the declared variables for the current iteration are provided in
+     * `loopVariables`, so the implementation can initialize them appropriately.
+     */
     fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement>
@@ -84,7 +97,7 @@ internal class HeaderProcessor(
     private val scopeOwnerSymbol: () -> IrSymbol
 ) {
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     /**
      * Extracts information for building the for-loop (as a [ForLoopHeader]) from the given
@@ -96,7 +109,7 @@ internal class HeaderProcessor(
     fun extractHeader(variable: IrVariable): ForLoopHeader? {
         // Verify the variable type is a subtype of Iterator<*>.
         assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)
-        if (!variable.type.isSubtypeOfClass(symbols.iterator)) {
+        if (!variable.type.isSubtypeOfClass(context.irBuiltIns.iteratorClass)) {
             return null
         }
 
@@ -105,11 +118,9 @@ internal class HeaderProcessor(
         //   val it = someIterable.iterator()
         val iteratorCall = variable.initializer as? IrCall
         val iterable = iteratorCall?.run {
-            if (extensionReceiver != null) {
-                extensionReceiver
-            } else {
-                dispatchReceiver
-            }
+            arguments.zip(symbol.owner.parameters).last { (_, parameter) ->
+                parameter.kind == IrParameterKind.ExtensionReceiver || parameter.kind == IrParameterKind.DispatchReceiver
+            }.first
         }
 
         // Collect loop information from the iterable expression.

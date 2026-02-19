@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // Issue: KT-36254
 
@@ -18,3 +19,6 @@ class Out<out T> {}
 fun main(o: Out<Nothing?>) {
     takeConvertor(Convertor { o })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType, lambdaLiteral, nullableType, out,
+typeParameter */

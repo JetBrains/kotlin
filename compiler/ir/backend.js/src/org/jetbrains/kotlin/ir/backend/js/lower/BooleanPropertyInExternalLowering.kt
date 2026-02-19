@@ -16,13 +16,16 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 
+/**
+ * Wraps boolean in external declarations with `Boolean()` call and adds a diagnostic for such cases.
+ */
 class BooleanPropertyInExternalLowering(
     private val context: JsIrBackendContext
 ) : BodyLoweringPass {
@@ -69,9 +72,9 @@ class BooleanPropertyInExternalLowering(
 
             if (safeExternalBoolean && function == null) {
                 return JsIrBuilder.buildCall(
-                    target = context.intrinsics.jsNativeBoolean
+                    target = context.symbols.jsNativeBoolean
                 ).apply {
-                    putValueArgument(0, expression)
+                    arguments[0] = expression
                 }
             }
 
@@ -80,20 +83,17 @@ class BooleanPropertyInExternalLowering(
                 val call = JsIrBuilder.buildCall(
                     target = function!!
                 ).apply {
-                    putValueArgument(
-                        0,
-                        property.fqNameWhenAvailable?.asString().toIrConst(context.irBuiltIns.stringType)
-                    )
-                    putValueArgument(1, irGet(tmp))
+                    arguments[0] = property.fqNameWhenAvailable?.asString().toIrConst(context.irBuiltIns.stringType)
+                    arguments[1] = irGet(tmp)
                 }
 
                 +call
 
                 val newBooleanGet = if (safeExternalBoolean) {
                     JsIrBuilder.buildCall(
-                        target = this@ExternalBooleanPropertyProcessor.context.intrinsics.jsNativeBoolean
+                        target = this@ExternalBooleanPropertyProcessor.context.symbols.jsNativeBoolean
                     ).apply {
-                        putValueArgument(0, irGet(tmp))
+                        arguments[0] = irGet(tmp)
                     }
                 } else irGet(tmp)
                 +newBooleanGet
@@ -101,8 +101,8 @@ class BooleanPropertyInExternalLowering(
         }
 
         private fun RuntimeDiagnostic.diagnosticMethod() = when (this) {
-            RuntimeDiagnostic.LOG -> context.intrinsics.jsBooleanInExternalLog
-            RuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsBooleanInExternalException
+            RuntimeDiagnostic.LOG -> context.symbols.jsBooleanInExternalLog
+            RuntimeDiagnostic.EXCEPTION -> context.symbols.jsBooleanInExternalException
         }
     }
 }

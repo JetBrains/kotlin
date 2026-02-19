@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun foo(shouldThrow: Boolean) {
@@ -15,7 +15,7 @@ fun box() {
     foo(true)
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:14 box
 // test.kt:5 foo
 // test.kt:6 foo
@@ -30,6 +30,22 @@ fun box() {
 // test.kt:11 foo
 // test.kt:16 box
 
+// EXPECTATIONS NATIVE
+// test.kt:14 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:11 foo
+// test.kt:14 box
+// test.kt:15 box
+// test.kt:4 foo
+// test.kt:6 foo
+// test.kt:6 foo
+// test.kt:11 foo
+// test.kt:7 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:16 box
+
 // EXPECTATIONS JS_IR
 // test.kt:14 box
 // test.kt:6 foo
@@ -41,3 +57,15 @@ fun box() {
 // test.kt:7 foo
 // test.kt:11 foo
 // test.kt:16 box
+
+// EXPECTATIONS WASM
+// test.kt:14 $box (8, 4)
+// test.kt:6 $foo (12)
+// test.kt:10 $foo (4)
+// test.kt:11 $foo (1)
+// test.kt:15 $box (8, 4)
+// test.kt:6 $foo (12, 31, 25)
+// test.kt:8 $foo (8)
+// test.kt:10 $foo (4)
+// test.kt:11 $foo (1)
+// test.kt:16 $box (1)

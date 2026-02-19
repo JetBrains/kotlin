@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-1027 Strange selection of unreachable code
 
 package kt1027
@@ -46,3 +47,6 @@ fun t4() {
 }
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, doWhileLoop, forLoop, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration, tryExpression, whileLoop */

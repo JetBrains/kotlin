@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 
 inline fun default(s : Int = 10) {
 
@@ -14,3 +15,5 @@ open class Base {
 
     inline final fun foo2(a: Int = 1, s: String = "OK") {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, integerLiteral, stringLiteral */

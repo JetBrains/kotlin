@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -11,3 +12,7 @@ fun foo() {
     if (x is Int && bar(x)*bar(x) == bar(x)) bar(x)
     bar(<!TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, disjunctionExpression, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, isExpression, localProperty, multiplicativeExpression, nullableType, propertyDeclaration,
+smartcast */

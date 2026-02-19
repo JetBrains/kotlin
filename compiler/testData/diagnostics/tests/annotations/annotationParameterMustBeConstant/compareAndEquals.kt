@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 annotation class Ann(vararg val i: Boolean)
 fun foo() {
     val a1 = 1 > 2
@@ -15,3 +16,6 @@ fun foo() {
             <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 == a2<!>
     ) val b = 1
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, comparisonExpression, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration, vararg */

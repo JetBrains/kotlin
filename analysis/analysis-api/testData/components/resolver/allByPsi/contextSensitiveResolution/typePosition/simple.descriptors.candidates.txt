@@ -1,0 +1,149 @@
+KtFile: 'simple.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,188): 'sealed interface MySealed {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,84): 'sealed'
+  NO_CANDIDATES
+
+KtClassBody(104,188): '{'
+  NO_CANDIDATES
+
+KtClass(110,145): 'class Left(val x: String): MySealed'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(120,135): '(val x: String)'
+  NO_CANDIDATES
+
+KtParameterList(120,135): '(val x: String)'
+  NO_CANDIDATES
+
+KtParameter(121,134): 'val x: String'
+  NO_CANDIDATES
+
+KtTypeReference(128,134): 'String'
+  NO_CANDIDATES
+
+KtUserType(128,134): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(128,134): 'String'
+  NO_CANDIDATES
+
+KtSuperTypeList(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtTypeReference(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtUserType(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtClass(150,186): 'class Right(val y: String): MySealed'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(161,176): '(val y: String)'
+  NO_CANDIDATES
+
+KtParameterList(161,176): '(val y: String)'
+  NO_CANDIDATES
+
+KtParameter(162,175): 'val y: String'
+  NO_CANDIDATES
+
+KtTypeReference(169,175): 'String'
+  NO_CANDIDATES
+
+KtUserType(169,175): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(169,175): 'String'
+  NO_CANDIDATES
+
+KtSuperTypeList(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtTypeReference(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtUserType(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtNamedFunction(190,267): 'fun MySealed.getOrElse() = when (this) {'
+  NO_CANDIDATES
+
+KtTypeReference(194,202): 'MySealed'
+  NO_CANDIDATES
+
+KtUserType(194,202): 'MySealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(194,202): 'MySealed'
+  NO_CANDIDATES
+
+KtParameterList(212,214): '()'
+  NO_CANDIDATES
+
+KtWhenExpression(217,267): 'when (this) {'
+  NO_CANDIDATES
+
+KtThisExpression(223,227): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(223,227): 'this'
+  NO_CANDIDATES
+
+KtWhenEntry(235,247): 'is Left -> x'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(235,242): 'is Left'
+  NO_CANDIDATES
+
+KtTypeReference(238,242): 'Left'
+  NO_CANDIDATES
+
+KtUserType(238,242): 'Left'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(238,242): 'Left'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(246,247): 'x'
+  NO_CANDIDATES
+
+KtWhenEntry(252,265): 'is Right -> y'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(252,260): 'is Right'
+  NO_CANDIDATES
+
+KtTypeReference(255,260): 'Right'
+  NO_CANDIDATES
+
+KtUserType(255,260): 'Right'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(255,260): 'Right'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(264,265): 'y'
+  NO_CANDIDATES

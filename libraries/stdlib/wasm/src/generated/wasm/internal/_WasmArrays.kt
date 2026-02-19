@@ -45,6 +45,10 @@ internal class WasmByteArray(size: Int) {
     fun get(index: Int): Byte =
         implementedAsIntrinsic
 
+    @WasmOp(WasmOp.ARRAY_GET_U)
+    fun getU(index: Int): UByte =
+        implementedAsIntrinsic
+
     @WasmOp(WasmOp.ARRAY_SET)
     fun set(index: Int, value: Byte): Unit =
         implementedAsIntrinsic

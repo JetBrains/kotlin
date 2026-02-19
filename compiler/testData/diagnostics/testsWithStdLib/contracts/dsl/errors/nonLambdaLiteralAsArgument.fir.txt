@@ -1,0 +1,21 @@
+FILE: nonLambdaLiteralAsArgument.fir.kt
+    public final fun passLambdaValue(l: R|kotlin/contracts/ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|kotlin/contracts/contract|(R|<local>/l|)
+    }
+    public final fun passAnonymousFunction(x: R|kotlin/Boolean|): R|kotlin/Unit|
+        [E|Contract description] {
+        R|kotlin/contracts/contract|(fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(R|<local>/x|)
+        }
+        )
+    }
+    public open class OpenClass : R|kotlin/Any| {
+        public constructor(): R|OpenClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun passLambdaValue(l: R|kotlin/contracts/ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit| {
+            R|kotlin/contracts/contract|(R|<local>/l|)
+        }
+
+    }

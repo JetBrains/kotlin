@@ -1,0 +1,2 @@
+KtCallExpression(15,25): 'function()'
+  NO_CANDIDATES

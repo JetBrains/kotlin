@@ -1,7 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
-// IGNORE_DIAGNOSTIC_API
-// IGNORE_REVERSED_RESOLVE
-// ^KT-61491
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 import kotlin.reflect.KProperty
 
@@ -84,3 +82,7 @@ fun literals() {
     PropertyHolder::test1
     PropertyHolder::<!DEPRECATION!>name<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter,
+starProjection, stringLiteral */

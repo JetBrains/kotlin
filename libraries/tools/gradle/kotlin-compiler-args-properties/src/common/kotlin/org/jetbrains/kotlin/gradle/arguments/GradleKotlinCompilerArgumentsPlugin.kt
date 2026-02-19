@@ -11,12 +11,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import javax.inject.Inject
 
 class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
@@ -31,11 +29,22 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
 
     private fun Project.configureKotlinVersions(properties: KotlinTaskProperties) {
         plugins.withType<KotlinBasePlugin>().configureEach {
+            configureExtension(properties)
             if (properties.kotlinOverrideUserValues.get()) {
                 forceConfigureTask(properties)
             } else {
                 configureTask(properties)
             }
+        }
+    }
+
+    private fun Project.configureExtension(properties: KotlinTaskProperties) {
+        extensions.projectCompilerOptions()?.let {
+            configureKotlinOptions(
+                properties,
+                it,
+                ignoreExtensionValue = true
+            )
         }
     }
 
@@ -46,7 +55,7 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
     }
 
     private fun Project.forceConfigureTask(properties: KotlinTaskProperties) {
-        // Wrapping into afterEvaluate to reduce amount of exception trying to modify value from the user-script
+        // Wrapping into afterEvaluate to reduce the number of exceptions trying to modify value from the user-script
         afterEvaluate {
             tasks.withType<KotlinCompilationTask<*>>().configureEach {
                 configureKotlinOptions(properties, it.compilerOptions, true)
@@ -54,9 +63,17 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
         }
     }
 
-    private fun ExtensionContainer.projectCompilerOptions(): KotlinCommonCompilerOptions? =
-        findByType(KotlinJvmProjectExtension::class.java)?.compilerOptions
-            ?: findByType(KotlinAndroidProjectExtension::class.java)?.compilerOptions
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    private fun ExtensionContainer.projectCompilerOptions(): KotlinCommonCompilerOptions? {
+        val kotlinExtension = findByName("kotlin") ?: return null // Return on this plugin apply
+
+        return when (kotlinExtension) {
+            is KotlinJvmProjectExtension -> kotlinExtension.compilerOptions
+            is KotlinAndroidProjectExtension -> kotlinExtension.compilerOptions
+            is KotlinMultiplatformExtension -> kotlinExtension.compilerOptions
+            else -> null // org.jetbrains.kotlin.js add "kotlin" as convention
+        }
+    }
 
     private fun Project.projectLevelLanguageVersion(): Provider<KotlinVersion> {
         return extensions.projectCompilerOptions()?.languageVersion ?: providers.provider { null }
@@ -69,10 +86,21 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
     private fun Project.configureKotlinOptions(
         properties: KotlinTaskProperties,
         taskOptions: KotlinCommonCompilerOptions,
-        shouldSetValue: Boolean = false
+        shouldSetValue: Boolean = false,
+        ignoreExtensionValue: Boolean = false,
     ) {
-        taskOptions.languageVersion.configureValue(properties.kotlinLanguageVersion.orElse(projectLevelLanguageVersion()), shouldSetValue)
-        taskOptions.apiVersion.configureValue(properties.kotlinApiVersion.orElse(projectLevelApiVersion()), shouldSetValue)
+        taskOptions.languageVersion.configureValue(
+            properties.kotlinLanguageVersion.run {
+                if (!ignoreExtensionValue) orElse(projectLevelLanguageVersion()) else this
+            },
+            shouldSetValue
+        )
+        taskOptions.apiVersion.configureValue(
+            properties.kotlinApiVersion.run {
+                if (!ignoreExtensionValue) orElse(projectLevelApiVersion()) else this
+            },
+            shouldSetValue
+        )
     }
 
     private fun <T : Any> Property<T>.configureValue(

@@ -76,7 +76,7 @@ public final class InlineMutableList {
     public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public method set-kAA0daY(p0: int, p1: long): long
     public static method set-kAA0daY(p0: java.util.List, p1: int, p2: long): long
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public static method subList-impl(p0: java.util.List, p1: int, p2: int): java.util.List
     public method toArray(): java.lang.Object[]

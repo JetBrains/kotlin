@@ -1,0 +1,82 @@
+MODULES: lib1, lib2, main
+
+STEP 0:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, main/m, main/m.export, main
+STEP 1:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
+STEP 2:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal
+STEP 3:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
+STEP 4..6:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVal
+STEP 7:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
+STEP 8..9:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVar
+STEP 10:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVal
+STEP 11..12:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVar
+STEP 13:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
+STEP 14..15:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVar
+STEP 16..17:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineExtensionProperty
+STEP 18:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2globalVar, lib2/l2inlineGlobalVal, lib2/l2inlineGlobalVar, lib2/l2inlineExtensionProperty
+STEP 19:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2inlineGlobalVar, lib2/l2inlineExtensionProperty
+STEP 20:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2inlineGlobalVal, lib2/l2inlineGlobalVar
+STEP 21:
+    language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2globalVar, lib2/l2inlineGlobalVar, lib2/l2inlineExtensionProperty

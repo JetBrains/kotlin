@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.*
 
-class PropertiesLowering : DeclarationTransformer {
+/**
+ * Moves fields and accessors out from its property.
+ */
+class PropertiesLowering(@Suppress("unused") context: LoweringContext) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -43,23 +48,9 @@ class PropertiesLowering : DeclarationTransformer {
 
         return null
     }
-
-    companion object {
-        fun checkNoProperties(irFile: IrFile) {
-            irFile.acceptVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitProperty(declaration: IrProperty) {
-                    error("No properties should remain at this stage")
-                }
-            })
-        }
-    }
 }
 
-class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), BodyLoweringPass {
+class LocalDelegatedPropertiesLowering(private val context: CommonBackendContext) : IrElementTransformerVoid(), BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.accept(this, null)
@@ -68,16 +59,14 @@ class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), BodyLowerin
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
         declaration.transformChildrenVoid(this)
 
-        val initializer = declaration.delegate.initializer!!
-        declaration.delegate.initializer = IrBlockImpl(
-            initializer.startOffset, initializer.endOffset, initializer.type, null,
-            listOfNotNull(
-                declaration.getter,
-                declaration.setter,
-                initializer
-            )
-        )
-
-        return declaration.delegate
+        return IrCompositeImpl(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            type = context.irBuiltIns.unitType,
+        ).apply {
+            statements.add(declaration.getter)
+            statements.addIfNotNull(declaration.setter)
+            statements.addIfNotNull(declaration.delegate)
+        }
     }
 }

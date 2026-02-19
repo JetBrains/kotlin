@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !LANGUAGE: +InlineDefaultFunctionalParameters
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// LANGUAGE: +InlineDefaultFunctionalParameters
 
 inline fun inlineFun(lambda: () -> String) = lambda()
 
@@ -56,3 +57,6 @@ inline fun default2_2(noinline lambda: () -> String, dlambda: () -> String = { i
 inline fun default2_3(noinline lambda: () -> String, noinline dlambda: () -> String = { inlineFun(lambda) }) {
     lambda() + dlambda()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, crossinline, functionDeclaration, functionalType, inline, lambdaLiteral,
+noinline, stringLiteral */

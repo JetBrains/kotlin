@@ -1,7 +1,8 @@
-// !SKIP_JAVAC
-// !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !LANGUAGE: +DefinitelyNonNullableTypes
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +DefinitelyNonNullableTypes
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;
@@ -38,3 +39,6 @@ interface Q2<X> : SLRUMap<X> {
 
     override fun <K2> id(k2: K2): K2
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, interfaceDeclaration, javaType, nullableType, override,
+typeParameter */

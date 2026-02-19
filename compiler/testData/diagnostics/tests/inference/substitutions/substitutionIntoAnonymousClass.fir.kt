@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Test {
     private fun <T : Any> T.self() = object {
         fun bar(): T {
@@ -23,3 +24,6 @@ class Foo<R> {
         Foo<Int>().bar<String>().baz().getR(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, nullableType, stringLiteral, thisExpression, typeConstraint, typeParameter */

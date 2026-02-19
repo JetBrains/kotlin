@@ -33,7 +33,7 @@ internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
  * Native map and set implementations do not make use of capacities or load factors.
  */
 @PublishedApi
-internal actual fun mapCapacity(expectedSize: Int) = expectedSize
+internal actual fun mapCapacity(expectedSize: Int): Int = expectedSize
 
 /**
  * Returns a new read-only map, mapping only the specified key to the

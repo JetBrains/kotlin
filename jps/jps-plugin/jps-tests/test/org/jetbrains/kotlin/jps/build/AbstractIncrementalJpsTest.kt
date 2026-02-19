@@ -19,8 +19,6 @@ import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
-import org.jetbrains.jps.builders.BuildResult
-import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
@@ -28,7 +26,6 @@ import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.JpsDummyElement
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
+import org.jetbrains.kotlin.jps.build.KotlinBuilder.Companion.useDependencyGraph
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
@@ -94,8 +92,6 @@ abstract class AbstractIncrementalJpsTest(
 
     // is used to compare lookup dumps in a human readable way (lookup symbols are hashed in an actual lookup storage)
     protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
-    private var isJvmICEnabledBackup: Boolean = false
-    private var isJsICEnabledBackup: Boolean = false
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
@@ -163,7 +159,8 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun build(
         name: String?,
-        scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()
+        needUpdateArguments: Boolean,
+        scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules(),
     ): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
 
@@ -185,8 +182,10 @@ abstract class AbstractIncrementalJpsTest(
             val buildResult = BuildResult()
             builder.addMessageHandler(buildResult)
             val finalScope = scope.build()
-            projectDescriptor.project.kotlinCommonCompilerArguments = projectDescriptor.project.kotlinCommonCompilerArguments.apply {
-                updateCommandLineArguments(this)
+            if (needUpdateArguments) {
+                projectDescriptor.project.kotlinCommonCompilerArguments = projectDescriptor.project.kotlinCommonCompilerArguments.apply {
+                    updateCommandLineArguments(this)
+                }
             }
 
             builder.build(finalScope, false)
@@ -224,7 +223,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun initialMake(): MakeResult {
-        val makeResult = build(null)
+        val makeResult = build(null, needUpdateArguments = true)
 
         val initBuildLogFile = File(testDataDir, "init-build.log")
         if (initBuildLogFile.exists()) {
@@ -236,12 +235,12 @@ abstract class AbstractIncrementalJpsTest(
         return makeResult
     }
 
-    private fun make(name: String?): MakeResult {
-        return build(name)
+    private fun incrementallyMake(name: String?): MakeResult {
+        return build(name, needUpdateArguments = false)
     }
 
     private fun rebuild(): MakeResult {
-        return build(null, CompileScopeTestBuilder.rebuild().allModules())
+        return build(null, needUpdateArguments = true, CompileScopeTestBuilder.rebuild().allModules())
     }
 
     protected open fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
@@ -280,7 +279,10 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
-        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot!!)
+        @Suppress("UnstableApiUsage") // KT-81463
+        FileUtil.delete(
+            BuildDataPathsImpl(myDataStorageRoot.toPath()).dataStorageDir.toFile()
+        )
 
         rebuildAndCheckOutput(makeOverallResult)
     }
@@ -336,11 +338,13 @@ abstract class AbstractIncrementalJpsTest(
 
         buildLogFile?.let {
             val logs = createBuildLog(otherMakeResults)
-            val expected = excludeCompilerErrorMessagesFromLog(File(buildLogFile.absolutePath).readText())
+            val buildLog = File(buildLogFile.absolutePath).readText()
+            val expected = excludeCompilerErrorMessagesFromLog(buildLog)
             val actual = excludeCompilerErrorMessagesFromLog(logs)
 
-            UsefulTestCase.assertEquals(expected.trimEnd(), actual.trimEnd())
-
+            if(expected.trimEnd() != actual.trimEnd()) {
+                assertSameLinesWithFile(it.absolutePath, logs)
+            }
             val lastMakeResult = otherMakeResults.last()
             clearCachesRebuildAndCheckOutput(lastMakeResult)
         }
@@ -396,7 +400,7 @@ abstract class AbstractIncrementalJpsTest(
             }
 
             val name = modificationNames?.getOrNull(index)
-            val makeResult = make(name)
+            val makeResult = incrementallyMake(name)
             results.add(makeResult)
         }
         return results
@@ -404,8 +408,6 @@ abstract class AbstractIncrementalJpsTest(
 
     protected open fun performAdditionalModifications(modifications: List<Modification>) {
     }
-
-    protected open fun generateModuleSources(modulesTxt: ModulesTxt) = Unit
 
     // null means one module
     private fun configureModules(): ModulesTxt? {
@@ -483,7 +485,6 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         // configure module contents
-        generateModuleSources(modulesTxt)
         modulesTxt.modules.forEach { module ->
             val sourceDirName = "${module.name}/src"
             val sourceDestinationDir = File(workDir, sourceDirName)
@@ -616,10 +617,11 @@ abstract class AbstractIncrementalJpsTest(
 private fun createMappingsDump(
     project: ProjectDescriptor,
     kotlinContext: KotlinCompileContext,
-    lookupsDuringTest: Set<LookupSymbol>
-) = createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
-        createCommonMappingsDump(project) + "\n\n\n" +
-        createJavaMappingsDump(project)
+    lookupsDuringTest: Set<LookupSymbol>,
+) = if (useDependencyGraph) "" else
+    createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
+            createCommonMappingsDump(project) + "\n\n\n" +
+            createJavaMappingsDump(project)
 
 internal fun createKotlinCachesDump(
     project: ProjectDescriptor,
@@ -672,7 +674,7 @@ private fun createCommonMappingsDump(project: ProjectDescriptor): String {
         result.pushIndent()
 
         val mapping = project.dataManager.getSourceToOutputMap(target)
-        mapping.sources.sorted().forEach {
+        mapping.sourcesIterator.asSequence().toList().sorted().forEach {
             val outputs = mapping.getOutputs(it)!!.sorted()
             if (outputs.isNotEmpty()) {
                 result.println("source $it -> $outputs")

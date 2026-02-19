@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-1998 Strange "Overload resolution ambiguity"
 
@@ -13,3 +14,6 @@ class B
 
 val B.c : String
     get() = "test"
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, objectDeclaration, propertyDeclaration,
+propertyWithExtensionReceiver, stringLiteral */

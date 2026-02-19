@@ -7,44 +7,62 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalInheritorsOnly
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
-object FirJsExternalInheritorOnlyChecker : FirClassChecker() {
-    private fun FirClass.forEachParents(context: CheckerContext, f: (FirRegularClassSymbol) -> Unit) {
+sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
+    object Regular : FirJsExternalInheritorOnlyChecker(MppCheckerKind.Platform) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
+            if (declaration.isExpect) return
+            super.check(declaration)
+        }
+    }
+
+    object ForExpectClass : FirJsExternalInheritorOnlyChecker(MppCheckerKind.Common) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
+            if (!declaration.isExpect) return
+            super.check(declaration)
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun FirClass.forEachParents(f: (FirRegularClassSymbol) -> Unit) {
         val todo = superConeTypes.toMutableList()
         val done = hashSetOf<FirRegularClassSymbol>()
 
         while (todo.isNotEmpty()) {
-            val classSymbol = todo.popLast().toRegularClassSymbol(context.session) ?: continue
+            val classSymbol = todo.popLast().toRegularClassSymbol() ?: continue
             if (done.add(classSymbol)) {
                 f(classSymbol)
-                classSymbol.resolvedSuperTypeRefs.mapNotNullTo(todo) { it.type as? ConeClassLikeType }
+                classSymbol.resolvedSuperTypeRefs.mapNotNullTo(todo) { it.coneType as? ConeClassLikeType }
             }
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!declaration.symbol.isEffectivelyExternal(context)) {
-            declaration.forEachParents(context) { parent ->
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        if (!declaration.symbol.isEffectivelyExternal()) {
+            declaration.forEachParents() { parent ->
                 if (parent.hasAnnotation(JsExternalInheritorsOnly, context.session)) {
                     reporter.reportOn(
                         declaration.source,
                         FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY,
                         parent,
-                        declaration.symbol,
-                        context
+                        declaration.symbol
                     )
                 }
             }

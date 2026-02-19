@@ -1,17 +1,26 @@
-implicit receivers:
+implicit values:
 scopes:
-  DefaultStarImportingScope, index = 0
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
-  DefaultSimpleImportingScope, index = 1
+  PackageMemberScope, index = 1
 
-  ExplicitStarImportingScope, index = 2
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
     packages: 0
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
-        annotationsList: []
-        classIdIfNonLocal: other/A
+      KaNamedClassSymbol:
+        annotations: []
+        classId: other/A
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -20,22 +29,24 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: A
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 1
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: other/b
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: other/b
+        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -50,28 +61,20 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
+        location: TOP_LEVEL
         modality: FINAL
         name: b
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Unit
-        symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 3
+  DefaultStarImportingScope, index = 5
 
-  DefaultSimpleImportingScope, index = 4
-
-  PackageMemberScope, index = 5
-
-  ExplicitSimpleImportingScope, index = 6
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0

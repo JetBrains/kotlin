@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.utils.DFS
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
@@ -29,6 +30,7 @@ fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     }
 }
 
+// TODO: drop CompatibilityMode, KT-72100
 class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
 
     init {
@@ -37,17 +39,18 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
         }
     }
 
-    val oldSignatures: Boolean
-        get() {
-            if (abiVersion.minor == LAST_PRIVATE_SIG_ABI_VERSION.minor) {
-                return abiVersion.patch <= LAST_PRIVATE_SIG_ABI_VERSION.patch
-            }
-            return abiVersion.minor < LAST_PRIVATE_SIG_ABI_VERSION.minor
-        }
+    /** See comments for [LAST_WITH_LEGACY_SIGNATURES_FOR_PRIVATE_AND_LOCAL_DECLARATIONS]. */
+    val legacySignaturesForPrivateAndLocalDeclarations: Boolean
+        get() = abiVersion.isAtMost(LAST_WITH_LEGACY_SIGNATURES_FOR_PRIVATE_AND_LOCAL_DECLARATIONS)
 
     companion object {
-        val LAST_PRIVATE_SIG_ABI_VERSION = KotlinAbiVersion(1, 5, 0)
         val CURRENT = CompatibilityMode(KotlinAbiVersion.CURRENT)
+
+        /**
+         * KLIBs with ABI version <= 1.5.0 had different rules for computing signatures for private and local declarations.
+         * See also [org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor.CompatibleChecker].
+         */
+        val LAST_WITH_LEGACY_SIGNATURES_FOR_PRIVATE_AND_LOCAL_DECLARATIONS = KotlinAbiVersion(1, 5, 0)
     }
 }
 
@@ -75,7 +78,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
         deserializeIrSymbolOrFail(signature, symbol.kind())
     }
 
-    open val klib: IrLibrary get() = error("Unsupported operation")
+    abstract val klib: KotlinLibrary
 
     open fun init() = init(this)
 
@@ -83,10 +86,16 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     open fun init(delegate: IrModuleDeserializer) {}
 
-    open fun addModuleReachableTopLevel(idSig: IdSignature) {
-        error("Unsupported Operation (sig: $idSig")
+    /**
+     * Schedule deserialization of the top-level declaration with the given signature in the given file.
+     */
+    open fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
+        error("Unsupported Operation (sig: $topLevelDeclarationSignature")
     }
 
+    /**
+     * Run deserialization of top-level declarations previously scheduled for deserialization in the current module.
+     */
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
     abstract val moduleFragment: IrModuleFragment
@@ -216,14 +225,14 @@ class IrModuleDeserializerWithBuiltIns(
         delegate.init(this)
     }
 
-    override val klib: IrLibrary
+    override val klib: KotlinLibrary
         get() = delegate.klib
 
     override val strategyResolver: (String) -> DeserializationStrategy
         get() = delegate.strategyResolver
 
-    override fun addModuleReachableTopLevel(idSig: IdSignature) {
-        delegate.addModuleReachableTopLevel(idSig)
+    override fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
+        delegate.addModuleReachableTopLevel(topLevelDeclarationSignature)
     }
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
@@ -247,6 +256,8 @@ open class CurrentModuleDeserializer(
     override val moduleFragment: IrModuleFragment,
     override val moduleDependencies: Collection<IrModuleDeserializer>
 ) : IrModuleDeserializer(moduleFragment.descriptor, KotlinAbiVersion.CURRENT) {
+    override val klib get() = error("'klib' is not available for ${this::class.java}")
+
     override fun contains(idSig: IdSignature): Boolean = false // TODO:
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): Nothing =
@@ -258,4 +269,10 @@ open class CurrentModuleDeserializer(
     override fun declareIrSymbol(symbol: IrSymbol) = Unit
 
     override val kind get() = IrModuleDeserializerKind.CURRENT
+}
+
+fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
+    return DFS.topologicalOrder(moduleDependencies.keys) { m ->
+        moduleDependencies.getValue(m)
+    }.reversed()
 }

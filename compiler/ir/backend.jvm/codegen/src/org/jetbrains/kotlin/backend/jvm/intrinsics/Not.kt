@@ -24,14 +24,23 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Label
 
 object Not : IntrinsicMethod() {
-    class BooleanNegation(val value: BooleanValue) : BooleanValue(value.codegen) {
-        override fun jumpIfFalse(target: Label) = value.jumpIfTrue(target)
-        override fun jumpIfTrue(target: Label) = value.jumpIfFalse(target)
+    class BooleanNegation(val expression: IrFunctionAccessExpression, val value: BooleanValue) : BooleanValue(value.codegen) {
+        override fun jumpIfFalse(target: Label) {
+            markLineNumber(expression)
+            value.jumpIfTrue(target)
+        }
+
+        override fun jumpIfTrue(target: Label) {
+            markLineNumber(expression)
+            value.jumpIfFalse(target)
+        }
+
         override fun discard() {
+            markLineNumber(expression)
             value.discard()
         }
     }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) =
-        BooleanNegation(expression.dispatchReceiver!!.accept(codegen, data).coerceToBoolean())
+        BooleanNegation(expression, expression.dispatchReceiver!!.accept(codegen, data).coerceToBoolean())
 }

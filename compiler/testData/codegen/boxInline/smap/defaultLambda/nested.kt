@@ -1,5 +1,5 @@
-// SKIP_INLINE_CHECK_IN: inlineFun$default
 
+// SKIP_INLINE_CHECK_IN: inlineFun$default
 // FILE: 1.kt
 
 

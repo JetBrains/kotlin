@@ -1,10 +1,9 @@
-// !LANGUAGE: +MultiPlatformProjects
-// !OPT_IN: kotlin.ExperimentalMultiplatform
-// IGNORE_BACKEND_K1: WASM, JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
+// LANGUAGE: +MultiPlatformProjects
+// OPT_IN: kotlin.ExperimentalMultiplatform
 // WITH_STDLIB
+// ISSUE: KT-69024
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: expected.kt
 
 package a
@@ -25,17 +24,25 @@ package a
 
 actual annotation class A(actual val x: Int)
 
-// MODULE: common2
-// TARGET_PLATFORM: Common
+// MODULE: common2(common)
 // FILE: common2.kt
 
 package usage
 
 import a.B
 
-@B("OK")
+const val s = "OK"
+
+@B(s)
 @B.C(true)
 fun ok() = "OK"
+
+expect annotation class C()
+
+@OptionalExpectation
+expect annotation class AnnWithOptionalExpectation(val c: C) {
+    annotation class NestedAnnWithOptionalExpectation(val c2: C)
+}
 
 // MODULE: main(library)()(common2)
 // FILE: main.kt
@@ -43,6 +50,8 @@ fun ok() = "OK"
 package usage
 
 import a.A
+
+actual annotation class C()
 
 @A(42)
 fun box(): String = ok()

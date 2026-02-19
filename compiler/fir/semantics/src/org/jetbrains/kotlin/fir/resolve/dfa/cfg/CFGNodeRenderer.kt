@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
@@ -50,14 +51,21 @@ fun CFGNode<*>.render(): String =
                 is StubNode -> "Stub"
                 is CheckNotNullCallNode -> "Check not null: ${CfgRenderer.renderElementAsString(fir)}"
 
-                is ConstExpressionNode -> "Const: ${fir.render()}"
-                is VariableDeclarationNode ->
-                    "Variable declaration: ${
+                is LiteralExpressionNode -> "Const: ${fir.render()}"
+                is VariableDeclarationEnterNode ->
+                    "Enter variable declaration: ${
+                        CfgRenderer.renderAsCallableDeclarationString(fir)
+                    }"
+                is VariableDeclarationExitNode ->
+                    "Exit variable declaration: ${
                         CfgRenderer.renderAsCallableDeclarationString(fir)
                     }"
 
                 is VariableAssignmentNode -> "Assignment: ${fir.calleeReference?.let(CfgRenderer::renderElementAsString)}"
-                is FunctionCallNode -> "Function call: ${CfgRenderer.renderElementAsString(fir)}"
+                is FunctionCallArgumentsEnterNode -> "Function call arguments enter"
+                is FunctionCallArgumentsExitNode -> "Function call arguments exit"
+                is FunctionCallEnterNode -> "Function call enter: ${CfgRenderer.renderElementAsString(fir)}"
+                is FunctionCallExitNode -> "Function call exit: ${CfgRenderer.renderElementAsString(fir)}"
                 is DelegatedConstructorCallNode -> "Delegated constructor call: ${CfgRenderer.renderElementAsString(fir)}"
                 is StringConcatenationCallNode -> "String concatenation call: ${CfgRenderer.renderElementAsString(fir)}"
                 is ThrowExceptionNode -> "Throw: ${CfgRenderer.renderElementAsString(fir)}"
@@ -71,14 +79,10 @@ fun CFGNode<*>.render(): String =
                 is FinallyBlockExitNode -> "Exit finally"
                 is TryExpressionExitNode -> "Try expression exit"
 
-                is BinaryAndEnterNode -> "Enter &&"
-                is BinaryAndExitLeftOperandNode -> "Exit left part of &&"
-                is BinaryAndEnterRightOperandNode -> "Enter right part of &&"
-                is BinaryAndExitNode -> "Exit &&"
-                is BinaryOrEnterNode -> "Enter ||"
-                is BinaryOrExitLeftOperandNode -> "Exit left part of ||"
-                is BinaryOrEnterRightOperandNode -> "Enter right part of ||"
-                is BinaryOrExitNode -> "Exit ||"
+                is BooleanOperatorEnterNode -> "Enter " + if (fir.kind == LogicOperationKind.AND) "&&" else "||"
+                is BooleanOperatorExitLeftOperandNode -> "Exit left part of " + if (fir.kind == LogicOperationKind.AND) "&&" else "||"
+                is BooleanOperatorEnterRightOperandNode -> "Enter right part of " + if (fir.kind == LogicOperationKind.AND) "&&" else "||"
+                is BooleanOperatorExitNode -> "Exit " + if (fir.kind == LogicOperationKind.AND) "&&" else "||"
 
                 is PropertyInitializerEnterNode -> "Enter property"
                 is PropertyInitializerExitNode -> "Exit property"
@@ -97,6 +101,7 @@ fun CFGNode<*>.render(): String =
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
                 is MergePostponedLambdaExitsNode -> "Merge postponed lambda exits"
                 is AnonymousFunctionExpressionNode -> "Exit anonymous function expression"
+                is AnonymousFunctionCaptureNode -> "Anonymous function capture"
 
                 is FileEnterNode -> "Enter file ${fir.name}"
                 is FileExitNode -> "Exit file ${fir.name}"
@@ -113,6 +118,9 @@ fun CFGNode<*>.render(): String =
                 is CodeFragmentEnterNode -> "Enter code fragment"
                 is CodeFragmentExitNode -> "Exit code fragment"
 
+                is ReplSnippetEnterNode -> "Enter repl snippet"
+                is ReplSnippetExitNode -> "Exit repl snippet"
+
                 is FakeExpressionEnterNode -> "Enter fake expression"
 
                 is EnterValueParameterNode -> "Enter default value of ${fir.name}"
@@ -127,8 +135,6 @@ fun CFGNode<*>.render(): String =
 
                 is CallableReferenceNode -> "Callable reference: ${CfgRenderer.renderElementAsString(fir)}"
                 is GetClassCallNode -> "::class call"
-
-                is AbstractBinaryExitNode -> throw IllegalStateException()
             },
         )
     }

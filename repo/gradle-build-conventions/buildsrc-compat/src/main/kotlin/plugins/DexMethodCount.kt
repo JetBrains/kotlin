@@ -114,7 +114,7 @@ abstract class DexMethodCountStats : DefaultTask() {
     private val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
 
     @TaskAction
-    private fun printStats() {
+    internal fun printStats() {
         val artifactOrArchiveName = artifactOrArchiveName.get()
         inputFile.get().asFile.reader().useLines { lines ->
             fun String.getStatValue() = substringBefore("\t").trim()
@@ -125,7 +125,7 @@ abstract class DexMethodCountStats : DefaultTask() {
             val total = stats[0]
             logger.lifecycle("Artifact $artifactOrArchiveName, total methods: $total")
 
-            if (isTeamCityBuild) {
+            if (isTeamCityBuild.get()) {
                 println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}' value='$total']")
             }
 
@@ -136,7 +136,7 @@ abstract class DexMethodCountStats : DefaultTask() {
                 logger.lifecycle("Artifact $artifactOrArchiveName, total methods from packages ${packages.joinToString { "$it.*" }}: $totalOwnPackages")
                 logger.lifecycle("Artifact $artifactOrArchiveName, total methods from other packages: $totalOtherPackages")
 
-                if (project.kotlinBuildProperties.isTeamcityBuild) {
+                if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                     println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}_OwnPackages' value='$totalOwnPackages']")
                     println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}_OtherPackages' value='$totalOtherPackages']")
                 }

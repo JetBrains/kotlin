@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Test1 {
     val test1: Int
@@ -20,3 +22,5 @@ interface Test4 {
 }
 var Test4.<!EXTENSION_SHADOWED_BY_MEMBER!>test4<!>: Int get() = 42; set(v) {}
 
+/* GENERATED_FIR_TAGS: getter, integerLiteral, interfaceDeclaration, propertyDeclaration, propertyWithExtensionReceiver,
+setter */

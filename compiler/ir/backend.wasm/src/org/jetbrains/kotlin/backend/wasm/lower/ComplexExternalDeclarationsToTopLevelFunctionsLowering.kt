@@ -9,27 +9,32 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
+import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
+import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
+import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
+import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
+import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irCallConstructor
+import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -44,12 +49,6 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     lateinit var currentFile: IrFile
     val addedDeclarations = mutableListOf<IrDeclaration>()
 
-    val externalFunToTopLevelMapping =
-        context.mapping.wasmNestedExternalToNewTopLevelFunction
-
-    val externalObjectToGetInstanceFunction =
-        context.mapping.wasmExternalObjectToGetInstanceFunction
-
     override fun lower(irFile: IrFile) {
         currentFile = irFile
         for (declaration in irFile.declarations) {
@@ -62,7 +61,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun processExternalDeclaration(declaration: IrDeclaration) {
-        declaration.acceptVoid(object : IrElementVisitorVoid {
+        declaration.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 error("Unknown external element ${element::class}")
             }
@@ -75,19 +74,27 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
 
             override fun visitClass(declaration: IrClass) {
                 declaration.acceptChildrenVoid(this)
-                lowerExternalClass(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    lowerExternalClass(declaration)
+                }
             }
 
             override fun visitProperty(declaration: IrProperty) {
-                processExternalProperty(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    processExternalProperty(declaration)
+                }
             }
 
             override fun visitConstructor(declaration: IrConstructor) {
-                processExternalConstructor(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    processExternalConstructor(declaration)
+                }
             }
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                processExternalSimpleFunction(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    processExternalSimpleFunction(declaration)
+                }
             }
         })
     }
@@ -96,8 +103,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (klass.kind == ClassKind.OBJECT)
             generateExternalObjectInstanceGetter(klass)
 
-        if (klass.kind != ClassKind.INTERFACE)
+        if (klass.kind != ClassKind.INTERFACE) {
             generateInstanceCheckForExternalClass(klass)
+            generateGetClassForExternalClass(klass)
+        }
     }
 
     fun processExternalProperty(property: IrProperty) {
@@ -113,7 +122,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 if (dispatchReceiver == null)
                     "() => ${referenceTopLevelExternalDeclaration(property)}"
                 else
-                    "(_this) => _this.$propName"
+                    "(_this) => ${propName.toSavePropertyAccess("_this")}"
 
             val res = createExternalJsFunction(
                 property.name,
@@ -126,7 +135,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 res.addValueParameter("_this", dispatchReceiver.type)
             }
 
-            externalFunToTopLevelMapping[getter] = res
+            getter.topLevelFunctionForNestedExternal = res
         }
 
         property.setter?.let { setter ->
@@ -135,7 +144,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 if (dispatchReceiver == null)
                     "(v) => ${referenceTopLevelExternalDeclaration(property)} = v"
                 else
-                    "(_this, v) => _this.$propName = v"
+                    "(_this, v) => ${propName.toSavePropertyAccess("_this")} = v"
 
             val res = createExternalJsFunction(
                 property.name,
@@ -147,9 +156,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             if (dispatchReceiver != null) {
                 res.addValueParameter("_this", dispatchReceiver.type)
             }
-            res.addValueParameter("v", setter.valueParameters[0].type)
+            val setterParameter = setter.parameters.first { it.kind == IrParameterKind.Regular }.type
+            res.addValueParameter("v", setterParameter)
 
-            externalFunToTopLevelMapping[setter] = res
+            setter.topLevelFunctionForNestedExternal = res
         }
     }
 
@@ -182,12 +192,29 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 // Reference to external companion object is reference to its parent class
                 return
             }
-            append('.')
-            append(klass.getJsNameOrKotlinName())
+
+            append(klass.getJsNameOrKotlinName().identifier.toSavePropertyAccess(isTopLevel = false))
         } else {
             append(referenceTopLevelExternalDeclaration(klass))
         }
     }
+
+    private fun String.toSavePropertyAccess(
+        receiver: String = "",
+        isTopLevel: Boolean = receiver.isEmpty(),
+    ) = StringBuilder().apply {
+        append(receiver)
+        if (isValidES5Identifier()) {
+            if (!isTopLevel) append('.')
+            append(this@toSavePropertyAccess)
+        } else {
+            if (isTopLevel) append("globalThis")
+            append("['")
+            append(replace("'", "\\'"))
+            append("']")
+        }
+
+    }.toString()
 
     fun processExternalConstructor(constructor: IrConstructor) {
         val klass = constructor.constructedClass
@@ -208,16 +235,17 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     fun processExternalSimpleFunction(function: IrSimpleFunction) {
         // Skip JS interop adapters form WasmImport.
         // It needs to keep original signature to interop with other Wasm modules.
-        if (function.getWasmImportDescriptor() != null)
+        if (function.getWasmImportDescriptor() != null || function.getJsBuiltinDescriptor() != null)
             return
 
         val jsFun = function.getJsFunAnnotation()
         // Wrap external functions without @JsFun to lambdas `foo` -> `(a, b) => foo(a, b)`.
         // This way we wouldn't fail if we don't call them.
         if (jsFun != null &&
-            function.valueParameters.all { it.defaultValue == null && it.varargElementType == null } &&
+            function.parameters.all { it.defaultValue == null && it.varargElementType == null } &&
             currentFile.getJsQualifier() == null &&
-            currentFile.getJsModule() == null
+            currentFile.getJsModule() == null &&
+            !function.isJsNativeInvoke()
         ) {
             return
         }
@@ -227,9 +255,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         }
 
         val jsFunctionReference = when {
+            function.isJsNativeInvoke() -> ""
             jsFun != null -> "($jsFun)"
             function.isTopLevelDeclaration -> referenceTopLevelExternalDeclaration(function)
-            else -> function.getJsNameOrKotlinName().identifier
+            else -> function.getJsNameOrKotlinName().identifier.toSavePropertyAccess(isTopLevel = false)
         }
 
         processFunctionOrConstructor(
@@ -254,7 +283,8 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         jsFunctionReference: String
     ): String {
         val dispatchReceiver = function.dispatchReceiverParameter
-        val numValueParameters = function.valueParameters.size
+        val valueParameters = function.parameters.filter { it.kind == IrParameterKind.Regular }
+        val numValueParameters = valueParameters.size
 
         return buildString {
             append("(")
@@ -284,27 +314,27 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 append("new ")
             }
             if (dispatchReceiver != null) {
-                append("_this.")
+                append("_this")
             }
             append(jsFunctionReference)
             append("(")
 
-            val numNonDefaultParamters = numValueParameters - numDefaultParameters
-            repeat(numNonDefaultParamters) {
-                if (function.valueParameters[it].isVararg) {
+            val numNonDefaultParameters = numValueParameters - numDefaultParameters
+            repeat(numNonDefaultParameters) {
+                if (valueParameters[it].isVararg) {
                     append("...")
                 }
                 append("p$it")
-                if (numDefaultParameters != 0 || it + 1 < numNonDefaultParamters)
+                if (numDefaultParameters != 0 || it + 1 < numNonDefaultParameters)
                     append(", ")
             }
             repeat(numDefaultParameters) {
-                if (function.valueParameters[numNonDefaultParamters + it].isVararg) {
+                if (valueParameters[numNonDefaultParameters + it].isVararg) {
                     append("...")
                 } else {
                     append("isDefault$it ? undefined : ")
                 }
-                append("p${numNonDefaultParamters + it}, ")
+                append("p${numNonDefaultParameters + it}, ")
             }
             append(")")
         }
@@ -318,6 +348,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         jsFunctionReference: String
     ) {
         val dispatchReceiver = function.dispatchReceiverParameter
+        val valueParameters = function.parameters.filter { it.kind == IrParameterKind.Regular }
 
         val numDefaultParameters =
             numDefaultParametersForExternalFunction(function)
@@ -337,14 +368,21 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (dispatchReceiver != null) {
             res.addValueParameter("_this", dispatchReceiver.type)
         }
-        function.valueParameters.forEach { res.addValueParameter(it.name, it.type).apply { varargElementType = it.varargElementType } }
+        valueParameters.forEach {
+            res.addValueParameter(
+                name = it.name,
+                type = if (it.type.isPrimitiveType(false)) it.type else it.type.makeNullable()
+            ).apply {
+                varargElementType = it.varargElementType
+            }
+        }
         // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
         repeat(numDefaultParameters) { res.addValueParameter("isDefault$it", context.irBuiltIns.intType) }
-        externalFunToTopLevelMapping[function] = res
+        function.topLevelFunctionForNestedExternal = res
     }
 
     fun generateExternalObjectInstanceGetter(obj: IrClass) {
-        context.mapping.wasmExternalObjectToGetInstanceFunction[obj] = createExternalJsFunction(
+        obj.getInstanceFunctionForExternalObject = createExternalJsFunction(
             obj.name,
             "_\$external_object_getInstance",
             resultType = obj.defaultType,
@@ -356,7 +394,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun generateInstanceCheckForExternalClass(klass: IrClass) {
-        context.mapping.wasmExternalClassToInstanceCheck[klass] = createExternalJsFunction(
+        klass.instanceCheckForExternalClass = createExternalJsFunction(
             klass.name,
             "_\$external_class_instanceof",
             resultType = context.irBuiltIns.booleanType,
@@ -374,6 +412,18 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         }
     }
 
+    fun generateGetClassForExternalClass(klass: IrClass) {
+        klass.getJsClassForExternalClass = createExternalJsFunction(
+            klass.name,
+            "_\$external_class_get",
+            resultType = context.wasmSymbols.jsRelatedSymbols.jsAnyType.makeNullable(),
+            jsCode = buildString {
+                append("() => ")
+                appendExternalClassReference(klass)
+            }
+        )
+    }
+
     private fun createExternalJsFunction(
         originalName: Name,
         suffix: String,
@@ -389,19 +439,23 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     private fun referenceTopLevelExternalDeclaration(declaration: IrDeclarationWithName): String {
         var name: String? = declaration.getJsNameOrKotlinName().identifier
 
-        val qualifier = currentFile.getJsQualifier()
+        val qualifier = declaration.getJsQualifier() ?: currentFile.getJsQualifier()
 
         val module = currentFile.getJsModule()
             ?: declaration.getJsModule()?.also {
                 name = if (declaration is IrClass && declaration.isObject) null else "default"
             }
 
-        if (qualifier == null && module == null)
-            return name!!
+        if (qualifier == null && module == null) {
+            require(name != null) { "Unexpected null inside declaration Name identifier "}
+            return name.toSavePropertyAccess()
+        }
 
-        val qualifieReference = JsModuleAndQualifierReference(module, qualifier)
-        context.jsModuleAndQualifierReferences += qualifieReference
-        return qualifieReference.jsVariableName + name?.let { ".$it" }.orEmpty()
+        val qualifierReference = JsModuleAndQualifierReference(module, qualifier)
+        if (module != null) {
+            context.getFileContext(currentFile).jsModuleAndQualifierReferences += qualifierReference
+        }
+        return name?.toSavePropertyAccess(qualifierReference.jsReference) ?: qualifierReference.jsReference
     }
 }
 
@@ -418,8 +472,8 @@ fun createExternalJsFunction(
         isExternal = true
     }
     val builder = context.createIrBuilder(res.symbol)
-    res.annotations += builder.irCallConstructor(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
-        it.putValueArgument(0, builder.irString(jsCode))
+    res.annotations += builder.irAnnotation(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        it.arguments[0] = builder.irString(jsCode)
     }
     return res
 }
@@ -428,14 +482,11 @@ fun createExternalJsFunction(
  * Redirect usages of complex declarations to top-level functions
  */
 class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) : FileLoweringPass {
-    private val nestedExternalToNewTopLevelFunctions = context.mapping.wasmNestedExternalToNewTopLevelFunction
-    private val objectToGetInstanceFunctions = context.mapping.wasmExternalObjectToGetInstanceFunction
-
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(declarationTransformer)
     }
 
-    private val declarationTransformer = object : IrElementVisitorVoid {
+    private val declarationTransformer = object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -452,7 +503,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
 
         private fun process(container: IrDeclarationContainer) {
             container.declarations.transformFlat { member ->
-                if (nestedExternalToNewTopLevelFunctions.keys.contains(member)) {
+                if (member is IrFunction && member.topLevelFunctionForNestedExternal != null) {
                     emptyList()
                 } else {
                     member.acceptVoid(this)
@@ -478,34 +529,42 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
         }
 
         override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-            val externalGetInstance = objectToGetInstanceFunctions[expression.symbol.owner] ?: return expression
+            val externalGetInstance = expression.symbol.owner.getInstanceFunctionForExternalObject ?: return expression
             return IrCallImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,
                 type = expression.type,
                 symbol = externalGetInstance.symbol,
-                valueArgumentsCount = 0,
                 typeArgumentsCount = 0
             )
         }
 
         fun transformCall(call: IrFunctionAccessExpression): IrExpression {
             val oldFun = call.symbol.owner.realOverrideTarget
-            val newFun: IrSimpleFunction = nestedExternalToNewTopLevelFunctions[oldFun] ?: return call
+            val newFun: IrSimpleFunction = oldFun.topLevelFunctionForNestedExternal ?: return call
 
-            val newCall = irCall(call, newFun, receiversAsArguments = true)
+            val newCall = IrCallImpl(call.startOffset, call.endOffset, newFun.returnType, newFun.symbol)
+
+            // Copy arguments or fill with default
+            for (parameter in oldFun.parameters) {
+                val arg = call.arguments[parameter.indexInParameters]
+                newCall.arguments[parameter.indexInParameters] = if (
+                    arg == null &&
+                    !parameter.isVararg // Handled with WasmVarargExpressionLowering
+                ) IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type)
+                else arg
+            }
 
             // Add default arguments flags if needed
             val numDefaultParameters = numDefaultParametersForExternalFunction(oldFun)
-            val firstDefaultFlagArgumentIdx = newFun.valueParameters.size - numDefaultParameters
-            val firstOldDefaultArgumentIdx = call.valueArgumentsCount - numDefaultParameters
-            repeat(numDefaultParameters) {
-                val value = if (call.getValueArgument(firstOldDefaultArgumentIdx + it) == null) 1 else 0
-                newCall.putValueArgument(
-                    firstDefaultFlagArgumentIdx + it,
+            val firstOldDefaultArgumentIdx = oldFun.parameters.size - numDefaultParameters
+            val firstDefaultFlagArgumentIdx = newFun.parameters.size - numDefaultParameters
+            for (i in 0..<numDefaultParameters) {
+                val value = if (call.arguments[i + firstOldDefaultArgumentIdx] == null) 1 else 0
+                newCall.arguments[firstDefaultFlagArgumentIdx + i] =
                     IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
-                )
             }
+
             return newCall
         }
     }
@@ -524,11 +583,10 @@ private fun numDefaultParametersForExternalFunction(function: IrFunction): Int {
         }
     }
 
-    val firstDefaultParameterIndex: Int? =
-        function.valueParameters.firstOrNull { it.defaultValue != null }?.index
-
-    return if (firstDefaultParameterIndex == null)
+    val firstDefaultParameterIndex = function.parameters.indexOfFirst { it.defaultValue != null }
+    return if (firstDefaultParameterIndex == -1) {
         0
-    else
-        function.valueParameters.size - firstDefaultParameterIndex
+    } else {
+        function.parameters.size - firstDefaultParameterIndex
+    }
 }

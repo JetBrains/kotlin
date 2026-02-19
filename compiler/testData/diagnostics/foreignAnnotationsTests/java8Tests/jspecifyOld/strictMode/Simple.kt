@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // JSPECIFY_STATE: strict
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: Simple.java
 import org.jspecify.nullness.*;
@@ -29,13 +29,10 @@ public class Derived extends Base {
 
 // FILE: main.kt
 fun main(a: Simple, x: Derived): Unit {
-    // jspecify_nullness_mismatch
     a.foo(x, null)<!UNSAFE_CALL!>.<!>foo()
-    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
     a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, x)<!UNSAFE_CALL!>.<!>foo()
 
     a.bar().foo()
 
-    // jspecify_nullness_mismatch
     a.field<!UNSAFE_CALL!>.<!>foo()
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // FIR_IDENTICAL
 
@@ -22,3 +23,6 @@ private fun buz() {
 private fun <T> bar(actionForAll: () -> T) {
     actionForAll()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, nullableType, override, typeParameter */

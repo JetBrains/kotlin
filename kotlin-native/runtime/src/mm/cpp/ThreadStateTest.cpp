@@ -10,7 +10,8 @@
 
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
-#include "ScopedThread.hpp"
+#include "Runtime.h"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"

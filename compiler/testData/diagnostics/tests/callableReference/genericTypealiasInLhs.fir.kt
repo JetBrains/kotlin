@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
 class Some { fun foo() {} }
 
 typealias SomeAlias = Some
@@ -27,12 +29,18 @@ typealias InvUnusedCorrectAlias<T> = Inv<String>
 typealias InvUnusedIncorrectAlias<T> = Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>
 typealias InvSpecificAlias = Inv<String>
 
+typealias Mixed3<B> = Inv<InvAlias<B>>
+
 fun test_2() {
+    <!UPPER_BOUND_VIOLATED!>Mixed3<String><!>::foo
+
     Inv<String>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     Inv<*>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
     Inv<out String>::foo
+    Inv<<!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
+    Inv<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<String, String><!>::foo
 
@@ -41,6 +49,8 @@ fun test_2() {
     InvAlias<*>::foo
     InvAlias<<!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
     InvAlias<out String>::foo
+    InvAlias<<!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
+    InvAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvAlias<!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvAlias<String, String><!>::foo
 
@@ -49,19 +59,31 @@ fun test_2() {
     InvUnusedCorrectAlias<*>::foo
     InvUnusedCorrectAlias<out Int>::foo
     InvUnusedCorrectAlias<out String>::foo
+    InvUnusedCorrectAlias<in Int>::foo
+    InvUnusedCorrectAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<String, String><!>::foo
 
-    InvUnusedIncorrectAlias<String>::foo
-    InvUnusedIncorrectAlias<Int>::foo
-    InvUnusedIncorrectAlias<*>::foo
-    InvUnusedIncorrectAlias<out Int>::foo
-    InvUnusedIncorrectAlias<out String>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<String><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<Int><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<*><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<out Int><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<out String><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<in Int><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<in String><!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<String, String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<in String, in String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<out String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<in String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<*, *><!>::foo
 
     InvSpecificAlias::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<String, String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<in String, in String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<out String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<in String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<*, *><!>::foo
 }
 
 // ----------------------------------------------------------------
@@ -168,3 +190,6 @@ fun test_3() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSpecificAlias<!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSpecificAlias<Int, Int, Int><!>::foo
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

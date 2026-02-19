@@ -1,0 +1,4 @@
+fun mustUse(): kotlin.String
+
+@kotlin.IgnorableReturnValue
+fun ignorable(): kotlin.String

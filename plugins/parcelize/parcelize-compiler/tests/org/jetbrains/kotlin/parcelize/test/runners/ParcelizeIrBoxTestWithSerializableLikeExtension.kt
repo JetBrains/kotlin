@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,3 +25,20 @@ class ParcelizeIrBoxTestWithSerializableLikeExtension : AbstractParcelizeIrBoxTe
         builder.useConfigurators(::SerializableLikeExtensionProvider)
     }
 }
+
+
+@TestMetadata("plugins/parcelize/parcelize-compiler/testData/box")
+@TestDataPath("\$PROJECT_ROOT")
+class ParcelizeFirBoxTestWithSerializableLikeExtension : AbstractParcelizeFirLightTreeBoxTest() {
+    @Test
+    @TestMetadata("simple.kt")
+    fun testSimple() {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/simple.kt")
+    }
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useConfigurators(::SerializableLikeExtensionProvider)
+    }
+}
+

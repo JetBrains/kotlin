@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: main.kt
 package test
 
@@ -13,3 +14,5 @@ package kotlin
 class MyClass
 
 fun MyClass.extensionFun() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("ArraysKt")
+@file:Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 
 package kotlin.collections
 
@@ -13,6 +14,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -21,7 +23,9 @@ import kotlin.ranges.reversed
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component1(): T {
@@ -32,7 +36,9 @@ public inline operator fun <T> Array<out T>.component1(): T {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component1(): Byte {
@@ -43,7 +49,9 @@ public inline operator fun ByteArray.component1(): Byte {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component1(): Short {
@@ -54,7 +62,9 @@ public inline operator fun ShortArray.component1(): Short {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component1(): Int {
@@ -65,7 +75,9 @@ public inline operator fun IntArray.component1(): Int {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component1(): Long {
@@ -76,7 +88,9 @@ public inline operator fun LongArray.component1(): Long {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component1(): Float {
@@ -87,7 +101,9 @@ public inline operator fun FloatArray.component1(): Float {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component1(): Double {
@@ -98,7 +114,9 @@ public inline operator fun DoubleArray.component1(): Double {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component1(): Boolean {
@@ -109,7 +127,9 @@ public inline operator fun BooleanArray.component1(): Boolean {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component1(): Char {
@@ -120,7 +140,9 @@ public inline operator fun CharArray.component1(): Char {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component2(): T {
@@ -131,7 +153,9 @@ public inline operator fun <T> Array<out T>.component2(): T {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component2(): Byte {
@@ -142,7 +166,9 @@ public inline operator fun ByteArray.component2(): Byte {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component2(): Short {
@@ -153,7 +179,9 @@ public inline operator fun ShortArray.component2(): Short {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component2(): Int {
@@ -164,7 +192,9 @@ public inline operator fun IntArray.component2(): Int {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component2(): Long {
@@ -175,7 +205,9 @@ public inline operator fun LongArray.component2(): Long {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component2(): Float {
@@ -186,7 +218,9 @@ public inline operator fun FloatArray.component2(): Float {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component2(): Double {
@@ -197,7 +231,9 @@ public inline operator fun DoubleArray.component2(): Double {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component2(): Boolean {
@@ -208,7 +244,9 @@ public inline operator fun BooleanArray.component2(): Boolean {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component2(): Char {
@@ -219,7 +257,9 @@ public inline operator fun CharArray.component2(): Char {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component3(): T {
@@ -230,7 +270,9 @@ public inline operator fun <T> Array<out T>.component3(): T {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component3(): Byte {
@@ -241,7 +283,9 @@ public inline operator fun ByteArray.component3(): Byte {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component3(): Short {
@@ -252,7 +296,9 @@ public inline operator fun ShortArray.component3(): Short {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component3(): Int {
@@ -263,7 +309,9 @@ public inline operator fun IntArray.component3(): Int {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component3(): Long {
@@ -274,7 +322,9 @@ public inline operator fun LongArray.component3(): Long {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component3(): Float {
@@ -285,7 +335,9 @@ public inline operator fun FloatArray.component3(): Float {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component3(): Double {
@@ -296,7 +348,9 @@ public inline operator fun DoubleArray.component3(): Double {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component3(): Boolean {
@@ -307,7 +361,9 @@ public inline operator fun BooleanArray.component3(): Boolean {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component3(): Char {
@@ -318,7 +374,9 @@ public inline operator fun CharArray.component3(): Char {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component4(): T {
@@ -329,7 +387,9 @@ public inline operator fun <T> Array<out T>.component4(): T {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component4(): Byte {
@@ -340,7 +400,9 @@ public inline operator fun ByteArray.component4(): Byte {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component4(): Short {
@@ -351,7 +413,9 @@ public inline operator fun ShortArray.component4(): Short {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component4(): Int {
@@ -362,7 +426,9 @@ public inline operator fun IntArray.component4(): Int {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component4(): Long {
@@ -373,7 +439,9 @@ public inline operator fun LongArray.component4(): Long {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component4(): Float {
@@ -384,7 +452,9 @@ public inline operator fun FloatArray.component4(): Float {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component4(): Double {
@@ -395,7 +465,9 @@ public inline operator fun DoubleArray.component4(): Double {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component4(): Boolean {
@@ -406,7 +478,9 @@ public inline operator fun BooleanArray.component4(): Boolean {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component4(): Char {
@@ -417,7 +491,9 @@ public inline operator fun CharArray.component4(): Char {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component5(): T {
@@ -428,7 +504,9 @@ public inline operator fun <T> Array<out T>.component5(): T {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component5(): Byte {
@@ -439,7 +517,9 @@ public inline operator fun ByteArray.component5(): Byte {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component5(): Short {
@@ -450,7 +530,9 @@ public inline operator fun ShortArray.component5(): Short {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component5(): Int {
@@ -461,7 +543,9 @@ public inline operator fun IntArray.component5(): Int {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component5(): Long {
@@ -472,7 +556,9 @@ public inline operator fun LongArray.component5(): Long {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component5(): Float {
@@ -483,7 +569,9 @@ public inline operator fun FloatArray.component5(): Float {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component5(): Double {
@@ -494,7 +582,9 @@ public inline operator fun DoubleArray.component5(): Double {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component5(): Boolean {
@@ -505,7 +595,9 @@ public inline operator fun BooleanArray.component5(): Boolean {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component5(): Char {
@@ -649,7 +741,10 @@ public expect fun CharArray.elementAt(index: Int): Char
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -659,7 +754,10 @@ public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (In
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -669,7 +767,10 @@ public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> B
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Short): Short {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -679,7 +780,10 @@ public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Int): Int {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -689,7 +793,10 @@ public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> In
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Long): Long {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -699,7 +806,10 @@ public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> L
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Float): Float {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -709,7 +819,10 @@ public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Double): Double {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -719,7 +832,10 @@ public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) ->
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -729,7 +845,10 @@ public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1349,74 +1468,119 @@ public inline fun CharArray.firstOrNull(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short): Short {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): Int {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): Long {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float): Float {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Double): Double {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1425,7 +1589,7 @@ public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): 
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun <T> Array<out T>.getOrNull(index: Int): T? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1434,7 +1598,7 @@ public fun <T> Array<out T>.getOrNull(index: Int): T? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ByteArray.getOrNull(index: Int): Byte? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1443,7 +1607,7 @@ public fun ByteArray.getOrNull(index: Int): Byte? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ShortArray.getOrNull(index: Int): Short? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1452,7 +1616,7 @@ public fun ShortArray.getOrNull(index: Int): Short? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun IntArray.getOrNull(index: Int): Int? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1461,7 +1625,7 @@ public fun IntArray.getOrNull(index: Int): Int? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun LongArray.getOrNull(index: Int): Long? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1470,7 +1634,7 @@ public fun LongArray.getOrNull(index: Int): Long? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun FloatArray.getOrNull(index: Int): Float? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1479,7 +1643,7 @@ public fun FloatArray.getOrNull(index: Int): Float? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun DoubleArray.getOrNull(index: Int): Double? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1488,7 +1652,7 @@ public fun DoubleArray.getOrNull(index: Int): Double? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun BooleanArray.getOrNull(index: Int): Boolean? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1497,7 +1661,7 @@ public fun BooleanArray.getOrNull(index: Int): Boolean? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharArray.getOrNull(index: Int): Char? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -2617,7 +2781,6 @@ public fun CharArray.random(random: Random): Char {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.randomOrNull(): T? {
     return randomOrNull(Random)
@@ -2627,7 +2790,6 @@ public inline fun <T> Array<out T>.randomOrNull(): T? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.randomOrNull(): Byte? {
     return randomOrNull(Random)
@@ -2637,7 +2799,6 @@ public inline fun ByteArray.randomOrNull(): Byte? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.randomOrNull(): Short? {
     return randomOrNull(Random)
@@ -2647,7 +2808,6 @@ public inline fun ShortArray.randomOrNull(): Short? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun IntArray.randomOrNull(): Int? {
     return randomOrNull(Random)
@@ -2657,7 +2817,6 @@ public inline fun IntArray.randomOrNull(): Int? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun LongArray.randomOrNull(): Long? {
     return randomOrNull(Random)
@@ -2667,7 +2826,6 @@ public inline fun LongArray.randomOrNull(): Long? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.randomOrNull(): Float? {
     return randomOrNull(Random)
@@ -2677,7 +2835,6 @@ public inline fun FloatArray.randomOrNull(): Float? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.randomOrNull(): Double? {
     return randomOrNull(Random)
@@ -2687,7 +2844,6 @@ public inline fun DoubleArray.randomOrNull(): Double? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.randomOrNull(): Boolean? {
     return randomOrNull(Random)
@@ -2697,7 +2853,6 @@ public inline fun BooleanArray.randomOrNull(): Boolean? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharArray.randomOrNull(): Char? {
     return randomOrNull(Random)
@@ -2707,7 +2862,6 @@ public inline fun CharArray.randomOrNull(): Char? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> Array<out T>.randomOrNull(random: Random): T? {
     if (isEmpty())
         return null
@@ -2718,7 +2872,6 @@ public fun <T> Array<out T>.randomOrNull(random: Random): T? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun ByteArray.randomOrNull(random: Random): Byte? {
     if (isEmpty())
         return null
@@ -2729,7 +2882,6 @@ public fun ByteArray.randomOrNull(random: Random): Byte? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun ShortArray.randomOrNull(random: Random): Short? {
     if (isEmpty())
         return null
@@ -2740,7 +2892,6 @@ public fun ShortArray.randomOrNull(random: Random): Short? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun IntArray.randomOrNull(random: Random): Int? {
     if (isEmpty())
         return null
@@ -2751,7 +2902,6 @@ public fun IntArray.randomOrNull(random: Random): Int? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun LongArray.randomOrNull(random: Random): Long? {
     if (isEmpty())
         return null
@@ -2762,7 +2912,6 @@ public fun LongArray.randomOrNull(random: Random): Long? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun FloatArray.randomOrNull(random: Random): Float? {
     if (isEmpty())
         return null
@@ -2773,7 +2922,6 @@ public fun FloatArray.randomOrNull(random: Random): Float? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun DoubleArray.randomOrNull(random: Random): Double? {
     if (isEmpty())
         return null
@@ -2784,7 +2932,6 @@ public fun DoubleArray.randomOrNull(random: Random): Double? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun BooleanArray.randomOrNull(random: Random): Boolean? {
     if (isEmpty())
         return null
@@ -2795,7 +2942,6 @@ public fun BooleanArray.randomOrNull(random: Random): Boolean? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun CharArray.randomOrNull(random: Random): Char? {
     if (isEmpty())
         return null
@@ -3970,6 +4116,7 @@ public inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boole
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -3984,6 +4131,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (index: Int, Byte) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -3998,6 +4146,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(des
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (index: Int, Short) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4012,6 +4161,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (index: Int, Int) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4026,6 +4176,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (index: Int, Long) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4040,6 +4191,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(des
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (index: Int, Float) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4054,6 +4206,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (index: Int, Double) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4068,6 +4221,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (index: Int, Boolean) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4082,6 +4236,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexed
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4103,6 +4258,7 @@ public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
+@IgnorableReturnValue
 public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
     return destination
@@ -4203,6 +4359,7 @@ public fun <T : Any> Array<out T?>.filterNotNull(): List<T> {
  * 
  * @sample samples.collections.Collections.Filtering.filterNotNullTo
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
     return destination
@@ -4213,6 +4370,7 @@ public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4223,6 +4381,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(dest
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4233,6 +4392,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4243,6 +4403,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4253,6 +4414,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destinati
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4263,6 +4425,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4273,6 +4436,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4283,6 +4447,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(des
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4293,6 +4458,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4303,6 +4469,7 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4313,6 +4480,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4323,6 +4491,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destinatio
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4333,6 +4502,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destinat
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4343,6 +4513,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination:
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4353,6 +4524,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destinatio
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4363,6 +4535,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destinat
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4373,6 +4546,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destin
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4383,6 +4557,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(dest
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4769,14 +4944,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<T>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -4968,10 +5136,7 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     val size = size
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
-    val list = ArrayList<T>(n)
-    for (index in size - n until size)
-        list.add(this[index])
-    return list
+    return copyOfRange(size - n, size).asList()
 }
 
 /**
@@ -5258,13 +5423,11 @@ public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Ch
  * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T> {
-    val list = ArrayList<T>()
-    for (item in this) {
-        if (!predicate(item))
-            break
-        list.add(item)
-    }
-    return list
+    var i = 0
+    while (i < size && predicate(this[i])) i++
+    return if (i == 0) emptyList()
+           else if (i == 1) listOf(this[0])
+           else copyOfRange(0, i).asList()
 }
 
 /**
@@ -6002,7 +6165,7 @@ public fun CharArray.shuffle(): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun <T> Array<T>.shuffle(random: Random): Unit {
@@ -6017,7 +6180,7 @@ public fun <T> Array<T>.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun ByteArray.shuffle(random: Random): Unit {
@@ -6032,7 +6195,7 @@ public fun ByteArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun ShortArray.shuffle(random: Random): Unit {
@@ -6047,7 +6210,7 @@ public fun ShortArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun IntArray.shuffle(random: Random): Unit {
@@ -6062,7 +6225,7 @@ public fun IntArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun LongArray.shuffle(random: Random): Unit {
@@ -6077,7 +6240,7 @@ public fun LongArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun FloatArray.shuffle(random: Random): Unit {
@@ -6092,7 +6255,7 @@ public fun FloatArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.shuffle(random: Random): Unit {
@@ -6107,7 +6270,7 @@ public fun DoubleArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun BooleanArray.shuffle(random: Random): Unit {
@@ -6122,7 +6285,7 @@ public fun BooleanArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun CharArray.shuffle(random: Random): Unit {
@@ -6137,7 +6300,10 @@ public fun CharArray.shuffle(random: Random): Unit {
 /**
  * Sorts elements in the array in-place according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortBy
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -6146,7 +6312,10 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selecto
 /**
  * Sorts elements in the array in-place descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortByDescending
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))
@@ -6434,7 +6603,8 @@ public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  * 
  * @sample samples.collections.Collections.Sorting.sortedBy
  */
@@ -6445,7 +6615,10 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selec
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (Byte) -> R?): List<Byte> {
     return sortedWith(compareBy(selector))
@@ -6454,7 +6627,10 @@ public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: (Short) -> R?): List<Short> {
     return sortedWith(compareBy(selector))
@@ -6463,7 +6639,10 @@ public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (Int) -> R?): List<Int> {
     return sortedWith(compareBy(selector))
@@ -6472,7 +6651,10 @@ public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (I
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (Long) -> R?): List<Long> {
     return sortedWith(compareBy(selector))
@@ -6481,7 +6663,10 @@ public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: (Float) -> R?): List<Float> {
     return sortedWith(compareBy(selector))
@@ -6490,7 +6675,10 @@ public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector: (Double) -> R?): List<Double> {
     return sortedWith(compareBy(selector))
@@ -6499,7 +6687,10 @@ public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector:
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector: (Boolean) -> R?): List<Boolean> {
     return sortedWith(compareBy(selector))
@@ -6508,7 +6699,10 @@ public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (Char) -> R?): List<Char> {
     return sortedWith(compareBy(selector))
@@ -6517,7 +6711,10 @@ public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedByDescending
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareByDescending(selector))
@@ -6525,6 +6722,11 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossin
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(crossinline selector: (Byte) -> R?): List<Byte> {
     return sortedWith(compareByDescending(selector))
@@ -6532,6 +6734,11 @@ public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(crossinline s
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline selector: (Short) -> R?): List<Short> {
     return sortedWith(compareByDescending(selector))
@@ -6539,6 +6746,11 @@ public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline 
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> IntArray.sortedByDescending(crossinline selector: (Int) -> R?): List<Int> {
     return sortedWith(compareByDescending(selector))
@@ -6546,6 +6758,11 @@ public inline fun <R : Comparable<R>> IntArray.sortedByDescending(crossinline se
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> LongArray.sortedByDescending(crossinline selector: (Long) -> R?): List<Long> {
     return sortedWith(compareByDescending(selector))
@@ -6553,6 +6770,11 @@ public inline fun <R : Comparable<R>> LongArray.sortedByDescending(crossinline s
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(crossinline selector: (Float) -> R?): List<Float> {
     return sortedWith(compareByDescending(selector))
@@ -6560,6 +6782,11 @@ public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(crossinline 
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(crossinline selector: (Double) -> R?): List<Double> {
     return sortedWith(compareByDescending(selector))
@@ -6567,6 +6794,11 @@ public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(crossinline
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(crossinline selector: (Boolean) -> R?): List<Boolean> {
     return sortedWith(compareByDescending(selector))
@@ -6574,6 +6806,11 @@ public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(crossinlin
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline selector: (Char) -> R?): List<Char> {
     return sortedWith(compareByDescending(selector))
@@ -6748,30 +6985,40 @@ public expect fun BooleanArray.asList(): List<Boolean>
 public expect fun CharArray.asList(): List<Char>
 
 /**
- * Returns `true` if the two specified arrays are *deeply* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *deeply* equal to one another.
  * 
- * If two corresponding elements are nested arrays, they are also compared deeply.
- * If any of arrays contains itself on any nesting level the behavior is undefined.
+ * Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+ * That is, if two corresponding elements are nested arrays, they are also compared deeply.
+ * Elements of other types are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
- * The elements of other types are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+ * 
+ * @param other the array to compare deeply with this array.
+ * @return `true` if the two arrays are deeply equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepEquals
  */
 @SinceKotlin("1.1")
 @kotlin.internal.LowPriorityInOverloadResolution
 public expect infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *deeply* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *deeply* equal to one another.
  * 
- * The specified arrays are also considered deeply equal if both are `null`.
+ * Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+ * That is, if two corresponding elements are nested arrays, they are also compared deeply.
+ * Elements of other types are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
- * If two corresponding elements are nested arrays, they are also compared deeply.
- * If any of arrays contains itself on any nesting level the behavior is undefined.
+ * The arrays are also considered deeply equal if both are `null`.
  * 
- * The elements of other types are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+ * 
+ * @param other the array to compare deeply with this array.
+ * @return `true` if the two arrays are deeply equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun <T> Array<out T>?.contentDeepEquals(other: Array<out T>?): Boolean
@@ -6821,91 +7068,144 @@ public expect fun <T> Array<out T>.contentDeepToString(): String
 public expect fun <T> Array<out T>?.contentDeepToString(): String
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.arrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun <T> Array<out T>?.contentEquals(other: Array<out T>?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun ByteArray?.contentEquals(other: ByteArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun ShortArray?.contentEquals(other: ShortArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun IntArray?.contentEquals(other: IntArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun LongArray?.contentEquals(other: LongArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun FloatArray?.contentEquals(other: FloatArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun DoubleArray?.contentEquals(other: DoubleArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.booleanArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun BooleanArray?.contentEquals(other: BooleanArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.charArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun CharArray?.contentEquals(other: CharArray?): Boolean
@@ -7053,6 +7353,7 @@ public expect fun CharArray?.contentToString(): String
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T>
 
 /**
@@ -7072,6 +7373,7 @@ public expect fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
@@ -7091,6 +7393,7 @@ public expect fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray
 
 /**
@@ -7110,6 +7413,7 @@ public expect fun ShortArray.copyInto(destination: ShortArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray
 
 /**
@@ -7129,6 +7433,7 @@ public expect fun IntArray.copyInto(destination: IntArray, destinationOffset: In
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray
 
 /**
@@ -7148,6 +7453,7 @@ public expect fun LongArray.copyInto(destination: LongArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray
 
 /**
@@ -7167,6 +7473,7 @@ public expect fun FloatArray.copyInto(destination: FloatArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray
 
 /**
@@ -7186,6 +7493,7 @@ public expect fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray
 
 /**
@@ -7205,6 +7513,7 @@ public expect fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray
 
 /**
@@ -7212,7 +7521,6 @@ public expect fun CharArray.copyInto(destination: CharArray, destinationOffset: 
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOf(): Array<T>
 
 /**
@@ -7368,8 +7676,250 @@ public expect fun CharArray.copyOf(newSize: Int): CharArray
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(newSize: Int, init: (Int) -> T): Array<T> {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    @Suppress("UNCHECKED_CAST") return copy as Array<T>
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfByteArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(newSize: Int, init: (Int) -> Byte): ByteArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfShortArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(newSize: Int, init: (Int) -> Short): ShortArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfIntArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(newSize: Int, init: (Int) -> Int): IntArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfLongArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(newSize: Int, init: (Int) -> Long): LongArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfFloatArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(newSize: Int, init: (Int) -> Float): FloatArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfDoubleArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(newSize: Int, init: (Int) -> Double): DoubleArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfBooleanArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(newSize: Int, init: (Int) -> Boolean): BooleanArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfCharArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(newSize: Int, init: (Int) -> Char): CharArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
 
 /**
  * Returns a new array which is a copy of the specified range of the original array.
@@ -7380,7 +7930,6 @@ public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T>
 
 /**
@@ -7834,7 +8383,6 @@ public val CharArray.lastIndex: Int
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(element: T): Array<T>
 
 /**
@@ -7880,7 +8428,6 @@ public expect operator fun CharArray.plus(element: Char): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T>
 
 /**
@@ -7926,7 +8473,6 @@ public expect operator fun CharArray.plus(elements: Collection<Char>): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T>
 
 /**
@@ -7972,7 +8518,6 @@ public expect operator fun CharArray.plus(elements: CharArray): CharArray
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.plusElement(element: T): Array<T>
 
 /**
@@ -8797,6 +9342,7 @@ public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTr
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8813,6 +9359,7 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8829,6 +9376,7 @@ public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8845,6 +9393,7 @@ public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8861,6 +9410,7 @@ public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8877,6 +9427,7 @@ public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8893,6 +9444,7 @@ public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8909,6 +9461,7 @@ public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8925,6 +9478,7 @@ public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateBy
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8941,6 +9495,7 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -8957,6 +9512,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateBy
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -8973,6 +9529,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -8989,6 +9546,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9005,6 +9563,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9021,6 +9580,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9037,6 +9597,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9053,6 +9614,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9069,6 +9631,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9084,6 +9647,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9099,6 +9663,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9114,6 +9679,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9129,6 +9695,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9144,6 +9711,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destin
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9159,6 +9727,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9174,6 +9743,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9189,6 +9759,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9204,6 +9775,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9372,6 +9944,7 @@ public inline fun <V> CharArray.associateWith(valueSelector: (Char) -> V): Map<C
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Array<out K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
     for (element in this) {
         destination.put(element, valueSelector(element))
@@ -9388,6 +9961,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Array<out K>.associateWithT
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Byte, in V>> ByteArray.associateWithTo(destination: M, valueSelector: (Byte) -> V): M {
     for (element in this) {
@@ -9405,6 +9979,7 @@ public inline fun <V, M : MutableMap<in Byte, in V>> ByteArray.associateWithTo(d
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Short, in V>> ShortArray.associateWithTo(destination: M, valueSelector: (Short) -> V): M {
     for (element in this) {
@@ -9422,6 +9997,7 @@ public inline fun <V, M : MutableMap<in Short, in V>> ShortArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Int, in V>> IntArray.associateWithTo(destination: M, valueSelector: (Int) -> V): M {
     for (element in this) {
@@ -9439,6 +10015,7 @@ public inline fun <V, M : MutableMap<in Int, in V>> IntArray.associateWithTo(des
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Long, in V>> LongArray.associateWithTo(destination: M, valueSelector: (Long) -> V): M {
     for (element in this) {
@@ -9456,6 +10033,7 @@ public inline fun <V, M : MutableMap<in Long, in V>> LongArray.associateWithTo(d
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Float, in V>> FloatArray.associateWithTo(destination: M, valueSelector: (Float) -> V): M {
     for (element in this) {
@@ -9473,6 +10051,7 @@ public inline fun <V, M : MutableMap<in Float, in V>> FloatArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Double, in V>> DoubleArray.associateWithTo(destination: M, valueSelector: (Double) -> V): M {
     for (element in this) {
@@ -9490,6 +10069,7 @@ public inline fun <V, M : MutableMap<in Double, in V>> DoubleArray.associateWith
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Boolean, in V>> BooleanArray.associateWithTo(destination: M, valueSelector: (Boolean) -> V): M {
     for (element in this) {
@@ -9507,6 +10087,7 @@ public inline fun <V, M : MutableMap<in Boolean, in V>> BooleanArray.associateWi
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Char, in V>> CharArray.associateWithTo(destination: M, valueSelector: (Char) -> V): M {
     for (element in this) {
@@ -9518,6 +10099,7 @@ public inline fun <V, M : MutableMap<in Char, in V>> CharArray.associateWithTo(d
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9528,6 +10110,7 @@ public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destinatio
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9538,6 +10121,7 @@ public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: 
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9548,6 +10132,7 @@ public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9558,6 +10143,7 @@ public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C)
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9568,6 +10154,7 @@ public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: 
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9578,6 +10165,7 @@ public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9588,6 +10176,7 @@ public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destinati
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9598,6 +10187,7 @@ public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destina
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9675,7 +10265,7 @@ public fun <T> Array<out T>.toList(): List<T> {
     return when (size) {
         0 -> emptyList()
         1 -> listOf(this[0])
-        else -> this.toMutableList()
+        else -> copyOf().asList()
     }
 }
 
@@ -10215,6 +10805,7 @@ public inline fun <T, R> Array<out T>.flatMapIndexed(transform: (index: Int, T) 
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Iterable<R>): C {
     var index = 0
@@ -10233,6 +10824,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexe
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapIndexedTo(destination: C, transform: (index: Int, Byte) -> Iterable<R>): C {
     var index = 0
@@ -10251,6 +10843,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapIndexedTo(de
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapIndexedTo(destination: C, transform: (index: Int, Short) -> Iterable<R>): C {
     var index = 0
@@ -10269,6 +10862,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapIndexedTo(d
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapIndexedTo(destination: C, transform: (index: Int, Int) -> Iterable<R>): C {
     var index = 0
@@ -10287,6 +10881,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapIndexedTo(des
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapIndexedTo(destination: C, transform: (index: Int, Long) -> Iterable<R>): C {
     var index = 0
@@ -10305,6 +10900,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapIndexedTo(de
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapIndexedTo(destination: C, transform: (index: Int, Float) -> Iterable<R>): C {
     var index = 0
@@ -10323,6 +10919,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapIndexedTo(d
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapIndexedTo(destination: C, transform: (index: Int, Double) -> Iterable<R>): C {
     var index = 0
@@ -10341,6 +10938,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapIndexedTo(
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapIndexedTo(destination: C, transform: (index: Int, Boolean) -> Iterable<R>): C {
     var index = 0
@@ -10359,6 +10957,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapIndexedTo
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapIndexedTo(destination: C, transform: (index: Int, Char) -> Iterable<R>): C {
     var index = 0
@@ -10377,6 +10976,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapIndexedTo(de
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedSequenceTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Sequence<R>): C {
     var index = 0
@@ -10390,6 +10990,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexe
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10401,6 +11002,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(des
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destination: C, transform: (Byte) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10412,6 +11014,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destinati
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destination: C, transform: (Short) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10423,6 +11026,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destinat
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destination: C, transform: (Int) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10434,6 +11038,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destinatio
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destination: C, transform: (Long) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10445,6 +11050,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destinati
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destination: C, transform: (Float) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10456,6 +11062,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destinat
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destination: C, transform: (Double) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10467,6 +11074,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destina
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destination: C, transform: (Boolean) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10478,6 +11086,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destin
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10493,6 +11102,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destinati
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapSequenceTo")
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10734,6 +11344,7 @@ public inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valueTransf
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10751,6 +11362,7 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.grou
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10768,6 +11380,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10785,6 +11398,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.group
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10802,6 +11416,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10819,6 +11434,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10836,6 +11452,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.group
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10853,6 +11470,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.gro
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10870,6 +11488,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.g
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10888,6 +11507,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10906,6 +11526,7 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.g
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10924,6 +11545,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10942,6 +11564,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupB
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10960,6 +11583,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByT
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10978,6 +11602,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10996,6 +11621,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupB
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11014,6 +11640,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.group
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11032,6 +11659,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.grou
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11251,6 +11879,7 @@ public inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (index:
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
@@ -11262,6 +11891,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapInde
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
     var index = 0
     for (item in this)
@@ -11275,6 +11905,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (index: Int, Byte) -> R): C {
     var index = 0
     for (item in this)
@@ -11288,6 +11919,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destin
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (index: Int, Short) -> R): C {
     var index = 0
     for (item in this)
@@ -11301,6 +11933,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(desti
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (index: Int, Int) -> R): C {
     var index = 0
     for (item in this)
@@ -11314,6 +11947,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destina
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (index: Int, Long) -> R): C {
     var index = 0
     for (item in this)
@@ -11327,6 +11961,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destin
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (index: Int, Float) -> R): C {
     var index = 0
     for (item in this)
@@ -11340,6 +11975,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(desti
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (index: Int, Double) -> R): C {
     var index = 0
     for (item in this)
@@ -11353,6 +11989,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(dest
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (index: Int, Boolean) -> R): C {
     var index = 0
     for (item in this)
@@ -11366,6 +12003,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(des
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C {
     var index = 0
     for (item in this)
@@ -11387,6 +12025,7 @@ public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): Li
  * Applies the given [transform] function to each element in the original array
  * and appends only the non-null results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
     forEach { element -> transform(element)?.let { destination.add(it) } }
     return destination
@@ -11396,6 +12035,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotN
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11406,6 +12046,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destina
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11416,6 +12057,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: 
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11426,6 +12068,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination:
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11436,6 +12079,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11446,6 +12090,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: 
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11456,6 +12101,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination:
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11466,6 +12112,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11476,6 +12123,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destinatio
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11827,22 +12475,33 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<T>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11853,9 +12512,12 @@ public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11866,9 +12528,12 @@ public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11879,9 +12544,12 @@ public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11892,9 +12560,12 @@ public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11905,9 +12576,12 @@ public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11918,9 +12592,12 @@ public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11931,9 +12608,12 @@ public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> 
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -11947,17 +12627,28 @@ public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.removeAll(other)
-    return set
+    val otherCollection = other.convertToListIfNotCollection()
+    val result = mutableSetOf<T>()
+    for (e in this) {
+        if (!otherCollection.contains(e)) {
+            result.add(e)
+        }
+    }
+    return result
 }
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
@@ -11969,6 +12660,9 @@ public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
@@ -11980,6 +12674,9 @@ public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
@@ -11991,6 +12688,9 @@ public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
@@ -12002,6 +12702,9 @@ public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
@@ -12013,6 +12716,9 @@ public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
@@ -12024,6 +12730,9 @@ public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
@@ -12035,6 +12744,9 @@ public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
@@ -12130,6 +12842,9 @@ public fun CharArray.toMutableSet(): MutableSet<Char> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
@@ -12144,6 +12859,9 @@ public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12160,6 +12878,9 @@ public infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
@@ -12174,6 +12895,9 @@ public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12190,6 +12914,9 @@ public infix fun IntArray.union(other: Iterable<Int>): Set<Int> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
@@ -12204,6 +12931,9 @@ public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12220,6 +12950,9 @@ public infix fun FloatArray.union(other: Iterable<Float>): Set<Float> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
@@ -12235,6 +12968,9 @@ public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
@@ -12249,6 +12985,9 @@ public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -13458,9 +14197,11 @@ public inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): 
 /**
  * Returns the largest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13478,9 +14219,11 @@ public fun Array<out Double>.max(): Double {
 /**
  * Returns the largest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13498,7 +14241,11 @@ public fun Array<out Float>.max(): Float {
 /**
  * Returns the largest element.
  * 
+ * If there are multiple equal maximal elements, this function returns the first of those elements.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13517,6 +14264,8 @@ public fun <T : Comparable<T>> Array<out T>.max(): T {
  * Returns the largest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13535,6 +14284,8 @@ public fun ByteArray.max(): Byte {
  * Returns the largest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13553,6 +14304,8 @@ public fun ShortArray.max(): Short {
  * Returns the largest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13571,6 +14324,8 @@ public fun IntArray.max(): Int {
  * Returns the largest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13588,9 +14343,11 @@ public fun LongArray.max(): Long {
 /**
  * Returns the largest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13608,9 +14365,11 @@ public fun FloatArray.max(): Float {
 /**
  * Returns the largest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13629,6 +14388,8 @@ public fun DoubleArray.max(): Double {
  * Returns the largest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -13644,11 +14405,18 @@ public fun CharArray.max(): Char {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13671,11 +14439,18 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R):
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13698,11 +14473,18 @@ public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): By
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13725,11 +14507,18 @@ public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13752,11 +14541,18 @@ public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13779,11 +14575,18 @@ public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Lo
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13806,11 +14609,18 @@ public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13833,11 +14643,18 @@ public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13860,11 +14677,18 @@ public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13887,9 +14711,16 @@ public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Ch
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.maxByOrNull(selector: (T) -> R): T? {
@@ -13910,9 +14741,16 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxByOrNull(selector: (T) 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ByteArray.maxByOrNull(selector: (Byte) -> R): Byte? {
@@ -13933,9 +14771,16 @@ public inline fun <R : Comparable<R>> ByteArray.maxByOrNull(selector: (Byte) -> 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ShortArray.maxByOrNull(selector: (Short) -> R): Short? {
@@ -13956,9 +14801,16 @@ public inline fun <R : Comparable<R>> ShortArray.maxByOrNull(selector: (Short) -
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> IntArray.maxByOrNull(selector: (Int) -> R): Int? {
@@ -13979,9 +14831,16 @@ public inline fun <R : Comparable<R>> IntArray.maxByOrNull(selector: (Int) -> R)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> LongArray.maxByOrNull(selector: (Long) -> R): Long? {
@@ -14002,9 +14861,16 @@ public inline fun <R : Comparable<R>> LongArray.maxByOrNull(selector: (Long) -> 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> FloatArray.maxByOrNull(selector: (Float) -> R): Float? {
@@ -14025,9 +14891,16 @@ public inline fun <R : Comparable<R>> FloatArray.maxByOrNull(selector: (Float) -
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> DoubleArray.maxByOrNull(selector: (Double) -> R): Double? {
@@ -14048,9 +14921,16 @@ public inline fun <R : Comparable<R>> DoubleArray.maxByOrNull(selector: (Double)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> BooleanArray.maxByOrNull(selector: (Boolean) -> R): Boolean? {
@@ -14071,9 +14951,16 @@ public inline fun <R : Comparable<R>> BooleanArray.maxByOrNull(selector: (Boolea
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharArray.maxByOrNull(selector: (Char) -> R): Char? {
@@ -14100,6 +14987,8 @@ public inline fun <R : Comparable<R>> CharArray.maxByOrNull(selector: (Char) -> 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14122,6 +15011,8 @@ public inline fun <T> Array<out T>.maxOf(selector: (T) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14144,6 +15035,8 @@ public inline fun ByteArray.maxOf(selector: (Byte) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14166,6 +15059,8 @@ public inline fun ShortArray.maxOf(selector: (Short) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14188,6 +15083,8 @@ public inline fun IntArray.maxOf(selector: (Int) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14210,6 +15107,8 @@ public inline fun LongArray.maxOf(selector: (Long) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14232,6 +15131,8 @@ public inline fun FloatArray.maxOf(selector: (Float) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14254,6 +15155,8 @@ public inline fun DoubleArray.maxOf(selector: (Double) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14276,6 +15179,8 @@ public inline fun BooleanArray.maxOf(selector: (Boolean) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14298,6 +15203,8 @@ public inline fun CharArray.maxOf(selector: (Char) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14320,6 +15227,8 @@ public inline fun <T> Array<out T>.maxOf(selector: (T) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14342,6 +15251,8 @@ public inline fun ByteArray.maxOf(selector: (Byte) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14364,6 +15275,8 @@ public inline fun ShortArray.maxOf(selector: (Short) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14386,6 +15299,8 @@ public inline fun IntArray.maxOf(selector: (Int) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14408,6 +15323,8 @@ public inline fun LongArray.maxOf(selector: (Long) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14430,6 +15347,8 @@ public inline fun FloatArray.maxOf(selector: (Float) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14452,6 +15371,8 @@ public inline fun DoubleArray.maxOf(selector: (Double) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14474,6 +15395,8 @@ public inline fun BooleanArray.maxOf(selector: (Boolean) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14493,7 +15416,11 @@ public inline fun CharArray.maxOf(selector: (Char) -> Float): Float {
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14515,7 +15442,11 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxOf(selector: (T) -> R):
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14537,7 +15468,11 @@ public inline fun <R : Comparable<R>> ByteArray.maxOf(selector: (Byte) -> R): R 
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14559,7 +15494,11 @@ public inline fun <R : Comparable<R>> ShortArray.maxOf(selector: (Short) -> R): 
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14581,7 +15520,11 @@ public inline fun <R : Comparable<R>> IntArray.maxOf(selector: (Int) -> R): R {
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14603,7 +15546,11 @@ public inline fun <R : Comparable<R>> LongArray.maxOf(selector: (Long) -> R): R 
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14625,7 +15572,11 @@ public inline fun <R : Comparable<R>> FloatArray.maxOf(selector: (Float) -> R): 
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14647,7 +15598,11 @@ public inline fun <R : Comparable<R>> DoubleArray.maxOf(selector: (Double) -> R)
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14669,7 +15624,11 @@ public inline fun <R : Comparable<R>> BooleanArray.maxOf(selector: (Boolean) -> 
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14689,9 +15648,11 @@ public inline fun <R : Comparable<R>> CharArray.maxOf(selector: (Char) -> R): R 
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14709,9 +15670,11 @@ public inline fun <T> Array<out T>.maxOfOrNull(selector: (T) -> Double): Double?
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14729,9 +15692,11 @@ public inline fun ByteArray.maxOfOrNull(selector: (Byte) -> Double): Double? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14749,9 +15714,11 @@ public inline fun ShortArray.maxOfOrNull(selector: (Short) -> Double): Double? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14769,9 +15736,11 @@ public inline fun IntArray.maxOfOrNull(selector: (Int) -> Double): Double? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14789,9 +15758,11 @@ public inline fun LongArray.maxOfOrNull(selector: (Long) -> Double): Double? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14809,9 +15780,11 @@ public inline fun FloatArray.maxOfOrNull(selector: (Float) -> Double): Double? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14829,9 +15802,11 @@ public inline fun DoubleArray.maxOfOrNull(selector: (Double) -> Double): Double?
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14849,9 +15824,11 @@ public inline fun BooleanArray.maxOfOrNull(selector: (Boolean) -> Double): Doubl
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14869,9 +15846,11 @@ public inline fun CharArray.maxOfOrNull(selector: (Char) -> Double): Double? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14889,9 +15868,11 @@ public inline fun <T> Array<out T>.maxOfOrNull(selector: (T) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14909,9 +15890,11 @@ public inline fun ByteArray.maxOfOrNull(selector: (Byte) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14929,9 +15912,11 @@ public inline fun ShortArray.maxOfOrNull(selector: (Short) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14949,9 +15934,11 @@ public inline fun IntArray.maxOfOrNull(selector: (Int) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14969,9 +15956,11 @@ public inline fun LongArray.maxOfOrNull(selector: (Long) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -14989,9 +15978,11 @@ public inline fun FloatArray.maxOfOrNull(selector: (Float) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15009,9 +16000,11 @@ public inline fun DoubleArray.maxOfOrNull(selector: (Double) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15029,9 +16022,11 @@ public inline fun BooleanArray.maxOfOrNull(selector: (Boolean) -> Float): Float?
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15049,7 +16044,11 @@ public inline fun CharArray.maxOfOrNull(selector: (Char) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15069,7 +16068,11 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxOfOrNull(selector: (T) 
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15089,7 +16092,11 @@ public inline fun <R : Comparable<R>> ByteArray.maxOfOrNull(selector: (Byte) -> 
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15109,7 +16116,11 @@ public inline fun <R : Comparable<R>> ShortArray.maxOfOrNull(selector: (Short) -
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15129,7 +16140,11 @@ public inline fun <R : Comparable<R>> IntArray.maxOfOrNull(selector: (Int) -> R)
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15149,7 +16164,11 @@ public inline fun <R : Comparable<R>> LongArray.maxOfOrNull(selector: (Long) -> 
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15169,7 +16188,11 @@ public inline fun <R : Comparable<R>> FloatArray.maxOfOrNull(selector: (Float) -
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15189,7 +16212,11 @@ public inline fun <R : Comparable<R>> DoubleArray.maxOfOrNull(selector: (Double)
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15209,7 +16236,11 @@ public inline fun <R : Comparable<R>> BooleanArray.maxOfOrNull(selector: (Boolea
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15231,7 +16262,11 @@ public inline fun <R : Comparable<R>> CharArray.maxOfOrNull(selector: (Char) -> 
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15253,7 +16288,11 @@ public inline fun <T, R> Array<out T>.maxOfWith(comparator: Comparator<in R>, se
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15275,7 +16314,11 @@ public inline fun <R> ByteArray.maxOfWith(comparator: Comparator<in R>, selector
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15297,7 +16340,11 @@ public inline fun <R> ShortArray.maxOfWith(comparator: Comparator<in R>, selecto
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15319,7 +16366,11 @@ public inline fun <R> IntArray.maxOfWith(comparator: Comparator<in R>, selector:
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15341,7 +16392,11 @@ public inline fun <R> LongArray.maxOfWith(comparator: Comparator<in R>, selector
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15363,7 +16418,11 @@ public inline fun <R> FloatArray.maxOfWith(comparator: Comparator<in R>, selecto
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15385,7 +16444,11 @@ public inline fun <R> DoubleArray.maxOfWith(comparator: Comparator<in R>, select
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15407,7 +16470,11 @@ public inline fun <R> BooleanArray.maxOfWith(comparator: Comparator<in R>, selec
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15427,7 +16494,11 @@ public inline fun <R> CharArray.maxOfWith(comparator: Comparator<in R>, selector
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15447,7 +16518,11 @@ public inline fun <T, R> Array<out T>.maxOfWithOrNull(comparator: Comparator<in 
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15467,7 +16542,11 @@ public inline fun <R> ByteArray.maxOfWithOrNull(comparator: Comparator<in R>, se
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15487,7 +16566,11 @@ public inline fun <R> ShortArray.maxOfWithOrNull(comparator: Comparator<in R>, s
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15507,7 +16590,11 @@ public inline fun <R> IntArray.maxOfWithOrNull(comparator: Comparator<in R>, sel
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15527,7 +16614,11 @@ public inline fun <R> LongArray.maxOfWithOrNull(comparator: Comparator<in R>, se
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15547,7 +16638,11 @@ public inline fun <R> FloatArray.maxOfWithOrNull(comparator: Comparator<in R>, s
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15567,7 +16662,11 @@ public inline fun <R> DoubleArray.maxOfWithOrNull(comparator: Comparator<in R>, 
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15587,7 +16686,11 @@ public inline fun <R> BooleanArray.maxOfWithOrNull(comparator: Comparator<in R>,
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -15606,9 +16709,11 @@ public inline fun <R> CharArray.maxOfWithOrNull(comparator: Comparator<in R>, se
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Array<out Double>.maxOrNull(): Double? {
@@ -15622,9 +16727,11 @@ public fun Array<out Double>.maxOrNull(): Double? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Array<out Float>.maxOrNull(): Float? {
@@ -15638,7 +16745,11 @@ public fun Array<out Float>.maxOrNull(): Float? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
+ * 
+ * If there are multiple equal maximal elements, this function returns the first of those elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.4")
 public fun <T : Comparable<T>> Array<out T>.maxOrNull(): T? {
@@ -15652,7 +16763,9 @@ public fun <T : Comparable<T>> Array<out T>.maxOrNull(): T? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun ByteArray.maxOrNull(): Byte? {
@@ -15666,7 +16779,9 @@ public fun ByteArray.maxOrNull(): Byte? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun ShortArray.maxOrNull(): Short? {
@@ -15680,7 +16795,9 @@ public fun ShortArray.maxOrNull(): Short? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun IntArray.maxOrNull(): Int? {
@@ -15694,7 +16811,9 @@ public fun IntArray.maxOrNull(): Int? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun LongArray.maxOrNull(): Long? {
@@ -15708,9 +16827,11 @@ public fun LongArray.maxOrNull(): Long? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun FloatArray.maxOrNull(): Float? {
@@ -15724,9 +16845,11 @@ public fun FloatArray.maxOrNull(): Float? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.maxOrNull(): Double? {
@@ -15740,7 +16863,9 @@ public fun DoubleArray.maxOrNull(): Double? {
 }
 
 /**
- * Returns the largest element or `null` if there are no elements.
+ * Returns the largest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun CharArray.maxOrNull(): Char? {
@@ -16044,9 +17169,11 @@ public fun CharArray.maxWithOrNull(comparator: Comparator<in Char>): Char? {
 /**
  * Returns the smallest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16064,9 +17191,11 @@ public fun Array<out Double>.min(): Double {
 /**
  * Returns the smallest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16084,7 +17213,11 @@ public fun Array<out Float>.min(): Float {
 /**
  * Returns the smallest element.
  * 
+ * If there are multiple equal minimal elements, this function returns the first of those elements.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16103,6 +17236,8 @@ public fun <T : Comparable<T>> Array<out T>.min(): T {
  * Returns the smallest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16121,6 +17256,8 @@ public fun ByteArray.min(): Byte {
  * Returns the smallest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16139,6 +17276,8 @@ public fun ShortArray.min(): Short {
  * Returns the smallest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16157,6 +17296,8 @@ public fun IntArray.min(): Int {
  * Returns the smallest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16174,9 +17315,11 @@ public fun LongArray.min(): Long {
 /**
  * Returns the smallest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16194,9 +17337,11 @@ public fun FloatArray.min(): Float {
 /**
  * Returns the smallest element.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16215,6 +17360,8 @@ public fun DoubleArray.min(): Double {
  * Returns the smallest element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -16230,11 +17377,18 @@ public fun CharArray.min(): Char {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16257,11 +17411,18 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R):
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16284,11 +17445,18 @@ public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): By
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16311,11 +17479,18 @@ public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16338,11 +17513,18 @@ public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16365,11 +17547,18 @@ public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Lo
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16392,11 +17581,18 @@ public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16419,11 +17615,18 @@ public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16446,11 +17649,18 @@ public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16473,9 +17683,16 @@ public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Ch
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.minByOrNull(selector: (T) -> R): T? {
@@ -16496,9 +17713,16 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minByOrNull(selector: (T) 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ByteArray.minByOrNull(selector: (Byte) -> R): Byte? {
@@ -16519,9 +17743,16 @@ public inline fun <R : Comparable<R>> ByteArray.minByOrNull(selector: (Byte) -> 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ShortArray.minByOrNull(selector: (Short) -> R): Short? {
@@ -16542,9 +17773,16 @@ public inline fun <R : Comparable<R>> ShortArray.minByOrNull(selector: (Short) -
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> IntArray.minByOrNull(selector: (Int) -> R): Int? {
@@ -16565,9 +17803,16 @@ public inline fun <R : Comparable<R>> IntArray.minByOrNull(selector: (Int) -> R)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> LongArray.minByOrNull(selector: (Long) -> R): Long? {
@@ -16588,9 +17833,16 @@ public inline fun <R : Comparable<R>> LongArray.minByOrNull(selector: (Long) -> 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> FloatArray.minByOrNull(selector: (Float) -> R): Float? {
@@ -16611,9 +17863,16 @@ public inline fun <R : Comparable<R>> FloatArray.minByOrNull(selector: (Float) -
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> DoubleArray.minByOrNull(selector: (Double) -> R): Double? {
@@ -16634,9 +17893,16 @@ public inline fun <R : Comparable<R>> DoubleArray.minByOrNull(selector: (Double)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> BooleanArray.minByOrNull(selector: (Boolean) -> R): Boolean? {
@@ -16657,9 +17923,16 @@ public inline fun <R : Comparable<R>> BooleanArray.minByOrNull(selector: (Boolea
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharArray.minByOrNull(selector: (Char) -> R): Char? {
@@ -16686,6 +17959,8 @@ public inline fun <R : Comparable<R>> CharArray.minByOrNull(selector: (Char) -> 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16708,6 +17983,8 @@ public inline fun <T> Array<out T>.minOf(selector: (T) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16730,6 +18007,8 @@ public inline fun ByteArray.minOf(selector: (Byte) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16752,6 +18031,8 @@ public inline fun ShortArray.minOf(selector: (Short) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16774,6 +18055,8 @@ public inline fun IntArray.minOf(selector: (Int) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16796,6 +18079,8 @@ public inline fun LongArray.minOf(selector: (Long) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16818,6 +18103,8 @@ public inline fun FloatArray.minOf(selector: (Float) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16840,6 +18127,8 @@ public inline fun DoubleArray.minOf(selector: (Double) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16862,6 +18151,8 @@ public inline fun BooleanArray.minOf(selector: (Boolean) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16884,6 +18175,8 @@ public inline fun CharArray.minOf(selector: (Char) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16906,6 +18199,8 @@ public inline fun <T> Array<out T>.minOf(selector: (T) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16928,6 +18223,8 @@ public inline fun ByteArray.minOf(selector: (Byte) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16950,6 +18247,8 @@ public inline fun ShortArray.minOf(selector: (Short) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16972,6 +18271,8 @@ public inline fun IntArray.minOf(selector: (Int) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -16994,6 +18295,8 @@ public inline fun LongArray.minOf(selector: (Long) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17016,6 +18319,8 @@ public inline fun FloatArray.minOf(selector: (Float) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17038,6 +18343,8 @@ public inline fun DoubleArray.minOf(selector: (Double) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17060,6 +18367,8 @@ public inline fun BooleanArray.minOf(selector: (Boolean) -> Float): Float {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17079,7 +18388,11 @@ public inline fun CharArray.minOf(selector: (Char) -> Float): Float {
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17101,7 +18414,11 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minOf(selector: (T) -> R):
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17123,7 +18440,11 @@ public inline fun <R : Comparable<R>> ByteArray.minOf(selector: (Byte) -> R): R 
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17145,7 +18466,11 @@ public inline fun <R : Comparable<R>> ShortArray.minOf(selector: (Short) -> R): 
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17167,7 +18492,11 @@ public inline fun <R : Comparable<R>> IntArray.minOf(selector: (Int) -> R): R {
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17189,7 +18518,11 @@ public inline fun <R : Comparable<R>> LongArray.minOf(selector: (Long) -> R): R 
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17211,7 +18544,11 @@ public inline fun <R : Comparable<R>> FloatArray.minOf(selector: (Float) -> R): 
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17233,7 +18570,11 @@ public inline fun <R : Comparable<R>> DoubleArray.minOf(selector: (Double) -> R)
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17255,7 +18596,11 @@ public inline fun <R : Comparable<R>> BooleanArray.minOf(selector: (Boolean) -> 
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17275,9 +18620,11 @@ public inline fun <R : Comparable<R>> CharArray.minOf(selector: (Char) -> R): R 
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17295,9 +18642,11 @@ public inline fun <T> Array<out T>.minOfOrNull(selector: (T) -> Double): Double?
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17315,9 +18664,11 @@ public inline fun ByteArray.minOfOrNull(selector: (Byte) -> Double): Double? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17335,9 +18686,11 @@ public inline fun ShortArray.minOfOrNull(selector: (Short) -> Double): Double? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17355,9 +18708,11 @@ public inline fun IntArray.minOfOrNull(selector: (Int) -> Double): Double? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17375,9 +18730,11 @@ public inline fun LongArray.minOfOrNull(selector: (Long) -> Double): Double? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17395,9 +18752,11 @@ public inline fun FloatArray.minOfOrNull(selector: (Float) -> Double): Double? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17415,9 +18774,11 @@ public inline fun DoubleArray.minOfOrNull(selector: (Double) -> Double): Double?
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17435,9 +18796,11 @@ public inline fun BooleanArray.minOfOrNull(selector: (Boolean) -> Double): Doubl
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17455,9 +18818,11 @@ public inline fun CharArray.minOfOrNull(selector: (Char) -> Double): Double? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17475,9 +18840,11 @@ public inline fun <T> Array<out T>.minOfOrNull(selector: (T) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17495,9 +18862,11 @@ public inline fun ByteArray.minOfOrNull(selector: (Byte) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17515,9 +18884,11 @@ public inline fun ShortArray.minOfOrNull(selector: (Short) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17535,9 +18906,11 @@ public inline fun IntArray.minOfOrNull(selector: (Int) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17555,9 +18928,11 @@ public inline fun LongArray.minOfOrNull(selector: (Long) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17575,9 +18950,11 @@ public inline fun FloatArray.minOfOrNull(selector: (Float) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17595,9 +18972,11 @@ public inline fun DoubleArray.minOfOrNull(selector: (Double) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17615,9 +18994,11 @@ public inline fun BooleanArray.minOfOrNull(selector: (Boolean) -> Float): Float?
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17635,7 +19016,11 @@ public inline fun CharArray.minOfOrNull(selector: (Char) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17655,7 +19040,11 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minOfOrNull(selector: (T) 
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17675,7 +19064,11 @@ public inline fun <R : Comparable<R>> ByteArray.minOfOrNull(selector: (Byte) -> 
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17695,7 +19088,11 @@ public inline fun <R : Comparable<R>> ShortArray.minOfOrNull(selector: (Short) -
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17715,7 +19112,11 @@ public inline fun <R : Comparable<R>> IntArray.minOfOrNull(selector: (Int) -> R)
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17735,7 +19136,11 @@ public inline fun <R : Comparable<R>> LongArray.minOfOrNull(selector: (Long) -> 
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17755,7 +19160,11 @@ public inline fun <R : Comparable<R>> FloatArray.minOfOrNull(selector: (Float) -
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17775,7 +19184,11 @@ public inline fun <R : Comparable<R>> DoubleArray.minOfOrNull(selector: (Double)
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17795,7 +19208,11 @@ public inline fun <R : Comparable<R>> BooleanArray.minOfOrNull(selector: (Boolea
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each element in the array or `null` if there are no elements.
+ * applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17817,7 +19234,11 @@ public inline fun <R : Comparable<R>> CharArray.minOfOrNull(selector: (Char) -> 
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17839,7 +19260,11 @@ public inline fun <T, R> Array<out T>.minOfWith(comparator: Comparator<in R>, se
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17861,7 +19286,11 @@ public inline fun <R> ByteArray.minOfWith(comparator: Comparator<in R>, selector
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17883,7 +19312,11 @@ public inline fun <R> ShortArray.minOfWith(comparator: Comparator<in R>, selecto
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17905,7 +19338,11 @@ public inline fun <R> IntArray.minOfWith(comparator: Comparator<in R>, selector:
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17927,7 +19364,11 @@ public inline fun <R> LongArray.minOfWith(comparator: Comparator<in R>, selector
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17949,7 +19390,11 @@ public inline fun <R> FloatArray.minOfWith(comparator: Comparator<in R>, selecto
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17971,7 +19416,11 @@ public inline fun <R> DoubleArray.minOfWith(comparator: Comparator<in R>, select
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -17993,7 +19442,11 @@ public inline fun <R> BooleanArray.minOfWith(comparator: Comparator<in R>, selec
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each element in the array.
  * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18013,7 +19466,11 @@ public inline fun <R> CharArray.minOfWith(comparator: Comparator<in R>, selector
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18033,7 +19490,11 @@ public inline fun <T, R> Array<out T>.minOfWithOrNull(comparator: Comparator<in 
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18053,7 +19514,11 @@ public inline fun <R> ByteArray.minOfWithOrNull(comparator: Comparator<in R>, se
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18073,7 +19538,11 @@ public inline fun <R> ShortArray.minOfWithOrNull(comparator: Comparator<in R>, s
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18093,7 +19562,11 @@ public inline fun <R> IntArray.minOfWithOrNull(comparator: Comparator<in R>, sel
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18113,7 +19586,11 @@ public inline fun <R> LongArray.minOfWithOrNull(comparator: Comparator<in R>, se
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18133,7 +19610,11 @@ public inline fun <R> FloatArray.minOfWithOrNull(comparator: Comparator<in R>, s
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18153,7 +19634,11 @@ public inline fun <R> DoubleArray.minOfWithOrNull(comparator: Comparator<in R>, 
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18173,7 +19658,11 @@ public inline fun <R> BooleanArray.minOfWithOrNull(comparator: Comparator<in R>,
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each element in the array or `null` if there are no elements.
+ * among all values produced by [selector] function applied to each element in the array or `null` if the array is empty.
+ * 
+ * If multiple elements produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithPrimitive
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -18192,9 +19681,11 @@ public inline fun <R> CharArray.minOfWithOrNull(comparator: Comparator<in R>, se
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Array<out Double>.minOrNull(): Double? {
@@ -18208,9 +19699,11 @@ public fun Array<out Double>.minOrNull(): Double? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun Array<out Float>.minOrNull(): Float? {
@@ -18224,7 +19717,11 @@ public fun Array<out Float>.minOrNull(): Float? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
+ * 
+ * If there are multiple equal minimal elements, this function returns the first of those elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinGeneric
  */
 @SinceKotlin("1.4")
 public fun <T : Comparable<T>> Array<out T>.minOrNull(): T? {
@@ -18238,7 +19735,9 @@ public fun <T : Comparable<T>> Array<out T>.minOrNull(): T? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun ByteArray.minOrNull(): Byte? {
@@ -18252,7 +19751,9 @@ public fun ByteArray.minOrNull(): Byte? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun ShortArray.minOrNull(): Short? {
@@ -18266,7 +19767,9 @@ public fun ShortArray.minOrNull(): Short? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun IntArray.minOrNull(): Int? {
@@ -18280,7 +19783,9 @@ public fun IntArray.minOrNull(): Int? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun LongArray.minOrNull(): Long? {
@@ -18294,9 +19799,11 @@ public fun LongArray.minOrNull(): Long? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun FloatArray.minOrNull(): Float? {
@@ -18310,9 +19817,11 @@ public fun FloatArray.minOrNull(): Float? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
  * 
- * If any of elements is `NaN` returns `NaN`.
+ * If any of elements is `NaN`, this function returns `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinFloating
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.minOrNull(): Double? {
@@ -18326,7 +19835,9 @@ public fun DoubleArray.minOrNull(): Double? {
 }
 
 /**
- * Returns the smallest element or `null` if there are no elements.
+ * Returns the smallest element or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun CharArray.minOrNull(): Char? {
@@ -19593,7 +21104,6 @@ public inline fun CharArray.reduceIndexedOrNull(operation: (index: Int, acc: Cha
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Array<out T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
     if (isEmpty())
         return null
@@ -19616,7 +21126,6 @@ public inline fun <S, T : S> Array<out T>.reduceOrNull(operation: (acc: S, T) ->
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ByteArray.reduceOrNull(operation: (acc: Byte, Byte) -> Byte): Byte? {
     if (isEmpty())
         return null
@@ -19639,7 +21148,6 @@ public inline fun ByteArray.reduceOrNull(operation: (acc: Byte, Byte) -> Byte): 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ShortArray.reduceOrNull(operation: (acc: Short, Short) -> Short): Short? {
     if (isEmpty())
         return null
@@ -19662,7 +21170,6 @@ public inline fun ShortArray.reduceOrNull(operation: (acc: Short, Short) -> Shor
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun IntArray.reduceOrNull(operation: (acc: Int, Int) -> Int): Int? {
     if (isEmpty())
         return null
@@ -19685,7 +21192,6 @@ public inline fun IntArray.reduceOrNull(operation: (acc: Int, Int) -> Int): Int?
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun LongArray.reduceOrNull(operation: (acc: Long, Long) -> Long): Long? {
     if (isEmpty())
         return null
@@ -19708,7 +21214,6 @@ public inline fun LongArray.reduceOrNull(operation: (acc: Long, Long) -> Long): 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun FloatArray.reduceOrNull(operation: (acc: Float, Float) -> Float): Float? {
     if (isEmpty())
         return null
@@ -19731,7 +21236,6 @@ public inline fun FloatArray.reduceOrNull(operation: (acc: Float, Float) -> Floa
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun DoubleArray.reduceOrNull(operation: (acc: Double, Double) -> Double): Double? {
     if (isEmpty())
         return null
@@ -19754,7 +21258,6 @@ public inline fun DoubleArray.reduceOrNull(operation: (acc: Double, Double) -> D
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun BooleanArray.reduceOrNull(operation: (acc: Boolean, Boolean) -> Boolean): Boolean? {
     if (isEmpty())
         return null
@@ -19777,7 +21280,6 @@ public inline fun BooleanArray.reduceOrNull(operation: (acc: Boolean, Boolean) -
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharArray.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
     if (isEmpty())
         return null
@@ -20412,7 +21914,6 @@ public inline fun CharArray.reduceRightIndexedOrNull(operation: (index: Int, Cha
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Array<out T>.reduceRightOrNull(operation: (T, acc: S) -> S): S? {
     var index = lastIndex
     if (index < 0) return null
@@ -20435,7 +21936,6 @@ public inline fun <S, T : S> Array<out T>.reduceRightOrNull(operation: (T, acc: 
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ByteArray.reduceRightOrNull(operation: (Byte, acc: Byte) -> Byte): Byte? {
     var index = lastIndex
     if (index < 0) return null
@@ -20458,7 +21958,6 @@ public inline fun ByteArray.reduceRightOrNull(operation: (Byte, acc: Byte) -> By
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ShortArray.reduceRightOrNull(operation: (Short, acc: Short) -> Short): Short? {
     var index = lastIndex
     if (index < 0) return null
@@ -20481,7 +21980,6 @@ public inline fun ShortArray.reduceRightOrNull(operation: (Short, acc: Short) ->
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun IntArray.reduceRightOrNull(operation: (Int, acc: Int) -> Int): Int? {
     var index = lastIndex
     if (index < 0) return null
@@ -20504,7 +22002,6 @@ public inline fun IntArray.reduceRightOrNull(operation: (Int, acc: Int) -> Int):
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun LongArray.reduceRightOrNull(operation: (Long, acc: Long) -> Long): Long? {
     var index = lastIndex
     if (index < 0) return null
@@ -20527,7 +22024,6 @@ public inline fun LongArray.reduceRightOrNull(operation: (Long, acc: Long) -> Lo
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun FloatArray.reduceRightOrNull(operation: (Float, acc: Float) -> Float): Float? {
     var index = lastIndex
     if (index < 0) return null
@@ -20550,7 +22046,6 @@ public inline fun FloatArray.reduceRightOrNull(operation: (Float, acc: Float) ->
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun DoubleArray.reduceRightOrNull(operation: (Double, acc: Double) -> Double): Double? {
     var index = lastIndex
     if (index < 0) return null
@@ -20573,7 +22068,6 @@ public inline fun DoubleArray.reduceRightOrNull(operation: (Double, acc: Double)
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun BooleanArray.reduceRightOrNull(operation: (Boolean, acc: Boolean) -> Boolean): Boolean? {
     var index = lastIndex
     if (index < 0) return null
@@ -20596,7 +22090,6 @@ public inline fun BooleanArray.reduceRightOrNull(operation: (Boolean, acc: Boole
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharArray.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
     var index = lastIndex
     if (index < 0) return null
@@ -21058,7 +22551,6 @@ public inline fun <R> CharArray.runningFoldIndexed(initial: R, operation: (index
  * @sample samples.collections.Collections.Aggregates.runningReduce
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Array<out T>.runningReduce(operation: (acc: S, T) -> S): List<S> {
     if (isEmpty()) return emptyList()
     var accumulator: S = this[0]
@@ -21450,7 +22942,6 @@ public inline fun CharArray.runningReduceIndexed(operation: (index: Int, acc: Ch
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <T, R> Array<out T>.scan(initial: R, operation: (acc: R, T) -> R): List<R> {
     return runningFold(initial, operation)
 }
@@ -21467,7 +22958,6 @@ public inline fun <T, R> Array<out T>.scan(initial: R, operation: (acc: R, T) ->
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ByteArray.scan(initial: R, operation: (acc: R, Byte) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21485,7 +22975,6 @@ public inline fun <R> ByteArray.scan(initial: R, operation: (acc: R, Byte) -> R)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ShortArray.scan(initial: R, operation: (acc: R, Short) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21503,7 +22992,6 @@ public inline fun <R> ShortArray.scan(initial: R, operation: (acc: R, Short) -> 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> IntArray.scan(initial: R, operation: (acc: R, Int) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21521,7 +23009,6 @@ public inline fun <R> IntArray.scan(initial: R, operation: (acc: R, Int) -> R): 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> LongArray.scan(initial: R, operation: (acc: R, Long) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21539,7 +23026,6 @@ public inline fun <R> LongArray.scan(initial: R, operation: (acc: R, Long) -> R)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> FloatArray.scan(initial: R, operation: (acc: R, Float) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21557,7 +23043,6 @@ public inline fun <R> FloatArray.scan(initial: R, operation: (acc: R, Float) -> 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> DoubleArray.scan(initial: R, operation: (acc: R, Double) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21575,7 +23060,6 @@ public inline fun <R> DoubleArray.scan(initial: R, operation: (acc: R, Double) -
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> BooleanArray.scan(initial: R, operation: (acc: R, Boolean) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21593,7 +23077,6 @@ public inline fun <R> BooleanArray.scan(initial: R, operation: (acc: R, Boolean)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> CharArray.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21612,7 +23095,6 @@ public inline fun <R> CharArray.scan(initial: R, operation: (acc: R, Char) -> R)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <T, R> Array<out T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
 }
@@ -21630,7 +23112,6 @@ public inline fun <T, R> Array<out T>.scanIndexed(initial: R, operation: (index:
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ByteArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21649,7 +23130,6 @@ public inline fun <R> ByteArray.scanIndexed(initial: R, operation: (index: Int, 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ShortArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21668,7 +23148,6 @@ public inline fun <R> ShortArray.scanIndexed(initial: R, operation: (index: Int,
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> IntArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21687,7 +23166,6 @@ public inline fun <R> IntArray.scanIndexed(initial: R, operation: (index: Int, a
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> LongArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21706,7 +23184,6 @@ public inline fun <R> LongArray.scanIndexed(initial: R, operation: (index: Int, 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> FloatArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21725,7 +23202,6 @@ public inline fun <R> FloatArray.scanIndexed(initial: R, operation: (index: Int,
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> DoubleArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21744,7 +23220,6 @@ public inline fun <R> DoubleArray.scanIndexed(initial: R, operation: (index: Int
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> BooleanArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21763,7 +23238,6 @@ public inline fun <R> BooleanArray.scanIndexed(initial: R, operation: (index: In
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> CharArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -22151,8 +23625,6 @@ public inline fun CharArray.sumOf(selector: (Char) -> Double): Double {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.sumOf(selector: (T) -> Int): Int {
@@ -22167,8 +23639,6 @@ public inline fun <T> Array<out T>.sumOf(selector: (T) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sumOf(selector: (Byte) -> Int): Int {
@@ -22183,8 +23653,6 @@ public inline fun ByteArray.sumOf(selector: (Byte) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sumOf(selector: (Short) -> Int): Int {
@@ -22199,8 +23667,6 @@ public inline fun ShortArray.sumOf(selector: (Short) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sumOf(selector: (Int) -> Int): Int {
@@ -22215,8 +23681,6 @@ public inline fun IntArray.sumOf(selector: (Int) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sumOf(selector: (Long) -> Int): Int {
@@ -22231,8 +23695,6 @@ public inline fun LongArray.sumOf(selector: (Long) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sumOf(selector: (Float) -> Int): Int {
@@ -22247,8 +23709,6 @@ public inline fun FloatArray.sumOf(selector: (Float) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sumOf(selector: (Double) -> Int): Int {
@@ -22263,8 +23723,6 @@ public inline fun DoubleArray.sumOf(selector: (Double) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.sumOf(selector: (Boolean) -> Int): Int {
@@ -22279,8 +23737,6 @@ public inline fun BooleanArray.sumOf(selector: (Boolean) -> Int): Int {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sumOf(selector: (Char) -> Int): Int {
@@ -22439,10 +23895,7 @@ public inline fun CharArray.sumOf(selector: (Char) -> Long): Long {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.sumOf(selector: (T) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22456,10 +23909,7 @@ public inline fun <T> Array<out T>.sumOf(selector: (T) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sumOf(selector: (Byte) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22473,10 +23923,7 @@ public inline fun ByteArray.sumOf(selector: (Byte) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sumOf(selector: (Short) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22490,10 +23937,7 @@ public inline fun ShortArray.sumOf(selector: (Short) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sumOf(selector: (Int) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22507,10 +23951,7 @@ public inline fun IntArray.sumOf(selector: (Int) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sumOf(selector: (Long) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22524,10 +23965,7 @@ public inline fun LongArray.sumOf(selector: (Long) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sumOf(selector: (Float) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22541,10 +23979,7 @@ public inline fun FloatArray.sumOf(selector: (Float) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sumOf(selector: (Double) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22558,10 +23993,7 @@ public inline fun DoubleArray.sumOf(selector: (Double) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.sumOf(selector: (Boolean) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22575,10 +24007,7 @@ public inline fun BooleanArray.sumOf(selector: (Boolean) -> UInt): UInt {
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.5")
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sumOf(selector: (Char) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -22595,7 +24024,6 @@ public inline fun CharArray.sumOf(selector: (Char) -> UInt): UInt {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.sumOf(selector: (T) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22612,7 +24040,6 @@ public inline fun <T> Array<out T>.sumOf(selector: (T) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sumOf(selector: (Byte) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22629,7 +24056,6 @@ public inline fun ByteArray.sumOf(selector: (Byte) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sumOf(selector: (Short) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22646,7 +24072,6 @@ public inline fun ShortArray.sumOf(selector: (Short) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sumOf(selector: (Int) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22663,7 +24088,6 @@ public inline fun IntArray.sumOf(selector: (Int) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sumOf(selector: (Long) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22680,7 +24104,6 @@ public inline fun LongArray.sumOf(selector: (Long) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sumOf(selector: (Float) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22697,7 +24120,6 @@ public inline fun FloatArray.sumOf(selector: (Float) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sumOf(selector: (Double) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22714,7 +24136,6 @@ public inline fun DoubleArray.sumOf(selector: (Double) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.sumOf(selector: (Boolean) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22731,7 +24152,6 @@ public inline fun BooleanArray.sumOf(selector: (Boolean) -> ULong): ULong {
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sumOf(selector: (Char) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -22755,7 +24175,7 @@ public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22775,7 +24195,7 @@ public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<Li
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22795,7 +24215,7 @@ public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<B
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22815,7 +24235,7 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22835,7 +24255,7 @@ public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22855,7 +24275,7 @@ public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<L
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22875,7 +24295,7 @@ public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22895,7 +24315,7 @@ public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<Li
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -22915,7 +24335,7 @@ public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<
 }
 
 /**
- * Splits the original array into pair of lists,
+ * Splits the original array into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
@@ -23634,8 +25054,11 @@ public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Ch
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23656,8 +25079,11 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23681,8 +25107,11 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23706,8 +25135,11 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23731,8 +25163,11 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence =
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23756,8 +25191,11 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23781,8 +25219,11 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23806,8 +25247,11 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequenc
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -23831,8 +25275,11 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequen
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0

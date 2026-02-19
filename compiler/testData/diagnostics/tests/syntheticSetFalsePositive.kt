@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: JavaClass.java
 import java.util.List;
@@ -13,3 +14,6 @@ fun foo(x: JavaClass<in CharSequence>, l: MutableList<out CharSequence>) {
     x.setFoo(l) // OK
     x.foo = l // Should be OK, too
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, inProjection, javaProperty, javaType,
+outProjection */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: +BreakContinueInInlineLambdas
 
@@ -8,3 +9,5 @@ fun test() {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: break, functionDeclaration, functionalType, lambdaLiteral, whileLoop */

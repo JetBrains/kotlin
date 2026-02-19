@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 package one
 
@@ -15,3 +16,6 @@ interface NextMissing {
 interface NextMissing2 {
     operator fun hasNext(): Boolean
 }
+
+/* GENERATED_FIR_TAGS: forLoop, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localProperty,
+operator, propertyDeclaration */

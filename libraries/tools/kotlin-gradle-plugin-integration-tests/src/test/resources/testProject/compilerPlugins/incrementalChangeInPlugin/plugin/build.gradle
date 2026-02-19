@@ -8,6 +8,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable"
 }
 
+kotlin.jvmToolchain(8)
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -22,49 +21,53 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 
-internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
-    ::AnonymousObjectSuperConstructorLowering,
-    name = "AnonymousObjectSuperConstructor",
-    description = "Move evaluation of anonymous object super constructor arguments to call site"
-)
-
-// Transform code like this:
-//
-//      object : SuperType(complexExpression) {}
-//
-// which looks like this in the IR:
-//
-//      run {
-//          class _anonymous : SuperType(complexExpression) {}
-//          _anonymous()
-//      }
-//
-// into this:
-//
-//      run {
-//          class _anonymous(arg: T) : SuperType(arg) {}
-//          _anonymous(complexExpression)
-//      }
-//
-// The reason for doing such a transformation is the inliner: if the object is declared
-// in an inline function, `complexExpression` may be a call to a lambda, which will be
-// inlined into regenerated copies of the object. Unfortunately, if that lambda captures
-// some values, the inliner does not notice that `this` is not yet initialized, and
-// attempts to read them from fields, causing a bytecode validation error.
-//
-// (TODO fix the inliner instead. Then keep this code for one more version for backwards compatibility.)
-private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
+/**
+ * Moves evaluation of anonymous object super constructor arguments to call site. Specifically, transforms code like this:
+ *
+ *      object : SuperType(complexExpression) {}
+ *
+ * which looks like this in the IR:
+ *
+ *      run {
+ *          class _anonymous : SuperType(complexExpression) {}
+ *          _anonymous()
+ *      }
+ *
+ * into this:
+ *
+ *      run {
+ *          class _anonymous(arg: T) : SuperType(arg) {}
+ *          _anonymous(complexExpression)
+ *      }
+ *
+ * The reason for doing such a transformation is the inliner: if the object is declared
+ * in an inline function, `complexExpression` may be a call to a lambda, which will be
+ * inlined into regenerated copies of the object. Unfortunately, if that lambda captures
+ * some values, the inliner does not notice that `this` is not yet initialized, and
+ * attempts to read them from fields, causing a bytecode validation error.
+ *
+ * (TODO fix the inliner instead. Then keep this code for one more version for backwards compatibility.)
+ */
+internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid()
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression.origin != IrStatementOrigin.OBJECT_LITERAL)
+        if (
+            expression.origin != IrStatementOrigin.OBJECT_LITERAL ||
+            context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+        ) {
             return super.visitBlock(expression)
+        }
 
         val objectConstructorCall = expression.statements.last() as? IrConstructorCall
             ?: throw AssertionError("object literal does not end in a constructor call")
@@ -82,7 +85,7 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
 
         fun IrExpression.transform(remapping: Map<IrVariable, IrValueParameter>): IrExpression =
             when (this) {
-                is IrConst<*> -> this
+                is IrConst -> this
                 is IrGetValue -> IrGetValueImpl(startOffset, endOffset, remapping[symbol.owner]?.symbol ?: symbol)
                 is IrTypeOperatorCall ->
                     IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, argument.transform(remapping))
@@ -91,8 +94,8 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
 
         fun IrDelegatingConstructorCall.transform(lift: List<IrVariable>) = apply {
             val remapping = lift.associateWith { addArgument(it.initializer!!) }
-            for (i in symbol.owner.valueParameters.indices) {
-                putValueArgument(i, getValueArgument(i)?.transform(remapping))
+            for (parameter in symbol.owner.parameters) {
+                arguments[parameter] = arguments[parameter]?.transform(remapping)
             }
         }
 
@@ -113,22 +116,18 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
             }
         }
 
-        val classTypeParametersCount = objectConstructorCall.typeArgumentsCount - objectConstructorCall.symbol.owner.typeParameters.size
+        val classTypeParametersCount = objectConstructorCall.typeArguments.size - objectConstructorCall.symbol.owner.typeParameters.size
         context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             expression.statements[expression.statements.size - 1] = irBlock(objectConstructorCall) {
                 +IrConstructorCallImpl.fromSymbolOwner(
                     objectConstructorCall.startOffset, objectConstructorCall.endOffset, objectConstructorCall.type,
                     objectConstructorCall.symbol, classTypeParametersCount, objectConstructorCall.origin
                 ).apply {
-                    for (i in 0 until objectConstructorCall.valueArgumentsCount)
-                        putValueArgument(i, objectConstructorCall.getValueArgument(i))
+                    arguments.assignFrom(objectConstructorCall.arguments)
                     // Avoid complex expressions between `new` and `<init>`, as the inliner gets confused if
                     // an argument to `<init>` is an anonymous object. Put them in variables instead.
                     // See KT-21781 for an example; in short, it looks like `object : S({ ... })` in an inline function.
-                    for ((i, argument) in newArguments.withIndex()) {
-                        argument.patchDeclarationParents(currentDeclarationParent)
-                        putValueArgument(i + objectConstructorCall.valueArgumentsCount, irGet(irTemporary(argument)))
-                    }
+                    arguments += newArguments.map { irGet(irTemporary(it.patchDeclarationParents(currentDeclarationParent))) }
                 }
             }
         }

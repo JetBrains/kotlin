@@ -1,0 +1,8 @@
+STEP 0:
+    arguments: -Xklib-ir-inliner=intra-module
+    dependencies: stdlib
+STEP 1:
+    arguments: -Xklib-ir-inliner=intra-module
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1 -> l1.kt

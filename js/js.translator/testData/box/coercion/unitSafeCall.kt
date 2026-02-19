@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1284
 class C {
     fun foo() {}
 }

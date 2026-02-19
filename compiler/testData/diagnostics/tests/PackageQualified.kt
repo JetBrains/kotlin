@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: a.kt
 
@@ -69,3 +69,6 @@ abstract class Collection<E> : Iterable<E> {
       return current.done()
   }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, functionDeclaration, ifExpression, in, localProperty,
+nullableType, out, override, primaryConstructor, propertyDeclaration, thisExpression, typeParameter */

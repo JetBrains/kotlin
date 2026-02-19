@@ -4,12 +4,12 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
 }
 
 dependencies {
     implementation("org.jetbrains.dukat:dukat:0.5.8-rc.5")
-    implementation("org.jsoup:jsoup:1.14.2")
+    implementation(libs.jsoup)
 }
 
 task("downloadIDL", JavaExec::class) {

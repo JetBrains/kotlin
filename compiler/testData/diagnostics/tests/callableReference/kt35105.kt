@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -19,3 +20,6 @@ class Testclass {
         distinct(Testclass::entry, "filter")
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, functionDeclaration, inline, outProjection,
+propertyDeclaration, reified, stringLiteral, typeConstraint, typeParameter, vararg */

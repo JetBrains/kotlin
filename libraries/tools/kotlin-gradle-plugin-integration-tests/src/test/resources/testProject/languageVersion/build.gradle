@@ -9,7 +9,7 @@ repositories {
 
 compileKotlin {
     kotlinOptions {
-        languageVersion = "1.5"
-        apiVersion = "1.5"
+        languageVersion = "2.1"
+        apiVersion = "2.1"
     }
 }

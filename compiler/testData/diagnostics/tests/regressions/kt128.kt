@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-128 Support passing only the last closure if all the other parameters have default values
 
@@ -11,3 +12,5 @@ fun f() {
       // ...
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
@@ -21,11 +21,11 @@ internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
  * be iterated over.
  * @param T the type of element being iterated over. The iterator is covariant in its element type.
  */
-public interface Iterable<out T> {
+public actual interface Iterable<out T> {
     /**
      * Returns an iterator over the elements of this object.
      */
-    public operator fun iterator(): Iterator<T>
+    public actual operator fun iterator(): Iterator<T>
 }
 
 /**
@@ -33,11 +33,11 @@ public interface Iterable<out T> {
  * be iterated over and that supports removing elements during iteration.
  * @param T the type of element being iterated over. The mutable iterator is invariant in its element type.
  */
-public interface MutableIterable<out T> : Iterable<T> {
+public actual interface MutableIterable<out T> : Iterable<T> {
     /**
      * Returns an iterator over the elements of this sequence that supports removing elements during iteration.
      */
-    override fun iterator(): MutableIterator<T>
+    actual override fun iterator(): MutableIterator<T>
 }
 
 
@@ -81,9 +81,9 @@ public actual fun <T> MutableList<T>.fill(value: T): Unit {
 }
 
 /**
- * Randomly shuffles elements in this list.
+ * Randomly shuffles elements in this list in-place.
  *
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.2")
 public actual fun <T> MutableList<T>.shuffle(): Unit {
@@ -96,32 +96,37 @@ public actual fun <T> MutableList<T>.shuffle(): Unit {
 }
 
 /**
- * Returns a new list with the elements of this list randomly shuffled.
+ * Returns a new list with the elements of this collection randomly shuffled.
  */
 @SinceKotlin("1.2")
 public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
+@IgnorableReturnValue
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly
 internal actual inline fun checkIndexOverflow(index: Int): Int {
     if (index < 0) {
-        // TODO: api version check?
         throwIndexOverflow()
     }
     return index
 }
 
+@IgnorableReturnValue
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly
 internal actual inline fun checkCountOverflow(count: Int): Int {
     if (count < 0) {
-        // TODO: api version check?
         throwCountOverflow()
     }
     return count
 }
+
+/**
+ * Replaces each element in the list with a result of a transformation specified.
+ */
+internal expect fun <T> MutableList<T>.replaceAll(transformation: (T) -> T)
 
 /**
  * Returns a new read-only list containing only the specified object [element].
@@ -130,3 +135,10 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
  */
 @SinceKotlin("1.9")
 public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)
+
+/**
+ * Returns a new [ArrayList] from the given Array.
+ */
+@kotlin.internal.InlineOnly
+internal actual inline fun <T> Array<out T>.asArrayList(): ArrayList<T> =
+    ArrayList(asCollection(isVarargs = true))

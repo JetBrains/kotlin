@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-41308, KT-47830
 
@@ -8,3 +9,6 @@ fun main() {
         yieldAll(outputList)
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration */
