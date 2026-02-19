@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("generated-sources")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -24,6 +25,7 @@ optInToUnsafeDuringIrConstructionAPI()
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+    "testFixtures" { projectDefault() }
 }
 
 tasks.withType<KotlinJvmCompile> {
