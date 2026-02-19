@@ -47,9 +47,9 @@ import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
-import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
+import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
@@ -101,7 +101,7 @@ class WasmLoweringFacade(
         val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
         with(configuration) {
             phaseConfig = phaseConfigToConfigure
-            outputName = "index"
+            outputName = WASM_BASE_FILE_NAME
             outputDir = outputDirBase
             configureWith(testServices.moduleStructure.allDirectives)
         }

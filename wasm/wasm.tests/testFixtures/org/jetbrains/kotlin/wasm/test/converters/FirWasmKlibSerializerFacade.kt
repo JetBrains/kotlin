@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
 
 class FirWasmKlibSerializerFacade(
     testServices: TestServices,
@@ -75,7 +76,7 @@ class FirWasmKlibSerializerFacade(
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 jsOutputName = if (WasmEnvironmentConfigurator.isMainModule(module, testServices)) {
-                    "index"
+                    WASM_BASE_FILE_NAME
                 } else moduleName,
                 builtInsPlatform = BuiltInsPlatform.WASM,
                 wasmTarget = target,
