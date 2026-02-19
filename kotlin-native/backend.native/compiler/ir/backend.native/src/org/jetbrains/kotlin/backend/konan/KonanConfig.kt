@@ -458,11 +458,14 @@ class KonanConfig(
         get() = AllocationMode.CUSTOM
 
     val allocationMode by lazy {
+        AllocationMode.STD
+        /*
         (configuration.allocationMode ?: defaultAllocationMode).also {
             if (it == AllocationMode.CUSTOM && sanitizer != null && pagedAllocator) {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are not useful with the paged allocator")
             }
         }
+        */
     }
 
     val minidumpLocation by lazy {
