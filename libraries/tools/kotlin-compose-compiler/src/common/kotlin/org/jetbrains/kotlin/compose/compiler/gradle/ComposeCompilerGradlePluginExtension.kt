@@ -58,6 +58,22 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     val includeSourceInformation: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
+     * Include source information in generated code for specific targets.
+     *
+     * This property takes effect only when [includeSourceInformation] is true.
+     * Otherwise, source information is not included for all targets regardless of the [includeSourceInformationForTargets] value.
+     *
+     * By default, it is enabled only for JVM targets.
+     * For non-JVM targets, the option is disabled by default to compensate for the additional overhead and absence of tools capable of
+     * removing the sourceInformation from the production binaries.
+     *
+     * @see includeSourceInformation
+     */
+    val includeSourceInformationForTargets: SetProperty<KotlinPlatformType> = objectFactory
+        .setProperty(KotlinPlatformType::class.java)
+        .convention(setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm))
+
+    /**
      * Save Compose build metrics to this folder.
      *
      * When specified, the Compose compiler will dump metrics about the current module, which can be useful when manually optimizing your
@@ -179,6 +195,22 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *  - [composition tracing blog post](https://medium.com/androiddevelopers/jetpack-compose-composition-tracing-9ec2b3aea535)
      */
     val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
+
+    /**
+     * Include composition trace markers in the generated code for specific targets.
+     *
+     * This property takes effect only when [includeTraceMarkers] is true.
+     * Otherwise, trace markers are not included for all targets regardless of the [includeTraceMarkersForTargets] value.
+     *
+     * By default, it is enabled only for JVM targets.
+     * For non-JVM targets, the option is disabled by default to compensate for the additional overhead and absence of tools capable of
+     * removing the trace markers from the production binaries.
+     *
+     * @see includeTraceMarkers
+     */
+    val includeTraceMarkersForTargets: SetProperty<KotlinPlatformType> = objectFactory
+        .setProperty(KotlinPlatformType::class.java)
+        .convention(setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm))
 
     /**
      * A set of Kotlin platforms to which the Compose compiler plugin will be applied.
