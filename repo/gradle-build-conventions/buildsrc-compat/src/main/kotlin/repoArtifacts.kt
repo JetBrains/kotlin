@@ -304,7 +304,7 @@ fun Project.publishJarsForIde(
     libraryDependencies: List<String> = emptyList(),
     jarTaskConfiguration: Jar.() -> Unit = {},
 ) {
-    val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
+    val projectsUsedInIntelliJKotlinPlugin = ProjectModuleLists.projectsUsedInIntelliJKotlinPlugin
 
     for (projectName in projects) {
         check(projectName in projectsUsedInIntelliJKotlinPlugin) {

@@ -85,7 +85,7 @@ object IdeVersionConfigurator {
     lateinit var currentIde: Ide
 
     fun setCurrentIde(project: Project) {
-        val platformVersion = project.rootProject.extensions.extraProperties["versions.platform"].toString()
+        val platformVersion = project.extensions.extraProperties["versions.platform"].toString()
         val ideName = if (platformVersion.startsWith("AS")) platformVersion else "IJ$platformVersion"
         currentIde = Ide.valueOf(ideName)
     }

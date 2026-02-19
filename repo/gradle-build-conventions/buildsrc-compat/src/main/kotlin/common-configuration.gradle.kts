@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 // Contains common configuration that should be applied to all projects
 
 // Common Group and version
-val kotlinVersion: String by rootProject.extra
+val defaultSnapshotVersion: String = providers.gradleProperty("defaultSnapshotVersion").get()
+val buildNumber: String = providers.gradleProperty("build.number").orElse(provider { defaultSnapshotVersion }).get()
+val kotlinVersion: String = providers.gradleProperty("deployVersion").orNull?.let { deploySnapshotStr ->
+    if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
+} ?: buildNumber
 group = "org.jetbrains.kotlin"
 version = kotlinVersion
 
@@ -94,15 +98,15 @@ fun Project.configureJavaBasePlugin() {
     }
 }
 
-val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
+val projectsUsedInIntelliJKotlinPlugin: Array<String> = ProjectModuleLists.projectsUsedInIntelliJKotlinPlugin
+val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String =
+    providers.gradleProperty("kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin").get()
 
 /**
  * In all specified modules `-XXexplicit-return-types` flag will be added to warn about
  *   not specified return types for public declarations
  */
-@Suppress("UNCHECKED_CAST")
-val modulesWithRequiredExplicitTypes = rootProject.extra["firAllCompilerModules"] as Array<String>
+val modulesWithRequiredExplicitTypes = ProjectModuleLists.firAllCompilerModules
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
@@ -113,7 +117,7 @@ fun Project.configureKotlinCompilationOptions() {
             "-Xcontext-parameters", // KT-72222
         )
 
-        val kotlinLanguageVersion: String by rootProject.extra
+        val kotlinLanguageVersion = providers.gradleProperty("kotlinLanguageVersion").get()
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -155,7 +159,7 @@ fun Project.configureKotlinCompilationOptions() {
             }
         }
 
-        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
+        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib = ProjectModuleLists.projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib
 
         tasks.withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
@@ -427,7 +431,7 @@ fun Project.configureTests() {
 
     // Aggregate task for build related checks
     tasks.register("checkBuild")
-    val mppProjects: List<String> by rootProject.extra
+    val mppProjects = ProjectModuleLists.mppProjects
     if (path !in mppProjects) {
         configureTestRetriesForTestTasks()
     }
