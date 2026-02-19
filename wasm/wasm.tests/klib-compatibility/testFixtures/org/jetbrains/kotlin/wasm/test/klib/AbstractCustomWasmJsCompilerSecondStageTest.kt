@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppresso
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.blackbox.CustomWasmJsCompilerSecondStageFacade
@@ -42,11 +44,29 @@ import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
 import org.junit.jupiter.api.Tag
+import java.io.File
 
 @Tag("custom-second-stage")
 open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String = "compiler/testData/codegen/") :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.WASM_JS)
 {
+    override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
+        return if (customWasmJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
+            super.createKotlinStandardLibrariesPathProvider()
+        else
+            object : KotlinStandardLibrariesPathProvider by StandardLibrariesPathProviderForKotlinProject {
+                override fun fullWasmStdlib(target: WasmTarget): File {
+                    require(target == WasmTarget.JS)
+                    return customWasmJsCompilerSettings.stdlib
+                }
+
+                override fun kotlinTestWasmKLib(target: WasmTarget): File {
+                    require(target == WasmTarget.JS)
+                    return customWasmJsCompilerSettings.kotlinTest
+                }
+            }
+    }
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useSourcePreprocessor(::JsExportBoxPreprocessor)
         useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)

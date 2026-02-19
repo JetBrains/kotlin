@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_SCRIP
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_TEST_JAR_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WEB_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -108,6 +109,16 @@ interface KotlinStandardLibrariesPathProvider : TestService {
      * kotlin-test-js.jar
      */
     fun kotlinTestJsKLib(): File
+
+    /**
+     * kotlin-stdlib-<WasmTarget>.klib
+     */
+    fun fullWasmStdlib(target: WasmTarget): File
+
+    /**
+     * kotlin-test-<WasmTarget>.jar
+     */
+    fun kotlinTestWasmKLib(target: WasmTarget): File
 
     fun webStdlibForTests(): File
 
@@ -217,6 +228,12 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     override fun fullJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_STDLIB_KLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
     override fun defaultJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_REDUCED_STDLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
     override fun kotlinTestJsKLib(): File = extractFromPropertyFirst(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH) { "kotlin-test-js.klib".dist() }
+    override fun fullWasmStdlib(target: WasmTarget): File =
+        extractFromPropertyFirst("kotlin.${target.alias}.stdlib.path") { "kotlin-stdlib-${target.alias}.klib".dist() }
+
+    override fun kotlinTestWasmKLib(target: WasmTarget): File =
+        extractFromPropertyFirst("kotlin.${target.alias}.kotlin.test.path") { "kotlin-test-${target.alias}.klib".dist() }
+
     override fun scriptingPluginFilesForTests(): Collection<File> =
         extractFromPropertyFirstFiles(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH) {
             val libPath = PathUtil.kotlinPathsForCompiler.libPath
@@ -301,6 +318,8 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun fullJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
     override fun defaultJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
     override fun kotlinTestJsKLib(): File = getFile(KOTLIN_TEST_JS_PROP)
+    override fun fullWasmStdlib(target: WasmTarget): File = getFile("$KOTLIN_STDLIB_PROP-${target.alias}")
+    override fun kotlinTestWasmKLib(target: WasmTarget): File = getFile("$KOTLIN_TEST_PROP-${target.alias}")
     override fun commonStdlibForTests(): File = getFile(KOTLIN_COMMON_STDLIB_PATH)
     override fun webStdlibForTests(): File = TODO("Not implemented")
     override fun scriptingPluginFilesForTests(): Collection<File> {

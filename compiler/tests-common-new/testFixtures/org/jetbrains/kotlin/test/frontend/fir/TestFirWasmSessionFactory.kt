@@ -96,7 +96,7 @@ fun getWasmDependencies(
     testServices: TestServices,
     target: WasmTarget,
 ): Triple<List<String>, List<File>, List<File>> {
-    val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(target)
+    val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(target, testServices)
     val transitiveLibraries = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
     val friendLibraries = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
     return Triple(runtimeKlibsPaths, transitiveLibraries, friendLibraries)
