@@ -63,7 +63,7 @@ abstract class WasmDeserializerFacadeBase(
     open fun loadKLibs(module: TestModule, mainModule: MainModule.Klib, configuration: CompilerConfiguration): LoadedKlibs {
         val wasmTarget = configuration.wasmTarget
 
-        val runtimeKlibs: List<String> = WasmEnvironmentConfigurator.getRuntimePathsForModule(wasmTarget)
+        val runtimeKlibs: List<String> = WasmEnvironmentConfigurator.getRuntimePathsForModule(wasmTarget, testServices)
         val klibDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
             .map { it.absolutePath }
         val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)

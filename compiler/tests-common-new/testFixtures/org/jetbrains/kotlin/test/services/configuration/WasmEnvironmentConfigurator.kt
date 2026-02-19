@@ -39,12 +39,18 @@ abstract class WasmEnvironmentConfigurator(
         get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
     companion object {
-        fun getRuntimePathsForModule(target: WasmTarget): List<String> {
-            return listOf(stdlibPath(target), kotlinTestPath(target))
+        fun getRuntimePathsForModule(target: WasmTarget, testServices: TestServices): List<String> {
+            return listOf(stdlibPath(target, testServices), kotlinTestPath(target, testServices))
         }
 
         fun kotlinTestPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.kotlin.test.path")!!
         fun stdlibPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.stdlib.path")!!
+
+        fun kotlinTestPath(target: WasmTarget, testServices: TestServices): String =
+            testServices.standardLibrariesPathProvider.fullWasmStdlib(target).absolutePath
+
+        fun stdlibPath(target: WasmTarget, testServices: TestServices): String =
+            testServices.standardLibrariesPathProvider.kotlinTestWasmKLib(target).absolutePath
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
@@ -94,7 +100,7 @@ class WasmFirstStageEnvironmentConfigurator(
 
         val dependencies = module.regularDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
         val friends = module.friendDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
-        val libraries = getRuntimePathsForModule(wasmTarget) + dependencies + friends
+        val libraries = getRuntimePathsForModule(wasmTarget, testServices) + dependencies + friends
 
         configuration.libraries = libraries
         configuration.friendLibraries = friends

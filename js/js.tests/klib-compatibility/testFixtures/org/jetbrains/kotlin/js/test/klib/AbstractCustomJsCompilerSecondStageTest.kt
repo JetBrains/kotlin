@@ -37,7 +37,7 @@ import java.io.File
 open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return if (customJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
-            StandardLibrariesPathProviderForKotlinProject
+            createKotlinStandardLibrariesPathProvider()
         else
             object : KotlinStandardLibrariesPathProvider by StandardLibrariesPathProviderForKotlinProject {
                 override fun fullJsStdlib(): File = customJsCompilerSettings.stdlib
