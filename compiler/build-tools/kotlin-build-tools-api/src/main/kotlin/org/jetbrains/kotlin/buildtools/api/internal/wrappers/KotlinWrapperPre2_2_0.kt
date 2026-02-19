@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:OptIn(ExperimentalBuildToolsApi::class)
-@file:Suppress("DEPRECATION_ERROR")
+@file:Suppress("DEPRECATION_ERROR", "ClassName")
 
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import java.io.File
 
-internal class PreKotlin220Wrapper(
+internal class KotlinWrapperPre2_2_0(
     private val base: CompilationService
 ) : CompilationService by base {
     override fun makeJvmCompilationConfiguration(): JvmCompilationConfiguration {
-        return Pre220JvmCompilationConfigurationWrapper(
+        return JvmCompilationConfigurationWrapperPre2_2_0(
             base.makeJvmCompilationConfiguration(),
             getCompilerVersion(),
         )
@@ -28,7 +28,7 @@ internal class PreKotlin220Wrapper(
         sources: List<File>,
         arguments: List<String>
     ): CompilationResult {
-        val unwrappedCompilationConfig = if (compilationConfig is Pre220JvmCompilationConfigurationWrapper) {
+        val unwrappedCompilationConfig = if (compilationConfig is JvmCompilationConfigurationWrapperPre2_2_0) {
             compilationConfig.base
         } else {
             compilationConfig
@@ -52,7 +52,7 @@ internal class PreKotlin220Wrapper(
     }
 }
 
-private class Pre220JvmCompilationConfigurationWrapper(
+private class JvmCompilationConfigurationWrapperPre2_2_0(
     val base: JvmCompilationConfiguration,
     private val kotlinVersion: String,
 ) : JvmCompilationConfiguration {
@@ -73,7 +73,7 @@ private class Pre220JvmCompilationConfigurationWrapper(
 
     override fun makeClasspathSnapshotBasedIncrementalCompilationConfiguration(
     ): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
-        return Pre220ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration(
+        return ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationWrapperPre2_2_0(
             base.makeClasspathSnapshotBasedIncrementalCompilationConfiguration(),
             logger,
             kotlinVersion,
@@ -87,7 +87,7 @@ private class Pre220JvmCompilationConfigurationWrapper(
         options: IncrementalJvmCompilationConfiguration<P>
     ) {
         val unwrappedICConfig: IncrementalJvmCompilationConfiguration<P> =
-            if (options is Pre220ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration) {
+            if (options is ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationWrapperPre2_2_0) {
                 @Suppress("UNCHECKED_CAST")
                 options.base as IncrementalJvmCompilationConfiguration<P>
             } else {
@@ -97,7 +97,7 @@ private class Pre220JvmCompilationConfigurationWrapper(
     }
 }
 
-private class Pre220ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration(
+private class ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationWrapperPre2_2_0(
     val base: ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration,
     private val logger: KotlinLogger,
     private val kotlinVersion: String,
