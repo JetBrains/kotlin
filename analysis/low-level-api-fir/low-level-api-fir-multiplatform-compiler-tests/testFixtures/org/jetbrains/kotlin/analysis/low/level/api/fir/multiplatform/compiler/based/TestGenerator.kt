@@ -58,6 +58,10 @@ fun main(args: Array<String>) {
                     blackBoxTestsInit()
                 }
 
+                testClass<AbstractLLCommonBlackBoxTest> {
+                    blackBoxTestsInit()
+                }
+
                 testClass<AbstractLLReversedJsBlackBoxTest> {
                     blackBoxTestsInit()
                 }
@@ -74,6 +78,10 @@ fun main(args: Array<String>) {
                 testClass<AbstractLLReversedNativeBlackBoxTest>(
                     annotations = llFirNativeTag
                 ) {
+                    blackBoxTestsInit()
+                }
+
+                testClass<AbstractLLReversedCommonBlackBoxTest> {
                     blackBoxTestsInit()
                 }
             }
