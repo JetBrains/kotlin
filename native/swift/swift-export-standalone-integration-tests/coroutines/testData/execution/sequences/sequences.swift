@@ -153,6 +153,7 @@ func testStateFlow() async {
     let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
     let subject = CurrentSubject.shared
+    #expect(subject.value.value == expected.first)
 
     let collectTask = Task<[Elem], any Error>.detached {
         var actual: [Elem] = []
@@ -179,6 +180,7 @@ func testStateFlow() async {
     #expect(!collectTask.isCancelled)
     #expect(emitResult == .success(()))
     #expect(collectResult == .success(expected))
+    #expect(subject.value.value == expected.last)
 }
 
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {

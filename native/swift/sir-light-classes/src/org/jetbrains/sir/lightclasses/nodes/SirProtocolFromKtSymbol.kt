@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.*
@@ -393,19 +394,35 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
 }
 
 /**
- * An ad-hoc translation for kotlinx.coroutines.Flow
+ * An ad-hoc translation for kotlinx.coroutines.Flow/StateFlow/MutableStateFlow
  */
 internal class SirFlowFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
     sirSession: SirSession,
 ) : SirProtocolFromKtSymbol(ktSymbol, sirSession), SirFromKtSymbol<KaNamedClassSymbol> {
+
+    internal companion object {
+        val FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/Flow")
+        val STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/StateFlow")
+        val MUTABLE_STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/MutableStateFlow")
+
+        val CLASS_IDS = listOf(FLOW_CLASS_ID, STATE_FLOW_CLASS_ID, MUTABLE_STATE_FLOW_CLASS_ID)
+    }
+
+    private val additionalProtocols = when (ktSymbol.classId) {
+        FLOW_CLASS_ID -> listOf(KotlinCoroutineSupportModule.kotlinFlow, SirSwiftConcurrencyModule.asyncSequence)
+        STATE_FLOW_CLASS_ID -> listOf(KotlinCoroutineSupportModule.kotlinStateFlow)
+        MUTABLE_STATE_FLOW_CLASS_ID -> listOf(KotlinCoroutineSupportModule.kotlinMutableStateFlow)
+        else -> throw IllegalArgumentException("Unsupported flow kind: ${ktSymbol.classId}")
+    }
+
     internal inner class SirExistentialProtocolImplementation : SirExistentialProtocolImplementationFromKtSymbol(this@SirFlowFromKtSymbol) {
         override val protocols: List<SirProtocol>
-            get() = super.protocols + listOf(KotlinCoroutineSupportModule.kotlinFlow, SirSwiftConcurrencyModule.asyncSequence)
+            get() = super.protocols + additionalProtocols
     }
 
     override val protocols: List<SirProtocol> by lazy {
-        super.protocols + KotlinCoroutineSupportModule.kotlinFlow + SirSwiftConcurrencyModule.asyncSequence
+        super.protocols + additionalProtocols
     }
 
     override val existentialExtension: SirExtension by lazy {

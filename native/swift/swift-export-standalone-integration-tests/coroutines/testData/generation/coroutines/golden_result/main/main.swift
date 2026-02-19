@@ -20,9 +20,9 @@ public final class Foo: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public var flowFoo: KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
+public var flowFoo: any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> {
     get {
-        return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowFoo_get()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowFoo_get()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
     }
 }
 public func alwaysFails() async throws -> Swift.Never {
@@ -52,11 +52,11 @@ public func alwaysFails() async throws -> Swift.Never {
         }
     }()
 }
-public func demo() -> KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
-    return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+public func demo() -> any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> {
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
-public func produce_flow() -> KotlinCoroutineSupport._KotlinTypedFlow<Swift.Int32> {
-    return KotlinCoroutineSupport._KotlinTypedFlow<Swift.Int32>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_flow()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+public func produce_flow() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Int32> {
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Int32>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_flow()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
 public func produce_function() -> (Swift.Int32) async throws -> Swift.Int32 {
     return {

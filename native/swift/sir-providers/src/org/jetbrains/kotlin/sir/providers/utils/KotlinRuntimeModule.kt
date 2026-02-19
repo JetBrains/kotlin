@@ -122,19 +122,55 @@ public object KotlinCoroutineSupportModule : SirModule() {
 
     public val kotlinFlow: SirProtocol = buildProtocol {
         origin = KotlinRuntimeElement()
-        name = "_KotlinFlow"
+        name = "KotlinFlow"
         visibility = SirVisibility.PUBLIC
     }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
 
-    public val kotlinFlowMarker: SirProtocol = buildProtocol {
+    public val kotlinTypedFlow: SirProtocol = buildProtocol {
         origin = KotlinRuntimeElement()
-        name = "__KotlinFlow"
+        name = "KotlinTypedFlow"
         visibility = SirVisibility.PUBLIC
     }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
 
-    public val kotlinTypedFlowStruct: SirStruct = buildStruct {
+    public val kotlinTypedFlowImpl: SirStruct = buildStruct {
         origin = KotlinRuntimeElement()
-        name = "_KotlinTypedFlow"
+        name = "_KotlinTypedFlowImpl"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinStateFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinStateFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedStateFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinTypedStateFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedStateFlowImpl: SirStruct = buildStruct {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinTypedStateFlowImpl"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinMutableStateFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinMutableStateFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedMutableStateFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinTypedMutableStateFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedMutableStateFlowImpl: SirStruct = buildStruct {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinTypedMutableStateFlowImpl"
         visibility = SirVisibility.PUBLIC
     }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
 
