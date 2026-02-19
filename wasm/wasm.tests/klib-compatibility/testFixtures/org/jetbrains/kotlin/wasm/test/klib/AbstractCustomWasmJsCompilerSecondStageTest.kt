@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
+import org.jetbrains.kotlin.js.test.preprocessors.JsExportBoxPreprocessor
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
@@ -32,17 +33,13 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppresso
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
-import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.blackbox.CustomWasmJsCompilerSecondStageFacade
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmFirstStageTest
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
-import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
-import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
-import org.jetbrains.kotlin.wasm.test.handlers.WasmIrHandler
+import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-second-stage")
@@ -50,6 +47,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.WASM_JS)
 {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        useSourcePreprocessor(::JsExportBoxPreprocessor)
         useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         defaultDirectives {
             if (customWasmJsCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
@@ -92,13 +90,11 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             ::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS),
         )
 
-        wasmArtifactsHandlersStep {
-            useHandlers(::WasmBoxRunner)
-            useHandlers(::WasmIrHandler)
-            useHandlers(::WasmDtsHandler)
-        }
-
         facadeStep(::CustomWasmJsCompilerSecondStageFacade)
+
+        wasmArtifactsHandlersStep {
+            useHandlers(::WasmFolderBoxRunner)
+        }
 
         useAfterAnalysisCheckers(
             // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
