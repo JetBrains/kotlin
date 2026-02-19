@@ -777,6 +777,8 @@ public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncremental
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Companion;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;)Ljava/lang/Object;
 	public abstract fun getClasspath ()Ljava/util/List;
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Builder;
@@ -787,6 +789,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;)Ljava/lang/Object;
 	public abstract fun getClasspath ()Ljava/util/List;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Companion {
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
