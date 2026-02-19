@@ -50,7 +50,6 @@ val unzipTemplates = tasks.register<Copy>("unzipTemplates") {
 
 dokka {
     description = "Generates documentation for Kotlin Gradle plugins API reference"
-    moduleName.set("Kotlin Gradle Plugins API reference")
 
     dokkaPublications.html {
         includes.from(documentationExtension.moduleDescription)
@@ -72,8 +71,6 @@ dokka {
             olderVersionsDir.set(oldVersion.asFile)
         }
     }
-
-
 }
 
 tasks.withType<DokkaBaseTask>().configureEach {

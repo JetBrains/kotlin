@@ -11,6 +11,10 @@ pluginsApiDocumentation {
     moduleDescription.set(layout.projectDirectory.file("module-description.md"))
 }
 
+dokka {
+    moduleName.set("Kotlin Gradle Plugins API reference")
+}
+
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {

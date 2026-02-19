@@ -11,7 +11,6 @@ pluginApiReference {
     enableForAllGradlePluginVariants()
 
     failOnWarning = true
-    moduleName("The Kotlin Gradle plugins API")
 
     additionalDokkaConfiguration {
         dokkaSourceSets.configureEach {
