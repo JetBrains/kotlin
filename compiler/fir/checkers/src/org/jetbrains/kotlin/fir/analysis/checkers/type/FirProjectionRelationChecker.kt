@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.types.Variance
 object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
+        if (typeRef.source?.kind is KtFakeSourceElementKind) return
         val type = typeRef.coneType.abbreviatedTypeOrSelf
         val fullyExpandedType = type.fullyExpandedType()
 
@@ -54,7 +55,7 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
 
             val argTypeRefSource = argumentData.source
 
-            if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is KtFakeSourceElementKind) {
+            if (projectionRelation != ProjectionRelation.None) {
                 reporter.reportOn(
                     argTypeRefSource.source ?: argTypeRefSource.typeRef?.source,
                     if (projectionRelation == ProjectionRelation.Conflicting)
