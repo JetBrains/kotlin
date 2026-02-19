@@ -12,7 +12,13 @@ inline fun publicTest() = object : Foo() {
     override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>foo<!>() = numbers
 }
 
-inline fun publicTestInArg(noinline arg: () -> MutableList<Int> = { numbers }) {}
+inline fun publicTestInArg(noinline arg: () -> MutableList<Int> = { <!RETURN_TYPE_MISMATCH!>numbers<!> }) {}
+
+inline fun outer() {
+    val local = object {
+        private inline fun foo(noinline block: () -> MutableList<Int> = { <!RETURN_TYPE_MISMATCH!>numbers<!> }) {}
+    }
+}
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, explicitBackingField, functionDeclaration,
 functionalType, inline, lambdaLiteral, noinline, override, propertyDeclaration, smartcast */

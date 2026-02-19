@@ -10,8 +10,8 @@ inline fun outer() {
             field: Int = 1
 
         private inline fun inner() {
-            x.inc()
-            y.inc()
+            x.<!UNRESOLVED_REFERENCE!>inc<!>()
+            y.<!UNRESOLVED_REFERENCE!>inc<!>()
         }
     }
 
