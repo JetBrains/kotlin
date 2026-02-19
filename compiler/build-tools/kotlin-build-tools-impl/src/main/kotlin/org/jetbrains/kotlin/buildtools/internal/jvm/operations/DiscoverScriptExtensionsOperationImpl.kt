@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
+import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -31,9 +32,9 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
         // KT-84096 BTA: support daemon execution for script discovery operation
         check(executionPolicy is ExecutionPolicy.InProcess) { "Only in-process execution policy is supported for this operation." }
         val definitions = ScriptDefinitionsFromClasspathDiscoverySource(
-            classpath.map(Path::toFile),
-            defaultJvmScriptingHostConfiguration,
-            KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, DefaultCompilerMessageRenderer).reporter
+            classpath.map(Path::toFile), defaultJvmScriptingHostConfiguration, KotlinLoggerMessageCollectorAdapter(
+                logger ?: DefaultKotlinLogger, this[COMPILER_MESSAGE_RENDERER]
+            ).reporter
         ).definitions
 
         return definitions.mapTo(arrayListOf()) { it.fileExtension }
@@ -52,5 +53,10 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
     override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
 
     override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(options.deepCopy(), classpath)
+
+    companion object {
+        val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> =
+            Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
+    }
 
 }
