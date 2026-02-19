@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -40,8 +41,12 @@ public fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
     val preSerializationLowered = newEngine(loweringContext) { engine ->
         // TODO: move to nativeLoweringsOfTheFirstPhase after they moved to NativeLoweringPhases.kt
         // Unfortunately, this needs K/N to be turned on by default in the Kotlin repository.
-        val lowerings = listOf(testProcessorModulePhase) +
-                nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings)
+        val lowerings = buildList {
+            val runTestProcessorModulePhase =
+                environment.configuration.languageVersionSettings.supportsFeature(LanguageFeature.NativeTestProcessorBeforeSerialization)
+            if (runTestProcessorModulePhase) add(testProcessorModulePhase)
+            addAll(nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings))
+        }
         engine.runPreSerializationLoweringPhases(
             fir2IrOutput.fir2irActualizedResult,
             lowerings,
