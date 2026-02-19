@@ -754,19 +754,19 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                 let package = Package(
                   name: "_internal_linkage_SwiftPMImport",
                   platforms: [
-                    .iOS("15.0"),
+                    .iOS("15.0")
                   ],
                   products: [
-                      .library(
-                          name: "_internal_linkage_SwiftPMImport",
-                          type: .none,
-                          targets: ["_internal_linkage_SwiftPMImport"]
-                      ),
+                    .library(
+                      name: "_internal_linkage_SwiftPMImport",
+                      type: .none,
+                      targets: ["_internal_linkage_SwiftPMImport"]
+                    )
                   ],
                   dependencies: [
                     .package(
                       path: "../../../localSwiftPackage",
-                    ),
+                    )
                   ],
                   targets: [
                     .target(
@@ -775,9 +775,9 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                         .product(
                           name: "LocalSwiftPackage",
                           package: "localSwiftPackage",
-                        ),
+                        )
                       ]
-                    ),
+                    )
                   ]
                 )
             """.trimIndent() + "\n"
@@ -1025,25 +1025,25 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                             let package = Package(
                               name: "_internal_linkage_SwiftPMImport",
                               platforms: [
-                                .iOS("15.0"),
+                                .iOS("15.0")
                               ],
                               products: [
-                                  .library(
-                                      name: "_internal_linkage_SwiftPMImport",
-                                      type: .none,
-                                      targets: ["_internal_linkage_SwiftPMImport"]
-                                  ),
+                                .library(
+                                  name: "_internal_linkage_SwiftPMImport",
+                                  type: .none,
+                                  targets: ["_internal_linkage_SwiftPMImport"]
+                                )
                               ],
                               dependencies: [
-                                .package(path: "subpackages/_producer"),
+                                .package(path: "subpackages/_producer")
                               ],
                               targets: [
                                 .target(
                                   name: "_internal_linkage_SwiftPMImport",
                                   dependencies: [
-                                    .product(name: "_producer", package: "_producer"),
+                                    .product(name: "_producer", package: "_producer")
                                   ]
-                                ),
+                                )
                               ]
                             )
                         """.trimIndent() + "\n"
@@ -1059,19 +1059,19 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                             let package = Package(
                               name: "_producer",
                               platforms: [
-                                .iOS("15.0"),
+                                .iOS("15.0")
                               ],
                               products: [
-                                  .library(
-                                      name: "_producer",
-                                      type: .none,
-                                      targets: ["_producer"]
-                                  ),
+                                .library(
+                                  name: "_producer",
+                                  type: .none,
+                                  targets: ["_producer"]
+                                )
                               ],
                               dependencies: [
                                 .package(
                                   path: "../../../../producer/localSwiftPackage",
-                                ),
+                                )
                               ],
                               targets: [
                                 .target(
@@ -1080,9 +1080,9 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                                     .product(
                                       name: "LocalSwiftPackage",
                                       package: "localSwiftPackage",
-                                    ),
+                                    )
                                   ]
-                                ),
+                                )
                               ]
                             )
                         """.trimIndent() + "\n",
