@@ -2,9 +2,7 @@
 // TARGET_BACKEND: JVM
 // FIR_IDENTICAL
 
-// Two bugs:
-// 1. K1 fails to compute types for 'b19'. New reflect implementation computes the types correctly
-// 2. flexibility mismatch for `kotlinInterface2Fun1`. I will fix this bug in the next commits
+// K1 fails to compute types for 'b19'. New reflect implementation computes the types correctly
 // KOTLIN_REFLECT_DUMP_MISMATCH
 
 // FILE: Java.java

@@ -66,16 +66,16 @@ KClass: class D : A, I
 KClass: class E1 : JavaIntermediate
   members:
     public open operator fun E1.equals(kotlin.Any?): kotlin.Boolean
-    public final external fun E1.externalFun(): kotlin.String
+    public final external fun E1.externalFun(): kotlin.String!
     public final external fun E1.externalFunSpecialized(): kotlin.String
     public open fun E1.hashCode(): kotlin.Int
-    public final infix fun E1.infixFun(kotlin.Any): kotlin.String
+    public final infix fun E1.infixFun(kotlin.Any): kotlin.String!
     public final infix fun E1.infixFunSpecialized(kotlin.Any): kotlin.String
-    public final inline fun E1.inlineFun(): kotlin.String
+    public final inline fun E1.inlineFun(): kotlin.String!
     public final inline fun E1.inlineFunSpecialized(): kotlin.String
     public open external fun E1.javaNativeMethod(): kotlin.Unit
     public final operator fun E1.minus(kotlin.Any): kotlin.String
-    public final operator fun E1.plus(kotlin.Any): kotlin.String
+    public final operator fun E1.plus(kotlin.Any): kotlin.String!
     public open fun E1.toString(): kotlin.String
   declaredMembers:
 KClass: class E2 : KotlinIntermediate
@@ -117,16 +117,16 @@ KClass: abstract interface I : Any
 KClass: class JavaIntermediate : A
   members:
     public open operator fun JavaIntermediate.equals(kotlin.Any?): kotlin.Boolean
-    public final external fun JavaIntermediate.externalFun(): kotlin.String
+    public final external fun JavaIntermediate.externalFun(): kotlin.String!
     public final external fun JavaIntermediate.externalFunSpecialized(): kotlin.String
     public open fun JavaIntermediate.hashCode(): kotlin.Int
-    public final infix fun JavaIntermediate.infixFun(kotlin.Any): kotlin.String
+    public final infix fun JavaIntermediate.infixFun(kotlin.Any): kotlin.String!
     public final infix fun JavaIntermediate.infixFunSpecialized(kotlin.Any): kotlin.String
-    public final inline fun JavaIntermediate.inlineFun(): kotlin.String
+    public final inline fun JavaIntermediate.inlineFun(): kotlin.String!
     public final inline fun JavaIntermediate.inlineFunSpecialized(): kotlin.String
     public open external fun JavaIntermediate.javaNativeMethod(): kotlin.Unit
     public final operator fun JavaIntermediate.minus(kotlin.Any): kotlin.String
-    public final operator fun JavaIntermediate.plus(kotlin.Any): kotlin.String
+    public final operator fun JavaIntermediate.plus(kotlin.Any): kotlin.String!
     public open fun JavaIntermediate.toString(): kotlin.String
   declaredMembers:
     public open external fun JavaIntermediate.javaNativeMethod(): kotlin.Unit

@@ -128,7 +128,7 @@ KClass: abstract class Java : KotlinInterface, KotlinInterface2
     public abstract <D23> fun Java.d23(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D23 : Box1<(raw) kotlin.CharSequence?>
     public open operator fun Java.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java.hashCode(): kotlin.Int
-    public abstract fun Java.kotlinInterface2Fun1(kotlin.Int): kotlin.Int
+    public abstract fun Java.kotlinInterface2Fun1(kotlin.Int!): kotlin.Int!
     public abstract <B> fun Java.kotlinInterface2Fun2(B): B
     public abstract <A> fun Java.normalFun1(kotlin.Any?): kotlin.Any?
     public abstract <A> fun Java.normalFun2(kotlin.Any): kotlin.Any where A : kotlin.Any

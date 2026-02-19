@@ -5,10 +5,12 @@
 
 package kotlin.reflect.jvm.internal.types
 
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.createTypeImpl
+import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.isFlexible
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullability as withNullabilityFromTypeSystem
 
 internal class KTypeSubstitutor(
@@ -50,7 +52,7 @@ internal class KTypeSubstitutor(
             return when {
                 substitutingType != null && substitutingVariance != null -> KTypeProjection(
                     substitutingVariance.intersectWith(variance),
-                    substitutingType.withNullabilityOf(type),
+                    substitutingType.withWorseNullabilityOfBoth(type),
                 )
                 else -> substitutingProjection
             }
@@ -121,7 +123,9 @@ internal class KTypeSubstitutor(
         }
 
     // TODO (KT-77700): also keep annotations of 'other'
-    private fun KType.withNullabilityOf(other: KType): KType {
+    private fun KType.withWorseNullabilityOfBoth(other: KType): KType {
+        check(other is KotlinTypeMarker && !other.isFlexible()) { "'$other' must be non flexible" }
+        if (isNullabilityFlexible() && !other.isMarkedNullable) return this
         val thiz = this as RigidTypeMarker
         return with(ReflectTypeSystemContext) {
             val withNullability = withNullabilityFromTypeSystem(other.isMarkedNullable || isMarkedNullable)
@@ -173,6 +177,9 @@ internal class KTypeSubstitutor(
         }
     }
 }
+
+private fun KType.isNullabilityFlexible(): Boolean =
+    this is AbstractKType && lowerBoundIfFlexible()?.isMarkedNullable != upperBoundIfFlexible()?.isMarkedNullable
 
 /**
  * Erase all type arguments to the first upper bound of their respective type parameter and convert all parametrized types to raw types
