@@ -55,4 +55,9 @@ class LicensesTests {
         val missingFiles = linkedInReadme.filterNot { path -> File(path).exists() }
         assertEmpty("Files for licenses are missing", missingFiles)
     }
+
+    @Test
+    fun testFailure() {
+        assert(false)
+    }
 }
