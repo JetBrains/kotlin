@@ -1,0 +1,28 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.low.level.api.fir.multiplatform.compiler.based
+
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLBlackBoxTest
+import org.jetbrains.kotlin.js.test.runners.commonServicesConfigurationForJsCodegenTest
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.model.DependencyKind
+
+abstract class AbstractLLJsBlackBoxTest : AbstractLLBlackBoxTest(
+    JsPlatforms.defaultJsPlatform
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForJSBlackBoxTests()
+    }
+}
+
+internal fun TestConfigurationBuilder.configureForJSBlackBoxTests() {
+    commonServicesConfigurationForJsCodegenTest()
+    globalDefaults {
+        dependencyKind = DependencyKind.Source
+    }
+}
