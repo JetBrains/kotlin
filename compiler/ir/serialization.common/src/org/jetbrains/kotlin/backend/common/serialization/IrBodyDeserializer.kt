@@ -899,7 +899,7 @@ class IrBodyDeserializer(
             -> error("Const deserialization error: ${proto.valueCase} ")
         }
 
-    private fun deserializeOperation(proto: ProtoExpression, start: Int, end: Int, type: IrType): IrExpression? =
+    private fun deserializeOperation(proto: ProtoExpression, start: Int, end: Int, type: IrType): IrExpression =
         when (proto.operationCase!!) {
             OP_BLOCK -> deserializeBlock(proto.opBlock, start, end, type)
             OP_RETURNABLE_BLOCK -> deserializeReturnableBlock(proto.opReturnableBlock, start, end, type)
@@ -941,8 +941,8 @@ class IrBodyDeserializer(
             OP_RICH_PROPERTY_REFERENCE -> deserializeRichPropertyReference(proto.opRichPropertyReference, start, end, type)
             OP_ERROR_EXPRESSION -> deserializeErrorExpression(proto.opErrorExpression, start, end, type)
             OP_ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.opErrorCallExpression, start, end, type)
-            OP_MISSING_EXPRESSION -> null
-            ProtoExpression.OperationCase.OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
+            ProtoExpression.OperationCase.OPERATION_NOT_SET, OP_MISSING_EXPRESSION ->
+                error("Expression deserialization not implemented: ${proto.operationCase}")
         }
 
     private fun deserializeOperationPre240(proto: ProtoOperationPre2_4_0, start: Int, end: Int, type: IrType): IrExpression =
@@ -991,6 +991,10 @@ class IrBodyDeserializer(
         }
 
     fun deserializeNullableExpression(proto: ProtoExpression): IrExpression? {
+        if (proto.operationCase == OP_MISSING_EXPRESSION) {
+            return null
+        }
+
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         val start = coordinates.startOffset
         val end = coordinates.endOffset

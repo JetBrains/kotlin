@@ -401,11 +401,31 @@ public interface IrExpressionOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 getOperationPre240();
 
   /**
-   * <code>required int32 type = 2;</code>
+   * <code>optional int32 type = 2 [default = -1];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+   * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+   * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+   * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+   * deserializing, otherwise it would fail.
+   * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+   * </pre>
    */
   boolean hasType();
   /**
-   * <code>required int32 type = 2;</code>
+   * <code>optional int32 type = 2 [default = -1];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+   * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+   * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+   * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+   * deserializing, otherwise it would fail.
+   * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+   * </pre>
    */
   int getType();
 

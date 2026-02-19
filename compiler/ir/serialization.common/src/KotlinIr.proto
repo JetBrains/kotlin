@@ -569,7 +569,14 @@ message IrExpression {
   }
 
   optional IrOperationPre_2_4_0 operation_pre_2_4_0 = 1; // Was required before 2.4.0
-  required int32 type = 2;
+  // Was required before 2.4.0.
+  // The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+  // It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+  // and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+  // this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+  // deserializing, otherwise it would fail.
+  // Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
+  optional int32 type = 2 [default=-1];
   required int64 coordinates = 3;
 }
 

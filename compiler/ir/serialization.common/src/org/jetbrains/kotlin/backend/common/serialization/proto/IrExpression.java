@@ -1461,13 +1461,33 @@ public final class IrExpression extends
   public static final int TYPE_FIELD_NUMBER = 2;
   private int type_;
   /**
-   * <code>required int32 type = 2;</code>
+   * <code>optional int32 type = 2 [default = -1];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+   * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+   * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+   * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+   * deserializing, otherwise it would fail.
+   * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+   * </pre>
    */
   public boolean hasType() {
     return ((bitField1_ & 0x00000200) == 0x00000200);
   }
   /**
-   * <code>required int32 type = 2;</code>
+   * <code>optional int32 type = 2 [default = -1];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+   * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+   * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+   * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+   * deserializing, otherwise it would fail.
+   * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+   * </pre>
    */
   public int getType() {
     return type_;
@@ -1490,7 +1510,7 @@ public final class IrExpression extends
 
   private void initFields() {
     operationPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0.getDefaultInstance();
-    type_ = 0;
+    type_ = -1;
     coordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
@@ -1499,10 +1519,6 @@ public final class IrExpression extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasType()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!hasCoordinates()) {
       memoizedIsInitialized = 0;
       return false;
@@ -2154,7 +2170,7 @@ public final class IrExpression extends
       super.clear();
       operationPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0.getDefaultInstance();
       bitField1_ = (bitField1_ & ~0x00000100);
-      type_ = 0;
+      type_ = -1;
       bitField1_ = (bitField1_ & ~0x00000200);
       coordinates_ = 0L;
       bitField1_ = (bitField1_ & ~0x00000400);
@@ -2505,10 +2521,6 @@ public final class IrExpression extends
     }
 
     public final boolean isInitialized() {
-      if (!hasType()) {
-        
-        return false;
-      }
       if (!hasCoordinates()) {
         
         return false;
@@ -5476,21 +5488,51 @@ public final class IrExpression extends
       return this;
     }
 
-    private int type_ ;
+    private int type_ = -1;
     /**
-     * <code>required int32 type = 2;</code>
+     * <code>optional int32 type = 2 [default = -1];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+     * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+     * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+     * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+     * deserializing, otherwise it would fail.
+     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * </pre>
      */
     public boolean hasType() {
       return ((bitField1_ & 0x00000200) == 0x00000200);
     }
     /**
-     * <code>required int32 type = 2;</code>
+     * <code>optional int32 type = 2 [default = -1];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+     * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+     * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+     * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+     * deserializing, otherwise it would fail.
+     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * </pre>
      */
     public int getType() {
       return type_;
     }
     /**
-     * <code>required int32 type = 2;</code>
+     * <code>optional int32 type = 2 [default = -1];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+     * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+     * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+     * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+     * deserializing, otherwise it would fail.
+     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * </pre>
      */
     public Builder setType(int value) {
       bitField1_ |= 0x00000200;
@@ -5499,11 +5541,21 @@ public final class IrExpression extends
       return this;
     }
     /**
-     * <code>required int32 type = 2;</code>
+     * <code>optional int32 type = 2 [default = -1];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+     * It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+     * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+     * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+     * deserializing, otherwise it would fail.
+     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * </pre>
      */
     public Builder clearType() {
       bitField1_ = (bitField1_ & ~0x00000200);
-      type_ = 0;
+      type_ = -1;
       
       return this;
     }

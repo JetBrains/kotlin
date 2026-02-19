@@ -1091,7 +1091,6 @@ open class IrFileSerializer(
             // (They also cannot be migrated to `optional`, because then 0 values would be elided (as the default value), in which case the
             // older compiler, which still sees them as `required`, would fail to deserialize then.)
             proto.setCoordinates(0)
-            proto.setType(0)
         }
 
         if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
