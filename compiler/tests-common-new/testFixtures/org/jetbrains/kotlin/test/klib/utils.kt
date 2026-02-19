@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.targetPlatform
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -51,7 +52,9 @@ internal fun TestServices.versionAndTargetAreIgnored(directive: StringDirective,
                 2 -> { // Check for a matching platform or ANY platform
                     if (parts[0] == "ANY") return true
                     val targets = parts[0].split(TARGETS_SEPARATOR).map { it.uppercase() }
-                    val componentPlatformNames = firstModule.targetPlatform(this).componentPlatforms.map {
+
+                    @OptIn(TestInfrastructureInternals::class)
+                    val componentPlatformNames = defaultsProvider.targetPlatform.componentPlatforms.map {
                         it.platformName.uppercase()
                     }
                     if (componentPlatformNames.any(targets::contains))
