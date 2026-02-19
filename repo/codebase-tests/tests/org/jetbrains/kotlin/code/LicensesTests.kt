@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertEmpty
 import org.junit.Test
 import java.io.File
+import kotlin.random.Random
 
 class LicensesTests {
     companion object {
@@ -54,5 +55,12 @@ class LicensesTests {
 
         val missingFiles = linkedInReadme.filterNot { path -> File(path).exists() }
         assertEmpty("Files for licenses are missing", missingFiles)
+    }
+
+    @Test
+    fun testFlakyCoin() {
+        if (Random.nextDouble() > 0.7) {
+            assert(false)
+        }
     }
 }
