@@ -160,12 +160,13 @@ internal fun WasmVM.runWithCaughtExceptions(
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
         }
-        run(
+        val str = run(
             "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
         )
+        println(str)
         if (shortName in failsIn) {
             return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")
         }

@@ -1,3 +1,5 @@
+// ISSUE: KT-82732, fixed in 2.3.20-Beta2
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: WASM-JS:2.3
 fun <T> myRun(action: () -> T): T = action()
 fun foo(): String = "foo"
 
