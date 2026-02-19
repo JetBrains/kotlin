@@ -65,13 +65,17 @@ object BinaryArtifacts {
         val compilationDependencies: List<WasmCompilationSet> = emptyList(),
     )
 
-    class Wasm(
-        val compilation: WasmCompilationSet,
-        val dceCompilation: WasmCompilationSet? = null,
-        val optimisedCompilation: WasmCompilationSet? = null,
-    ) : ResultingArtifact.Binary<Wasm>() {
+    sealed class Wasm: ResultingArtifact.Binary<Wasm>() {
         override val kind: ArtifactKind<Wasm>
             get() = ArtifactKinds.Wasm
+
+        class CompilationSets(
+            val compilation: WasmCompilationSet,
+            val dceCompilation: WasmCompilationSet? = null,
+            val optimisedCompilation: WasmCompilationSet? = null,
+        ) : Wasm()
+
+        class Folder(val folder: File) : Wasm()
     }
 
     class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {

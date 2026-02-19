@@ -150,7 +150,7 @@ class WasmLoweringFacade(
             )
         }
 
-        return BinaryArtifacts.Wasm(
+        return BinaryArtifacts.Wasm.CompilationSets(
             compilation = compilationSet,
             dceCompilation = dceCompilationSet,
             optimisedCompilation = optimised,

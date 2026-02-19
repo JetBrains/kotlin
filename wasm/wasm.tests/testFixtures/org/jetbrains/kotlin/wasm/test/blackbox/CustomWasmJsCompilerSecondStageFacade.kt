@@ -44,7 +44,7 @@ class CustomWasmJsCompilerSecondStageFacade(
         mainLibrary: String,
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
-    ): BinaryArtifacts.Wasm {
+    ): BinaryArtifacts.Wasm.Folder {
         val wasmArtifactFile = testServices.temporaryDirectoryManager.getOrCreateTempDirectory(module.name).resolve("${module.name}.wasm")
         val compilerXmlOutput = ByteArrayOutputStream()
 
@@ -79,13 +79,7 @@ class CustomWasmJsCompilerSecondStageFacade(
                 "Internal testinfra error: Couldn't find expected generated wasm artifact ${wasmArtifactFile.absolutePath}"
             }
 
-//            return BinaryArtifacts.Wasm(
-//                compilation = WasmCompilationSet(
-//                    compiledModule = WasmModule(),
-//                    compilerResult = WasmCompilerResult(),
-//                )
-//            )
-            throw CustomKlibCompilerException(exitCode, "$wasmArtifactFile is created")
+            return BinaryArtifacts.Wasm.Folder(wasmArtifactFile.parentFile)
         } else {
             // Throw an exception to abort further test execution.
             throw CustomKlibCompilerException(exitCode, compilerXmlOutput.toString(Charsets.UTF_8.name()))

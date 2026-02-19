@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -29,7 +30,7 @@ class WasiBoxRunner(
     }
 
     private fun runWasmCode() {
-        val artifacts = modulesToArtifact.values.single()
+        val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.CompilationSets
         val baseFileName = "index"
         val outputDirBase = testServices.getWasmTestOutputDirectory()
 

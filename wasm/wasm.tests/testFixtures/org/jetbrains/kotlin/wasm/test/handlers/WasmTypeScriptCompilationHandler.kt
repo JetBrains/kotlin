@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.test.handlers.JsTypeScriptCompilationHandler.Companion.getMainTsFile
 import org.jetbrains.kotlin.js.test.handlers.TypeScriptCompilation
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -39,6 +40,7 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
             testServices,
             modulesToArtifact,
             { artifact ->
+                require(artifact is BinaryArtifacts.Wasm.CompilationSets)
                 File(outputDir, artifact.compilation.compilerResult.baseFileName + ".d.mts").also { tsFile ->
                     artifact.compilation.compilerResult.dts?.let {
                         tsFile.parentFile.mkdirs()
