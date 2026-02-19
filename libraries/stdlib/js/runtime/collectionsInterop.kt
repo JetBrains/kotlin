@@ -231,18 +231,18 @@ private fun <K, V> createJsMapViewWith(
 private fun <T> createJsIteratorFrom(iterator: Iterator<T>, transform: (T) -> dynamic = { it }): dynamic {
     val iteratorNext = { iterator.next() }
     val iteratorHasNext = { iterator.hasNext() }
-    val jsIterator = js(
-        """
-        {
-            next: function() {
-                var result = { done: !iteratorHasNext() };
-                if (!result.done) result.value = transform(iteratorNext());
-                return result;
-            }
-        }
-        """
-    )
-    js("jsIterator[Symbol.iterator] = function() { return this; }")
+    val iteratorConstructor = js("typeof Iterator === 'function' ? Iterator : Object")
+    val jsIterator = js("Object.create(iteratorConstructor.prototype)")
+
+    js("""
+        jsIterator.next = function() {
+            var result = { done: !iteratorHasNext() };
+            if (!result.done) result.value = transform(iteratorNext());
+            return result;
+        };
+        jsIterator[Symbol.iterator] = function() { return this; };
+    """)
+
     return jsIterator
 }
 

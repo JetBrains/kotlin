@@ -163,6 +163,14 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global,
     )
 
+    val TSC_LIB by stringDirective(
+        description = """
+        The argument for the --lib CLI option of the TypeScript compiler.
+        See https://www.typescriptlang.org/tsconfig/#lib for supported values.
+        """,
+        applicability = DirectiveApplicability.Global,
+    )
+
     val TSC_MODULE by stringDirective(
         description = """
         The argument for the --module CLI option of the TypeScript compiler.
