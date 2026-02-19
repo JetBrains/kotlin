@@ -1,6 +1,5 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 buildscript {
     dependencies {
@@ -352,25 +351,8 @@ tasks.register("createIdeaHomeForTests") {
 }
 
 tasks {
-    register("compileAll") {
-        /*
-         * Build cache tests don't work properly with KMP projects,
-         * so such projects are temporary excluded from them (KTI-2822)
-         */
-        val excludedNativePrefixes = listOf(
-            ":native",
-            ":libraries:tools:analysis-api-based-klib-reader:testProject",
-            ":plugins:plugin-sandbox:plugin-annotations",
-        )
-        allprojects
-            .filter {
-                excludedNativePrefixes.none(it.path::startsWith) || kotlinBuildProperties.isKotlinNativeEnabled.get()
-            }
-            .forEach {
-                dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
-                dependsOn(it.tasks.withType<JavaCompile>())
-            }
-    }
+    // compileAll is registered per-project by common-configuration plugin.
+    // Cross-project wiring is done in settings.gradle gradle.projectsEvaluated block.
 
     named<Delete>("clean") {
         delete(distDir)
@@ -624,9 +606,12 @@ tasks {
 
     register("examplesTest") {
         dependsOn("dist")
-        project(":examples").subprojects.forEach { p ->
-            dependsOn("${p.path}:check")
-        }
+        dependsOn(":examples:annotation-processor-example:check")
+        dependsOn(":examples:scripting-jvm-simple-script:check")
+        dependsOn(":examples:scripting-jvm-simple-script-host:check")
+        dependsOn(":examples:scripting-jvm-maven-deps:check")
+        dependsOn(":examples:scripting-jvm-maven-deps-host:check")
+        dependsOn(":examples:scripting-jvm-embeddable-host:check")
     }
 
     register("distTest") {
@@ -685,9 +670,8 @@ tasks {
     }
 
     register("dependenciesAll") {
-        subprojects.forEach {
-            dependsOn(it.tasks.named("dependencies"))
-        }
+        description = "Run dependencies task for all subprojects"
+        // Cross-project dependsOn wiring is done in settings.gradle gradle.projectsEvaluated block.
     }
 
     named("checkBuild") {
@@ -746,27 +730,15 @@ tasks {
 
     // 'mvnPublish' is required for local bootstrap
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-        val localPublishTask = register("publish") {
+        register("publish") {
             group = "publishing"
             finalizedBy(mvnPublishTask)
-        }
-
-        subprojects {
-            tasks.configureEach {
-                if (name == "publish") {
-                    localPublishTask.get().dependsOn(this)
-                }
-            }
+            // Cross-project dependsOn wiring is done in settings.gradle gradle.projectsEvaluated block.
         }
     }
 
     register<Exec>("installJps") {
-        val installTask = this
-        allprojects {
-            plugins.withType<MavenPublishPlugin> {
-                installTask.dependsOn(tasks.named("publishToMavenLocal"))
-            }
-        }
+        // Cross-project dependsOn wiring (MavenPublishPlugin -> publishToMavenLocal) is done in settings.gradle.
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true")

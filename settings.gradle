@@ -1067,3 +1067,120 @@ if (buildProperties.isKotlinNativeEnabled.get()) {
 }
 
 include 'compiler:test-security-manager'
+
+// =============================================================================
+// Cross-project task wiring for project isolation
+// Settings scripts are exempt from project isolation restrictions, so all
+// cross-project dependsOn wiring is centralized here.
+// =============================================================================
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+
+    // Projects without common-configuration don't have per-project lifecycle tasks
+    def hasCommonConfiguration = { Project p -> !p.path.startsWith(":kotlin-ide.") }
+
+    // --- compileAll aggregation (Step 6a) ---
+    def excludedNativePrefixes = [":native", ":libraries:tools:analysis-api-based-klib-reader:testProject", ":plugins:plugin-sandbox:plugin-annotations"]
+    def isNativeEnabled = buildProperties.isKotlinNativeEnabled.get()
+    def rootCompileAll = root.tasks.named("compileAll")
+    root.allprojects.each { p ->
+        if (p != root && hasCommonConfiguration(p)) {
+            if (isNativeEnabled || excludedNativePrefixes.every { prefix -> !p.path.startsWith(prefix) }) {
+                rootCompileAll.configure { dependsOn("${p.path}:compileAll") }
+            }
+        }
+    }
+
+    // --- dependenciesAll aggregation (Step 6c) ---
+    def rootDepsAll = root.tasks.named("dependenciesAll")
+    root.allprojects.each { p ->
+        if (p != root) {
+            rootDepsAll.configure { dependsOn("${p.path}:dependencies") }
+        }
+    }
+
+    // --- publish aggregation (Step 6d) ---
+    if (!buildProperties.isTeamcityBuild.get()) {
+        def rootPublish = root.tasks.named("publish")
+        root.allprojects.each { p ->
+            if (p != root) {
+                p.tasks.configureEach { t ->
+                    if (t.name == "publish") {
+                        rootPublish.configure { dependsOn(t) }
+                    }
+                }
+            }
+        }
+    }
+
+    // --- installJps aggregation (Step 6e) ---
+    def rootInstallJps = root.tasks.named("installJps")
+    root.allprojects.each { p ->
+        p.plugins.withType(org.gradle.api.publish.maven.plugins.MavenPublishPlugin) {
+            rootInstallJps.configure { dependsOn(p.tasks.named("publishToMavenLocal")) }
+        }
+    }
+
+    // --- resolveDependenciesInAllProjects aggregation (Step 7) ---
+    def rootResolveDeps = root.tasks.named("resolveDependenciesInAllProjects")
+    root.allprojects.each { p ->
+        if (hasCommonConfiguration(p)) {
+            rootResolveDeps.configure { dependsOn("${p.path}:resolveProjectDependencies") }
+        }
+    }
+
+    // --- resolveJsTools aggregation (Step 7) ---
+    def rootResolveJs = root.tasks.named("resolveJsTools")
+    root.allprojects.each { p ->
+        if (hasCommonConfiguration(p)) {
+            rootResolveJs.configure { dependsOn("${p.path}:resolveProjectJsTools") }
+        }
+    }
+
+    // --- resolveJavaToolchainsInAllProjects aggregation (Step 7) ---
+    def rootResolveToolchains = root.tasks.named("resolveJavaToolchainsInAllProjects")
+    root.allprojects.each { p ->
+        if (hasCommonConfiguration(p)) {
+            rootResolveToolchains.configure { dependsOn("${p.path}:resolveProjectJavaToolchains") }
+        }
+    }
+
+    // --- manageTestDataGlobally aggregation (Step 8) ---
+    def rootTestDataTask = root.tasks.named("manageTestDataGlobally")
+
+    // Support -Porg.jetbrains.kotlin.testDataManager.options.module filter
+    def requestedModulesStr = root.findProperty("org.jetbrains.kotlin.testDataManager.options.module")
+    def requestedModules = requestedModulesStr != null
+            ? requestedModulesStr.toString().split(",").collect { it.trim() }.findAll { !it.isEmpty() }.toSet()
+            : null
+
+    def testDataModulePaths = []
+    root.allprojects.each { p ->
+        if (p != root && p.plugins.hasPlugin("test-data-manager")) {
+            if (requestedModules == null || requestedModules.contains(p.path)) {
+                testDataModulePaths.add(p.path)
+            }
+        }
+    }
+
+    if (requestedModules != null) {
+        def found = testDataModulePaths.toSet()
+        def notFound = requestedModules.findAll { !found.contains(it) }
+        if (!notFound.isEmpty()) {
+            root.logger.warn("Requested modules not found or don't have test-data-manager plugin: $notFound")
+        }
+    }
+
+    testDataModulePaths.sort()
+    rootTestDataTask.configure {
+        testDataModulePaths.each { modulePath ->
+            dependsOn("${modulePath}:manageTestData")
+        }
+        doFirst {
+            logger.lifecycle("Running manageTestDataGlobally for ${testDataModulePaths.size()} module(s):")
+            testDataModulePaths.each { path ->
+                logger.lifecycle("  $path")
+            }
+        }
+    }
+}
