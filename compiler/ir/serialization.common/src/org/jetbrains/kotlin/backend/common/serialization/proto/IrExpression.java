@@ -77,6 +77,11 @@ public final class IrExpression extends
             globalCoordinates_ = input.readInt64();
             break;
           }
+          case 32: {
+            bitField1_ |= 0x00000800;
+            localCoordinates_ = input.readInt64();
+            break;
+          }
           case 42: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.Builder subBuilder = null;
             if (operationCase_ == 5) {
@@ -1520,10 +1525,26 @@ public final class IrExpression extends
     return globalCoordinates_;
   }
 
+  public static final int LOCAL_COORDINATES_FIELD_NUMBER = 4;
+  private long localCoordinates_;
+  /**
+   * <code>optional int64 local_coordinates = 4;</code>
+   */
+  public boolean hasLocalCoordinates() {
+    return ((bitField1_ & 0x00000800) == 0x00000800);
+  }
+  /**
+   * <code>optional int64 local_coordinates = 4;</code>
+   */
+  public long getLocalCoordinates() {
+    return localCoordinates_;
+  }
+
   private void initFields() {
     operationPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0.getDefaultInstance();
     type_ = -1;
     globalCoordinates_ = 6148914691236517201L;
+    localCoordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -1781,6 +1802,9 @@ public final class IrExpression extends
     if (((bitField1_ & 0x00000400) == 0x00000400)) {
       output.writeInt64(3, globalCoordinates_);
     }
+    if (((bitField1_ & 0x00000800) == 0x00000800)) {
+      output.writeInt64(4, localCoordinates_);
+    }
     if (operationCase_ == 5) {
       output.writeMessage(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IrConst) operation_);
     }
@@ -1921,6 +1945,10 @@ public final class IrExpression extends
     if (((bitField1_ & 0x00000400) == 0x00000400)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(3, globalCoordinates_);
+    }
+    if (((bitField1_ & 0x00000800) == 0x00000800)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(4, localCoordinates_);
     }
     if (operationCase_ == 5) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -2182,6 +2210,8 @@ public final class IrExpression extends
       bitField1_ = (bitField1_ & ~0x00000200);
       globalCoordinates_ = 6148914691236517201L;
       bitField1_ = (bitField1_ & ~0x00000400);
+      localCoordinates_ = 0L;
+      bitField1_ = (bitField1_ & ~0x00000800);
       operationCase_ = 0;
       operation_ = null;
       return this;
@@ -2341,6 +2371,10 @@ public final class IrExpression extends
         to_bitField1_ |= 0x00000400;
       }
       result.globalCoordinates_ = globalCoordinates_;
+      if (((from_bitField1_ & 0x00000800) == 0x00000800)) {
+        to_bitField1_ |= 0x00000800;
+      }
+      result.localCoordinates_ = localCoordinates_;
       result.bitField0_ = to_bitField0_;
       result.bitField1_ = to_bitField1_;
       result.operationCase_ = operationCase_;
@@ -2357,6 +2391,9 @@ public final class IrExpression extends
       }
       if (other.hasGlobalCoordinates()) {
         setGlobalCoordinates(other.getGlobalCoordinates());
+      }
+      if (other.hasLocalCoordinates()) {
+        setLocalCoordinates(other.getLocalCoordinates());
       }
       switch (other.getOperationCase()) {
         case OP_CONST: {
@@ -5616,6 +5653,38 @@ public final class IrExpression extends
     public Builder clearGlobalCoordinates() {
       bitField1_ = (bitField1_ & ~0x00000400);
       globalCoordinates_ = 6148914691236517201L;
+      
+      return this;
+    }
+
+    private long localCoordinates_ ;
+    /**
+     * <code>optional int64 local_coordinates = 4;</code>
+     */
+    public boolean hasLocalCoordinates() {
+      return ((bitField1_ & 0x00000800) == 0x00000800);
+    }
+    /**
+     * <code>optional int64 local_coordinates = 4;</code>
+     */
+    public long getLocalCoordinates() {
+      return localCoordinates_;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 4;</code>
+     */
+    public Builder setLocalCoordinates(long value) {
+      bitField1_ |= 0x00000800;
+      localCoordinates_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 4;</code>
+     */
+    public Builder clearLocalCoordinates() {
+      bitField1_ = (bitField1_ & ~0x00000800);
+      localCoordinates_ = 0L;
       
       return this;
     }

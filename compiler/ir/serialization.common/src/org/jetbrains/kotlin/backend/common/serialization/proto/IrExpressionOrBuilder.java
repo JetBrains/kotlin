@@ -449,4 +449,13 @@ public interface IrExpressionOrBuilder extends
    * </pre>
    */
   long getGlobalCoordinates();
+
+  /**
+   * <code>optional int64 local_coordinates = 4;</code>
+   */
+  boolean hasLocalCoordinates();
+  /**
+   * <code>optional int64 local_coordinates = 4;</code>
+   */
+  long getLocalCoordinates();
 }

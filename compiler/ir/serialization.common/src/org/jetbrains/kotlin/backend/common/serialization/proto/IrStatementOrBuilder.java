@@ -27,6 +27,15 @@ public interface IrStatementOrBuilder extends
   long getGlobalCoordinates();
 
   /**
+   * <code>optional int64 local_coordinates = 8;</code>
+   */
+  boolean hasLocalCoordinates();
+  /**
+   * <code>optional int64 local_coordinates = 8;</code>
+   */
+  long getLocalCoordinates();
+
+  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 2;</code>
    */
   boolean hasDeclaration();

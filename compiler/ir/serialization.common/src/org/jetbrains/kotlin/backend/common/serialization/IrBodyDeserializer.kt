@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -64,11 +62,15 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject as ProtoGetObject
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue as ProtoGetValue
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall as ProtoInstanceInitializerCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 as ProtoOperationPre2_4_0
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField as ProtoSetField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue as ProtoSetValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement
@@ -86,8 +88,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWh
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 as ProtoMemberAccessCommonPre_2_4_0
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 
 class IrBodyDeserializer(
     private val builtIns: IrBuiltIns,
@@ -137,7 +137,9 @@ class IrBodyDeserializer(
     }
 
     internal fun deserializeStatement(proto: ProtoStatement, parentStart: Int?): IrElement {
-        val coords = declarationDeserializer.deserializeCoordinates(proto.globalCoordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(
+            proto.hasGlobalCoordinates(), proto.globalCoordinates, proto.localCoordinates, parentStart
+        )
         val element = when (proto.statementCase) {
             StatementCase.BLOCK_BODY //proto.hasBlockBody()
             -> deserializeBlockBody(proto.blockBody, coords.startOffset, coords.endOffset)
@@ -311,18 +313,11 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeAnnotation(proto: ProtoAnnotation, type: IrType, parentStart: Int?): IrAnnotation {
-        var start = UNDEFINED_OFFSET
-        var end = UNDEFINED_OFFSET
-        if (proto.hasGlobalCoordinates()) {
-            val coords = BinaryCoordinatesEncoding.decode(proto.globalCoordinates)
-            start = coords.startOffset
-            end = coords.endOffset
-        }
-
+        val coords = declarationDeserializer.deserializeCoordinates(false, 0, proto.localCoordinates, parentStart)
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
         return IrAnnotationImplRaw(
-            start,
-            end,
+            coords.startOffset,
+            coords.endOffset,
             type,
             symbol,
             proto.constructorTypeArgumentsCount,
@@ -330,7 +325,7 @@ class IrBodyDeserializer(
             SourceElement.NO_SOURCE,
         ).also {
             deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
-            it.arguments.addAll(deserializeArguments(proto.argumentList, start))
+            it.arguments.addAll(deserializeArguments(proto.argumentList, coords.startOffset))
             it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         }
     }
@@ -661,7 +656,9 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeSpreadElement(proto: ProtoSpreadElement, parentStart: Int): IrSpreadElement {
-        val coords = declarationDeserializer.deserializeCoordinates(proto.globalCoordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(
+            proto.hasGlobalCoordinates(), proto.globalCoordinates, proto.localCoordinates, parentStart
+        )
         val expression = deserializeExpression(proto.expression, coords.startOffset)
         return IrSpreadElementImpl(coords.startOffset, coords.endOffset, expression)
     }
@@ -999,7 +996,9 @@ class IrBodyDeserializer(
             return null
         }
 
-        val coords = declarationDeserializer.deserializeCoordinates(proto.globalCoordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(
+            proto.hasGlobalCoordinates(), proto.globalCoordinates, proto.localCoordinates, parentStart
+        )
         val type = declarationDeserializer.deserializeIrType(proto.type)
 
         val expression = if (proto.operationCase != ProtoExpression.OperationCase.OPERATION_NOT_SET) {

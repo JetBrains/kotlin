@@ -71,6 +71,11 @@ public final class IrSpreadElement extends
             globalCoordinates_ = input.readInt64();
             break;
           }
+          case 24: {
+            bitField0_ |= 0x00000004;
+            localCoordinates_ = input.readInt64();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -145,9 +150,25 @@ public final class IrSpreadElement extends
     return globalCoordinates_;
   }
 
+  public static final int LOCAL_COORDINATES_FIELD_NUMBER = 3;
+  private long localCoordinates_;
+  /**
+   * <code>optional int64 local_coordinates = 3;</code>
+   */
+  public boolean hasLocalCoordinates() {
+    return ((bitField0_ & 0x00000004) == 0x00000004);
+  }
+  /**
+   * <code>optional int64 local_coordinates = 3;</code>
+   */
+  public long getLocalCoordinates() {
+    return localCoordinates_;
+  }
+
   private void initFields() {
     expression_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     globalCoordinates_ = 6148914691236517201L;
+    localCoordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -176,6 +197,9 @@ public final class IrSpreadElement extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeInt64(2, globalCoordinates_);
     }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      output.writeInt64(3, localCoordinates_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -192,6 +216,10 @@ public final class IrSpreadElement extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(2, globalCoordinates_);
+    }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(3, localCoordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -291,6 +319,8 @@ public final class IrSpreadElement extends
       bitField0_ = (bitField0_ & ~0x00000001);
       globalCoordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000002);
+      localCoordinates_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
@@ -322,6 +352,10 @@ public final class IrSpreadElement extends
         to_bitField0_ |= 0x00000002;
       }
       result.globalCoordinates_ = globalCoordinates_;
+      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+        to_bitField0_ |= 0x00000004;
+      }
+      result.localCoordinates_ = localCoordinates_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -333,6 +367,9 @@ public final class IrSpreadElement extends
       }
       if (other.hasGlobalCoordinates()) {
         setGlobalCoordinates(other.getGlobalCoordinates());
+      }
+      if (other.hasLocalCoordinates()) {
+        setLocalCoordinates(other.getLocalCoordinates());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -478,6 +515,38 @@ public final class IrSpreadElement extends
     public Builder clearGlobalCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000002);
       globalCoordinates_ = 6148914691236517201L;
+      
+      return this;
+    }
+
+    private long localCoordinates_ ;
+    /**
+     * <code>optional int64 local_coordinates = 3;</code>
+     */
+    public boolean hasLocalCoordinates() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int64 local_coordinates = 3;</code>
+     */
+    public long getLocalCoordinates() {
+      return localCoordinates_;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 3;</code>
+     */
+    public Builder setLocalCoordinates(long value) {
+      bitField0_ |= 0x00000004;
+      localCoordinates_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 3;</code>
+     */
+    public Builder clearLocalCoordinates() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      localCoordinates_ = 0L;
       
       return this;
     }

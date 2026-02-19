@@ -34,4 +34,13 @@ public interface IrSpreadElementOrBuilder extends
    * </pre>
    */
   long getGlobalCoordinates();
+
+  /**
+   * <code>optional int64 local_coordinates = 3;</code>
+   */
+  boolean hasLocalCoordinates();
+  /**
+   * <code>optional int64 local_coordinates = 3;</code>
+   */
+  long getLocalCoordinates();
 }

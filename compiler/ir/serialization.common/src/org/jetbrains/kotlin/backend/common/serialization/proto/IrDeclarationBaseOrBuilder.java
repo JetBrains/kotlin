@@ -45,6 +45,15 @@ public interface IrDeclarationBaseOrBuilder extends
   long getGlobalCoordinates();
 
   /**
+   * <code>optional int64 local_coordinates = 6;</code>
+   */
+  boolean hasLocalCoordinates();
+  /**
+   * <code>optional int64 local_coordinates = 6;</code>
+   */
+  long getLocalCoordinates();
+
+  /**
    * <code>optional int64 flags = 4 [default = 0];</code>
    */
   boolean hasFlags();

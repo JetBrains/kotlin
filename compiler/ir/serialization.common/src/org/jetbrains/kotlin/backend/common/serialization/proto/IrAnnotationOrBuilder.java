@@ -71,11 +71,11 @@ public interface IrAnnotationOrBuilder extends
   int getOriginName();
 
   /**
-   * <code>optional int64 global_coordinates = 7;</code>
+   * <code>optional int64 local_coordinates = 7;</code>
    */
-  boolean hasGlobalCoordinates();
+  boolean hasLocalCoordinates();
   /**
-   * <code>optional int64 global_coordinates = 7;</code>
+   * <code>optional int64 local_coordinates = 7;</code>
    */
-  long getGlobalCoordinates();
+  long getLocalCoordinates();
 }

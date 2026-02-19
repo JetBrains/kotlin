@@ -69,16 +69,21 @@ public final class IrDeclarationBase extends
             break;
           }
           case 32: {
-            bitField0_ |= 0x00000008;
+            bitField0_ |= 0x00000010;
             flags_ = input.readInt64();
             break;
           }
           case 42: {
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
               annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000020;
             }
             annotation_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation.PARSER, extensionRegistry));
+            break;
+          }
+          case 48: {
+            bitField0_ |= 0x00000008;
+            localCoordinates_ = input.readInt64();
             break;
           }
         }
@@ -89,7 +94,7 @@ public final class IrDeclarationBase extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
         annotation_ = java.util.Collections.unmodifiableList(annotation_);
       }
       try {
@@ -173,13 +178,28 @@ public final class IrDeclarationBase extends
     return globalCoordinates_;
   }
 
+  public static final int LOCAL_COORDINATES_FIELD_NUMBER = 6;
+  private long localCoordinates_;
+  /**
+   * <code>optional int64 local_coordinates = 6;</code>
+   */
+  public boolean hasLocalCoordinates() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+  /**
+   * <code>optional int64 local_coordinates = 6;</code>
+   */
+  public long getLocalCoordinates() {
+    return localCoordinates_;
+  }
+
   public static final int FLAGS_FIELD_NUMBER = 4;
   private long flags_;
   /**
    * <code>optional int64 flags = 4 [default = 0];</code>
    */
   public boolean hasFlags() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
+    return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
    * <code>optional int64 flags = 4 [default = 0];</code>
@@ -227,6 +247,7 @@ public final class IrDeclarationBase extends
     symbol_ = 0L;
     originName_ = 0;
     globalCoordinates_ = 6148914691236517201L;
+    localCoordinates_ = 0L;
     flags_ = 0L;
     annotation_ = java.util.Collections.emptyList();
   }
@@ -266,11 +287,14 @@ public final class IrDeclarationBase extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeInt64(3, globalCoordinates_);
     }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeInt64(4, flags_);
     }
     for (int i = 0; i < annotation_.size(); i++) {
       output.writeMessage(5, annotation_.get(i));
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      output.writeInt64(6, localCoordinates_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -293,13 +317,17 @@ public final class IrDeclarationBase extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(3, globalCoordinates_);
     }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(4, flags_);
     }
     for (int i = 0; i < annotation_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(5, annotation_.get(i));
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(6, localCoordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -401,10 +429,12 @@ public final class IrDeclarationBase extends
       bitField0_ = (bitField0_ & ~0x00000002);
       globalCoordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000004);
-      flags_ = 0L;
+      localCoordinates_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
-      annotation_ = java.util.Collections.emptyList();
+      flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000010);
+      annotation_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -443,10 +473,14 @@ public final class IrDeclarationBase extends
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
       }
+      result.localCoordinates_ = localCoordinates_;
+      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+        to_bitField0_ |= 0x00000010;
+      }
       result.flags_ = flags_;
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
         annotation_ = java.util.Collections.unmodifiableList(annotation_);
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
       }
       result.annotation_ = annotation_;
       result.bitField0_ = to_bitField0_;
@@ -464,13 +498,16 @@ public final class IrDeclarationBase extends
       if (other.hasGlobalCoordinates()) {
         setGlobalCoordinates(other.getGlobalCoordinates());
       }
+      if (other.hasLocalCoordinates()) {
+        setLocalCoordinates(other.getLocalCoordinates());
+      }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
       }
       if (!other.annotation_.isEmpty()) {
         if (annotation_.isEmpty()) {
           annotation_ = other.annotation_;
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
         } else {
           ensureAnnotationIsMutable();
           annotation_.addAll(other.annotation_);
@@ -635,12 +672,44 @@ public final class IrDeclarationBase extends
       return this;
     }
 
+    private long localCoordinates_ ;
+    /**
+     * <code>optional int64 local_coordinates = 6;</code>
+     */
+    public boolean hasLocalCoordinates() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional int64 local_coordinates = 6;</code>
+     */
+    public long getLocalCoordinates() {
+      return localCoordinates_;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 6;</code>
+     */
+    public Builder setLocalCoordinates(long value) {
+      bitField0_ |= 0x00000008;
+      localCoordinates_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 6;</code>
+     */
+    public Builder clearLocalCoordinates() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      localCoordinates_ = 0L;
+      
+      return this;
+    }
+
     private long flags_ ;
     /**
      * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public boolean hasFlags() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
      * <code>optional int64 flags = 4 [default = 0];</code>
@@ -652,7 +721,7 @@ public final class IrDeclarationBase extends
      * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public Builder setFlags(long value) {
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       flags_ = value;
       
       return this;
@@ -661,7 +730,7 @@ public final class IrDeclarationBase extends
      * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public Builder clearFlags() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       flags_ = 0L;
       
       return this;
@@ -670,9 +739,9 @@ public final class IrDeclarationBase extends
     private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation> annotation_ =
       java.util.Collections.emptyList();
     private void ensureAnnotationIsMutable() {
-      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
         annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation>(annotation_);
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
        }
     }
 
@@ -778,7 +847,7 @@ public final class IrDeclarationBase extends
      */
     public Builder clearAnnotation() {
       annotation_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000020);
 
       return this;
     }

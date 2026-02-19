@@ -140,6 +140,11 @@ public final class IrStatement extends
             statementCase_ = 7;
             break;
           }
+          case 64: {
+            bitField0_ |= 0x00000002;
+            localCoordinates_ = input.readInt64();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -236,6 +241,21 @@ public final class IrStatement extends
    */
   public long getGlobalCoordinates() {
     return globalCoordinates_;
+  }
+
+  public static final int LOCAL_COORDINATES_FIELD_NUMBER = 8;
+  private long localCoordinates_;
+  /**
+   * <code>optional int64 local_coordinates = 8;</code>
+   */
+  public boolean hasLocalCoordinates() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+  /**
+   * <code>optional int64 local_coordinates = 8;</code>
+   */
+  public long getLocalCoordinates() {
+    return localCoordinates_;
   }
 
   public static final int DECLARATION_FIELD_NUMBER = 2;
@@ -342,6 +362,7 @@ public final class IrStatement extends
 
   private void initFields() {
     globalCoordinates_ = 6148914691236517201L;
+    localCoordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -413,6 +434,9 @@ public final class IrStatement extends
     if (statementCase_ == 7) {
       output.writeMessage(7, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody) statement_);
     }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      output.writeInt64(8, localCoordinates_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -449,6 +473,10 @@ public final class IrStatement extends
     if (statementCase_ == 7) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(7, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody) statement_);
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(8, localCoordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -550,6 +578,8 @@ public final class IrStatement extends
       super.clear();
       globalCoordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000001);
+      localCoordinates_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000002);
       statementCase_ = 0;
       statement_ = null;
       return this;
@@ -579,6 +609,10 @@ public final class IrStatement extends
         to_bitField0_ |= 0x00000001;
       }
       result.globalCoordinates_ = globalCoordinates_;
+      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+        to_bitField0_ |= 0x00000002;
+      }
+      result.localCoordinates_ = localCoordinates_;
       if (statementCase_ == 2) {
         result.statement_ = statement_;
       }
@@ -606,6 +640,9 @@ public final class IrStatement extends
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.getDefaultInstance()) return this;
       if (other.hasGlobalCoordinates()) {
         setGlobalCoordinates(other.getGlobalCoordinates());
+      }
+      if (other.hasLocalCoordinates()) {
+        setLocalCoordinates(other.getLocalCoordinates());
       }
       switch (other.getStatementCase()) {
         case DECLARATION: {
@@ -762,6 +799,38 @@ public final class IrStatement extends
     public Builder clearGlobalCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000001);
       globalCoordinates_ = 6148914691236517201L;
+      
+      return this;
+    }
+
+    private long localCoordinates_ ;
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public boolean hasLocalCoordinates() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public long getLocalCoordinates() {
+      return localCoordinates_;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public Builder setLocalCoordinates(long value) {
+      bitField0_ |= 0x00000002;
+      localCoordinates_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public Builder clearLocalCoordinates() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      localCoordinates_ = 0L;
       
       return this;
     }
