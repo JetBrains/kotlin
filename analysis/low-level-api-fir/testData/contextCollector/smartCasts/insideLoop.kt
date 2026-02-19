@@ -2,9 +2,9 @@ interface Node {
     val parent: Node?
 }
 
-fun test(initial: Node) { 
-    var current = initial
-    
+fun test(initial: Node) {
+    var current: Node? = initial
+
     while (current != null) {
         <expr>consume(current)</expr>
         current = current.parent

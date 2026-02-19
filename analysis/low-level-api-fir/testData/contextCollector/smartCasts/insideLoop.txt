@@ -18,11 +18,11 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirLocalPropertySymbol lvar current: R|Node|
+                FirLocalPropertySymbol lvar current: R|Node?|
     Element 8
         Scope: FirLocalScope
 Smart Casts:
-    FirLocalPropertySymbol lvar current: R|Node|
+    FirLocalPropertySymbol lvar current: R|Node?|
     Stability: CAPTURED_VARIABLE
     Types:
         kotlin.Any
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] insideLoop.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] initial: R|Node|): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lvar current: R|Node| = R|<local>/initial|
+        [ResolvedTo(BODY_RESOLVE)] lvar current: R|Node?| = R|<local>/initial|
         while(!=(R|<local>/current|, Null(null))) {
             R|/consume|(R|<local>/current|)
             R|<local>/current| = R|<local>/current|.R|/Node.parent|
