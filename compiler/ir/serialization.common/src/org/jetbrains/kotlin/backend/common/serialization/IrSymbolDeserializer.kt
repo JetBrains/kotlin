@@ -45,6 +45,8 @@ class IrSymbolDeserializer(
         }
     }
 
+    private fun mixBits(code: Long) = code xor (code ushr 8)
+
     /**
      * This function helps [IrDeclarationDeserializer] to deserialize symbols of deserialized declarations.
      * So, it is always called for the symbols belonging to the current file, [libraryFile].
@@ -54,7 +56,7 @@ class IrSymbolDeserializer(
         val signature = deserializeIdSignature(symbolData.signatureId)
         val symbol = deserializeSymbolWithOwnerInCurrentFile(signature, symbolData.kind)
 
-        symbolCache[code] = symbol
+        symbolCache[mixBits(code)] = symbol
 
         return symbol to signature
     }
@@ -64,7 +66,7 @@ class IrSymbolDeserializer(
      * or belongs to another file (e.g., a symbol in a [IrMemberAccessExpression] being deserialized right now).
      */
     fun deserializeSymbolWithOwnerMaybeInOtherFile(code: Long): IrSymbol {
-        return symbolCache.getOrPut(code) {
+        return symbolCache.getOrPut(mixBits(code)) {
             val symbolData = parseSymbolData(code)
             val signature = deserializeIdSignature(symbolData.signatureId)
             deserializeSymbolWithOwnerMaybeInOtherFile(signature, symbolData.kind)
