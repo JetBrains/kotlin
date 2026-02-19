@@ -29,9 +29,12 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":dist")
         workingDir = rootDir
+        useJUnitPlatform {
+            excludeTags("llFirNative")
+        }
     }
 
-    testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.konan.compiler.based.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.multiplatform.compiler.based.TestGeneratorKt")
 
     nativeTestTask("llFirNativeTests", "llFirNative", requirePlatformLibs = true)
 }

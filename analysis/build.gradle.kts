@@ -28,7 +28,7 @@ tasks.register("analysisAllTests") {
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(
             ":analysis:analysis-api-standalone:analysis-api-standalone-native:test",
-            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:llFirNativeTests",
+            ":analysis:low-level-api-fir:low-level-api-fir-multiplatform-compiler-tests:llFirNativeTests",
         )
     }
 }
