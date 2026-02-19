@@ -56,12 +56,10 @@ apply plugin: "kotlin.native.build-tools-conventions"
 apply plugin: "platform-manager"
 apply plugin: "java"
 
-allprojects {
-    repositories {
-        mavenCentral()
-        maven {
-            url = project.bootstrapKotlinRepo
-        }
+repositories {
+    mavenCentral()
+    maven {
+        url = project.bootstrapKotlinRepo
     }
 }
 

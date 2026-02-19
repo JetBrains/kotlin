@@ -9,7 +9,15 @@ How to Publish
 val protobufVersion by extra("2.6.1")
 val publishedVersion by extra("2.6.1-2")
 
-allprojects {
+group = "org.jetbrains.kotlin"
+version = publishedVersion
+
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}
+
+subprojects {
     group = "org.jetbrains.kotlin"
     version = publishedVersion
 

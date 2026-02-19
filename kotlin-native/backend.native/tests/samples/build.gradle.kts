@@ -12,7 +12,21 @@ buildscript {
     }
 }
 
-allprojects {
+repositories {
+    mavenCentral()
+
+    val kotlinCompilerRepo: String? by rootProject
+    kotlinCompilerRepo?.let { maven(it) }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.addAll(
+            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+            "-opt-in=kotlin.experimental.ExperimentalNativeApi"
+    )
+}
+
+subprojects {
     repositories {
         mavenCentral()
 

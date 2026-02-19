@@ -1,3 +1,4 @@
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -27,6 +28,9 @@ project.configureJavaBasePlugin()
 project.configureKotlinCompilationOptions()
 project.configureArtifacts()
 project.configureTests()
+
+pluginManager.apply("java-instrumentation")
+project.configurePublishingRetry()
 
 // There are problems with common build dir:
 //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
@@ -449,6 +453,171 @@ fun skipJvmDefaultForModule(path: String): Boolean =
             // KT-54749
             path == ":core:descriptors"
 
+
+fun Project.configurePublishingRetry() {
+    val publishingAttempts = findProperty("kotlin.build.publishing.attempts")?.toString()?.toInt()
+
+    fun retry(attempts: Int, action: () -> Unit): Boolean {
+        repeat(attempts) {
+            try {
+                action()
+                return true
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+        return false
+    }
+
+    fun <T : Task> T.configureRetry(attempts: Int, taskAction: T.() -> Unit) {
+        doFirst {
+            if (retry(attempts) { taskAction() })
+                throw StopExecutionException()
+            else
+                error("Number of attempts ($attempts) exceeded for ${project.path}:$name")
+        }
+    }
+
+    if (publishingAttempts != null && publishingAttempts > 1) {
+        tasks.withType<PublishToMavenRepository> {
+            configureRetry(publishingAttempts, PublishToMavenRepository::publish)
+        }
+    }
+}
+
+// Remove kotlin-compiler from dependencies during Idea import. KTI-1598
+if (kotlinBuildProperties.isInIdeaSync.get()) {
+    afterEvaluate {
+        configurations.all {
+            if (dependencies.removeIf { (it as? ProjectDependency)?.path == ":kotlin-compiler" }) {
+                logger.warn("Removed :kotlin-compiler project dependency from $this")
+            }
+        }
+    }
+}
+
+val dependencyOnSnapshotReflectWhitelist = setOf(
+    ":kotlin-compiler",
+    ":kotlin-reflect",
+    ":tools:binary-compatibility-validator",
+    ":tools:kotlin-stdlib-gen",
+)
+
+configurations.all {
+    val configuration = this
+    if (name != "compileClasspath") {
+        return@all
+    }
+    resolutionStrategy.eachDependency {
+        if (requested.group != "org.jetbrains.kotlin") {
+            return@eachDependency
+        }
+
+        val isReflect = requested.name == "kotlin-reflect"
+        // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
+        // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
+        if (project.path in ProjectModuleLists.compilerModules) {
+            val expectedReflectVersion = commonDependencyVersion("org.jetbrains.kotlin", "kotlin-reflect")
+            if (isReflect) {
+                check(requested.version == expectedReflectVersion) {
+                    """
+                        $configuration: 'kotlin-reflect' should have '$expectedReflectVersion' version. But it was '${requested.version}'
+                        Suggestions:
+                            1. Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
+                            2. Avoid 'kotlin-reflect' leakage from transitive dependencies with 'exclude("org.jetbrains.kotlin")'
+                    """.trimIndent()
+                }
+            }
+            if (requested.name.startsWith("kotlin-stdlib")) {
+                check(requested.version != expectedReflectVersion) {
+                    """
+                        $configuration: '${requested.name}' has a wrong version. It's not allowed to be '$expectedReflectVersion'
+                        Suggestions:
+                            1. Most likely, it leaked from 'kotlin-reflect' transitive dependencies. Use 'isTransitive = false' for
+                               'kotlin-reflect' dependencies
+                            2. Avoid '${requested.name}' leakage from other transitive dependencies with 'exclude("org.jetbrains.kotlin")'
+                    """.trimIndent()
+                }
+            }
+        }
+        if (isReflect && project.path !in dependencyOnSnapshotReflectWhitelist) {
+            check(requested.version != kotlinVersion) {
+                """
+                    $configuration: 'kotlin-reflect' is not allowed to have '$kotlinVersion' version.
+                    Suggestion: Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
+                """.trimIndent()
+            }
+        }
+    }
+}
+
+val mirrorRepo: String? = providers.gradleProperty("maven.repository.mirror").orNull
+
+repositories {
+    when (kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull) {
+        null -> {}
+        "master" -> {
+            maven { setUrl("https://www.jetbrains.com/intellij-repository/snapshots") }
+        }
+
+        else -> {
+            kotlinBuildLocalRepo(project)
+        }
+    }
+
+    mirrorRepo?.let(::maven)
+
+    maven(intellijRepo) {
+        content {
+            includeGroupByRegex("com\\.jetbrains\\.intellij(\\..+)?")
+        }
+    }
+
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
+        content {
+            includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+            includeGroupByRegex("com.intellij.platform.*")
+            includeGroupByRegex("org.jetbrains.jps.*")
+            includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
+            includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
+            includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
+            includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
+            includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
+        }
+    }
+
+    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
+        content {
+            includeModule("org.jetbrains.dukat", "dukat")
+            includeModule("org.jetbrains.kotlin", "android-dx")
+            includeModule("org.jetbrains.kotlin", "jcabi-aether")
+            includeModule("org.jetbrains.kotlin", "kotlin-build-gradle-plugin")
+            includeModule("org.jetbrains.kotlin", "protobuf-lite")
+            includeModule("org.jetbrains.kotlin", "protobuf-relocated")
+            includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
+        }
+    }
+
+    maven("https://download.jetbrains.com/teamcity-repository") {
+        content {
+            includeModule("org.jetbrains.teamcity", "serviceMessages")
+            includeModule("org.jetbrains.teamcity.idea", "annotations")
+        }
+    }
+
+    maven("https://dl.google.com/dl/android/maven2") {
+        content {
+            includeGroup("com.android.tools")
+            includeGroup("com.android.tools.build")
+            includeGroup("com.android.tools.layoutlib")
+            includeGroup("com.android")
+            includeGroup("androidx.test")
+            includeGroup("androidx.annotation")
+        }
+    }
+
+    mavenCentral()
+}
 
 // Workaround for #KT-65266
 afterEvaluate {
