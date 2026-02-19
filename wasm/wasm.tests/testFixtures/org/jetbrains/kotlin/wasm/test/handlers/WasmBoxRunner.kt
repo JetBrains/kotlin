@@ -36,7 +36,7 @@ class WasmBoxRunner(
     }
 
     private fun runWasmCode() {
-        val artifacts = modulesToArtifact.values.single()
+        val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.CompilationSets
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()

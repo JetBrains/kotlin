@@ -17,7 +17,7 @@ class WasmIrHandler(testServices: TestServices) : WasmBinaryArtifactHandler(test
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
-
+        require(info is BinaryArtifacts.Wasm.CompilationSets)
         val ktFiles = module.files.filter { it.isKtFile }.associate { it.originalFile to it.originalContent }
 
         ktFiles.forEach {
