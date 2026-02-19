@@ -1,3 +1,6 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: WASM-JS:2.3.0
+// ^^^ K/Wasm backend v.2.3.0 did not raise NothingValueException. Fixed only in 2.3.20-Beta1, commit 2074edc.
+//     So, a test `current frontend + 2.3.0 backend` expectedly fails
 fun <T> something(): T = Any() as T
 
 class Context<T>

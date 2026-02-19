@@ -160,7 +160,7 @@ internal fun WasmVM.runWithCaughtExceptions(
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
         }
-        run(
+        val str = run(
             "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,

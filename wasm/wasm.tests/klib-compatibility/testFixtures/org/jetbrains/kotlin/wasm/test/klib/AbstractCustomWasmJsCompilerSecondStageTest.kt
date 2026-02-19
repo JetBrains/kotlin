@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MUL
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
@@ -49,6 +50,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useSourcePreprocessor(::JsExportBoxPreprocessor)
         useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
+        useDirectives(WasmEnvironmentConfigurationDirectives)
         defaultDirectives {
             if (customWasmJsCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
                 +ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
