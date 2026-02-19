@@ -46,11 +46,6 @@ plugins {
     id "cache-redirector"
 }
 
-File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")
-def versionProperties = new Properties()
-versionPropertiesFile.withInputStream {
-    versionProperties.load(it)
-}
 dependencyResolutionManagement {
     components {
         withModule("com.google.code.gson:gson") {
@@ -58,7 +53,7 @@ dependencyResolutionManagement {
                 withDependencies {
                     add("com.google.code.gson:gson") {
                         version {
-                            it.require(versionProperties['versions.gson'] as String)
+                            it.require("2.11.0")
                         }
                     }
                 }
@@ -70,7 +65,7 @@ dependencyResolutionManagement {
                 withDependencies {
                     add("org.apache.commons:commons-compress") {
                         version {
-                            it.require(versionProperties['versions.commons-compress'] as String)
+                            it.require("1.27.1")
                         }
                     }
                 }
@@ -82,7 +77,7 @@ dependencyResolutionManagement {
                 withDependencies {
                     add("commons-io:commons-io") {
                         version {
-                            it.require(versionProperties['versions.commons-io'] as String)
+                            it.require("2.18.0")
                         }
                     }
                 }
