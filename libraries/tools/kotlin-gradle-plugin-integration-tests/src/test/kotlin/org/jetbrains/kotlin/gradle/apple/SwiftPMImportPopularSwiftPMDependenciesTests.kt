@@ -901,38 +901,8 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         } else null,
         beforeBuild = {
             // Generate local Swift package as a sibling directory (to test relative path with ../)
-            val localPackageDir = projectPath.resolve("../localSwiftPackage")
-            localPackageDir.resolve("Sources/LocalSwiftPackage").createDirectories()
-
-            localPackageDir.resolve("Package.swift").writeText(
-                """
-                // swift-tools-version: 5.9
-                import PackageDescription
-
-                let package = Package(
-                    name: "LocalSwiftPackage",
-                    platforms: [.iOS(.v15)],
-                    products: [
-                        .library(name: "LocalSwiftPackage", targets: ["LocalSwiftPackage"]),
-                    ],
-                    targets: [
-                        .target(name: "LocalSwiftPackage"),
-                    ]
-                )
-                """.trimIndent()
-            )
-
-            localPackageDir.resolve("Sources/LocalSwiftPackage/LocalSwiftPackage.swift").writeText(
-                """
-                import Foundation
-
-                @objc public class LocalHelper: NSObject {
-                    @objc public static func greeting() -> String {
-                        return "Hello from LocalSwiftPackage"
-                    }
-                }
-                """.trimIndent()
-            )
+            val localSwiftPackageRelativePath = "../localSwiftPackage"
+            createLocalSwiftPackage(projectPath.resolve(localSwiftPackageRelativePath))
         }
     ) { layout ->
         localPackage(
@@ -1030,36 +1000,8 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
             // Create producer project with local SwiftPM dependency
             val producer = project("empty", version) {
                 // Create local Swift package inside producer project
-                val localPackageDir = projectPath.resolve("localSwiftPackage")
-                localPackageDir.resolve("Sources/LocalSwiftPackage").createDirectories()
-
-                localPackageDir.resolve("Package.swift").writeText(
-                    """
-                    // swift-tools-version: 5.9
-                    import PackageDescription
-                    let package = Package(
-                        name: "LocalSwiftPackage",
-                        platforms: [.iOS(.v15)],
-                        products: [
-                            .library(name: "LocalSwiftPackage", targets: ["LocalSwiftPackage"]),
-                        ],
-                        targets: [
-                            .target(name: "LocalSwiftPackage"),
-                        ]
-                    )
-                """.trimIndent()
-                )
-
-                localPackageDir.resolve("Sources/LocalSwiftPackage/LocalSwiftPackage.swift").writeText(
-                    """
-                    import Foundation
-                    @objc public class LocalHelper: NSObject {
-                        @objc public static func greeting() -> String {
-                            return "Hello from LocalSwiftPackage"
-                        }
-                    }
-                """.trimIndent()
-                )
+                val localSwiftPackageRelativePath = "localSwiftPackage"
+                createLocalSwiftPackage(projectPath.resolve(localSwiftPackageRelativePath))
 
                 buildScriptInjection {
                     project.applyMultiplatform {
@@ -1078,7 +1020,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 
                         swiftPMDependencies {
                             localPackage(
-                                directory = project.layout.projectDirectory.dir("localSwiftPackage"),
+                                directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                                 products = listOf("LocalSwiftPackage"),
                             )
                         }
