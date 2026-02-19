@@ -47,7 +47,7 @@ class WasmBoxRunner(
             val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
             outputDir.mkdirs()
 
-            result.compilerResult.writeTo(outputDir, "index", debugMode, mode)
+            result.compilerResult.writeTo(outputDir, WASM_BASE_FILE_NAME, debugMode, mode)
             result.compilationDependencies.forEach {
                 it.compilerResult.writeTo(outputDir, it.compilerResult.baseFileName, debugMode, mode)
             }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -45,7 +46,7 @@ class CustomWasmJsCompilerSecondStageFacade(
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
     ): BinaryArtifacts.Wasm.Folder {
-        val wasmArtifactFile = testServices.temporaryDirectoryManager.getOrCreateTempDirectory(module.name).resolve("${module.name}.wasm")
+        val wasmArtifactFile = testServices.temporaryDirectoryManager.getOrCreateTempDirectory(module.name).resolve("$WASM_BASE_FILE_NAME.wasm")
         val compilerXmlOutput = ByteArrayOutputStream()
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
@@ -57,7 +58,7 @@ class CustomWasmJsCompilerSecondStageFacade(
                     K2WasmCompilerArguments::wasm.cliArgument,
                     K2JSCompilerArguments::includes.cliArgument(mainLibrary),
                     K2JSCompilerArguments::outputDir.cliArgument, wasmArtifactFile.parentFile.path,
-                    K2JSCompilerArguments::moduleName.cliArgument, module.name,
+                    K2JSCompilerArguments::moduleName.cliArgument, WASM_BASE_FILE_NAME,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
