@@ -2,6 +2,8 @@ plugins {
     id("gradle-plugins-documentation")
 }
 
+description = "Generates documentation for Kotlin Gradle plugins API reference"
+
 pluginsApiDocumentation {
     documentationOutput = layout.buildDirectory.dir("documentation/kotlinlang")
     documentationOldVersions = layout.buildDirectory.dir("documentation/kotlinlangOld")

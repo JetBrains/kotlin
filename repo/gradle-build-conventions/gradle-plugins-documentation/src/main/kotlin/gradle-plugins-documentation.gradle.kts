@@ -49,8 +49,6 @@ val unzipTemplates = tasks.register<Copy>("unzipTemplates") {
 }
 
 dokka {
-    description = "Generates documentation for Kotlin Gradle plugins API reference"
-
     dokkaPublications.html {
         includes.from(documentationExtension.moduleDescription)
 
