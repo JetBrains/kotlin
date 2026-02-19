@@ -1,5 +1,5 @@
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: WASM-JS:2.3
-// ^^^ The issue was fixed for Wasm in 2.3.0-Beta1
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: WASM-JS:2.3.0
+// ^^^ The issue was fixed for Wasm in 2.3.20-Beta1
 fun <T> something(): T = Any() as T
 
 class Context<T>
