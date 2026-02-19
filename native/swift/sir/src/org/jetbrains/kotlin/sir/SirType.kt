@@ -133,17 +133,6 @@ open class SirOptionalType(type: SirType) : SirNominalType(
     val wrappedType: SirType get() = super.typeArguments.single()
 }
 
-class SirWrappedFlowType(
-    wrapperStruct: SirScopeDefiningDeclaration,
-    flowType: SirType,
-    typeArguments: List<SirType>,
-) : SirNominalType(
-    typeDeclaration = wrapperStruct,
-    typeArguments = typeArguments
-), SirWrappedType {
-    val wrappedType: SirType = flowType
-}
-
 class SirImplicitlyUnwrappedOptionalType(type: SirType) : SirOptionalType(type)
 
 class SirArrayType(type: SirType) : SirNominalType(
@@ -161,14 +150,16 @@ class SirDictionaryType(keyType: SirType, valueType: SirType) : SirNominalType(
     val valueType: SirType get() = super.typeArguments[1]
 }
 
-class SirExistentialType(
-    protocols: List<SirProtocol>,
+open class SirExistentialType(
+    protocols: List<Pair<SirProtocol, List<SirType>>> = emptyList(),
 ) : SirType {
     override val attributes: List<SirAttribute> = emptyList()
 
-    val protocols: List<SirProtocol> = protocols.sortedBy { it.swiftFqName }
+    val protocols: List<Pair<SirProtocol, List<SirType>>> = protocols.sortedBy { it.first.swiftFqName }
 
-    constructor(vararg protocols: SirProtocol) : this(protocols.toList())
+    constructor(vararg protocols: SirProtocol) : this(protocols.map { it to emptyList() })
+
+    constructor(vararg protocols: Pair<SirProtocol, List<SirType>>) : this(protocols.toList())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -180,6 +171,12 @@ class SirExistentialType(
         return this::class.hashCode()
     }
 }
+
+class SirTypedFlowType(
+    val typedProtocol: SirProtocol,
+    val elementType: SirType,
+    val flowType: SirExistentialType,
+) : SirExistentialType(typedProtocol to listOf(elementType)), SirWrappedType
 
 val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
 

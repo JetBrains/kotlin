@@ -109,9 +109,11 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
         declarationSupported && type.typeArguments.all { isSupported(it) }
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
-    is SirExistentialType -> type.protocols.all {
-        it == KotlinRuntimeSupportModule.kotlinBridgeable ||
-                it.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
+    is SirTypedFlowType -> isSupported(type.elementType)
+    is SirExistentialType -> type.protocols.all { (protocol, typeArguments) ->
+        val protocolSupported = protocol == KotlinRuntimeSupportModule.kotlinBridgeable ||
+                protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
+        protocolSupported && typeArguments.all { isSupported(it) }
     }
     else -> false
 }

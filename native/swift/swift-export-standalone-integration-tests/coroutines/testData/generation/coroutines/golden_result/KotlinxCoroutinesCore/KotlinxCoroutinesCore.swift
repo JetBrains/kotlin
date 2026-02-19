@@ -26,21 +26,21 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow where Self : 
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinCoroutineSupport._KotlinFlow, _Concurrency.AsyncSequence where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinCoroutineSupport.KotlinFlow, _Concurrency.AsyncSequence where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, KotlinCoroutineSupport.KotlinStateFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow {
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow {
-    public protocol Flow: KotlinRuntime.KotlinBase, KotlinCoroutineSupport._KotlinFlow, _Concurrency.AsyncSequence {
+    public protocol Flow: KotlinRuntime.KotlinBase, KotlinCoroutineSupport.KotlinFlow, _Concurrency.AsyncSequence {
     }
     public protocol SharedFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.Flow {
         var replayCache: [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
             get
         }
     }
-    public protocol StateFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow {
+    public protocol StateFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, KotlinCoroutineSupport.KotlinStateFlow {
         var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
             get
         }

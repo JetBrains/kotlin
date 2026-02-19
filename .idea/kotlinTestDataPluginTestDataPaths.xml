@@ -131,6 +131,7 @@
         <option value="$PROJECT_DIR$/js/js.translator/testData/incremental" />
         <option value="$PROJECT_DIR$/native/native.tests/testData/klib/header-klibs" />
         <option value="$PROJECT_DIR$/native/swift/sir-compiler-bridge/testData" />
+        <option value="$PROJECT_DIR$/native/swift/swift-export-standalone-integration-tests/coroutines/testData" />
         <option value="$PROJECT_DIR$/native/swift/swift-export-standalone-integration-tests/simple/testData" />
         <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData/projects" />
         <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />

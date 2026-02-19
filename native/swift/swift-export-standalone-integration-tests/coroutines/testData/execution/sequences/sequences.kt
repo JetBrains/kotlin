@@ -18,7 +18,7 @@ object Element3: Elem()
 object CurrentSubject {
     private val flow: MutableStateFlow<Elem> = MutableStateFlow(Element1)
 
-    public val value: Flow<Elem> get() = flow
+    public val value: StateFlow<Elem> get() = flow
 
     public fun update(value: Elem) {
         flow.value = value

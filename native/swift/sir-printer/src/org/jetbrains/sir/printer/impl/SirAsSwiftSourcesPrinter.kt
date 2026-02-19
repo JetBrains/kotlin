@@ -590,7 +590,11 @@ internal class SirAsSwiftSourcesPrinter private constructor(
 
     private val SirType.swiftRenderAsConstraint: String
         get() = when (this) {
-            is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.swiftFqName } ?: "Any"
+            is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { (protocol, typeArguments) ->
+                val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
+                    ?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftRenderAsConstraint } ?: ""
+                "${protocol.swiftFqName}${typeArguments}"
+            } ?: "Any"
             else -> this.swiftRender(SirTypeVariance.INVARIANT)
         }
 

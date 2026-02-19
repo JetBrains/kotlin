@@ -53,7 +53,8 @@ internal fun bridgeType(type: SirType, position: SirTypeVariance): AnyBridge =
     }
 
 private fun bridgeExistential(type: SirExistentialType, position: SirTypeVariance): AnyBridge {
-    if (type.protocols.singleOrNull() == KotlinRuntimeSupportModule.kotlinBridgeable) {
+    if (type is SirTypedFlowType) return AsTypedFlow(type)
+    if (type.protocols.singleOrNull()?.first == KotlinRuntimeSupportModule.kotlinBridgeable) {
         return AsAnyBridgeable
     }
     return AsExistential(
@@ -115,8 +116,6 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
 
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
-
-        KotlinCoroutineSupportModule.kotlinTypedFlowStruct -> AsTypedFlow(type)
 
         is SirTypealias -> bridgeType(subtype.type, position)
 
@@ -451,16 +450,24 @@ internal sealed class Bridge(
     }
 
     /**
-     * A bridge for the typed `_KotlinTypedFlow<Element>` wrapper struct.
+     * A bridge for the typed `KotlinTypedFlow<Element>` wrapper protocols/structs.
      *
      * On the Kotlin/C side it's the same opaque pointer as for [AsExistential].
-     * On the Swift side, the return path wraps the pointer in a `_KotlinTypedFlow<Element>` struct,
+     * On the Swift side, the return path wraps the pointer in a `KotlinTypedFlow<Element>` protocol,
      * and the parameter path (theoretical – typed flow only appears in return position)
-     * unwraps via `.untyped.__externalRCRef()`.
+     * unwraps via `.wrapped.__externalRCRef()`.
      */
-    class AsTypedFlow(swiftType: SirNominalType) : WithSingleType(swiftType, KotlinType.KotlinObject, CType.Object) {
-        private val flowCastType: SirType = (swiftType as? SirWrappedFlowType)?.wrappedType
-            ?: SirExistentialType(KotlinCoroutineSupportModule.kotlinFlow)
+    class AsTypedFlow(swiftType: SirTypedFlowType) : WithSingleType(swiftType, KotlinType.KotlinObject, CType.Object) {
+
+        private val structType = SirNominalType(
+            typeDeclaration = when (swiftType.typedProtocol) {
+                KotlinCoroutineSupportModule.kotlinTypedFlow -> KotlinCoroutineSupportModule.kotlinTypedFlowImpl
+                KotlinCoroutineSupportModule.kotlinTypedStateFlow -> KotlinCoroutineSupportModule.kotlinTypedStateFlowImpl
+                KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlowImpl
+                else -> error("Unsupported typed flow type: ${swiftType.typedProtocol}")
+            },
+            typeArguments = listOf(swiftType.elementType)
+        )
 
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -475,13 +482,13 @@ internal sealed class Bridge(
 
         override val inSwiftSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${valueExpression}.untyped.__externalRCRef()"
+                "${valueExpression}.wrapped.__externalRCRef()"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
-                val flowProtocolFqName = typeNamer.swiftFqName(flowCastType)
-                val typedFlowFqName = typeNamer.swiftFqName(swiftType)
-                return "$typedFlowFqName($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression) as! $flowProtocolFqName)"
+                val flowProtocolFqName = typeNamer.swiftFqName(swiftType.flowType)
+                val structFqName = typeNamer.swiftFqName(structType)
+                return "$structFqName($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression) as! $flowProtocolFqName)"
             }
         }
     }

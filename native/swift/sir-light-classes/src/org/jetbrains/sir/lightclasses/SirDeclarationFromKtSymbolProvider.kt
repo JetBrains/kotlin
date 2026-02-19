@@ -7,7 +7,6 @@ package org.jetbrains.sir.lightclasses
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.SirEnum
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
@@ -28,8 +27,8 @@ public class SirDeclarationFromKtSymbolProvider(
             is KaNamedClassSymbol -> {
                 when (ktSymbol.classKind) {
                     KaClassKind.INTERFACE -> {
-                        val protocol = when (ktSymbol.classId) {
-                            ClassId.fromString("kotlinx/coroutines/flow/Flow") -> SirFlowFromKtSymbol(
+                        val protocol = when {
+                            ktSymbol.classId in SirFlowFromKtSymbol.CLASS_IDS -> SirFlowFromKtSymbol(
                                 ktSymbol = ktSymbol,
                                 sirSession = sirSession,
                             )

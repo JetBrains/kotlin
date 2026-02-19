@@ -87,17 +87,20 @@ public class SirTypeProviderImpl(
                             }
 
                             // Intercept Flow<T> for typed generic wrapping in covariant position
-                            if (kaType.classId == FLOW_CLASS_ID && ctx.currentPosition == SirTypeVariance.COVARIANT) {
+                            if (kaType.classId in FLOW_CLASS_IDS && ctx.currentPosition == SirTypeVariance.COVARIANT) {
                                 val elementArg = kaType.typeArguments.singleOrNull()
                                 if (elementArg is KaTypeArgumentWithVariance) {
                                     val elementType = elementArg.type
                                     val translatedElement = elementType.translateType(ctx)
                                     if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
-                                        val flowType = resolveFlowProtocolType(kaType)
-                                        return@withSessions SirWrappedFlowType(
-                                            wrapperStruct = KotlinCoroutineSupportModule.kotlinTypedFlowStruct,
-                                            flowType = flowType,
-                                            typeArguments = listOf(translatedElement)
+                                        return@withSessions SirTypedFlowType(
+                                            typedProtocol = when (kaType.classId) {
+                                                STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedStateFlow
+                                                MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow
+                                                else -> KotlinCoroutineSupportModule.kotlinTypedFlow
+                                            },
+                                            elementType = translatedElement,
+                                            flowType = resolveFlowProtocolType(kaType)
                                         ).optionalIfNeeded(kaType)
                                     }
                                 }
@@ -206,11 +209,14 @@ public class SirTypeProviderImpl(
                     typeArguments.forEach { it.handleImports(processTypeImports) }
                     typeDeclaration.extractImport()
                 }
-                if (this is SirWrappedFlowType) {
-                    wrappedType.handleImports(processTypeImports)
+            }
+            is SirExistentialType -> this.protocols.forEach { (protocol, typeArguments) ->
+                protocol.extractImport()
+                typeArguments.forEach { it.handleImports(processTypeImports) }
+                if (this is SirTypedFlowType) {
+                    flowType.handleImports(processTypeImports)
                 }
             }
-            is SirExistentialType -> this.protocols.forEach { it.extractImport() }
             is SirFunctionalType -> {
                 parameterTypes.forEach { it.handleImports(processTypeImports) }
                 returnType.handleImports(processTypeImports)
@@ -259,6 +265,10 @@ public class SirTypeProviderImpl(
 
     private companion object {
         val FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/Flow")
+        val STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/StateFlow")
+        val MUTABLE_STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/MutableStateFlow")
+
+        val FLOW_CLASS_IDS = listOf(FLOW_CLASS_ID, STATE_FLOW_CLASS_ID, MUTABLE_STATE_FLOW_CLASS_ID)
     }
 }
 

@@ -56,7 +56,7 @@ class CollectionTranslationTests : SirTranslationTest() {
         )
         translate(file) {
             val map = it.variableNamed("mutableMap")
-            val mutableMapType = (map.type as SirExistentialType).protocols.single()
+            val mutableMapType = (map.type as SirExistentialType).protocols.single().first
             assertEquals("MutableMap", mutableMapType.name)
         }
     }

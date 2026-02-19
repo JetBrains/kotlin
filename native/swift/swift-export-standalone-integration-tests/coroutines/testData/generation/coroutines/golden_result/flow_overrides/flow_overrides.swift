@@ -31,9 +31,9 @@ extension ExportedKotlinPackages.namespace {
     }
     open class Bar: ExportedKotlinPackages.namespace.Foo {
         @_nonoverride
-        open var voo: KotlinCoroutineSupport._KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> {
+        open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Bar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                return KotlinCoroutineSupport._KotlinTypedFlowImpl<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Bar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
             }
         }
         public override init() {
@@ -48,14 +48,14 @@ extension ExportedKotlinPackages.namespace {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
-        open func foo() -> KotlinCoroutineSupport._KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> {
-            return KotlinCoroutineSupport._KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Bar_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> {
+            return KotlinCoroutineSupport._KotlinTypedFlowImpl<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Bar_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
         }
     }
     open class Foo: KotlinRuntime.KotlinBase {
-        open var voo: KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+        open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
             }
         }
         public init() {
@@ -70,15 +70,15 @@ extension ExportedKotlinPackages.namespace {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
-        open func foo() -> KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
-            return KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
         }
     }
     open class Nar: ExportedKotlinPackages.namespace.Foo {
         @_nonoverride
-        open var voo: KotlinCoroutineSupport._KotlinTypedFlow<Swift.Never> {
+        open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Never> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlow<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
             }
         }
         public override init() {
@@ -93,15 +93,15 @@ extension ExportedKotlinPackages.namespace {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
-        open func foo() -> KotlinCoroutineSupport._KotlinTypedFlow<Swift.Never> {
-            return KotlinCoroutineSupport._KotlinTypedFlow<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Never> {
+            return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
         }
     }
     open class StateFoo: ExportedKotlinPackages.namespace.Foo {
         @_nonoverride
-        open var voo: any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow {
+        open var voo: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {
-                return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_StateFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow
+                return KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_StateFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow)
             }
         }
         public override init() {
@@ -116,15 +116,15 @@ extension ExportedKotlinPackages.namespace {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
-        open func foo() -> any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_StateFoo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            return KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_StateFoo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow)
         }
     }
     open class Zar: ExportedKotlinPackages.namespace.Foo {
         @_nonoverride
-        open var voo: KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> {
+        open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Zar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Zar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
             }
         }
         public override init() {
@@ -139,8 +139,8 @@ extension ExportedKotlinPackages.namespace {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
-        open func foo() -> KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> {
-            return KotlinCoroutineSupport._KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Zar_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> {
+            return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Zar_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
         }
     }
 }

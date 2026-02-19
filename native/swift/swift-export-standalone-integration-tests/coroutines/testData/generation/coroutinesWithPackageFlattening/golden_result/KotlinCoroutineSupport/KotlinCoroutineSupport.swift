@@ -39,34 +39,78 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     }
 }
 
-public protocol _KotlinFlow: KotlinRuntime.KotlinBase, AsyncSequence { }
+public protocol KotlinFlow: KotlinRuntime.KotlinBase, AsyncSequence { }
 
-extension _KotlinFlow {
+extension KotlinFlow {
     public func makeAsyncIterator() -> KotlinFlowIterator {
         .init(flow: self)
     }
 }
 
-/// A typed wrapper around kotlinx.coroutines.flow.Flow
-/// that preserves the element type as a Swift generic parameter.
-public struct _KotlinTypedFlow<Element>: AsyncSequence {
-    internal let _flow: any _KotlinFlow
+public protocol KotlinTypedFlow<Element>: AsyncSequence where AsyncIterator == KotlinTypedFlowIterator<Element> {
+    var _flow: any KotlinFlow { get }
+}
 
-    public init(_ flow: any _KotlinFlow) {
-        self._flow = flow
-    }
+extension KotlinTypedFlow {
+    public var wrapped: any KotlinFlow { _flow }
 
-    /// Returns the underlying type-erased flow.
-    public var wrapped: any _KotlinFlow {
-        _flow
-    }
-
-    public func makeAsyncIterator() -> _KotlinTypedFlowIterator<Element> {
-        _KotlinTypedFlowIterator(_flow.makeAsyncIterator())
+    public func makeAsyncIterator() -> KotlinTypedFlowIterator<Element> {
+        KotlinTypedFlowIterator(_flow.makeAsyncIterator())
     }
 }
 
-public struct _KotlinTypedFlowIterator<Element>: AsyncIteratorProtocol {
+public struct _KotlinTypedFlowImpl<Element>: KotlinTypedFlow {
+    public let _flow: any KotlinFlow
+
+    public init(_ flow: any KotlinFlow) {
+        self._flow = flow
+    }
+}
+
+public protocol KotlinStateFlow: KotlinFlow {
+    var value: (any KotlinRuntimeSupport._KotlinBridgeable)? { get }
+}
+
+public protocol KotlinTypedStateFlow<Element>: KotlinTypedFlow { }
+
+extension KotlinTypedStateFlow {
+    public var wrapped: any KotlinStateFlow { _flow as! (any KotlinStateFlow) }
+
+    public var value: Element { wrapped.value as! Element }
+}
+
+public struct _KotlinTypedStateFlowImpl<Element>: KotlinTypedStateFlow {
+    public let _flow: any KotlinFlow
+
+    public init(_ flow: any KotlinStateFlow) {
+        self._flow = flow
+    }
+}
+
+public protocol KotlinMutableStateFlow: KotlinStateFlow {
+    var value: (any KotlinRuntimeSupport._KotlinBridgeable)? { get set }
+}
+
+public protocol KotlinTypedMutableStateFlow<Element>: KotlinTypedStateFlow { }
+
+extension KotlinTypedMutableStateFlow {
+    public var wrapped: any KotlinMutableStateFlow { _flow as! (any KotlinMutableStateFlow) }
+
+    public var value: Element {
+        get { wrapped.value as! Element }
+        set { wrapped.value = newValue as! (any KotlinRuntimeSupport._KotlinBridgeable)? }
+    }
+}
+
+public struct _KotlinTypedMutableStateFlowImpl<Element>: KotlinTypedMutableStateFlow {
+    public let _flow: any KotlinFlow
+
+    public init(_ flow: any KotlinMutableStateFlow) {
+        self._flow = flow
+    }
+}
+
+public struct KotlinTypedFlowIterator<Element>: AsyncIteratorProtocol {
     private var _iterator: KotlinFlowIterator
 
     internal init(_ iterator: KotlinFlowIterator) {
@@ -88,7 +132,7 @@ public final class KotlinFlowIterator: KotlinRuntime.KotlinBase, AsyncIteratorPr
     public typealias Element = any KotlinRuntimeSupport._KotlinBridgeable
     public typealias Failure = any Error
 
-    fileprivate init(flow: some _KotlinFlow) {
+    fileprivate init(flow: some KotlinFlow) {
         let __kt = _kotlin_swift_SwiftFlowIterator_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         _kotlin_swift_SwiftFlowIterator_init_initialize(__kt, flow.__externalRCRef())
