@@ -12113,6 +12113,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldsInInlineWithAnonymousObject2.kt")
+        public void testExplicitBackingFieldsInInlineWithAnonymousObject2() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlineWithAnonymousObject2.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldsInInlines.kt")
         public void testExplicitBackingFieldsInInlines() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlines.kt");
