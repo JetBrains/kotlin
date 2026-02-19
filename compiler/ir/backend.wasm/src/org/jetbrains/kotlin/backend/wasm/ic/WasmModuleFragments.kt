@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedTypes
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledCodeFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledDeclarationsFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledDependencyFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledLinkerDataFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledTypesFileFragment
 import org.jetbrains.kotlin.backend.wasm.serialization.WasmSerializer
@@ -32,6 +33,18 @@ class WasmIrProgramFragmentsMultimodule(
             serialize(referencedDeclarations)
             serializeCompiledDeclarations(codeDeclarations)
             serializeCompiledLinkerData(linkerData)
+        }
+    }
+}
+
+class WasmIrProgramFragmentsSingleModule(val fragmentData: SingleModuleFragmentData) : IrICProgramFragments() {
+    sealed class SingleModuleFragmentData
+    class Compiled(val codeFileFragment: WasmCompiledCodeFileFragment, val referencedDeclarations: ModuleReferencedDeclarations) : SingleModuleFragmentData()
+    class Dependency(val dependencyFragment: WasmCompiledDependencyFileFragment) : SingleModuleFragmentData()
+
+    override fun serialize(stream: OutputStream) {
+        with(WasmSerializer(stream)) {
+            serialize(fragmentData)
         }
     }
 }

@@ -29,6 +29,9 @@ class WasmIrFileMetadata(
             val reader = IrArrayReader(data)
             val exportArrays = reader.toArray()
 
+            if (exportArrays.size != ExportKind.entries.size)
+                return WasmIrFileMetadata(ExportKind.entries.associateWith { emptyList() })
+
             val exportNames = ExportKind.entries.associateWith { kind ->
                 val bytes = exportArrays[kind.ordinal]
                 IrArrayReader(bytes).toArray().map(WobblyTF8::decode)

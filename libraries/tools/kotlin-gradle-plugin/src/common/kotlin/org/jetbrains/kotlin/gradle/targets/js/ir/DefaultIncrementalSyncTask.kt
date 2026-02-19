@@ -67,31 +67,32 @@ abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask {
                     }
                 }
 
-            val nonRemovingFiles = mutableSetOf<File>()
-
-            from.asFileTree
-                .visit {
-                    nonRemovingFiles.add(it.relativePath.getFile(destinationDir))
-                }
-
-            val removingFiles = objectFactory.fileTree()
-                .from(destinationDir)
-                .also { fileTree ->
-                    fileTree.exclude {
-                        it.file.isFile && it.file in nonRemovingFiles
-                    }
-                }
-
-            val deleteWork = fs.delete {
-                it.delete(removingFiles)
-            }
+//            val nonRemovingFiles = mutableSetOf<File>()
+//
+//            from.asFileTree
+//                .visit {
+//                    nonRemovingFiles.add(it.relativePath.getFile(destinationDir))
+//                }
+//
+//            val removingFiles = objectFactory.fileTree()
+//                .from(destinationDir)
+//                .also { fileTree ->
+//                    fileTree.exclude {
+//                        it.file.isFile && it.file in nonRemovingFiles
+//                    }
+//                }
+//
+//            val deleteWork = fs.delete {
+//                it.delete(removingFiles)
+//            }
 
             val copyWork = fs.copy {
                 it.from(forCopy)
                 it.commonAction()
             }
 
-            deleteWork.didWork || copyWork.didWork
+//            deleteWork.didWork || copyWork.didWork
+            copyWork.didWork
         }
 
         didWork = work

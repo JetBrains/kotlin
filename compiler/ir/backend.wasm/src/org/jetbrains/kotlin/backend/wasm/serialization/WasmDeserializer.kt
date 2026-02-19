@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.serialization
 
+import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsSingleModule
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.LOCATED0
 import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.LOCATED1
@@ -46,6 +47,31 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     companion object {
         private val OPCODE_TO_WASM_OP by lazy { enumValues<WasmOp>().associateBy { it.opcode } }
     }
+
+    fun deserializeSingleModuleFragmentData(): WasmIrProgramFragmentsSingleModule.SingleModuleFragmentData = withTag { tag ->
+        when (tag) {
+            SingleModuleFragmentTag.COMPILED -> {
+                WasmIrProgramFragmentsSingleModule.Compiled(
+                    codeFileFragment = WasmCompiledCodeFileFragment(
+                        definedTypes = deserializeCompiledTypesFragment(),
+                        definedDeclarations = deserializeCompiledDeclarationsFragment(),
+                        linkerData = deserializeCompiledLinkerDataFragment(),
+                    ),
+                    referencedDeclarations = deserializeModuleReferencedDeclarations()
+                )
+            }
+            SingleModuleFragmentTag.DEPENDENCY -> {
+                WasmIrProgramFragmentsSingleModule.Dependency(
+                    dependencyFragment = WasmCompiledDependencyFileFragment(
+                        definedTypes = deserializeCompiledTypesFragment(),
+                        definedDeclarations = deserializeCompiledDeclarationsFragment(),
+                    )
+                )
+            }
+            else -> tagError(tag)
+        }
+    }
+
 
     fun deserializeModuleReferencedTypes(): ModuleReferencedTypes = ModuleReferencedTypes(
         gcTypes = deserializeSignatureSet(),

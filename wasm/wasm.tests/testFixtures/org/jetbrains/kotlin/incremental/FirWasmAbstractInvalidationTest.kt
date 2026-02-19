@@ -11,34 +11,16 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
+import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 
 abstract class AbstractFirWasmInvalidationTest :
-    WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir")
+    WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir") {
+}
 
-abstract class AbstractFirWasmInvalidationMultiModuleTest :
-    WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFirMultimodule") {
-    override fun createConfiguration(
-        moduleName: String,
-        moduleKind: ModuleKind,
-        languageFeatures: List<String>,
-        allLibraries: List<String>,
-        friendLibraries: List<String>,
-        includedLibrary: String?
-    ): CompilerConfiguration {
-        val config = super.createConfiguration(
-            moduleName = moduleName,
-            moduleKind = moduleKind,
-            languageFeatures = languageFeatures,
-            allLibraries = allLibraries,
-            friendLibraries = friendLibraries,
-            includedLibrary = includedLibrary
-        )
-        config.wasmGenerateClosedWorldMultimodule = true
-        return config
-    }
+abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: String) :
+    WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath) {
 
     private val ignoredTests = setOf(
         "classFunctionsAndFields", //Invalid signature
@@ -50,54 +32,43 @@ abstract class AbstractFirWasmInvalidationMultiModuleTest :
         super.isIgnoredTest(projectInfo) || projectInfo.name in ignoredTests
 }
 
+abstract class AbstractFirWasmInvalidationMultiModuleTest :
+    AbstractFirWasmInvalidationMultiModuleTestBase("incrementalOut/invalidationFirMultimodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        configuration.wasmGenerateClosedWorldMultimodule = true
+    }
+}
+
+abstract class AbstractFirWasmInvalidationSingleModuleTest :
+    AbstractFirWasmInvalidationMultiModuleTestBase("incrementalOut/invalidationFirSinglemodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        configuration.wasmIncludedModuleOnly = true
+    }
+}
+
 abstract class AbstractFirWasmInvalidationWithPLTest :
     AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPL")
 
 abstract class AbstractFirWasmInvalidationWithPLMultiModuleTest :
     AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPLMultimodule") {
-    override fun createConfiguration(
-        moduleName: String,
-        moduleKind: ModuleKind,
-        languageFeatures: List<String>,
-        allLibraries: List<String>,
-        friendLibraries: List<String>,
-        includedLibrary: String?
-    ): CompilerConfiguration {
-        val config = super.createConfiguration(
-            moduleName = moduleName,
-            moduleKind = moduleKind,
-            languageFeatures = languageFeatures,
-            allLibraries = allLibraries,
-            friendLibraries = friendLibraries,
-            includedLibrary = includedLibrary
-        )
-        config.wasmGenerateClosedWorldMultimodule = true
-        return config
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        super.modifyConfig(configuration)
+        configuration.wasmGenerateClosedWorldMultimodule = true
     }
 }
 
+abstract class AbstractFirWasmInvalidationWithPLSingleModuleTest :
+    AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPLSinglemodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        super.modifyConfig(configuration)
+        configuration.wasmIncludedModuleOnly = true
+    }
+}
+
+
 abstract class AbstractWasmInvalidationWithPLTest(workingDirPath: String) :
-    WasmAbstractInvalidationTest(
-        TargetBackend.WASM,
-        workingDirPath
-    ) {
-    override fun createConfiguration(
-        moduleName: String,
-        moduleKind: ModuleKind,
-        languageFeatures: List<String>,
-        allLibraries: List<String>,
-        friendLibraries: List<String>,
-        includedLibrary: String?,
-    ): CompilerConfiguration {
-        val config = super.createConfiguration(
-            moduleName = moduleName,
-            moduleKind = moduleKind,
-            languageFeatures = languageFeatures,
-            allLibraries = allLibraries,
-            friendLibraries = friendLibraries,
-            includedLibrary = includedLibrary,
-        )
-        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
-        return config
+    WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath) {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
     }
 }

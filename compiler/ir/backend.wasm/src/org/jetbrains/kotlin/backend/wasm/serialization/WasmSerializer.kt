@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.serialization
 
+import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsSingleModule
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.serialization.ReferenceTags.IN_PLACE
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -45,6 +46,25 @@ import java.util.*
 class WasmSerializer(outputStream: OutputStream) {
     private val body = ByteWriter(outputStream)
     private val serializedReferenceIndexes = IdentityHashMap<Any, Int>()
+
+    fun serialize(data: WasmIrProgramFragmentsSingleModule.SingleModuleFragmentData) {
+        when (data) {
+            is WasmIrProgramFragmentsSingleModule.Compiled -> {
+                withTag(SingleModuleFragmentTag.COMPILED) {
+                    serializeCompiledTypes(data.codeFileFragment.definedTypes)
+                    serializeCompiledDeclarations(data.codeFileFragment.definedDeclarations)
+                    serializeCompiledLinkerData(data.codeFileFragment.linkerData)
+                    serialize(data.referencedDeclarations)
+                }
+            }
+            is WasmIrProgramFragmentsSingleModule.Dependency -> {
+                withTag(SingleModuleFragmentTag.DEPENDENCY) {
+                    serializeCompiledTypes(data.dependencyFragment.definedTypes)
+                    serializeCompiledDeclarations(data.dependencyFragment.definedDeclarations)
+                }
+            }
+        }
+    }
 
     fun serialize(referencedTypes: ModuleReferencedTypes) {
         with(referencedTypes) {
