@@ -305,20 +305,6 @@ public open expect class swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest
   public open expect fun new(): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
             """.trimIndent(),
             "AWSEC2ImageAttributeName" to """// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBlockDeviceMapping
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBootMode
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDeregistrationProtection
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDescription
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameImdsSupport
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameKernel
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLastLaunchedTime
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLaunchPermission
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameProductCodes
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameRAMDisk
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameSriovNetSupport
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameTpmSupport
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUefiData
-// class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUnknown
 // class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Companion
 // class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var
 // class name: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var.Companion
@@ -340,20 +326,6 @@ public final expect enum class swiftPMImport/emptyxcode/AWSEC2ImageAttributeName
   AWSEC2ImageAttributeNameRAMDisk,
   AWSEC2ImageAttributeNameKernel,
   AWSEC2ImageAttributeNameDescription,
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBlockDeviceMapping : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBootMode : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDeregistrationProtection : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDescription : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameImdsSupport : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameKernel : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLastLaunchedTime : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLaunchPermission : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameProductCodes : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameRAMDisk : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameSriovNetSupport : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameTpmSupport : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUefiData : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
-public final expect enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUnknown : swiftPMImport/emptyxcode/AWSEC2ImageAttributeName {
 public final expect companion object swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Companion : kotlin/Any {
   public final expect fun byValue(value: kotlin/Long /* = platform/darwin/NSInteger^ */): swiftPMImport/emptyxcode/AWSEC2ImageAttributeName
 public final expect class swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var : kotlinx/cinterop/CEnumVar {
@@ -383,7 +355,7 @@ public open expect class swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTa
   public open expect fun allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?
   public open expect fun new(): swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?
   public typealias AWSS3TransferUtilityDownloadCompletionHandlerBlock = kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>? /* = kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>? */
-  public typealias AWSS3TransferUtilityDownloadCompletionHandlerBlockVar = kotlinx/cinterop/ObjCBlockVar^<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadCompletionHandlerBlock^?> /* = kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?> /* = kotlinx/cinterop/ObjCBlockVar^<kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>? /* = swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadCompletionHandlerBlock^? */> */ */
+  public typealias AWSS3TransferUtilityDownloadCompletionHandlerBlockVar = kotlinx/cinterop/ObjCBlockVar^<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadCompletionHandlerBlock^?> /* = kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>? /* = swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadCompletionHandlerBlock^? */> /* = kotlinx/cinterop/ObjCBlockVar^<kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>? /* = swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadCompletionHandlerBlock^? */> */ */
   """.trimIndent()
         ),
         ktSnippet = """
