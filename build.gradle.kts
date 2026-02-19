@@ -594,6 +594,8 @@ val dependencyOnSnapshotReflectWhitelist = setOf(
     ":tools:kotlin-stdlib-gen",
 )
 
+val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
+
 allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
@@ -659,7 +661,6 @@ allprojects {
             }
         }
     }
-    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
         when (kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull) {

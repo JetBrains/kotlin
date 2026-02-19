@@ -1,9 +1,10 @@
+val publishingAttempts = findProperty("kotlin.build.publishing.attempts")?.toString()?.toInt()
+
 allprojects {
-    configurePublishingRetry()
+    configurePublishingRetry(publishingAttempts)
 }
 
-fun Project.configurePublishingRetry() {
-    val publishingAttempts = findProperty("kotlin.build.publishing.attempts")?.toString()?.toInt()
+fun Project.configurePublishingRetry(publishingAttempts: Int?) {
 
     fun retry(attempts: Int, action: () -> Unit): Boolean {
         repeat(attempts) {
