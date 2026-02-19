@@ -42,7 +42,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
-            module1.compile {
+            module1.compile(forceOutput = LogLevel.DEBUG) {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }
             module2.compile {
