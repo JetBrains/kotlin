@@ -418,7 +418,9 @@ object FirExpressionEvaluator {
             val strings = stringConcatenationCall.argumentList.arguments.map {
                 evaluate(it).unwrapOr<FirLiteralExpression> { return it } ?: return NotEvaluated
             }
-            val result = strings.joinToString(separator = "") { it.value.toString() }
+            val result = strings.joinToString(separator = "") {
+                it.kind.convertToGivenKind(it.value).toString()
+            }
             return result.toConstExpression(ConstantValueKind.String, stringConcatenationCall).wrap()
         }
 
