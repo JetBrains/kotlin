@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -17,6 +18,9 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(project(":compiler:cli-base"))
+
+    testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":compiler:ir.tree")))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
@@ -25,4 +29,5 @@ optInToObsoleteDescriptorBasedAPI()
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+    "testFixtures" { projectDefault() }
 }
