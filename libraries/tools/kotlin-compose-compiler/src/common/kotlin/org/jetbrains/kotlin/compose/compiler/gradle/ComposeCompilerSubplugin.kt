@@ -70,7 +70,9 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                 })
                 if (!composeWithAgpConfig.isDisableIncludeSourceInformationForAgp) {
                     add(composeExtension.includeSourceInformation.map {
-                        SubpluginOption("sourceInformation", it.toString())
+                        val enabledForTarget = it && composeExtension.includeSourceInformationForTargets.get()
+                            .contains(kotlinCompilation.platformType)
+                        SubpluginOption("sourceInformation", enabledForTarget.toString())
                     })
                 }
                 add(composeExtension.metricsDestination.map<SubpluginOption> {
@@ -96,7 +98,9 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                 }.orElse(emptyList()))
 
                 add(composeExtension.includeTraceMarkers.map {
-                    SubpluginOption("traceMarkersEnabled", it.toString())
+                    val enabledForTarget = it && composeExtension.includeTraceMarkersForTargets.get()
+                        .contains(kotlinCompilation.platformType)
+                    SubpluginOption("traceMarkersEnabled", enabledForTarget.toString())
                 })
 
                 @Suppress("DEPRECATION")

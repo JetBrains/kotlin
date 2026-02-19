@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.compose.compiler.gradle
 
 import org.gradle.api.Project
+import org.gradle.internal.impldep.org.apache.http.annotation.Experimental
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithJvm
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithMPP
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.composeOptions
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -345,6 +348,191 @@ class ExtensionConfigurationTest {
         ).forEach { flag ->
             composeOptions.assertFeature(flag)
         }
+    }
+
+    @Test
+    fun testIncludeSourceInformationForTargetsDefault() {
+        val project = buildProjectWithMPP {
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm()
+                js { nodejs() }
+            }
+        }
+
+        project.evaluate()
+
+        val jvmOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJvm").get().composeOptions()
+        assertEquals(
+            listOf("sourceInformation" to "true"),
+            jvmOptions.filter { it.first == "sourceInformation" },
+            "JVM should have sourceInformation enabled by default"
+        )
+
+        val jsOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJs").get().composeOptions()
+        assertEquals(
+            listOf("sourceInformation" to "false"),
+            jsOptions.filter { it.first == "sourceInformation" },
+            "JS should have sourceInformation disabled by default"
+        )
+    }
+
+    @ExperimentalWasmDsl
+    @Test
+    fun testIncludeSourceInformationForTargetsCustom() {
+        val project = buildProjectWithMPP {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.includeSourceInformationForTargets.set(
+                setOf(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.wasm)
+            )
+
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm()
+                wasmJs { browser() }
+            }
+        }
+
+        project.evaluate()
+
+        val jvmOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJvm").get().composeOptions()
+        assertEquals(
+            listOf("sourceInformation" to "false"),
+            jvmOptions.filter { it.first == "sourceInformation" },
+            "JVM should have sourceInformation disabled (not in the set)"
+        )
+
+        val wasmOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinWasmJs").get().composeOptions()
+        assertEquals(
+            listOf("sourceInformation" to "true"),
+            wasmOptions.filter { it.first == "sourceInformation" },
+            "Wasm should have sourceInformation enabled (in the set)"
+        )
+    }
+
+    @Test
+    fun testIncludeSourceInformationGlobalDisable() {
+        val project = buildProjectWithMPP {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.includeSourceInformation.set(false)
+            composeExtension.includeSourceInformationForTargets.set(
+                setOf(
+                    org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm,
+                    org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.js
+                )
+            )
+
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm()
+                js { nodejs() }
+            }
+        }
+
+        project.evaluate()
+
+        val jvmOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJvm").get().composeOptions()
+        assertEquals(
+            listOf("sourceInformation" to "false"),
+            jvmOptions.filter { it.first == "sourceInformation" },
+            "Both targets should have sourceInformation disabled (global flag is false)"
+        )
+
+        val jsOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJs").get().composeOptions()
+        assertEquals(
+            listOf("sourceInformation" to "false"),
+            jsOptions.filter { it.first == "sourceInformation" },
+            "Both targets should have sourceInformation disabled (global flag is false)"
+        )
+    }
+
+    @Test
+    fun testIncludeTraceMarkersForTargetsDefault() {
+        val project = buildProjectWithMPP {
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm()
+                js { nodejs() }
+            }
+        }
+
+        project.evaluate()
+
+        val jvmOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJvm").get().composeOptions()
+        assertEquals(
+            listOf("traceMarkersEnabled" to "true"),
+            jvmOptions.filter { it.first == "traceMarkersEnabled" },
+            "JVM should have traceMarkers enabled by default"
+        )
+
+        val jsOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJs").get().composeOptions()
+        assertEquals(
+            listOf("traceMarkersEnabled" to "false"),
+            jsOptions.filter { it.first == "traceMarkersEnabled" },
+            "JS should have traceMarkers disabled by default"
+        )
+    }
+
+    @Test
+    fun testIncludeTraceMarkersForTargetsCustom() {
+        val project = buildProjectWithMPP {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.includeTraceMarkersForTargets.set(
+                setOf(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.js)
+            )
+
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm()
+                js { nodejs() }
+            }
+        }
+
+        project.evaluate()
+
+        val jvmOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJvm").get().composeOptions()
+        assertEquals(
+            listOf("traceMarkersEnabled" to "false"),
+            jvmOptions.filter { it.first == "traceMarkersEnabled" },
+            "JVM should have traceMarkers disabled (not in the set)"
+        )
+
+        val jsOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJs").get().composeOptions()
+        assertEquals(
+            listOf("traceMarkersEnabled" to "true"),
+            jsOptions.filter { it.first == "traceMarkersEnabled" },
+            "JS should have traceMarkers enabled (in the set)"
+        )
+    }
+
+    @Test
+    fun testIncludeTraceMarkersGlobalDisable() {
+        val project = buildProjectWithMPP {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.includeTraceMarkers.set(false)
+            composeExtension.includeTraceMarkersForTargets.set(
+                setOf(
+                    org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm,
+                    org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.js
+                )
+            )
+
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm()
+                js { nodejs() }
+            }
+        }
+
+        project.evaluate()
+
+        val jvmOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJvm").get().composeOptions()
+        assertEquals(
+            listOf("traceMarkersEnabled" to "false"),
+            jvmOptions.filter { it.first == "traceMarkersEnabled" },
+            "Both targets should have traceMarkers disabled (global flag is false)"
+        )
+
+        val jsOptions = project.tasks.named<BaseKotlinCompile>("compileKotlinJs").get().composeOptions()
+        assertEquals(
+            listOf("traceMarkersEnabled" to "false"),
+            jsOptions.filter { it.first == "traceMarkersEnabled" },
+            "Both targets should have traceMarkers disabled (global flag is false)"
+        )
     }
 
     private fun testComposeFeatureFlags(flags: List<String>, configure: (ComposeCompilerGradlePluginExtension) -> Unit) {
