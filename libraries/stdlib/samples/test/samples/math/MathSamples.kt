@@ -465,6 +465,36 @@ class MathSamples {
             assertPrints(atan2(y = 0.0, x = Double.POSITIVE_INFINITY), "0.0")
             assertPrints(atan2(y = Double.POSITIVE_INFINITY, x = 100500.0).toDegrees(), "90.0")
         }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1.0, 1.0), "-1.0")
+            assertPrints(min(1.0, -1.0), "-1.0")
+            assertPrints(min(-3.0, -1.0), "-3.0")
+            assertPrints(min(-0.0, 0.0), "-0.0")
+
+            // special cases
+            assertPrints(min(Double.NaN, 0.0), "NaN")
+            assertPrints(min(-9000.0, Double.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(min(Double.MIN_VALUE, 0.0), "0.0")
+            assertTrue(min(Double.POSITIVE_INFINITY, Double.MAX_VALUE) == Double.MAX_VALUE)
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1.0, 1.0), "1.0")
+            assertPrints(max(1.0, -1.0), "1.0")
+            assertPrints(max(-3.0, -1.0), "-1.0")
+            assertPrints(max(-0.0, 0.0), "0.0")
+
+            // special cases
+            assertPrints(max(Double.NaN, 0.0), "NaN")
+            assertPrints(max(-9000.0, Double.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertTrue(max(Double.MIN_VALUE, 0.0) == Double.MIN_VALUE)
+            assertPrints(max(Double.POSITIVE_INFINITY, Double.MAX_VALUE), "Infinity")
+        }
     }
 
     class Floats {
@@ -922,6 +952,36 @@ class MathSamples {
             assertPrints(atan2(y = 0.0f, x = Float.POSITIVE_INFINITY), "0.0")
             assertPrints(atan2(y = Float.POSITIVE_INFINITY, x = 100500.0f).toDegrees(), "90.0")
         }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1.0f, 1.0f), "-1.0")
+            assertPrints(min(1.0f, -1.0f), "-1.0")
+            assertPrints(min(-3.0f, -1.0f), "-3.0")
+            assertPrints(min(-0.0f, 0.0f), "-0.0")
+
+            // special cases
+            assertPrints(min(Float.NaN, 0.0f), "NaN")
+            assertPrints(min(-9000.0f, Float.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(min(Float.MIN_VALUE, 0.0f), "0.0")
+            assertTrue(min(Float.POSITIVE_INFINITY, Float.MAX_VALUE) == Float.MAX_VALUE)
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1.0f, 1.0f), "1.0")
+            assertPrints(max(1.0f, -1.0f), "1.0")
+            assertPrints(max(-3.0f, -1.0f), "-1.0")
+            assertPrints(max(-0.0f, 0.0f), "0.0")
+
+            // special cases
+            assertPrints(max(Float.NaN, 0.0f), "NaN")
+            assertPrints(max(-9000.0f, Float.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertTrue(max(Float.MIN_VALUE, 0.0f) == Float.MIN_VALUE)
+            assertPrints(max(Float.POSITIVE_INFINITY, Float.MAX_VALUE), "Infinity")
+        }
     }
 
     class Longs {
@@ -949,6 +1009,20 @@ class MathSamples {
             assertPrints(Long.MAX_VALUE.sign, "1")
             assertPrints(Long.MIN_VALUE.sign, "-1")
         }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1L, 1L), "-1")
+            assertPrints(min(1L, -1L), "-1")
+            assertPrints(min(-3L, -1L), "-3")
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1L, 1L), "1")
+            assertPrints(max(1L, -1L), "1")
+            assertPrints(max(-3L, -1L), "-1")
+        }
     }
 
     class Ints {
@@ -975,6 +1049,20 @@ class MathSamples {
             assertPrints((-9000).sign, "-1")
             assertPrints(Int.MAX_VALUE.sign, "1")
             assertPrints(Int.MIN_VALUE.sign, "-1")
+        }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1, 1), "-1")
+            assertPrints(min(1, -1), "-1")
+            assertPrints(min(-3, -1), "-3")
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1, 1), "1")
+            assertPrints(max(1, -1), "1")
+            assertPrints(max(-3, -1), "-1")
         }
     }
 }

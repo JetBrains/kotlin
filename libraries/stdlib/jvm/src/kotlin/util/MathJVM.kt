@@ -507,6 +507,8 @@ public actual inline fun sign(x: Double): Double = nativeMath.signum(x)
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -516,6 +518,8 @@ public actual inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1126,6 +1130,8 @@ public actual inline fun sign(x: Float): Float = nativeMath.signum(x)
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1135,6 +1141,8 @@ public actual inline fun min(a: Float, b: Float): Float = nativeMath.min(a, b)
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1343,6 +1351,8 @@ public actual inline fun abs(n: Int): Int = nativeMath.abs(n)
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1350,6 +1360,8 @@ public actual inline fun min(a: Int, b: Int): Int = nativeMath.min(a, b)
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1396,6 +1408,8 @@ public actual inline fun abs(n: Long): Long = nativeMath.abs(n)
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1403,6 +1417,8 @@ public actual inline fun min(a: Long, b: Long): Long = nativeMath.min(a, b)
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.max
  */
 @SinceKotlin("1.2")
 @InlineOnly

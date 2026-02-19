@@ -395,6 +395,8 @@ public actual fun sign(x: Double): Double = when {
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_f64_min(a, b)
@@ -403,6 +405,8 @@ public actual fun min(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_f64_max(a, b)
@@ -974,6 +978,8 @@ public actual fun sign(x: Float): Float = when {
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32_min(a, b)
@@ -982,6 +988,8 @@ public actual fun min(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32_max(a ,b)
@@ -1134,12 +1142,16 @@ public actual fun abs(n: Int): Int = if (n < 0) -n else n
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Int, b: Int): Int = if (a < b) a else b
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Int, b: Int): Int = if (a > b) a else b
@@ -1181,12 +1193,16 @@ public actual fun abs(n: Long): Long = if (n < 0) -n else n
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Long, b: Long): Long = if (a <= b) a else b
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Long, b: Long): Long = if (a >= b) a else b
