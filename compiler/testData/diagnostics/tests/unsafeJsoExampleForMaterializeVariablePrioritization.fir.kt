@@ -15,7 +15,7 @@ interface ReactComponentWrapper<S : State> {
         builder: S.() -> Unit,
     ) {
         wrapper.setState(
-            { assign(unsafeJso(), it).apply(builder) },
+            { <!RETURN_TYPE_MISMATCH!>assign(unsafeJso(), it).apply(<!ARGUMENT_TYPE_MISMATCH!>builder<!>)<!> },
         )
     }
 }

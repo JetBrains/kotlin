@@ -27,7 +27,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -42,7 +42,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -87,7 +87,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -157,11 +157,11 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
 ##### Continue Call Completion:
 
 1. `kotlin/Unit <: kotlin/Unit` _from LambdaArgument_
-2. Choose `TypeVariable(OT)` with `Readiness(
+2. Choose `TypeVariable(PNT)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -172,11 +172,11 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-    1. `TypeVariable(PNT)` is `Readiness(
+    1. `TypeVariable(OT)` is `Readiness(
        	 true ALLOWED
        	 true HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -187,14 +187,14 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
-4. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == ScopeOwner`
-    1. `TypeVariable(PNT) <: ScopeOwner`
-5. Choose `TypeVariable(PNT)` with `Readiness(
+3. `TypeVariable(PNT) == ScopeOwner` _from Fix variable PNT_
+4. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
+    1. `ScopeOwner <: TypeVariable(OT)`
+5. Choose `TypeVariable(OT)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -205,7 +205,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-6. `TypeVariable(PNT) == ScopeOwner` _from Fix variable PNT_
+6. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
 
 ### Call 6
 
@@ -235,7 +235,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -250,7 +250,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -295,7 +295,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -363,7 +363,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -378,7 +378,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
        	 true ALLOWED
        	 true HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -396,7 +396,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -436,7 +436,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -451,7 +451,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -496,7 +496,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -568,11 +568,11 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
 ##### Continue Call Completion:
 
 1. `kotlin/Unit <: kotlin/Unit` _from LambdaArgument_
-2. Choose `TypeVariable(OT)` with `Readiness(
+2. Choose `TypeVariable(PNT)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -583,11 +583,11 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-    1. `TypeVariable(PNT)` is `Readiness(
+    1. `TypeVariable(OT)` is `Readiness(
        	 true ALLOWED
        	 true HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -598,16 +598,14 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
-4. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == ScopeOwner`
-    1. `TypeVariable(PNT) <: ScopeOwner`
-5. Combine `TypeVariable(OT) == ScopeOwner` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(PNT) <: CapturedType(in ScopeOwner)`
-6. Choose `TypeVariable(PNT)` with `Readiness(
+3. `TypeVariable(PNT) == ScopeOwner` _from Fix variable PNT_
+4. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
+    1. `ScopeOwner <: TypeVariable(OT)`
+5. Choose `TypeVariable(OT)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -618,7 +616,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-7. `TypeVariable(PNT) == ScopeOwner` _from Fix variable PNT_
+6. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
 
 ### Call 16
 
@@ -648,7 +646,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -663,7 +661,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -708,7 +706,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -796,7 +794,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -811,7 +809,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
        	 true ALLOWED
        	 true HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -841,7 +839,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
     	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -880,7 +878,7 @@ Null(null)!!
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -915,7 +913,7 @@ ContravariantContainer#()
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -953,7 +951,7 @@ TypeVariableOwner#()
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -988,7 +986,7 @@ InvariantContainer#()
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -1026,7 +1024,7 @@ TypeVariableOwner#()
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
@@ -1066,7 +1064,7 @@ Null(null)!!
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS

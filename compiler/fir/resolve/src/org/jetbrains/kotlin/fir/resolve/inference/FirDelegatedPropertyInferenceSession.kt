@@ -174,7 +174,7 @@ class FirDelegatedPropertyInferenceSession(
                 parentSystem.asConstraintSystemCompleterContext(),
                 ConstraintSystemCompletionMode.FULL,
                 notCompletedCalls,
-                unitType, resolutionContext
+                unitType, resolutionContext, components.returnTypeCalculator,
             ) { lambdaAtom, withPCLASession, precalculatedBoundsForCL ->
                 // Reversed here bc we want top-most call to avoid exponential visit
                 val containingCandidateForLambda = notCompletedCalls.asReversed().first {
