@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.compactIfPossible
@@ -313,6 +314,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val customGetterName = property.getter?.getJsName()
         val setter = property.setter
         val customSetterName = setter?.getJsName()
+        val isProtected = property.visibility == KaSymbolVisibility.PROTECTED
         if (customGetterName != null || customSetterName != null) {
             return buildList {
                 if (customSetterName != null) {
@@ -324,7 +326,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             isMember = parentClass != null,
                             isStatic = isStatic,
                             isAbstract = isAbstract,
-                            isProtected = property.visibility == KaSymbolVisibility.PROTECTED,
+                            isProtected = isProtected,
                         )
                     )
                 }
@@ -337,7 +339,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             isMember = parentClass != null,
                             isStatic = isStatic,
                             isAbstract = isAbstract,
-                            isProtected = property.visibility == KaSymbolVisibility.PROTECTED,
+                            isProtected = isProtected,
                         )
                     )
                 }
@@ -389,26 +391,50 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 )
         }
 
-        return listOf(
-            ExportedProperty(
-                name = ExportedMemberName.Identifier(property.getExportedIdentifier()),
-                type = propertyType,
-                mutable = !property.isVal,
-                isMember = parentClass != null,
-                isStatic = isStatic,
-                isAbstract = isAbstract,
-                isProtected = property.visibility == KaSymbolVisibility.PROTECTED,
-                isField = parentClass?.classKind == KaClassKind.INTERFACE,
-                isObjectGetter = isObjectGetter,
-                isOptional = isOptional,
-            ).withAttributes(property)
-        )
+        val name = ExportedMemberName.Identifier(property.getExportedIdentifier())
+        if (!isMember || parentClass.classKind == KaClassKind.INTERFACE) {
+            return listOf(
+                ExportedField(
+                    name = name,
+                    type = propertyType,
+                    mutable = !property.isVal,
+                    isMember = isMember,
+                    isStatic = isStatic,
+                    isAbstract = isAbstract,
+                    isProtected = isProtected,
+                    isObjectGetter = isObjectGetter,
+                    isOptional = isOptional,
+                ).withAttributes(property)
+            )
+        } else {
+            val accessors: MutableList<ExportedDeclaration> = SmartList(
+                ExportedPropertyGetter(
+                    name = name,
+                    type = propertyType,
+                    isStatic = isStatic,
+                    isAbstract = isAbstract,
+                    isProtected = isProtected,
+                ).withAttributes(property)
+            )
+            if (!property.isVal) {
+                accessors.add(
+                    ExportedPropertySetter(
+                        name = name,
+                        type = propertyType,
+                        isStatic = isStatic,
+                        isAbstract = isAbstract,
+                        isProtected = isProtected,
+                    ).withAttributes(property)
+                )
+            }
+            return accessors
+        }
     }
 
     context(_: KaSession)
-    private fun exportEnumEntry(entry: KaEnumEntrySymbol, ordinal: Int, parentClass: KaNamedClassSymbol): ExportedProperty {
+    private fun exportEnumEntry(entry: KaEnumEntrySymbol, ordinal: Int, parentClass: KaNamedClassSymbol): ExportedPropertyGetter {
         fun fakeProperty(name: String, type: ExportedType) =
-            ExportedProperty(name = ExportedMemberName.Identifier(name), type = type, mutable = false, isMember = true)
+            ExportedPropertyGetter(ExportedMemberName.Identifier(name), type)
 
         val nameProperty = fakeProperty(
             name = "name",
@@ -422,11 +448,9 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
         val type = ExportedType.InlineInterfaceType(listOf(nameProperty, ordinalProperty))
 
-        return ExportedProperty(
+        return ExportedPropertyGetter(
             name = ExportedMemberName.Identifier(entry.getExportedIdentifier()),
             type = ExportedType.IntersectionType(exportType(parentClass.defaultType, emptyMap(),), type),
-            mutable = false,
-            isMember = true,
             isStatic = true,
             isProtected = parentClass.visibility == KaSymbolVisibility.PROTECTED,
         ).withAttributes(entry)
@@ -609,25 +633,21 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             )
         )
         members.add(
-            ExportedProperty(
+            ExportedPropertyGetter(
                 name = ExportedMemberName.Identifier("name"),
                 type = enumEntries
                     .map { ExportedType.LiteralType.StringLiteralType(it.name.asString()) }
                     .reduceOrNull(ExportedType::UnionType)
                     ?: ExportedType.Primitive.Nothing,
-                mutable = false,
-                isMember = true,
             )
         )
         members.add(
-            ExportedProperty(
+            ExportedPropertyGetter(
                 name = ExportedMemberName.Identifier("ordinal"),
                 type = enumEntries.indices
                     .map { ExportedType.LiteralType.NumberLiteralType(it) }
                     .reduceOrNull(ExportedType::UnionType)
                     ?: ExportedType.Primitive.Nothing,
-                mutable = false,
-                isMember = true,
             )
         )
     }
@@ -636,17 +656,15 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
      * Generates a property in the outer class that can be used to construct an instance of an inner class using Kotlin-like syntax.
      */
     context(_: KaSession)
-    private fun KaNamedClassSymbol.toFactoryPropertyForInnerClass(outerClassTypeParameterScope: TypeParameterScope): ExportedProperty {
+    private fun KaNamedClassSymbol.toFactoryPropertyForInnerClass(outerClassTypeParameterScope: TypeParameterScope): ExportedPropertyGetter {
         val typeParameterScope = TypeParameterScope(this, config, outerClassTypeParameterScope)
         val typeMembers = declaredMemberScope.constructors.mapNotNull {
             exportConstructor(it, this, typeParameterScope, isFactoryPropertyForInnerClass = true)
         }.toList().compactIfPossible()
         val name = getExportedIdentifier()
-        return ExportedProperty(
+        return ExportedPropertyGetter(
             name = ExportedMemberName.Identifier(name),
             type = ExportedType.InlineInterfaceType(typeMembers),
-            mutable = false,
-            isMember = true,
         )
     }
 

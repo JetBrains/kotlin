@@ -30,6 +30,7 @@ declare namespace JS_TESTS {
             get readOnlyProperty(): string;
             /** @deprecated deprecated read-write property */
             get readWriteProperty(): string;
+            /** @deprecated deprecated read-write property */
             set readWriteProperty(value: string);
             get deprecatedGetter(): string;
             set deprecatedGetter(value: string);

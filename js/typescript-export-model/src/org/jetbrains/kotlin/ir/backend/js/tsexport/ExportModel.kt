@@ -74,7 +74,7 @@ public data class ExportedConstructSignature(
     override val isProtected: Boolean,
 ) : ExportedDeclaration()
 
-public data class ExportedProperty(
+public data class ExportedField(
     override val name: ExportedMemberName,
     val type: ExportedType,
     val mutable: Boolean = true,
@@ -82,11 +82,37 @@ public data class ExportedProperty(
     override val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
     override val isProtected: Boolean = false,
-    val isField: Boolean = false,
     val isObjectGetter: Boolean = false,
     val isOptional: Boolean = false,
     val isQualified: Boolean = false,
 ) : ExportedDeclaration(), ExportedMember
+
+public sealed interface ExportedPropertyAccessor : ExportedMember {
+    public val type: ExportedType
+    public val isAbstract: Boolean
+}
+
+public data class ExportedPropertyGetter(
+    override val name: ExportedMemberName,
+    override val type: ExportedType,
+    override val isStatic: Boolean = false,
+    override val isAbstract: Boolean = false,
+    override val isProtected: Boolean = false,
+) : ExportedDeclaration(), ExportedPropertyAccessor {
+    override val isMember: Boolean
+        get() = true
+}
+
+public data class ExportedPropertySetter(
+    override val name: ExportedMemberName,
+    override val type: ExportedType,
+    override val isStatic: Boolean = false,
+    override val isAbstract: Boolean = false,
+    override val isProtected: Boolean = false,
+) : ExportedDeclaration(), ExportedPropertyAccessor {
+    override val isMember: Boolean
+        get() = true
+}
 
 // TODO: Cover all cases with frontend and disable error declarations
 public class ErrorDeclaration(public val message: String) : ExportedDeclaration()

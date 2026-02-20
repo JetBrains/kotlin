@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedAttribute
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedMemberName
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedProperty
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedField
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -257,12 +257,11 @@ private const val magicPropertyName = "__doNotUseOrImplementIt"
 context(_: KaSession)
 internal fun MutableList<ExportedDeclaration>.addMagicInterfaceProperty(klass: KaNamedClassSymbol, config: TypeScriptExportConfig) {
     add(
-        ExportedProperty(
+        ExportedField(
             name = ExportedMemberName.Identifier(magicPropertyName),
             type = klass.generateTagType(config),
             mutable = false,
             isMember = true,
-            isField = true
         )
     )
 }
@@ -291,12 +290,11 @@ internal fun MutableList<ExportedDeclaration>.addMagicPropertyForInterfaceImplem
     }
 
     add(
-        ExportedProperty(
+        ExportedField(
             name = ExportedMemberName.Identifier(magicPropertyName),
             type = intersectionOfTypes,
             mutable = false,
             isMember = true,
-            isField = true
         )
     )
 }
@@ -316,12 +314,11 @@ context(_: KaSession)
 private fun KaNamedClassSymbol.generateTagType(config: TypeScriptExportConfig): ExportedType {
     return ExportedType.InlineInterfaceType(
         listOf(
-            ExportedProperty(
+            ExportedField(
                 name = ExportedMemberName.Identifier(getExportedFqName(shouldIncludePackage = true, config).asString()),
                 type = ExportedType.Primitive.UniqueSymbol,
                 mutable = false,
                 isMember = true,
-                isField = true,
             )
         )
     )

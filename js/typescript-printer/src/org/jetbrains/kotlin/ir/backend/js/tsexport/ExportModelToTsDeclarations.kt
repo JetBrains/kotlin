@@ -97,7 +97,8 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             is ExportedNamespace -> generateTypeScriptString(indent, prefix)
             is ExportedFunction -> generateTypeScriptString(indent, prefix)
             is ExportedRegularClass -> generateTypeScriptString(indent, prefix)
-            is ExportedProperty -> generateTypeScriptString(indent, prefix)
+            is ExportedField -> generateTypeScriptString(indent, prefix)
+            is ExportedPropertyAccessor -> generateTypeScriptString(indent, prefix)
             is ExportedObject -> generateTypeScriptString(indent, prefix)
         }
 
@@ -137,14 +138,17 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         return "new${renderTypeParameters(typeParameters)}(${parameters.generateTypeScriptString(indent)}): ${returnType.toTypeScript(indent)};"
     }
 
-    private fun ExportedProperty.generateTypeScriptString(indent: String, prefix: String): String {
-        val extraIndent = "$indent    "
-        val optional = if (isOptional) "?" else ""
-        val memberName = when (val propertyName = name) {
+    private val ExportedMember.propertyMemberName: String
+        get() = when (val propertyName = name) {
             is ExportedMemberName.SymbolReference -> "[${propertyName.value}]"
             is ExportedMemberName.Identifier if !propertyName.value.isValidES5Identifier() -> "\"${propertyName.value}\""
             else -> propertyName.value
         }
+
+    private fun ExportedField.generateTypeScriptString(indent: String, prefix: String): String {
+        val extraIndent = "$indent    "
+        val optional = if (isOptional) "?" else ""
+        val memberName = propertyMemberName
 
         val typeToTypeScript = type.toTypeScript(if (!isMember && isEsModules && isObjectGetter) extraIndent else indent)
 
@@ -154,14 +158,8 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 val abstract = if (isAbstract) "abstract " else ""
                 val visibility = if (isProtected) "protected " else ""
 
-                if (isField) {
-                    val readonly = if (!mutable) "readonly " else ""
-                    "$prefix$visibility$static$abstract$readonly$memberName$optional: $typeToTypeScript;"
-                } else {
-                    val getter = "$prefix$visibility$static${abstract}get $memberName(): $typeToTypeScript;"
-                    val setter = runIf(mutable) { "\n$indent$prefix$visibility$static${abstract}set $memberName(value: $typeToTypeScript);" }
-                    getter + setter.orEmpty()
-                }
+                val readonly = if (!mutable) "readonly " else ""
+                "$prefix$visibility$static$abstract$readonly$memberName$optional: $typeToTypeScript;"
             }
             memberName != name.value -> ""
             else -> {
@@ -170,6 +168,38 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             }
         }
     }
+
+    private fun <T> T.generateTypeScriptString(indent: String, prefix: String): String
+            where T : ExportedDeclaration,
+                  T : ExportedPropertyAccessor =
+        buildString {
+            append(prefix)
+            if (isProtected) {
+                append("protected ")
+            }
+            if (isStatic) {
+                append("static ")
+            }
+            if (isAbstract) {
+                append("abstract ")
+            }
+            when (this@generateTypeScriptString) {
+                is ExportedPropertyGetter -> {
+                    append("get ")
+                    append(this@generateTypeScriptString.propertyMemberName)
+                    append("(): ")
+                    append(this@generateTypeScriptString.type.toTypeScript(indent))
+                }
+                is ExportedPropertySetter -> {
+                    append("set ")
+                    append(this@generateTypeScriptString.propertyMemberName)
+                    append("(value: ")
+                    append(this@generateTypeScriptString.type.toTypeScript(indent))
+                    append(")")
+                }
+            }
+            append(";")
+        }
 
     private fun renderTypeParameters(typeParameters: List<ExportedTypeParameter>): String = if (typeParameters.isNotEmpty()) {
         typeParameters.joinToString(", ", "<", ">") { tp ->
@@ -279,7 +309,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 nestedClasses = emptyList(),
                 superClasses = emptyList(),
                 members = listOf(
-                    ExportedProperty(
+                    ExportedField(
                         name = ExportedMemberName.Identifier(getInstance),
                         type = ExportedType.Function(
                             emptyList(),
@@ -288,7 +318,6 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                         isMember = true,
                         mutable = false,
                         isStatic = true,
-                        isField = true
                     ),
                     ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
                 ),
@@ -319,7 +348,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val namespaceMembers = membersForNamespace.map {
             when (it) {
                 is ExportedFunction -> it.copy(isMember = false)
-                is ExportedProperty -> it.copy(isMember = false)
+                is ExportedField -> it.copy(isMember = false)
                 else -> it
             }
         }
@@ -341,7 +370,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val bodyString = privateCtorString + membersString + indent
 
         val metadataNamespace = listOfNotNull(runIf(requireMetadata) {
-            val constructorProperty = ExportedProperty(
+            val constructorProperty = ExportedField(
                 name = ExportedMemberName.Identifier(MetadataConstructor),
                 type = ExportedType.ConstructorType(
                     typeParameters,
