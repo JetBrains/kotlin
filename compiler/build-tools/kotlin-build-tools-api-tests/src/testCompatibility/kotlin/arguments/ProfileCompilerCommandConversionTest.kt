@@ -3,15 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests
+package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_PROFILE
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Paths
@@ -29,16 +30,16 @@ internal class ProfileCompilerCommandConversionTest : BaseCompilationTest() {
             outputDir = workingDirectory.resolve("/path/to/snapshots")
         )
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments[X_PROFILE] = profileCompilerCommand
+            compilerArguments[JvmCompilerArguments.Companion.X_PROFILE] = profileCompilerCommand
         }.build()
 
         val valueString =
             jvmOperation.compilerArguments.toArgumentStrings().first { it.startsWith("-Xprofile=") }.removePrefix("-Xprofile=")
         val (profilerPath, command, outputDir) = valueString.split(File.pathSeparator)
 
-        assertEquals(profileCompilerCommand.profilerPath, Paths.get(profilerPath))
-        assertEquals(profileCompilerCommand.command, command)
-        assertEquals(profileCompilerCommand.outputDir, Paths.get(outputDir))
+        Assertions.assertEquals(profileCompilerCommand.profilerPath, Paths.get(profilerPath))
+        Assertions.assertEquals(profileCompilerCommand.command, command)
+        Assertions.assertEquals(profileCompilerCommand.outputDir, Paths.get(outputDir))
     }
 
     @DisplayName("Test that ProfileCompilerCommand is not set by default")
@@ -50,7 +51,7 @@ internal class ProfileCompilerCommandConversionTest : BaseCompilationTest() {
         val valueString =
             jvmOperation.compilerArguments.toArgumentStrings().firstOrNull { it.startsWith("-Xprofile=") }
 
-        assertEquals(null, valueString)
+        Assertions.assertEquals(null, valueString)
     }
 
     @DisplayName("Test ProfileCompilerCommand is set and retrieved correctly")
@@ -66,14 +67,14 @@ internal class ProfileCompilerCommandConversionTest : BaseCompilationTest() {
             outputDir = outputDir
         )
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments[X_PROFILE] = profileCompilerCommand
+            compilerArguments[JvmCompilerArguments.Companion.X_PROFILE] = profileCompilerCommand
         }.build()
 
-        val profileCommand = jvmOperation.compilerArguments[X_PROFILE]
+        val profileCommand = jvmOperation.compilerArguments[JvmCompilerArguments.Companion.X_PROFILE]
 
-        assertEquals(profilerPath, profileCommand?.profilerPath)
-        assertEquals(command, profileCommand?.command)
-        assertEquals(outputDir, profileCommand?.outputDir)
+        Assertions.assertEquals(profilerPath, profileCommand?.profilerPath)
+        Assertions.assertEquals(command, profileCommand?.command)
+        Assertions.assertEquals(outputDir, profileCommand?.outputDir)
     }
 
     @DisplayName("Test ProfileCompilerCommand is retrieved correctly when it is not set")
@@ -82,8 +83,8 @@ internal class ProfileCompilerCommandConversionTest : BaseCompilationTest() {
         val toolchain = strategyConfig.first
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).build()
 
-        val profileCommand = jvmOperation.compilerArguments[X_PROFILE]
+        val profileCommand = jvmOperation.compilerArguments[JvmCompilerArguments.Companion.X_PROFILE]
 
-        assertEquals(null, profileCommand)
+        Assertions.assertEquals(null, profileCommand)
     }
 }

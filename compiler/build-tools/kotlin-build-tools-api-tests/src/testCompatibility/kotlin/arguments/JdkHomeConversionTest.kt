@@ -3,14 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests
+package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JDK_HOME
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
@@ -25,7 +26,7 @@ internal class JdkHomeConversionTest : BaseCompilationTest() {
         val jdkHomePath = workingDirectory.resolve("path/to/jdk")
 
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments[JDK_HOME] = jdkHomePath
+            compilerArguments[JvmCompilerArguments.Companion.JDK_HOME] = jdkHomePath
         }.build()
 
         val argumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
@@ -33,7 +34,7 @@ internal class JdkHomeConversionTest : BaseCompilationTest() {
             .takeIf { it != -1 }
             ?.let { argumentStrings.getOrNull(it + 1) }
 
-        assertEquals(jdkHomePath.absolutePathString(), valueString)
+        Assertions.assertEquals(jdkHomePath.absolutePathString(), valueString)
     }
 
     @DisplayName("Test that jdk-home is not set by default")
@@ -47,7 +48,7 @@ internal class JdkHomeConversionTest : BaseCompilationTest() {
             .takeIf { it != -1 }
             ?.let { argumentStrings.getOrNull(it + 1) }
 
-        assertEquals(null, valueString)
+        Assertions.assertEquals(null, valueString)
     }
 
     @DisplayName("Test jdk-home is set and retrieved correctly")
@@ -57,12 +58,12 @@ internal class JdkHomeConversionTest : BaseCompilationTest() {
         val jdkHomePath = workingDirectory.resolve("path/to/jdk")
 
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments[JDK_HOME] = jdkHomePath
+            compilerArguments[JvmCompilerArguments.Companion.JDK_HOME] = jdkHomePath
         }.build()
 
-        val jdkHome = jvmOperation.compilerArguments[JDK_HOME]
+        val jdkHome = jvmOperation.compilerArguments[JvmCompilerArguments.Companion.JDK_HOME]
 
-        assertEquals(jdkHomePath, jdkHome)
+        Assertions.assertEquals(jdkHomePath, jdkHome)
     }
 
     @DisplayName("Test jdk-home is retrieved correctly when it is not set")
@@ -71,8 +72,8 @@ internal class JdkHomeConversionTest : BaseCompilationTest() {
         val toolchain = strategyConfig.first
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).build()
 
-        val jdkHome = jvmOperation.compilerArguments[JDK_HOME]
+        val jdkHome = jvmOperation.compilerArguments[JvmCompilerArguments.Companion.JDK_HOME]
 
-        assertEquals(null, jdkHome)
+        Assertions.assertEquals(null, jdkHome)
     }
 }
