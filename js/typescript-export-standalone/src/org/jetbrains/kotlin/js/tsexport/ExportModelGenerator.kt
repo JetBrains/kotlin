@@ -147,7 +147,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 originalClassId = klass.classId,
                 isExternal = klass.isExternal,
             )
-        }
+        }.withAttributes(klass)
     }
 
     context(_: KaSession)
@@ -179,7 +179,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     isStatic = isStatic,
                     isAbstract = parent is KaClassSymbol && parent.classKind != KaClassKind.INTERFACE && function.modality == KaSymbolModality.ABSTRACT,
                     isProtected = function.visibility == KaSymbolVisibility.PROTECTED,
-                )
+                ).withAttributes(function)
             }
         }
 
@@ -232,7 +232,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 )
             } else {
                 ExportedConstructor(parameters, visibility)
-            }
+            }.withAttributes(constructor)
         }
 
         if (visibility == ExportedVisibility.PRIVATE || (constructedClass.isInner && !isFactoryPropertyForInnerClass)) return null
@@ -246,7 +246,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             isMember = true,
             isStatic = !isFactoryPropertyForInnerClass,
             isProtected = constructor.visibility == KaSymbolVisibility.PROTECTED,
-        )
+        ).withAttributes(constructor)
     }
 
     context(_: KaSession)
@@ -401,7 +401,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 isField = parentClass?.classKind == KaClassKind.INTERFACE,
                 isObjectGetter = isObjectGetter,
                 isOptional = isOptional,
-            )
+            ).withAttributes(property)
         )
     }
 
@@ -429,7 +429,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             isMember = true,
             isStatic = true,
             isProtected = parentClass.visibility == KaSymbolVisibility.PROTECTED,
-        )
+        ).withAttributes(entry)
     }
 
     private fun classExportability(klass: KaNamedClassSymbol, parent: KaDeclarationSymbol?): Exportability {

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedAttribute
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedMemberName
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedProperty
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsStatic
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
@@ -332,3 +334,10 @@ internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?
         KaSymbolVisibility.PROTECTED -> ExportedVisibility.PROTECTED
         else -> ExportedVisibility.DEFAULT
     }
+
+internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSymbol): T {
+    source.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
+        attributes.add(ExportedAttribute.DeprecatedAttribute(it))
+    }
+    return this
+}
