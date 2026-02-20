@@ -126,6 +126,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/classWithWrongSuperCall.kt");
     }
 
+    @TestMetadata("companionExtensions.kt")
+    public void testCompanionExtensions() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/companionExtensions.kt");
+    }
+
     @TestMetadata("complexTypes.kt")
     public void testComplexTypes() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt");

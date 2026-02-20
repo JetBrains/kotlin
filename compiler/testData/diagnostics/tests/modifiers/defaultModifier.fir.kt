@@ -49,7 +49,7 @@ class J {
 
 }
 
-<!WRONG_MODIFIER_TARGET!>companion<!> var prop: Int = 1
+<!WRONG_MODIFIER_TARGET!>companion<!> var prop: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     <!WRONG_MODIFIER_TARGET!>companion<!> get
     <!WRONG_MODIFIER_TARGET!>companion<!> set
 

@@ -1515,6 +1515,7 @@ class LightTreeRawFirDeclarationBuilder(
                             FirDeclarationStatusImpl(propertyVisibility, null).apply {
                                 isInline = calculatedModifiers.hasInline()
                                 isExternal = calculatedModifiers.hasExternal()
+                                isStatic = calculatedModifiers.hasCompanion()
                             }
 
                         val convertedAccessors = accessors.map {
@@ -1562,6 +1563,7 @@ class LightTreeRawFirDeclarationBuilder(
                             isConst = calculatedModifiers.isConst()
                             isLateInit = calculatedModifiers.hasLateinit()
                             isExternal = calculatedModifiers.hasExternal()
+                            isStatic = calculatedModifiers.hasCompanion()
                         }
 
                         generateAccessorsByDelegate(
@@ -1733,6 +1735,7 @@ class LightTreeRawFirDeclarationBuilder(
                 isInline = propertyModifiers.hasInline() || calculatedModifiers.hasInline()
                 isExternal = propertyModifiers.hasExternal() || calculatedModifiers.hasExternal()
                 isExpect = propertyModifiers.hasExpect() || calculatedModifiers.hasExpect()
+                isStatic = propertyModifiers.hasCompanion() || calculatedModifiers.hasCompanion()
             }
         val accessorAdditionalAnnotations = propertyAnnotations.filterUseSiteTarget(
             if (isGetter) PROPERTY_GETTER
@@ -2045,6 +2048,7 @@ class LightTreeRawFirDeclarationBuilder(
                         isTailRec = calculatedModifiers.hasTailrec()
                         isExternal = calculatedModifiers.hasExternal()
                         isSuspend = calculatedModifiers.hasSuspend()
+                        isStatic = calculatedModifiers.hasCompanion()
                     }
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
