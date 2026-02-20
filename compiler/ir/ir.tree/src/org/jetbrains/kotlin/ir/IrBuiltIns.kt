@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
  */
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class IrBuiltIns : SymbolFinderHolder {
-    abstract val languageVersionSettings: LanguageVersionSettings
-
     abstract val irFactory: IrFactory
 
     abstract val anyType: IrType

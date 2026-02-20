@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -36,6 +38,7 @@ abstract class SymbolFinder {
 @InternalSymbolFinderAPI
 interface SymbolFinderHolder {
     val symbolFinder: SymbolFinder
+    val languageVersionSettings: LanguageVersionSettings
 }
 
 context(holder: SymbolFinderHolder)
@@ -43,6 +46,16 @@ fun ClassId.classSymbolOrNull(): IrClassSymbol? = holder.symbolFinder.findClass(
 
 context(holder: SymbolFinderHolder)
 fun ClassId.classSymbol(): IrClassSymbol = classSymbolOrNull() ?: error("Class $this is not found")
+
+context(holder: SymbolFinderHolder)
+fun ClassId.lazyClassSymbol(languageFeature: LanguageFeature): Lazy<IrClassSymbol> =
+    classSymbolOrNull().let { classSymbol ->
+        lazy {
+            if (!holder.languageVersionSettings.supportsFeature(languageFeature))
+                error("Class $this cannot be loaded when language feature '$languageFeature' is not enabled")
+            classSymbol ?: error("Class $this is not found, but language feature '$languageFeature' that requires this symbol is enabled")
+        }
+    }
 
 context(holder: SymbolFinderHolder)
 fun CallableId.propertySymbols(): List<IrPropertySymbol> = holder.symbolFinder.findProperties(this).toList()
