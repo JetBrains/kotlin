@@ -5,4 +5,4 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
   sed -i -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
 fi
-./gradlew -i --write-verification-metadata sha256,md5 -Pkotlin.native.enabled=true resolveDependencies
+./gradlew -i --write-verification-metadata sha256 -Pkotlin.native.enabled=true resolveDependencies
