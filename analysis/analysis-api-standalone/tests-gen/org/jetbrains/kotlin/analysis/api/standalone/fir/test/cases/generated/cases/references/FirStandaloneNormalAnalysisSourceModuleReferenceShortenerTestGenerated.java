@@ -243,6 +243,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
   }
 
   @Test
+  @TestMetadata("enumEntryConflictsWithCompanionMember.kt")
+  public void testEnumEntryConflictsWithCompanionMember() {
+    run("enumEntryConflictsWithCompanionMember.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntryInitUsesCompanion.kt")
   public void testEnumEntryInitUsesCompanion() {
     run("enumEntryInitUsesCompanion.kt");
