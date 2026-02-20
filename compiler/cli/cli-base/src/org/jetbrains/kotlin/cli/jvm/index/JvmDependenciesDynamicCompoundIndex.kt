@@ -53,9 +53,7 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
     ): Collection<T> = lock.read {
         if (shouldOnlyFindFirstClass) {
             listOfNotNull(
-                indices.asSequence()
-                    .mapNotNull { it.findClasses(classId, acceptedRootTypes, findClassGivenDirectory).firstOrNull() }
-                    .firstOrNull()
+                indices.firstNotNullOfOrNull { it.findClasses(classId, acceptedRootTypes, findClassGivenDirectory).firstOrNull() }
             )
         } else {
             indices.flatMap { it.findClasses(classId, acceptedRootTypes, findClassGivenDirectory) }
