@@ -63,7 +63,10 @@ internal fun computeImportingScopes(
 
     session.importTracker?.let { tracker ->
         file.imports.map { import ->
-            tracker.reportImportDirectives(file.sourceFile?.path, import.importedFqName?.asString())
+            val importString = import.importedFqName?.asString()?.let {
+                if (import.isAllUnder) "$it.*" else it
+            }
+            tracker.reportImportDirectives(file.sourceFile?.path, importString)
         }
     }
 
