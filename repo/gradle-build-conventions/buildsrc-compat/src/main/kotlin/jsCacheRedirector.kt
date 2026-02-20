@@ -26,37 +26,6 @@ fun Project.configureJsCacheRedirector() {
         }
     }
 
-    project.allprojects {
-        afterEvaluate {
-            pluginManager.withPlugin("com.github.node-gradle.node") {
-                tasks.withType<NpmTask>().configureEach {
-                    val command = npmCommand.orNull?.takeIf { it.isNotEmpty() }
-                        ?: args.get() // some tasks may be configured by putting command into args instead of npmCommand
-                    if (command.firstOrNull() in listOf("install", "ci")) {
-                        val workingDirectory = workingDir.orNull?.asFile ?: layout.projectDirectory.asFile
-                        val npmRcFile = workingDirectory.resolve(".npmrc")
-
-                        outputs.file(npmRcFile)
-
-                        doFirst {
-                            logger.info("Setting Npm registry for $path to $NPM_REGISTRY_CACHE")
-                            val nodeExecConfiguration =
-                                NodeExecConfiguration(
-                                    listOf("config", "set", "registry", NPM_REGISTRY_CACHE, "--location=project"),
-                                    environment.get(),
-                                    workingDir.asFile.orNull,
-                                    ignoreExitValue.get(),
-                                    execOverrides.orNull
-                                )
-                            val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-                            npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, VariantComputer())
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
         rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().restoreYarnLockTaskProvider.configure {
             doLast {
@@ -78,6 +47,37 @@ fun Project.configureJsCacheRedirector() {
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().downloadBaseUrl.set(YARN_DIST_CACHE)
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().yarnLockMismatchReport.set(YarnLockMismatchReport.WARNING)
+        }
+    }
+}
+
+fun Project.configureNpmCacheRedirector() {
+    afterEvaluate {
+        pluginManager.withPlugin("com.github.node-gradle.node") {
+            tasks.withType<NpmTask>().configureEach {
+                val command = npmCommand.orNull?.takeIf { it.isNotEmpty() }
+                    ?: args.get() // some tasks may be configured by putting command into args instead of npmCommand
+                if (command.firstOrNull() in listOf("install", "ci")) {
+                    val workingDirectory = workingDir.orNull?.asFile ?: layout.projectDirectory.asFile
+                    val npmRcFile = workingDirectory.resolve(".npmrc")
+
+                    outputs.file(npmRcFile)
+
+                    doFirst {
+                        logger.info("Setting Npm registry for $path to $NPM_REGISTRY_CACHE")
+                        val nodeExecConfiguration =
+                            NodeExecConfiguration(
+                                listOf("config", "set", "registry", NPM_REGISTRY_CACHE, "--location=project"),
+                                environment.get(),
+                                workingDir.asFile.orNull,
+                                ignoreExitValue.get(),
+                                execOverrides.orNull
+                            )
+                        val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
+                        npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, VariantComputer())
+                    }
+                }
+            }
         }
     }
 }

@@ -45,6 +45,10 @@ project.configureTests()
 pluginManager.apply("java-instrumentation")
 project.configurePublishingRetry()
 
+if (kotlinBuildProperties.isCacheRedirectorEnabled.get()) {
+    project.configureNpmCacheRedirector()
+}
+
 // Per-project compileAll lifecycle task (aggregated by root compileAll via settings.gradle)
 tasks.register("compileAll") {
     dependsOn(tasks.withType<KotlinCompilationTask<*>>())
