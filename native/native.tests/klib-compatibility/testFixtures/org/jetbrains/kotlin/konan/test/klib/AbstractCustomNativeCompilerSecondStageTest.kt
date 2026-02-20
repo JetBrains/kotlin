@@ -99,11 +99,5 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
                 LANGUAGE with "+ExplicitBackingFields"
             }
         }
-        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
-            defaultDirectives {
-                +FIR_DUMP
-                +RENDER_FIR_DECLARATION_ATTRIBUTES
-            }
-        }
     }
 }

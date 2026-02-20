@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -88,14 +86,6 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
 
         configureIrHandlersStep {
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
-        }
-
-        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
-            enableMetaInfoHandler()
-            defaultDirectives {
-                +FIR_DUMP
-                +RENDER_FIR_DECLARATION_ATTRIBUTES
-            }
         }
     }
 }
