@@ -48,6 +48,12 @@ class AnotherClass @Deprecated("message 4") constructor(val value: String) {
     @get:Deprecated("deprecated getter")
     @set:Deprecated("deprecated setter")
     var mixedDeprecated: String = "mixedDeprecated"
+
+    inner class Inner @Deprecated("deprecated inner class primary constructor") constructor(value: String) {
+        @Deprecated("deprecated inner class secondary constructor")
+        @JsName("fromNothing")
+        constructor(): this("Test")
+    }
 }
 
 @JsExport

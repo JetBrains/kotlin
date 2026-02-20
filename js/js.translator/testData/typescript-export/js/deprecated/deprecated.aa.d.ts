@@ -39,11 +39,27 @@ declare namespace JS_TESTS {
             /** @deprecated deprecated property */
             get mixedDeprecated(): string;
             set mixedDeprecated(value: string);
+            get Inner(): {
+                /** @deprecated deprecated inner class primary constructor */
+                new(value: string): foo.AnotherClass.Inner;
+                /** @deprecated deprecated inner class secondary constructor */
+                fromNothing(): foo.AnotherClass.Inner;
+            };
         }
         namespace AnotherClass {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 const constructor: abstract new () => AnotherClass;
+            }
+            class Inner {
+                /** @deprecated deprecated inner class primary constructor */
+                private constructor();
+            }
+            namespace Inner {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => Inner;
+                }
             }
         }
         interface TestInterface {
