@@ -295,6 +295,51 @@ object ProjectModuleLists {
         ":kotlin-test",
     )
 
+    val kotlinJpsPluginEmbeddedDependencies = listOf(
+        ":compiler:cli-base",
+        ":kotlin-build-tools-enum-compat",
+        ":kotlin-compiler-runner-unshaded",
+        ":daemon-common",
+        ":core:compiler.common",
+        ":core:compiler.common.jvm",
+        ":core:compiler.common.js",
+        ":core:compiler.common.native",
+        ":core:compiler.common.wasm",
+        ":core:compiler.common.web",
+        ":core:descriptors",
+        ":core:descriptors.jvm",
+        ":compiler:backend.common.jvm",
+        ":js:js.serializer",
+        ":core:deserialization",
+        ":core:deserialization.common",
+        ":core:deserialization.common.jvm",
+        ":compiler:frontend.common.jvm",
+        ":compiler:frontend.java",
+        ":core:metadata",
+        ":core:metadata.jvm",
+        ":kotlin-preloader",
+        ":compiler:util",
+        ":compiler:config",
+        ":compiler:config.jvm",
+        ":js:js.config",
+        ":wasm:wasm.config",
+        ":native:native.config",
+        ":core:util.runtime",
+        ":compiler:compiler.version",
+        ":compiler:build-tools:kotlin-build-statistics",
+        ":kotlin-build-common",
+        ":compiler:arguments.common",
+    )
+
+    val kotlinJpsPluginMavenDependencies = listOf(
+        ":kotlin-daemon-client",
+        ":kotlin-util-io",
+        ":kotlin-util-klib",
+        ":kotlin-util-klib-metadata",
+        ":native:kotlin-native-utils",
+        ":compiler:build-tools:kotlin-build-tools-api",
+    )
+
     val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib = listOf(
         ":analysis:analysis-api-fe10",
         ":analysis:analysis-api-fir",

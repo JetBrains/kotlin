@@ -6,7 +6,7 @@ plugins {
     id("project-tests-convention")
 }
 
-val compilerModules: Array<String> by rootProject.extra
+val compilerModules = ProjectModuleLists.compilerModules
 val otherCompilerModules = compilerModules.filter { it != path }
 
 dependencies {

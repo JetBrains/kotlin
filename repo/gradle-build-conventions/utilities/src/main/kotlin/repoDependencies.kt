@@ -14,7 +14,6 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
-import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
@@ -55,12 +54,28 @@ fun Project.commonDependency(group: String, artifact: String, vararg suffixesAnd
     return "$group:$artifact${artifactSuffixes.joinToString("")}:${commonDependencyVersion(group, artifact)}${classifiers.joinToString("")}"
 }
 
-fun Project.commonDependencyVersion(group: String, artifact: String): String =
-    when {
-        rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
-        rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
-        else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
-    } as String
+private val extraKeyToCatalogKey = mapOf(
+    "annotations" to "intellij-annotations",
+    "commons-lang3" to "commons-lang",
+    "android" to "android-sdk",
+    "javax.inject" to "javax-inject",
+    "kotlin-reflect" to "kotlin-reflect-bundled",
+    "protobuf-relocated" to "protobufRelocated",
+    "nodejs.lts" to "nodejs-lts",
+    "nodejs.for.building.wasm.debug.browsers" to "nodejs-for-building-wasm-debug-browsers",
+    "jakarta.annotation-api" to "jakarta-annotation-api",
+)
+
+fun Project.commonDependencyVersion(group: String, artifact: String): String {
+    val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+    val artifactCatalogKey = extraKeyToCatalogKey[artifact] ?: artifact
+    val artifactVersion = catalog.findVersion(artifactCatalogKey)
+    if (artifactVersion.isPresent) return artifactVersion.get().requiredVersion
+    val groupCatalogKey = extraKeyToCatalogKey[group] ?: group
+    val groupVersion = catalog.findVersion(groupCatalogKey)
+    if (groupVersion.isPresent) return groupVersion.get().requiredVersion
+    throw GradleException("Neither $artifactCatalogKey nor $groupCatalogKey is defined in the version catalog")
+}
 
 fun kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
     listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
@@ -210,7 +225,7 @@ val Project.protobufRelocatedVersion: String get() = catalogVersion("protobufRel
 fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufRelocatedVersion"
 fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufRelocatedVersion"
 fun Project.kotlinxCollectionsImmutable() =
-    "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
+    "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${catalogVersion("kotlinx-collections-immutable")}"
 
 val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 

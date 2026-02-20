@@ -8,20 +8,9 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib("jdk8"))
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
-        .let { it as List<String> }
-        .forEach { implementation(project(it)) }
-
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependencies"]
-        .let { it as List<String> }
-        .forEach { implementation(project(it)) }
-
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"]
-        .let { it as List<String> }
-        .forEach { implementation(it) { isTransitive = false } }
+    ProjectModuleLists.kotlinJpsPluginEmbeddedDependencies.forEach { implementation(project(it)) }
+    ProjectModuleLists.kotlinJpsPluginMavenDependencies.forEach { implementation(project(it)) }
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(intellijUtilRt())
     compileOnly(intellijPlatformUtil())

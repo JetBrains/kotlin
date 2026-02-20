@@ -17,7 +17,7 @@ plugins.withId("java") {
 fun Project.configureJavaInstrumentation() {
     val javaInstrumentator by configurations.creating
     dependencies {
-        javaInstrumentator("com.jetbrains.intellij.java:java-compiler-ant-tasks:${rootProject.extra["versions.intellijSdk"]}")
+        javaInstrumentator("com.jetbrains.intellij.java:java-compiler-ant-tasks:$intellijVersion")
     }
     for (sourceSet in listOf(mainSourceSet, testSourceSet)) {
         tasks.named(sourceSet.compileJavaTaskName, InstrumentJava(javaInstrumentator))

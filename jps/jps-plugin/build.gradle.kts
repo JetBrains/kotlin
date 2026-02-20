@@ -8,26 +8,15 @@ plugins {
     id("project-tests-convention")
 }
 
-val compilerModules: Array<String> by rootProject.extra
+val compilerModules = ProjectModuleLists.compilerModules
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(testFixtures(project(":generators:test-generator")))
 
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
-        .let { it as List<String> }
-        .forEach { implementation(project(it)) }
-
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependencies"]
-        .let { it as List<String> }
-        .forEach { implementation(project(it)) }
-
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"]
-        .let { it as List<String> }
-        .forEach { implementation(it) { isTransitive = false } }
+    ProjectModuleLists.kotlinJpsPluginEmbeddedDependencies.forEach { implementation(project(it)) }
+    ProjectModuleLists.kotlinJpsPluginMavenDependencies.forEach { implementation(project(it)) }
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     implementation(project(":jps:jps-common"))
     compileOnly(libs.intellij.fastutil)
@@ -77,7 +66,7 @@ dependencies {
         testRuntimeOnly(project(it))
     }
 
-    testImplementation("org.projectlombok:lombok:${rootProject.extra["versions.lombok"]}")
+    testImplementation(commonDependency("org.projectlombok", "lombok"))
     testImplementation(libs.kotlinx.serialization.json)
 }
 

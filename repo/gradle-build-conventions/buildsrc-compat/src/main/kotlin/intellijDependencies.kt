@@ -1,5 +1,6 @@
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.extra
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.project
 
 /*
@@ -7,8 +8,11 @@ import org.gradle.kotlin.dsl.project
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+private fun Project.catalogVersion(key: String): String =
+    extensions.getByType<VersionCatalogsExtension>().named("libs").findVersion(key).get().requiredVersion
+
 val Project.intellijVersion
-    get() = rootProject.extra["versions.intellijSdk"]
+    get() = catalogVersion("intellijSdk")
 
 fun Project.intellijCore() = dependencies.project(":dependencies:intellij-core")
 fun Project.intellijUtilRt() = "com.jetbrains.intellij.platform:util-rt:$intellijVersion"
@@ -37,4 +41,4 @@ fun Project.intellijJDom() = "com.jetbrains.intellij.platform:util-jdom:$intelli
  *
  * https://youtrack.jetbrains.com/issue/KT-25047/#focus=Comments-27-6974910.0-0
  */
-fun Project.intellijRuntimeAnnotations() = "org.jetbrains:annotations:${rootProject.extra["versions.annotations"]}"
+fun Project.intellijRuntimeAnnotations() = "org.jetbrains:annotations:${catalogVersion("intellij-annotations")}"

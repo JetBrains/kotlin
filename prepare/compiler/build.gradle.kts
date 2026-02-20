@@ -77,7 +77,7 @@ val buildNumber by configurations.creating
 
 val compilerBaseName = name
 
-val compilerModules: Array<String> by rootProject.extra
+val compilerModules = ProjectModuleLists.compilerModules
 
 val distLibraryProjects = listOfNotNull(
     ":kotlin-annotation-processing-cli",
@@ -349,7 +349,7 @@ val proguard by task<CacheableProguardTask> {
 }
 
 val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
-val distDir: String by rootProject.extra
+val distDir = "$rootDir/dist"
 
 val jar = runtimeJar {
     dependsOn(pack)
