@@ -11,7 +11,10 @@ import hair.ir.nodes.ReadVar
 import hair.ir.nodes.Return
 import hair.ir.nodes.Throw
 import hair.ir.nodes.Use
+import hair.sym.CmpOp
+import hair.sym.HairType
 import hair.sym.HairType.*
+import hair.test.Cls
 import hair.test.Fun
 import hair.utils.printGraphviz
 import kotlin.test.*
@@ -179,6 +182,21 @@ class SSATest : IrTest {
 
             assertContentEquals(listOf(v1, v2), (retHandler.result as Phi).joinedValues)
             assertEquals(v3, retNormal.result)
+        }
+    }
+
+    @Test
+    fun testGVNReplacement() = withTestSession {
+        buildInitialIR {
+            AssignVar("element")(Param(1))
+            val cc1 = CheckCast(Cls("Foo"))(ReadVar("element"))
+            val cc2 = CheckCast(Cls("Foo"))(ReadVar("element"))
+            val cond = Cmp(HairType.REFERENCE, CmpOp.EQ)(cc1, cc2)
+            Return(cond)
+
+            buildSSA { INT }
+
+            printGraphviz()
         }
     }
 

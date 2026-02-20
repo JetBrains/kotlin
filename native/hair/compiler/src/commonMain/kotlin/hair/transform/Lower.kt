@@ -6,6 +6,7 @@
 package hair.transform
 
 import hair.ir.*
+import hair.ir.nodes.CheckCast
 import hair.ir.nodes.ControlFlowBuilder
 import hair.ir.nodes.IsInstanceOf
 import hair.ir.nodes.Node
@@ -57,6 +58,11 @@ fun Session.lower() {
                             )
                             node.replaceValueUsesAndKill(replacement)
                             control.next.control = replacement
+                        }
+
+                        override fun visitCheckCast(node: CheckCast) {
+                            // TODO strike out?
+                            node.replaceValueUsesAndKill(node.obj)
                         }
                     }
 

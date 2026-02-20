@@ -416,8 +416,6 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         return when (expression.operator) {
                             IrTypeOperator.CAST -> {
                                 CheckCast(cls!!)(arg)
-                                arg
-                                notImplemented(HairTODO.CAST)
                             }
                             IrTypeOperator.IMPLICIT_CAST -> {
                                 // FIXME should we generate it?

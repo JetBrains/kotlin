@@ -22,14 +22,23 @@ object Object : ModelDSL() {
 
     // type-checks
 
-    val typeCheck by abstractClass {
+    val typeCheck by nodeInterface {
         formParam("targetType", HairClass::class)
         param("obj")
     }
 
-    val isInstanceOf by node(typeCheck)
+    val isInstanceOf by node {
+        interfaces(typeCheck)
+    }
 
-    val checkCast by node(typeCheck)
+    // TODO filter/projeciton interface or whatever
+    val throwingCheck by abstractClass(ControlFlow.blockBodyWithException) {
+        param("obj")
+    }
+
+    val checkCast by node(throwingCheck) {
+        interfaces(typeCheck)
+    }
 
     val typeInfo by node {
         param("obj")
