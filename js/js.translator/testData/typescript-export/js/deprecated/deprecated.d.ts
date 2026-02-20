@@ -26,8 +26,18 @@ declare namespace JS_TESTS {
             /** @deprecated message 6 */
             foo(): void;
             baz(): void;
-            /** @deprecated message 7 */
-            get bar(): string;
+            /** @deprecated deprecated read-only property */
+            get readOnlyProperty(): string;
+            /** @deprecated deprecated read-write property */
+            get readWriteProperty(): string;
+            set readWriteProperty(value: string);
+            get deprecatedGetter(): string;
+            set deprecatedGetter(value: string);
+            get deprecatedSetter(): string;
+            set deprecatedSetter(value: string);
+            /** @deprecated deprecated property */
+            get mixedDeprecated(): string;
+            set mixedDeprecated(value: string);
         }
         namespace AnotherClass {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

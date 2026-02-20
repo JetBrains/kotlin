@@ -32,8 +32,22 @@ class AnotherClass @Deprecated("message 4") constructor(val value: String) {
 
     fun baz() {}
 
-    @Deprecated("message 7")
-    val bar: String = "Test"
+    @Deprecated("deprecated read-only property")
+    val readOnlyProperty: String = "Test"
+
+    @Deprecated("deprecated read-write property")
+    var readWriteProperty: String = "Test"
+
+    @get:Deprecated("this getter is deprecated")
+    var deprecatedGetter: String = "deprecatedGetter"
+
+    @set:Deprecated("this setter is deprecated")
+    var deprecatedSetter: String = "deprecatedSetter"
+
+    @property:Deprecated("deprecated property")
+    @get:Deprecated("deprecated getter")
+    @set:Deprecated("deprecated setter")
+    var mixedDeprecated: String = "mixedDeprecated"
 }
 
 @JsExport
