@@ -12,6 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 /**
  * Represents the body of a class or object declaration enclosed in curly braces.
@@ -38,6 +39,14 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
     override fun getDeclarations() = stub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
         ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
 
+    /**
+     * The list of all declarations and companion blocks.
+     */
+    @KtExperimentalApi
+    val declarationsAndCompanionBlocks: List<PsiElement>
+        get() = stub?.getChildrenByType(KtTokenSets.DECLARATION_AND_COMPANION_BLOCK_TYPES, PsiElement.ARRAY_FACTORY)?.toList()
+            ?: PsiTreeUtil.getChildrenOfAnyType(this, KtDeclaration::class.java, KtCompanionBlock::class.java)
+
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitClassBody(this, data)
 
     val anonymousInitializers: List<KtAnonymousInitializer>
@@ -57,6 +66,13 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
 
     val allCompanionObjects: List<KtObjectDeclaration>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }
+
+    /**
+     * The list of all companion blocks.
+     */
+    @KtExperimentalApi
+    val companionBlocks: List<KtCompanionBlock>
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.COMPANION_BLOCK)
 
     val rBrace: PsiElement?
         get() = node.getChildren(rBraceTokenSet).singleOrNull()?.psi

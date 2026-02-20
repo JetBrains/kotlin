@@ -31,6 +31,7 @@ public abstract interface class org/jetbrains/kotlin/KtNodeTypes {
 	public static final field CLASS_INITIALIZER Lcom/intellij/psi/tree/IElementType;
 	public static final field CLASS_LITERAL_EXPRESSION Lcom/intellij/psi/tree/IElementType;
 	public static final field COLLECTION_LITERAL_EXPRESSION Lcom/intellij/psi/tree/IElementType;
+	public static final field COMPANION_BLOCK Lcom/intellij/psi/tree/IElementType;
 	public static final field CONDITION Lcom/intellij/psi/tree/IElementType;
 	public static final field CONSTRUCTOR_CALLEE Lcom/intellij/psi/tree/IElementType;
 	public static final field CONSTRUCTOR_DELEGATION_CALL Lcom/intellij/psi/tree/IElementType;
@@ -3811,6 +3812,7 @@ public final class org/jetbrains/kotlin/psi/psiUtil/KtPsiUtilKt {
 	public static final fun getAssignmentByLHS (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/psi/KtBinaryExpression;
 	public static final fun getBinaryWithTypeParent (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/psi/KtBinaryExpressionWithTypeRHS;
 	public static final fun getCallNameExpression (Lorg/jetbrains/kotlin/psi/KtCallElement;)Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;
+	public static final fun getContainingClassOrObject (Lorg/jetbrains/kotlin/psi/KtClassBody;)Lorg/jetbrains/kotlin/psi/KtClassOrObject;
 	public static final fun getContainingClassOrObject (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/psi/KtClassOrObject;
 	public static final fun getContentRange (Lorg/jetbrains/kotlin/psi/KtStringTemplateExpression;)Lcom/intellij/openapi/util/TextRange;
 	public static final fun getFileOrScriptDeclarations (Lorg/jetbrains/kotlin/psi/KtFile;)Ljava/util/List;
@@ -4216,6 +4218,7 @@ public abstract class org/jetbrains/kotlin/psi/stubs/elements/KtStubElementType 
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/elements/KtTokenSets {
 	public static final field CONSTANT_EXPRESSIONS Lcom/intellij/psi/tree/TokenSet;
+	public static final field DECLARATION_AND_COMPANION_BLOCK_TYPES Lcom/intellij/psi/tree/TokenSet;
 	public static final field DECLARATION_TYPES Lcom/intellij/psi/tree/TokenSet;
 	public static final field INSIDE_DIRECTIVE_EXPRESSIONS Lcom/intellij/psi/tree/TokenSet;
 	public static final field POSTFIX_OPERATIONS Lcom/intellij/psi/tree/TokenSet;

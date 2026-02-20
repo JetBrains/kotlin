@@ -41,6 +41,9 @@ interface KotlinElementTypeProvider {
     val typeAliasType: KtStubElementType<out KotlinTypeAliasStub, KtTypeAlias>
     val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
 
+    @KtExperimentalApi
+    val companionBlockType: KtStubElementType<out KotlinPlaceHolderStub<KtCompanionBlock>, KtCompanionBlock>
+
     // Initializers
     val classInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer>
     val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>

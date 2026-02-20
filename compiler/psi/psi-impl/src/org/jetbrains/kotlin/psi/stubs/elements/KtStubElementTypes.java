@@ -42,6 +42,9 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtClassBody> CLASS_BODY =
             new KtPlaceHolderStubElementType<>("CLASS_BODY", KtClassBody.class);
 
+    KtPlaceHolderStubElementType<KtCompanionBlock> COMPANION_BLOCK =
+            new KtPlaceHolderStubElementType<>("COMPANION_BLOCK", KtCompanionBlock.class);
+
     KtPlaceHolderStubElementType<KtImportList> IMPORT_LIST =
             new KtPlaceHolderStubElementType<>("IMPORT_LIST", KtImportList.class);
 

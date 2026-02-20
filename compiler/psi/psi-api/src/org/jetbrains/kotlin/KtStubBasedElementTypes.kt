@@ -39,6 +39,11 @@ internal object KtStubBasedElementTypes {
     val CLASS_BODY: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody> =
         provider.classBodyType
 
+    @JvmField
+    @KtExperimentalApi
+    val COMPANION_BLOCK: KtStubElementType<out KotlinPlaceHolderStub<KtCompanionBlock>, KtCompanionBlock> =
+        provider.companionBlockType
+
 
     // Initializers
 

@@ -76,6 +76,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CLASS_BODY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CLASS_INITIALIZER
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CLASS_LITERAL_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:COLLECTION_LITERAL_EXPRESSION
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:COMPANION_BLOCK
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONSTRUCTOR_CALLEE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTEXT_PARAMETER_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTEXT_RECEIVER

@@ -82,6 +82,11 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitClassBody(classBody, null);
     }
 
+    @KtExperimentalApi
+    public void visitCompanionBlock(@NotNull KtCompanionBlock companionBlock) {
+        super.visitCompanionBlock(companionBlock, null);
+    }
+
     public void visitModifierList(@NotNull KtModifierList list) {
         super.visitModifierList(list, null);
     }
@@ -559,6 +564,13 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitClassBody(@NotNull KtClassBody classBody, Void data) {
         visitClassBody(classBody);
+        return null;
+    }
+
+    @Override
+    @KtExperimentalApi
+    public Void visitCompanionBlock(@NotNull KtCompanionBlock companionBlock, Void data) {
+        visitCompanionBlock(companionBlock);
         return null;
     }
 

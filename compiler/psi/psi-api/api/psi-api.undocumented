@@ -14,6 +14,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.classInitializerType
 org.jetbrains.kotlin.KotlinElementTypeProvider.classLiteralExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.classType
 org.jetbrains.kotlin.KotlinElementTypeProvider.collectionLiteralExpressionType
+org.jetbrains.kotlin.KotlinElementTypeProvider.companionBlockType
 org.jetbrains.kotlin.KotlinElementTypeProvider.constructorCalleeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.contextParameterListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.contextReceiverType
@@ -105,6 +106,7 @@ org.jetbrains.kotlin.KtNodeTypes:CLASS_BODY
 org.jetbrains.kotlin.KtNodeTypes:CLASS_INITIALIZER
 org.jetbrains.kotlin.KtNodeTypes:CLASS_LITERAL_EXPRESSION
 org.jetbrains.kotlin.KtNodeTypes:COLLECTION_LITERAL_EXPRESSION
+org.jetbrains.kotlin.KtNodeTypes:COMPANION_BLOCK
 org.jetbrains.kotlin.KtNodeTypes:CONDITION
 org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_CALLEE
 org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_DELEGATION_CALL
@@ -445,6 +447,8 @@ org.jetbrains.kotlin.psi.KtCommonFile.packageFqNameByTree
 org.jetbrains.kotlin.psi.KtCommonFile.script
 org.jetbrains.kotlin.psi.KtCommonFile.shouldChangeModificationCount(PsiElement)
 org.jetbrains.kotlin.psi.KtCommonFile.virtualFilePath
+org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(KotlinPlaceHolderStub<KtCompanionBlock>)
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(KotlinConstantExpressionStub)
 org.jetbrains.kotlin.psi.KtConstructor
@@ -1220,6 +1224,7 @@ org.jetbrains.kotlin.psi.KtVisitor:visitClassInitializer(KtClassInitializer, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitClassLiteralExpression(KtClassLiteralExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitClassOrObject(KtClassOrObject, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitCollectionLiteralExpression(KtCollectionLiteralExpression, D)
+org.jetbrains.kotlin.psi.KtVisitor:visitCompanionBlock(KtCompanionBlock, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstantExpression(KtConstantExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstructor(KtConstructor<?>, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstructorCalleeExpression(KtConstructorCalleeExpression, D)
@@ -1330,6 +1335,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoid:visitClassInitializer(KtClassInitializer)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitClassLiteralExpression(KtClassLiteralExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitClassOrObject(KtClassOrObject)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitCollectionLiteralExpression(KtCollectionLiteralExpression)
+org.jetbrains.kotlin.psi.KtVisitorVoid:visitCompanionBlock(KtCompanionBlock)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstantExpression(KtConstantExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructor(KtConstructor<?>)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructorCalleeExpression(KtConstructorCalleeExpression)
@@ -1437,6 +1443,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitClassBodyVoid(KtClassBo
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitClassLiteralExpressionVoid(KtClassLiteralExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitClassVoid(KtClass, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitCollectionLiteralExpressionVoid(KtCollectionLiteralExpression, P)
+org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitCompanionBlockVoid(KtCompanionBlock, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitConstantExpressionVoid(KtConstantExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitConstructorCalleeExpressionVoid(KtConstructorCalleeExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitConstructorDelegationCallVoid(KtConstructorDelegationCall, P)
@@ -1860,6 +1867,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:createPsiFromAst(ASTNo
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:getArrayFactory()
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:CONSTANT_EXPRESSIONS
+org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:DECLARATION_AND_COMPANION_BLOCK_TYPES
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:DECLARATION_TYPES
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:INSIDE_DIRECTIVE_EXPRESSIONS
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:POSTFIX_OPERATIONS
