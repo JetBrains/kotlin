@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // TARGET_BACKEND: JVM_IR
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 val list = ArrayList<String>()
 

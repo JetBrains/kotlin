@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // KT-5192 JS compiler fails to generate correct code for List implementation
 package foo
 

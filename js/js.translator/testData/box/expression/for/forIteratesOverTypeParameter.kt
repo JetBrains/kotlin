@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 public fun <T, C : Collection<T>> bar(collection: C, f: (T) -> Unit) { for (item in collection) f(item) }
 
 fun box(): String {

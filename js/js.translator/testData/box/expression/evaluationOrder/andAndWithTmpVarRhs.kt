@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun foo(arg: Any): Boolean {
     return arg == "x"
 }

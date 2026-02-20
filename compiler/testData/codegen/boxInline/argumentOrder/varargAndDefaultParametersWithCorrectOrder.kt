@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // NO_CHECK_LAMBDA_INLINING
-// KJS_WITH_FULL_RUNTIME
 // FILE: 1.kt
 package test
 

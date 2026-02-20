@@ -1,5 +1,5 @@
 // LANGUAGE: +EnumEntries
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // KT-61957
 
 @JsExport

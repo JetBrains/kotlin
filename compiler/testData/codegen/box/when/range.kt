@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun isDigit(a: Int) : String {
     val aa = ArrayList<Int> ()
     aa.add(239)

@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // FILE: lib.kt
 public inline fun <T> T.with(f: T.() -> Unit): T {
     this.f()

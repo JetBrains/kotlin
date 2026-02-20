@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 
 fun TestConfigurationBuilder.configureLineNumberTests(createLineNumberHandler: (testServices: TestServices) -> JsBinaryArtifactHandler) {
     defaultDirectives {
-        +JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME
+        +ConfigurationDirectives.WITH_STDLIB
         +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
         -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
         JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with(listOf("JS", "JS_IR", "JS_IR_ES6"))

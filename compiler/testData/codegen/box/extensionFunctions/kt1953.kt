@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun box(): String {
     val sb = StringBuilder()
     operator fun String.unaryPlus() {

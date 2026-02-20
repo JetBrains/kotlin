@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // FILE: lib.kt
 
 inline fun <T> buzz(x: T): T {

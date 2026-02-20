@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 data class Pair<First, Second>(val first: First, val second: Second)
 
 fun parseCatalogs(hashMap: Any?) {

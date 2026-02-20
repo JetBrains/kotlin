@@ -1,7 +1,6 @@
 // ISSUE: KT-77170
 // WTIH_STDLIB
 // WITH_REFLECT
-// KJS_WITH_FULL_RUNTIME
 
 // MODULE: lib
 // FILE: lib.kt

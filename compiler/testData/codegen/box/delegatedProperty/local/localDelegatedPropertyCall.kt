@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WITH_REFLECT
-// KJS_WITH_FULL_RUNTIME
 // DUMP_IR_AFTER_INLINE
 
 import kotlin.reflect.*

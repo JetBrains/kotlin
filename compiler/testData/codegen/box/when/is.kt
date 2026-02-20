@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun typeName(a: Any?) : String {
     return when(a) {
         is ArrayList<*> -> "array list"

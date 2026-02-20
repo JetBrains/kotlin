@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 tailrec fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()) : String =
         if (num == 0) acc.toString()

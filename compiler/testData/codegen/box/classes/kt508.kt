@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) = put(key, value)
 

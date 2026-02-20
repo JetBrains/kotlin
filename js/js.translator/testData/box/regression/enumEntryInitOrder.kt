@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 enum class E { A, B }
 val x: Any = E.A

@@ -1,6 +1,5 @@
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
-// KJS_WITH_FULL_RUNTIME
 
 // FILE: 1.kt
 

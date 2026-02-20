@@ -1,5 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // See KT-11711
 // FILE: lib.kt
 package foo

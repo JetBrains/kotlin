@@ -1,5 +1,5 @@
 // LANGUAGE: +EnumEntries
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // TODO: Remove after enumEntries become public
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")

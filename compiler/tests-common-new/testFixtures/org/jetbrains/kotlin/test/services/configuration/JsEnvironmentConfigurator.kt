@@ -87,14 +87,11 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
             return getMainModule(testServices).name
         }
 
-        fun isFullJsRuntimeNeeded(module: TestModule): Boolean =
-            JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME in module.directives || ConfigurationDirectives.WITH_STDLIB in module.directives
-
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
             val result = mutableListOf<String>()
 
             val pathProvider = testServices.standardLibrariesPathProvider
-            if (isFullJsRuntimeNeeded(module)) {
+            if (ConfigurationDirectives.WITH_STDLIB in module.directives) {
                 result += pathProvider.fullJsStdlib().absolutePath
                 result += pathProvider.kotlinTestJsKLib().absolutePath
             } else {

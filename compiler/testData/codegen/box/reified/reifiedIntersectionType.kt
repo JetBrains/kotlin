@@ -1,5 +1,5 @@
 // LANGUAGE: -ProhibitIntersectionReifiedTypeParameter
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // KT-37163
 // Case that was found in kotlinx.coroutines

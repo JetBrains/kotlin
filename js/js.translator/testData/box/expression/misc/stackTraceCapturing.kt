@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // Reproduction of KT-37563
 // Test stack trace capturing in various kinds of constructors

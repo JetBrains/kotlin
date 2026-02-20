@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 class A {
     @PublishedApi
     internal fun published(x: String) = "${x}K"

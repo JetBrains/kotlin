@@ -3,7 +3,6 @@
 // WASM_FAILS_IN_SINGLE_MODULE_MODE
 // TODO: remove the test when KT-66906 will be resolved
 // WITH_STDLIB
-// KJS_WITH_FULL_RUNTIME
 
 // FILE: 1.kt
 class My(val value: Int)

@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun box(): String {
     val l = ArrayList<Boolean>()
     l.add(true)

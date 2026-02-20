@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 import kotlin.js.Promise
 
 public class MyPromise(executor: ((Unit) -> Unit, (Throwable) -> Unit) -> Unit) : Promise<Unit>(executor)

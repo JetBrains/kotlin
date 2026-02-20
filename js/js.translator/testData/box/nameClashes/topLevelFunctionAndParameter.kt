@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun f(x: Int) = x * 2
 
 fun test(f: (Long) -> Long) = Pair(f(23 as Int), f(42L))

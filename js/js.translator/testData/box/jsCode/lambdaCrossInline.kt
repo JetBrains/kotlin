@@ -1,6 +1,6 @@
 // ISSUE: KT-68975
 // Test must become non-compilable after KT-66181
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 external fun p(s: String, n: () -> String): String
 
 inline fun foo(arg: String, crossinline makeString: () -> String): String {

@@ -295,57 +295,57 @@ FILE fqName:kotlin fileName:/fail.kt lineStartOffsets: [0, 15, 142, 186, 187, 23
       THROW[236, 260] type=kotlin.Nothing
         CONSTRUCTOR_CALL[242, 260] 'public constructor <init> (message: kotlin.String?) declared in kotlin.Throwable' type=kotlin.Throwable origin=null
           ARG message: GET_VAR[252, 259] 'message: kotlin.String? declared in kotlin.fail' type=kotlin.String? origin=null
-FILE fqName:<root> fileName:/localDelegatedPropertyCall.kt lineStartOffsets: [0, 15, 31, 56, 80, 81, 105, 106, 107, 126, 195, 250, 256, 258, 259, 280, 297, 325, 335, 384, 397, 403, 405]
-  CLASS[107, 257] CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]
-    thisReceiver: VALUE_PARAMETER[107, 257] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Delegate
-    CONSTRUCTOR[121, 123] visibility:public returnType:<root>.Delegate [primary]
-      BLOCK_BODY[121, 123]
-        DELEGATING_CONSTRUCTOR_CALL[107, 257] 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL[107, 257] classDescriptor='CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN[107, 257] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER[107, 257] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER[107, 257] kind:Regular name:other index:1 type:kotlin.Any?
+FILE fqName:<root> fileName:/localDelegatedPropertyCall.kt lineStartOffsets: [0, 15, 31, 55, 56, 80, 81, 82, 101, 170, 225, 231, 233, 234, 255, 272, 300, 310, 359, 372, 378, 380]
+  CLASS[82, 232] CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[82, 232] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Delegate
+    CONSTRUCTOR[96, 98] visibility:public returnType:<root>.Delegate [primary]
+      BLOCK_BODY[96, 98]
+        DELEGATING_CONSTRUCTOR_CALL[82, 232] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[82, 232] classDescriptor='CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[82, 232] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[82, 232] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[82, 232] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-    FUN[107, 257] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER[107, 257] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[82, 232] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[82, 232] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-    FUN[107, 257] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER[107, 257] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[82, 232] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[82, 232] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN[139, 255] name:getValue visibility:public modality:FINAL returnType:kotlin.String [operator]
-      VALUE_PARAMETER[139, 255] kind:DispatchReceiver name:<this> index:0 type:<root>.Delegate
-      VALUE_PARAMETER[152, 162] kind:Regular name:thiz index:1 type:kotlin.Any?
-      VALUE_PARAMETER[164, 182] kind:Regular name:prop index:2 type:kotlin.reflect.KProperty<*>
-      BLOCK_BODY[193, 255]
-        RETURN[203, 249] type=kotlin.Nothing from='public final fun getValue (thiz: kotlin.Any?, prop: kotlin.reflect.KProperty<*>): kotlin.String declared in <root>.Delegate'
-          TYPE_OP[210, 249] type=kotlin.String origin=CAST typeOperand=kotlin.String
-            CALL[234, 239] 'public abstract fun get (): V of kotlin.reflect.KProperty0 declared in kotlin.reflect.KProperty0' type=kotlin.Any? origin=null
-              ARG <this>: TYPE_OP[211, 232] type=kotlin.reflect.KProperty0<*> origin=CAST typeOperand=kotlin.reflect.KProperty0<*>
-                GET_VAR[211, 215] 'prop: kotlin.reflect.KProperty<*> declared in <root>.Delegate.getValue' type=kotlin.reflect.KProperty<*> origin=null
-  FUN[259, 404] name:box visibility:public modality:FINAL returnType:kotlin.String
-    BLOCK_BODY[278, 404]
-      RETURN[284, 402] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        TRY[291, 402] type=kotlin.String
-          try: BLOCK[295, 340] type=kotlin.String origin=null
-            LOCAL_DELEGATED_PROPERTY[305, 324] name:x type:kotlin.String flags:val
-              VAR[305, 324] PROPERTY_DELEGATE name:x$delegate type:<root>.Delegate [val]
-                CONSTRUCTOR_CALL[314, 324] 'public constructor <init> () declared in <root>.Delegate' type=<root>.Delegate origin=null
-              FUN[305, 324] DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL returnType:kotlin.String
-                BLOCK_BODY[314, 324]
-                  RETURN[314, 324] type=kotlin.Nothing from='local final fun <get-x> (): kotlin.String declared in <root>.box'
-                    CALL[314, 324] 'public final fun getValue (thiz: kotlin.Any?, prop: kotlin.reflect.KProperty<*>): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
-                      ARG <this>: GET_VAR[314, 324] 'val x$delegate: <root>.Delegate declared in <root>.box' type=<root>.Delegate origin=null
+    FUN[114, 230] name:getValue visibility:public modality:FINAL returnType:kotlin.String [operator]
+      VALUE_PARAMETER[114, 230] kind:DispatchReceiver name:<this> index:0 type:<root>.Delegate
+      VALUE_PARAMETER[127, 137] kind:Regular name:thiz index:1 type:kotlin.Any?
+      VALUE_PARAMETER[139, 157] kind:Regular name:prop index:2 type:kotlin.reflect.KProperty<*>
+      BLOCK_BODY[168, 230]
+        RETURN[178, 224] type=kotlin.Nothing from='public final fun getValue (thiz: kotlin.Any?, prop: kotlin.reflect.KProperty<*>): kotlin.String declared in <root>.Delegate'
+          TYPE_OP[185, 224] type=kotlin.String origin=CAST typeOperand=kotlin.String
+            CALL[209, 214] 'public abstract fun get (): V of kotlin.reflect.KProperty0 declared in kotlin.reflect.KProperty0' type=kotlin.Any? origin=null
+              ARG <this>: TYPE_OP[186, 207] type=kotlin.reflect.KProperty0<*> origin=CAST typeOperand=kotlin.reflect.KProperty0<*>
+                GET_VAR[186, 190] 'prop: kotlin.reflect.KProperty<*> declared in <root>.Delegate.getValue' type=kotlin.reflect.KProperty<*> origin=null
+  FUN[234, 379] name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[253, 379]
+      RETURN[259, 377] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        TRY[266, 377] type=kotlin.String
+          try: BLOCK[270, 315] type=kotlin.String origin=null
+            LOCAL_DELEGATED_PROPERTY[280, 299] name:x type:kotlin.String flags:val
+              VAR[280, 299] PROPERTY_DELEGATE name:x$delegate type:<root>.Delegate [val]
+                CONSTRUCTOR_CALL[289, 299] 'public constructor <init> () declared in <root>.Delegate' type=<root>.Delegate origin=null
+              FUN[280, 299] DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL returnType:kotlin.String
+                BLOCK_BODY[289, 299]
+                  RETURN[289, 299] type=kotlin.Nothing from='local final fun <get-x> (): kotlin.String declared in <root>.box'
+                    CALL[289, 299] 'public final fun getValue (thiz: kotlin.Any?, prop: kotlin.reflect.KProperty<*>): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR[289, 299] 'val x$delegate: <root>.Delegate declared in <root>.box' type=<root>.Delegate origin=null
                       ARG thiz: CONST[-1, -1] Null type=kotlin.Nothing? value=null
-                      ARG prop: RICH_PROPERTY_REFERENCE[314, 324] type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val x: kotlin.String by (...)'
-                        getter: FUN[314, 324] LOCAL_FUNCTION_FOR_LAMBDA name:<get-x> visibility:local modality:FINAL returnType:kotlin.Nothing
+                      ARG prop: RICH_PROPERTY_REFERENCE[289, 299] type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val x: kotlin.String by (...)'
+                        getter: FUN[289, 299] LOCAL_FUNCTION_FOR_LAMBDA name:<get-x> visibility:local modality:FINAL returnType:kotlin.Nothing
                           BLOCK_BODY[-1, -1]
                             CALL[-1, -1] 'internal final fun throwUnsupportedOperationException (message: kotlin.String): kotlin.Nothing declared in kotlin.internal' type=kotlin.Nothing origin=null
                               ARG message: CONST[-1, -1] String type=kotlin.String value="Not supported for local property reference."
-            CALL[333, 334] 'local final fun <get-x> (): kotlin.String declared in <root>.box' type=kotlin.String origin=GET_LOCAL_PROPERTY
-          CATCH[341, 402] parameter=val e: kotlin.UnsupportedOperationException declared in <root>.box
-            VAR[348, 380] CATCH_PARAMETER name:e type:kotlin.UnsupportedOperationException [val]
-            BLOCK[382, 402] type=kotlin.String origin=null
-              CONST[392, 396] String type=kotlin.String value="OK"
+            CALL[308, 309] 'local final fun <get-x> (): kotlin.String declared in <root>.box' type=kotlin.String origin=GET_LOCAL_PROPERTY
+          CATCH[316, 377] parameter=val e: kotlin.UnsupportedOperationException declared in <root>.box
+            VAR[323, 355] CATCH_PARAMETER name:e type:kotlin.UnsupportedOperationException [val]
+            BLOCK[357, 377] type=kotlin.String origin=null
+              CONST[367, 371] String type=kotlin.String value="OK"

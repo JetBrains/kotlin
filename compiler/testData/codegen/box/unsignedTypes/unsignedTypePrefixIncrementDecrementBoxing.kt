@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // WITH_REFLECT
 
 fun prefixDecrementUByteLocal(): Any? {

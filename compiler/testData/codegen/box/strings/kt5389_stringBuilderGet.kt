@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun box(): String {
     val sb = StringBuilder("OK")
     return "${sb.get(0)}${sb[1]}"

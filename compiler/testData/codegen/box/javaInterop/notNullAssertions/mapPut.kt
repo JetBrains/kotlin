@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun <K: Any, V: Any> foo(k: K, v: V) {
     val map = HashMap<K, V>()

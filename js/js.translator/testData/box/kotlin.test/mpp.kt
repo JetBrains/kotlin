@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: ANY
 // FIR status: expect/actual in one module
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // SKIP_DCE_DRIVEN
 // RUN_UNIT_TESTS
 

@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 package foo
 
 class MyList<T>(vararg val data: T) : AbstractList<T>() {

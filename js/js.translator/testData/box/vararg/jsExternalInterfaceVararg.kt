@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // Generated briges must not contain any casts!
 // CHECK_NOT_CALLED_IN_SCOPE: function=THROW_CCE scope=collect1

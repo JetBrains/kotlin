@@ -54,11 +54,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val KJS_WITH_FULL_RUNTIME by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val SPLIT_PER_MODULE by directive(
         description = "",
         applicability = DirectiveApplicability.Global

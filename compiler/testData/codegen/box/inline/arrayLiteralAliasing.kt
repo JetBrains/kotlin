@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 /*
 This tests that variables (aliases) are created for array literals.
 

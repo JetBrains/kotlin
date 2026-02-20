@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test1
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test2
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test3

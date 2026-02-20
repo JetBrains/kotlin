@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // KT-6153 java.lang.IllegalStateException while building
 object Bug {
     fun title(id:Int) = when (id) {

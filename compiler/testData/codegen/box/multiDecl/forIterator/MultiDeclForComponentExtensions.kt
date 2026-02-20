@@ -1,5 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 class C(val i: Int) {
 }
 

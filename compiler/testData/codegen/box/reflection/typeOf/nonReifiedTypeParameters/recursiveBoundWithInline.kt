@@ -2,7 +2,7 @@
 // IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR, JVM_IR_SERIALIZE
 // ^^^ This test fails during the second phase of compilation. Yet it's still used in first phase-only
 //     tests such as *IrDeserializationTest*generated.
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // FILE: lib.kt
 import kotlin.reflect.typeOf

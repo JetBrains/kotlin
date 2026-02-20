@@ -3,7 +3,7 @@
 // REASON: IllegalStateException: FAILOK
 // REASON: No sane way to codegen this snippet
 // Reason will be changed after KT-66181, when `js()` would be forbidden to use inlined lambdas
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 external fun p(s: String, n: () -> String): String
 
 inline fun foo(arg: String, makeString: () -> String): String {

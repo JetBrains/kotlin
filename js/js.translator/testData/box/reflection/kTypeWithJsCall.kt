@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: JS_IR_ES6
 
 import kotlin.reflect.KClass

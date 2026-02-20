@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // MODULE: lib1
 // FILE: lib1.kt
 

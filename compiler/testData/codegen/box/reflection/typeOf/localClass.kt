@@ -1,6 +1,6 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_REFLECT
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // FILE: lib.kt
 import kotlin.reflect.*

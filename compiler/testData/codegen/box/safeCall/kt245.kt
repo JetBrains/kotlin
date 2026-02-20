@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun foo() {
     val l = ArrayList<Int>(2)
     l.add(1)

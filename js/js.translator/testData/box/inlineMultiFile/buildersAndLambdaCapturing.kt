@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/builders/buildersAndLambdaCapturing.1.kt

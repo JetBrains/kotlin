@@ -1,6 +1,6 @@
 // DONT_TARGET_EXACT_BACKEND: WASM_JS
 // WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // Test that APIs expecting Number behave correctly with Long values.
 

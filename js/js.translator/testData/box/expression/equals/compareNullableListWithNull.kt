@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // KT-3518 Null pointer during null comparison in JS Backend
 package foo
 

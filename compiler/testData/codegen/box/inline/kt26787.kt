@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 // Simplified example from https://youtrack.jetbrains.com/issue/KT-26787
 

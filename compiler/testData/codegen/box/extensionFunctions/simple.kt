@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun StringBuilder.first() = this.get(0)
 
 fun foo() = StringBuilder("foo").first()

@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun getC(c: Char) = c
 inline fun getCInline(c: Char) = c

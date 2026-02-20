@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 operator fun HashMap<String, Int?>.set(index: String, elem: Int?) {
     this.put(index, elem)
 }

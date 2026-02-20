@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun abstractCollectionToArray() {
     class TestCollection<out E>(val data: Collection<E>) : AbstractCollection<E>() {

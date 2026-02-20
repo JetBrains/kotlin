@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 open class A {
     val a: Int
     open val b: Int

@@ -1,4 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // CHECK_CONTAINS_NO_CALLS: test1 except=toString
 // CHECK_CONTAINS_NO_CALLS: test2 except=toString
 // CHECK_CONTAINS_NO_CALLS: test3 except=toString
