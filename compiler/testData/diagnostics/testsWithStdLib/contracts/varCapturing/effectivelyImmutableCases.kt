@@ -7,6 +7,8 @@ fun barRegular(f: () -> Unit) {}
 
 fun baz(s: String) {}
 
+class MutableObject(var mutableField: String = "initial")
+
 private fun testStable() = barRegular {
     var another = "hello"
 
@@ -65,6 +67,43 @@ fun testReturnAnonymousFunction(): (String) -> Unit {
                 isScheduled = false
             }
         }
+    }
+}
+
+fun testEffectivelyImmutableObject(): Unit {
+    var mutObj = MutableObject()
+    barRegular {
+        baz(mutObj.mutableField)
+        println(mutObj.toString())
+    }
+}
+
+fun testMutableObject(): Unit {
+    var immutObj = MutableObject()
+    barRegular {
+        baz(immutObj.mutableField)
+        println(immutObj.toString())
+    }
+
+    var mutObj = MutableObject()
+
+    barRegular {
+        mutObj = MutableObject("process")
+        println(mutObj.mutableField)
+    }
+
+    barRegular {
+        println(mutObj.toString())
+    }
+
+    var x = "bla"
+
+    barRegular {
+        x = "3"
+    }
+
+    barRegular {
+        println(x)
     }
 }
 

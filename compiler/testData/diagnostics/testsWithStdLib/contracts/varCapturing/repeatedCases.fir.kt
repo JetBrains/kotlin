@@ -27,7 +27,7 @@ fun testNestedFunction() {
 
     fun localHelper() {
         barRegularEmpty {
-            println(r)
+            println(<!CV_DIAGNOSTIC!>r<!>)
         }
     }
 
@@ -42,7 +42,7 @@ fun testNestedAnonymousFunction() {
         var l = 3
         barRegularEmpty {
             println(<!CV_DIAGNOSTIC!>l<!>)
-            println(outer) // problem
+            println(<!CV_DIAGNOSTIC!>outer<!>)
         }
         l = 2
     }

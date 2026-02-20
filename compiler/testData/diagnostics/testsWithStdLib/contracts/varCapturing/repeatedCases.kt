@@ -42,7 +42,7 @@ fun testNestedAnonymousFunction() {
         var l = 3
         barRegularEmpty {
             println(l)
-            println(outer) // problem
+            println(outer)
         }
         l = 2
     }
