@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import java.io.FileOutputStream
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
     alias(libs.plugins.gradle.node)
     idea

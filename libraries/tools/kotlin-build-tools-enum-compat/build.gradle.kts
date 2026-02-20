@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("root-config")
     id("org.jetbrains.kotlin.jvm")
 }
 

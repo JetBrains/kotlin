@@ -1,6 +1,7 @@
 description = "Kotlin Compiler Infrastructure for Scripting for embeddable compiler"
 
 plugins {
+    id("root-config")
     java
 }
 

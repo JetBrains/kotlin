@@ -1,6 +1,7 @@
 description = "Kotlin Library (KLIB) metadata manipulation library"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

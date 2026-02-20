@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
 
 plugins {
+    id("root-config")
     id("base")
     id("platform-manager")
     id("native-dependencies")

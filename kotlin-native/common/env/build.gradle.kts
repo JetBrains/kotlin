@@ -1,4 +1,5 @@
 plugins {
+    id("root-config")
     id("native-interop-plugin")
     id("project-tests-convention")
 }

@@ -1,6 +1,7 @@
 description = "Kotlin KLIB Library Commonizer (for using with embeddable compiler)"
 
 plugins {
+    id("root-config")
     java
 }
 

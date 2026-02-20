@@ -4,9 +4,13 @@ buildscript {
         google()
         jcenter()
     }
-    dependencies {        
+    dependencies {
         classpath 'com.android.tools.build:gradle:4.1.2'
     }
+}
+
+plugins {
+    id 'root-config'
 }
 apply plugin: 'com.android.application'
 

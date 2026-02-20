@@ -1,6 +1,7 @@
 import gradle.GradlePluginVariant
 
 plugins {
+    id("root-config")
     id("gradle-plugin-common-configuration")
     `jvm-test-suite`
     id("gradle-plugin-api-reference")

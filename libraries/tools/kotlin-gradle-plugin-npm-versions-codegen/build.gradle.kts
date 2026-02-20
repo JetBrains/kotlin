@@ -2,6 +2,7 @@ import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.yarn.task.YarnTask
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
 }

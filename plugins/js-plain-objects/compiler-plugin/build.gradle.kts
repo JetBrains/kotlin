@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 description = "JavaScript Plain Objects Compiler Plugin"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("java-test-fixtures")
     id("d8-configuration")

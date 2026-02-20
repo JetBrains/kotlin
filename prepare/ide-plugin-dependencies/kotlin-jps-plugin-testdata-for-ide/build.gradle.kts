@@ -1,3 +1,6 @@
+plugins {
+    id("root-config")
+}
 idePluginDependency {
     apply<JavaPlugin>()
 

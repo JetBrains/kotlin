@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.net.URI
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
     id("generated-sources")
     id("binaryen-configuration")

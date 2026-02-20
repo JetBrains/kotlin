@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.io.File
 
 plugins {
+    id("root-config")
     `java-base`
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "4.0.3" apply false

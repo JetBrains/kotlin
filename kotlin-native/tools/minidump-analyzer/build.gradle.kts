@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
+    id("root-config")
     id("native")
 }
 

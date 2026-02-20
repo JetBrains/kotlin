@@ -1,3 +1,6 @@
+plugins {
+    id 'root-config'
+}
 description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'

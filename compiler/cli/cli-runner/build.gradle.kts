@@ -2,6 +2,7 @@
 description = "Kotlin Runner"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

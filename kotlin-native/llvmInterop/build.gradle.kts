@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.tools.lib
 
 plugins {
+    id("root-config")
     id("native-interop-plugin")
     id("project-tests-convention")
 }

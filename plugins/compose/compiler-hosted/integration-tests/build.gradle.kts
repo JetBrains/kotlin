@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
 }
 

@@ -1,6 +1,7 @@
 import kotlinx.benchmark.gradle.benchmark
 
 plugins {
+    id("root-config")
     java
     kotlin("jvm")
     id("org.jetbrains.kotlinx.benchmark") version "0.4.6-1"

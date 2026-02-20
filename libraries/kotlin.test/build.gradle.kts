@@ -17,6 +17,7 @@ import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
     `maven-publish`
     signing

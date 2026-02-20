@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("java-test-fixtures")
 }

@@ -2,6 +2,7 @@
 description = "Kotlin Preloader"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

@@ -1,6 +1,7 @@
 @file:Suppress("HasPlatformType")
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

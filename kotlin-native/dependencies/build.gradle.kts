@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.konan.target.allTargetsWithSanitizers
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
+    id("root-config")
     id("native-dependencies-downloader")
     id("native-dependencies")
 }

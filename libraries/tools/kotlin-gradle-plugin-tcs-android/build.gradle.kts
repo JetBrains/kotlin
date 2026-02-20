@@ -1,4 +1,5 @@
 plugins {
+    id("root-config")
     kotlin("jvm")
     `maven-publish`
 }

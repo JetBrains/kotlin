@@ -1,4 +1,5 @@
 plugins {
+    id("root-config")
     id("gradle-plugins-documentation")
 }
 

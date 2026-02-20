@@ -1,6 +1,7 @@
 description = "Kotlin Daemon Tests"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

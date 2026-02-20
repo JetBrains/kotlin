@@ -1,6 +1,7 @@
 description = "Kotlin NoArg Compiler Plugin (CLI)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

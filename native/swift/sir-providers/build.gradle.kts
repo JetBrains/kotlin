@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

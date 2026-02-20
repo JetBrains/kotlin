@@ -1,6 +1,7 @@
 description = "Kotlin DataFrame Compiler Plugin (Common)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

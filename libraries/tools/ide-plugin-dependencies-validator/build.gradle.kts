@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import kotlin.io.path.readLines
 
 plugins {
+    id("root-config")
     application
     kotlin("jvm")
     id("project-tests-convention")

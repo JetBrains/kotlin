@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

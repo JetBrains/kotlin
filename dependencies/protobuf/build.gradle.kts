@@ -1,3 +1,6 @@
+plugins {
+    id("root-config")
+}
 /*
 How to Publish
 

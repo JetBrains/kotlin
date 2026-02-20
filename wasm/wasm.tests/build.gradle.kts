@@ -4,6 +4,7 @@ import java.net.URI
 import java.util.*
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")

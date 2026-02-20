@@ -1,3 +1,6 @@
+plugins {
+    id("root-config")
+}
 val resolvedBootstrap = configurations.resolvable("kotlinBuildToolsCriImplBootstrapClasspath") {
     dependencies.addLater(providers.provider {
         project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-cri-impl:${bootstrapKotlinVersion}")

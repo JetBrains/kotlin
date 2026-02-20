@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

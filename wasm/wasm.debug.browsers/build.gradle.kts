@@ -4,6 +4,7 @@ import org.gradle.api.tasks.PathSensitivity.RELATIVE
 description = "Simple Kotlin/Wasm devtools formatters"
 
 plugins {
+    id("root-config")
     id("base")
     id("share-kotlin-wasm-custom-formatters")
     alias(libs.plugins.gradle.node)

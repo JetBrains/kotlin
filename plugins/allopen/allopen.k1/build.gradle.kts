@@ -1,6 +1,7 @@
 description = "Kotlin AllOpen Compiler Plugin (K1)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

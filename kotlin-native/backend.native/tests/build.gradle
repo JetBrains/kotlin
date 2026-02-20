@@ -1,3 +1,6 @@
+plugins {
+    id 'root-config'
+}
 tasks.register("run") {
     doFirst {
         println("Nothing to do")

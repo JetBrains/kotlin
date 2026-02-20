@@ -14,6 +14,7 @@ embedded.apply {
 }
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

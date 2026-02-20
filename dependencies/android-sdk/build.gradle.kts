@@ -1,6 +1,9 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 
+plugins {
+    id("root-config")
+}
 repositories {
     ivy {
         url = URI("https://dl.google.com/android/repository")

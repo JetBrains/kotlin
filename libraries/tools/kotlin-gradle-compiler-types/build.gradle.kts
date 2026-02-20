@@ -1,4 +1,5 @@
 plugins {
+    id("root-config")
     id("org.jetbrains.kotlin.jvm")
     id("gradle-plugin-api-reference") apply false
 }

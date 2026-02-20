@@ -7,6 +7,7 @@ buildscript {
 }
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

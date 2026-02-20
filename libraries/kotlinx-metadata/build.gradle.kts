@@ -1,6 +1,7 @@
 description = "Kotlin metadata manipulation library"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

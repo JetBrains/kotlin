@@ -1,6 +1,7 @@
 description = "Kotlin Serialization Compiler Plugin (CLI)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

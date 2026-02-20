@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")

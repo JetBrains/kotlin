@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 val kotlinVersion: String by rootProject.extra
 
 plugins {
+    id("root-config")
     id("base")
     id("compile-to-bitcode")
 }

@@ -1,6 +1,7 @@
 description = "Kotlin Annotation Processing Runtime"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

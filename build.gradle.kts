@@ -52,6 +52,7 @@ buildscript {
 }
 
 plugins {
+    id("root-config")
     base
     idea
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.0.1" // this version should be in sync with repo/buildsrc-compat/build.gradle.kts
@@ -305,14 +306,7 @@ val gradlePluginProjects = listOf(
 
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
-allprojects {
-    if (!project.path.startsWith(":kotlin-ide.")) {
-        pluginManager.apply("common-configuration")
-    }
-    if (!project.path.startsWith(":compiler:build-tools")) {
-        pluginManager.apply("com.autonomousapps.dependency-analysis")
-    }
-}
+
 
 gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"

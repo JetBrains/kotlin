@@ -4,6 +4,7 @@ description = "Kotlin JVM metadata manipulation library"
 group = "org.jetbrains.kotlin"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("org.jetbrains.dokka")

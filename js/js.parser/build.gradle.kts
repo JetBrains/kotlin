@@ -1,4 +1,5 @@
 plugins {
+    id("root-config")
     java
     kotlin("jvm")
 }

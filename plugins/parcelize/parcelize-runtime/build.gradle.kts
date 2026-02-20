@@ -1,6 +1,7 @@
 description = "Runtime library for the Parcelize compiler plugin"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

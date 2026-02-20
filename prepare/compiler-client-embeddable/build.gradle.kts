@@ -1,6 +1,7 @@
 description = "Kotlin compiler client embeddable"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

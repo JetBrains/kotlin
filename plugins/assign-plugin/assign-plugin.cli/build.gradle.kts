@@ -1,6 +1,7 @@
 description = "Kotlin Assignment Compiler Plugin (CLI)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

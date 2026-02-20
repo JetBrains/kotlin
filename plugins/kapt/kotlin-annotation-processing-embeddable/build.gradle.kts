@@ -6,6 +6,7 @@ import plugins.signLibraryPublication
 description = "Annotation Processor for Kotlin (for using with embeddable compiler)"
 
 plugins {
+    id("root-config")
     `java-library`
 }
 

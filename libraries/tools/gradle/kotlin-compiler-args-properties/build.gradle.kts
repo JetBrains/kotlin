@@ -1,6 +1,7 @@
 import plugins.KotlinBuildPublishingPlugin
 
 plugins {
+    id("root-config")
     id("gradle-plugin-common-configuration")
 }
 

@@ -1,6 +1,7 @@
 description = "Simple Annotation Processor for testing kapt"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     `maven-publish` // only used for installing to mavenLocal()
 }

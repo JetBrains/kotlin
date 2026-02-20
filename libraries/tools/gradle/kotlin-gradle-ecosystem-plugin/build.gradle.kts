@@ -1,6 +1,7 @@
 import kotlinx.validation.KotlinApiBuildTask
 
 plugins {
+    id("root-config")
     id("gradle-plugin-common-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }

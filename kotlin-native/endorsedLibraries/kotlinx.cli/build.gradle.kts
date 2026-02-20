@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.*
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
 }
 

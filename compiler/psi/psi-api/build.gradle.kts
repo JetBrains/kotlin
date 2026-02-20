@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("java-test-fixtures")

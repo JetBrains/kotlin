@@ -46,6 +46,8 @@ buildscript {
 
 defaultTasks 'clean', 'dist'
 
+apply plugin: 'root-config'
+
 apply plugin: XcodeOverridePlugin
 
 if (PlatformInfo.isMac()) {

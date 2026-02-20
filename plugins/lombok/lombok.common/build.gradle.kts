@@ -1,6 +1,7 @@
 description = "Lombok compiler plugin (Common)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

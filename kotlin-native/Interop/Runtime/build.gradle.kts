@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
+    id("root-config")
     id("org.jetbrains.kotlin.jvm")
     id("native")
     id("native-dependencies")

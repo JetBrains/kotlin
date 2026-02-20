@@ -1,3 +1,6 @@
+plugins {
+    id 'root-config'
+}
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 description = 'Kotlin Standard Library JDK 8 extension'

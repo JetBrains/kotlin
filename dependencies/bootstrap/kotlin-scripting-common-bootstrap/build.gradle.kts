@@ -1,3 +1,6 @@
+plugins {
+    id("root-config")
+}
 val resolvedBootstrap = configurations.resolvable("kotlinScriptingCommonBootstrapClasspath") {
     dependencies.addLater(providers.provider {
         project.dependencies.create("org.jetbrains.kotlin:kotlin-scripting-common:${bootstrapKotlinVersion}")

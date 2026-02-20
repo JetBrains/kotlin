@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     application
     id("native-dependencies")

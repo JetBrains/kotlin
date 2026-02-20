@@ -4,6 +4,7 @@ import org.jetbrains.dokka.gradle.*
 import java.net.URL
 
 plugins {
+    id("root-config")
     base
     id("org.jetbrains.dokka")
 }

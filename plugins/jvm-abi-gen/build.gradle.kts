@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 description = "ABI generation for Kotlin/JVM"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")

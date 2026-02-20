@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 description = "kotlinp-jvm"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
     id("test-inputs-check")

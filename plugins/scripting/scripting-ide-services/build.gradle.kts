@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 description = "Kotlin Scripting Compiler extension providing code completion and static analysis"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

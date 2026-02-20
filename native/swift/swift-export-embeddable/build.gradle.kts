@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.zip.ZipFile
 
 plugins {
+    id("root-config")
     java
     kotlin("jvm")
     id("project-tests-convention")

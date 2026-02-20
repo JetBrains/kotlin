@@ -1,4 +1,5 @@
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("project-tests-convention")

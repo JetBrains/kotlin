@@ -1,4 +1,5 @@
 plugins {
+    id("root-config")
     id("org.jetbrains.kotlin.jvm")
     id("project-tests-convention")
 }

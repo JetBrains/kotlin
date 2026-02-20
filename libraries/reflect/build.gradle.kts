@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 description = "Kotlin Full Reflection Library"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

@@ -1,6 +1,7 @@
 description = "Kotlin lombok compiler plugin"
 
 plugins {
+    id("root-config")
     id("gradle-plugin-common-configuration")
 }
 

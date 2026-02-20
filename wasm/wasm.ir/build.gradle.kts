@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("project-tests-convention")

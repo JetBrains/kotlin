@@ -4,6 +4,7 @@ import org.gradle.internal.jvm.Jvm
 description = "KLIB ABI reader"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

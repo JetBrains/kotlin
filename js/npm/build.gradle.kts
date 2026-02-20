@@ -1,6 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
+    id("root-config")
   alias(libs.plugins.gradle.node)
   base
 }

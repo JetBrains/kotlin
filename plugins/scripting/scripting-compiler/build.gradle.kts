@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

@@ -2,6 +2,7 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     `java-gradle-plugin`
     `maven-publish`

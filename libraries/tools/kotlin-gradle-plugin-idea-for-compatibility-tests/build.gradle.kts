@@ -1,5 +1,8 @@
 @file:Suppress("HasPlatformType")
 
+plugins {
+    id("root-config")
+}
 /**
  * Version of kotlin-gradle-plugin-idea module that should be resolved for compatibility tests
  * This version can be treated as 'minimal guaranteed backwards compatible version' of the module.

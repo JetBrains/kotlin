@@ -23,6 +23,7 @@ import plugins.publishing.copyAttributes
 import kotlin.io.path.copyTo
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
     `maven-publish`
     signing

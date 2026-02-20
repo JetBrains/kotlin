@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.kotlinNativeDist
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

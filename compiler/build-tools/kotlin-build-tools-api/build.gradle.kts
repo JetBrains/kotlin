@@ -2,6 +2,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("project-tests-convention")

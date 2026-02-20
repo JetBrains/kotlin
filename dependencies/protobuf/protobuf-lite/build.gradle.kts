@@ -7,6 +7,7 @@ import java.util.jar.JarFile
 import java.util.zip.ZipOutputStream
 
 plugins {
+    id("root-config")
     base
     `maven-publish`
 }

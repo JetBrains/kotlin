@@ -3,6 +3,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 description = "Kotlin Compiler (embeddable)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

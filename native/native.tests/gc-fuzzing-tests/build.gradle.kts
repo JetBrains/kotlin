@@ -1,6 +1,7 @@
 import kotlin.random.Random
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

@@ -4,6 +4,7 @@ import plugins.configureKotlinPomAttributes
 description = "Runtime library for the Atomicfu compiler plugin"
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
     `maven-publish`
     id("nodejs-cache-redirector-configuration")

@@ -1,6 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
+    id("root-config")
     java
     id("gradle-plugin-compiler-dependency-configuration")
 }

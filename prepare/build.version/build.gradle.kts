@@ -2,6 +2,9 @@
 
 import java.io.File
 
+plugins {
+    id("root-config")
+}
 val buildVersionFilePath = layout.buildDirectory.file("build.txt")
 val buildVersion by configurations.creating
 val buildNumber: String by rootProject.extra

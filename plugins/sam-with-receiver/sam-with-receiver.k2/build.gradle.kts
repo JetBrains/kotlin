@@ -1,6 +1,7 @@
 description = "Kotlin SamWithReceiver Compiler Plugin (K2)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

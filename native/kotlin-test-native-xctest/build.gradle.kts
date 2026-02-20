@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream
 description = "XCTest wrapper of Native kotlin.test"
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
 }
 

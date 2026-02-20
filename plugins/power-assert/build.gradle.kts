@@ -1,6 +1,7 @@
 description = "Kotlin Power-Assert Compiler Plugin"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")

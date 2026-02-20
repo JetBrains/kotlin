@@ -3,6 +3,7 @@ import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     `jvm-test-suite`
     id("test-symlink-transformation")

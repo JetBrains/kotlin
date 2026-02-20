@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 description = "Kotlin Compiler Infrastructure for Scripting"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

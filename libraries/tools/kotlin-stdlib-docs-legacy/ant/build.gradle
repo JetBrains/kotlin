@@ -1,3 +1,6 @@
+plugins {
+    id 'root-config'
+}
 apply plugin: 'de.undercouch.download'
 apply plugin: 'base'
 

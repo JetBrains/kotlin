@@ -1,3 +1,6 @@
+plugins {
+    id 'root-config'
+}
 description = 'Kotlin annotations for JVM'
 
 apply plugin: 'kotlin'

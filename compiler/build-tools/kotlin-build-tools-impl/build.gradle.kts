@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("generated-sources")
     id("test-inputs-check")

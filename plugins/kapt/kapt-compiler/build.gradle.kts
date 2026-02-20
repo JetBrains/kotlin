@@ -2,6 +2,7 @@
 description = "Annotation Processor for Kotlin"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")

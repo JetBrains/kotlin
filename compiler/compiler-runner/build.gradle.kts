@@ -1,6 +1,7 @@
 description = "Compiler runner + daemon client"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

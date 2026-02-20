@@ -1,6 +1,9 @@
 import org.gradle.api.Project
 import java.io.File
 
+plugins {
+    id("root-config")
+}
 project.removePrePushHookIfExists()
 
 fun Project.removePrePushHookIfExists() {

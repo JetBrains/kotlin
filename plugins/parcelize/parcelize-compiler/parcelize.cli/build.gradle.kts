@@ -1,6 +1,7 @@
 description = "Parcelize compiler plugin (CLI)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

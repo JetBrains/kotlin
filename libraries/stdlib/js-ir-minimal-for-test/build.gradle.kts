@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
+    id("root-config")
     kotlin("multiplatform")
     id("nodejs-cache-redirector-configuration")
 }

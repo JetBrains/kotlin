@@ -1,6 +1,7 @@
 import kotlin.io.path.createTempDirectory
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
     id("test-inputs-check")

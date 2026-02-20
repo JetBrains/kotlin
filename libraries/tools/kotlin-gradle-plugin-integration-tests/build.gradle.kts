@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")

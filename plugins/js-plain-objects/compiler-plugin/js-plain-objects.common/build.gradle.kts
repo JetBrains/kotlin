@@ -1,6 +1,7 @@
 description = "Kotlin JavaScript Plain Objects Compiler Plugin (Common)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

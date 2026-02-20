@@ -5,6 +5,7 @@ import java.util.jar.JarFile
 import kotlin.sequences.forEach
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }

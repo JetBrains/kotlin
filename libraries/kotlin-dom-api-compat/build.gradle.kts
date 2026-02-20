@@ -2,6 +2,7 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
 plugins {
+    id("root-config")
     `maven-publish`
     kotlin("multiplatform")
 }

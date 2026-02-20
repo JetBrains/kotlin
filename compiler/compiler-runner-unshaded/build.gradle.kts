@@ -1,6 +1,7 @@
 description = "Compiler runner + daemon client unshaded"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("gradle-plugin-published-compiler-dependency-configuration")
 }

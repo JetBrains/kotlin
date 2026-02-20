@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")

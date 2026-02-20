@@ -1,6 +1,7 @@
 description = "Kotlin Scripting Compiler Plugin for embeddable compiler"
 
 plugins {
+    id("root-config")
     `java-library`
 }
 

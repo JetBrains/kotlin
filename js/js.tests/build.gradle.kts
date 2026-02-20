@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import java.util.*
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     kotlin("plugin.serialization")
     alias(libs.plugins.gradle.node)

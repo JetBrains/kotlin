@@ -1,6 +1,7 @@
 description = "Kotlin Build Common"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("java-test-fixtures")

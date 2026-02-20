@@ -1,3 +1,6 @@
+plugins {
+    id("root-config")
+}
 // This artifact is deprecated and will be remove in the near future. Use `kotlin-jps-plugin` instead
 idePluginDependency {
     @Suppress("UNCHECKED_CAST")

@@ -1,3 +1,6 @@
+plugins {
+    id("root-config")
+}
 tasks.register("analysisAllTests") {
     dependsOn(
         ":analysis:analysis-api-fe10:test",

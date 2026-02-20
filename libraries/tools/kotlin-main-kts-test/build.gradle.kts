@@ -2,6 +2,7 @@
 description = "Kotlin \"main\" script definition tests"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }

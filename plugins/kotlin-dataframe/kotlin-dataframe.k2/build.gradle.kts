@@ -1,6 +1,7 @@
 description = "Kotlin DataFrame Compiler Plugin (K2)"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     kotlin("plugin.serialization")
 }

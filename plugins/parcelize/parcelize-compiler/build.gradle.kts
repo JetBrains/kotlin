@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 description = "Parcelize compiler plugin"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("android-sdk-provisioner")
     id("java-test-fixtures")

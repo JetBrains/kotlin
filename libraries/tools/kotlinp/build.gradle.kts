@@ -1,6 +1,7 @@
 description = "kotlinp"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

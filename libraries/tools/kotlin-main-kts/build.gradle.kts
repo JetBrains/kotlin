@@ -4,6 +4,7 @@ import org.gradle.internal.jvm.Jvm
 description = "Kotlin \"main\" script definition"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

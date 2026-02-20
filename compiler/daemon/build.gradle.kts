@@ -1,6 +1,7 @@
 description = "Kotlin Daemon"
 
 plugins {
+    id("root-config")
     kotlin("jvm")
 }
 

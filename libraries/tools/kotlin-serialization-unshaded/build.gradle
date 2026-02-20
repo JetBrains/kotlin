@@ -1,3 +1,6 @@
+plugins {
+    id 'root-config'
+}
 apply plugin: 'kotlin'
 
 RepoArtifacts.publish(project)

@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
+    id("root-config")
     kotlin("jvm")
     id("project-tests-convention")
 }
