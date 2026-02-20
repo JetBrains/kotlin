@@ -226,6 +226,20 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
+    inline fun withCompanionBlock(block: () -> Unit) {
+        val oldValue = context.currentCompanionBlockOwnerOrNull
+        context.currentCompanionBlockOwnerOrNull = context.containerSymbolIfAny as? FirClassSymbol<*>
+            ?: error("containerSymbolIfAny is not a FirClassSymbol")
+        try {
+            block()
+        } finally {
+            context.currentCompanionBlockOwnerOrNull = oldValue
+        }
+    }
+
+    val isDirectlyInsideCompanionBlock: Boolean
+        get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
+
     protected open fun addCapturedTypeParameters(
         status: Boolean,
         declarationSource: KtSourceElement?,
