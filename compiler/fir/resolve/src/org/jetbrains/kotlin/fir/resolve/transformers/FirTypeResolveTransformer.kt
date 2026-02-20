@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
@@ -234,6 +235,10 @@ open class FirTypeResolveTransformer(
 
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(session, property) {
         withScopeCleanup {
+            if (property.isStatic) {
+                scopes = staticScopes
+            }
+
             withDeclaration(property) {
                 addTypeParametersScope(property)
                 property.transformTypeParameters(this, data)
@@ -302,6 +307,10 @@ open class FirTypeResolveTransformer(
         data: Any?,
     ): FirNamedFunction = whileAnalysing(session, namedFunction) {
         withScopeCleanup {
+            if (namedFunction.isStatic) {
+                scopes = staticScopes
+            }
+
             withDeclaration(namedFunction) {
                 addTypeParametersScope(namedFunction)
                 val result = transformDeclaration(namedFunction, data).also {

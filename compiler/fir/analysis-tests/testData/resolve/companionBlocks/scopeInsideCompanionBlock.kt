@@ -12,7 +12,7 @@ class C<T>(
     }
 
     companion {
-        fun test(t: T) {
+        fun test(t: <!UNRESOLVED_REFERENCE!>T<!>) {
             <!UNRESOLVED_REFERENCE!>foo<!>
             <!UNRESOLVED_REFERENCE!>bar<!>()
             <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
@@ -21,7 +21,7 @@ class C<T>(
             companionFun()
         }
 
-        val testProp: T?
+        val testProp: <!UNRESOLVED_REFERENCE!>T<!>?
             get() {
                 <!UNRESOLVED_REFERENCE!>foo<!>
                 <!UNRESOLVED_REFERENCE!>bar<!>()
