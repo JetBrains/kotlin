@@ -4,8 +4,9 @@
 // DISABLE_NATIVE: gcScheduler=MANUAL
 // The test checks GC, we need to allocate everything on the heap.
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative -Xdisable-phases=EscapeAnalysis -Xruntime-logs=gc=debug
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, kotlin.native.concurrent.ObsoleteWorkersApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, kotlin.native.concurrent.ObsoleteWorkersApi::class, kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
 
+import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.AtomicInt
 import kotlin.concurrent.Volatile
 import kotlin.native.concurrent.*
@@ -32,6 +33,31 @@ object Blackhole {
     }
 }
 
+class FinalizerNode(
+    var obj: Any?,
+    val next: AtomicReference<FinalizerNode?> = AtomicReference(null),
+)
+
+val finalizers: AtomicReference<FinalizerNode?> = AtomicReference(null)
+
+fun FinalizerNode?.processFinalizers() {
+    var top = this
+    while (top != null) {
+        top.obj = null
+        top = top.next.exchange(null)
+    }
+}
+
+fun finalizersThread() = Worker.start().apply {
+    executeAfter {
+        while (true) {
+            park(100_000L)
+            val top = finalizers.exchange(null)
+            top.processFinalizers()
+        }
+    }
+}
+
 class ArrayOfBytes(bytes: Int) {
     val data = ByteArray(bytes)
     init {
@@ -50,6 +76,15 @@ class ArrayOfBytesWithFinalizer(bytes: Int) {
         Blackhole.consume(it)
     }
     */
+    init {
+        val node = FinalizerNode(this)
+        while (true) {
+            val top = finalizers.load()
+            node.next.store(top)
+            if (finalizers.compareAndSet(top, node))
+                break;
+        }
+    }
 }
 
 fun allocateGarbage() {
@@ -116,6 +151,7 @@ fun main() {
             }
         }
     }
+    finalizersThread()
 
     val reportStep = finalGlobalCount / progressReportsCount
     var lastReportCount = -reportStep
