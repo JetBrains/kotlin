@@ -70,6 +70,11 @@ private object ClassIds {
     val functionAdapter = "FunctionAdapter".internalClassId
     val defaultConstructorMarker = "DefaultConstructorMarker".internalClassId
 
+    // Internal test classes
+    private val String.internalTestClassId get() = ClassId(RuntimeNames.kotlinNativeInternalTestPackageName, Name.identifier(this))
+    val testInitializer = "TestInitializer".internalTestClassId
+    val testsProcessed = "TestsProcessed".internalTestClassId
+
     // Interop classes
     private val String.interopClassId get() = ClassId(InteropFqNames.packageName, Name.identifier(this))
     private val String.interopInternalClassId get() = ClassId(InteropFqNames.internalPackageName, Name.identifier(this))
@@ -631,4 +636,7 @@ class BackendNativeSymbols(
     override val getWithoutBoundCheckName: Name = KonanNameConventions.getWithoutBoundCheck
 
     override val setWithoutBoundCheckName: Name = KonanNameConventions.setWithoutBoundCheck
+
+    override val testInitializer = ClassIds.testInitializer.classSymbol()
+    override val testsProcessed = ClassIds.testsProcessed.classSymbol()
 }

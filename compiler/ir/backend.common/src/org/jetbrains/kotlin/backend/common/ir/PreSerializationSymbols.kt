@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -212,8 +213,8 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val asserts: Iterable<IrSimpleFunctionSymbol>
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
-    val testInitializer: IrClassSymbol? // KT-83807 Restore non-nullability of symbols not available in 2.3.0 stdlib
-    val testsProcessed: IrClassSymbol? // KT-83807 Restore non-nullability of symbols not available in 2.3.0 stdlib
+    val testInitializer: IrClassSymbol
+    val testsProcessed: IrClassSymbol
 
     val topLevelSuite: IrClassSymbol
     val baseClassSuite: IrClassSymbol
@@ -236,8 +237,13 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol =
             CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 
-        override val testInitializer = ClassIds.testInitializer.classSymbolOrNull()
-        override val testsProcessed = ClassIds.testsProcessed.classSymbolOrNull()
+        override val testInitializer: IrClassSymbol by ClassIds.testInitializer.lazyClassSymbol(
+            LanguageFeature.NativeTestProcessorBeforeSerialization
+        )
+
+        override val testsProcessed: IrClassSymbol by ClassIds.testsProcessed.lazyClassSymbol(
+            LanguageFeature.NativeTestProcessorBeforeSerialization
+        )
 
         override val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
         override val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
