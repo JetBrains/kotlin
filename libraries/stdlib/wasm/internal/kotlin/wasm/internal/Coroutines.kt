@@ -58,7 +58,7 @@ internal class WasmContinuation<T, R>(
             isResumed = true
             val resumeResult: ResumeIntrinsicResult = exception?.let {
                 resumeThrowImpl(it, wasmContBox.cont)
-            } ?: resumeWithImpl(wasmContBox.cont, result)
+            } ?: resumeWithImpl(wasmContBox.cont, this)
             wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
             isResumed = false
             wasSuspended = true
@@ -139,7 +139,7 @@ internal fun resumeCompletionWithException(completion: Continuation<Throwable>, 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
-    return suspendIntrinsic(block) as T
+    return (suspendIntrinsic(block) as CoroutineImpl<*, *>).result as T
 }
 
 @UsedFromCompilerGeneratedCode
