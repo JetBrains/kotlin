@@ -61,6 +61,7 @@ class CustomWasmJsCompilerSecondStageFacade(
                     K2JSCompilerArguments::includes.cliArgument(mainLibrary),
                     K2JSCompilerArguments::outputDir.cliArgument, wasmArtifactFile.parentFile.path,
                     K2JSCompilerArguments::moduleName.cliArgument, WASM_BASE_FILE_NAME,
+                    K2WasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularAndFriendDependencies.isNotEmpty()) {

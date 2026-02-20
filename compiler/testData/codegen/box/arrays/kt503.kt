@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: WASM-JS:2.3
 
 fun iarr(vararg a : Int) = a
 fun <T> array(vararg a : T) = a
