@@ -213,7 +213,12 @@ class PathExtensionsTest : AbstractPathTest() {
         val dstDirectory = root.resolve("dstDirectory")
 
         withRestrictedRead(srcDirectory, alsoReset = listOf(dstDirectory)) {
-            srcDirectory.copyTo(dstDirectory) // successfully copies restricted directory
+            try {
+                // successfully copies restricted directory before jdk22, fails with AccessDeniedException after
+                srcDirectory.copyTo(dstDirectory)
+            } catch (_: AccessDeniedException) {
+                return@withRestrictedRead
+            }
             assertFalse(dstDirectory.isReadable()) // copies access permissions
         }
     }
