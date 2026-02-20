@@ -60,6 +60,31 @@ class WasmSrcFileArtifactMultimodule(
     override fun isModified() = compiledArtifact != null
 }
 
+class WasmSrcFileArtifactSingleModule(
+    private val compiledArtifact: WasmIrProgramFragmentsSingleModule?,
+    private val astArtifact: File? = null,
+    private val skipLocalNames: Boolean = false,
+) : SrcFileArtifact() {
+
+    override fun loadIrFragments(): WasmIrProgramFragmentsSingleModule? {
+        if (compiledArtifact != null) {
+            return compiledArtifact
+        }
+
+        return astArtifact?.ifExists {
+            inputStream().use {
+                with(WasmDeserializer(inputStream = it, skipLocalNames = skipLocalNames)) {
+                    WasmIrProgramFragmentsSingleModule(
+                        fragmentData = deserializeSingleModuleFragmentData()
+                    )
+                }
+            }
+        }
+    }
+
+    override fun isModified() = compiledArtifact != null
+}
+
 class WasmSrcFileArtifact(
     private val fragments: WasmIrProgramFragments?,
     private val astArtifact: File? = null,
@@ -90,8 +115,19 @@ class WasmModuleArtifact(
     override val fileArtifacts: List<WasmSrcFileArtifact>,
 ) : ModuleArtifact()
 
-class WasmModuleArtifactMultimodule(
-    override val fileArtifacts: List<WasmSrcFileArtifactMultimodule>,
+abstract class WasmModuleArtifactMultimoduleBase(
     val moduleName: String,
     val externalModuleName: String?,
 ) : ModuleArtifact()
+
+class WasmModuleArtifactMultimodule(
+    override val fileArtifacts: List<WasmSrcFileArtifactMultimodule>,
+    moduleName: String,
+    externalModuleName: String?,
+) : WasmModuleArtifactMultimoduleBase(moduleName, externalModuleName)
+
+class WasmModuleArtifactSingleModule(
+    override val fileArtifacts: List<WasmSrcFileArtifactSingleModule>,
+    moduleName: String,
+    externalModuleName: String?,
+) : WasmModuleArtifactMultimoduleBase(moduleName, externalModuleName)

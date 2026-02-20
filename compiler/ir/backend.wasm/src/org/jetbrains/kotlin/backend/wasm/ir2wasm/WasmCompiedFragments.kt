@@ -70,23 +70,24 @@ class WasmCompiledCodeFileFragment(
     val linkerData: WasmCompiledLinkerDataFileFragment = WasmCompiledLinkerDataFileFragment(),
 ) : WasmCompiledFileFragment(definedTypes, definedDeclarations)
 
-fun List<WasmIrProgramFragmentsMultimodule>.collectTypeReferences(): ModuleReferencedTypes {
+inline fun <T> List<T>.collectTypeReferences(selector: (T) -> ModuleReferencedTypes): ModuleReferencedTypes {
     val currentDeclarationTypes = ModuleReferencedTypes()
     forEach { fragment ->
-        currentDeclarationTypes.gcTypes.addAll(fragment.referencedTypes.gcTypes)
-        currentDeclarationTypes.functionTypes.addAll(fragment.referencedTypes.functionTypes)
+        val fragmentTypes = selector(fragment)
+        currentDeclarationTypes.gcTypes.addAll(fragmentTypes.gcTypes)
+        currentDeclarationTypes.functionTypes.addAll(fragmentTypes.functionTypes)
     }
-
     return currentDeclarationTypes
 }
 
-fun List<WasmIrProgramFragmentsMultimodule>.collectDeclarationReferences(): ModuleReferencedDeclarations {
+inline fun <T> List<T>.collectDeclarationReferences(selector: (T) -> ModuleReferencedDeclarations): ModuleReferencedDeclarations {
     val currentDeclarationReferences = ModuleReferencedDeclarations()
     forEach { fragment ->
-        currentDeclarationReferences.functions.addAll(fragment.referencedDeclarations.functions)
-        currentDeclarationReferences.globalVTable.addAll(fragment.referencedDeclarations.globalVTable)
-        currentDeclarationReferences.globalClassITable.addAll(fragment.referencedDeclarations.globalClassITable)
-        currentDeclarationReferences.rttiGlobal.addAll(fragment.referencedDeclarations.rttiGlobal)
+        val fragmentReferences = selector(fragment)
+        currentDeclarationReferences.functions.addAll(fragmentReferences.functions)
+        currentDeclarationReferences.globalVTable.addAll(fragmentReferences.globalVTable)
+        currentDeclarationReferences.globalClassITable.addAll(fragmentReferences.globalClassITable)
+        currentDeclarationReferences.rttiGlobal.addAll(fragmentReferences.rttiGlobal)
     }
     return currentDeclarationReferences
 }

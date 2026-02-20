@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import java.io.File
 
 abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(
@@ -86,13 +86,15 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             prepareIcCaches(
                 cacheDirectory = cacheDirectory,
                 icConfigurationData = when {
-                    configuration.wasmCompilation -> IcCachesConfigurationData.Wasm(
-                        wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-                        generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
-                        generateDebugInformation =
-                            configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
-                        multimodule = configuration.wasmGenerateClosedWorldMultimodule,
-                    )
+                    configuration.wasmCompilation -> {
+                        IcCachesConfigurationData.Wasm(
+                            wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
+                            generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
+                            generateDebugInformation =
+                                configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
+                            mode = configuration.wasmCompilationMode()
+                        )
+                    }
                     else -> IcCachesConfigurationData.Js(
                         granularity = configuration.artifactConfiguration!!.granularity
                     )

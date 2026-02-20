@@ -163,3 +163,8 @@ internal object NullableTags {
 internal object ReferenceTags {
     const val IN_PLACE = -1
 }
+
+internal object SingleModuleFragmentTag {
+    const val COMPILED = 0u
+    const val DEPENDENCY = 1u
+}

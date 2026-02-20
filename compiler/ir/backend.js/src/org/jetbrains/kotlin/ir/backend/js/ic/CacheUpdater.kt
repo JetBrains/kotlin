@@ -94,6 +94,7 @@ class CacheUpdater(
     private val compilerConfiguration: CompilerConfiguration,
     private val icContext: PlatformDependentICContext,
     checkForClassStructuralChanges: Boolean = false,
+    private val loadBodiesOnlyForMainModule: Boolean = false,
 ) {
     private val stopwatch = StopwatchIC()
 
@@ -705,7 +706,8 @@ class CacheUpdater(
             orderedLibraries = updater.orderedLibraries,
             mainModuleFriends = updater.mainModuleFriendLibraries,
             irFactory = icContext.createIrFactory(),
-            stubbedSignatures = stubbedSignatures
+            stubbedSignatures = stubbedSignatures,
+            loadBodiesOnlyForMainModule = loadBodiesOnlyForMainModule,
         )
         var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
 
@@ -837,7 +839,7 @@ fun rebuildCacheForDirtyFiles(
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, orderedLibraries, emptyList(), irFactory, emptySet())
+    val jsIrLoader = JsIrLinkerLoader(configuration, orderedLibraries, emptyList(), irFactory, emptySet(), false)
     val loadedIr = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = loadedIr.orderedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)

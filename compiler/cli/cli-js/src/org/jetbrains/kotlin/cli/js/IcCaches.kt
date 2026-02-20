@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.cli.js
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.JsICContext
@@ -27,7 +32,7 @@ sealed class IcCachesConfigurationData {
         val wasmDebug: Boolean,
         val generateWat: Boolean,
         val generateDebugInformation: Boolean,
-        val multimodule: Boolean,
+        val mode: WasmCompilationMode,
     ) : IcCachesConfigurationData()
 }
 
@@ -43,7 +48,7 @@ internal fun prepareIcCaches(
             wasmDebug = arguments.wasmDebug,
             generateWat = arguments.wasmGenerateWat,
             generateDebugInformation = arguments.sourceMap || arguments.generateDwarf,
-            multimodule = arguments.wasmGenerateClosedWorldMultimodule,
+            mode = targetConfiguration.wasmCompilationMode(),
         )
         else -> IcCachesConfigurationData.Js(
             arguments.granularity
@@ -74,13 +79,22 @@ internal fun prepareIcCaches(
 
     val start = System.currentTimeMillis()
 
+    val loadBodiesOnlyForMainModule: Boolean
     val icContext = when (icConfigurationData) {
-        is IcCachesConfigurationData.Js -> JsICContext(
-            mainCallArguments,
-            icConfigurationData.granularity,
-        )
+        is IcCachesConfigurationData.Js -> {
+            loadBodiesOnlyForMainModule = false
+            JsICContext(
+                mainCallArguments,
+                icConfigurationData.granularity,
+            )
+        }
         is IcCachesConfigurationData.Wasm -> {
-            val contextConstructor = if (icConfigurationData.multimodule) ::WasmICContextMultimodule else ::WasmICContextWholeWorld
+            loadBodiesOnlyForMainModule = icConfigurationData.mode == WasmCompilationMode.SINGLE_MODULE
+            val contextConstructor = when (icConfigurationData.mode) {
+                WasmCompilationMode.REGULAR -> ::WasmICContextWholeWorld
+                WasmCompilationMode.MULTI_MODULE -> ::WasmICContextMultimodule
+                WasmCompilationMode.SINGLE_MODULE -> ::WasmICContextSingleModule
+            }
             contextConstructor(
                 false,
                 !icConfigurationData.wasmDebug,
@@ -94,6 +108,7 @@ internal fun prepareIcCaches(
         compilerConfiguration = targetConfiguration,
         icContext = icContext,
         checkForClassStructuralChanges = icConfigurationData is IcCachesConfigurationData.Wasm,
+        loadBodiesOnlyForMainModule = loadBodiesOnlyForMainModule,
     )
 
     val artifacts = cacheUpdater.actualizeCaches()
