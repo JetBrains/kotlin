@@ -18,9 +18,9 @@ class WasmIrFileMetadata(
 
     override fun toByteArray(): ByteArray {
         val allExportBytes = ExportKind.entries.map { kind ->
-            IrStringWriter(exportNames[kind].orEmpty()).writeIntoMemory()
+            IrStringWriter(exportNames[kind].orEmpty(), false).writeIntoMemory()
         }
-        return IrArrayWriter(allExportBytes).writeIntoMemory()
+        return IrArrayWriter(allExportBytes, false).writeIntoMemory()
     }
 
     companion object {

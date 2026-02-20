@@ -23,7 +23,7 @@ fun IrArrayReader(loadBytes: () -> ByteArray): IrArrayReader = IrArrayReader(Rea
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> IrArrayReader(
     layoutReader: KlibLayoutReader<KCL>,
-    crossinline getFile: KCL.() -> File
+    crossinline getFile: KCL.() -> File,
 ): IrArrayReader = IrArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
 class IrArrayReader(private val buffer: ReadBuffer) {
@@ -42,7 +42,7 @@ fun IrMultiArrayReader(loadBytes: () -> ByteArray): IrMultiArrayReader = IrMulti
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> IrMultiArrayReader(
     layoutReader: KlibLayoutReader<KCL>,
-    crossinline getFile: KCL.() -> File
+    crossinline getFile: KCL.() -> File,
 ): IrMultiArrayReader = IrMultiArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
 class IrMultiArrayReader(private val buffer: ReadBuffer) {
@@ -87,7 +87,7 @@ fun DeclarationIdMultiTableReader(loadBytes: () -> ByteArray): DeclarationIdMult
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> DeclarationIdMultiTableReader(
     layoutReader: KlibLayoutReader<KCL>,
-    crossinline getFile: KCL.() -> File
+    crossinline getFile: KCL.() -> File,
 ): DeclarationIdMultiTableReader = DeclarationIdMultiTableReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
 class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
@@ -125,13 +125,23 @@ private typealias IndexToDeclarationIdToCoordinates = MutableMap<Int, Declaratio
 private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
     this.position = position
 
-    val count = this.int
-    val indexToOffset = IndexToOffset(count + 1)
+    var count = this.int
+    var usesVarInt = false
+    if (count < 0) {
+        // Negative count of elements means that element sizes use var-int encoding (available since 2.4.0).
+        count = -count
+        usesVarInt = true
+    }
 
-    indexToOffset[0] = 4 * (count + 1)
+    val elementSizes = IntArray(count) {
+        if (usesVarInt) this.readVarInt().toInt() else this.int
+    }
+
+    val indexToOffset = IndexToOffset(count + 1)
+    // After reading all element sizes, we know at which position the element values start.
+    indexToOffset[0] = this.position - position
     for (i in 0 until count) {
-        val size = this.int
-        indexToOffset[i + 1] = indexToOffset[i] + size
+        indexToOffset[i + 1] = indexToOffset[i] + elementSizes[i]
     }
 
     return indexToOffset
@@ -183,7 +193,7 @@ private fun ReadBuffer.readTableItemBytes(
     indexToOffset: IndexToOffset,
     indexToDeclarationIdToCoordinates: IndexToDeclarationIdToCoordinates,
     rowIndex: Int,
-    declarationId: DeclarationId
+    declarationId: DeclarationId,
 ): ByteArray {
     val rowOffset = indexToOffset[rowIndex]
     val declarationIdToCoordinates: DeclarationIdToCoordinates = indexToDeclarationIdToCoordinates.getOrPut(rowIndex) {
@@ -200,5 +210,19 @@ private fun ReadBuffer.readTableItemBytes(offset: Int, size: Int): ByteArray {
     this.position = offset
     this.get(result, 0, size)
 
+    return result
+}
+
+private fun ReadBuffer.readVarInt(maxCount: Int = 4): UInt {
+    // Taken from Android source, Apache licensed
+    var result = 0u
+    var cur: UInt
+    var count = 0
+    do {
+        cur = this.byte.toUInt() and 0xffu
+        result = result or ((cur and 0x7fu) shl (count * 7))
+        count++
+    } while (cur and 0x80u == 0x80u && count <= maxCount)
+    if (cur and 0x80u == 0x80u) error("Invalid Leb128Number")
     return result
 }

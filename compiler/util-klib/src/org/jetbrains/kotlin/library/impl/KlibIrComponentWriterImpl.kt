@@ -50,7 +50,7 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
     private inline fun List<SerializedIrFile>.serializeNonNullableEntities(
         accessor: (SerializedIrFile) -> ByteArray,
         destination: () -> KlibFile,
-    ): Unit = IrArrayWriter(map { accessor(it) }).writeIntoFile(destination().absolutePath)
+    ): Unit = IrArrayWriter(map { accessor(it) }, false).writeIntoFile(destination().absolutePath)
 
     private inline fun List<SerializedIrFile>.serializeNullableEntries(
         accessor: (SerializedIrFile) -> ByteArray?,
@@ -69,6 +69,6 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
                     "\nOnly ${nonNullEntries.size} out of $size serialized IR files have non-nullable values."
         }
 
-        IrArrayWriter(nonNullEntries).writeIntoFile(destination().absolutePath)
+        IrArrayWriter(nonNullEntries, false).writeIntoFile(destination().absolutePath)
     }
 }

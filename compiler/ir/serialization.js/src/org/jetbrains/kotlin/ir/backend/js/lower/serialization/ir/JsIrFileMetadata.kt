@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.library.impl.IrArrayReader
 
 class JsIrFileMetadata(val exportedNames: List<String>) : IrFileSerializer.FileBackendSpecificMetadata {
     override fun toByteArray(): ByteArray {
-        return IrStringWriter(exportedNames).writeIntoMemory()
+        return IrStringWriter(exportedNames, false).writeIntoMemory()
     }
 
     companion object {

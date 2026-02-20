@@ -117,6 +117,7 @@ open class IrFileSerializer(
     protected val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable<*>,
 ) {
+    private val useVarIntInDataArrays = settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
     private var fileBeingSerialized: IrFile? = null
@@ -1762,16 +1763,16 @@ open class IrFileSerializer(
             fileData = proto.build().toByteArray(),
             fqName = file.packageFqName.asString(),
             path = file.path,
-            types = IrArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
-            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
-            strings = IrStringWriter(protoStringArray).writeIntoMemory(),
-            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
+            types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
+            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
+            strings = IrStringWriter(protoStringArray, useVarIntInDataArrays).writeIntoMemory(),
+            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
-            debugInfo = IrStringWriter(protoDebugInfoArray).writeIntoMemory(),
+            debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
             backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
             fileEntries = with(protoIrFileEntryArray) {
                 if (isNotEmpty()) {
-                    IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory()
+                    IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory()
                 } else {
                     null
                 }
@@ -1804,14 +1805,14 @@ open class IrFileSerializer(
             fileData = fileProto.build().toByteArray(),
             fqName = FqName.ROOT.asString(),
             path = "",
-            types = IrArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
-            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
-            strings = IrStringWriter(protoStringArray).writeIntoMemory(),
-            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
+            types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
+            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
+            strings = IrStringWriter(protoStringArray, useVarIntInDataArrays).writeIntoMemory(),
+            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
-            debugInfo = IrStringWriter(protoDebugInfoArray).writeIntoMemory(),
+            debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
             backendSpecificMetadata = null,
-            fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory(),
+            fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
         )
     }
 

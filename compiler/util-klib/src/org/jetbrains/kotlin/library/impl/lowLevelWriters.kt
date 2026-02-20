@@ -28,22 +28,44 @@ sealed class IrDataWriter {
     }
 }
 
-class IrArrayWriter(private val data: List<ByteArray>) : IrDataWriter() {
+class IrArrayWriter(private val data: List<ByteArray>, private val useVarInt: Boolean) : IrDataWriter() {
     override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(data.size)
+        if (useVarInt) {
+            // Designate that var-int encoding is used for sizes of elements by writing the number of elements as negative number.
+            dataOutput.writeInt(-data.size)
+        } else {
+            dataOutput.writeInt(data.size)
+        }
 
-        data.forEach { dataOutput.writeInt(it.size) }
+        data.forEach {
+            if (useVarInt) {
+                dataOutput.writeVarInt(it.size.toUInt())
+            } else {
+                dataOutput.writeInt(it.size)
+            }
+        }
         data.forEach { dataOutput.write(it) }
     }
 }
 
-class IrStringWriter(private val data: List<String>) : IrDataWriter() {
+class IrStringWriter(private val data: List<String>, private val useVarInt: Boolean) : IrDataWriter() {
     override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(data.size)
+        if (useVarInt) {
+            // Designate that var-int encoding is used for sizes of elements by writing the number of elements as negative number.
+            dataOutput.writeInt(-data.size)
+        } else {
+            dataOutput.writeInt(data.size)
+        }
 
         val transformedData = data.map(WobblyTF8::encode)
 
-        transformedData.forEach { dataOutput.writeInt(it.size) }
+        transformedData.forEach {
+            if (useVarInt) {
+                dataOutput.writeVarInt(it.size.toUInt())
+            } else {
+                dataOutput.writeInt(it.size)
+            }
+        }
         transformedData.forEach { dataOutput.write(it) }
     }
 }
@@ -70,4 +92,18 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
         private const val SINGLE_INDEX_RECORD_SIZE = 3 * Int.SIZE_BYTES
         private const val INDEX_HEADER_SIZE = Int.SIZE_BYTES
     }
+}
+
+private fun DataOutput.writeVarInt(value: UInt) {
+    // Taken from Android source, Apache licensed
+    var v = value
+    var remaining = v shr 7
+    while (remaining != 0u) {
+        val byte = (v and 0x7fu) or 0x80u
+        writeByte(byte.toInt())
+        v = remaining
+        remaining = remaining shr 7
+    }
+    val byte = v and 0x7fu
+    writeByte(byte.toInt())
 }
