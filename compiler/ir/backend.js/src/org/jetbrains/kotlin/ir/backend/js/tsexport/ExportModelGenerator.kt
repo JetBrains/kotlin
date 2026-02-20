@@ -290,9 +290,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                     isStatic = shouldPropertyBeStatic,
                     isAbstract = isAbstract,
                     isProtected = isProtected,
-                )
+                ).withAttributesFor(property.getter)
             )
-            if (property.isVar && !shouldBeExportedAsObjectWithAccessorsInside) {
+            if (property.isVar) {
                 accessors.add(
                     ExportedPropertySetter(
                         name = name,
@@ -300,7 +300,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                         isStatic = shouldPropertyBeStatic,
                         isAbstract = isAbstract,
                         isProtected = isProtected,
-                    )
+                    ).withAttributesFor(property.setter)
                 )
             }
             return accessors
@@ -1226,10 +1226,10 @@ fun DescriptorVisibility.toExportedVisibility() =
         else -> ExportedVisibility.DEFAULT
     }
 
-private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
-    declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
+private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration?): T {
+    declaration?.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
-    if (declaration.isJsExportDefault()) {
+    if (declaration?.isJsExportDefault() == true) {
         attributes.add(ExportedAttribute.DefaultExport)
     }
 

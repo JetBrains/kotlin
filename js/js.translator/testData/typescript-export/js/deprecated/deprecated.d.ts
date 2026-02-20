@@ -32,12 +32,17 @@ declare namespace JS_TESTS {
             get readWriteProperty(): string;
             /** @deprecated deprecated read-write property */
             set readWriteProperty(value: string);
+            /** @deprecated this getter is deprecated */
             get deprecatedGetter(): string;
             set deprecatedGetter(value: string);
             get deprecatedSetter(): string;
+            /** @deprecated this setter is deprecated */
             set deprecatedSetter(value: string);
+            /** @deprecated deprecated getter */
             /** @deprecated deprecated property */
             get mixedDeprecated(): string;
+            /** @deprecated deprecated setter */
+            /** @deprecated deprecated property */
             set mixedDeprecated(value: string);
             get Inner(): {
                 /** @deprecated deprecated inner class primary constructor */

@@ -311,7 +311,8 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val isAbstract = parentClass?.classKind != KaClassKind.INTERFACE && property.modality == KaSymbolModality.ABSTRACT
         val isStatic = property.isStatic || property.isJsStatic()
 
-        val customGetterName = property.getter?.getJsName()
+        val getter = property.getter
+        val customGetterName = getter?.getJsName()
         val setter = property.setter
         val customSetterName = setter?.getJsName()
         val isProtected = property.visibility == KaSymbolVisibility.PROTECTED
@@ -327,7 +328,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             isStatic = isStatic,
                             isAbstract = isAbstract,
                             isProtected = isProtected,
-                        )
+                        ).withAttributes(property).withAttributes(setter)
                     )
                 }
                 if (customGetterName != null) {
@@ -340,7 +341,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             isStatic = isStatic,
                             isAbstract = isAbstract,
                             isProtected = isProtected,
-                        )
+                        ).withAttributes(property).withAttributes(getter)
                     )
                 }
             }
@@ -361,7 +362,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                         parameters = emptyList(),
                         isMember = true,
                         isProtected = false
-                    )
+                    ).withAttributes(property),
                 )
             )
             else -> // TODO: add correct default implementations processing
@@ -373,7 +374,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             parameters = emptyList(),
                             isMember = true,
                             isProtected = false
-                        ),
+                        ).withAttributes(property).withAttributes(getter),
                         runIf(!property.isVal) {
                             ExportedFunction(
                                 name = ExportedMemberName.Identifier("set"),
@@ -385,7 +386,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                                 ),
                                 isMember = true,
                                 isProtected = false
-                            )
+                            ).withAttributes(property).withAttributes(setter)
                         }
                     )
                 )
@@ -414,7 +415,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     isStatic = isStatic,
                     isAbstract = isAbstract,
                     isProtected = isProtected,
-                ).withAttributes(property)
+                ).withAttributes(property).withAttributes(getter)
             )
             if (!property.isVal) {
                 accessors.add(
@@ -424,7 +425,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                         isStatic = isStatic,
                         isAbstract = isAbstract,
                         isProtected = isProtected,
-                    ).withAttributes(property)
+                    ).withAttributes(property).withAttributes(setter)
                 )
             }
             return accessors

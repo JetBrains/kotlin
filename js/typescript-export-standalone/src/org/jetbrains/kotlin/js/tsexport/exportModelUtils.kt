@@ -332,8 +332,8 @@ internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?
         else -> ExportedVisibility.DEFAULT
     }
 
-internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSymbol): T {
-    source.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
+internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSymbol?): T {
+    source?.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
         attributes.add(ExportedAttribute.DeprecatedAttribute(it))
     }
     return this
