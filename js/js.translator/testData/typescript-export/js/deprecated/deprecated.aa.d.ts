@@ -58,7 +58,6 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => AnotherClass;
             }
             class Inner {
-                /** @deprecated deprecated inner class primary constructor */
                 private constructor();
             }
             namespace Inner {

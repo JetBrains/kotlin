@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedAttribute
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedConstructor
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedMemberName
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedField
@@ -333,6 +334,8 @@ internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?
     }
 
 internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSymbol?): T {
+    if (this is ExportedConstructor && visibility == ExportedVisibility.PRIVATE) return this
+
     source?.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
         attributes.add(ExportedAttribute.DeprecatedAttribute(it))
     }

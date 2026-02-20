@@ -1227,6 +1227,8 @@ fun DescriptorVisibility.toExportedVisibility() =
     }
 
 private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration?): T {
+    if (this is ExportedConstructor && visibility == ExportedVisibility.PRIVATE) return this
+
     declaration?.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
     if (declaration?.isJsExportDefault() == true) {
