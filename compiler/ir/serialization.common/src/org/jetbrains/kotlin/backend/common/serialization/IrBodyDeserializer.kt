@@ -79,7 +79,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement a
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWhen
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
-import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 as ProtoMemberAccessCommonPre_2_4_0
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 
@@ -207,7 +207,11 @@ class IrBodyDeserializer(
         return block(origin, statements)
     }
 
-    private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
+    private fun deserializeMemberAccessCommonPre_2_4_0(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommonPre_2_4_0?) {
+        if (proto == null) {
+            return
+        }
+
         if (proto.hasDispatchReceiver() || proto.hasExtensionReceiver() || proto.regularArgumentCount > 0) {
             // Pre 2.2.0 scheme: arguments are separated by their kind.
             if (proto.hasDispatchReceiver()) {
@@ -219,21 +223,22 @@ class IrBodyDeserializer(
             for (arg in proto.regularArgumentList) {
                 access.arguments += if (arg.hasExpression()) deserializeExpression(arg.expression) else null
             }
-        } else if (proto.argumentPre240Count > 0) {
+        } else {
             // Post 2.2.0 scheme: all arguments are in a single list, wrapped in a NullableIrExpression.
             access.arguments.assignFrom(proto.argumentPre240List) {
                 if (it.hasExpression()) deserializeExpression(it.expression) else null
             }
-        } else {
-            // Post 2.4.0 scheme: all arguments are in a single list, with `null` expressed as one of the possible operations.
-            access.arguments.assignFrom(proto.argumentList) {
-                deserializeNullableExpression(it)
-            }
         }
 
-        access.typeArguments.assignFrom(proto.typeArgumentList) {
-            declarationDeserializer.deserializeNullableIrType(it)
-        }
+        access.typeArguments.assignFrom(deserializeTypeArguments(proto.typeArgumentList))
+    }
+
+    private fun deserializeArguments(rawArgumentList: List<ProtoExpression>): List<IrExpression?> {
+        return rawArgumentList.map { deserializeNullableExpression(it) }
+    }
+
+    private fun deserializeTypeArguments(rawTypeArgumentList: List<Int>): List<IrType?> {
+        return rawTypeArgumentList.map { declarationDeserializer.deserializeNullableIrType(it) }
     }
 
     private fun deserializeClassReference(
@@ -324,7 +329,9 @@ class IrBodyDeserializer(
             deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
             SourceElement.NO_SOURCE,
         ).also {
-            deserializeMemberAccessCommon(it, proto.memberAccess)
+            deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
+            it.arguments.addAll(deserializeArguments(proto.argumentList))
+            it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         }
     }
 
@@ -337,7 +344,9 @@ class IrBodyDeserializer(
             deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
             SourceElement.NO_SOURCE,
         ).also {
-            deserializeMemberAccessCommon(it, proto.memberAccess)
+            deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
+            it.arguments.addAll(deserializeArguments(proto.argumentList))
+            it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         }
     }
 
@@ -352,7 +361,9 @@ class IrBodyDeserializer(
             origin,
             superSymbol
         )
-        deserializeMemberAccessCommon(call, proto.memberAccess)
+        deserializeMemberAccessCommonPre_2_4_0(call, proto.memberAccessPre240)
+        call.arguments.addAll(deserializeArguments(proto.argumentList))
+        call.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         return call
     }
 
@@ -380,7 +391,9 @@ class IrBodyDeserializer(
             symbol,
             null,
         )
-        deserializeMemberAccessCommon(call, proto.memberAccess)
+        deserializeMemberAccessCommonPre_2_4_0(call, proto.memberAccessPre240)
+        call.arguments.addAll(deserializeArguments(proto.argumentList))
+        call.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         return call
     }
 
@@ -398,7 +411,9 @@ class IrBodyDeserializer(
             symbol,
             null,
         )
-        deserializeMemberAccessCommon(call, proto.memberAccess)
+        deserializeMemberAccessCommonPre_2_4_0(call, proto.memberAccessPre240)
+        call.arguments.addAll(deserializeArguments(proto.argumentList))
+        call.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         return call
     }
 
@@ -511,8 +526,9 @@ class IrBodyDeserializer(
             reflectionTarget,
             origin,
         )
-        deserializeMemberAccessCommon(callable, proto.memberAccess)
-
+        deserializeMemberAccessCommonPre_2_4_0(callable, proto.memberAccessPre240)
+        callable.arguments.addAll(deserializeArguments(proto.argumentList))
+        callable.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         return callable
     }
 
@@ -609,7 +625,9 @@ class IrBodyDeserializer(
             setter,
             origin,
         )
-        deserializeMemberAccessCommon(callable, proto.memberAccess)
+        deserializeMemberAccessCommonPre_2_4_0(callable, proto.memberAccessPre240)
+        callable.arguments.addAll(deserializeArguments(proto.argumentList))
+        callable.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         return callable
     }
 

@@ -169,10 +169,7 @@ message IrInlinedFunctionBlock {
   optional int32 inlined_function_file_entry_id = 6;  // Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
 }
 
-message MemberAccessCommon {
-  // Value argument serialization scheme after 2.4.0
-  repeated IrExpression argument = 7;
-
+message MemberAccessCommonPre_2_4_0 {
   // Value argument serialization scheme before 2.4.0
   repeated NullableIrExpression argument_pre_2_4_0 = 6;
 
@@ -189,7 +186,9 @@ message MemberAccessCommon {
 
 message IrCall {
   required int64 symbol = 1;
-  required MemberAccessCommon member_access = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
   optional int64 super = 3;
   optional int32 origin_name = 4;
 }
@@ -197,14 +196,18 @@ message IrCall {
 message IrConstructorCall {
   required int64 symbol = 1;
   required int32 constructor_type_arguments_count = 2;
-  required MemberAccessCommon member_access = 3;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
   optional int32 origin_name = 4;
 }
 
 message IrFunctionReference {
   required int64 symbol = 1;
   optional int32 origin_name = 2;
-  required MemberAccessCommon member_access = 3;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
   optional int64 reflection_target_symbol = 4;
 }
 
@@ -221,7 +224,9 @@ message IrPropertyReference {
   optional int64 getter = 2;
   optional int64 setter = 3;
   optional int32 origin_name = 4;
-  required MemberAccessCommon member_access = 5;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 5;
+  repeated IrExpression argument = 7;
+  repeated int32 type_argument = 8 [packed=true];
   required int64 symbol = 6;
 }
 
@@ -274,7 +279,9 @@ message IrContinue {
 
 message IrDelegatingConstructorCall {
   required int64 symbol = 1;
-  required MemberAccessCommon member_access = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
+  repeated IrExpression argument = 3;
+  repeated int32 type_argument = 4 [packed=true];
 }
 
 message IrDoWhile {
@@ -283,7 +290,9 @@ message IrDoWhile {
 
 message IrEnumConstructorCall {
   required int64 symbol = 1;
-  required MemberAccessCommon member_access = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
+  repeated IrExpression argument = 3;
+  repeated int32 type_argument = 4 [packed=true];
 }
 
 message IrGetClass {

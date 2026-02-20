@@ -107,7 +107,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWhen
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
-import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 as ProtoMemberAccessCommonPre_2_4_0
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 as ProtoOperationPre_2_4_0
 
@@ -572,7 +572,7 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommon {
+    private fun serializeMemberAccessCommonPre2_4_0(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommonPre_2_4_0 {
         fun buildProtoNullableIrExpression(arg: IrExpression?): ProtoNullableIrExpression.Builder {
             val argOrNullProto = ProtoNullableIrExpression.newBuilder()
             if (arg == null) {
@@ -588,23 +588,25 @@ open class IrFileSerializer(
             return argOrNullProto
         }
 
-        val proto = ProtoMemberAccessCommon.newBuilder()
+        val proto = ProtoMemberAccessCommonPre_2_4_0.newBuilder()
 
         for (arg in call.arguments) {
-            if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
-                proto.addArgument(serializeExpression(arg))
-            } else {
-                proto.addArgumentPre240(buildProtoNullableIrExpression(arg))
-            }
+            proto.addArgumentPre240(buildProtoNullableIrExpression(arg))
         }
-
-        for (typeArg in call.typeArguments) {
-            // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
-            val typeArgumentIndex = typeArg?.let { serializeIrType(it) } ?: -1
-            proto.addTypeArgument(typeArgumentIndex)
-        }
+        proto.addAllTypeArgument(serializeTypeArguments(call))
 
         return proto.build()
+    }
+
+    private fun serializeArguments(call: IrMemberAccessExpression<*>): List<ProtoExpression> {
+        return call.arguments.map { serializeExpression(it) }
+    }
+
+    private fun serializeTypeArguments(call: IrMemberAccessExpression<*>): List<Int> {
+        return call.typeArguments.map {
+            // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
+            if (it != null) serializeIrType(it) else -1
+        }
     }
 
     private fun serializeCall(call: IrCall): ProtoCall {
@@ -615,8 +617,13 @@ open class IrFileSerializer(
         call.superQualifierSymbol?.let {
             proto.`super` = serializeIrSymbol(it)
         }
-        proto.memberAccess = serializeMemberAccessCommon(call)
 
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(call))
+            proto.addAllTypeArgument(serializeTypeArguments(call))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+        }
         return proto.build()
     }
 
@@ -624,7 +631,12 @@ open class IrFileSerializer(
         ProtoConstructorCall.newBuilder().apply {
             symbol = serializeIrSymbol(call.symbol)
             constructorTypeArgumentsCount = call.constructorTypeArgumentsCount
-            memberAccess = serializeMemberAccessCommon(call)
+            if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+                addAllArgument(serializeArguments(call))
+                addAllTypeArgument(serializeTypeArguments(call))
+            } else {
+                memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+            }
             serializeIrStatementOrigin(call.origin, ::setOriginName)
         }.build()
 
@@ -637,7 +649,12 @@ open class IrFileSerializer(
     private fun serializeFunctionReference(callable: IrFunctionReference): ProtoFunctionReference {
         val proto = ProtoFunctionReference.newBuilder()
             .setSymbol(serializeIrSymbol(callable.symbol))
-            .setMemberAccess(serializeMemberAccessCommon(callable))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(callable))
+            proto.addAllTypeArgument(serializeTypeArguments(callable))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(callable)
+        }
 
         callable.reflectionTarget?.let { proto.reflectionTargetSymbol = serializeIrSymbol(it) }
         serializeIrStatementOrigin(callable.origin, proto::setOriginName)
@@ -685,8 +702,13 @@ open class IrFileSerializer(
 
     private fun serializePropertyReference(callable: IrPropertyReference): ProtoPropertyReference {
         val proto = ProtoPropertyReference.newBuilder()
-            .setMemberAccess(serializeMemberAccessCommon(callable))
             .setSymbol(serializeIrSymbol(callable.symbol))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(callable))
+            proto.addAllTypeArgument(serializeTypeArguments(callable))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(callable)
+        }
 
         serializeIrStatementOrigin(callable.origin, proto::setOriginName)
         callable.field?.let { proto.field = serializeIrSymbol(it) }
@@ -723,7 +745,12 @@ open class IrFileSerializer(
     private fun serializeDelegatingConstructorCall(call: IrDelegatingConstructorCall): ProtoDelegatingConstructorCall {
         val proto = ProtoDelegatingConstructorCall.newBuilder()
             .setSymbol(serializeIrSymbol(call.symbol))
-            .setMemberAccess(serializeMemberAccessCommon(call))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(call))
+            proto.addAllTypeArgument(serializeTypeArguments(call))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+        }
         return proto.build()
     }
 
@@ -735,7 +762,12 @@ open class IrFileSerializer(
     private fun serializeEnumConstructorCall(call: IrEnumConstructorCall): ProtoEnumConstructorCall {
         val proto = ProtoEnumConstructorCall.newBuilder()
             .setSymbol(serializeIrSymbol(call.symbol))
-            .setMemberAccess(serializeMemberAccessCommon(call))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(call))
+            proto.addAllTypeArgument(serializeTypeArguments(call))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+        }
         return proto.build()
     }
 

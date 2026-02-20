@@ -44,13 +44,40 @@ public interface IrPropertyReferenceOrBuilder extends
   int getOriginName();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 5;</code>
    */
-  boolean hasMemberAccess();
+  boolean hasMemberAccessPre240();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
+  org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 getMemberAccessPre240();
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 7;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression> 
+      getArgumentList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getArgument(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 7;</code>
+   */
+  int getArgumentCount();
+
+  /**
+   * <code>repeated int32 type_argument = 8 [packed = true];</code>
+   */
+  java.util.List<java.lang.Integer> getTypeArgumentList();
+  /**
+   * <code>repeated int32 type_argument = 8 [packed = true];</code>
+   */
+  int getTypeArgumentCount();
+  /**
+   * <code>repeated int32 type_argument = 8 [packed = true];</code>
+   */
+  int getTypeArgument(int index);
 
   /**
    * <code>required int64 symbol = 6;</code>
