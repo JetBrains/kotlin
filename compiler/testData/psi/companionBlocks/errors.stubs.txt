@@ -22,6 +22,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ErrorsKt]]
     VALUE_PARAMETER_LIST
   CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
-      FUN[fqName=C.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      COMPANION_BLOCK
         MODIFIER_LIST[companion]
-        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=Nested, superNames=[]]
+        CLASS_BODY
+          CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+          TYPEALIAS[classId=null, fqName=null, isTopLevel=false, name=TA]
+            TYPE_REFERENCE

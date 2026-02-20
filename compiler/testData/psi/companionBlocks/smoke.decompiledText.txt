@@ -1,0 +1,29 @@
+C.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final class C public constructor() {
+  }
+
+C2.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final class C2 public constructor() {
+  }
+
+C3.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final class C3 public constructor() {
+      public final fun foo(): kotlin.Unit { /* compiled code */ }
+  }
+
+C4.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final class C4 public constructor() {
+      public final fun foo(): kotlin.Unit { /* compiled code */ }
+  }

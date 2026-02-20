@@ -3,31 +3,37 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
-      FUN[fqName=C.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      COMPANION_BLOCK
         MODIFIER_LIST[companion]
+        CLASS_BODY
   CLASS[classId=/C2, fqName=C2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C2, superNames=[]]
     CLASS_BODY
-      FUN[fqName=C2.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      COMPANION_BLOCK
         MODIFIER_LIST[companion]
-      FUN[fqName=C2.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+        CLASS_BODY
+      COMPANION_BLOCK
         MODIFIER_LIST[companion]
+        CLASS_BODY
   CLASS[classId=/C3, fqName=C3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C3, superNames=[]]
     CLASS_BODY
       FUN[fqName=C3.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
-      FUN[fqName=C3.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      COMPANION_BLOCK
         MODIFIER_LIST[companion]
-        FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
-          VALUE_PARAMETER_LIST
+        CLASS_BODY
+          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+            VALUE_PARAMETER_LIST
   CLASS[classId=/C4, fqName=C4, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C4, superNames=[]]
     CLASS_BODY
       FUN[fqName=C4.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
-      FUN[fqName=C4.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      COMPANION_BLOCK
         MODIFIER_LIST[companion]
-        FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
-          VALUE_PARAMETER_LIST
-      FUN[fqName=C4.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+        CLASS_BODY
+          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+            VALUE_PARAMETER_LIST
+      COMPANION_BLOCK
         MODIFIER_LIST[companion]
-        FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
-          VALUE_PARAMETER_LIST
+        CLASS_BODY
+          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
+            VALUE_PARAMETER_LIST

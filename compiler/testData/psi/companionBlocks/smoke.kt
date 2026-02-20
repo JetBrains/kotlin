@@ -1,5 +1,3 @@
-// COMPILATION_ERRORS
-
 class C {
     companion {}
 }

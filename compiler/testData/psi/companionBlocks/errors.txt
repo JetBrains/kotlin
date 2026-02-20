@@ -100,13 +100,11 @@ KtFile: errors.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      COMPANION_BLOCK
         MODIFIER_LIST
           PsiElement(companion)('companion')
-        PsiErrorElement:Expecting member declaration
-          <empty list>
         PsiWhiteSpace(' ')
-        BLOCK
+        CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
           CLASS

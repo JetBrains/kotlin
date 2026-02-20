@@ -3,8 +3,6 @@ KtFile: smoke.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
-  PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
@@ -13,13 +11,11 @@ KtFile: smoke.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      COMPANION_BLOCK
         MODIFIER_LIST
           PsiElement(companion)('companion')
-        PsiErrorElement:Expecting member declaration
-          <empty list>
         PsiWhiteSpace(' ')
-        BLOCK
+        CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
@@ -33,23 +29,19 @@ KtFile: smoke.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      COMPANION_BLOCK
         MODIFIER_LIST
           PsiElement(companion)('companion')
-        PsiErrorElement:Expecting member declaration
-          <empty list>
         PsiWhiteSpace(' ')
-        BLOCK
+        CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      COMPANION_BLOCK
         MODIFIER_LIST
           PsiElement(companion)('companion')
-        PsiErrorElement:Expecting member declaration
-          <empty list>
         PsiWhiteSpace(' ')
-        BLOCK
+        CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
@@ -75,13 +67,11 @@ KtFile: smoke.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      COMPANION_BLOCK
         MODIFIER_LIST
           PsiElement(companion)('companion')
-        PsiErrorElement:Expecting member declaration
-          <empty list>
         PsiWhiteSpace(' ')
-        BLOCK
+        CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
           FUN
@@ -120,13 +110,11 @@ KtFile: smoke.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      COMPANION_BLOCK
         MODIFIER_LIST
           PsiElement(companion)('companion')
-        PsiErrorElement:Expecting member declaration
-          <empty list>
         PsiWhiteSpace(' ')
-        BLOCK
+        CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
           FUN
@@ -143,13 +131,11 @@ KtFile: smoke.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      COMPANION_BLOCK
         MODIFIER_LIST
           PsiElement(companion)('companion')
-        PsiErrorElement:Expecting member declaration
-          <empty list>
         PsiWhiteSpace(' ')
-        BLOCK
+        CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
           FUN

@@ -1302,10 +1302,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
         PsiBuilder.Marker decl = mark();
 
+        boolean isCompanionBlock = at(COMPANION_KEYWORD) && lookahead(1) == LBRACE;
+
         ModifierDetector detector = new ModifierDetector();
         parseModifierList(detector, TokenSet.EMPTY, /* localDeclaration = */false);
 
-        IElementType declType = parseMemberDeclarationRest(detector);
+        IElementType declType = isCompanionBlock ? parseCompanionBlock() : parseMemberDeclarationRest(detector);
 
         if (declType == null) {
             errorWithRecovery("Expecting member declaration", TokenSet.EMPTY);
@@ -1345,6 +1347,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
             declType = FUN;
         }
         return declType;
+    }
+
+    private IElementType parseCompanionBlock() {
+        parseClassBody();
+        return COMPANION_BLOCK;
     }
 
     /*
