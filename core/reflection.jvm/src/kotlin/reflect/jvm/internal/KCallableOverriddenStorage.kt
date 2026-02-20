@@ -10,9 +10,9 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal data class KCallableOverriddenStorage(
-    val instanceReceiverParameter: KClassImpl<*>?,
     private val classTypeParametersSubstitutor: KTypeSubstitutor,
     val modality: Modality?,
+    val isStatic: Boolean?,
     val originalContainerIfFakeOverride: KDeclarationContainerImpl?,
     private val originalCallableTypeParameters: List<KTypeParameter>,
 
@@ -24,9 +24,9 @@ internal data class KCallableOverriddenStorage(
     companion object {
         @JvmField
         val EMPTY = KCallableOverriddenStorage(
-            null,
-            KTypeSubstitutor.EMPTY,
-            null,
+            classTypeParametersSubstitutor = KTypeSubstitutor.EMPTY,
+            modality = null,
+            isStatic = null,
             originalContainerIfFakeOverride = null,
             originalCallableTypeParameters = emptyList(),
             forceIsExternal = false,

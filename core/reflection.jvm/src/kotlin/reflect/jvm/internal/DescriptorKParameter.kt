@@ -16,7 +16,10 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -49,11 +52,7 @@ internal class DescriptorKParameter(
                     callable.instanceReceiverParameter == descriptor &&
                     (callable.overriddenStorage.isFakeOverride || callable.descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
                 ) {
-                    // In case of fake overrides, dispatch receiver type should be computed manually because Caller.parameterTypes returns
-                    // types from Java reflection where receiver is always the declaring class of the original declaration
-                    // (not the class where the fake override is generated, which is returned by KParameter.type)
-                    callable.overriddenStorage.instanceReceiverParameter?.java
-                        ?: (callable.descriptor.containingDeclaration as? ClassDescriptor)?.toJavaClass()
+                    (callable.container as? KClassImpl<*>)?.java
                         ?: throw KotlinReflectionInternalError("Cannot determine receiver Java type of inherited declaration: $descriptor")
                 } else {
                     callable.caller.parameterTypes[index]

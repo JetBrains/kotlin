@@ -132,9 +132,9 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
                 .copy(
-                    instanceReceiverParameter = kClass.takeUnless { notSubstitutedMember.isStatic },
                     originalContainerIfFakeOverride = notSubstitutedMember.originalContainer,
                     originalCallableTypeParameters = notSubstitutedMember.typeParameters,
+                    isStatic = notSubstitutedMember.isStatic,
                 )
             val member = notSubstitutedMember.shallowCopy(kClass, overriddenStorage)
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
@@ -194,7 +194,7 @@ private val ReflectKCallable<*>.originalContainer: KDeclarationContainerImpl
     get() = overriddenStorage.originalContainerIfFakeOverride ?: container
 
 internal val ReflectKCallable<*>.isStatic: Boolean
-    get() = allParameters.firstOrNull()?.kind != KParameter.Kind.INSTANCE
+    get() = overriddenStorage.isStatic ?: (allParameters.firstOrNull()?.kind != KParameter.Kind.INSTANCE)
 
 private val ReflectKCallable<*>.isJavaField: Boolean
     get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlin == false
