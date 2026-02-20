@@ -46,11 +46,10 @@ class BooleanType(
 }
 
 /**
- * A value which accepts [KotinVersion] type.
+ * A value which accepts [KotlinVersion] type.
  */
 @Serializable
 class KotlinVersionType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<KotlinVersion?> = ReleaseDependent(
         current = KotlinVersion.v2_2,
         KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v1_0_7 to KotlinVersion.v1_0,
@@ -66,27 +65,22 @@ class KotlinVersionType(
         KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_0_21 to KotlinVersion.v2_0,
         KotlinReleaseVersion.v2_1_0..KotlinReleaseVersion.v2_1_21 to KotlinVersion.v2_1,
     ),
-) : KotlinArgumentValueType<KotlinVersion> {
-    override fun stringRepresentation(value: KotlinVersion?): String? {
-        return value?.versionName?.valueOrNullStringLiteral
-    }
-}
+) : EnumType<KotlinVersion>(
+    ReleaseDependent(true),
+)
 
 /**
  * A value which accepts [JvmTarget] type.
  */
 @Serializable
 class KotlinJvmTargetType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
         JvmTarget.jvm1_8,
         KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v1_9_20 to JvmTarget.jvm1_6
     ),
-) : KotlinArgumentValueType<JvmTarget> {
-    override fun stringRepresentation(value: JvmTarget?): String? {
-        return value?.targetName?.valueOrNullStringLiteral
-    }
-}
+) : EnumType<JvmTarget>(
+    ReleaseDependent(true),
+)
 
 /**
  * A value which accepts [String] type.
@@ -134,51 +128,40 @@ class StringArrayType(
  * A value which accepts [ExplicitApiMode] type.
  */
 @Serializable
-class KotlinExplicitApiModeType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
-    override val defaultValue: ReleaseDependent<ExplicitApiMode?> = ReleaseDependent(ExplicitApiMode.disable),
-) : KotlinArgumentValueType<ExplicitApiMode> {
-    override fun stringRepresentation(value: ExplicitApiMode?): String {
-        return value?.modeName.valueOrNullStringLiteral
-    }
+class KotlinExplicitApiModeType : EnumType<ExplicitApiMode>() {
+    override val defaultValue: ReleaseDependent<ExplicitApiMode?> = ReleaseDependent(ExplicitApiMode.disable)
 }
 
 /**
  * A value which accepts [HeaderMode] type.
  */
 @Serializable
-class KotlinHeaderModeType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
-    override val defaultValue: ReleaseDependent<HeaderMode?> = ReleaseDependent(HeaderMode.any),
-) : KotlinArgumentValueType<HeaderMode> {
-    override fun stringRepresentation(value: HeaderMode?): String {
-        return value?.modeName.valueOrNullStringLiteral
-    }
+class KotlinHeaderModeType : EnumType<HeaderMode>() {
+    override val defaultValue: ReleaseDependent<HeaderMode?> = ReleaseDependent(HeaderMode.any)
 }
 
 /**
  * A value which accepts [ReturnValueCheckerMode] type.
  */
 @Serializable
-class ReturnValueCheckerModeType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
-    override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(ReturnValueCheckerMode.disabled),
-) : KotlinArgumentValueType<ReturnValueCheckerMode> {
-    override fun stringRepresentation(value: ReturnValueCheckerMode?): String {
-        return value?.modeState.valueOrNullStringLiteral
-    }
+class ReturnValueCheckerModeType : EnumType<ReturnValueCheckerMode>() {
+    override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(ReturnValueCheckerMode.disabled)
 }
 
 /**
  * A value which accepts [KlibIrInlinerMode] type.
  */
 @Serializable
-class KlibIrInlinerModeType(
+class KlibIrInlinerModeType : EnumType<KlibIrInlinerMode>() {
+    override val defaultValue: ReleaseDependent<KlibIrInlinerMode?> = ReleaseDependent(KlibIrInlinerMode.default)
+}
+
+@Serializable
+sealed class EnumType<T : WithStringRepresentation>(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
-    override val defaultValue: ReleaseDependent<KlibIrInlinerMode?> = ReleaseDependent(KlibIrInlinerMode.default),
-) : KotlinArgumentValueType<KlibIrInlinerMode> {
-    override fun stringRepresentation(value: KlibIrInlinerMode?): String {
-        return value?.modeState.valueOrNullStringLiteral
+) : KotlinArgumentValueType<T> {
+    override fun stringRepresentation(value: T?): String? {
+        return value?.stringRepresentation?.valueOrNullStringLiteral
     }
 }
 

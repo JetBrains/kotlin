@@ -153,7 +153,6 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         )
 
         argumentType = KotlinJvmTargetType(
-            isNullable = true.asReleaseDependent(),
             defaultValue = null.asReleaseDependent(),
         )
         argumentTypeDescription = "<version>".asReleaseDependent()
