@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppresso
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.utils.bind
@@ -59,7 +60,7 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
             }
         }
 
-        useConfigurators(::NativeSecondStageEnvironmentConfigurator)
+        useConfigurators(::NativeFirstStageEnvironmentConfigurator, ::NativeSecondStageEnvironmentConfigurator)
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
         )
