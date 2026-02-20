@@ -31,7 +31,7 @@ fun Session.generateGraphviz(gcm: GCMResult?): String = buildString {
             else -> commonShape
         }
         printed += n
-        return "${n.id}[label=\"${n}\",color=\"$color\",shape=$shape];"
+        return "${n.id}[label=\"${n} uses=${n.uses.map{ it.id }.toList()}\",color=\"$color\",shape=$shape];"
     }
 
     fun arg(arg: Node, argNum: Int, node: Node): String {
