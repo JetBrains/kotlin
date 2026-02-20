@@ -103,7 +103,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
 
         val module = ModulesStructure(
             project = environment.project,
-            mainModule = MainModule.Klib(kotlinTestPath),
+            mainModule = MainModule.Klib(includes),
             compilerConfiguration = configuration,
             klibs = klibs,
         )
