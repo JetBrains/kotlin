@@ -8,9 +8,11 @@
 package org.jetbrains.kotlin.build.d8
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
 
@@ -19,7 +21,8 @@ abstract class D8Extension(
     private val d8envSpec: D8EnvSpec,
 ) {
     val v8Version: String
-        get() = project.property("versions.v8") as String
+        get() = project.extensions.getByType<VersionCatalogsExtension>().named("libs")
+            .findVersion("v8").get().requiredVersion
 
     val v8ExecutablePath: Provider<String> = d8envSpec.executable.also {
         project.extra["javascript.engine.path.V8"] = it

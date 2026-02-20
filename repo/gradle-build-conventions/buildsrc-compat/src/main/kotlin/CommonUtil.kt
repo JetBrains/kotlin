@@ -57,7 +57,7 @@ var Project.javaHome: String?
         extra["javaHome"] = v
     }
 
-fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
+fun Project.getBooleanProperty(name: String): Boolean? = this.providers.gradleProperty(name).orNull?.let {
     val v = it.toString()
     if (v.isBlank()) true
     else v.toBoolean()

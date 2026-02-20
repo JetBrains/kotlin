@@ -158,12 +158,12 @@ fun Project.configureDefaultPublishing(
             maven {
                 name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
 
-                val repo: String? = project.properties["kotlin.build.deploy-repo"]?.toString()
-                    ?: project.properties["deploy-repo"]?.toString()
+                val repo: String? = project.providers.gradleProperty("kotlin.build.deploy-repo").orNull
+                    ?: project.providers.gradleProperty("deploy-repo").orNull
 
-                val deployRepoUrl: String? = (project.properties["kotlin.build.deploy-url"]
-                    ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
-                    ?: project.properties["kotlin.build.deploy-path"]?.toString()?.takeIf { it.isNotBlank() }
+                val deployRepoUrl: String? = (project.providers.gradleProperty("kotlin.build.deploy-url").orNull
+                    ?: project.providers.gradleProperty("deploy-url").orNull)?.takeIf { it.isNotBlank() }
+                    ?: project.providers.gradleProperty("kotlin.build.deploy-path").orNull?.takeIf { it.isNotBlank() }
                         ?.let { "${project.rootProject.layout.projectDirectory.dir(it).asFile.toURI()}" }
 
                 val repoUrl: String by extra(
@@ -171,10 +171,10 @@ fun Project.configureDefaultPublishing(
                 )
 
                 val username: String? by extra(
-                    project.properties["kotlin.build.deploy-username"]?.toString() ?: project.properties["kotlin.${repo}.user"]?.toString()
+                    project.providers.gradleProperty("kotlin.build.deploy-username").orNull ?: project.providers.gradleProperty("kotlin.${repo}.user").orNull
                 )
                 val password: String? by extra(
-                    project.properties["kotlin.build.deploy-password"]?.toString() ?: project.properties["kotlin.${repo}.password"]?.toString()
+                    project.providers.gradleProperty("kotlin.build.deploy-password").orNull ?: project.providers.gradleProperty("kotlin.${repo}.password").orNull
                 )
 
                 setUrl(repoUrl)
@@ -201,7 +201,7 @@ fun Project.configureDefaultPublishing(
 }
 
 private fun Project.getSensitiveProperty(name: String): String? {
-    return project.findProperty(name) as? String ?: System.getenv(name)
+    return project.providers.gradleProperty(name).orNull ?: System.getenv(name)
 }
 
 private fun Project.configureSigning() {

@@ -9,11 +9,13 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import java.io.File
@@ -201,7 +203,10 @@ fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepS
     }
 }
 
-val Project.protobufRelocatedVersion: String get() = findProperty("versions.protobuf-relocated") as String
+private fun Project.catalogVersion(key: String): String =
+    extensions.getByType<VersionCatalogsExtension>().named("libs").findVersion(key).get().requiredVersion
+
+val Project.protobufRelocatedVersion: String get() = catalogVersion("protobufRelocated")
 fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufRelocatedVersion"
 fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufRelocatedVersion"
 fun Project.kotlinxCollectionsImmutable() =
@@ -209,9 +214,9 @@ fun Project.kotlinxCollectionsImmutable() =
 
 val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 
-val Project.nodejsVersion: String get() = property("versions.nodejs") as String
-val Project.nodejsLtsVersion: String get() = property("versions.nodejs.lts") as String
-val Project.nodejsVersionForBuildingWasmDebugBrowsers: String get() = property("versions.nodejs.for.building.wasm.debug.browsers") as String
+val Project.nodejsVersion: String get() = catalogVersion("nodejs")
+val Project.nodejsLtsVersion: String get() = catalogVersion("nodejs-lts")
+val Project.nodejsVersionForBuildingWasmDebugBrowsers: String get() = catalogVersion("nodejs-for-building-wasm-debug-browsers")
 
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 

@@ -9,8 +9,8 @@ import org.gradle.kotlin.dsl.develocity
 import org.gradle.kotlin.dsl.withType
 
 fun Project.configureTestRetriesForTestTasks() {
-    val testRetryMaxRetries = findProperty("kotlin.build.testRetry.maxRetries")
-        ?.toString()?.toInt()
+    val testRetryMaxRetries = providers.gradleProperty("kotlin.build.testRetry.maxRetries").orNull
+        ?.toInt()
         ?: (if (kotlinBuildProperties.isTeamcityBuild.get()) 3 else 0)
 
     tasks.withType<Test>().configureEach {

@@ -15,7 +15,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
+fun Project.getBooleanProperty(name: String): Boolean? = this.providers.gradleProperty(name).orNull?.let {
     val v = it.toString()
     if (v.isBlank()) true
     else v.toBoolean()
@@ -37,9 +37,9 @@ val customDepsOrg: String by extra("kotlin.build")
 
 val intellijVersion = project.extra["versions.intellijSdk"] as String
 val intellijVersionForIde = rootProject.intellijSdkVersionForIde()
-val asmVersion = project.findProperty("versions.jar.asm-all") as String?
-val androidStudioRelease = project.findProperty("versions.androidStudioRelease") as String?
-val androidStudioBuild = project.findProperty("versions.androidStudioBuild") as String?
+val asmVersion = providers.gradleProperty("versions.jar.asm-all").orNull
+val androidStudioRelease = providers.gradleProperty("versions.androidStudioRelease").orNull
+val androidStudioBuild = providers.gradleProperty("versions.androidStudioBuild").orNull
 
 fun checkIntellijVersion(intellijVersion: String) {
     val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
@@ -105,7 +105,7 @@ val intellijCoreForIde by configurations.creating
  */
 val intellijRuntimeAnnotations = "intellij-runtime-annotations"
 
-val dependenciesDir = (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File)
+val dependenciesDir = providers.gradleProperty("kotlin.build.dependencies.dir").orNull?.let(::File)
     ?: rootProject.gradle.gradleUserHomeDir.resolve("kotlin-build-dependencies")
 
 val customDepsRepoDir = dependenciesDir.resolve("repo")
@@ -425,7 +425,7 @@ fun skipContentsDirectory(path: String) = path.substringAfter("Contents/")
 
 fun Project.intellijSdkVersionForIde(): String? {
     val majorVersion = kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull ?: return null
-    return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
+    return providers.gradleProperty("versions.intellijSdk.forIde.$majorVersion").orNull
 }
 
 class XMLWriter(private val outputStreamWriter: OutputStreamWriter) : Closeable {
