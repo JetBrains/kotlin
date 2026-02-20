@@ -59,7 +59,6 @@ where advanced options include:
                              Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module
   -Xwasm-generate-dwarf      Generate DWARF debug information.
   -Xwasm-generate-wat        Generate a .wat file.
-  -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xwasm-included-module-only Compile only a module passed using `-include` option.
   -Xwasm-internal-local-variable-prefix
                              Prefix to use for internally generated local variables.

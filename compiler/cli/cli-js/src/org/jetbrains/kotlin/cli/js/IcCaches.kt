@@ -35,7 +35,6 @@ internal fun prepareIcCaches(
     outputDir: File,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
-    icCacheReadOnly: Boolean,
 ): IcCachesArtifacts {
     val data = when {
         arguments.wasm -> IcCachesConfigurationData.Wasm(
@@ -53,7 +52,6 @@ internal fun prepareIcCaches(
         outputDir,
         targetConfiguration,
         mainCallArguments,
-        icCacheReadOnly
     )
 }
 
@@ -63,7 +61,6 @@ internal fun prepareIcCaches(
     outputDir: File,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
-    icCacheReadOnly: Boolean,
 ): IcCachesArtifacts {
 
     targetConfiguration.reportLog("")
@@ -91,7 +88,6 @@ internal fun prepareIcCaches(
         compilerConfiguration = targetConfiguration,
         icContext = icContext,
         checkForClassStructuralChanges = icConfigurationData is IcCachesConfigurationData.Wasm,
-        commitIncrementalCache = !icCacheReadOnly,
     )
 
     val artifacts = cacheUpdater.actualizeCaches()

@@ -10289,52 +10289,6 @@
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-ic-cache-readonly",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Do not commit IC cache updates.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "argumentTypeDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
                                         "name": "Xwasm-included-module-only",
                                         "shortName": null,
                                         "deprecatedName": null,

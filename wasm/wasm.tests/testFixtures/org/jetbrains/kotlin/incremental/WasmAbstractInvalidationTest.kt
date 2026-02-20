@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.utils.TestDisposable
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
@@ -120,7 +119,6 @@ abstract class WasmAbstractInvalidationTest(
             configuration: CompilerConfiguration,
             testInfo: List<TestStepInfo>,
             removedModulesInfo: List<TestStepInfo>,
-            commitIncrementalCache: Boolean,
         ) {
             val icContext = WasmICContextForTesting(allowIncompleteImplementations = false, skipLocalNames = false)
 
@@ -129,7 +127,6 @@ abstract class WasmAbstractInvalidationTest(
                 compilerConfiguration = configuration,
                 icContext = icContext,
                 checkForClassStructuralChanges = true,
-                commitIncrementalCache = commitIncrementalCache,
             )
 
             val icCaches = cacheUpdater.actualizeCaches()
@@ -205,8 +202,6 @@ abstract class WasmAbstractInvalidationTest(
                 val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
 
                 val cacheDir = buildDir.resolve("incremental-cache")
-                val totalSizeBefore =
-                    cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
 
                 compileVerifyAndRun(
                     stepId = projStep.id,
@@ -215,21 +210,6 @@ abstract class WasmAbstractInvalidationTest(
                     configuration = configuration,
                     testInfo = testInfo,
                     removedModulesInfo = removedModulesInfo,
-                    commitIncrementalCache = false
-                )
-
-                val totalSizeAfterNotCommit =
-                    cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
-                assertEquals(totalSizeBefore, totalSizeAfterNotCommit)
-
-                compileVerifyAndRun(
-                    stepId = projStep.id,
-                    cacheDir = cacheDir,
-                    mainModuleInfo = mainModuleInfo,
-                    configuration = configuration,
-                    testInfo = testInfo,
-                    removedModulesInfo = removedModulesInfo,
-                    commitIncrementalCache = true
                 )
             }
         }

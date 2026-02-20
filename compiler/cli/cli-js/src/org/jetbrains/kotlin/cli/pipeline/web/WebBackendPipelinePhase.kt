@@ -51,9 +51,8 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         val mainCallArguments = if (configuration.callMainMode == K2JsArgumentConstants.NO_CALL) null else emptyList<String>()
 
         if (cacheDirectory != null) {
-            val icCacheReadOnly = configuration.wasmCompilation && configuration.icCacheReadOnly
-            val cacheGuard = IncrementalCacheGuard(cacheDirectory, icCacheReadOnly)
-            val backendIr = compileToBackendIrIncrementally(cacheDirectory, cacheGuard, icCacheReadOnly, configuration, mainCallArguments)
+            val cacheGuard = IncrementalCacheGuard(cacheDirectory)
+            val backendIr = compileToBackendIrIncrementally(cacheDirectory, cacheGuard, configuration, mainCallArguments)
             return cacheGuard.tryAcquireAndRelease {
                 backendIr?.let { compileIntermediate(it, configuration) }
             }
@@ -66,7 +65,6 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
     private fun compileToBackendIrIncrementally(
         cacheDirectory: String,
         cacheGuard: IncrementalCacheGuard,
-        icCacheReadOnly: Boolean,
         configuration: CompilerConfiguration,
         mainCallArguments: List<String>?,
     ): IntermediateOutput? {
@@ -100,7 +98,6 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
                 outputDir = configuration.outputDir!!,
                 targetConfiguration = configuration,
                 mainCallArguments = mainCallArguments,
-                icCacheReadOnly = icCacheReadOnly,
             )
         }
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)

@@ -122,16 +122,6 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-ic-cache-readonly",
-        description = "Do not commit IC cache updates.",
-    )
-    var icCacheReadonly: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xwasm-included-module-only",
         description = "Compile only a module passed using `-include` option.",
     )

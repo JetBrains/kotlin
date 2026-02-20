@@ -197,17 +197,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
-        name = "Xwasm-ic-cache-readonly"
-        compilerName = "icCacheReadonly"
-        description = "Do not commit IC cache updates.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xwasm-generate-dwarf"
         compilerName = "generateDwarf"
         description = "Generate DWARF debug information.".asReleaseDependent()
