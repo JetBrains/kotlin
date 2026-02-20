@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
 enum class HeaderMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
-) : WithKotlinReleaseVersionsMetadata {
+) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
     any(
         modeName = "any",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -25,4 +25,8 @@ enum class HeaderMode(
             introducedVersion = KotlinReleaseVersion.v2_3_20
         )
     ),
+    ;
+
+    override val stringRepresentation: String
+        get() = modeName
 }

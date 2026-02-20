@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.KotlinReturnValueChecke
 enum class ReturnValueCheckerMode(
     val modeState: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
-) : WithKotlinReleaseVersionsMetadata {
+) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
     checker(
         modeState = "check",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -34,4 +34,8 @@ enum class ReturnValueCheckerMode(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
         ),
     ),
+    ;
+
+    override val stringRepresentation: String
+        get() = modeState
 }

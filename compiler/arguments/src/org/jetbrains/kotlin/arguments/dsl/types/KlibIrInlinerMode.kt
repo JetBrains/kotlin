@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.KotlinKlibIrInlinerMode
 enum class KlibIrInlinerMode(
     val modeState: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
-) : WithKotlinReleaseVersionsMetadata {
+) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
     intraModule(
         modeState = "intra-module",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -40,4 +40,8 @@ enum class KlibIrInlinerMode(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         ),
     ),
+    ;
+
+    override val stringRepresentation: String
+        get() = modeState
 }

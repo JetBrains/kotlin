@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.arguments.dsl.types
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
+import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
 import org.jetbrains.kotlin.arguments.serialization.json.KotlinJvmTargetAsNameSerializer
 
 @Serializable(with = KotlinJvmTargetAsNameSerializer::class)
 enum class JvmTarget(
     val targetName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle
-) : WithKotlinReleaseVersionsMetadata {
+) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
     jvm1_6(
         targetName = "1.6",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -156,4 +158,7 @@ enum class JvmTarget(
             "${jvm1_8.targetName} and ${jvm_9.targetName}–${JvmTarget.entries.last().targetName}"
         internal val CURRENT_DEFAULT_VERSION = jvm1_8.targetName
     }
+
+    override val stringRepresentation: String
+        get() = targetName
 }

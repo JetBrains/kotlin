@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.KotlinVersionAsNameSeri
 enum class KotlinVersion(
     val versionName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
-) : WithKotlinReleaseVersionsMetadata {
+) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
     v1_0(
         versionName = "1.0",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -148,4 +148,8 @@ enum class KotlinVersion(
             introducedVersion = KotlinReleaseVersion.v2_2_20,
         )
     ),
+    ;
+
+    override val stringRepresentation: String
+        get() = versionName
 }
