@@ -5,86 +5,132 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_PROFILE
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.junit.jupiter.api.Assertions
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
-internal class ProfileCompilerCommandConversionTest : BaseCompilationTest() {
+internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<ProfileCompilerCommand>("Xprofile") {
 
-    @DisplayName("Test ProfileCompilerCommand is converted to a compiler argument correctly")
-    @DefaultStrategyAgnosticCompilationTest
-    fun testXprofileToArgumentString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    @DisplayName("ProfileCompilerCommand is converted to '-Xprofile' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testXprofileToArgumentString(toolchain: KotlinToolchains) {
         val profileCompilerCommand = ProfileCompilerCommand(
             profilerPath = workingDirectory.resolve("path/to/libasyncProfiler.so"),
             command = "event=cpu,interval=1ms,threads,start",
             outputDir = workingDirectory.resolve("/path/to/snapshots")
         )
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments[JvmCompilerArguments.Companion.X_PROFILE] = profileCompilerCommand
+            compilerArguments[X_PROFILE] = profileCompilerCommand
         }.build()
 
-        val valueString =
-            jvmOperation.compilerArguments.toArgumentStrings().first { it.startsWith("-Xprofile=") }.removePrefix("-Xprofile=")
-        val (profilerPath, command, outputDir) = valueString.split(File.pathSeparator)
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
 
-        Assertions.assertEquals(profileCompilerCommand.profilerPath, Paths.get(profilerPath))
-        Assertions.assertEquals(profileCompilerCommand.command, command)
-        Assertions.assertEquals(profileCompilerCommand.outputDir, Paths.get(outputDir))
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(profileCompilerCommand), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
     }
 
-    @DisplayName("Test that ProfileCompilerCommand is not set by default")
-    @DefaultStrategyAgnosticCompilationTest
-    fun testXprofileNotSetByDefault(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    @DisplayName("'-Xprofile' has the default value when ProfileCompilerCommand is not set")
+    @BtaVersionsOnlyCompilationTest
+    fun testXprofileNotSetByDefault(toolchain: KotlinToolchains) {
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).build()
 
-        val valueString =
-            jvmOperation.compilerArguments.toArgumentStrings().firstOrNull { it.startsWith("-Xprofile=") }
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
 
-        Assertions.assertEquals(null, valueString)
+        assertEquals(
+            expectedArgumentStringsFor(getDefaultValueString(toolchain.getCompilerVersion()), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
     }
 
-    @DisplayName("Test ProfileCompilerCommand is set and retrieved correctly")
-    @DefaultStrategyAgnosticCompilationTest
-    fun testXprofileGetWhenSet(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
-        val profilerPath = workingDirectory.resolve("path/to/libasyncProfiler.so")
-        val command = "event=cpu,interval=1ms,threads,start"
-        val outputDir = workingDirectory.resolve("path/to/snapshots")
-        val profileCompilerCommand = ProfileCompilerCommand(
-            profilerPath = profilerPath,
-            command = command,
-            outputDir = outputDir
+    @DisplayName("ProfileCompilerCommand can be set and retrieved")
+    @BtaVersionsOnlyCompilationTest
+    fun testXprofileGetWhenSet(toolchain: KotlinToolchains) {
+        val expectedProfileCommand = ProfileCompilerCommand(
+            profilerPath = workingDirectory.resolve("path/to/libasyncProfiler.so"),
+            command = "event=cpu,interval=1ms,threads,start",
+            outputDir = workingDirectory.resolve("path/to/snapshots")
         )
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments[JvmCompilerArguments.Companion.X_PROFILE] = profileCompilerCommand
+            compilerArguments[X_PROFILE] = expectedProfileCommand
         }.build()
 
-        val profileCommand = jvmOperation.compilerArguments[JvmCompilerArguments.Companion.X_PROFILE]
+        val actualProfileCommand = jvmOperation.compilerArguments[X_PROFILE]
 
-        Assertions.assertEquals(profilerPath, profileCommand?.profilerPath)
-        Assertions.assertEquals(command, profileCommand?.command)
-        Assertions.assertEquals(outputDir, profileCommand?.outputDir)
+        assertEquals(expectedProfileCommand.profilerPath, actualProfileCommand?.profilerPath)
+        assertEquals(expectedProfileCommand.command, actualProfileCommand?.command)
+        assertEquals(expectedProfileCommand.outputDir, actualProfileCommand?.outputDir)
     }
 
-    @DisplayName("Test ProfileCompilerCommand is retrieved correctly when it is not set")
-    @DefaultStrategyAgnosticCompilationTest
-    fun testXprofileGetWhenNull(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    @DisplayName("ProfileCompilerCommand has the default value when not set")
+    @BtaVersionsOnlyCompilationTest
+    fun testXprofileGetWhenNull(toolchain: KotlinToolchains) {
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).build()
 
-        val profileCommand = jvmOperation.compilerArguments[JvmCompilerArguments.Companion.X_PROFILE]
+        val profileCompilerCommand = jvmOperation.compilerArguments[X_PROFILE]
 
-        Assertions.assertEquals(null, profileCommand)
+        assertEquals(
+            getDefaultValueString(toolchain.getCompilerVersion()),
+            getValueString(profileCompilerCommand)
+        )
+    }
+
+    @DisplayName("Raw argument strings '-Xprofile=<value>' are converted to ProfileCompilerCommand")
+    @BtaVersionsOnlyCompilationTest
+    fun testRawArgumentsXprofileConversion(toolchain: KotlinToolchains) {
+        val expectedProfileCommand = ProfileCompilerCommand(
+            profilerPath = workingDirectory.resolve("path/to/libasyncProfiler.so"),
+            command = "event=cpu,interval=1ms,threads,start",
+            outputDir = workingDirectory.resolve("path/to/snapshots")
+        )
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+
+        operation.compilerArguments.applyArgumentStrings(
+            expectedArgumentStringsFor(
+                getValueString(expectedProfileCommand),
+                toolchain.getCompilerVersion()
+            )
+        )
+        val actualProfileCommand = operation.compilerArguments[X_PROFILE]
+
+        assertEquals(expectedProfileCommand.profilerPath, actualProfileCommand?.profilerPath)
+        assertEquals(expectedProfileCommand.command, actualProfileCommand?.command)
+        assertEquals(expectedProfileCommand.outputDir, actualProfileCommand?.outputDir)
+    }
+
+    @DisplayName("ProfileCompilerCommand has the default value when no raw arguments are applied")
+    @BtaVersionsOnlyCompilationTest
+    fun testNoRawArgumentsXprofile(toolchain: KotlinToolchains) {
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+
+        operation.compilerArguments.applyArgumentStrings(listOf())
+
+        assertEquals(
+            getDefaultValueString(toolchain.getCompilerVersion()),
+            getValueString(operation.compilerArguments[X_PROFILE])
+        )
+    }
+
+    override fun expectedArgumentStringsFor(value: String?, compilerVersion: String): List<String> {
+        if (value == null || value == getDefaultValueString(compilerVersion)) {
+            return emptyList()
+        }
+
+        return listOf("-$argumentName=$value")
+    }
+
+    override fun getValueString(argument: ProfileCompilerCommand?): String? {
+        if (argument == null) return null
+
+        return argument.profilerPath.toFile().absolutePath + File.pathSeparator + argument.command + File.pathSeparator + argument.outputDir.toFile().absolutePath
     }
 }
