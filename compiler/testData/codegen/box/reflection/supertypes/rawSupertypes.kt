@@ -114,7 +114,7 @@ fun box(): String {
     )
 
     assertEquals(
-        "[test.BImpl, test.B<(raw) kotlin.Number!, (raw) kotlin.Any!>, test.A<kotlin.Any!, kotlin.Number!>, kotlin.Any]",
+        "[test.BImpl, test.B<(raw) kotlin.Number!, (raw) kotlin.Any!>, test.A<(raw) kotlin.Any!, (raw) kotlin.Any!>, kotlin.Any]",
         TestB::class.allSupertypes.toString(),
     )
 
