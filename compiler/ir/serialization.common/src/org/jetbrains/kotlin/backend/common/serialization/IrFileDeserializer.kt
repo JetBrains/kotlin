@@ -250,32 +250,12 @@ class IrKlibBytesSource(private val ir: KlibIrComponent, private val fileIndex: 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::string)
 
-fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile, irInterner: IrInterningService): IrFile {
-    val fileEntry = deserializeFileEntry(fileEntry(fileProto), irInterner)
+fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile, fileEntryDeserializer: FileEntryDeserializer): IrFile {
+    val fileEntry = fileEntryDeserializer.fileEntry(this, fileProto)
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
     val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
     return IrFileImpl(fileEntry, symbol, fqName, module)
-}
-
-internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry, irInterner: IrInterningService): IrFileEntry {
-    val lineStartOffsets: IntArray
-    if (fileEntryProto.lineStartOffsetDeltaCount > 0) {
-        lineStartOffsets = IntArray(fileEntryProto.lineStartOffsetDeltaCount)
-        var offset = 0
-        for ((index, delta) in fileEntryProto.lineStartOffsetDeltaList.withIndex()) {
-            offset += delta
-            lineStartOffsets[index] = offset
-        }
-    } else {
-        lineStartOffsets = fileEntryProto.lineStartOffsetList.toIntArray()
-    }
-
-    return NaiveSourceBasedFileEntryImpl(
-        name = irInterner.string(deserializeFileEntryName(fileEntryProto)),
-        lineStartOffsets = lineStartOffsets,
-        firstRelevantLineIndex = fileEntryProto.firstRelevantLineIndex
-    )
 }
 
 fun IrLibraryFile.deserializeFileEntryName(fileEntryProto: ProtoFileEntry): String = when {
@@ -283,7 +263,6 @@ fun IrLibraryFile.deserializeFileEntryName(fileEntryProto: ProtoFileEntry): Stri
     fileEntryProto.hasNameOld() -> fileEntryProto.nameOld
     else -> error("Malformed KLIB: File entry has no name")
 }
-
 
 fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
     if (protoFile.hasFileEntryId())
