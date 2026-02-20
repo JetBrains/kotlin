@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
@@ -80,3 +81,5 @@ inline val FirFunction.hasBody: Boolean get() = body != null
 
 inline val FirPropertyAccessor.hasBody: Boolean get() = body != null
 
+val FirCallableDeclaration.isCompanionBlockMember: Boolean
+    get() = isStatic && containingClassForStaticMemberAttr != null
