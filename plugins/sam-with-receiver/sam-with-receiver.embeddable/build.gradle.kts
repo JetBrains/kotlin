@@ -12,9 +12,5 @@ publish {
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJarWithSourcesFromEmbedded(
-    project(":kotlin-sam-with-receiver-compiler-plugin").tasks.named<Jar>("sourcesJar")
-)
-javadocJarWithJavadocFromEmbedded(
-    project(":kotlin-sam-with-receiver-compiler-plugin").tasks.named<Jar>("javadocJar")
-)
+sourcesJarWithSourcesFromEmbedded(embeddedProjectSources(":kotlin-sam-with-receiver-compiler-plugin"))
+javadocJarWithJavadocFromEmbedded(embeddedProjectJavadoc(":kotlin-sam-with-receiver-compiler-plugin"))

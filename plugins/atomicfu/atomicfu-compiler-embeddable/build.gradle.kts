@@ -10,9 +10,5 @@ dependencies {
 publish()
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJarWithSourcesFromEmbedded(
-    project(":kotlin-atomicfu-compiler-plugin").tasks.named<Jar>("sourcesJar")
-)
-javadocJarWithJavadocFromEmbedded(
-    project(":kotlin-atomicfu-compiler-plugin").tasks.named<Jar>("javadocJar")
-)
+sourcesJarWithSourcesFromEmbedded(embeddedProjectSources(":kotlin-atomicfu-compiler-plugin"))
+javadocJarWithJavadocFromEmbedded(embeddedProjectJavadoc(":kotlin-atomicfu-compiler-plugin"))

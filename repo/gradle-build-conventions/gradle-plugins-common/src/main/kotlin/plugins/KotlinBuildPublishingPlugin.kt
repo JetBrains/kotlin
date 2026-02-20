@@ -197,10 +197,6 @@ fun Project.configureDefaultPublishing(
     tasks.register("install") {
         group = "publishing"
         dependsOn(tasks.named("publishToMavenLocal"))
-    }.also {
-        rootProject.tasks.named("mvnInstall").configure {
-            dependsOn(it)
-        }
     }
 }
 

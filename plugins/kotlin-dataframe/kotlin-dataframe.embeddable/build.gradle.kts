@@ -14,9 +14,5 @@ publish {
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJarWithSourcesFromEmbedded(
-    project(":kotlin-dataframe-compiler-plugin").tasks.named<Jar>("sourcesJar")
-)
-javadocJarWithJavadocFromEmbedded(
-    project(":kotlin-dataframe-compiler-plugin").tasks.named<Jar>("javadocJar")
-)
+sourcesJarWithSourcesFromEmbedded(embeddedProjectSources(":kotlin-dataframe-compiler-plugin"))
+javadocJarWithJavadocFromEmbedded(embeddedProjectJavadoc(":kotlin-dataframe-compiler-plugin"))

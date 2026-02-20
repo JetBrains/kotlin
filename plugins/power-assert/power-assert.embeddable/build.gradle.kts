@@ -13,9 +13,5 @@ publish {
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJarWithSourcesFromEmbedded(
-    project(":kotlin-power-assert-compiler-plugin").tasks.named<Jar>("sourcesJar")
-)
-javadocJarWithJavadocFromEmbedded(
-    project(":kotlin-power-assert-compiler-plugin").tasks.named<Jar>("javadocJar")
-)
+sourcesJarWithSourcesFromEmbedded(embeddedProjectSources(":kotlin-power-assert-compiler-plugin"))
+javadocJarWithJavadocFromEmbedded(embeddedProjectJavadoc(":kotlin-power-assert-compiler-plugin"))

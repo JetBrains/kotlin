@@ -1121,6 +1121,18 @@ gradle.projectsEvaluated {
         }
     }
 
+    // --- mvnInstall aggregation (Step 6f) ---
+    def rootMvnInstall = root.tasks.named("mvnInstall")
+    root.allprojects.each { p ->
+        if (p != root) {
+            p.tasks.configureEach { t ->
+                if (t.name == "install") {
+                    rootMvnInstall.configure { dependsOn(t) }
+                }
+            }
+        }
+    }
+
     // --- resolveDependenciesInAllProjects aggregation (Step 7) ---
     def rootResolveDeps = root.tasks.named("resolveDependenciesInAllProjects")
     root.allprojects.each { p ->

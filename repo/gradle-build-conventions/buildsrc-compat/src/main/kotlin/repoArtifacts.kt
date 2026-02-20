@@ -4,11 +4,15 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Bundling
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
@@ -264,6 +268,80 @@ fun Project.javadocJarWithJavadocFromEmbedded(
     }
 
     return javadocJarTask
+}
+
+/**
+ * Variant of [sourcesJarWithSourcesFromEmbedded] that accepts a [FileCollection] (typically a resolvable [Configuration])
+ * instead of cross-project task references, to support Gradle project isolation.
+ */
+fun Project.sourcesJarWithSourcesFromEmbedded(
+    embeddedSourcesJars: FileCollection,
+    body: Jar.() -> Unit = {},
+): TaskProvider<Jar> {
+    val sourcesJarTask = sourcesJar(body)
+
+    sourcesJarTask.configure {
+        val archiveOperations = serviceOf<ArchiveOperations>()
+        from(provider { embeddedSourcesJars.files.map { archiveOperations.zipTree(it) } })
+    }
+
+    return sourcesJarTask
+}
+
+/**
+ * Variant of [javadocJarWithJavadocFromEmbedded] that accepts a [FileCollection] (typically a resolvable [Configuration])
+ * instead of cross-project task references, to support Gradle project isolation.
+ */
+fun Project.javadocJarWithJavadocFromEmbedded(
+    embeddedJavadocJars: FileCollection,
+    body: Jar.() -> Unit = {},
+): TaskProvider<Jar> {
+    val javadocJarTask = javadocJar(body)
+
+    javadocJarTask.configure {
+        val archiveOperations = serviceOf<ArchiveOperations>()
+        from(provider { embeddedJavadocJars.files.map { archiveOperations.zipTree(it) } })
+    }
+
+    return javadocJarTask
+}
+
+/**
+ * Creates a resolvable configuration that resolves sources jar artifacts from the given project.
+ * Use with [sourcesJarWithSourcesFromEmbedded] to avoid cross-project task access.
+ */
+fun Project.embeddedProjectSources(projectPath: String): FileCollection {
+    val config = configurations.create("embeddedSources") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
+    dependencies.add(config.name, project(projectPath))
+    return config
+}
+
+/**
+ * Creates a resolvable configuration that resolves javadoc jar artifacts from the given project.
+ * Use with [javadocJarWithJavadocFromEmbedded] to avoid cross-project task access.
+ */
+fun Project.embeddedProjectJavadoc(projectPath: String): FileCollection {
+    val config = configurations.create("embeddedJavadoc") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.JAVADOC))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
+    dependencies.add(config.name, project(projectPath))
+    return config
 }
 
 
