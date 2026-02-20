@@ -10,12 +10,10 @@ import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.types.*
+import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import kotlin.math.max
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.KType
 
 private const val MAX_SUPPORTED_VERSIONS_BACK = 3
 
@@ -74,29 +72,15 @@ internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().rep
     }
 }
 
-// TODO: workaround for now, but we should expose these in the arguments module in a way that doesn't need listing enums and their accessors explicitly here
-internal val enumNameAccessors = mutableMapOf(
-    JvmTarget::class to JvmTarget::targetName,
-    ExplicitApiMode::class to ExplicitApiMode::modeName,
-    KotlinVersion::class to KotlinVersion::versionName,
-    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState,
-    HeaderMode::class to HeaderMode::modeName
-)
-
 internal val customTypeAccessors = mutableSetOf(ProfileCompilerCommand::class)
 
 internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)
 internal fun KClass<*>.toBtaCustomClassName(): ClassName = ClassName(API_TYPES_PACKAGE, simpleName!!)
 
-internal val KType.isCompilerEnum: Boolean get() = classifier is KClass<*> && classifier in enumNameAccessors
-internal val KType.isCustomType: Boolean get() = classifier is KClass<*> && classifier in customTypeAccessors
+internal val KClass<*>?.isCustomType: Boolean get() = this in customTypeAccessors
 
-internal val TypeName.isCompilerEnum: Boolean get() = (this as? ClassName)?.copy(nullable = false) in enumNameAccessors.map { it.key.toBtaEnumClassName() }
+internal val TypeName.isGeneratedEnum: Boolean get() = (this as? ClassName)?.packageName?.startsWith(API_ENUMS_PACKAGE) ?: false
 internal val TypeName.isCustomType: Boolean get() = (this as? ClassName)?.copy(nullable = false) in customTypeAccessors.map { it.toBtaCustomClassName() }
-
-@Suppress("UNCHECKED_CAST")
-internal fun KClass<*>.accessor(): KProperty1<Any, String> = enumNameAccessors[this] as? KProperty1<Any, String>
-    ?: error("Unknown enum in compiler arguments. Must be one of: ${enumNameAccessors.keys.joinToString()}.")
 
 internal fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
     .appendLine("the README.md file").appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX).appendLine()

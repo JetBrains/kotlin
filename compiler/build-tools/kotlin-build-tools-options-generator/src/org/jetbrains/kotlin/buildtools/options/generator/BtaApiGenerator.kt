@@ -9,12 +9,13 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.types.WithStringRepresentation
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
+import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.primaryConstructor
 
 internal class BtaApiGenerator(
@@ -91,8 +92,13 @@ internal class BtaApiGenerator(
              * Marks enum to be generated and returns its name
              */
             fun generatedEnumType(type: KClass<*>): ClassName {
+                require(WithStringRepresentation::class in type.allSuperclasses) {
+                    "Compiler enum ${type.qualifiedName} must implement ${WithStringRepresentation::class.qualifiedName} to be used with BTA."
+                }
                 val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
-                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, type.accessor())
+                @Suppress("UNCHECKED_CAST")
+                enumConstants as List<WithStringRepresentation>
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants)
                 if (type !in enumsExperimental && experimental) {
                     enumsExperimental[type] = true
                 } else if (type in enumsExperimental && !experimental) {
@@ -137,14 +143,12 @@ internal class BtaApiGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val argumentType = argument.valueType.kType
-
+                    val type = argumentType.classifier as? KClass<*> ?: error("Type is not a KClass: $argumentType")
                     when {
-                        argumentType.isCompilerEnum -> {
-                            val type = argumentType.classifier as KClass<*>
+                        type.java.isEnum -> {
                             generatedEnumType(type)
                         }
-                        argumentType.isCustomType -> {
-                            val type = argumentType.classifier as KClass<*>
+                        type.isCustomType -> {
                             generatedCustomType(type)
                         }
                         else -> {
@@ -215,10 +219,9 @@ internal class BtaApiGenerator(
         }
     }
 
-    fun generateEnumTypeBuilder(
-        sourceEnum: Collection<Enum<*>>,
-        nameAccessor: KProperty1<Any, String>,
-    ): TypeSpec.Builder {
+    fun <T> generateEnumTypeBuilder(
+        sourceEnum: Collection<T>,
+    ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation{
         val className = sourceEnum.first()::class.toBtaEnumClassName()
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
@@ -226,6 +229,7 @@ internal class BtaApiGenerator(
             }
             addKdoc(KDOC_SINCE_2_3_0)
             primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
+            val nameAccessor = WithStringRepresentation::stringRepresentation
             sourceEnum.forEach {
                 addEnumConstant(
                     it.name.uppercase(),

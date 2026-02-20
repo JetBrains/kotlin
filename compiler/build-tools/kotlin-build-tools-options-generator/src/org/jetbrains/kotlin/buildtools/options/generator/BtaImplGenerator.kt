@@ -168,12 +168,13 @@ internal class BtaImplGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val type = argument.valueType.kType
+                    val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
                     when {
-                        type.isCompilerEnum -> {
+                        classifier.java.isEnum -> {
                             val classifier = type.classifier as KClass<*>
                             classifier.toBtaEnumClassName()
                         }
-                        type.isCustomType -> {
+                        classifier.isCustomType -> {
                             val classifier = type.classifier as KClass<*>
                             classifier.toBtaCustomClassName()
                         }
@@ -371,7 +372,7 @@ internal class BtaImplGenerator(
     ): CodeBlock = CodeBlock.builder().apply {
         add("get(%M)", member)
         when {
-            type.isCompilerEnum -> {
+            type.isGeneratedEnum -> {
                 add(maybeGetNullabilitySign(argument) + ".stringValue")
             }
             argument.valueType.origin is IntType -> {
@@ -440,7 +441,7 @@ internal class BtaImplGenerator(
         }
 
         when {
-            type.isCompilerEnum -> {
+            type.isGeneratedEnum -> {
                 add(maybeGetNullabilitySign(argument))
                 add(
                     $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
