@@ -51,9 +51,7 @@ class ArgsUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgsUpda
             val replacement: Node = if (normal != node) {
                 normal
             } else {
-                val uniq = session.gvn(normal)
-                newValue.addUse(uniq)
-                uniq
+                session.gvn(normal)
             }
 
             if (replacement != node) {
@@ -62,6 +60,8 @@ class ArgsUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgsUpda
                     it.control = normal as Controlling
                 }
                 node.replaceValueUsesAndKill(replacement)
+            } else {
+                newValue.addUse(replacement)
             }
         }
     }
@@ -83,6 +83,7 @@ fun <T> Session.buildInitialIR(
         builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
+            verify()
         }
     }
 }
@@ -93,6 +94,7 @@ fun <T> Session.modifyIR(
     return context(nodeBuilder, argsUpdater, NoControlFlowBuilder) {
         builderAction().also {
             eliminateDeadFoam()
+            verify()
         }
     }
 }
@@ -105,6 +107,7 @@ fun <T> Session.modifyControlFlow(
         builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
+            verify()
         }
     }
 }
