@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
+import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -100,6 +101,12 @@ abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) :
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
 
+        forTestsMatching("compiler/testData/diagnostics/nativeTests/specialBackendChecks/*") {
+            defaultDirectives {
+                // it prevents compiler crash after an error diagnostic from SpecialBackendChecksTraversal by returning null from `processErrorFromCliPhase()`
+                +CHECK_COMPILER_OUTPUT
+            }
+        }
         globalDefaults {
             targetBackend = TargetBackend.NATIVE
         }
