@@ -19,8 +19,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import java.io.File
 import java.net.URI
 
-private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
-private val Project.isNightlyIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
+private val intellijSdkVersionRegex = Regex("""^\s*intellijSdk\s*=\s*"([^"]+)"\s*$""")
+
+private val Project.intellijSdkVersion: String
+    get() = rootDir.resolve("gradle/libs.versions.toml")
+        .useLines { lines ->
+            lines.firstNotNullOf { intellijSdkVersionRegex.matchEntire(it)?.groupValues?.get(1) }
+        }
+
+private val Project.isEAPIntellij get() = intellijSdkVersion.contains("-EAP-")
+private val Project.isNightlyIntellij get() = intellijSdkVersion.endsWith("SNAPSHOT") && !isEAPIntellij
 
 val Project.intellijRepo
     get() =
