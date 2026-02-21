@@ -1070,111 +1070,122 @@ include 'compiler:test-security-manager'
 
 // =============================================================================
 // Cross-project task wiring for project isolation
-// Settings scripts are exempt from project isolation restrictions, so all
-// cross-project dependsOn wiring is centralized here.
+// Uses gradle.lifecycle.afterProject to detect per-project state (own-project
+// access only), then wires root task dependencies in projectsEvaluated using
+// string-based task paths to avoid cross-project isolation violations.
 // =============================================================================
-gradle.projectsEvaluated {
-    def root = gradle.rootProject
 
-    // Projects without common-configuration don't have per-project lifecycle tasks
-    def hasCommonConfiguration = { Project p -> !p.path.startsWith(":kotlin-ide.") }
+// Projects without common-configuration don't have per-project lifecycle tasks
+def hasCommonConfiguration = { String path -> !path.startsWith(":kotlin-ide.") }
+
+def excludedNativePrefixes = [":native", ":libraries:tools:analysis-api-based-klib-reader:testProject", ":plugins:plugin-sandbox:plugin-annotations"]
+def isNativeEnabled = buildProperties.isKotlinNativeEnabled.get()
+def isTeamcityBuild = buildProperties.isTeamcityBuild.get()
+
+// Support -Porg.jetbrains.kotlin.testDataManager.options.module filter
+def requestedModulesStr = providers.gradleProperty("org.jetbrains.kotlin.testDataManager.options.module").getOrNull()
+def requestedModules = requestedModulesStr != null
+        ? requestedModulesStr.toString().split(",").collect { it.trim() }.findAll { !it.isEmpty() }.toSet()
+        : null
+
+// Data collected per-project in afterProject, consumed in projectsEvaluated
+def compileAllPaths = []
+def dependenciesAllPaths = []
+def publishPaths = []
+def installJpsPaths = []
+def mvnInstallPaths = []
+def resolveDepsPaths = []
+def resolveJsPaths = []
+def resolveToolchainsPaths = []
+def testDataModulePaths = []
+
+gradle.lifecycle.afterProject { p ->
+    if (p == p.rootProject) return
+
+    def path = p.path
 
     // --- compileAll aggregation (Step 6a) ---
-    def excludedNativePrefixes = [":native", ":libraries:tools:analysis-api-based-klib-reader:testProject", ":plugins:plugin-sandbox:plugin-annotations"]
-    def isNativeEnabled = buildProperties.isKotlinNativeEnabled.get()
-    def rootCompileAll = root.tasks.named("compileAll")
-    root.allprojects.each { p ->
-        if (p != root && hasCommonConfiguration(p)) {
-            if (isNativeEnabled || excludedNativePrefixes.every { prefix -> !p.path.startsWith(prefix) }) {
-                rootCompileAll.configure { dependsOn("${p.path}:compileAll") }
-            }
+    if (hasCommonConfiguration(path)) {
+        if (isNativeEnabled || excludedNativePrefixes.every { prefix -> !path.startsWith(prefix) }) {
+            compileAllPaths.add(path)
         }
+
+        // --- resolve* aggregation (Step 7) ---
+        resolveDepsPaths.add(path)
+        resolveJsPaths.add(path)
+        resolveToolchainsPaths.add(path)
     }
 
     // --- dependenciesAll aggregation (Step 6c) ---
-    def rootDepsAll = root.tasks.named("dependenciesAll")
-    root.allprojects.each { p ->
-        if (p != root) {
-            rootDepsAll.configure { dependsOn("${p.path}:dependencies") }
+    dependenciesAllPaths.add(path)
+
+    // --- publish, installJps, mvnInstall aggregation (Steps 6d, 6e, 6f) ---
+    def taskNames = p.tasks.names
+    if (!isTeamcityBuild && taskNames.contains("publish")) {
+        publishPaths.add(path)
+    }
+    if (taskNames.contains("publishToMavenLocal")) {
+        installJpsPaths.add(path)
+    }
+    if (taskNames.contains("install")) {
+        mvnInstallPaths.add(path)
+    }
+
+    // --- manageTestDataGlobally aggregation (Step 8) - collect data ---
+    if (p.plugins.hasPlugin("test-data-manager")) {
+        if (requestedModules == null || requestedModules.contains(path)) {
+            testDataModulePaths.add(path)
+        }
+    }
+}
+
+// Wire root aggregation tasks using collected data and string-based task paths.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+
+    // --- compileAll (Step 6a) ---
+    root.tasks.named("compileAll").configure {
+        compileAllPaths.each { dependsOn("${it}:compileAll") }
+    }
+
+    // --- dependenciesAll (Step 6c) ---
+    root.tasks.named("dependenciesAll").configure {
+        dependenciesAllPaths.each { dependsOn("${it}:dependencies") }
+    }
+
+    // --- publish (Step 6d) ---
+    if (!isTeamcityBuild) {
+        root.tasks.named("publish").configure {
+            publishPaths.each { dependsOn("${it}:publish") }
         }
     }
 
-    // --- publish aggregation (Step 6d) ---
-    if (!buildProperties.isTeamcityBuild.get()) {
-        def rootPublish = root.tasks.named("publish")
-        root.allprojects.each { p ->
-            if (p != root) {
-                p.tasks.configureEach { t ->
-                    if (t.name == "publish") {
-                        rootPublish.configure { dependsOn(t) }
-                    }
-                }
-            }
-        }
+    // --- installJps (Step 6e) ---
+    root.tasks.named("installJps").configure {
+        installJpsPaths.each { dependsOn("${it}:publishToMavenLocal") }
     }
 
-    // --- installJps aggregation (Step 6e) ---
-    def rootInstallJps = root.tasks.named("installJps")
-    root.allprojects.each { p ->
-        p.plugins.withType(org.gradle.api.publish.maven.plugins.MavenPublishPlugin) {
-            rootInstallJps.configure { dependsOn(p.tasks.named("publishToMavenLocal")) }
-        }
+    // --- mvnInstall (Step 6f) ---
+    root.tasks.named("mvnInstall").configure {
+        mvnInstallPaths.each { dependsOn("${it}:install") }
     }
 
-    // --- mvnInstall aggregation (Step 6f) ---
-    def rootMvnInstall = root.tasks.named("mvnInstall")
-    root.allprojects.each { p ->
-        if (p != root) {
-            p.tasks.configureEach { t ->
-                if (t.name == "install") {
-                    rootMvnInstall.configure { dependsOn(t) }
-                }
-            }
-        }
+    // --- resolveDependenciesInAllProjects (Step 7) ---
+    root.tasks.named("resolveDependenciesInAllProjects").configure {
+        resolveDepsPaths.each { dependsOn("${it}:resolveProjectDependencies") }
     }
 
-    // --- resolveDependenciesInAllProjects aggregation (Step 7) ---
-    def rootResolveDeps = root.tasks.named("resolveDependenciesInAllProjects")
-    root.allprojects.each { p ->
-        if (hasCommonConfiguration(p)) {
-            rootResolveDeps.configure { dependsOn("${p.path}:resolveProjectDependencies") }
-        }
+    // --- resolveJsTools (Step 7) ---
+    root.tasks.named("resolveJsTools").configure {
+        resolveJsPaths.each { dependsOn("${it}:resolveProjectJsTools") }
     }
 
-    // --- resolveJsTools aggregation (Step 7) ---
-    def rootResolveJs = root.tasks.named("resolveJsTools")
-    root.allprojects.each { p ->
-        if (hasCommonConfiguration(p)) {
-            rootResolveJs.configure { dependsOn("${p.path}:resolveProjectJsTools") }
-        }
+    // --- resolveJavaToolchainsInAllProjects (Step 7) ---
+    root.tasks.named("resolveJavaToolchainsInAllProjects").configure {
+        resolveToolchainsPaths.each { dependsOn("${it}:resolveProjectJavaToolchains") }
     }
 
-    // --- resolveJavaToolchainsInAllProjects aggregation (Step 7) ---
-    def rootResolveToolchains = root.tasks.named("resolveJavaToolchainsInAllProjects")
-    root.allprojects.each { p ->
-        if (hasCommonConfiguration(p)) {
-            rootResolveToolchains.configure { dependsOn("${p.path}:resolveProjectJavaToolchains") }
-        }
-    }
-
-    // --- manageTestDataGlobally aggregation (Step 8) ---
-    def rootTestDataTask = root.tasks.named("manageTestDataGlobally")
-
-    // Support -Porg.jetbrains.kotlin.testDataManager.options.module filter
-    def requestedModulesStr = root.findProperty("org.jetbrains.kotlin.testDataManager.options.module")
-    def requestedModules = requestedModulesStr != null
-            ? requestedModulesStr.toString().split(",").collect { it.trim() }.findAll { !it.isEmpty() }.toSet()
-            : null
-
-    def testDataModulePaths = []
-    root.allprojects.each { p ->
-        if (p != root && p.plugins.hasPlugin("test-data-manager")) {
-            if (requestedModules == null || requestedModules.contains(p.path)) {
-                testDataModulePaths.add(p.path)
-            }
-        }
-    }
-
+    // --- manageTestDataGlobally finalization (Step 8) ---
     if (requestedModules != null) {
         def found = testDataModulePaths.toSet()
         def notFound = requestedModules.findAll { !found.contains(it) }
@@ -1184,7 +1195,7 @@ gradle.projectsEvaluated {
     }
 
     testDataModulePaths.sort()
-    rootTestDataTask.configure {
+    root.tasks.named("manageTestDataGlobally").configure {
         testDataModulePaths.each { modulePath ->
             dependsOn("${modulePath}:manageTestData")
         }
