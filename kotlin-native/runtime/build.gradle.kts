@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistributi
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
-val kotlinVersion: String by rootProject.extra
+val kotlinVersion: String by extra
 
 plugins {
     id("root-config")

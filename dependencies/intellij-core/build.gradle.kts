@@ -3,7 +3,7 @@ plugins {
     `java-library`
 }
 
-val intellijVersion = rootProject.extra["versions.intellijSdk"]
+val intellijVersion = libs.versions.intellijSdk.get()
 
 //https://jetbrains.team/p/ij/repositories/intellij/files/aea53cfc5d27b15246ab7b7a0b5679d0d8cf1875/community/build/groovy/org/jetbrains/intellij/build/IntelliJCoreArtifactsBuilder.groovy?tab=source&line=18
 //CORE_MODULES = [

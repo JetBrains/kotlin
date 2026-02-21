@@ -7,8 +7,8 @@ plugins {
 }
 val buildVersionFilePath = layout.buildDirectory.file("build.txt")
 val buildVersion by configurations.creating
-val buildNumber: String by rootProject.extra
-val kotlinVersion: String by rootProject.extra
+val buildNumber: String by extra
+val kotlinVersion: String by extra
 
 val writeBuildNumber by tasks.registering {
     val versionFile = buildVersionFilePath

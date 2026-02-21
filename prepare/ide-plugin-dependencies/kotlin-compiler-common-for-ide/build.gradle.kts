@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm")
 }
 
-val commonCompilerModules: Array<String> by rootProject.extra
+val commonCompilerModules = ProjectModuleLists.commonCompilerModules
 
 val excludedCompilerModules = listOf(
     // Sic! Includes ":compiler:cli-base" as there are many non-CLI clients depending on compiler options

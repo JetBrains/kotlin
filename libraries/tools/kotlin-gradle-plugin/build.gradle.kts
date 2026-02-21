@@ -678,6 +678,8 @@ tasks.named("check") {
     dependsOn("lincheckTest")
 }
 
+testsJarToBeUsedAlongWithFixtures()
+
 fun avoidPublishingTestFixtures() {
     val javaComponent = components["java"] as AdhocComponentWithVariants
     javaComponent.withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }

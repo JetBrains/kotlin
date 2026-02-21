@@ -38,8 +38,8 @@ application {
     mainClass.set("org.jetbrains.kotlin.ide.plugin.dependencies.validator.MainKt")
 }
 
-val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
+val projectsUsedInIntelliJKotlinPlugin = ProjectModuleLists.projectsUsedInIntelliJKotlinPlugin
+val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin = providers.gradleProperty("kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin").get()
 
 tasks.withType<JavaExec> {
     notCompatibleWithConfigurationCache("Uses project in task action")

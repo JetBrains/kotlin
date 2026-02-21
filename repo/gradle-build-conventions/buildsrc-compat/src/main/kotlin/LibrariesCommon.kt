@@ -86,11 +86,11 @@ fun Project.manifestAttributes(
     manifest.attributes(
         "Implementation-Vendor" to "JetBrains",
         "Implementation-Title" to project.extensions.getByType<BasePluginExtension>().archivesName,
-        "Implementation-Version" to project.rootProject.extra["buildNumber"] as String
+        "Implementation-Version" to project.extra["buildNumber"] as String
     )
 
     if (component != null) {
-        val kotlinLanguageVersion: String by rootProject.extra
+        val kotlinLanguageVersion = providers.gradleProperty("kotlinLanguageVersion").get()
         manifest.attributes(
             "Kotlin-Runtime-Component" to component,
             "Kotlin-Version" to kotlinLanguageVersion

@@ -30,6 +30,8 @@ val buildNumber: String = providers.gradleProperty("build.number").orElse(provid
 val kotlinVersion: String = providers.gradleProperty("deployVersion").orNull?.let { deploySnapshotStr ->
     if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
 } ?: buildNumber
+extra["buildNumber"] = buildNumber
+extra["kotlinVersion"] = kotlinVersion
 group = "org.jetbrains.kotlin"
 version = kotlinVersion
 

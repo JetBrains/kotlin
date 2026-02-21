@@ -23,7 +23,7 @@ fun Jar.setupPublicJar(
     baseName: Provider<String>,
     classifier: Provider<String> = project.provider { "" }
 ) {
-    val buildNumber = project.rootProject.extra["buildNumber"] as String
+    val buildNumber = project.extra["buildNumber"] as String
     this.archiveBaseName.set(baseName)
     this.archiveClassifier.set(classifier)
     manifest.attributes.apply {

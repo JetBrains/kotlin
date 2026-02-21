@@ -164,10 +164,10 @@ fun Project.configureDefaultPublishing(
                 val deployRepoUrl: String? = (project.providers.gradleProperty("kotlin.build.deploy-url").orNull
                     ?: project.providers.gradleProperty("deploy-url").orNull)?.takeIf { it.isNotBlank() }
                     ?: project.providers.gradleProperty("kotlin.build.deploy-path").orNull?.takeIf { it.isNotBlank() }
-                        ?.let { "${project.rootProject.layout.projectDirectory.dir(it).asFile.toURI()}" }
+                        ?.let { "${project.rootProject.isolated.projectDirectory.dir(it).asFile.toURI()}" }
 
                 val repoUrl: String by extra(
-                    (deployRepoUrl ?: "${project.rootProject.layout.buildDirectory.dir("repo").get().asFile.toURI()}")
+                    (deployRepoUrl ?: "${project.rootProject.isolated.projectDirectory.dir("build").dir("repo").asFile.toURI()}")
                 )
 
                 val username: String? by extra(

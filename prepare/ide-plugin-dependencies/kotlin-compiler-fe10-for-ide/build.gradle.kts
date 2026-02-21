@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm")
 }
 
-val fe10CompilerModules: Array<String> by rootProject.extra
+val fe10CompilerModules = ProjectModuleLists.fe10CompilerModules
 
 val excludedCompilerModules = listOf(
     ":compiler:javac-wrapper",

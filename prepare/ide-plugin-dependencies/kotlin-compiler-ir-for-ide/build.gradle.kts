@@ -3,6 +3,6 @@ plugins {
     kotlin("jvm")
 }
 
-val irCompilerModulesForIDE: Array<String> by rootProject.extra
+val irCompilerModulesForIDE = ProjectModuleLists.irCompilerModulesForIDE
 
 publishJarsForIde(irCompilerModulesForIDE.asList())
