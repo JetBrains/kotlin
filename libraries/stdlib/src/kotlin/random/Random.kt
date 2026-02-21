@@ -176,6 +176,8 @@ public abstract class Random {
      *
      * Generates a `Double` random value uniformly distributed between 0 (inclusive) and [until] (exclusive).
      *
+     * [until] must be a fininte number otherwise the behavior is unspecified.
+     *
      * @throws IllegalArgumentException if [until] is negative or zero.
      *
      * @sample samples.random.Randoms.nextDoubleFromUntil
@@ -187,7 +189,7 @@ public abstract class Random {
      *
      * Generates a `Double` random value uniformly distributed between the specified [from] (inclusive) and [until] (exclusive) bounds.
      *
-     * [from] and [until] must be finite otherwise the behavior is unspecified.
+     * [from] and [until] must be finite numbers otherwise the behavior is unspecified.
      *
      * @throws IllegalArgumentException if [from] is greater than or equal to [until].
      *
