@@ -101,9 +101,6 @@ internal fun Project.createGeneralTestTask(
     }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
-    if (shouldInstrument) {
-        evaluationDependsOn(":test-instrumenter")
-    }
     return getOrCreateTask<Test>(taskName) {
         if (taskName != "test") {
             classpath = sourceSets.getByName("test").runtimeClasspath
