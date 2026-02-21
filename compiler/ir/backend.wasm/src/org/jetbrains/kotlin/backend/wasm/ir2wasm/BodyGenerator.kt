@@ -1452,11 +1452,11 @@ class BodyGenerator(
 
         val actualClassErased = actualType.getRuntimeClass(irBuiltIns)
         val expectedTypeErased =
-            if (backendContext.inlineClassesUtils.isClassInlineLike(expectedClassErased))
+            if (!expectedType.type.isNullable() && backendContext.inlineClassesUtils.isClassInlineLike(expectedClassErased))
                 backendContext.inlineClassesUtils.getInlineClassUnderlyingType(expectedClassErased)
             else expectedClassErased.defaultType
         val actualTypeErased =
-            if (backendContext.inlineClassesUtils.isClassInlineLike(actualClassErased))
+            if (!actualType.type.isNullable() && backendContext.inlineClassesUtils.isClassInlineLike(actualClassErased))
                 backendContext.inlineClassesUtils.getInlineClassUnderlyingType(actualClassErased)
             else actualClassErased.defaultType
 
