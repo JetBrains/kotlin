@@ -1,6 +1,6 @@
 // ISSUE: KT-83652, KT-84154
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
 
 // FILE: part1/part2/GenericJava.java
 
@@ -80,15 +80,15 @@ class WithInner {
 
 fun testJavaCallableReferences() {
     // for reference:
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2.GenericJava<!>::S
+    part1.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!>::S
     part1.part2.GenericJava<Int>::S
     part1.part2.GenericJava<Int>::M
 
     // generic:
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.GenericJava<!>::S
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.GenericJava<!>::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.GenericJava<!>::S
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.GenericJava<!>::M
+    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!>::S
+    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!>::M
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!><!>::S
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!><!>::M
     part1<Int>.part2.GenericJava<Int>::S
     part1<Int>.part2.GenericJava<Int>::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<Int><!>::S
@@ -136,10 +136,10 @@ fun testEnums() {
 }
 
 fun testKotlinCallableReferences() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.Generic<!>::M
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.Generic<!>::S
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.Generic<!>::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.Generic<!>::S
+    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!>::M
+    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!>::S
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!><!>::M
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!><!>::S
     part1<Int>.part2.Generic<Int>::M
     part1<Int>.part2.Generic<Int>::<!UNRESOLVED_REFERENCE!>S<!>
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<Int><!>::M

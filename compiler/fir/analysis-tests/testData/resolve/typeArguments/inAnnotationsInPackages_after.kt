@@ -1,6 +1,6 @@
 // ISSUE: KT-84167
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25
 // DISABLE_NEXT_PHASE_SUGGESTION
 
 // FILE: part1/part2/part3/tests.kt

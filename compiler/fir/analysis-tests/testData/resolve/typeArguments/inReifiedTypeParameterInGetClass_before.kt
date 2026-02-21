@@ -1,7 +1,6 @@
 // ISSUE: KT-84380
-// RUN_PIPELINE_TILL: FRONTEND
-// DISABLE_NEXT_PHASE_SUGGESTION
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidUselessTypeArgumentsIn25
 
 inline fun <reified R> test() {
     val p1 = R::class

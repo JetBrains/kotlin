@@ -1,6 +1,6 @@
 // ISSUE: KT-84380
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: -ForbidUselessTypeArgumentsIn25
 
 class C
 object O

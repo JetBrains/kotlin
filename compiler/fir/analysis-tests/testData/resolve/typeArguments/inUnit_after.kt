@@ -1,6 +1,6 @@
 // ISSUE: KT-84280, KT-84281
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25, +ProperSupportOfInnerClassesInCallableReferenceLHS
 
 object MyUnit
 
