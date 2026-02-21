@@ -134,9 +134,9 @@ private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, Captured
         if (this is FirQualifiedAccessExpression) {
             val symbol = this.calleeReference.toResolvedVariableSymbol() ?: return
             val hasWrites = isHasWrites(this, data, symbol as? FirPropertySymbol ?: return)
-            if (hasWrites || (data.currentWrite != null && data.currentWrite == this)) {
-                checkCapturedVariable(symbol, data, this.source)
-            }
+//            if (hasWrites || (data.currentWrite != null && data.currentWrite == this)) {
+            checkCapturedVariable(symbol, data, this.source)
+//            }
             val receiver = this.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
             receiver?.checkExpressionCapturedVariable(data)
         }
