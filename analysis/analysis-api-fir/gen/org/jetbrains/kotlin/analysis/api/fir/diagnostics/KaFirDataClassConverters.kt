@@ -752,6 +752,13 @@ private fun KaDiagnosticConverterBuilder.addConversions10() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions11() {
+    add(FirErrors.CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING) { firDiagnostic ->
+        ConflictingProjectionInCallableReferenceWarningImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS_WARNING) { firDiagnostic ->
         ExpressionOfNullableTypeInClassLiteralLhsWarningImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

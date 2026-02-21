@@ -15,10 +15,10 @@ class B<out T> {
 }
 
 fun test() {
-    A<out String>::foo
-    A<in String>::foo
-    B<out String>::foo
-    B<in String>::foo
+    A<<!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>out<!> String>::foo
+    A<<!REDUNDANT_PROJECTION!>in<!> String>::foo
+    B<<!REDUNDANT_PROJECTION!>out<!> String>::foo
+    B<<!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>in<!> String>::foo
 
     A<*>::foo
     B<*>::foo
@@ -42,13 +42,13 @@ class B<out T> {
 typealias TB<X> = B<X>
 
 fun test() {
-    TA<in String>::foo
-    TA<out String>::foo
+    TA<<!REDUNDANT_PROJECTION!>in<!> String>::foo
+    TA<<!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>out<!> String>::foo
     TA<String>::foo
     TA<*>::foo
 
-    TB<in String>::foo
-    TB<out String>::foo
+    TB<<!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>in<!> String>::foo
+    TB<<!REDUNDANT_PROJECTION!>out<!> String>::foo
     TB<String>::foo
     TB<*>::foo
 }
@@ -86,9 +86,9 @@ class A<in T, out S> {
 }
 
 fun test() {
-    A<in String, out Int>::foo
-    A<out String, in Int>::foo
-    A<in String, in Int>::foo
+    A<<!REDUNDANT_PROJECTION!>in<!> String, <!REDUNDANT_PROJECTION!>out<!> Int>::foo
+    A<<!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>out<!> String, <!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>in<!> Int>::foo
+    A<<!REDUNDANT_PROJECTION!>in<!> String, <!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>in<!> Int>::foo
 }
 
 // FILE: inner/local/file5.kt
@@ -105,8 +105,8 @@ fun <X> test() {
             fun foo() { }
         }
     }
-    A<in String>.B<String>::foo
-    A<out String>.B<String>::foo
+    A<<!REDUNDANT_PROJECTION!>in<!> String>.B<String>::foo
+    A<<!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>out<!> String>.B<String>::foo
 }
 
 // FILE: two/type/aliases/file6.kt
@@ -121,8 +121,8 @@ typealias T1<X> = C<X>
 typealias T2<X> = T1<X>
 
 fun test() {
-    T2<out String>::foo
-    T2<in Int>::foo
+    T2<<!CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING!>out<!> String>::foo
+    T2<<!REDUNDANT_PROJECTION!>in<!> Int>::foo
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, in, inProjection, inner, localClass,

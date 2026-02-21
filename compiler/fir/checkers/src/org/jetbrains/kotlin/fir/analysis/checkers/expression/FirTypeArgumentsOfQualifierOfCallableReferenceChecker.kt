@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FE10LikeConeSubstitutor
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.ProjectionRelationCheckerImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.checkers.toTypeArgumentsWithSourceInfo
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -40,7 +43,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         get() = LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS.isEnabled()
 
     /**
-     * @return true if **error** was reported
+     * @return max. severity among reported diagnostics
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkNonFatalDiagnostics(
@@ -48,7 +51,8 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         lhs: FirResolvedQualifier,
         classSymbol: FirClassLikeSymbol<*>,
         lhsType: ConeKotlinType,
-    ): Boolean {
+    ): Severity? {
+        var warningWasReported = false
         for (diagnostic in expression.nonFatalDiagnostics) {
             when (diagnostic) {
                 is ConeWrongNumberOfTypeArgumentsError -> {
@@ -80,6 +84,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                                 positioningStrategy = positioning,
                             )
                         }
+                        warningWasReported = true
                         continue
                     }
 
@@ -90,7 +95,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         diagnostic.symbol,
                         positioningStrategy = positioning,
                     )
-                    return true
+                    return Severity.ERROR
                 }
                 is ConeOuterClassArgumentsRequired -> {
                     reporter.reportOn(
@@ -98,11 +103,11 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED,
                         diagnostic.symbol,
                     )
-                    return true
+                    return Severity.ERROR
                 }
             }
         }
-        return false
+        return Severity.WARNING.takeIf { warningWasReported }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -119,7 +124,8 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             }
         }
 
-        if (checkNonFatalDiagnostics(expression, lhs, correspondingDeclaration, lhsType)) return
+        val nonFatalDiagnosticsCheckResult = checkNonFatalDiagnostics(expression, lhs, correspondingDeclaration, lhsType)
+        if (nonFatalDiagnosticsCheckResult == Severity.ERROR) return
 
         val typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeArguments = when {
@@ -163,5 +169,18 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             fallbackSource = lhs.source,
             isTypealiasExpansion = correspondingDeclaration is FirTypeAliasSymbol,
         )
+
+        if (nonFatalDiagnosticsCheckResult == null) {
+            // We only report projection relation deprecation warnings / errors if there were no deprecation warnings / errors
+            // reported for arguments matching
+            ProjectionRelationCheckerImpl.doCheck(
+                extractArgumentsTypeRefAndSource(lhs),
+                lhsType,
+                ProjectionRelationCheckerImpl.Deprecation(
+                    LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS,
+                    FirErrors.CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING,
+                )
+            )
+        }
     }
 }

@@ -185,6 +185,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_IMPOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_INHERITED_MEMBERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_UPPER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFUSING_BRANCH_CONDITION_ERROR
@@ -2090,6 +2091,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
             "Conflicting projection in type alias expansion in intermediate type ''{0}''.",
+            RENDER_TYPE,
+        )
+        map.put(
+            CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING,
+            "Projection is conflicting with variance of the corresponding type parameter of ''{0}''. Remove the projection or replace it with ''*''."
+                .toDeprecationWarningMessage(LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS),
             RENDER_TYPE,
         )
         map.put(

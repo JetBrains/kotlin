@@ -581,6 +581,14 @@ internal fun checkCondition(condition: FirExpression) {
     }
 }
 
+fun extractArgumentsTypeRefAndSource(qualifier: FirResolvedQualifier): List<FirTypeRefSource> {
+    return buildList {
+        for (typeArgument in qualifier.typeArguments) {
+            add(FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source))
+        }
+    }
+}
+
 fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSource>? {
     if (typeRef !is FirResolvedTypeRef) return null
     val result = mutableListOf<FirTypeRefSource>()
