@@ -113,10 +113,6 @@ kotlin {
         }
     }
     js {
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
-        }
-        nodejs {}
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.addAll(
                 "-Xklib-ir-inliner=intra-module",
@@ -128,7 +124,6 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
         (this as KotlinJsTargetDsl).compilerOptions {
             freeCompilerArgs.addAll(
                 "-Xklib-ir-inliner=intra-module",
@@ -143,7 +138,6 @@ kotlin {
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
         (this as KotlinJsTargetDsl).compilerOptions {
             freeCompilerArgs.addAll(
                 "-Xklib-ir-inliner=intra-module",

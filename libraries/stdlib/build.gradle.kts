@@ -8,9 +8,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
@@ -241,17 +239,6 @@ kotlin {
         }
     }
     js(IR) {
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
-        }
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
-
         compilerOptions {
             freeCompilerArgs.addAll(
                 listOf(
@@ -279,7 +266,6 @@ kotlin {
     }
 
     fun KotlinWasmTargetDsl.commonWasmTargetConfiguration() {
-        (this as KotlinTargetWithNodeJsDsl).nodejs()
         (this as KotlinJsTargetDsl).compilerOptions {
             freeCompilerArgs.addAll(
                 listOfNotNull(
@@ -830,17 +816,6 @@ tasks {
             // exclusions due to KT-51647
             exclude("generated/minmax/*")
             exclude("collections/MapTest.kt")
-        }
-        named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
-            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
-        }
-        named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
-            enabled = false  // Causes out-of-memory in CI: KTI-2150
-        }
-    }
-    val wasmWasiNodeTest by existing {
-        if (!kotlinBuildProperties.booleanProperty("kotlin.stdlib.wasi.tests").get()) {
-            enabled = false
         }
     }
 

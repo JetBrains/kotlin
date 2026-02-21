@@ -14,8 +14,6 @@ group = "org.jetbrains.kotlin"
 
 kotlin {
     js {
-        browser()
-        nodejs()
     }
 
     sourceSets {

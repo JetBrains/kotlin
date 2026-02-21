@@ -784,14 +784,6 @@ if (disableVerificationTasks) {
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
-plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
-    extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        npmInstallTaskProvider.configure {
-            args += listOf("--network-concurrency", "1", "--mutex", "network")
-        }
-    }
-}
-
 if (kotlinBuildProperties.isCacheRedirectorEnabled.get()) {
     configureJsCacheRedirector()
 }
@@ -800,7 +792,3 @@ afterEvaluate {
     checkExpectedGradlePropertyValues()
 }
 
-// workaround for KT-68482
-tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
-    notCompatibleWithConfigurationCache("KotlinNpmInstallTask is not compatible with Configuration Cache")
-}

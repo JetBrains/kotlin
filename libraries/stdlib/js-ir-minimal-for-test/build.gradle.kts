@@ -9,7 +9,6 @@ plugins {
 
 kotlin {
     js(IR) {
-        nodejs()
     }
 }
 val commonMainFullSources by task<Sync> {
