@@ -18,4 +18,4 @@ val totalMaxMemoryForTestsMb: Int
         return availableMemoryMb - (availableMemoryMb % 1024)
     }
 
-fun Project.ideaHomePathForTests(): Provider<Directory> = rootProject.layout.buildDirectory.dir("ideaHomeForTests")
+fun Project.ideaHomePathForTests(): Provider<Directory> = provider { isolated.rootProject.projectDirectory.dir("build/ideaHomeForTests") }

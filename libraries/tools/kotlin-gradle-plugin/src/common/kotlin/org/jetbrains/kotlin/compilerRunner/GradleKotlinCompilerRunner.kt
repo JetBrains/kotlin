@@ -320,7 +320,7 @@ internal open class GradleCompilerRunner(
                     val module = IncrementalModuleEntry(
                         project.path,
                         task.taskModuleName,
-                        project.layout.buildDirectory.get().asFile,
+                        project.isolated.projectDirectory.dir("build").asFile,
                         task.buildHistoryFile.get().asFile,
                         task.abiSnapshotFile.get().asFile
                     )
@@ -353,7 +353,7 @@ internal open class GradleCompilerRunner(
                         val module = IncrementalModuleEntry(
                             project.path,
                             kotlinTask.taskModuleName,
-                            project.layout.buildDirectory.get().asFile,
+                            project.isolated.projectDirectory.dir("build").asFile,
                             kotlinTask.buildHistoryFile.get().asFile,
                             kotlinTask.abiSnapshotFile.get().asFile
                         )
@@ -373,7 +373,7 @@ internal open class GradleCompilerRunner(
             }
 
             return IncrementalModuleInfo(
-                rootProjectBuildDir = gradle.rootProject.layout.buildDirectory.get().asFile,
+                rootProjectBuildDir = gradle.rootProject.isolated.projectDirectory.dir("build").asFile,
                 dirToModule = dirToModule,
                 nameToModules = nameToModules,
                 jarToClassListFile = jarToClassListFile,

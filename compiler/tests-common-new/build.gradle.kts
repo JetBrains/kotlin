@@ -59,13 +59,13 @@ optInToUnsafeDuringIrConstructionAPI()
 optInToK1Deprecation()
 
 tasks.processTestFixturesResources.configure {
-    from(project(":compiler").layout.projectDirectory.dir("testData")) {
+    from(project(":compiler").isolated.projectDirectory.dir("testData")) {
         include("/diagnostics/helpers/**")
         include("/codegen/helpers/**")
         include("/ir/interpreter/helpers/**")
     }
     into("stdlib") {
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("src/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("src/kotlin")) {
             into("src/kotlin")
             include("ranges/Progressions.kt")
             include("ranges/ProgressionIterators.kt")
@@ -78,16 +78,16 @@ tasks.processTestFixturesResources.configure {
             include("internal/Annotations.kt")
             include("experimental/inferenceMarker.kt")
         }
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("unsigned/src/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("unsigned/src/kotlin")) {
             into("unsigned/src/kotlin")
         }
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("jvm/src/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("jvm/src/kotlin")) {
             into("jvm/src/kotlin")
             include("util/UnsignedJVM.kt")
             include("collections/TypeAliases.kt")
             include("reflect/**")
         }
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("jvm/runtime/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("jvm/runtime/kotlin")) {
             into("jvm/runtime/kotlin")
             include("TypeAliases.kt")
             include("text/TypeAliases.kt")

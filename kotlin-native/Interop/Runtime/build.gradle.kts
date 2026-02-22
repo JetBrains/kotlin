@@ -46,7 +46,7 @@ native {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags("-shared",
               "-o",ruleOut(), *ruleInAll(),
-              "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",
+              "-L${project(":kotlin-native:libclangext").isolated.projectDirectory.dir("build").asFile}",
               "${nativeDependencies.libffiPath}/lib/libffi.$lib",
               "-lclangext")
 

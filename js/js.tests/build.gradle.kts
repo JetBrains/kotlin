@@ -219,7 +219,7 @@ val npmInstall by tasks.getting(NpmTask::class) {
 
 tasks.processTestFixturesResources.configure {
     from(project.layout.projectDirectory.dir("_additionalFilesForTests"))
-    from(project(":compiler").layout.projectDirectory.dir("testData/debug")) {
+    from(project(":compiler").isolated.projectDirectory.dir("testData/debug")) {
         into("debugTestHelpers")
         include("jsTestHelpers/")
     }

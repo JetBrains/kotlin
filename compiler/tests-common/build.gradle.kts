@@ -89,7 +89,7 @@ dependencies {
 
 tasks.processTestFixturesResources.configure {
     into("legacy") {
-        from(project(":compiler").layout.projectDirectory.dir("testData")) {
+        from(project(":compiler").isolated.projectDirectory.dir("testData")) {
             include("/diagnostics/helpers/types/checkTypeWithExact.kt")
         }
     }
