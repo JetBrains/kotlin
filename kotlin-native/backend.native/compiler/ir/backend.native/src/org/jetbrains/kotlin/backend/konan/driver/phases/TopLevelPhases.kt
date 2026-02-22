@@ -308,9 +308,11 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
         mainPerfManager: PerformanceManager?,
 ): Sequence<BackendJobFragment> {
     val config = context.config
-    return if (context.config.producePerFileCache) {
+    val containsStdlib = config.libraryToCache?.klib == context.stdlibModule.konanLibrary
+    if (config.produce.isCache && containsStdlib)
+        input.files.removeAll { it.packageFqName.asString() == "kotlin.native.cuda" }
+    return if (config.producePerFileCache) {
         val files = input.files.toList()
-        val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
 
         files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
             val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.packageFqName.asString())
@@ -343,7 +345,6 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
         }
     } else {
         val llvmModuleSpecification = if (config.produce.isCache) {
-            val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
             CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
         } else {
             DefaultLlvmModuleSpecification(config.cachedLibraries)
