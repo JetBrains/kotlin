@@ -371,7 +371,7 @@ fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, confi
 }
 
 fun Project.idePluginDependency(block: () -> Unit) {
-    val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
+    val shouldActivate = providers.gradleProperty("publish.ide.plugin.dependencies").orNull?.toBoolean() == true
     if (shouldActivate) {
         block()
     }

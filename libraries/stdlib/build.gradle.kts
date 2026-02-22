@@ -805,7 +805,7 @@ tasks {
         testClassesDirs = compilation.output.classesDirs
     }
 
-    if (project.hasProperty("kotlin.stdlib.test.long.running")) {
+    if (providers.gradleProperty("kotlin.stdlib.test.long.running").isPresent) {
         check.configure { dependsOn(jvmLongRunningTest) }
     }
 

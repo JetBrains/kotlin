@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.build.binaryen
 
 import SystemPropertyClasspathProvider
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
@@ -20,7 +22,8 @@ abstract class BinaryenExtension(
     private val binaryen: BinaryenEnvSpec,
 ) {
     val binaryenVersion: String
-        get() = project.property("versions.binaryen") as String
+        get() = project.extensions.getByType<VersionCatalogsExtension>().named("libs")
+            .findVersion("binaryen").get().requiredVersion
 
     val binaryenExecutablePath: Provider<String> = binaryen.executable.also {
         project.extra["binaryen.path"] = it

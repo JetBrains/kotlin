@@ -13,7 +13,7 @@ if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
 }
 
 group = "org.jetbrains.kotlin"
-version = findProperty("privacyManifestsPluginDeployVersion") as String? ?: "test"
+version = providers.gradleProperty("privacyManifestsPluginDeployVersion").orNull ?: "test"
 
 standardPublicJars()
 

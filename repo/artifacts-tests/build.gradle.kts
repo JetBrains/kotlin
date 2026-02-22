@@ -16,8 +16,8 @@ dependencies {
 }
 
 val defaultSnapshotVersion: String by extra
-findProperty("deployVersion")?.let {
-    assert(findProperty("build.number") != null) { "`build.number` parameter is expected to be explicitly set with the `deployVersion`" }
+providers.gradleProperty("deployVersion").orNull?.let {
+    assert(providers.gradleProperty("build.number").isPresent) { "`build.number` parameter is expected to be explicitly set with the `deployVersion`" }
 }
 
 projectTests {

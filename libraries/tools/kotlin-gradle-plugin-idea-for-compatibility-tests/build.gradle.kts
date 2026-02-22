@@ -9,8 +9,8 @@ plugins {
  */
 val testedVersion = "1.8.20-dev-4242"
 
-val isSnapshotTest = properties.contains("kgp-idea.snapshot_test")
-val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString() else testedVersion
+val isSnapshotTest = providers.gradleProperty("kgp-idea.snapshot_test").isPresent
+val resolvedTestedVersion = if (isSnapshotTest) providers.gradleProperty("defaultSnapshotVersion").get() else testedVersion
 
 //region Download and prepare classpath for specified tested version
 

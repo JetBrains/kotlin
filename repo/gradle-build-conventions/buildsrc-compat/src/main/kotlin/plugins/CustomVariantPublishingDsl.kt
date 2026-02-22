@@ -26,9 +26,12 @@ private open class ComponentsFactoryAccess
 constructor(val factory: SoftwareComponentFactory)
 
 val Project.componentFactory: SoftwareComponentFactory
-    get() = findProperty("_componentFactory") as SoftwareComponentFactory?
-        ?: objects.newInstance<ComponentsFactoryAccess>().factory
-            .also { project.extra["_componentFactory"] = it }
+    get() {
+        val ext = extra
+        return if (ext.has("_componentFactory")) ext.get("_componentFactory") as SoftwareComponentFactory
+        else objects.newInstance<ComponentsFactoryAccess>().factory
+            .also { ext.set("_componentFactory", it) }
+    }
 
 fun copyAttributes(from: AttributeContainer, to: AttributeContainer,) {
     // capture type argument T

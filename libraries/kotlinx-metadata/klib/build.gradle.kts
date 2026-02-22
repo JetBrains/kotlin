@@ -7,7 +7,7 @@ plugins {
 
 group = "org.jetbrains.kotlinx"
 
-val deployVersion = findProperty("kotlinxMetadataKlibDeployVersion") as String?
+val deployVersion = providers.gradleProperty("kotlinxMetadataKlibDeployVersion").orNull
 version = deployVersion ?: "0.0.1-SNAPSHOT"
 
 sourceSets {

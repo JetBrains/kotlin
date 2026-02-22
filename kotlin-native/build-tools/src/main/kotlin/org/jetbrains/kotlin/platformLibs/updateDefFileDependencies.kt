@@ -165,8 +165,7 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
 }
 
 
-private fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
-    val v = it.toString()
-    if (v.isBlank()) true
-    else v.toBoolean()
+private fun Project.getBooleanProperty(name: String): Boolean? = providers.gradleProperty(name).orNull?.let {
+    if (it.isBlank()) true
+    else it.toBoolean()
 }

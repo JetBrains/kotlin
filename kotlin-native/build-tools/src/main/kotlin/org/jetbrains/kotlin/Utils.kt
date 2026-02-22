@@ -22,20 +22,22 @@ val Project.platformManager
     get() = extensions.getByType<PlatformManager>()
 
 val Project.kotlinNativeDist: File
-    get() = rootProject.project(":kotlin-native").run {
+    get() {
         val validPropertiesNames = listOf(
                 "konan.home",
                 "org.jetbrains.kotlin.native.home",
                 "kotlin.native.home"
         )
-        rootProject.file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
+        val propertyValue = validPropertiesNames.firstNotNullOfOrNull { providers.gradleProperty(it).orNull }
+        return rootProject.file(propertyValue ?: "dist")
     }
 
 val Project.nativeBundlesLocation
-    get() = file(findProperty("nativeBundlesLocation") ?: project.projectDir)
+    get() = providers.gradleProperty("nativeBundlesLocation").orNull?.let { file(it) } ?: project.projectDir
 
 fun projectOrFiles(proj: Project, notation: String): Any? {
-    val propertyMapper = proj.findProperty("notationMapping") ?: return proj.project(notation)
+    val ext = proj.extensions.getByType(ExtraPropertiesExtension::class.java)
+    val propertyMapper = if (ext.has("notationMapping")) ext.get("notationMapping") else return proj.project(notation)
     val mapping = (propertyMapper as? Map<*, *>)?.get(notation) as? String ?: return proj.project(notation)
     return proj.files(mapping).also {
         proj.logger.info("MAPPING: $notation -> ${it.asPath}")

@@ -227,7 +227,25 @@ fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$p
 fun Project.kotlinxCollectionsImmutable() =
     "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${catalogVersion("kotlinx-collections-immutable")}"
 
-val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
+val Project.kotlinNativeVersion: String
+    get() {
+        // Check if explicitly set via -Pversions.kotlin-native=...
+        providers.gradleProperty("versions.kotlin-native").orNull?.let { return it }
+        // Otherwise compute it (replicating logic from root build.gradle.kts)
+        return if (kotlinBuildProperties.alignKotlinNativeVersionInTCBuilds) {
+            val defaultSnapshotVersion = kotlinBuildProperties.defaultSnapshotVersion.get()
+            val deployVersion = providers.gradleProperty("deployVersion").orNull
+            if (deployVersion != null && deployVersion != "default.snapshot") {
+                deployVersion
+            } else {
+                providers.gradleProperty("build.number").orNull ?: defaultSnapshotVersion
+            }
+        } else if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+            kotlinBuildProperties.defaultSnapshotVersion.get()
+        } else {
+            "2.4.0-dev-3656"
+        }
+    }
 
 val Project.nodejsVersion: String get() = catalogVersion("nodejs")
 val Project.nodejsLtsVersion: String get() = catalogVersion("nodejs-lts")

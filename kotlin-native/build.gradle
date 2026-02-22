@@ -72,7 +72,7 @@ def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
-    commonSources
+    create("commonSources")
 
     runtimeBitcode {
         canBeConsumed = false
