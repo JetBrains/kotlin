@@ -402,8 +402,6 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                 when {
                     insn.isAreEqualIntrinsic() ->
                         adaptAreEqualIntrinsic(node, insn, value)
-                    insn.isJavaLangComparableCompareTo() ->
-                        adaptJavaLangComparableCompareTo(node, insn, value)
                     insn.isJavaLangClassBoxing() ||
                             insn.isJavaLangClassUnboxing() ->
                         node.instructions.remove(insn)
