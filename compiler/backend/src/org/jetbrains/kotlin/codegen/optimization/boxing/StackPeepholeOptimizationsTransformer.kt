@@ -119,6 +119,15 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                         changed = true
                     }
                 }
+
+                in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE -> {
+                    val prev2 = prev.previousMeaningful() ?: continue
+                    if (prev.opcode == Opcodes.ICONST_0 && prev2.isKotlinJvmInternalIntrinsicsCompareInt()) {
+                        instructions.set(prev, InsnNode(Opcodes.NOP))
+                        instructions.set(prev2, InsnNode(Opcodes.NOP))
+                        changed = true
+                    }
+                }
             }
         }
         return changed
