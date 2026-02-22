@@ -596,16 +596,6 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                     remove(next)
                 }
 
-                next != null &&
-                        next.opcode >= Opcodes.IFEQ && next.opcode <= Opcodes.IFLE -> {
-                    // Fuse: compareTo + IFxx -> IF_ICMPxx
-                    val nextLabel = (next as JumpInsnNode).label
-                    val ifCmpOpcode = next.opcode - Opcodes.IFEQ + Opcodes.IF_ICMPEQ
-                    insertBefore(insn, JumpInsnNode(ifCmpOpcode, nextLabel))
-                    remove(insn)
-                    remove(next)
-                }
-
                 else -> {
                     // Can't fuse with branching instruction. Use Intrinsics#compare(int, int).
                     set(insn, MethodInsnNode(Opcodes.INVOKESTATIC, IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(II)I", false))
