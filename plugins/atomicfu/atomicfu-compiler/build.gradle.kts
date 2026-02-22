@@ -9,7 +9,6 @@ description = "Atomicfu Compiler Plugin"
 plugins {
     id("root-config")
     kotlin("jvm")
-    id("d8-configuration")
     id("project-tests-convention")
 }
 

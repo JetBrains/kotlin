@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 plugins {
     id("root-config")
     kotlin("jvm")
-    id("d8-configuration")
     id("project-tests-convention")
 }
 

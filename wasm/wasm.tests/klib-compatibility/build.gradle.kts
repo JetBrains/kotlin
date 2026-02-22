@@ -7,7 +7,6 @@ plugins {
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")
-    id("d8-configuration")
     id("nodejs-configuration")
     id("binaryen-configuration")
     id("project-tests-convention")

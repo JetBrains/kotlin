@@ -26,7 +26,6 @@ plugins {
     `maven-publish`
     signing
     id("nodejs-cache-redirector-configuration")
-    id("d8-configuration")
     id("binaryen-configuration")
 }
 

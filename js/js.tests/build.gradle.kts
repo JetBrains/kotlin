@@ -9,7 +9,6 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     alias(libs.plugins.gradle.node)
-    id("d8-configuration")
     // TODO: uncomment this line after bootstrap
     // id("swc-configuration")
     id("nodejs-configuration")

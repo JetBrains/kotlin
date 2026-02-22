@@ -12,7 +12,6 @@ description = "Kotlin Serialization Compiler Plugin"
 plugins {
     id("root-config")
     kotlin("jvm")
-    id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
 }

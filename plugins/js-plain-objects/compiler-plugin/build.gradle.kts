@@ -8,7 +8,6 @@ plugins {
     id("root-config")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("d8-configuration")
     id("project-tests-convention")
     id("test-inputs-check")
 }

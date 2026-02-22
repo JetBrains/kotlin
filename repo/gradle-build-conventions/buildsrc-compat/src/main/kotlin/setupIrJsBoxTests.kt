@@ -6,6 +6,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.build.d8.D8Extension
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 fun Test.useJsIrBoxTests(
     buildDir: Provider<Directory>,
 ) {
-    with(project.the<D8Extension>()) {
+    project.extensions.findByType<D8Extension>()?.run {
         setupV8()
     }
 

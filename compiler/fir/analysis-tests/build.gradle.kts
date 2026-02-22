@@ -6,7 +6,6 @@
 plugins {
     id("root-config")
     kotlin("jvm")
-    id("d8-configuration")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
     id("project-tests-convention")

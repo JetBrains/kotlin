@@ -1,5 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.build.d8.D8Extension
 import java.net.URI
 import java.util.*
 
@@ -7,7 +8,6 @@ plugins {
     id("root-config")
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
-    id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
     id("java-test-fixtures")
@@ -410,7 +410,7 @@ projectTests {
             skipInLocalBuild = skipInLocalBuild,
             maxHeapSizeMb = 6144
         ) {
-            with(d8KotlinBuild) {
+            project.extensions.findByType<D8Extension>()?.run {
                 setupV8()
             }
             with(wasmNodeJsKotlinBuild) {

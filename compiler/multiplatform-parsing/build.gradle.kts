@@ -7,7 +7,6 @@ plugins {
     id("generated-sources")
     id("binaryen-configuration")
     id("nodejs-configuration")
-    id("d8-configuration")
 }
 
 kotlin {
