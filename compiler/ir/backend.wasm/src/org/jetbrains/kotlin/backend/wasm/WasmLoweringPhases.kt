@@ -136,6 +136,8 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createValidateIrAfterInliningAllFunctionsPhase,
     // END: Common Native/JS/Wasm prefix.
 
+    ::WasmComponentModelLowering,
+
     ::createConstEvaluationPhase,
     ::createSpecializeSharedVariableBoxesPhase,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,

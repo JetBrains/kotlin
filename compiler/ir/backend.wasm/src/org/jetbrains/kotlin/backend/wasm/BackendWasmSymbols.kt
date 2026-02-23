@@ -54,6 +54,13 @@ class BackendWasmSymbols(
 
     internal val eagerInitialization: IrClassSymbol = ClassIds.EagerInitialization.classSymbol()
 
+    // TODO organize properly
+    internal val witInterface: IrClassSymbol = ClassIds.WitInterface.classSymbol()
+    internal val witImport: IrClassSymbol = ClassIds.WitImport.classSymbol()
+    internal val witExport: IrClassSymbol = ClassIds.WitExport.classSymbol()
+    internal val wasmImport: IrClassSymbol = WasmStandardClassIds.Annotations.WasmImport.classSymbol()
+    internal val wasmExport: IrClassSymbol = WasmStandardClassIds.Annotations.WasmExport.classSymbol()
+
     internal val isNotFirstWasmExportCall: IrPropertySymbol = CallableIds.isNotFirstWasmExportCall.propertySymbol()
 
     val tryGetAssociatedObject = CallableIds.tryGetAssociatedObjectWithWrapper.functionSymbolOrNull()
@@ -372,6 +379,9 @@ private object ClassIds {
     // Other
     val kTypeClass = ClassId(StandardNames.KOTLIN_REFLECT_FQ_NAME, Name.identifier("KClass"))
     val EagerInitialization = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("EagerInitialization"))
+    val WitInterface = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("WitInterface"))
+    val WitImport = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("WitImport"))
+    val WitExport = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("WitExport"))
     val JsFun = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("JsFun"))
     val StringBuilder = ClassId(StandardClassIds.BASE_TEXT_PACKAGE, Name.identifier("StringBuilder"))
     val Appendable = ClassId(StandardClassIds.BASE_TEXT_PACKAGE, Name.identifier("Appendable"))

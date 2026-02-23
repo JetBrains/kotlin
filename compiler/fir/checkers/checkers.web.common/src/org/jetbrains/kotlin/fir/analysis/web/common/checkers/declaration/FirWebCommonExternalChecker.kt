@@ -70,7 +70,8 @@ abstract class FirWebCommonExternalChecker(
             }
 
             if (classKind != null) {
-                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, classKind)
+                // TODO relax properly
+//                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, classKind)
             }
 
             if (declaration.isEnumClass) {
@@ -92,7 +93,8 @@ abstract class FirWebCommonExternalChecker(
             !declaration.classKind.isInterface && (!allowCompanionInInterface || !declaration.status.isCompanion) &&
             container is FirClassSymbol<*> && container.classKind.isInterface
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE)
+            // TODO relax this properly
+//            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE)
         }
 
         if (

@@ -102,13 +102,14 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
             }
 
             if (!type.isSupportedInJsInterop(position)) {
-                reporter.reportOn(
-                    source ?: fallbackSource,
-                    FirWasmErrors.WRONG_JS_INTEROP_TYPE,
-                    type,
-                    position.description
-                )
-                return
+                // TODO relax properly
+//                reporter.reportOn(
+//                    source ?: fallbackSource,
+//                    FirWasmErrors.WRONG_JS_INTEROP_TYPE,
+//                    type,
+//                    position.description
+//                )
+//                return
             }
 
             // although function types themselves are supported, their parameter and return types should be checked separately

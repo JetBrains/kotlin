@@ -48,11 +48,11 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
 
             val isSuperClassExternal = superClass.isEffectivelyExternal(session)
             if (!isCurrentClassExternal && isSuperClassExternal) {
-                reporter.reportOn(
-                    declaration.source,
-                    FirWasmErrors.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,
-                    superTypeRef.coneType
-                )
+//                reporter.reportOn(
+//                    declaration.source,
+//                    FirWasmErrors.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,
+//                    superTypeRef.coneType
+//                )
             } else if (isCurrentClassExternal && !isSuperClassExternal) {
                 // External enum and annotation classes are prohibited, but they add implicit non-external super types. Skip reporting errors for them.
                 if (declaration.classKind == ClassKind.ANNOTATION_CLASS && superClass.classId == StandardClassIds.Annotation) continue

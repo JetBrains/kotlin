@@ -166,11 +166,12 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
             }
 
             if (notFromInitializerOfEnumEntry.isNotEmpty()) {
-                reporter.reportOn(
-                    source,
-                    ABSTRACT_MEMBER_NOT_IMPLEMENTED,
-                    classSymbol,
-                    notFromInitializerOfEnumEntry.map { it.unwrapFakeOverrides() })
+                // TODO relax properly
+//                reporter.reportOn(
+//                    source,
+//                    ABSTRACT_MEMBER_NOT_IMPLEMENTED,
+//                    classSymbol,
+//                    notFromInitializerOfEnumEntry.map { it.unwrapFakeOverrides() })
             }
 
             if (notFromInterfaceOrEnum.isNotEmpty()) {

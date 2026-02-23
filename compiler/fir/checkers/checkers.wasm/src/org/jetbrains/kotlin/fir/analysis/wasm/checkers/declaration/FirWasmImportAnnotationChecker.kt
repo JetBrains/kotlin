@@ -47,19 +47,23 @@ fun checkWasmInteropSignature(declaration: FirFunction) {
     for (parameter in declaration.valueParameters) {
         val type = parameter.returnTypeRef.coneType
         if (parameter.defaultValue != null) {
-            reporter.reportOn(parameter.source, FirWasmErrors.WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE)
+            // TODO relax properly
+//            reporter.reportOn(parameter.source, FirWasmErrors.WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE)
         }
         if (parameter.isVararg) {
-            reporter.reportOn(parameter.source, FirWasmErrors.WASM_IMPORT_EXPORT_VARARG_PARAMETER)
+            // TODO relax properly
+//            reporter.reportOn(parameter.source, FirWasmErrors.WASM_IMPORT_EXPORT_VARARG_PARAMETER)
         }
         if (!isTypeSupportedInWasmInterop(type, false, context.session)) {
-            reporter.reportOn(parameter.source, FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE, type)
+            // TODO relax properly
+//            reporter.reportOn(parameter.source, FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE, type)
         }
     }
 
     val returnType = declaration.returnTypeRef.coneType
     if (!isTypeSupportedInWasmInterop(returnType, true, context.session)) {
-        reporter.reportOn(declaration.source, FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE, returnType)
+        // TODO relax properly
+//        reporter.reportOn(declaration.source, FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE, returnType)
     }
 }
 
