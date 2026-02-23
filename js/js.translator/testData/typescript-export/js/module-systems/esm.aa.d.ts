@@ -5,7 +5,7 @@ declare function KtSingleton<T>(): T & (abstract new() => any);
 export declare const value: {
     get(): number;
 };
-export declare let variable: {
+export declare const variable: {
     get(): number;
     set(value: number): void;
 };
