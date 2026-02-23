@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractSamClassBySamConstructorTest : AbstractAnalysisApiBasedTest() {
+abstract class AbstractFunctionalInterfaceBySamConstructorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
             val symbolRenderer = KaDebugRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
