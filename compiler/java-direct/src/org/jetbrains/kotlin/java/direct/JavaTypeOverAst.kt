@@ -40,6 +40,7 @@ class JavaPrimitiveTypeOverAst(
 ) : JavaTypeOverAst(node, source), JavaPrimitiveType {
     override val type: org.jetbrains.kotlin.builtins.PrimitiveType?
         get() = when (node.text) {
+            "void" -> null
             "boolean" -> org.jetbrains.kotlin.builtins.PrimitiveType.BOOLEAN
             "char" -> org.jetbrains.kotlin.builtins.PrimitiveType.CHAR
             "byte" -> org.jetbrains.kotlin.builtins.PrimitiveType.BYTE
@@ -52,25 +53,30 @@ class JavaPrimitiveTypeOverAst(
         }
 }
 
-class JavaVoidTypeOverAst(
+class JavaArrayTypeOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence
-) : JavaTypeOverAst(node, source), JavaType // JavaType is enough for void in some contexts, but let's check if there is JavaVoidType
+    source: CharSequence,
+    override val componentType: JavaType
+) : JavaTypeOverAst(node, source), JavaArrayType
 
-fun createJavaType(node: JavaSyntaxNode, source: CharSequence): JavaType {
+class JavaWildcardTypeOverAst(
+    node: JavaSyntaxNode,
+    source: CharSequence,
+    override val bound: JavaType?,
+    override val isExtends: Boolean
+) : JavaTypeOverAst(node, source), JavaWildcardType
+
+fun createJavaType(node: JavaSyntaxNode, source: CharSequence, localScope: LocalJavaScope? = null): JavaType {
     val typeNode = node.findChildByType("TYPE") ?: node
-    val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") && it.type.toString() != "VOID_KEYWORD" }
+    val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") }
     if (primitiveNode != null) {
         return JavaPrimitiveTypeOverAst(primitiveNode, source)
     }
-    if (typeNode.findChildByType("VOID_KEYWORD") != null) {
-        return JavaVoidTypeOverAst(typeNode.findChildByType("VOID_KEYWORD")!!, source)
-    }
     val referenceNode = typeNode.findChildByType("JAVA_CODE_REFERENCE")
     if (referenceNode != null) {
-        return JavaClassifierTypeOverAst(referenceNode, source)
+        return JavaClassifierTypeOverAst(referenceNode, source, localScope)
     }
-    return JavaClassifierTypeOverAst(typeNode, source)
+    return JavaClassifierTypeOverAst(typeNode, source, localScope)
 }
 
 class JavaTypeParameterOverAst(

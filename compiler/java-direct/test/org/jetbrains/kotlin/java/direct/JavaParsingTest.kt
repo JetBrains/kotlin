@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -197,6 +198,27 @@ class JavaParsingTest {
         assert(javaClass3.constructors.isEmpty()) { "Expected no constructors for interface" }
         assert(!javaClass3.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = false for interface" }
         assert(javaClass3.isInterface) { "I should be an interface" }
+    }
+
+    @Test
+    fun testVoidReturnType() {
+        val source = """
+            public class A {
+                public void method() {}
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source)
+        
+        assert(javaClass.methods.size == 1) { "Expected 1 method, got ${javaClass.methods.size}" }
+        val method = javaClass.methods.first()
+        assert(method.name.asString() == "method")
+        
+        val returnType = method.returnType
+        assert(returnType is JavaPrimitiveType) { "Expected JavaPrimitiveType, got ${returnType::class.java}" }
+        assert((returnType as JavaPrimitiveType).type == null) { "Expected type=null for void, got ${returnType.type}" }
     }
 
     @Test
