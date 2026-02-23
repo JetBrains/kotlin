@@ -43,8 +43,8 @@ class PerformanceTest : AbstractKotlinCompilerIntegrationTest() {
         // Simulate a large number of imported classes that we are trying to resolve to simulate expensive roots enumerating
         val importedClassesCount = 6000
 
-        // Put the imported classes into the last root to simulate the worst possible enumeration case
-        val importedClassesRootIndex = rootsCount - 1
+        val firstRootIndex = 0
+        val lastRootIndex = rootsCount - 1
 
         // Put the imported classes into the latest package.
         // Probably it makes sense to also check a case when importedClassesDepthIndex is 0
@@ -118,10 +118,13 @@ class PerformanceTest : AbstractKotlinCompilerIntegrationTest() {
 
                         // Store imported classes into the last root to reproduce the worst case
                         // Because all roots are being traversed sequentially
-                        val classesCount = if (rootIndex == importedClassesRootIndex && packageDepthIndex == importedClassesDepthIndex)
+                        val classesCount = if (
+                            (rootIndex == firstRootIndex || rootIndex == lastRootIndex) && packageDepthIndex == importedClassesDepthIndex
+                        ) {
                             importedClassesCount
-                        else
+                        } else {
                             classesInPackageCount
+                        }
 
                         for (importClassIndex in 0..<classesCount) {
                             generateAndWriteJavaFile(
@@ -145,33 +148,41 @@ class PerformanceTest : AbstractKotlinCompilerIntegrationTest() {
         println("Total number of generated Java classes: $totalNumberOfGeneratedJavaFiles")
         println()
 
-        fun generateAndCompileKotlinFile(empty: Boolean, warmup: Boolean = false): Duration {
-            val fileName = when {
-                warmup -> "warmup"
-                empty -> "empty"
-                else -> "main"
-            } + ".kt"
+        fun generateAndCompileKotlinFile(compilationType: LargeClasspathsCompilationType): Duration {
+            val fileName = "$compilationType.kt"
             // It looks like it's enough to have only a single kotlin file that simulates multiple files by one super huge import list
             // Because each declaration is being cached once it's resolved.
             File(testDataDirectory, fileName).apply {
                 val content = buildString {
-                    val lastGenFileInfo = generateGenFileInfo(importedClassesDepthIndex, importedClassesBranchingDepthIndex)
-                    if (lastGenFileInfo.packageName.isNotEmpty() && !empty) {
+                    val rootIndex: Int
+                    val importedClassesFileInfo = if (compilationType != LargeClasspathsCompilationType.Warmup) {
+                        rootIndex = if (compilationType == LargeClasspathsCompilationType.FirstClasspathClasses) {
+                            firstRootIndex
+                        } else {
+                            lastRootIndex
+                        }
+                        generateGenFileInfo(importedClassesDepthIndex, importedClassesBranchingDepthIndex)
+                    } else {
+                        rootIndex = -1
+                        null
+                    }
+
+                    if (importedClassesFileInfo?.packageName?.isNotEmpty() == true) {
                         for (importClassIndex in 0..<importedClassesCount) {
                             appendLine(
-                                "import ${lastGenFileInfo.packageName}.${
-                                    lastGenFileInfo.getClassName(importedClassesRootIndex, importClassIndex)
-                                }"
+                                "import ${importedClassesFileInfo.packageName}.${importedClassesFileInfo.getClassName(rootIndex, importClassIndex)}"
                             )
                         }
+                        appendLine()
                     }
-                    appendLine()
-                    appendLine("fun main() {")
-                    if (!empty) {
+
+                    appendLine("fun ${compilationType.toString().replaceFirstChar { it.lowercase() }}() {")
+
+                    if (importedClassesFileInfo != null) {
                         for (importClassIndex in 0..<importedClassesCount) {
                             // Probably it makes sense to check when it's uncommented,
                             // But in this test we are interested only in jvm indexing performance, but not in FIR resolving
-                            //appendLine("    println(${lastGenFileInfo.getClassName(importedClassesRootIndex, importClassIndex)}.getValue())")
+                            //appendLine("    println(${lastGenFileInfo.getClassName(rootIndex, importClassIndex)}.getValue())")
                         }
                     }
                     appendLine('}')
@@ -195,15 +206,22 @@ class PerformanceTest : AbstractKotlinCompilerIntegrationTest() {
             return compilationTime
         }
 
-        generateAndCompileKotlinFile(empty = true, warmup = true) // Perform initialization at first
-        val emptyFileCompileTime = generateAndCompileKotlinFile(empty = true)
-        val normalFileCompileTime = generateAndCompileKotlinFile(empty = false)
-        val diff = normalFileCompileTime - emptyFileCompileTime
+        generateAndCompileKotlinFile(LargeClasspathsCompilationType.Warmup)
+        val classesFromFirstClasspathCompileTime = generateAndCompileKotlinFile(LargeClasspathsCompilationType.FirstClasspathClasses)
+        val classesFromLastClasspathCompileTime = generateAndCompileKotlinFile(LargeClasspathsCompilationType.LastClasspathClasses)
+        val diff = classesFromLastClasspathCompileTime - classesFromFirstClasspathCompileTime
+        val ratio = classesFromLastClasspathCompileTime / classesFromFirstClasspathCompileTime
         assert(diff.inWholeNanoseconds > 0) { "Increase the number of generated files because the current number doesn't provide meaningful performance difference" }
 
         println(
-            "Normal/empty diff: ${(diff).inWholeMilliseconds} ms" +
-                    " (ratio: ${String.format(Locale.ENGLISH, "%.4f", normalFileCompileTime / emptyFileCompileTime)})"
+            "${LargeClasspathsCompilationType.LastClasspathClasses}/${LargeClasspathsCompilationType.FirstClasspathClasses} diff: ${diff.inWholeMilliseconds} ms " +
+                    "(ratio: ${String.format(Locale.ENGLISH, "%.4f", ratio)})"
         )
+    }
+
+    enum class LargeClasspathsCompilationType {
+        Warmup,
+        FirstClasspathClasses,
+        LastClasspathClasses;
     }
 }
