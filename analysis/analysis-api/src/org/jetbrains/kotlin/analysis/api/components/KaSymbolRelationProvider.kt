@@ -64,6 +64,30 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
     public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 
     /**
+     * Returns the single abstract function of a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html),
+     * or `null` if this class is not a functional interface.
+     *
+     * A functional interface has exactly one abstract function. In Kotlin, it must be declared with the `fun` modifier.
+     * The function may be inherited from a parent interface.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun interface MyPredicate {
+     *     fun test(value: Int): Boolean
+     * }
+     * ```
+     *
+     * For `MyPredicate`, [functionalInterfaceFunction] returns the symbol for the `test` function.
+     *
+     * @see KaNamedClassSymbol.isFun
+     * @see samConstructor
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
+
+    /**
      * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
      *
      * #### Example
@@ -351,6 +375,34 @@ public val KaSymbol.containingModule: KaModule
 context(session: KaSession)
 public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
     get() = with(session) { samConstructor }
+
+/**
+ * Returns the single abstract function of a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html),
+ * or `null` if this class is not a functional interface.
+ *
+ * A functional interface has exactly one abstract function. In Kotlin, it must be declared with the `fun` modifier.
+ * The function may be inherited from a parent interface.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun interface MyPredicate {
+ *     fun test(value: Int): Boolean
+ * }
+ * ```
+ *
+ * For `MyPredicate`, [functionalInterfaceFunction] returns the symbol for the `test` function.
+ *
+ * @see KaNamedClassSymbol.isFun
+ * @see samConstructor
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(session: KaSession)
+public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
+    get() = with(session) { functionalInterfaceFunction }
 
 /**
  * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).

@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolD
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractAnnotationApplicableTargetsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractCanBeOperatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractFunctionalInterfaceBySamConstructorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractFunctionalInterfaceFunctionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractBuildArrayTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractBuildClassTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractTypeParameterTypeTest
@@ -522,6 +523,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractFunctionalInterfaceBySamConstructorTest> {
             model(it, "functionalInterfaceBySamConstructor")
+        }
+
+        test<AbstractFunctionalInterfaceFunctionTest>(filter = frontendIs(FrontendKind.Fir)) {
+            model(it, "functionalInterfaceFunction")
         }
 
         test<AbstractCanBeOperatorTest> {

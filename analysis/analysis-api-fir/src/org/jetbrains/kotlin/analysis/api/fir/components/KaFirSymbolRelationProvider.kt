@@ -366,6 +366,16 @@ internal class KaFirSymbolRelationProvider(
             }
         }
 
+    override val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
+        get() = withValidityAssertion {
+            val classId = classId ?: return null
+            val firClassOrTypeAlias = analysisSession.getClassLikeSymbol(classId) ?: return null
+            val firSession = analysisSession.firSession
+            val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
+            val samFunction = resolver.getSamFunction(firClassOrTypeAlias) ?: return null
+            return analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(samFunction)
+        }
+
     override val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
         get() = withValidityAssertion {
             firSymbol.fir.returnTypeRef.coneType.classId?.toLookupTag()?.let {
