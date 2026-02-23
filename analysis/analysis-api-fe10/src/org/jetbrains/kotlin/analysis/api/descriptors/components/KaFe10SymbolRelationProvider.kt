@@ -208,6 +208,11 @@ internal class KaFe10SymbolRelationProvider(
             throw NotImplementedError("Method is not implemented for FE 1.0")
         }
 
+    override val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
+        get() = withValidityAssertion {
+            throw NotImplementedError("Method is not implemented for FE 1.0")
+        }
+
     @KaExperimentalApi
     override val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
         get() = withValidityAssertion { null }

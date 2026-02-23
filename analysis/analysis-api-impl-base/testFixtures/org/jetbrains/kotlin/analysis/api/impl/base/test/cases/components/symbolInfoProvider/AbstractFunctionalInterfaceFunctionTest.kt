@@ -24,6 +24,12 @@ abstract class AbstractFunctionalInterfaceFunctionTest : AbstractAnalysisApiBase
             copyAwareAnalyzeForTest(typeReference) { contextTypeReference ->
                 val classSymbol = contextTypeReference.type.symbol ?: error("Cannot resolve type reference to a class-like symbol")
                 val functionalInterfaceFunction = classSymbol.functionalInterfaceFunction
+                val samConstructor = classSymbol.samConstructor
+                val functionalInterfaceFunctionFromConstructor = samConstructor?.functionalInterfaceFunction
+
+                testServices.assertions.assertEquals(functionalInterfaceFunction, functionalInterfaceFunctionFromConstructor) {
+                    "Functional interface functions from class and from SAM constructor should match"
+                }
 
                 buildString {
                     appendLine("CLASS:")

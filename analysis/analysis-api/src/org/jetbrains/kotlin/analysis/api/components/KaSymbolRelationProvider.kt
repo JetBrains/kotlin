@@ -112,6 +112,28 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
         get() = functionalInterface
 
     /**
+     * Returns the single abstract function of the [functional interface][functionalInterface] that this SAM constructor creates.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun interface MyPredicate {
+     *     fun test(value: Int): Boolean
+     * }
+     *
+     * val p = MyPredicate { it > 0 }  // MyPredicate is a SAM constructor call
+     * ```
+     *
+     * For the `MyPredicate` SAM constructor symbol, [functionalInterfaceFunction] returns the symbol for the `test` function.
+     *
+     * @see KaClassLikeSymbol.functionalInterfaceFunction
+     * @see functionalInterface
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
+
+    /**
      * Returns the original [KaConstructorSymbol] for a [type-aliased constructor][KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR], or `null`
      * otherwise.
      *
@@ -435,6 +457,32 @@ context(session: KaSession)
 public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
     @Suppress("DEPRECATION")
     get() = with(session) { constructedClass }
+
+/**
+ * Returns the single abstract function of the [functional interface][functionalInterface] that this SAM constructor creates.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun interface MyPredicate {
+ *     fun test(value: Int): Boolean
+ * }
+ *
+ * val p = MyPredicate { it > 0 }  // MyPredicate is a SAM constructor call
+ * ```
+ *
+ * For the `MyPredicate` SAM constructor symbol, [functionalInterfaceFunction] returns the symbol for the `test` function.
+ *
+ * @see KaClassLikeSymbol.functionalInterfaceFunction
+ * @see functionalInterface
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(session: KaSession)
+public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
+    get() = with(session) { functionalInterfaceFunction }
 
 /**
  * Returns the original [KaConstructorSymbol] for a [type-aliased constructor][KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR], or `null`
