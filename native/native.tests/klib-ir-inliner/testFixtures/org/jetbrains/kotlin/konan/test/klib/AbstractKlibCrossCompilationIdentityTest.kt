@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.utils.bind
@@ -165,7 +166,10 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
         val klibFile = info.outputFile
 
         metadataDumper[module] += klibFile.dumpMetadata(kotlinNativeClassLoader, printSignatures = false, signatureVersion = null)
-        irDumper[module] += klibFile.dumpIrAndSanitizePathsInFileEntries(kotlinNativeClassLoader)
+        irDumper[module] += klibFile.dumpIrAndSanitizePathsInFileEntries(
+            kotlinNativeClassLoader,
+            module.independentSourceDirectoryPathsTransitive(testServices)
+        )
         manifestDumper[module] += readManifestAndSanitize(klibFile, singleTargetInManifestToBeReplacedByTheAlias = null)
     }
 
@@ -210,8 +214,9 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
 
 private fun File.dumpIrAndSanitizePathsInFileEntries(
     kotlinNativeClassLoader: ClassLoader,
+    absolutePathPrefixes: List<String>,
 ): String {
-    val rawIrDump = dumpIr(kotlinNativeClassLoader)
+    val rawIrDump = dumpIr(kotlinNativeClassLoader, absolutePathPrefixes)
 
     // There can be absolute paths in IR file entries in `IrInlinedFunctionBlock`s coming from dependency libraries (stdlib, kotlin-test).
     // Let's truncate them to the last 5 path segments to make tests more stable.
