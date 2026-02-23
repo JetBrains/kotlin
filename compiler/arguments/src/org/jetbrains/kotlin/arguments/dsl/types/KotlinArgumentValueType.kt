@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
-import java.io.File
 import java.nio.file.Path
 
 /**
@@ -191,7 +190,7 @@ object ProfileCompilerCommandType : KotlinArgumentValueType<ProfileCompilerComma
     override fun stringRepresentation(value: ProfileCompilerCommand?): String? {
         if (value == null) return null
         return with(value) {
-            "\"${profilerPath.absolutePathStringOrThrow()}${File.pathSeparator}$command${File.pathSeparator}${outputDir.absolutePathStringOrThrow()}\""
+            $$"\"$${profilerPath.absolutePathStringOrThrow()}${File.pathSeparator}$$command${File.pathSeparator}$${outputDir.absolutePathStringOrThrow()}\""
         }
     }
 }

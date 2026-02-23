@@ -495,6 +495,68 @@ class CodeConformanceTest : TestCase() {
             )
         }
     }
+
+    /**
+     * Verify that no hardcoded File.pathSeparator is used in SSoT
+     * Valid patterns:
+     * - \${File.pathSeparator} in regular strings
+     * - ${File.pathSeparator} in raw string literals ($$"...")
+     * Invalid:
+     * - ${File.pathSeparator} in regular strings (without \ or $$ prefix)
+     */
+    fun testNoHardcodedPathSeparatorInSSOT() {
+        val pattern = Pattern.compile("""(?<![\\$])\$\{File\.pathSeparator\}""")
+        val targetDirs = listOf(
+            "compiler/arguments/src/org/jetbrains/kotlin/arguments/dsl/types"
+        )
+
+        targetDirs.flatMap {
+            FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
+        }.forEach { sourceFile ->
+            val content = sourceFile.readText()
+            val matcher = pattern.matcher(content)
+
+            while (matcher.find()) {
+                val matchPos = matcher.start()
+                val beforeMatch = content.substring(0, matchPos)
+                val quoteIdx = findPrecedingUnescapedQuote(beforeMatch)
+
+                if (isInsideRawStringLiteral(beforeMatch, quoteIdx)) {
+                    continue
+                }
+
+                fail(
+                    "[KT-84449] Platform-specific File.pathSeparator must be escaped for runtime evaluation. " +
+                            "Use \\${'$'}{File.pathSeparator} or raw string literals.\nin file: $sourceFile"
+                )
+            }
+        }
+    }
+}
+
+private fun findPrecedingUnescapedQuote(text: String): Int {
+    var i = text.length - 1
+    while (i >= 0) {
+        if (text[i] == '"') {
+            // Count preceding backslashes
+            var backslashCount = 0
+            var j = i - 1
+            while (j >= 0 && text[j] == '\\') {
+                backslashCount++
+                j--
+            }
+            // Quote is unescaped if even number of backslashes before it
+            if (backslashCount % 2 == 0) {
+                return i
+            }
+        }
+        i--
+    }
+    return -1
+}
+
+private fun isInsideRawStringLiteral(text: String, quoteIndex: Int): Boolean {
+    return quoteIndex >= 2 && text.substring(quoteIndex - 2, quoteIndex) == "$$" + ""
 }
 
 private fun String.ensureFileOrEndsWithSlash() =
