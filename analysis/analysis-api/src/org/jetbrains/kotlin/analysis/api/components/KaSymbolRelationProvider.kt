@@ -47,11 +47,36 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
     /**
      * The associated [KaSamConstructorSymbol] if this [KaClassLikeSymbol] is a
      * [functional interface type (SAM)](https://kotlinlang.org/docs/fun-interfaces.html).
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun interface MyPredicate {
+     *     fun test(value: Int): Boolean
+     * }
+     *
+     * val p = MyPredicate { it > 0 }  // MyPredicate is a SAM constructor call
+     * ```
+     *
+     * For `MyPredicate`, [samConstructor] returns the symbol for the synthetic SAM constructor
+     * that enables the `MyPredicate { ... }` lambda syntax.
      */
     public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 
     /**
      * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun interface MyPredicate {
+     *     fun test(value: Int): Boolean
+     * }
+     *
+     * val p = MyPredicate { it > 0 }  // MyPredicate is a SAM constructor call
+     * ```
+     *
+     * For the `MyPredicate` SAM constructor symbol, [functionalInterface] returns the symbol for the `MyPredicate` interface.
      */
     public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
 
@@ -307,6 +332,19 @@ public val KaSymbol.containingModule: KaModule
 /**
  * The associated [KaSamConstructorSymbol] if this [KaClassLikeSymbol] is a
  * [functional interface type (SAM)](https://kotlinlang.org/docs/fun-interfaces.html).
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun interface MyPredicate {
+ *     fun test(value: Int): Boolean
+ * }
+ *
+ * val p = MyPredicate { it > 0 }  // MyPredicate is a SAM constructor call
+ * ```
+ *
+ * For `MyPredicate`, [samConstructor] returns the symbol for the synthetic SAM constructor
+ * that enables the `MyPredicate { ... }` lambda syntax.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
@@ -316,6 +354,18 @@ public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 
 /**
  * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun interface MyPredicate {
+ *     fun test(value: Int): Boolean
+ * }
+ *
+ * val p = MyPredicate { it > 0 }  // MyPredicate is a SAM constructor call
+ * ```
+ *
+ * For the `MyPredicate` SAM constructor symbol, [functionalInterface] returns the symbol for the `MyPredicate` interface.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
