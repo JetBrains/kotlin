@@ -191,7 +191,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
             listOf(
                 metadataDumper.checkGoldenData(goldenDataFileExtension = "metadata.txt"),
                 irDumper.checkGoldenData(goldenDataFileExtension = "ir$irFileSuffix.txt"),
-                manifestDumper.checkGoldenData(goldenDataFileExtension = "manifest")
+                manifestDumper.checkGoldenData(goldenDataFileExtension = "manifest$irFileSuffix")
             )
         )
     }
