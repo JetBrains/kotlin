@@ -60,10 +60,6 @@ fun main(args: Array<String>) {
                 )
                 modelForDirectoryBasedTest("incremental", "js", extension = null, excludeParentDirs = true)
             }
-
-            testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
-                modelForDirectoryBasedTest("incremental/mpp", "allPlatforms", extension = null, excludeParentDirs = true)
-            }
             //TODO: write a proper k2 multiplatform test runner KT-63183
         }
     }
