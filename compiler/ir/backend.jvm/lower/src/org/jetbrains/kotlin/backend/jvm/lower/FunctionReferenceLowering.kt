@@ -93,9 +93,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private val isJavaSamConversionWithEqualsHashCode =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
-    private fun IrRichFunctionReference.isSamConversion(): Boolean =
-        !type.isFunctionOrKFunction() && !type.isSuspendFunctionOrKFunction()
-
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
         expression.transformChildrenVoid(this)
         if (expression.isIgnored) return expression
