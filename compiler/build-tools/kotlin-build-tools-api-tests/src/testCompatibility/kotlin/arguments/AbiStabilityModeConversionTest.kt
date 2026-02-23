@@ -108,11 +108,7 @@ internal class AbiStabilityModeConversionTest : BaseArgumentTest<AbiStabilityMod
         )
     }
 
-    override fun expectedArgumentStringsFor(value: String?, compilerVersion: String): List<String> {
-        if (value == null || value == getDefaultValueString(compilerVersion)) {
-            return emptyList()
-        }
-
+    override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }
 

@@ -13,15 +13,20 @@ import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.iterator
 
 abstract class BaseArgumentTest<T>(val argumentName: String) : BaseCompilationTest() {
 
-    abstract fun expectedArgumentStringsFor(value: String?, compilerVersion: String): List<String>
-
     abstract fun getValueString(argument: T?): String?
+
+    protected fun expectedArgumentStringsFor(value: String?, compilerVersion: String): List<String> {
+        if (value == null || value == getDefaultValueString(compilerVersion)) {
+            return emptyList()
+        }
+
+        return expectedArgumentStringsFor(value)
+    }
+
+    abstract fun expectedArgumentStringsFor(value: String): List<String>
 
     protected fun getDefaultValueString(
         compilerVersion: String,
