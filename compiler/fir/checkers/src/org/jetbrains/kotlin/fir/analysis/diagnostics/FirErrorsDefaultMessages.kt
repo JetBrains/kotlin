@@ -2746,7 +2746,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE,
             "Anonymous functions cannot specify default values for their parameters."
         )
-        map.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless.")
+        map.put(USELESS_VARARG_ON_PARAMETER, "The 'vararg' modifier is ignored on parameters of anonymous functions.")
         map.put(
             FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS,
             "Functional interface must have exactly one abstract function."
@@ -3253,8 +3253,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) called on a lambda expression.")
         map.put(NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, "Non-null assertion (!!) called on a callable reference expression.")
         map.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type ''{0}''.", RENDER_TYPE)
-        map.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null.")
-        map.put(USELESS_ELVIS_LEFT_IS_NULL, "Elvis operator (?:) is useless if the left operand is null.")
+        map.put(USELESS_ELVIS_RIGHT_IS_NULL, "Elvis operator (?:) is redundant if the right operand is always null.")
+        map.put(USELESS_ELVIS_LEFT_IS_NULL, "Elvis operator (?:) is redundant if the left operand is always null.")
 
         // Casts and is-checks
         map.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type ''{0}''.", RENDER_TYPE)

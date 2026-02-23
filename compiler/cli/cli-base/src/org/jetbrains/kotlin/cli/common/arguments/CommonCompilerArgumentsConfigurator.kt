@@ -257,7 +257,10 @@ private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersi
             )
         }
     } else if (suppressApiVersionGreaterThanLanguageVersionError) {
-        collector.report(WARNING, "Useless suppress -Xsuppress-api-version-greater-than-language-version-error.")
+        collector.report(
+            WARNING,
+            "-Xsuppress-api-version-greater-than-language-version-error was passed, but the API version (${apiVersion.versionString}) is not greater than the language version (${languageVersion.versionString})."
+        )
     }
 }
 

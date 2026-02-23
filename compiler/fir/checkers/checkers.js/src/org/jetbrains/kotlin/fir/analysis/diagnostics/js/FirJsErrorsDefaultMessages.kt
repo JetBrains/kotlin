@@ -200,7 +200,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(JS_STATIC_NOT_IN_CLASS_COMPANION, "Only members of class companion objects can be annotated with '@JsStatic'.")
         map.put(JS_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members of class companion objects can be annotated with '@JsStatic'.")
-        map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is useless for const.")
+        map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is redundant for const properties.")
 
         map.put(
             EXPOSED_NOT_EXPORTED_SUPER_INTERFACE,
