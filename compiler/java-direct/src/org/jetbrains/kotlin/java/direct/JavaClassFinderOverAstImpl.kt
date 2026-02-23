@@ -94,8 +94,9 @@ class JavaClassFinderOverAstImpl(
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
-        val byName = index[packageFqName] ?: return null
-        return byName.keys
+        val byName = index[packageFqName]
+        if (byName != null) return byName.keys
+        return emptySet()
     }
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true

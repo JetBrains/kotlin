@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.junit.jupiter.api.Test;
+import org.jetbrains.kotlin.name.FqName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.io.path.writeText
 
 class JavaParsingTest {
 
@@ -120,5 +124,57 @@ class JavaParsingTest {
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
         println(root.dump())
+    }
+
+    @Test
+    fun testKnownClassNamesInPackage(@TempDir tempDir: Path) {
+        // Create test Java files in different packages
+        val comExampleDir = tempDir.resolve("com/example")
+        comExampleDir.toFile().mkdirs()
+        comExampleDir.resolve("ClassA.java").writeText("""
+            package com.example;
+            public class ClassA {}
+        """.trimIndent())
+        comExampleDir.resolve("ClassB.java").writeText("""
+            package com.example;
+            public class ClassB {}
+        """.trimIndent())
+
+        val testDir = tempDir.resolve("test")
+        testDir.toFile().mkdirs()
+        testDir.resolve("ClassC.java").writeText("""
+            package test;
+            public class ClassC {}
+        """.trimIndent())
+
+        // Create JavaClassFinder with this source root
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+
+        // Test package with classes - should return class names
+        val comExampleClasses = finder.knownClassNamesInPackage(FqName("com.example"))
+        assert(comExampleClasses != null) { "Expected non-null for package com.example" }
+        assert(comExampleClasses!!.size == 2) { "Expected 2 classes in com.example, got ${comExampleClasses.size}" }
+        assert("ClassA" in comExampleClasses) { "Expected ClassA in com.example" }
+        assert("ClassB" in comExampleClasses) { "Expected ClassB in com.example" }
+
+        val testClasses = finder.knownClassNamesInPackage(FqName("test"))
+        assert(testClasses != null) { "Expected non-null for package test" }
+        assert(testClasses!!.size == 1) { "Expected 1 class in test, got ${testClasses.size}" }
+        assert("ClassC" in testClasses) { "Expected ClassC in test" }
+
+        // Test package NOT in our index - should return empty set (not null)
+        // This is critical: FIR expects empty set to mean "no Java classes here from this source"
+        val kotlinPackageClasses = finder.knownClassNamesInPackage(FqName("kotlin"))
+        assert(kotlinPackageClasses != null) { "Expected non-null (empty set) for package kotlin, got null" }
+        assert(kotlinPackageClasses!!.isEmpty()) { "Expected empty set for package kotlin, got $kotlinPackageClasses" }
+
+        val javaLangClasses = finder.knownClassNamesInPackage(FqName("java.lang"))
+        assert(javaLangClasses != null) { "Expected non-null (empty set) for package java.lang, got null" }
+        assert(javaLangClasses!!.isEmpty()) { "Expected empty set for package java.lang, got $javaLangClasses" }
+
+        // Test non-existent package - should also return empty set
+        val nonExistentClasses = finder.knownClassNamesInPackage(FqName("does.not.exist"))
+        assert(nonExistentClasses != null) { "Expected non-null (empty set) for non-existent package, got null" }
+        assert(nonExistentClasses!!.isEmpty()) { "Expected empty set for non-existent package" }
     }
 }
