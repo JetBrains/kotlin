@@ -212,6 +212,9 @@ private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): Li
 
             }
         }
+        if (arguments.any { arg -> arg.defaultValueInArgs.contains(File::class.simpleName!!) }) {
+            add(File::class.qualifiedName!!)
+        }
     }
     return rawImports
         .sorted()
