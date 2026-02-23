@@ -66,6 +66,8 @@ declare namespace JS_TESTS {
             }
             class N extends foo.AbstractClassWithProtected.$metadata$.constructor {
                 constructor();
+                protected protectedAbstractFun(): number;
+                protected get protectedAbstractVal(): number;
             }
             namespace N {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -86,6 +88,7 @@ declare namespace JS_TESTS {
         }
         class InheritorOfAbstractClass extends foo.AbstractInheritorOfAbstractClass.$metadata$.constructor {
             constructor();
+            protected get protectedAbstractVal(): number;
         }
         namespace InheritorOfAbstractClass {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

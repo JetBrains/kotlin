@@ -304,10 +304,6 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             return emptyList()
         }
 
-        if (property.exportedVisibility(parent) == ExportedVisibility.PRIVATE) {
-            return emptyList()
-        }
-
         val parentClass = parent as? KaClassSymbol
         val isAbstract = parentClass?.classKind != KaClassKind.INTERFACE && property.modality == KaSymbolModality.ABSTRACT
         val isStatic = property.isStatic || property.isJsStatic()
@@ -681,10 +677,6 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     private fun functionExportability(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): Exportability {
         if (function.isInline && function.typeParameters.any { it.isReified })
             return Exportability.Prohibited("Inline reified function")
-
-        if (function.exportedVisibility(parent) == ExportedVisibility.PRIVATE) {
-            return Exportability.NotNeeded
-        }
 
         val parentClass = parent as? KaClassSymbol
 

@@ -94,6 +94,8 @@ declare namespace JS_TESTS {
     class FinalClass extends AbstractClassWithProtected.$metadata$.constructor {
         private constructor();
         static fromString(s: string): FinalClass;
+        protected protectedAbstractFun(): number;
+        protected get protectedAbstractVal(): number;
     }
     namespace FinalClass {
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

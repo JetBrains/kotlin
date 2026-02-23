@@ -395,6 +395,8 @@ declare namespace JS_TESTS {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 abstract class constructor extends foo.AbstractClassWithProtected.$metadata$.constructor {
+                    protected protectedAbstractFun(): number;
+                    protected get protectedAbstractVal(): number;
                     private constructor();
                 }
             }
