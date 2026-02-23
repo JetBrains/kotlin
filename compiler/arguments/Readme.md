@@ -11,3 +11,5 @@ Another one representation is JSON-based that is bundled into a published jar as
 - `6`: No schema changes from `5` other than order changed during schema serialization
 - `7`: Revert deprecation of `valueType` and `valueDescription`; mark `argumentType` as experimental
 - `8`: Add `JvmDefaultModeType`
+- `9`: Migrate compiler arguments to enum types: `AbiStabilityModeType`, `AssertionsModeType`, `JspecifyAnnotationsModeType`,
+  `LambdasModeType`, `SamConversionsModeType`, `StringConcatModeType`, `CompatqualAnnotationsModeType`, `WhenExpressionsModeType`
