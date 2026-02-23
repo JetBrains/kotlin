@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.junit.Test
+import org.junit.jupiter.api.Test;
 
 class JavaParsingTest {
 
@@ -33,6 +33,7 @@ class JavaParsingTest {
         assert(javaClass.isInterface)
         assert(javaClass.isAbstract)
     }
+
     @Test
     fun testMembers() {
         val source = """
@@ -46,16 +47,17 @@ class JavaParsingTest {
         val root = buildSyntaxTree(builder, source)
         println(root.dump())
         val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
-        
+
         assert(javaClass.fields.size == 1)
         assert(javaClass.fields.first().name.asString() == "field")
-        
+
         assert(javaClass.methods.size == 1)
         assert(javaClass.methods.first().name.asString() == "method")
-        
+
         assert(javaClass.constructors.size == 1)
         assert(javaClass.constructors.first().name.asString() == "A")
     }
+
     @Test
     fun testSupertypesAndTypeParameters() {
         val source = "class A<T> extends B implements C, D {}"
@@ -63,16 +65,17 @@ class JavaParsingTest {
         val root = buildSyntaxTree(builder, source)
         println(root.dump())
         val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
-        
+
         assert(javaClass.typeParameters.size == 1)
         assert(javaClass.typeParameters.first().name.asString() == "T")
-        
+
         assert(javaClass.supertypes.size == 3)
         val supertypeNames = javaClass.supertypes.map { it.classifierQualifiedName }
         assert(supertypeNames.contains("B"))
         assert(supertypeNames.contains("C"))
         assert(supertypeNames.contains("D"))
     }
+
     @Test
     fun testPackageAndFqName() {
         val source = """
@@ -83,9 +86,10 @@ class JavaParsingTest {
         val root = buildSyntaxTree(builder, source)
         println(root.dump())
         val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
-        
+
         assert(javaClass.fqName?.asString() == "com.example.A")
     }
+
     @Test
     fun testAnnotations() {
         val source = """
@@ -96,8 +100,25 @@ class JavaParsingTest {
         val root = buildSyntaxTree(builder, source)
         println(root.dump())
         val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
-        
+
         assert(javaClass.annotations.size == 1)
         assert(javaClass.annotations.first().classId?.asSingleFqName()?.asString() == "Deprecated")
+    }
+
+    @Test fun testJavaClassWithImport() {
+        val source = """
+            // FILE: JavaClass.java
+            import java.util.concurrent.atomic.*;
+
+            public class JavaClass {
+                public String foo(AtomicInteger i) {
+                    return "JavaClass";
+                }
+                public AtomicInteger a = new AtomicInteger(1);
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        println(root.dump())
     }
 }

@@ -51,17 +51,28 @@ fun buildSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaSynta
 
     for (i in 0 until productionMarkers.size) {
         val production = productionMarkers.getMarker(i)
-        if (productionMarkers.isDoneMarker(i)) {
-            val lastChildren = childrenStack.removeAt(childrenStack.size - 1)
-            lastChildren.appendTokens(production.getEndTokenIndex())
-            val node = JavaSyntaxNode(production.getNodeType(), lastChildren, source, production.getStartOffset(), production.getEndOffset())
-            for (child in lastChildren) {
-                child.parent = node
+        when {
+            productionMarkers.isDoneMarker(i) -> {
+                val lastChildren = childrenStack.removeAt(childrenStack.size - 1)
+                lastChildren.appendTokens(production.getEndTokenIndex())
+                val node = JavaSyntaxNode(production.getNodeType(), lastChildren, source, production.getStartOffset(), production.getEndOffset())
+                for (child in lastChildren) {
+                    child.parent = node
+                }
+                childrenStack.last().add(node)
             }
-            childrenStack.last().add(node)
-        } else {
-            childrenStack.peek().appendTokens(production.getStartTokenIndex())
-            childrenStack.add(mutableListOf())
+            production.isErrorMarker() -> {
+                // Error markers don't have start/done pairs, handle them as leaf nodes
+                val errorTokenIndex = production.getStartTokenIndex()
+                childrenStack.peek().appendTokens(errorTokenIndex)
+                val errorNode = JavaSyntaxNode(production.getNodeType(), emptyList(), source, production.getStartOffset(), production.getEndOffset())
+                childrenStack.peek().add(errorNode)
+            }
+            else -> {
+                // Start marker
+                childrenStack.peek().appendTokens(production.getStartTokenIndex())
+                childrenStack.add(mutableListOf())
+            }
         }
     }
 
