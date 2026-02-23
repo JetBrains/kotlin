@@ -1460,6 +1460,9 @@ class BodyGenerator(
                 backendContext.inlineClassesUtils.getInlineClassUnderlyingType(actualClassErased)
             else actualClassErased.defaultType
 
+//        val expectedTypeErased = expectedClassErased.defaultType
+//        val actualTypeErased = actualClassErased.defaultType
+
         // TYPE -> TYPE -> TRUE
         if (expectedTypeErased == actualTypeErased) return
 
