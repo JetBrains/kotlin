@@ -198,7 +198,7 @@ internal class KaFe10SymbolRelationProvider(
             return KaFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
         }
 
-    override val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
+    override val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
         get() = withValidityAssertion {
             (getDescriptor() as SamConstructorDescriptor).baseDescriptorForSynthetic.toKaClassSymbol(analysisContext)
         }

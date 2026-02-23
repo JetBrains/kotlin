@@ -286,7 +286,8 @@ CONSTRUCTOR:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   importableFqName: Predicate
-CLASS:
+
+FUNCTIONAL INTERFACE:
   KaNamedClassSymbol:
   annotations: []
   classId: Predicate

@@ -26,13 +26,14 @@ abstract class AbstractSamClassBySamConstructorTest : AbstractAnalysisApiBasedTe
             val symbolRenderer = KaDebugRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
             copyAwareAnalyzeForTest(mainFile) { contextFile ->
                 val samConstructorSymbol = getSamConstructorSymbol(contextFile, testServices)
-                val constructedClass = samConstructorSymbol?.constructedClass
+                val functionalInterface = samConstructorSymbol?.functionalInterface
 
                 buildString {
                     appendLine("CONSTRUCTOR:")
                     appendLine("  ${samConstructorSymbol?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }}")
-                    appendLine("CLASS:")
-                    appendLine("  ${constructedClass?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }}")
+                    appendLine()
+                    appendLine("FUNCTIONAL INTERFACE:")
+                    appendLine("  ${functionalInterface?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }}")
                 }
             }
         }

@@ -185,7 +185,8 @@ CONSTRUCTOR:
   getContainingModule: KaDanglingFileModule "Temporary file"
   deprecationStatus: null
   importableFqName: IntPredicate
-CLASS:
+
+FUNCTIONAL INTERFACE:
   KaNamedClassSymbol:
   annotations: []
   classId: IntPredicate

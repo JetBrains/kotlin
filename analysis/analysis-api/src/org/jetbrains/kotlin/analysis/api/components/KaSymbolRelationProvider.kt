@@ -51,9 +51,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
     public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 
     /**
-     * Returns the [KaClassLikeSymbol] of the corresponding SAM interface.
+     * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
      */
+    public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
+
+    /**
+     * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
+     */
+    @Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"))
     public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
+        get() = functionalInterface
 
     /**
      * Returns the original [KaConstructorSymbol] for a [type-aliased constructor][KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR], or `null`
@@ -308,12 +315,23 @@ public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
     get() = with(session) { samConstructor }
 
 /**
- * Returns the [KaClassLikeSymbol] of the corresponding SAM interface.
+ * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
 context(session: KaSession)
+public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
+    get() = with(session) { functionalInterface }
+
+/**
+ * Returns the [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"))
+@KaContextParameterApi
+context(session: KaSession)
 public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
+    @Suppress("DEPRECATION")
     get() = with(session) { constructedClass }
 
 /**

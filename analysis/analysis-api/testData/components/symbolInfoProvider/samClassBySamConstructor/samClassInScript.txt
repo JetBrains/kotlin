@@ -185,7 +185,8 @@ CONSTRUCTOR:
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
   deprecationStatus: null
   importableFqName: IntPredicate
-CLASS:
+
+FUNCTIONAL INTERFACE:
   KaNamedClassSymbol:
   annotations: []
   classId: IntPredicate

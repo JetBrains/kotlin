@@ -366,12 +366,12 @@ internal class KaFirSymbolRelationProvider(
             }
         }
 
-    override val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
+    override val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
         get() = withValidityAssertion {
             firSymbol.fir.returnTypeRef.coneType.classId?.toLookupTag()?.let {
                 analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(it)
-            } ?: errorWithAttachment("Cannot retrieve constructed class for KaSamConstructorSymbol") {
-                withSymbolAttachment("KaSamConstructorSymbol", analysisSession, this@constructedClass)
+            } ?: errorWithAttachment("Cannot retrieve functional interface for KaSamConstructorSymbol") {
+                withSymbolAttachment("KaSamConstructorSymbol", analysisSession, this@functionalInterface)
             }
         }
 
