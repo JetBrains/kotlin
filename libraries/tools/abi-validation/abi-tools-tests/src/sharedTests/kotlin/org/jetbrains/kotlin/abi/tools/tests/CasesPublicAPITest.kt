@@ -33,6 +33,11 @@ class CasesPublicAPITest {
     }
 
     @Test
+    fun syntheticConstructors() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
+
+    @Test
     fun companions() {
         snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
     }

@@ -1,0 +1,45 @@
+public final class cases/syntheticConstructors/MixedParameters {
+	public final fun getA ()I
+	public final fun getB ()I
+	public final fun getC ()I
+}
+
+public final class cases/syntheticConstructors/MultipleConstructors {
+	public final fun getA ()I
+}
+
+public final class cases/syntheticConstructors/MultipleParameters {
+	public final fun getA ()I
+	public final fun getB ()I
+	public final fun getC ()I
+}
+
+public final class cases/syntheticConstructors/OneParameter {
+	public final fun getA ()I
+}
+
+public final class cases/syntheticConstructors/PrivateConstructor {
+	public final fun getA ()I
+}
+
+public abstract class cases/syntheticConstructors/ProtectedConstructor {
+	protected fun <init> ()V
+	protected fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getA ()I
+}
+
+public final class cases/syntheticConstructors/PublishedConstructor {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getA ()I
+}
+
+public final class cases/syntheticConstructors/SimpleClass {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getA ()I
+}
+

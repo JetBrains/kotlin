@@ -15,6 +15,7 @@ internal class ClassVisibility(
     val classKind: ClassKind?,
     val modality: Modality?,
     val members: Map<JvmMemberSignature, MemberVisibility>,
+    val primaryConstructorIsInternal: Boolean,
     val facadeClassName: String? = null
 ) {
     val isCompanion: Boolean get() = classKind == ClassKind.COMPANION_OBJECT
@@ -96,6 +97,7 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
     var kind: ClassKind? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
+    var primaryConstructorIsInternal = false
 
     fun addMember(
         signature: JvmMemberSignature?,
@@ -117,6 +119,9 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
 
                 for (constructor in klass.constructors) {
                     addMember(constructor.signature, constructor.visibility, isReified = false)
+                    if (!constructor.isSecondary) {
+                        primaryConstructorIsInternal = constructor.visibility == Visibility.INTERNAL
+                    }
                 }
             }
 
@@ -158,7 +163,7 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
         }
     }
 
-    return ClassVisibility(classNode.name, visibility, kind, modality, members.associateBy { it.member }, _facadeClassName)
+    return ClassVisibility(classNode.name, visibility, kind, modality, members.associateBy { it.member }, primaryConstructorIsInternal, _facadeClassName)
 }
 
 internal fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)
