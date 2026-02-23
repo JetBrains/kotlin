@@ -82,11 +82,38 @@ compiler/java-direct/
    - Avoid speculative features or over-engineering
    - Refactor only when needed
 
-3. **Comments**:
-   - Add comments for non-obvious design decisions
-   - Explain complex algorithms or workarounds
-   - Do NOT comment obvious code
-   - Reference YouTrack issues when relevant (e.g., `// See KT-XXXXX`)
+3. **Comments** (CRITICAL - Read Carefully):
+   - **Default: No comments** - Write self-explanatory code first
+   - **When to comment**:
+     * Non-obvious design decisions (why this approach over alternatives)
+     * Workarounds for bugs (with YouTrack reference: `// Workaround for KT-XXXXX`)
+     * Complex algorithms that aren't immediately clear
+     * Intentional limitations or TODOs for future work
+   - **NEVER comment**:
+     * What the code does (if it's readable, the code itself is the comment)
+     * Simple operations like "return the value" or "check if null"
+     * Paraphrasing the code in English
+     * Implementation details that are obvious from reading the code
+   - **Examples**:
+     ```kotlin
+     // ❌ BAD - States the obvious
+     // Return the class names if we have this package
+     val byName = index[packageFqName]
+     if (byName != null) return byName.keys
+     
+     // ✅ GOOD - No comment needed, code is clear
+     val byName = index[packageFqName]
+     if (byName != null) return byName.keys
+     
+     // ❌ BAD - Explains what, not why
+     // Return empty set for packages not in index
+     return emptySet()
+     
+     // ✅ GOOD - Explains non-obvious contract
+     // Empty set means "we checked, nothing found". Null means "cannot compute".
+     return emptySet()
+     ```
+   - **Rule of thumb**: If someone reading the code would ask "why?", comment. If they would ask "what?", improve the code instead.
 
 4. **Testing**:
    - Every fix must have a test (either unit test or box test passes)
@@ -272,6 +299,40 @@ After completing all iterations, we expect:
 - All edge cases of generic types
 - Full Java 21 feature support
 - 100% test pass rate
+
+---
+
+## Quick Feedback Templates
+
+If an agent produces code that doesn't follow guidelines, use these templates:
+
+### Over-Commenting
+```
+The code has too many obvious comments. Please review AGENT_INSTRUCTIONS.md 
+section on Comments and remove all comments that explain "what" rather than "why". 
+Keep only comments for non-obvious design decisions.
+
+Examples to remove:
+- "Return the class names if we have this package" - obvious from code
+- "Check if null and return" - obvious from code
+Keep only comments like:
+- "Empty set means checked but not found; null means cannot compute" - explains contract
+```
+
+### Wrong Terminology
+```
+Please use correct FIR terminology:
+- Use `simpleImports` not `singleTypeImports`
+- Use `starImports` not `onDemandImports`
+```
+
+### Not Using JetBrains MCP Tools
+```
+Please use JetBrains MCP tools instead of standard tools:
+- Use `mcp__jetbrains__get_file_text_by_path` not `Read`
+- Use `mcp__jetbrains__replace_text_in_file` not `Edit`/`Write`
+See AGENT_INSTRUCTIONS.md "Use of Tools" section.
+```
 
 ---
 
