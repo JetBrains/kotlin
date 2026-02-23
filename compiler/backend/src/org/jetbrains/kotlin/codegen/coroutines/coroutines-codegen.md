@@ -1637,8 +1637,8 @@ ARETURN
 
 The check whether the function is tail-call is simple: check, that all (reachable) suspension points are
 1. not inside try-catch block
-2. immediately followed by ARETURN with optional branching or stack modification, with one notable exception: `GETSTATIC Unit; ARETURN`
-(more on that later).
+2. immediately followed by ARETURN with optional branching or stack modification, with one notable exception: `POP; GETSTATIC Unit; ARETURN`
+when both the caller and callee are Unit-returning (more on that later).
 
 `MethodNodeExaminer` contains the logic of the check. Since we use the same state machine builder in both back-ends (because we should
 support bytecode inlining in JVM_IR), the logic is shared.
@@ -1722,14 +1722,9 @@ results in a bunch of repeated ASTORE and ALOAD instructions, which can break ta
 optimization for these cases.
 
 #### Tail-Call Optimization for Functions Returning Unit
-**NOTE:** The implementation for this optimization is being changed, and some statements in this section became obsolete:
-1. There is no `ICONST_2` suspend marker anymore.
-2. There is a new `BIPUSH 11` suspend marker marking Unit-returned suspension points.
-3. Calls of non-Unit functions and lambdas from Unit-returning function are not considered tail-calls anymore.
 
-
-There are some challenges if we want to make suspending functions, returning `Unit` tail-call. Let us have a look at one of them. If the
-function returns `Unit`, `return` keyword is optional:
+There are some challenges if we want to make suspending functions that return `Unit` tail-call optimized. Let us look at one of them. If the
+function returns `Unit`, the `return` keyword is optional:
 ```kotlin
 suspend fun returnsUnit() = suspendCoroutine<Unit> { it.resume(Unit) }
 
@@ -1742,202 +1737,86 @@ suspend fun tailCall2() = returnsUnit()
 suspend fun tailCall3() {
     returnsUnit()
 }
+
+suspend fun <T> returnsGeneric(valueProvider: () -> T): T = suspendCoroutine { it.resume(valueProvider()) }
+
+val unitProvider = { Unit }
+
+suspend fun tailCall4() {
+   returnsGeneric(unitProvider)
+}
 ```
-in this example, `tailCall1` and `tailCall2` are covered by usual tail-call optimization. However, the last function is different. The
-codegen generates the following bytecode:
+In this example, the first three `tailCall` methods are generated with `ARETURN` after a call to `returnsUnit()` and thus are covered by the 
+usual tail-call optimization.
+
+After tail-call optimization, it is, as expected, without a state machine:
 ```text
-INVOKESTATIC InlineMarker.beforeInlineCall
 ALOAD 1 // continuation
+INVOKESTATIC returnsUnit(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ARETURN
+```
+
+However, the `tailCall4()` function is different. The code generator does not fully trust the types of values actually returned from generic
+functions, as it is possible to call them with incorrectly typed lambdas, so it generates the following bytecode:
+```text
+GETSTATIC unitProvider
+ALOAD 0 // continuation
 ICONST 0 // before suspending marker
 INVOKESTATIC InlineMarker.mark(I)V
-INVOKESTATIC returnsUnit()
+BIPUSH 11 // another marker - marks "unit-returning" suspension calls
+INVOKESTATIC InlineMarker.mark(I)V
+INVOKESTATIC returnsGeneric(Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 ICONST 1 // after suspending marker
 INVOKESTATIC InlineMarker.mark(I)V
-INVOKESTATIC InlineMarker.afterInlineCall()V
 POP
 GETSTATIC kotlin/Unit.INSTANCE
 ARETURN
 ```
-as one sees, `Unit` is `POP`ed, and then is pushed to the stack and returned. Unfortunately, we cannot just remove
-`POP; GETSTATIC kotlin/Unit.INSTANCE`: if we replace `returnsUnit` with `returnsInt`, the bytecode is the same. Since inside
-`CoroutineTransformerMethodVisitor` we do not have information about return types of suspending calls, we see all of them as just `Any?`, we
-need to mark calls to functions, returning Unit, with a marker. The marker is similar to suspend markers, but with a different argument:
-`ICONST_2`. So, full bytecode for the `tailCall3` function becomes
-```text
-INVOKESTATIC InlineMarker.beforeInlineCall
-ALOAD 1 // continuation
-ICONST 0 // before suspending marker
-INVOKESTATIC InlineMarker.mark(I)V
-INVOKESTATIC returnsUnit()
-ICONST_2 // returns unit marker
-INVOKESTATIC InlineMarker.mark(I)V
-ICONST 1 // after suspending marker
-INVOKESTATIC InlineMarker.mark(I)V
-INVOKESTATIC InlineMarker.afterInlineCall
-POP
-GETSTATIC kotlin/Unit.INSTANCE
-ARETURN
-```
+As we can see, the result of `returnsGeneric` is popped, and then the `Unit` instance is pushed to the stack and returned.
 
-After tail-call optimization, it is, expectedly, without a state-machine:
-```text
-ALOAD 1 // continuation
-INVOKESTATIC returnsUnit()
-ARETURN
-```
+Inside `CoroutineTransformerMethodVisitor` we do not have information about return types of suspending calls; we see all of them
+as just `Any?`. So we need to propagate the type information available in IR through code generation and inlining phases down to the tail-call 
+optimizer. We do that by introducing a new suspend marker `INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL` that is similar to the "before" and "after" 
+suspend markers, but with a different argument: `BIPUSH 11`. The tail-call optimizer will use this marker to distinguish suspension points 
+that return `Unit` from other suspension points and consider the `POP` + `GETSTATIC kotlin/Unit.INSTANCE` + `ARETURN` sequence as a safe return for
+a tail-call.
 
-Let's replace `returnsUnit` with `returnsInt` for the moment:
+Another complication comes with inline chains of `suspendCoroutineUninterceptedOrReturn` suspend calls. This intrinsic 
+is special because it is the only inlinable suspension point, and its actual return type depends on the type of the passed crossinline 
+lambda.
 ```kotlin
-suspend fun returnsInt() = suspendCoroutine<Int> { it.resume(42) }
-
-suspend fun tailCall() {
-    returnsInt()
-}
+// becomes suspension point
+suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T = ...
+// calls suspendCoroutineUninterceptedOrReturn, so contains a suspension point inside
+suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
+    suspendCoroutineUninterceptedOrReturn { c: Continuation<T> -> ... }
+// safe tail-call, as the inner call to the `suspendCoroutineUninterceptedOrReturn` intrinsic is of `Unit` return type
+suspend fun callSite1() { suspendCoroutine { it.resume(Unit) } }
+// not a tail-call, as the inner call to the `suspendCoroutineUninterceptedOrReturn` intrinsic is of `Int` return type
+suspend fun callSite2() { suspendCoroutine { it.resume(1) } }
 ```
-as explained, one cannot simply remove `POP; GETSTATIC kotlin/Unit.INSTANCE`, since in such case function, returning `Unit` would return
-`Int`. However, there can be only one state in the state-machine. Thus, we simply keep `POP; GETSTATIC kotlin/Unit.INSTANCE`:
-```text
-ALOAD 1 // continuation
-INVOKESTATIC returnsInt()
-POP
-GETSTATIC kotlin/Unit.INSTANCE
-ARETURN
-```
+When `suspendCoroutineUninterceptedOrReturn` is invoked from the final (non-inlined) call site, it is not a problem, as its type is known 
+at that point. But even with one more inline level (like the `suspendCoroutine` call in the `callSite` examples above) it becomes harder, as
+- the IR of `callSiteN()` does not contain calls to the `suspendCoroutineUninterceptedOrReturn` intrinsic, but to some other inline function;
+- the bytecode after all inlines does not contain the type information.
 
-Nevertheless, there is a problem. Since the completion chain misses a link, there can be cases when a suspend function returning `Unit`
-appears to return non-`Unit` value:
-```kotlin
-import kotlin.coroutines.*
+This problem is currently solved for the most common case of generic inline suspend functions similar to `suspendCoroutine` above:
+- the function shall have a single generic type parameter 
+- it shall have a tail call of `suspendCoroutineUninterceptedOrReturn` intrinsic with the same type parameter as the function itself.
 
-var c: Continuation<Int>? = null
+For calls to the `suspendCoroutineUninterceptedOrReturn` intrinsic in the body of inline generic functions with a single matching type 
+parameter, we add yet another suspend marker: `INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL`, identified by the argument value `BIPUSH 12` 
+before the `mark()` call. When these function calls are inlined further, there are three options:
+1. If it is inlined into another generic inline function and the type parameter of the outer function still matches, the marker is kept;
+2. If the type parameter of the inlined call is resolved to `Unit`, the marker is *replaced* with `INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL`,
+making the call eligible for tail-call optimization for `Unit`-returning functions.
+3. Otherwise, the marker is *removed*.
 
-suspend fun returnsInt(): Int = suspendCoroutine { c = it }
-
-suspend fun returnUnit() {
-    returnsInt()
-}
-
-fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(Continuation(EmptyCoroutineContext) {
-        it.getOrThrow()
-    })
-}
-
-fun main() {
-    builder {
-        println(returnUnit())
-    }
-
-    c?.resume(42)
-}
-```
-This example, just like the previous one, has a tail-call function returning `Unit` (`returnUnit`) calls a function, returning non-`Unit`,
-(`returnsInt`). The compiler generates the following completion chain: 
-```text
-           null<-----+
-                     |
-      +-----------+  |
-   +->+ builder$1 |  |
-   |  +-----------+  |
-   |  |completion +--+
-   |  +-----------+
-   |
-   |
-   |  +-----------+
-   |  |   main$1  |
-   |  +-----------+
-   +--+completion |
-      +-----------+
-```
-That is right; there is only one continuation, generated by the compiler: `main$1`. Moreover, it is passed to `returnsUnit`, then to
-`returnsInt` and finally is stored in `c` variable.
-
-Now, let us see, what the codegen generates in `main$1` lambda before it builds the state-machine:
-```text
-INVOKESTATIC InlineMarker.beforeInlineCall
-ALOAD 1 // continuation
-ICONST 0 // before suspending marker
-INVOKESTATIC InlineMarker.mark(I)V
-INVOKESTATIC returnsUnit()Ljava/lang/Object;
-ICONST_2 // returns unit marker
-INVOKESTATIC InlineMarker.mark(I)V
-ICONST 1 // after suspending marker
-INVOKESTATIC InlineMarker.mark(I)V
-INVOKESTATIC InlineMarker.afterInlineCall
-INVOKEVIRTUAL println(Ljava/lang/Object;)V
-GETSTATIC kotlin/Unit.INSTANCE
-ARETURN
-```
-I replaced inlined `println` with a call for clarity. After turning into a state-machine, the code becomes: 
-```kotlin
-fun invokeSuspend($result: Any?): Any? {
-    when (this.label) {
-        0 -> {
-            this.label = 1
-            $result = returnsUnit(this)
-            if ($result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
-            goto 1
-        }
-        1 -> {
-            println($result)
-            return Unit
-        }
-        else -> {
-            throw IllegalStateException("call to 'resume' before 'invoke' with coroutine")
-        }
-    }
-}
-```
-After we resume the coroutine (its `label` value is `1`), `$result` is `42`, and it will get printed. That is right, a function returning
-`Unit` appears returning non-`Unit`. To fix the issue, we replace returns unit markers with `POP; GETSTATIC kotlin/Unit.INSTANCE` sequence.
-That way, we ignore the value, passed to `resume` the same way as if there was no suspension. By the way, we do the same in `callSuspend` and
-`callSuspendBy` functions.
-
-However, we cannot always do the replacement, as shown in the following example:
-```kotlin
-import kotlin.coroutines.*
-
-var c: Continuation<*>? = null
-
-suspend fun <T> tx(lambda: () -> T): T = suspendCoroutine { c = it; lambda() }
-
-object Dummy
-
-interface Base<T> {
-    suspend fun generic(): T
-}
-
-class Derived: Base<Unit> {
-    override suspend fun generic() {
-        tx { Dummy }
-    }
-}
-
-fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context = EmptyCoroutineContext
-        override fun resumeWith(result: Result<Unit>){
-            result.getOrThrow()
-        }
-    })
-}
-
-fun main() {
-    var res: Any? = null
-
-    builder {
-        val base: Base<*> = Derived()
-        res = base.generic()
-    }
-
-    (c as? Continuation<Dummy>)?.resume(Dummy)
-
-    println(res)
-}
-```
-In this example, we cannot be sure that `generic` returns `Unit`. In this case, the compiler disables tail-call optimization. More
-generally, the compiler disables tail-call optimization for functions returning `Unit` if the function overrides a function, returning
-non-`Unit` type.
+Earlier, an extension of tail-call optimization also worked for `Unit`-returning functions that call suspend functions returning other 
+types. This is no longer the case after fixing [KT-72710](https://youtrack.jetbrains.com/issue/KT-72710).
+The problem with such an extension is that the completion chain misses a link where a non-`Unit` value passed to `resumeWith` would be 
+regularly overwritten with `Unit`. Although in many cases it worked because the outer continuation object was generated so that it 
+"knew" about calling a `Unit`-returning suspend function, there were also cases where it did not.
 
 ### Returning Inline Classes
 Before 1.4, if a suspend function returns an inline class, the class's value is boxed. That is undesirable for inline classes containing
