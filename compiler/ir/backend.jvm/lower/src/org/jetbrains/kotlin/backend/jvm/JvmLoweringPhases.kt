@@ -22,12 +22,12 @@ private val jvmModulePhases1 = createModulePhases(
     ::JvmExpectDeclarationRemover,
     ::ConstEvaluationLowering,
     ::FileClassLowering,
+    ::JvmUpgradeCallableReferences,
     ::JvmStaticInObjectLowering,
     ::RepeatedAnnotationLowering,
 )
 
 private val jvmFilePhases = createFilePhases(
-    ::JvmUpgradeCallableReferences,
     ::TypeAliasAnnotationMethodsLowering,
 
     ::PatchLambdaOffsetsLowering,
