@@ -62,10 +62,6 @@ abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
     private val String.prefix get() = "compilerPlugins/$this"
 }
 
-class CompilerPluginsK1IncrementalIT : CompilerPluginsIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-}
-
 class CompilerPluginsK2IncrementalIT : CompilerPluginsIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
