@@ -166,7 +166,6 @@ internal fun WasmVM.runWithCaughtExceptions(
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
         )
-        println(str)
         if (shortName in failsIn) {
             return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")
         }
