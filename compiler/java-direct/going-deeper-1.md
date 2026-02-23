@@ -30,3 +30,25 @@ and create the prompts as requested.
 
 This looks good contents-wise. But probably non-optimal for the execution. Will it be more beneficial to extract common part of the instructions into a separate file, so the agents could be 
 prompted with a reference to the general instructions + current iteration prompt? If you agree with me, please split the document accordingly. Otherwise please explain, why the current form is better. 
+
+### 1.2
+
+How do I incorporate the adjustments to the processes, the knowledge of the subsystems and changes in the implementation so they are accessible for the next iterations, without overloading the agents with 
+excessive context? Should we add some instructions for the agens to dump some findings and general results description into a file, so I can prompt, e.g. you, later to update the general instructions?
+
+### 1.3
+
+(fixing commenting style)
+
+## 2 implementation prompts
+
+Read @AGENT_INSTRUCTIONS.md and @FIXING_ITERATIONS.md,
+then execute Iteration 1
+
+### 2.1
+
+Good work identifying and fixing the critical bug!
+
+The one issue with the solution is the excessive commenting. I removed the unnecessary comments and added more instructions to the @AGENT_INSTRUCTIONS.md.
+Please respect the updated version of the document.
+Proceed to Iteration 2: Type Resolution Implementation.

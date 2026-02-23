@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
-    override val outerClass: JavaClass? = null
+    override val outerClass: JavaClass? = null,
+    private val localScope: LocalJavaScope? = null
 ) : JavaElementOverAst(node, source), JavaClass {
 
     override val name: Name
@@ -72,10 +73,10 @@ class JavaClassOverAst(
         get() {
             val result = mutableListOf<JavaClassifierType>()
             node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, source))
+                result.add(JavaClassifierTypeOverAst(it, source, localScope))
             }
             node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, source))
+                result.add(JavaClassifierTypeOverAst(it, source, localScope))
             }
             return result
         }
@@ -88,7 +89,7 @@ class JavaClassOverAst(
         val innerClassNode = node.children.find { 
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
         }
-        return innerClassNode?.let { JavaClassOverAst(it, source, this) }
+        return innerClassNode?.let { JavaClassOverAst(it, source, this, localScope) }
     }
 
     override val isInterface: Boolean get() = node.findChildByType("INTERFACE_KEYWORD") != null

@@ -20,9 +20,14 @@ abstract class JavaTypeOverAst(
 
 class JavaClassifierTypeOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence
+    source: CharSequence,
+    private val localScope: LocalJavaScope? = null
 ) : JavaTypeOverAst(node, source), JavaClassifierType {
-    override val classifier: JavaClassifier? get() = null // TODO: Implement resolution
+    override val classifier: JavaClassifier? by lazy {
+        val simpleName = Name.identifier(classifierQualifiedName)
+        localScope?.findClass(simpleName)
+    }
+    
     override val classifierQualifiedName: String get() = node.text
     override val presentableText: String get() = node.text
     override val isRaw: Boolean get() = false

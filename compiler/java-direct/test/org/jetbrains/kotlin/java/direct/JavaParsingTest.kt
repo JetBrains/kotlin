@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -124,6 +125,38 @@ class JavaParsingTest {
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
         println(root.dump())
+    }
+
+    @Test
+    fun testLocalInheritance() {
+        val source = """
+            class Base {}
+            class Derived extends Base {}
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        
+        val localScope = LocalJavaScope(root, source)
+        
+        val classes = root.children.filter { it.type.toString() == "CLASS" }
+        assert(classes.size == 2) { "Expected 2 classes, got ${classes.size}" }
+        
+        val base = JavaClassOverAst(classes[0], source, null, localScope)
+        val derived = JavaClassOverAst(classes[1], source, null, localScope)
+        
+        assert(base.name.asString() == "Base")
+        assert(derived.name.asString() == "Derived")
+        
+        assert(base.supertypes.isEmpty()) { "Base should have no supertypes" }
+        assert(derived.supertypes.size == 1) { "Derived should have 1 supertype, got ${derived.supertypes.size}" }
+        
+        val supertype = derived.supertypes.first()
+        assert(supertype.classifierQualifiedName == "Base") { "Expected Base, got ${supertype.classifierQualifiedName}" }
+        
+        val classifier = supertype.classifier
+        assert(classifier != null) { "Expected classifier to be resolved" }
+        assert(classifier is JavaClass) { "Expected JavaClass, got ${classifier?.javaClass}" }
+        assert((classifier as JavaClass).name.asString() == "Base") { "Expected Base class, got ${classifier.name}" }
     }
 
     @Test

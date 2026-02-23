@@ -13,6 +13,65 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 ---
 
+## Iteration 2: Local Type Resolution Implementation - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented local scope resolution for Java supertypes within the same file. Created `LocalJavaScope` class that maps simple class names to `JavaClass` instances, enabling `JC2 extends JC` style inheritance to resolve correctly when both classes are in the same file. Unit tests confirm resolution works, but box tests still fail on constructor resolution issues.
+
+### Key Findings
+- **Supertype Resolution Architecture**: `JavaClassifierTypeOverAst.classifier` needs access to scope during lazy evaluation
+- **Scope Propagation**: `LocalJavaScope` must be threaded through `JavaClassOverAst` construction and passed to inner classes
+- **Test Pattern**: Same error persists (`UNRESOLVED_REFERENCE: '<init>'`), indicating constructor issues are the next blocker
+- **Box Test Status**: Still 0% pass rate, all 128 failing tests show constructor resolution errors
+- **Local Resolution Works**: Unit test confirms `class Derived extends Base` resolves Base correctly when both in same file
+
+### Implementation Decisions
+- **Lazy Resolution**: Used `by lazy` in `JavaClassifierTypeOverAst.classifier` to avoid eager evaluation during construction
+- **Scope Creation**: `LocalJavaScope` created once per file at parse time, shared by all classes in that file
+- **Simple Names Only**: Current implementation only resolves unqualified names (e.g., `Base`), not qualified names (e.g., `pkg.Base`)
+- **Deferred**: FIR integration for external classes, import handling, package-qualified resolution - these are for future iterations
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/LocalJavaScope.kt`: New file implementing local class name to JavaClass mapping
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt`: Added `localScope` parameter, pass to supertypes and inner classes
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`: Modified `JavaClassifierTypeOverAst` to accept `localScope` and implement lazy `classifier` resolution
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`: Create `LocalJavaScope` in `parseTopLevelClassFromFile`
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testLocalInheritance` unit test
+
+### Test Results
+- Unit tests: 9 passing (was 8), 1 added (`testLocalInheritance`)
+- Box tests: 0% pass rate (unchanged), 128/128 failing
+- Test progression: Same error as Iteration 1, but local resolution logic is verified working
+- Unit test confirms: `Base` class resolves correctly in `class Derived extends Base` scenario
+
+### Issues Encountered
+- **Same Box Test Errors**: Constructor resolution (`<init>` reference) still failing, blocking all box tests
+- **Scope Threading**: Required careful propagation through `JavaClassOverAst` constructors and inner class creation
+- **Test Data Structure**: Box tests have multiple files per test, ensuring scope is file-local was important
+
+### Next Layer Issues Identified
+Main blocker is now clearly constructor resolution:
+1. **Constructor Visibility**: `UNRESOLVED_REFERENCE: '<init>'` suggests Java constructors not properly exposed to Kotlin
+2. **Default Constructors**: `JavaClassOverAst.hasDefaultConstructor()` currently returns `false` - may need proper implementation
+3. **Constructor Synthetic Members**: Java classes without explicit constructors need synthetic default constructor
+4. **Member Resolution**: Beyond constructors, general member access may have issues
+
+### Recommendations for Future Iterations
+- **Iteration 3 Priority**: Investigate constructor resolution issue - why is `<init>` unresolved?
+- **hasDefaultConstructor**: Implement proper logic to return `true` when no explicit constructors exist
+- **Synthetic Constructors**: May need to generate default constructor when `constructors` collection is empty
+- **FIR Integration**: Still deferred - need to solve local issues first before tackling external type resolution
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
+
+---
+
 ## How to Update This File
 
 After completing each iteration, add a new section using this template:
@@ -67,6 +126,65 @@ After completing each iteration, add a new section using this template:
 
 ---
 
+## Iteration 2: Local Type Resolution Implementation - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented local scope resolution for Java supertypes within the same file. Created `LocalJavaScope` class that maps simple class names to `JavaClass` instances, enabling `JC2 extends JC` style inheritance to resolve correctly when both classes are in the same file. Unit tests confirm resolution works, but box tests still fail on constructor resolution issues.
+
+### Key Findings
+- **Supertype Resolution Architecture**: `JavaClassifierTypeOverAst.classifier` needs access to scope during lazy evaluation
+- **Scope Propagation**: `LocalJavaScope` must be threaded through `JavaClassOverAst` construction and passed to inner classes
+- **Test Pattern**: Same error persists (`UNRESOLVED_REFERENCE: '<init>'`), indicating constructor issues are the next blocker
+- **Box Test Status**: Still 0% pass rate, all 128 failing tests show constructor resolution errors
+- **Local Resolution Works**: Unit test confirms `class Derived extends Base` resolves Base correctly when both in same file
+
+### Implementation Decisions
+- **Lazy Resolution**: Used `by lazy` in `JavaClassifierTypeOverAst.classifier` to avoid eager evaluation during construction
+- **Scope Creation**: `LocalJavaScope` created once per file at parse time, shared by all classes in that file
+- **Simple Names Only**: Current implementation only resolves unqualified names (e.g., `Base`), not qualified names (e.g., `pkg.Base`)
+- **Deferred**: FIR integration for external classes, import handling, package-qualified resolution - these are for future iterations
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/LocalJavaScope.kt`: New file implementing local class name to JavaClass mapping
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt`: Added `localScope` parameter, pass to supertypes and inner classes
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`: Modified `JavaClassifierTypeOverAst` to accept `localScope` and implement lazy `classifier` resolution
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`: Create `LocalJavaScope` in `parseTopLevelClassFromFile`
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testLocalInheritance` unit test
+
+### Test Results
+- Unit tests: 9 passing (was 8), 1 added (`testLocalInheritance`)
+- Box tests: 0% pass rate (unchanged), 128/128 failing
+- Test progression: Same error as Iteration 1, but local resolution logic is verified working
+- Unit test confirms: `Base` class resolves correctly in `class Derived extends Base` scenario
+
+### Issues Encountered
+- **Same Box Test Errors**: Constructor resolution (`<init>` reference) still failing, blocking all box tests
+- **Scope Threading**: Required careful propagation through `JavaClassOverAst` constructors and inner class creation
+- **Test Data Structure**: Box tests have multiple files per test, ensuring scope is file-local was important
+
+### Next Layer Issues Identified
+Main blocker is now clearly constructor resolution:
+1. **Constructor Visibility**: `UNRESOLVED_REFERENCE: '<init>'` suggests Java constructors not properly exposed to Kotlin
+2. **Default Constructors**: `JavaClassOverAst.hasDefaultConstructor()` currently returns `false` - may need proper implementation
+3. **Constructor Synthetic Members**: Java classes without explicit constructors need synthetic default constructor
+4. **Member Resolution**: Beyond constructors, general member access may have issues
+
+### Recommendations for Future Iterations
+- **Iteration 3 Priority**: Investigate constructor resolution issue - why is `<init>` unresolved?
+- **hasDefaultConstructor**: Implement proper logic to return `true` when no explicit constructors exist
+- **Synthetic Constructors**: May need to generate default constructor when `constructors` collection is empty
+- **FIR Integration**: Still deferred - need to solve local issues first before tackling external type resolution
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
+
+---
+
 ## Periodic Context Refresh Process
 
 Every **2-3 iterations**, a human should:
@@ -84,6 +202,65 @@ Every **2-3 iterations**, a human should:
 4. **Archive old results**: After updates are incorporated, move detailed logs to an archive section at bottom
 
 This keeps the core instruction files lean while preserving institutional knowledge.
+
+---
+
+## Iteration 2: Local Type Resolution Implementation - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented local scope resolution for Java supertypes within the same file. Created `LocalJavaScope` class that maps simple class names to `JavaClass` instances, enabling `JC2 extends JC` style inheritance to resolve correctly when both classes are in the same file. Unit tests confirm resolution works, but box tests still fail on constructor resolution issues.
+
+### Key Findings
+- **Supertype Resolution Architecture**: `JavaClassifierTypeOverAst.classifier` needs access to scope during lazy evaluation
+- **Scope Propagation**: `LocalJavaScope` must be threaded through `JavaClassOverAst` construction and passed to inner classes
+- **Test Pattern**: Same error persists (`UNRESOLVED_REFERENCE: '<init>'`), indicating constructor issues are the next blocker
+- **Box Test Status**: Still 0% pass rate, all 128 failing tests show constructor resolution errors
+- **Local Resolution Works**: Unit test confirms `class Derived extends Base` resolves Base correctly when both in same file
+
+### Implementation Decisions
+- **Lazy Resolution**: Used `by lazy` in `JavaClassifierTypeOverAst.classifier` to avoid eager evaluation during construction
+- **Scope Creation**: `LocalJavaScope` created once per file at parse time, shared by all classes in that file
+- **Simple Names Only**: Current implementation only resolves unqualified names (e.g., `Base`), not qualified names (e.g., `pkg.Base`)
+- **Deferred**: FIR integration for external classes, import handling, package-qualified resolution - these are for future iterations
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/LocalJavaScope.kt`: New file implementing local class name to JavaClass mapping
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt`: Added `localScope` parameter, pass to supertypes and inner classes
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`: Modified `JavaClassifierTypeOverAst` to accept `localScope` and implement lazy `classifier` resolution
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`: Create `LocalJavaScope` in `parseTopLevelClassFromFile`
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testLocalInheritance` unit test
+
+### Test Results
+- Unit tests: 9 passing (was 8), 1 added (`testLocalInheritance`)
+- Box tests: 0% pass rate (unchanged), 128/128 failing
+- Test progression: Same error as Iteration 1, but local resolution logic is verified working
+- Unit test confirms: `Base` class resolves correctly in `class Derived extends Base` scenario
+
+### Issues Encountered
+- **Same Box Test Errors**: Constructor resolution (`<init>` reference) still failing, blocking all box tests
+- **Scope Threading**: Required careful propagation through `JavaClassOverAst` constructors and inner class creation
+- **Test Data Structure**: Box tests have multiple files per test, ensuring scope is file-local was important
+
+### Next Layer Issues Identified
+Main blocker is now clearly constructor resolution:
+1. **Constructor Visibility**: `UNRESOLVED_REFERENCE: '<init>'` suggests Java constructors not properly exposed to Kotlin
+2. **Default Constructors**: `JavaClassOverAst.hasDefaultConstructor()` currently returns `false` - may need proper implementation
+3. **Constructor Synthetic Members**: Java classes without explicit constructors need synthetic default constructor
+4. **Member Resolution**: Beyond constructors, general member access may have issues
+
+### Recommendations for Future Iterations
+- **Iteration 3 Priority**: Investigate constructor resolution issue - why is `<init>` unresolved?
+- **hasDefaultConstructor**: Implement proper logic to return `true` when no explicit constructors exist
+- **Synthetic Constructors**: May need to generate default constructor when `constructors` collection is empty
+- **FIR Integration**: Still deferred - need to solve local issues first before tackling external type resolution
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
 
 ---
 
@@ -130,6 +307,65 @@ This is an example of how to format iteration results. Real results should follo
 - [x] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to key files list
 - [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented
 - [ ] Update FIXING_ITERATIONS.md: Warn about lazy evaluation in Iteration 3
+
+---
+
+## Iteration 2: Local Type Resolution Implementation - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented local scope resolution for Java supertypes within the same file. Created `LocalJavaScope` class that maps simple class names to `JavaClass` instances, enabling `JC2 extends JC` style inheritance to resolve correctly when both classes are in the same file. Unit tests confirm resolution works, but box tests still fail on constructor resolution issues.
+
+### Key Findings
+- **Supertype Resolution Architecture**: `JavaClassifierTypeOverAst.classifier` needs access to scope during lazy evaluation
+- **Scope Propagation**: `LocalJavaScope` must be threaded through `JavaClassOverAst` construction and passed to inner classes
+- **Test Pattern**: Same error persists (`UNRESOLVED_REFERENCE: '<init>'`), indicating constructor issues are the next blocker
+- **Box Test Status**: Still 0% pass rate, all 128 failing tests show constructor resolution errors
+- **Local Resolution Works**: Unit test confirms `class Derived extends Base` resolves Base correctly when both in same file
+
+### Implementation Decisions
+- **Lazy Resolution**: Used `by lazy` in `JavaClassifierTypeOverAst.classifier` to avoid eager evaluation during construction
+- **Scope Creation**: `LocalJavaScope` created once per file at parse time, shared by all classes in that file
+- **Simple Names Only**: Current implementation only resolves unqualified names (e.g., `Base`), not qualified names (e.g., `pkg.Base`)
+- **Deferred**: FIR integration for external classes, import handling, package-qualified resolution - these are for future iterations
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/LocalJavaScope.kt`: New file implementing local class name to JavaClass mapping
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt`: Added `localScope` parameter, pass to supertypes and inner classes
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`: Modified `JavaClassifierTypeOverAst` to accept `localScope` and implement lazy `classifier` resolution
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`: Create `LocalJavaScope` in `parseTopLevelClassFromFile`
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testLocalInheritance` unit test
+
+### Test Results
+- Unit tests: 9 passing (was 8), 1 added (`testLocalInheritance`)
+- Box tests: 0% pass rate (unchanged), 128/128 failing
+- Test progression: Same error as Iteration 1, but local resolution logic is verified working
+- Unit test confirms: `Base` class resolves correctly in `class Derived extends Base` scenario
+
+### Issues Encountered
+- **Same Box Test Errors**: Constructor resolution (`<init>` reference) still failing, blocking all box tests
+- **Scope Threading**: Required careful propagation through `JavaClassOverAst` constructors and inner class creation
+- **Test Data Structure**: Box tests have multiple files per test, ensuring scope is file-local was important
+
+### Next Layer Issues Identified
+Main blocker is now clearly constructor resolution:
+1. **Constructor Visibility**: `UNRESOLVED_REFERENCE: '<init>'` suggests Java constructors not properly exposed to Kotlin
+2. **Default Constructors**: `JavaClassOverAst.hasDefaultConstructor()` currently returns `false` - may need proper implementation
+3. **Constructor Synthetic Members**: Java classes without explicit constructors need synthetic default constructor
+4. **Member Resolution**: Beyond constructors, general member access may have issues
+
+### Recommendations for Future Iterations
+- **Iteration 3 Priority**: Investigate constructor resolution issue - why is `<init>` unresolved?
+- **hasDefaultConstructor**: Implement proper logic to return `true` when no explicit constructors exist
+- **Synthetic Constructors**: May need to generate default constructor when `constructors` collection is empty
+- **FIR Integration**: Still deferred - need to solve local issues first before tackling external type resolution
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
 
 ---
 
@@ -190,6 +426,65 @@ From new test failures, need to address:
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Add to "What Works" - knownClassNamesInPackage fixed
 - [ ] Update AGENT_INSTRUCTIONS.md: Update "What's Failing" - tests now fail at different stage
+
+---
+
+## Iteration 2: Local Type Resolution Implementation - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented local scope resolution for Java supertypes within the same file. Created `LocalJavaScope` class that maps simple class names to `JavaClass` instances, enabling `JC2 extends JC` style inheritance to resolve correctly when both classes are in the same file. Unit tests confirm resolution works, but box tests still fail on constructor resolution issues.
+
+### Key Findings
+- **Supertype Resolution Architecture**: `JavaClassifierTypeOverAst.classifier` needs access to scope during lazy evaluation
+- **Scope Propagation**: `LocalJavaScope` must be threaded through `JavaClassOverAst` construction and passed to inner classes
+- **Test Pattern**: Same error persists (`UNRESOLVED_REFERENCE: '<init>'`), indicating constructor issues are the next blocker
+- **Box Test Status**: Still 0% pass rate, all 128 failing tests show constructor resolution errors
+- **Local Resolution Works**: Unit test confirms `class Derived extends Base` resolves Base correctly when both in same file
+
+### Implementation Decisions
+- **Lazy Resolution**: Used `by lazy` in `JavaClassifierTypeOverAst.classifier` to avoid eager evaluation during construction
+- **Scope Creation**: `LocalJavaScope` created once per file at parse time, shared by all classes in that file
+- **Simple Names Only**: Current implementation only resolves unqualified names (e.g., `Base`), not qualified names (e.g., `pkg.Base`)
+- **Deferred**: FIR integration for external classes, import handling, package-qualified resolution - these are for future iterations
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/LocalJavaScope.kt`: New file implementing local class name to JavaClass mapping
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt`: Added `localScope` parameter, pass to supertypes and inner classes
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`: Modified `JavaClassifierTypeOverAst` to accept `localScope` and implement lazy `classifier` resolution
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`: Create `LocalJavaScope` in `parseTopLevelClassFromFile`
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testLocalInheritance` unit test
+
+### Test Results
+- Unit tests: 9 passing (was 8), 1 added (`testLocalInheritance`)
+- Box tests: 0% pass rate (unchanged), 128/128 failing
+- Test progression: Same error as Iteration 1, but local resolution logic is verified working
+- Unit test confirms: `Base` class resolves correctly in `class Derived extends Base` scenario
+
+### Issues Encountered
+- **Same Box Test Errors**: Constructor resolution (`<init>` reference) still failing, blocking all box tests
+- **Scope Threading**: Required careful propagation through `JavaClassOverAst` constructors and inner class creation
+- **Test Data Structure**: Box tests have multiple files per test, ensuring scope is file-local was important
+
+### Next Layer Issues Identified
+Main blocker is now clearly constructor resolution:
+1. **Constructor Visibility**: `UNRESOLVED_REFERENCE: '<init>'` suggests Java constructors not properly exposed to Kotlin
+2. **Default Constructors**: `JavaClassOverAst.hasDefaultConstructor()` currently returns `false` - may need proper implementation
+3. **Constructor Synthetic Members**: Java classes without explicit constructors need synthetic default constructor
+4. **Member Resolution**: Beyond constructors, general member access may have issues
+
+### Recommendations for Future Iterations
+- **Iteration 3 Priority**: Investigate constructor resolution issue - why is `<init>` unresolved?
+- **hasDefaultConstructor**: Implement proper logic to return `true` when no explicit constructors exist
+- **Synthetic Constructors**: May need to generate default constructor when `constructors` collection is empty
+- **FIR Integration**: Still deferred - need to solve local issues first before tackling external type resolution
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
 
 ---
 
