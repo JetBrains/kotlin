@@ -761,7 +761,7 @@ configure<IdeaModel> {
     }
 }
 
-gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
+//gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
 if (kotlinBuildProperties.isCacheRedirectorEnabled.get()) {
     configureJsCacheRedirector()

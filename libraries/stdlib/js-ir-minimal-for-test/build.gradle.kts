@@ -179,25 +179,25 @@ val jsMainSources by task<Sync> {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
-            kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
-            kotlin.srcDir("common-src")
-        }
-        val commonNonJvmMain by creating {
-            dependsOn(commonMain)
-            kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
-        }
-        val commonJsAndWasmJs by creating {
-            dependsOn(commonMain)
-            kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
-        }
-        named("jsMain") {
-            dependsOn(commonJsAndWasmJs)
-            dependsOn(commonNonJvmMain)
-            kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
-            kotlin.srcDir("js-src")
-        }
+//        val commonMain by getting {
+//            kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
+//            kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
+//            kotlin.srcDir("common-src")
+//        }
+//        val commonNonJvmMain by creating {
+//            dependsOn(commonMain)
+//            kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
+//        }
+//        val commonJsAndWasmJs by creating {
+//            dependsOn(commonMain)
+//            kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
+//        }
+//        named("jsMain") {
+//            dependsOn(commonJsAndWasmJs)
+//            dependsOn(commonNonJvmMain)
+//            kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
+//            kotlin.srcDir("js-src")
+//        }
     }
 }
 
