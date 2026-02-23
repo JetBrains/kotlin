@@ -170,8 +170,11 @@ Each iteration in FIXING_ITERATIONS.md follows this structure:
 2. Fix any warnings related to changes
 3. Run broader test suite to check for regressions
 4. Document any limitations or partial fixes
+5. **MANDATORY**: Update `ITERATION_RESULTS.md` with your findings
 
-**Deliverable**: Validation report with test results
+**Deliverable**: 
+- Validation report with test results
+- Updated `ITERATION_RESULTS.md` entry
 
 ---
 
@@ -272,7 +275,20 @@ After completing all iterations, we expect:
 
 ---
 
+## Keeping Documentation Fresh
+
+**For Human Reviewers**: Every 2-3 iterations, review `ITERATION_RESULTS.md` and update this file with:
+- Newly discovered key files or patterns
+- Updated "What Works" / "What's Failing" sections
+- New common pitfalls encountered
+- Adjusted success metrics
+
+This keeps core instructions lean while preserving knowledge.
+
+---
+
 ## Document Change Log
 
+- 2026-02-23: Added ITERATION_RESULTS.md integration and periodic update process
 - 2026-02-23: Split from ITERATIVE_FIXING_PLAN.md into separate common instructions
 - 2026-02-10: Original content created in ITERATIVE_FIXING_PLAN.md

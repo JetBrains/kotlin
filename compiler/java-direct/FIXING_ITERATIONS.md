@@ -20,7 +20,21 @@ This document contains structured iteration prompts for fixing issues in the `ja
    - Follow the 4-phase template (Analysis → Reproduction → Implementation → Validation)
    - Ask for confirmation before proceeding to implementation
    - Report results after completion
+   - **MANDATORY**: Update `ITERATION_RESULTS.md` with findings (use template provided)
 3. **Between iterations**: Get user confirmation to proceed to next iteration
+
+## Capturing Learnings
+
+**IMPORTANT**: After completing each iteration, you MUST append your results to `ITERATION_RESULTS.md`.
+
+This file captures:
+- Key findings about the codebase
+- Implementation decisions and trade-offs
+- Test results and improvements
+- Issues encountered and solutions
+- Recommendations for future work
+
+See the template in `ITERATION_RESULTS.md` for the required format. This ensures knowledge is preserved across iterations without overloading context.
 
 ---
 
