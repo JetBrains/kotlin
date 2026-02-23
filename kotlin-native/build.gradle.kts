@@ -590,7 +590,7 @@ fun calculateChecksum(file: File, algorithm: String): String {
     }
 }
 
-val copySamples by tasks.registering(CopySamples::class) {
+tasks.register("copySamples", CopySamples::class) {
     destinationDir = file("build/samples-under-test")
 }
 
