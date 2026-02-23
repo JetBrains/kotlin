@@ -495,7 +495,7 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}"
     }
 
-    task.from(project.rootProject.file("license")) {
+    task.from(project.isolated.rootProject.projectDirectory.dir("license").asFile) {
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}/licenses"
     }
 }
@@ -724,12 +724,11 @@ KotlinBuildPublishingPluginKt.configureDefaultPublishing(
 )
 
 tasks.named("clean", Delete) {
-    dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     it.delete(nativeDistribution.map { it.root })
     it.delete(layout.buildDirectory)
     it.delete(bundle.outputs.files)
     it.delete("${projectDir}/compile_commands.json")
-    it.delete(rootProject.file("test.output").absolutePath) // Clean up after legacy test infrastructure
+    it.delete(project.isolated.rootProject.projectDirectory.file("test.output").asFile.absolutePath) // Clean up after legacy test infrastructure
 }
 
 publishing {

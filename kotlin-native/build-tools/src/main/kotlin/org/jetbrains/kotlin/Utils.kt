@@ -7,11 +7,8 @@ package org.jetbrains.kotlin
 
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
@@ -29,7 +26,7 @@ val Project.kotlinNativeDist: File
                 "kotlin.native.home"
         )
         val propertyValue = validPropertiesNames.firstNotNullOfOrNull { providers.gradleProperty(it).orNull }
-        return rootProject.file(propertyValue ?: "dist")
+        return isolated.rootProject.projectDirectory.asFile.resolve(propertyValue ?: "dist")
     }
 
 val Project.nativeBundlesLocation
@@ -49,7 +46,7 @@ fun projectOrFiles(proj: Project, notation: String): Any? {
 //region Task dependency.
 
 val Project.isDefaultNativeHome: Boolean
-    get() = kotlinNativeDist.absolutePath == project(":kotlin-native").file("dist").absolutePath
+    get() = kotlinNativeDist.absolutePath == project(":kotlin-native").isolated.projectDirectory.dir("dist").asFile.absolutePath
 
 //endregion
 

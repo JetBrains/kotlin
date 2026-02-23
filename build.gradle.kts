@@ -275,13 +275,6 @@ gradle.taskGraph.whenReady {
         "$profile build profile is active ($proguardMessage, $jarCompressionMessage). " +
                 "Use -Pteamcity=<true|false> to reproduce CI/local build"
     )
-
-    allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
-        task.entryCompression = if (kotlinBuildProperties.jarCompression)
-            ZipEntryCompression.DEFLATED
-        else
-            ZipEntryCompression.STORED
-    }
 }
 
 val dist = tasks.register("dist") {
@@ -765,20 +758,6 @@ configure<IdeaModel> {
                 "intellij",
             )
         )
-    }
-}
-
-val disableVerificationTasks = providers.gradleProperty("kotlin.build.disable.verification.tasks")
-    .orNull?.toBoolean() ?: false
-if (disableVerificationTasks) {
-    logger.info("Verification tasks are disabled because `kotlin.build.disable.verification.tasks` is true")
-    gradle.taskGraph.whenReady {
-        allTasks.forEach {
-            if (it is VerificationTask) {
-                logger.info("Task ${it.path} is disabled because `kotlin.build.disable.verification.tasks` is true")
-                it.enabled = false
-            }
-        }
     }
 }
 

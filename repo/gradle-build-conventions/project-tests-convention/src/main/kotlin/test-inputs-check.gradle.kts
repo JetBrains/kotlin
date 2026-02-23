@@ -18,7 +18,7 @@ tasks.withType<Test>().configureEach {
 
     // Disable checks on windows until we fix KTI-2322
     if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
-        val permissionsTemplateFile = rootProject.file("tests-permissions.template.policy")
+        val permissionsTemplateFile = project.isolated.rootProject.projectDirectory.file("tests-permissions.template.policy").asFile
         inputs.file(permissionsTemplateFile).withPathSensitivity(PathSensitivity.RELATIVE)
         val policyFileProvider: Provider<RegularFile> = layout.buildDirectory.file("permissions-for-$taskName.policy")
         outputs.file(policyFileProvider).withPropertyName("policyFile")

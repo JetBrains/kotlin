@@ -22,7 +22,7 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.providers.gradlePr
 }
 
 project.apply {
-    from(rootProject.file("../../gradle/versions.gradle.kts"))
+    from(isolated.rootProject.projectDirectory.asFile.resolve("../../gradle/versions.gradle.kts"))
 }
 
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
@@ -36,7 +36,7 @@ val intellijReleaseType: String by extra {
 val customDepsOrg: String by extra("kotlin.build")
 
 val intellijVersion = project.extra["versions.intellijSdk"] as String
-val intellijVersionForIde = rootProject.intellijSdkVersionForIde()
+val intellijVersionForIde = project.intellijSdkVersionForIde()
 val asmVersion = providers.gradleProperty("versions.jar.asm-all").orNull
 val androidStudioRelease = providers.gradleProperty("versions.androidStudioRelease").orNull
 val androidStudioBuild = providers.gradleProperty("versions.androidStudioBuild").orNull
@@ -106,7 +106,7 @@ val intellijCoreForIde by configurations.creating
 val intellijRuntimeAnnotations = "intellij-runtime-annotations"
 
 val dependenciesDir = providers.gradleProperty("kotlin.build.dependencies.dir").orNull?.let(::File)
-    ?: rootProject.gradle.gradleUserHomeDir.resolve("kotlin-build-dependencies")
+    ?: project.gradle.gradleUserHomeDir.resolve("kotlin-build-dependencies")
 
 val customDepsRepoDir = dependenciesDir.resolve("repo")
 

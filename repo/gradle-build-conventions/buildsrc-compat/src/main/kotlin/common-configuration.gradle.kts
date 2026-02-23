@@ -42,6 +42,24 @@ project.configureJavaCompile()
 project.configureJavaBasePlugin()
 project.configureKotlinCompilationOptions()
 project.configureArtifacts()
+
+// Jar compression (moved from root build.gradle.kts for project isolation)
+tasks.withType<org.gradle.jvm.tasks.Jar>().configureEach {
+    entryCompression = if (kotlinBuildProperties.jarCompression)
+        ZipEntryCompression.DEFLATED
+    else
+        ZipEntryCompression.STORED
+}
+
+// Verification task disabling (moved from root build.gradle.kts for project isolation)
+if (providers.gradleProperty("kotlin.build.disable.verification.tasks").orNull?.toBoolean() == true) {
+    tasks.configureEach {
+        if (this is VerificationTask) {
+            enabled = false
+        }
+    }
+}
+
 project.configureTests()
 
 pluginManager.apply("java-instrumentation")

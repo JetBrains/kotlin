@@ -162,8 +162,7 @@ val jsMainSources by task<Sync> {
         )
     }
     from {
-        val fullJsMainSources = tasks.getByPath(":kotlin-stdlib:prepareJsIrMainSources") as Sync
-        fullJsMainSources.destinationDir
+        project(":kotlin-stdlib").isolated.projectDirectory.dir("build/prepareJsIrMainSources").asFile
     }
     from("$jsDir/runtime") {
         exclude("collectionsHacks.kt")
