@@ -31,13 +31,13 @@ fun f2(x: Matrix<Any>) { }
 
 fun t2() {
     f2([[]]) // int
-    f2(<!ARGUMENT_TYPE_MISMATCH!>[["!"]]<!>) // any
+    f2([<!ARGUMENT_TYPE_MISMATCH!>["!"]<!>]) // any
     f2([[1], [2], [3]]) // int
-    f2(<!ARGUMENT_TYPE_MISMATCH!>[["1"], ["2"], ["3"]]<!>) // any
+    f2([<!ARGUMENT_TYPE_MISMATCH!>["1"]<!>, <!ARGUMENT_TYPE_MISMATCH!>["2"]<!>, <!ARGUMENT_TYPE_MISMATCH!>["3"]<!>]) // any
     f2([[1], Matrix.Row(2), [3]]) // int
     f2([[1], Matrix.Row(), [3]]) // int
     f2(<!ARGUMENT_TYPE_MISMATCH!>[[1], Matrix.Row<String>(), [3]]<!>) // any
-    f2(<!ARGUMENT_TYPE_MISMATCH!>[["1"], Matrix.Row(2), ["3"]]<!>) // any
+    f2([<!ARGUMENT_TYPE_MISMATCH!>["1"]<!>, Matrix.Row(2), <!ARGUMENT_TYPE_MISMATCH!>["3"]<!>]) // any
     f2(<!ARGUMENT_TYPE_MISMATCH!>[["1"], Matrix.Row("2"), ["3"]]<!>) // any
 }
 

@@ -38,7 +38,11 @@ fun resolveCollectionLiteralToPreparedCall(
     var call = preparedCall
     call =
         context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, topLevelCandidate)
-    call = context.bodyResolveComponents.callCompleter.completeCall(call, ResolutionMode.ContextDependent)
+    call = context.bodyResolveComponents.callCompleter.completeCall(
+        call,
+        ResolutionMode.ContextDependent,
+        skipEvenPartialCompletion = true,
+    )
 
     return call.also {
         postprocessCollectionLiteralCall(it, topLevelCandidate, collectionLiteralAtom)
@@ -85,7 +89,11 @@ fun resolveCollectionLiteralToErrorCall(
         origin = FirFunctionCallOrigin.Operator
     }
 
-    call = components.callCompleter.completeCall(call, ResolutionMode.ContextDependent)
+    call = components.callCompleter.completeCall(
+        call,
+        ResolutionMode.ContextDependent,
+        skipEvenPartialCompletion = true,
+    )
 
     return call.also {
         postprocessCollectionLiteralCall(it, topLevelCandidate, collectionLiteralAtom)
