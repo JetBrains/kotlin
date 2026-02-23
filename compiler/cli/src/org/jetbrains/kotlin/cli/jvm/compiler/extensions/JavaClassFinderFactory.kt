@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import java.io.File
 
 interface JavaClassFinderFactory {
 
@@ -19,6 +20,7 @@ interface JavaClassFinderFactory {
 
     fun createJavaClassFinder(
         scope: AbstractProjectFileSearchScope,
-        annotationProvider: JavaAnnotationProvider?
+        annotationProvider: JavaAnnotationProvider?,
+        findLocalFile: (String) -> File?,
     ): JavaClassFinder
 }

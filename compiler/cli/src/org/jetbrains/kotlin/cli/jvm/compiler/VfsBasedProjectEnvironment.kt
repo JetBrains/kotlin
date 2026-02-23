@@ -207,9 +207,12 @@ open class VfsBasedProjectEnvironment(
         fileSearchScope: AbstractProjectFileSearchScope
     ): FirJavaFacadeForSource {
         val javaAnnotationProvider = firSession.javaAnnotationProvider
+        val localFs = knownFileSystems.first { it.protocol == StandardFileSystems.FILE_PROTOCOL }
         val javaClassFinder = extensionsStorage?.get(JavaClassFinderFactory)?.firstOrNull() // TODO: selector?
             ?.createJavaClassFinder(
-                fileSearchScope, javaAnnotationProvider
+                fileSearchScope,
+                javaAnnotationProvider,
+                { localFs.findFileByPath(it)?.path?.let(::File) }
             ) ?: project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
     }

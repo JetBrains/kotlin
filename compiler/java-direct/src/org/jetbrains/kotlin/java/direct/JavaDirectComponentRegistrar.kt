@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
+import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import java.io.File
+import java.nio.file.Paths
 
 class JavaDirectComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
@@ -27,8 +30,10 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
     override fun createJavaClassFinder(
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
+        findLocalFile: (String) -> File?,
     ): JavaClassFinder {
-        TODO("Not yet implemented")
+        val roots = configuration.javaSourceRoots.mapNotNull(findLocalFile).flatMap { it.walk().filter { it.isFile && it.extension == "java" } }.map { it.canonicalFile.toPath() }
+        return JavaClassFinderOverAstImpl(roots)
     }
 }
 
