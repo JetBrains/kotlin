@@ -66,7 +66,7 @@ class BodyGenerator(
         expression.acceptVoid(this)
 
         if (expression.type.isNothing()) {
-            // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site. 
+            // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site.
             body.buildUnreachableAfterNothingType()
         }
     }
@@ -769,10 +769,7 @@ class BodyGenerator(
             }
         }
 
-        call.arguments.forEachIndexed { i, arg ->
-            val expectedType = call.symbol.owner.parameters[i].type
-            generateWithExpectedType(arg!!, expectedType)
-        }
+        call.arguments.forEach { generateExpression(it!!) }
 
         val callFunction = call.symbol.owner
 
@@ -1451,17 +1448,8 @@ class BodyGenerator(
         if (expectedClassErased.isExternal) return
 
         val actualClassErased = actualType.getRuntimeClass(irBuiltIns)
-        val expectedTypeErased =
-            if (!expectedType.type.isNullable() && backendContext.inlineClassesUtils.isClassInlineLike(expectedClassErased))
-                backendContext.inlineClassesUtils.getInlineClassUnderlyingType(expectedClassErased)
-            else expectedClassErased.defaultType
-        val actualTypeErased =
-            if (!actualType.type.isNullable() && backendContext.inlineClassesUtils.isClassInlineLike(actualClassErased))
-                backendContext.inlineClassesUtils.getInlineClassUnderlyingType(actualClassErased)
-            else actualClassErased.defaultType
-
-//        val expectedTypeErased = expectedClassErased.defaultType
-//        val actualTypeErased = actualClassErased.defaultType
+        val expectedTypeErased = expectedClassErased.defaultType
+        val actualTypeErased = actualClassErased.defaultType
 
         // TYPE -> TYPE -> TRUE
         if (expectedTypeErased == actualTypeErased) return
