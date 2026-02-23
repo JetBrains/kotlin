@@ -334,10 +334,16 @@ internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?
     }
 
 internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSymbol?): T {
+    if (source == null) return this
     if (this is ExportedConstructor && visibility == ExportedVisibility.PRIVATE) return this
 
-    source?.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
+    source.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
         attributes.add(ExportedAttribute.DeprecatedAttribute(it))
     }
+
+    if (source.annotations.contains(JsExportDefault)) {
+        attributes.add(ExportedAttribute.DefaultExport)
+    }
+
     return this
 }

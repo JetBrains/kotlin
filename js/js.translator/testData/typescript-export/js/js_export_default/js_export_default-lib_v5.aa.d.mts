@@ -2,11 +2,11 @@ type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
 
 export declare function getParent(): typeof Parent.$metadata$.type;
-export declare abstract class Parent {
+declare abstract class Parent {
     static readonly getInstance: () => typeof Parent.$metadata$.type;
     private constructor();
 }
-export declare namespace Parent {
+declare namespace Parent {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
     namespace $metadata$ {
         abstract class type extends KtSingleton<constructor>() {
@@ -64,3 +64,4 @@ export declare namespace Parent {
         }
     }
 }
+export default Parent;

@@ -12,7 +12,8 @@ export declare let variable: {
 export declare function box(): string;
 export declare function asyncList(): Promise<any/* List<number> */>;
 export declare function arrayOfLists(): Array<any/* List<number> */>;
-export declare function justSomeDefaultExport(): string;
+declare function justSomeDefaultExport(): string;
+export default justSomeDefaultExport;
 export declare class C {
     constructor(x: number);
     doubleX(): number;
