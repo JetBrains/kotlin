@@ -10,3 +10,4 @@ Another one representation is JSON-based that is bundled into a published jar as
 - `1`: Initial schema
 - `6`: Add `StringListType`
 - `7`: Add `JvmDefaultModeType`
+- `8`: Migrate compiler arguments to enum types: `AbiStabilityModeType`, `AssertionsModeType`, `JspecifyAnnotationsModeType`, `LambdasModeType`, `SamConversionsModeType`, `StringConcatModeType`, `CompatqualAnnotationsModeType`, `WhenExpressionsModeType`
