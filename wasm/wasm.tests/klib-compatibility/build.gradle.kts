@@ -7,8 +7,7 @@ plugins {
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")
-    id("nodejs-configuration")
-    id("binaryen-configuration")
+
     id("project-tests-convention")
     id("test-inputs-check")
 }
@@ -81,9 +80,7 @@ fun Project.customCompilerTest(
         }
         setupJsc()
         setupSpiderMonkey()
-        with(binaryenKotlinBuild) {
-            setupBinaryen()
-        }
+
         body()
     }
 }

@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.gradle.node)
     // TODO: uncomment this line after bootstrap
     // id("swc-configuration")
-    id("nodejs-configuration")
+
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
@@ -104,10 +104,6 @@ sourceSets {
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
 fun Test.setUpJsBoxTests() {
-    with(nodeJsKotlinBuild) {
-        setupNodeJs(nodejsVersion)
-    }
-
     dependsOn(npmInstall)
 
     systemProperty(

@@ -5,8 +5,7 @@ plugins {
     id("root-config")
     kotlin("multiplatform")
     id("generated-sources")
-    id("binaryen-configuration")
-    id("nodejs-configuration")
+
 }
 
 kotlin {

@@ -8,8 +8,7 @@ plugins {
     id("root-config")
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
-    id("binaryen-configuration")
-    id("nodejs-configuration")
+
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
@@ -413,13 +412,7 @@ projectTests {
             project.extensions.findByType<D8Extension>()?.run {
                 setupV8()
             }
-            with(wasmNodeJsKotlinBuild) {
-                setupNodeJs(nodejsVersion)
-                dependsOn(":js:js.tests:npmInstall")
-            }
-            with(binaryenKotlinBuild) {
-                setupBinaryen()
-            }
+            dependsOn(":js:js.tests:npmInstall")
             setupSpiderMonkey()
             setupWasmEdge()
             setupJsc()

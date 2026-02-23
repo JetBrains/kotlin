@@ -26,7 +26,7 @@ plugins {
     `maven-publish`
     signing
     id("nodejs-cache-redirector-configuration")
-    id("binaryen-configuration")
+
 }
 
 description = "Kotlin Standard Library"
