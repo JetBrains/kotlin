@@ -50,7 +50,7 @@ class Project(
             )
         )
         module.sourcesDirectory.createDirectories()
-        val templatePath = Paths.get("src/main/resources/modules/$moduleName")
+        val templatePath = Paths.get(System.getProperty("kotlin.test.templates.classpath") + "/modules/$moduleName")
         assert(templatePath.isDirectory()) {
             "Template for $moduleName not found. Expected template directory path is $templatePath"
         }

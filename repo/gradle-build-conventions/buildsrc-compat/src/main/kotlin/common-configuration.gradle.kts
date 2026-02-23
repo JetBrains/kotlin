@@ -308,8 +308,6 @@ fun Project.configureTests() {
             ":compiler:android-tests",
             ":compiler:arguments",
             ":compiler:build-tools:kotlin-build-tools-api",
-            ":compiler:build-tools:kotlin-build-tools-api-tests",
-            ":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests",
             ":compiler:build-tools:kotlin-build-tools-compat",
             ":compiler:build-tools:kotlin-build-tools-options-generator",
             ":compiler:fir:modularized-tests",

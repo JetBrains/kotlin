@@ -5,6 +5,7 @@ plugins {
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
@@ -27,6 +28,16 @@ val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingComp
     extendsFrom(scriptingCompilerPlugin.get())
 }
 
+val unpackedResources by configurations.dependencyScope("unpackedResources")
+val unpackedResourcesResolvable by configurations.resolvable("unpackedResourcesResolvable") {
+    // Wire the dependency declarations
+    extendsFrom(unpackedResources)
+    // These attributes must be compatible with the producer
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.RESOURCES))
+    }
+}
+
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
@@ -44,6 +55,9 @@ dependencies {
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    unpackedResources(project(":compiler:build-tools:kotlin-build-tools-api-tests")) {
+        isTransitive = false
+    }
 }
 
 kotlin {
@@ -178,6 +192,11 @@ testing {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                            extensions.configure<TestInputsCheckExtension> {
+                                if (implVersion.version < KotlinToolingVersion(2, 2, 0, "snapshot")) {
+                                    extraPermissions.add("permission java.util.PropertyPermission \"*\", \"read,write\";")
+                                }
+                            }
                         }
                     }
                 }
@@ -192,6 +211,7 @@ testing {
 
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
+                implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 implementation(project(":compiler:arguments"))
                 if (isRegular) {
@@ -204,6 +224,27 @@ testing {
                     projectTests {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                        }
+                    }
+                }
+                testTask.configure {
+                    systemProperty(
+                        "kotlin.daemon.custom.run.files.path.for.tests",
+                        "build/daemon"
+                    )
+                    addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
+                    extensions.configure<TestInputsCheckExtension> {
+                        with(extraPermissions) {
+                            add("permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",)
+                            add("permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";")
+
+                            // paths below are not expected to exist,
+                            // these are here to pass some implicit `exists()` checks in the Kotlin compiler
+                            add("permission java.io.FilePermission \"<no_path>/lib\", \"read\";")
+                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";")
+                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";")
+                            add("permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";")
+                            add("permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";")
                         }
                     }
                 }

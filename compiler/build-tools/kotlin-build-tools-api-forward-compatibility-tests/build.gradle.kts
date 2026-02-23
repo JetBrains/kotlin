@@ -1,10 +1,9 @@
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.project
-
 plugins {
     kotlin("jvm")
     `jvm-test-suite`
     id("test-symlink-transformation")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
@@ -54,8 +53,22 @@ testing {
         register<JvmTestSuite>("testCompatibility") {
             addSnapshotBuildToolsImpl()
             targets.all {
-                testTask.configure {
-                    systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                projectTests {
+                    testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                        systemProperty(
+                            "kotlin.daemon.custom.run.files.path.for.tests",
+                            "build/daemon"
+                        )
+                        extensions.configure<TestInputsCheckExtension> {
+                            extraPermissions.set(
+                                listOfNotNull(
+                                    "permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",
+                                    "permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";"
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -68,6 +81,7 @@ testing {
 
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
+                implementation(project(":compiler:test-security-manager"))
                 implementation("org.jetbrains.kotlin:kotlin-build-tools-api:2.3.0")
             }
         }
