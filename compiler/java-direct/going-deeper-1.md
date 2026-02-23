@@ -52,3 +52,11 @@ Good work identifying and fixing the critical bug!
 The one issue with the solution is the excessive commenting. I removed the unnecessary comments and added more instructions to the @AGENT_INSTRUCTIONS.md.
 Please respect the updated version of the document.
 Proceed to Iteration 2: Type Resolution Implementation.
+
+#### 2.1.1
+
+Good job!
+Now before going to the iteration 3, let's try to analyze the problems with constructors you outlined above. Analyze what may be missing in the implementation, add the test case for it, and try to find the solution.
+Request my approval after analyzing the possible problems and implementing the test, but before trying the solution in the code.
+
+

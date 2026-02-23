@@ -160,6 +160,46 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testDefaultConstructor() {
+        val sourceWithoutConstructor = """
+            public class A {}
+        """.trimIndent()
+        val builder1 = parseJavaToSyntaxTreeBuilder(sourceWithoutConstructor, 0)
+        val root1 = buildSyntaxTree(builder1, sourceWithoutConstructor)
+        val classNode1 = root1.children.first { it.type.toString() == "CLASS" }
+        val javaClass1 = JavaClassOverAst(classNode1, sourceWithoutConstructor)
+        
+        assert(javaClass1.constructors.isEmpty()) { "Expected no explicit constructors" }
+        assert(javaClass1.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = true for class without explicit constructor" }
+        assert(!javaClass1.isInterface) { "A is not an interface" }
+        
+        val sourceWithConstructor = """
+            public class B {
+                public B() {}
+            }
+        """.trimIndent()
+        val builder2 = parseJavaToSyntaxTreeBuilder(sourceWithConstructor, 0)
+        val root2 = buildSyntaxTree(builder2, sourceWithConstructor)
+        val classNode2 = root2.children.first { it.type.toString() == "CLASS" }
+        val javaClass2 = JavaClassOverAst(classNode2, sourceWithConstructor)
+        
+        assert(javaClass2.constructors.size == 1) { "Expected 1 explicit constructor, got ${javaClass2.constructors.size}" }
+        assert(!javaClass2.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = false for class with explicit constructor" }
+        
+        val sourceInterface = """
+            public interface I {}
+        """.trimIndent()
+        val builder3 = parseJavaToSyntaxTreeBuilder(sourceInterface, 0)
+        val root3 = buildSyntaxTree(builder3, sourceInterface)
+        val classNode3 = root3.children.first { it.type.toString() == "CLASS" }
+        val javaClass3 = JavaClassOverAst(classNode3, sourceInterface)
+        
+        assert(javaClass3.constructors.isEmpty()) { "Expected no constructors for interface" }
+        assert(!javaClass3.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = false for interface" }
+        assert(javaClass3.isInterface) { "I should be an interface" }
+    }
+
+    @Test
     fun testKnownClassNamesInPackage(@TempDir tempDir: Path) {
         // Create test Java files in different packages
         val comExampleDir = tempDir.resolve("com/example")

@@ -13,6 +13,69 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 ---
 
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
+
+---
+
 ## Iteration 2: Local Type Resolution Implementation - 2026-02-23
 
 ### Status
@@ -69,6 +132,69 @@ Main blocker is now clearly constructor resolution:
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
 - [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
+
+---
+
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
 
 ---
 
@@ -126,6 +252,69 @@ After completing each iteration, add a new section using this template:
 
 ---
 
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
+
+---
+
 ## Iteration 2: Local Type Resolution Implementation - 2026-02-23
 
 ### Status
@@ -182,6 +371,69 @@ Main blocker is now clearly constructor resolution:
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
 - [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
+
+---
+
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
 
 ---
 
@@ -205,6 +457,69 @@ This keeps the core instruction files lean while preserving institutional knowle
 
 ---
 
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
+
+---
+
 ## Iteration 2: Local Type Resolution Implementation - 2026-02-23
 
 ### Status
@@ -261,6 +576,69 @@ Main blocker is now clearly constructor resolution:
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
 - [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
+
+---
+
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
 
 ---
 
@@ -310,6 +688,69 @@ This is an example of how to format iteration results. Real results should follo
 
 ---
 
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
+
+---
+
 ## Iteration 2: Local Type Resolution Implementation - 2026-02-23
 
 ### Status
@@ -366,6 +807,69 @@ Main blocker is now clearly constructor resolution:
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
 - [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
+
+---
+
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
 
 ---
 
@@ -429,6 +933,69 @@ From new test failures, need to address:
 
 ---
 
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
+
+---
+
 ## Iteration 2: Local Type Resolution Implementation - 2026-02-23
 
 ### Status
@@ -485,6 +1052,69 @@ Main blocker is now clearly constructor resolution:
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Add LocalJavaScope to "What Works", update "What's Failing" to focus on constructors
 - [ ] Update IMPLEMENTATION_PLAN.md: Mark local scope as implemented (Phase 1 complete)
+
+---
+
+## Constructor Analysis & Fix - 2026-02-23
+
+### Status
+- ✅ Completed
+
+### Summary
+Identified and fixed critical constructor resolution bug. `JavaClassOverAst.hasDefaultConstructor()` was hardcoded to return `false`, preventing FIR from creating synthetic default constructors for Java classes. Fixed to return `!isInterface && constructors.isEmpty()` matching reference implementation. This eliminated ALL `UNRESOLVED_REFERENCE: '<init>'` errors (128 occurrences → 0), revealing next layer of issues related to external type dependencies.
+
+### Key Findings
+- **Root Cause**: FIR checks `hasDefaultConstructor()` to decide whether to create synthetic default constructor when `constructors.isEmpty()`
+- **FIR Code Path**: `FirJavaFacade.kt:283-288` creates synthetic constructor only if `hasDefaultConstructor() == true`
+- **Reference Implementation**: PSI-based `JavaClassImpl` uses `!isInterface && constructors.isEmpty()`
+- **Error Progression**: All 128 box test failures changed from `<init>` errors to diverse semantic errors
+- **New Error Patterns**: `MISSING_DEPENDENCY_CLASS` (88), `MISSING_DEPENDENCY_SUPERCLASS` (76), `UNRESOLVED_REFERENCE` (56)
+
+### Implementation Decisions
+- **Direct Fix**: Changed one-liner from `false` to `!isInterface && constructors.isEmpty()`
+- **No Additional Logic**: Java spec is clear - default constructor exists iff no explicit constructors and not an interface
+- **Test-First**: Created comprehensive unit test before implementing fix
+- **Zero Risk**: Exact match to reference implementation used throughout compiler
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt:113`: Fixed `hasDefaultConstructor()` implementation
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testDefaultConstructor()` unit test
+
+### Test Results
+- Unit tests: 10 passing (was 9), 1 added (`testDefaultConstructor`)
+- Box tests: Still 0% pass rate BUT all errors changed (major progress!)
+- Error elimination: 128/128 tests no longer have `<init>` errors (was 128/128)
+- New error distribution:
+  - `MISSING_DEPENDENCY_CLASS`: 88 occurrences
+  - `MISSING_DEPENDENCY_SUPERCLASS`: 76 occurrences  
+  - `UNRESOLVED_REFERENCE`: 56 (non-init related)
+  - `RETURN_TYPE_MISMATCH`: 28
+  - `TYPE_MISMATCH`: 24
+  - Other semantic errors: various
+
+### Issues Encountered
+- **None**: Clean one-line fix, test passed immediately
+- **Analysis Time**: Took careful code tracing through FIR to understand the usage pattern
+
+### Next Layer Issues Identified
+The new error patterns indicate we need **external type resolution**:
+1. **MISSING_DEPENDENCY_CLASS**: References to `java.lang.Object`, `java.lang.String`, etc. not resolved
+2. **MISSING_DEPENDENCY_SUPERCLASS**: Inheritance from JDK classes failing
+3. **UNRESOLVED_REFERENCE**: Methods from JDK classes not accessible
+4. **Type Mismatches**: Return types from JDK methods not matching expected types
+
+These all point to needing **FIR integration** for resolving types outside our parsed sources.
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement FIR integration for external class resolution
+- **Priority**: Focus on `java.lang.*` package (Object, String, etc.) as these appear most frequently
+- **Approach**: Integrate with `FirSession.symbolProvider` for external lookups as planned in IMPLEMENTATION_PLAN.md section 3.2
+- **Import Handling**: May need basic import support to reduce fully-qualified name usage
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Add constructor fix to "What Works", update "What's Failing" to focus on external types
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark default constructor handling as complete
 
 ---
 

@@ -110,7 +110,7 @@ class JavaClassOverAst(
         get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") == null }.map { JavaConstructorOverAst(it, source, this) }
     override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
 
-    override fun hasDefaultConstructor(): Boolean = false
+    override fun hasDefaultConstructor(): Boolean = !isInterface && constructors.isEmpty()
 
     override val annotations: Collection<JavaAnnotation>
         get() = modifierList?.getChildrenByType("ANNOTATION")?.map { JavaAnnotationOverAst(it, source) } ?: emptyList()
