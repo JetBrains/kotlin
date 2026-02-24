@@ -90,6 +90,7 @@ class IrBodyDeserializer(
     private val declarationDeserializer: IrDeclarationDeserializer,
     private val settings: IrDeserializationSettings,
     private val irInterner: IrInterningService,
+    private val fileEntryDeserializer: FileEntryDeserializer,
 ) {
 
     private val fileLoops = hashMapOf<Int, IrLoop>()

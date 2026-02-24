@@ -72,11 +72,20 @@ class IrDeclarationDeserializer(
     private val needToDeserializeFakeOverrides: (IrClass) -> Boolean,
     private val specialProcessingForMismatchedSymbolKind: ((deserializedSymbol: IrSymbol, fallbackSymbolKind: SymbolKind?) -> IrSymbol)?,
     private val irInterner: IrInterningService,
+    private val fileEntryDeserializer: FileEntryDeserializer,
 ) {
     private var areFunctionBodiesDeserialized: Boolean =
         settings.deserializeFunctionBodies == DeserializeFunctionBodies.ALL
 
-    private val bodyDeserializer = IrBodyDeserializer(builtIns, irFactory, libraryFile, this, settings, irInterner)
+    private val bodyDeserializer = IrBodyDeserializer(
+        builtIns = builtIns,
+        irFactory = irFactory,
+        libraryFile = libraryFile,
+        declarationDeserializer = this,
+        settings = settings,
+        irInterner = irInterner,
+        fileEntryDeserializer = fileEntryDeserializer,
+    )
 
     private fun deserializeName(index: Int): Name = irInterner.name(Name.guessByFirstCharacter(libraryFile.string(index)))
 

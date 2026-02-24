@@ -122,6 +122,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             }
         )
 
+        private val fileEntryDeserializer = FileEntryDeserializer(irInterner)
         private val declarationDeserializer = IrDeclarationDeserializer(
             builtIns = irBuiltIns,
             symbolTable = detachedSymbolTable,
@@ -137,6 +138,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             needToDeserializeFakeOverrides = { false },
             specialProcessingForMismatchedSymbolKind = null,
             irInterner = irInterner,
+            fileEntryDeserializer = fileEntryDeserializer,
         )
 
         /**

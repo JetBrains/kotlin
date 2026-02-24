@@ -45,6 +45,7 @@ fun deserializeFromByteArray(
     typeSystemContext: IrTypeSystemContext,
 ) {
     val irInterner = IrInterningService()
+    val fileEntryDeserializer = FileEntryDeserializer(irInterner)
     val irProto = JvmIr.ClassOrFile.parseFrom(byteArray.codedInputStream)
     val irLibraryFile = IrLibraryFileFromAnnotation(
         irProto.typeList,
@@ -82,7 +83,8 @@ fun deserializeFromByteArray(
         onDeserializedClass = { _, _ -> },
         needToDeserializeFakeOverrides = { false },
         specialProcessingForMismatchedSymbolKind = null,
-        irInterner = irInterner
+        irInterner = irInterner,
+        fileEntryDeserializer = fileEntryDeserializer,
     )
     for (declarationProto in irProto.declarationList) {
         deserializer.deserializeDeclaration(declarationProto, setParent = false)
