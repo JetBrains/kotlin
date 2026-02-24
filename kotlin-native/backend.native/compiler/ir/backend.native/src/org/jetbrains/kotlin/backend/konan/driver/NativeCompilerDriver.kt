@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
+import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedBinariesTo
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -109,6 +110,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 ?: return
 
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.linkKlibs(frontendOutput) }
+        dumpDependenciesOfProducedBinary(config, linkKlibsOutput)
+
         val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
@@ -150,6 +153,21 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
         val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
+    }
+
+    private fun dumpDependenciesOfProducedBinary(config: NativeSecondStageCompilationConfig, linkKlibsOutput: LinkKlibsOutput) {
+        val directoryPath = config.configuration.konanWriteDependenciesOfProducedBinariesTo ?: return
+        val directory = File(directoryPath)
+        if (directory.exists)
+            check(directory.isDirectory) { "Provided path for dumping dependencies of generated binaries is not a directory: $directoryPath" }
+        else
+            directory.mkdirs()
+
+        val moduleName = linkKlibsOutput.irModule.name.asStringStripSpecialMarkers()
+        val compilerOutputKind = config.produce.name
+
+        val dumpFile = directory.child(compilerOutputKind + "_" + moduleName + "_dependencies.txt")
+        dumpFile.writeLines(linkKlibsOutput.irModules.keys.sorted())
     }
 
     private fun createBackendContext(
