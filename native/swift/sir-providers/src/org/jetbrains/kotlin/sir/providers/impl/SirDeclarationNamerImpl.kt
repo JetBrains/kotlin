@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.export.utilities.getJvmNameOrNull
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.providers.SirDeclarationNamer
+import org.jetbrains.kotlin.sir.providers.utils.objCNameAnnotation
 
 public class SirDeclarationNamerImpl : SirDeclarationNamer {
 
@@ -17,6 +18,7 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
     }
 
     private fun KaDeclarationSymbol.getName(): String? {
+        objCNameAnnotation?.name?.let { return it }
         return when (this) {
             is KaNamedClassSymbol -> this.classId?.shortClassName?.asString()
             is KaPropertySymbol -> this.name.asString()

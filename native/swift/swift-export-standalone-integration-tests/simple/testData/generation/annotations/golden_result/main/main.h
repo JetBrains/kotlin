@@ -3,7 +3,47 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * KotlinClassA_KotlinSubClassA_init_allocate();
+
+void KotlinClassA_KotlinSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * KotlinClassA_KotlinSubClassB_init_allocate();
+
+void KotlinClassA_KotlinSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * KotlinClassA_KotlinSubClassC_init_allocate();
+
+void KotlinClassA_KotlinSubClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * KotlinClassA_KotlinSubClassD_init_allocate();
+
+void KotlinClassA_KotlinSubClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void KotlinClassA_kotlinFunA__TypesOfArguments__Swift_String__(void * self, NSString * swiftParamA);
+
+NSString * KotlinClassA_kotlinPropA_get(void * self);
+
+NSString * KotlinClassA_kotlinPropB_get(void * self);
+
+void KotlinClassA_kotlinPropB_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
+
+void KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String__(void * self, NSString * swiftParamD);
+
+void KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String__(void * self, NSString * kotlinParamE);
+
+void KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__(void * self, NSString * objCParamB);
+
+void KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(void * self, NSString * objCParamC);
+
+void * __root___KotlinClassA_init_allocate();
+
+void __root___KotlinClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___KotlinObjectB_get();
+
 NSString * __root___MESSAGE_get();
+
+void * __root___classA_get();
 
 void __root___constMessage() __attribute((noreturn));
 
@@ -25,6 +65,8 @@ void __root___deprecationInheritedV_get();
 
 void __root___formattedMessage() __attribute((noreturn));
 
+void * __root___interfaceC_get();
+
 void __root___multilineFormattedMessage() __attribute((noreturn));
 
 void __root___multilineMessage() __attribute((noreturn));
@@ -36,6 +78,8 @@ void __root___normalChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
 void * __root___normalT_init_allocate();
 
 void __root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___objectB_get();
 
 void __root___obsoletedF();
 
@@ -56,6 +100,12 @@ void __root___renamedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRaw
 void __root___renamedV_get();
 
 void __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+
+void * __root___returnClassA__TypesOfArguments__main_SwiftClassA__(void * value);
+
+void * __root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__(void * value);
+
+void * __root___returnObjectB__TypesOfArguments__main_ObjCObjectB__(void * value);
 
 void __root___unrenamed() __attribute((noreturn));
 

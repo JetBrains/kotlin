@@ -10,6 +10,131 @@ public typealias deprecatedImplicitlyA = Swift.Void
 public typealias obsoletedA = Swift.Void
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
 public typealias renamedA = Swift.Void
+public protocol SwiftInterfaceC: KotlinRuntime.KotlinBase {
+    func kotlinFunE(
+        _ kotlinParamE: Swift.String
+    ) -> Swift.Void
+    func swiftFunD(
+        swiftParamD: Swift.String
+    ) -> Swift.Void
+}
+@objc(_SwiftInterfaceC)
+package protocol _SwiftInterfaceC {
+}
+public final class ObjCObjectB: KotlinRuntime.KotlinBase {
+    public static var shared: main.ObjCObjectB {
+        get {
+            return main.ObjCObjectB.__createClassWrapper(externalRCRef: __root___KotlinObjectB_get())
+        }
+    }
+    private init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func kotlinFunC(
+        _ objCParamC: Swift.String
+    ) -> Swift.Void {
+        return KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(self.__externalRCRef(), objCParamC)
+    }
+    public func objCFunB(
+        objCParamB: Swift.String
+    ) -> Swift.Void {
+        return KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__(self.__externalRCRef(), objCParamB)
+    }
+}
+public final class SwiftClassA: KotlinRuntime.KotlinBase {
+    public final class ObjCSubClassC: KotlinRuntime.KotlinBase {
+        public init() {
+            if Self.self != main.SwiftClassA.ObjCSubClassC.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.ObjCSubClassC ") }
+            let __kt = KotlinClassA_KotlinSubClassC_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            KotlinClassA_KotlinSubClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
+    public final class SwiftSubClassA: KotlinRuntime.KotlinBase {
+        public init() {
+            if Self.self != main.SwiftClassA.SwiftSubClassA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.SwiftSubClassA ") }
+            let __kt = KotlinClassA_KotlinSubClassA_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            KotlinClassA_KotlinSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
+    public final class SwiftSubClassB: KotlinRuntime.KotlinBase {
+        public init() {
+            if Self.self != main.SwiftClassA.SwiftSubClassB.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.SwiftSubClassB ") }
+            let __kt = KotlinClassA_KotlinSubClassB_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            KotlinClassA_KotlinSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
+    public final class SwiftSubClassD: KotlinRuntime.KotlinBase {
+        public init() {
+            if Self.self != main.SwiftClassA.SwiftSubClassD.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.SwiftSubClassD ") }
+            let __kt = KotlinClassA_KotlinSubClassD_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            KotlinClassA_KotlinSubClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
+    public var swiftPropA: Swift.String {
+        get {
+            return KotlinClassA_kotlinPropA_get(self.__externalRCRef())
+        }
+    }
+    public var swiftPropB: Swift.String {
+        get {
+            return KotlinClassA_kotlinPropB_get(self.__externalRCRef())
+        }
+        set {
+            return KotlinClassA_kotlinPropB_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue)
+        }
+    }
+    public init() {
+        if Self.self != main.SwiftClassA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA ") }
+        let __kt = __root___KotlinClassA_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___KotlinClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func swiftFunA(
+        swiftParamA: Swift.String
+    ) -> Swift.Void {
+        return KotlinClassA_kotlinFunA__TypesOfArguments__Swift_String__(self.__externalRCRef(), swiftParamA)
+    }
+}
 public final class deprecatedChildT: main.deprecatedT {
     public var deprecationFurtherReinforcedV: Swift.Void {
         get {
@@ -399,6 +524,11 @@ public var MESSAGE: Swift.String {
         return __root___MESSAGE_get()
     }
 }
+public var classA: main.SwiftClassA {
+    get {
+        return main.SwiftClassA.__createClassWrapper(externalRCRef: __root___classA_get())
+    }
+}
 @available(*, deprecated, message: "Deprecated")
 public var deprecationInheritedImplicitlyV: Swift.Void {
     get {
@@ -409,6 +539,16 @@ public var deprecationInheritedImplicitlyV: Swift.Void {
 public var deprecationInheritedV: Swift.Void {
     get {
         return __root___deprecationInheritedV_get()
+    }
+}
+public var interfaceC: any main.SwiftInterfaceC {
+    get {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___interfaceC_get()) as! any main.SwiftInterfaceC
+    }
+}
+public var objectB: main.ObjCObjectB {
+    get {
+        return main.ObjCObjectB.__createClassWrapper(externalRCRef: __root___objectB_get())
     }
 }
 @available(*, unavailable, message: "Obsoleted")
@@ -494,7 +634,38 @@ public func renamedWithArguments(
 ) -> Swift.Never {
     return __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x, y)
 }
+public func returnClassA(
+    value: main.SwiftClassA
+) -> main.SwiftClassA {
+    return main.SwiftClassA.__createClassWrapper(externalRCRef: __root___returnClassA__TypesOfArguments__main_SwiftClassA__(value.__externalRCRef()))
+}
+public func returnInterfaceC(
+    value: any main.SwiftInterfaceC
+) -> any main.SwiftInterfaceC {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__(value.__externalRCRef())) as! any main.SwiftInterfaceC
+}
+public func returnObjectB(
+    value: main.ObjCObjectB
+) -> main.ObjCObjectB {
+    return main.ObjCObjectB.__createClassWrapper(externalRCRef: __root___returnObjectB__TypesOfArguments__main_ObjCObjectB__(value.__externalRCRef()))
+}
 @available(*, deprecated, message: ". Replacement: unrenamed")
 public func unrenamed() -> Swift.Never {
     return __root___unrenamed()
+}
+extension main.SwiftInterfaceC where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public func kotlinFunE(
+        _ kotlinParamE: Swift.String
+    ) -> Swift.Void {
+        return KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String__(self.__externalRCRef(), kotlinParamE)
+    }
+    public func swiftFunD(
+        swiftParamD: Swift.String
+    ) -> Swift.Void {
+        return KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String__(self.__externalRCRef(), swiftParamD)
+    }
+}
+extension main.SwiftInterfaceC {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
 }
