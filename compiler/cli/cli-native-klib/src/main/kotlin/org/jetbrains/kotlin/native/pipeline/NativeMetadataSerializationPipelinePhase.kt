@@ -18,7 +18,7 @@ object NativeMetadataSerializationPipelinePhase : PipelinePhase<NativeFrontendAr
     override fun executePhase(input: NativeFrontendArtifact): NativeSerializationArtifact {
         val (frontendOutput, configuration, phaseContext) = input
 
-        val serializerOutput = phaseContext.firSerializerBase(frontendOutput, fir2IrOutput = null)
+        val serializerOutput = phaseContext.firSerializerBase(configuration, frontendOutput, fir2IrOutput = null)
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,

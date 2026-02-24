@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDes
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -82,7 +83,7 @@ class KlibSerializerNativeCliFacade(
         val output = NativeKlibWritingPipelinePhase.executePhase(serializedOutput)
         val outputFile = File(output.outputKlibPath)
         updateTestConfiguration(input.configuration, module, input.fir2IrOutput.fir2irActualizedResult.irModuleFragment, outputFile)
-        return BinaryArtifacts.KLib(outputFile, diagnosticsCollector)
+        return BinaryArtifacts.KLib(outputFile, input.configuration.diagnosticsCollector)
     }
 
     private fun updateTestConfiguration(

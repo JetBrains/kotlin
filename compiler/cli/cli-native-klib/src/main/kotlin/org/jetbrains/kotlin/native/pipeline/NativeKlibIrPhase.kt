@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.FirSerializerInput
@@ -33,7 +34,8 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
         val outputKlibPath = phaseContext.config.outputPath
         if (!headerKlibPath.isNullOrEmpty()) {
             val headerKlib = phaseContext.fir2IrSerializer(
-                FirSerializerInput(fir2IrOutput, produceHeaderKlib = true)
+                configuration,
+                FirSerializerInput(fir2IrOutput, produceHeaderKlib = true),
             )
             val headerKlibInput = KlibWriterInput(headerKlib, headerKlibPath, produceHeaderKlib = true)
             phaseContext.writeKlib(headerKlibInput)
@@ -45,6 +47,7 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
             }
         }
         val serializerOutput = phaseContext.fir2IrSerializer(
+            configuration,
             FirSerializerInput(fir2IrOutput, produceHeaderKlib = false)
         )
         return NativeSerializationArtifact(
@@ -54,8 +57,13 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
         )
     }
 
-    private fun NativeFirstStagePhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
-        return firSerializerBase(input.firToIrOutput.frontendOutput, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
+    private fun NativeFirstStagePhaseContext.fir2IrSerializer(configuration: CompilerConfiguration, input: FirSerializerInput): SerializerOutput {
+        return firSerializerBase(
+            configuration,
+            input.firToIrOutput.frontendOutput,
+            input.firToIrOutput,
+            produceHeaderKlib = input.produceHeaderKlib,
+        )
     }
 }
 
