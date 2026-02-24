@@ -61,8 +61,8 @@ fun test() {
     takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[id(42)]<!>)
 
     takeMyList([<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_IT_PARAMETER_TYPE!>{ str: String -> str }<!>])
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[""::twice]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[String::twice]<!>)
+    takeMyList([""::<!INAPPLICABLE_CANDIDATE!>twice<!>])
+    takeMyList([String::<!INAPPLICABLE_CANDIDATE!>twice<!>])
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, asExpression, callableReference, checkNotNullCall, classDeclaration,

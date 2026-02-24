@@ -81,16 +81,18 @@ class FirCallResolver(
         resolutionMode: ResolutionMode,
         collectionLiteralContext: CollectionLiteralOuterCallsContext? = null,
     ): FirFunctionCall {
+        val isCollectionLiteralCall = collectionLiteralContext != null
         val name = functionCall.calleeReference.name
         val result = collectCandidates(
             functionCall, name,
+            forceCallKind = if (isCollectionLiteralCall) CallKind.CollectionLiteral else null,
             origin = functionCall.origin,
             resolutionMode = resolutionMode,
             containingCallCandidateForCL = collectionLiteralContext?.containingCandidate
         )
 
         var forceCandidates: Collection<Candidate>? = null
-        if (result.candidates.isEmpty()) {
+        if (result.candidates.isEmpty() && !isCollectionLiteralCall) {
             val newResult = collectCandidates(
                 functionCall,
                 name,

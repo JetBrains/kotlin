@@ -413,6 +413,3 @@ class Candidate(
         return "$okOrFail($step): $symbol"
     }
 }
-
-val Candidate.fullyAnalyzed: Boolean
-    get() = passedStages == callInfo.callKind.resolutionSequence.size

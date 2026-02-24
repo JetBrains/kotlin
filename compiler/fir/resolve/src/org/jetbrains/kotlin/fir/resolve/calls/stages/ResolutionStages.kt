@@ -832,13 +832,6 @@ internal object EagerResolveOfCollectionLiteral : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate): Unit =
         context(context.typeContext, CollectionLiteralOuterCallsContext(candidate, sink)) {
-            // In green code, applying this resolution stage to collection literal call won't help us,
-            // since all overloads of `of` differ in the number of parameters only.
-            // Note, however, that this is an important optimization.
-            // Consider [[[[...]]]] (N nested CLs) and that each time there are two candidates for `of`.
-            // Then the innermost CL would be expanded 2^N times.
-            if (candidate.callInfo.isCollectionLiteralCall) return
-
             if (candidate.postponedAtoms.isEmpty()) return
             for (atom in candidate.postponedAtoms) {
                 if (atom !is ConeCollectionLiteralAtom || atom.analyzed) continue

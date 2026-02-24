@@ -110,7 +110,7 @@ private fun resolveCollectionLiteralToErrorCall(
     val collectionLiteral = collectionLiteralAtom.expression
     val callInfo = CallInfo(
         collectionLiteral,
-        CallKind.Function,
+        CallKind.CollectionLiteral,
         OperatorNameConventions.OF,
         explicitReceiver = null,
         argumentList = collectionLiteral.argumentList,
