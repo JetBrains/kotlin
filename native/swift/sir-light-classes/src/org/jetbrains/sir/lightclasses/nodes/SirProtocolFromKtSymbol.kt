@@ -41,8 +41,8 @@ internal open class SirProtocolFromKtSymbol(
     override val documentation: String? by lazy {
         ktSymbol.documentation()
     }
-    override val name: String by lazy {
-        (this.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.name.asString()
+    override val name: String by lazyWithSessions {
+        (this.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
     }
     override var parent: SirDeclarationParent
         get() = withSessions {

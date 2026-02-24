@@ -1,4 +1,11 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(KotlinObjectB::class, "4main11ObjCObjectBC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA::class, "4main11SwiftClassAC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassC::class, "4main11SwiftClassAC13ObjCSubClassCC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassA::class, "4main11SwiftClassAC14SwiftSubClassAC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassB::class, "4main11SwiftClassAC14SwiftSubClassBC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassD::class, "4main11SwiftClassAC14SwiftSubClassDC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(KotlinInterfaceC::class, "_SwiftInterfaceC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedChildT::class, "4main16deprecatedChildTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedT::class, "4main11deprecatedTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedT.deprecationInheritedT::class, "4main11deprecatedTC21deprecationInheritedTC")
@@ -13,10 +20,138 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ExportedBridge("KotlinClassA_KotlinSubClassA_init_allocate")
+public fun KotlinClassA_KotlinSubClassA_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<KotlinClassA.KotlinSubClassA>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("KotlinClassA_KotlinSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun KotlinClassA_KotlinSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, KotlinClassA.KotlinSubClassA())
+}
+
+@ExportedBridge("KotlinClassA_KotlinSubClassB_init_allocate")
+public fun KotlinClassA_KotlinSubClassB_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<KotlinClassA.KotlinSubClassB>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("KotlinClassA_KotlinSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun KotlinClassA_KotlinSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, KotlinClassA.KotlinSubClassB())
+}
+
+@ExportedBridge("KotlinClassA_KotlinSubClassC_init_allocate")
+public fun KotlinClassA_KotlinSubClassC_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<KotlinClassA.KotlinSubClassC>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("KotlinClassA_KotlinSubClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun KotlinClassA_KotlinSubClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, KotlinClassA.KotlinSubClassC())
+}
+
+@ExportedBridge("KotlinClassA_KotlinSubClassD_init_allocate")
+public fun KotlinClassA_KotlinSubClassD_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<KotlinClassA.KotlinSubClassD>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("KotlinClassA_KotlinSubClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun KotlinClassA_KotlinSubClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, KotlinClassA.KotlinSubClassD())
+}
+
+@ExportedBridge("KotlinClassA_kotlinFunA__TypesOfArguments__Swift_String__")
+public fun KotlinClassA_kotlinFunA__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, swiftParamA: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinClassA
+    val __swiftParamA = interpretObjCPointer<kotlin.String>(swiftParamA)
+    __self.kotlinFunA(__swiftParamA)
+}
+
+@ExportedBridge("KotlinClassA_kotlinPropA_get")
+public fun KotlinClassA_kotlinPropA_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinClassA
+    val _result = __self.kotlinPropA
+    return _result.objcPtr()
+}
+
+@ExportedBridge("KotlinClassA_kotlinPropB_get")
+public fun KotlinClassA_kotlinPropB_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinClassA
+    val _result = __self.kotlinPropB
+    return _result.objcPtr()
+}
+
+@ExportedBridge("KotlinClassA_kotlinPropB_set__TypesOfArguments__Swift_String__")
+public fun KotlinClassA_kotlinPropB_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinClassA
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    __self.kotlinPropB = __newValue
+}
+
+@ExportedBridge("KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String__")
+public fun KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, swiftParamD: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinInterfaceC
+    val __swiftParamD = interpretObjCPointer<kotlin.String>(swiftParamD)
+    __self.kotlinFunD(__swiftParamD)
+}
+
+@ExportedBridge("KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String__")
+public fun KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, kotlinParamE: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinInterfaceC
+    val __kotlinParamE = interpretObjCPointer<kotlin.String>(kotlinParamE)
+    __self.kotlinFunE(__kotlinParamE)
+}
+
+@ExportedBridge("KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__")
+public fun KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, objCParamB: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinObjectB
+    val __objCParamB = interpretObjCPointer<kotlin.String>(objCParamB)
+    __self.kotlinFunB(__objCParamB)
+}
+
+@ExportedBridge("KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__")
+public fun KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, objCParamC: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinObjectB
+    val __objCParamC = interpretObjCPointer<kotlin.String>(objCParamC)
+    __self.kotlinFunC(__objCParamC)
+}
+
+@ExportedBridge("__root___KotlinClassA_init_allocate")
+public fun __root___KotlinClassA_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<KotlinClassA>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___KotlinClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___KotlinClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, KotlinClassA())
+}
+
+@ExportedBridge("__root___KotlinObjectB_get")
+public fun __root___KotlinObjectB_get(): kotlin.native.internal.NativePtr {
+    val _result = KotlinObjectB
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___MESSAGE_get")
 public fun __root___MESSAGE_get(): kotlin.native.internal.NativePtr {
     val _result = MESSAGE
     return _result.objcPtr()
+}
+
+@ExportedBridge("__root___classA_get")
+public fun __root___classA_get(): kotlin.native.internal.NativePtr {
+    val _result = classA
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___constMessage")
@@ -75,6 +210,12 @@ public fun __root___formattedMessage(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___interfaceC_get")
+public fun __root___interfaceC_get(): kotlin.native.internal.NativePtr {
+    val _result = interfaceC
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___multilineFormattedMessage")
 public fun __root___multilineFormattedMessage(): kotlin.native.internal.NativePtr {
     val _result = multilineFormattedMessage()
@@ -109,6 +250,12 @@ public fun __root___normalT_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, normalT())
+}
+
+@ExportedBridge("__root___objectB_get")
+public fun __root___objectB_get(): kotlin.native.internal.NativePtr {
+    val _result = objectB
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___obsoletedF")
@@ -172,6 +319,27 @@ public fun __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Fl
     val __x = x
     val __y = y
     val _result = renamedWithArguments(__x, __y)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___returnClassA__TypesOfArguments__main_SwiftClassA__")
+public fun __root___returnClassA__TypesOfArguments__main_SwiftClassA__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as KotlinClassA
+    val _result = returnClassA(__value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__")
+public fun __root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as KotlinInterfaceC
+    val _result = returnInterfaceC(__value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___returnObjectB__TypesOfArguments__main_ObjCObjectB__")
+public fun __root___returnObjectB__TypesOfArguments__main_ObjCObjectB__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as KotlinObjectB
+    val _result = returnObjectB(__value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

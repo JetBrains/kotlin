@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.translateType
+import org.jetbrains.kotlin.sir.providers.utils.objCNameAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.withSessions
@@ -52,8 +53,12 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = createParameterType(ktSymbol, parameter).escaping
+            val objCNameAnnotation = parameter.objCNameAnnotation
+            val argumentName = objCNameAnnotation?.argumentName ?: parameter.name.asString()
+            val parameterName = objCNameAnnotation?.name ?: parameter.name.asString()
             SirParameter(
-                argumentName = parameter.name.asString(),
+                argumentName = argumentName,
+                parameterName = parameterName.takeIf { it != argumentName },
                 type = sirType,
                 origin = KotlinParameterOrigin.ValueParameter(parameter),
                 isVariadic = parameter.isVararg,

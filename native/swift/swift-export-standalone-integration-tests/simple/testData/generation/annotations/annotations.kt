@@ -311,3 +311,63 @@ fun renamedQualified(x: Int, y: Float): Nothing = TODO("never")
 
 @Deprecated(message = "", replaceWith = ReplaceWith("something.else(x, y)"))
 fun renamedQualifiedWithArguments(x: Int, y: Float): Nothing = TODO("never")
+
+// FILE: objCName.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCName::class)
+
+@ObjCName("ObjCClassA", "SwiftClassA")
+class KotlinClassA {
+
+    @ObjCName("objCFunA", "swiftFunA")
+    fun kotlinFunA(@ObjCName("objCParamA", "swiftParamA") kotlinParamA: String): Unit = TODO()
+
+    @ObjCName("objCPropA", "swiftPropA")
+    val kotlinPropA: String get() = TODO()
+
+    @ObjCName("objCPropB", "swiftPropB")
+    var kotlinPropB: String
+        get() = TODO()
+        set(value) = TODO()
+
+    @ObjCName("ObjCSubClassA", "SwiftSubClassA")
+    class KotlinSubClassA
+
+    @ObjCName("ObjCSubClassB", "SwiftSubClassB", true)
+    class KotlinSubClassB
+
+    @ObjCName("ObjCSubClassC")
+    class KotlinSubClassC
+
+    @ObjCName(swiftName = "SwiftSubClassD")
+    class KotlinSubClassD
+}
+
+@ObjCName("ObjCObjectB")
+object KotlinObjectB {
+
+    @ObjCName("objCFunB")
+    fun kotlinFunB(@ObjCName("objCParamB") kotlinParamB: String): Unit = TODO()
+
+    fun kotlinFunC(@ObjCName("objCParamC", "_") kotlinParamC: String): Unit = TODO()
+}
+
+@ObjCName(swiftName = "SwiftInterfaceC")
+interface KotlinInterfaceC {
+
+    @ObjCName(swiftName = "swiftFunD")
+    fun kotlinFunD(@ObjCName(swiftName = "swiftParamD") kotlinParamD: String): Unit
+
+    fun kotlinFunE(@ObjCName(swiftName = "_") kotlinParamE: String): Unit
+}
+
+fun returnClassA(value: KotlinClassA): KotlinClassA = value
+
+fun returnObjectB(value: KotlinObjectB): KotlinObjectB = value
+
+fun returnInterfaceC(value: KotlinInterfaceC): KotlinInterfaceC = value
+
+val classA: KotlinClassA get() = TODO()
+
+val objectB: KotlinObjectB get() = TODO()
+
+val interfaceC: KotlinInterfaceC get() = TODO()
