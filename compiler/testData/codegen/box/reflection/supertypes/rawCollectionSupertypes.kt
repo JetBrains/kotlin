@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 abstract class TestA : AImpl
 
 fun box(): String {
-    // TODO: the remaining difference is tracked in KT-84382.
+    // The remaining difference in MutableList argument nullability seems not substantial, as these types are, for all intents and purposes, equivalent.
     if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
         assertEquals(
             "[test.AImpl, test.A, kotlin.collections.MutableList<(raw) kotlin.Any?>, kotlin.collections.Collection<(raw) kotlin.Any?>, kotlin.collections.Iterable<(raw) kotlin.Any?>, kotlin.Any]",
@@ -29,7 +29,7 @@ fun box(): String {
         )
     } else {
         assertEquals(
-            "[test.AImpl, test.A, kotlin.collections.List<(raw) kotlin.Any!>, kotlin.collections.Collection<(raw) kotlin.Any?>, kotlin.collections.Iterable<(raw) kotlin.Any?>, kotlin.Any]",
+            "[test.AImpl, test.A, kotlin.collections.MutableList<(raw) kotlin.Any!>, kotlin.collections.Collection<(raw) kotlin.Any?>, kotlin.collections.Iterable<(raw) kotlin.Any?>, kotlin.Any]",
             TestA::class.allSupertypes.toString(),
         )
     }
