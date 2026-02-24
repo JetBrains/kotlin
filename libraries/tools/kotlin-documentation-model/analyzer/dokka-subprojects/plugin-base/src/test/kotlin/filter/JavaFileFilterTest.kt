@@ -23,7 +23,7 @@ class JavaFileFilterTest : BaseAbstractTest() {
         testInline(
             """
             |/src/main/java/basic/Test.java
-            |package example;
+            |package basic;
             |
             |
             |

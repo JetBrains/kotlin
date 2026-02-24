@@ -9,12 +9,14 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.utilities.cast
 import utils.AbstractModelTest
+import utils.OnlyJavaPsi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
 
+    @OnlyJavaPsi
     @Test
     fun `function with deprecated parameter`() {
         inlineModelTest(
@@ -91,6 +93,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         }
     }
 
+    @OnlyJavaPsi
     @Test
     fun `function with generic parameter that has annotated bounds`() {
         inlineModelTest(
@@ -121,6 +124,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         }
     }
 
+    @OnlyJavaPsi
     @Test
     fun `type parameter annotations should be visible even if type declaration has none`() {
         inlineModelTest(
@@ -151,6 +155,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         }
     }
 
+    @OnlyJavaPsi
     @Test
     fun `type parameter annotations should not be propagated from resolved type`() {
         inlineModelTest(
