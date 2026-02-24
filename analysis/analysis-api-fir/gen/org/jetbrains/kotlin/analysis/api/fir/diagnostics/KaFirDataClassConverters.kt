@@ -215,6 +215,13 @@ private fun KaDiagnosticConverterBuilder.addConversions0() {
             token,
         )
     }
+    add(FirErrors.EO_DIAGNOSTIC) { firDiagnostic ->
+        EoDiagnosticImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OTHER_ERROR) { firDiagnostic ->
         OtherErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
