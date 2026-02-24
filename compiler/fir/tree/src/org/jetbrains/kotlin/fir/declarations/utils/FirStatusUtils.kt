@@ -83,3 +83,6 @@ inline val FirPropertyAccessor.hasBody: Boolean get() = body != null
 
 val FirCallableDeclaration.isCompanionBlockMember: Boolean
     get() = isStatic && containingClassForStaticMemberAttr != null
+
+val FirCallableDeclaration.isCompanionExtension: Boolean
+    get() = isStatic && receiverParameter != null

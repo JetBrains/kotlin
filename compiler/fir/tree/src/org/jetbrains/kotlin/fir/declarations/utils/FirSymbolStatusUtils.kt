@@ -97,3 +97,6 @@ inline val FirClassSymbol<*>.isEnumEntry: Boolean
     get() = classKind.isEnumEntry
 
 // ---------------------- specific callables ----------------------
+
+val FirCallableSymbol<*>.isCompanionExtension: Boolean
+    get() = fir.isCompanionExtension
