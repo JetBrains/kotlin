@@ -93,6 +93,7 @@ open class KonanCacheTask @Inject constructor(
             }
             add("-Xdebug-prefix-map=${outputDirectory.get().asFile.parentFile.absolutePath}=out")
         }
+        logger.warn("Running konanc with args: $args")
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(KonanCacheAction::class.java) {
             this.isolatedClassLoaderService.set(this@KonanCacheTask.isolatedClassLoadersService)

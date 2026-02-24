@@ -37,6 +37,10 @@ import org.jetbrains.kotlin.konan.config.incrementalCacheDir
 import org.jetbrains.kotlin.konan.config.konanDataDir
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
+import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
+import org.jetbrains.kotlin.konan.config.konanNoStdlib
 import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.config.llvmLtoPasses
@@ -411,6 +415,26 @@ class NativeSecondStageCompilationConfig(
     private val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
     )
+
+    init {
+        val fromKlibLoader = loadedKlibs.all.map { it.location }.toSet()
+        val fromKlibResolver = resolve.resolvedLibraries.getFullList().map { it.location }.toSet()
+
+        check(fromKlibLoader == fromKlibResolver) {
+            val missingInKlibLoader = fromKlibResolver - fromKlibLoader
+            val missingInKlibResolver = fromKlibLoader - fromKlibResolver
+            """
+                Klibs loaded from klib directory are inconsistent.
+                Missing in Klib Loader   (${missingInKlibLoader.size}: $missingInKlibLoader
+                Missing in Klib Resolver (${missingInKlibResolver.size}: $missingInKlibResolver
+                Libraries:   ${configuration.konanLibraries}
+                Includes:    ${configuration.konanIncludedLibraries}
+                Cache:       ${configuration.konanLibraryToAddToCache}
+                No stdlib:   ${configuration.konanNoStdlib}
+                No platform: ${configuration.konanNoDefaultLibs}
+            """.trimIndent()
+        }
+    }
 
     val includedLibraries: List<KotlinLibrary>
         get() = getIncludedLibraries(
