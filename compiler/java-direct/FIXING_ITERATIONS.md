@@ -44,7 +44,7 @@ See the template in `ITERATION_RESULTS.md` for the required format. This ensures
 
 ### Prompt
 
-```
+---
 TASK: Analyze failing tests in java-direct module to identify root causes
 
 CONTEXT:
@@ -101,7 +101,6 @@ CONSTRAINTS:
 - Ask questions if test execution is needed but unclear how
 
 CONFIRMATION REQUIRED: Present your analysis and wait for approval before proceeding.
-```
 
 ---
 
@@ -111,7 +110,7 @@ CONFIRMATION REQUIRED: Present your analysis and wait for approval before procee
 
 ### Prompt
 
-```
+---
 TASK: Fix JavaClassifierType to provide correct classifierQualifiedName for FIR resolution
 
 CONTEXT:
@@ -191,7 +190,6 @@ CONSTRAINTS:
 - DO trust FIR to handle resolution for `classifier == null`
 
 CONFIRMATION REQUIRED: Show your understanding of the approach before coding.
-```
 
 ---
 
@@ -201,7 +199,7 @@ CONFIRMATION REQUIRED: Show your understanding of the approach before coding.
 
 ### Prompt
 
-```
+---
 TASK: Implement import statement tracking to improve classifierQualifiedName accuracy
 
 CONTEXT:
@@ -294,7 +292,6 @@ CONSTRAINTS:
 - DO trust FIR to handle star imports and java.lang
 
 CONFIRMATION REQUIRED: Show import extraction logic before implementing.
-```
 
 ---
 
@@ -304,7 +301,7 @@ CONFIRMATION REQUIRED: Show import extraction logic before implementing.
 
 ### Prompt
 
-```
+---
 TASK: Verify that FIR successfully resolves types using our classifierQualifiedName
 
 CONTEXT:
@@ -367,7 +364,6 @@ CHALLENGES:
 - Need to distinguish resolution failures from other failures
 
 CONFIRMATION REQUIRED: Show analysis approach and test selection.
-```
 
 ---
 
@@ -377,7 +373,7 @@ CONFIRMATION REQUIRED: Show analysis approach and test selection.
 
 ### Prompt
 
-```
+---
 TASK: Handle Java files in different packages referencing each other
 
 CONTEXT:
@@ -419,7 +415,6 @@ DELIVERABLE:
 - Box test improvement report
 
 CONFIRMATION REQUIRED: Check if package handling already works, or if fixes needed.
-```
 
 ---
 
@@ -429,7 +424,7 @@ CONFIRMATION REQUIRED: Check if package handling already works, or if fixes need
 
 ### Prompt
 
-```
+---
 TASK: Implement proper handling of Java generic types
 
 CONTEXT:
@@ -488,7 +483,6 @@ DELIVERABLE:
 - Box test improvement report
 
 CONFIRMATION REQUIRED: Review current generic handling before making changes.
-```
 
 ---
 
@@ -498,7 +492,7 @@ CONFIRMATION REQUIRED: Review current generic handling before making changes.
 
 ### Prompt
 
-```
+---
 TASK: Implement annotation extraction and argument handling
 
 CONTEXT:
@@ -547,7 +541,6 @@ DELIVERABLE:
 - Box test improvement report
 
 CONFIRMATION REQUIRED: Verify current state of annotation support first.
-```
 
 ---
 
@@ -557,7 +550,7 @@ CONFIRMATION REQUIRED: Verify current state of annotation support first.
 
 ### Prompt
 
-```
+---
 TASK: Improve error handling and diagnostic reporting
 
 CONTEXT:
@@ -599,7 +592,6 @@ DELIVERABLE:
 - Documentation
 
 CONFIRMATION REQUIRED: Discuss error handling strategy.
-```
 
 ---
 
@@ -609,7 +601,6 @@ CONFIRMATION REQUIRED: Discuss error handling strategy.
 
 ### Prompt
 
-```
 TASK: Optimize performance with proper caching strategies
 
 CONTEXT:
@@ -648,7 +639,6 @@ DELIVERABLE:
 - Documentation of caching strategy
 
 CONFIRMATION REQUIRED: Profile first to find actual bottlenecks.
-```
 
 ---
 
@@ -658,7 +648,6 @@ CONFIRMATION REQUIRED: Profile first to find actual bottlenecks.
 
 ### Prompt
 
-```
 TASK: Validate implementation completeness and document findings
 
 CONTEXT:
@@ -700,7 +689,6 @@ DELIVERABLE:
 - Recommendations for future work
 
 CONFIRMATION REQUIRED: N/A (final iteration)
-```
 
 ---
 
