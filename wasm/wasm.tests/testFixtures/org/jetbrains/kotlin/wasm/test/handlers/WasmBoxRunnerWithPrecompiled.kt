@@ -28,7 +28,7 @@ class WasmBoxRunnerWithPrecompiled(
             val outputDirBase = testServices.getWasmTestOutputDirectory()
             val exceptions = saveAdditionalFilesAndRun(
                 outputDir = outputDirBase,
-                mark = "single",
+                mark = "",
                 failsIn = emptyList(),
                 filesToIgnoreInSizeChecks = mutableSetOf()
             )
