@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 class Container<T> {
     fun produce(): T = TODO()
 }
@@ -25,7 +25,7 @@ fun main() {
         // resulting type arguments: Av = Parent, Bv = Child
     )
     // resulting expression type: TypePair<Parent, Child>
-    val test: TypePair<Parent, Child> = result
+    val test: TypePair<Parent, Child> <!INITIALIZER_TYPE_MISMATCH!>=<!> result
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,

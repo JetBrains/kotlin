@@ -5,7 +5,7 @@ fun <T : Any> xSelectButton2(items: (matcher: String) -> List<T>, handler: T.() 
 
 fun main() {
     val x: List<Int>? = listOf()
-    xSelectButton2({ matcher -> x ?: emptyList() }) { this.inv() }
+    xSelectButton2({ matcher -> x ?: emptyList() }) { this.<!UNRESOLVED_REFERENCE!>inv<!>() }
 }
 
 /* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
