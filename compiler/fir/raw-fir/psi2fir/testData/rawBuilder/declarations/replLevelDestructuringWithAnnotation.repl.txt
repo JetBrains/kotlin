@@ -4,7 +4,7 @@ FILE: replLevelDestructuringWithAnnotation.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| {
+        public final fun $$eval(): <implicit> {
             @DestrAnno(<strcat>(String(destr 1 ), prop#)) lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
             <repl property initializer: /ReplLevelDestructuringWithAnnotation_repl.a> = R|<local>/<destruct>|.component1#()
             <repl property initializer: /ReplLevelDestructuringWithAnnotation_repl.b> = R|<local>/<destruct>|.component2#()

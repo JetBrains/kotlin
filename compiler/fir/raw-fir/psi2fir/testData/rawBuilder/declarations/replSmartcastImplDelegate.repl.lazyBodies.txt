@@ -4,7 +4,7 @@ FILE: replSmartcastImplDelegate.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final fun $$eval(): <implicit> { LAZY_BLOCK }
 
         public final? [ContainingReplKey=FirReplSnippetSymbol ReplSmartcastImplDelegate_repl, ReplSnippetTopLevelDeclaration=true] interface MyInterface : R|kotlin/Any| {
             public? final? fun foo(): R|kotlin/Unit|

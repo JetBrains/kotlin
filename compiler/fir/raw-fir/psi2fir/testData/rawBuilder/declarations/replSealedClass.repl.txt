@@ -4,7 +4,7 @@ FILE: replSealedClass.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| {
+        public final fun $$eval(): <implicit> {
             <repl declaration reference>: /ReplSealedClass_repl.Base
             <repl declaration reference>: /ReplSealedClass_repl.Foo
             <repl declaration reference>: /ReplSealedClass_repl.Bar

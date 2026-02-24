@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.replSnippetDelegatedPropertyCopies
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirOperation.*
@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorSuperReference
-import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
@@ -524,7 +520,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         /**
          * For PROVIDE_DELEGATE we skip transforming explicit receiver of the call since it's already been resolved
-         * at [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.transformPropertyAccessorsWithDelegate]
+         * at [FirDeclarationsResolveTransformer.transformPropertyAccessorsWithDelegate]
          */
         PROVIDE_DELEGATE,
 
@@ -2132,10 +2128,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         replDeclarationReference: FirReplDeclarationReference,
         data: ResolutionMode,
     ): FirStatement {
-        whileAnalysing(session, replDeclarationReference) {
-            val symbol = replDeclarationReference.symbol
-            symbol.fir.transformSingle(transformer, data)
-        }
+        // Do nothing.
         return replDeclarationReference
     }
 
@@ -2153,44 +2146,50 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirStatement {
         whileAnalysing(session, replPropertyInitializer) {
             val property = replPropertyInitializer.propertySymbol.fir
-            transformer.declarationsTransformer?.transformMemberPropertyInternal(
-                property = property,
-                data = data,
-                transformInitializer = {
-                    val resolutionMode = withExpectedType(property.returnTypeRef)
-                    replPropertyInitializer.transformInitializer(transformer, resolutionMode)
+            val hadExplicitType = property.returnTypeRef !is FirImplicitTypeRef
+            val resolutionMode = withExpectedType(property.returnTypeRef)
 
-                    // Update REPL expression reference in case initializer expression was replaced.
-                    (property.initializer as? FirReplExpressionReference)?.expressionRef?.bind(replPropertyInitializer.initializer)
-                },
-                transformDelegate = { _, _ -> },
-            )
+            dataFlowAnalyzer.enterLocalVariableDeclaration(property)
+
+            replPropertyInitializer.transformInitializer(transformer, resolutionMode)
+            // Update REPL expression reference in case initializer expression was replaced.
+            (property.initializer as? FirReplExpressionReference)?.expressionRef?.bind(replPropertyInitializer.initializer)
+
+            // TODO this causes a call to components.returnTypeCalculator.tryCalculateReturnType(), should it be explicit?
+            dataFlowAnalyzer.exitLocalVariableDeclaration(property, hadExplicitType)
         }
         return replPropertyInitializer
     }
 
+    @OptIn(FirImplementationDetail::class)
     override fun transformReplPropertyDelegate(
         replPropertyDelegate: FirReplPropertyDelegate,
         data: ResolutionMode,
     ): FirStatement {
         whileAnalysing(session, replPropertyDelegate) {
             val property = replPropertyDelegate.propertySymbol.fir
-            transformer.declarationsTransformer?.transformMemberPropertyInternal(
-                property = property,
-                data = data,
-                transformInitializer = {},
-                transformDelegate = { _, shouldResolveEverything ->
-                    transformer.declarationsTransformer?.transformPropertyAccessorsWithDelegate(
-                        property = property,
-                        delegateContainer = replPropertyDelegate.delegate,
-                        shouldResolveEverything = shouldResolveEverything,
-                        replaceDelegate = replPropertyDelegate::replaceDelegate,
-                    )
+            val hadExplicitType = property.returnTypeRef !is FirImplicitTypeRef
 
-                    // Update REPL expression reference in case delegate expression was replaced.
-                    (property.delegate as? FirReplExpressionReference)?.expressionRef?.bind(replPropertyDelegate.delegate)
-                }
-            )
+            dataFlowAnalyzer.enterLocalVariableDeclaration(property)
+
+            // See documentation on `replSnippetDelegatedPropertyCopies` attribute for why this is needed.
+            val evalFunction = context.containers.last() as FirNamedFunction
+            val copy = evalFunction.replSnippetDelegatedPropertyCopies?.get(property.symbol)
+            if (copy != null) {
+                // Resolve FIR copy of the REPL-level delegate property.
+                transformer.declarationsTransformer?.transformProperty(copy, data)
+
+                // Update REPL expression reference in case delegate expression was replaced.
+                val resolvedDelegate = requireNotNull(copy.delegate)
+                replPropertyDelegate.replaceDelegate(resolvedDelegate)
+                (property.delegate as? FirReplExpressionReference)?.expressionRef?.bind(resolvedDelegate)
+
+                // Since it is no longer necessary, remove the copied property to conserve memory.
+                evalFunction.replSnippetDelegatedPropertyCopies?.remove(property.symbol)
+            }
+
+            // TODO this causes a call to components.returnTypeCalculator.tryCalculateReturnType(), should it be explicit?
+            dataFlowAnalyzer.exitLocalVariableDeclaration(property, hadExplicitType)
         }
         return replPropertyDelegate
     }

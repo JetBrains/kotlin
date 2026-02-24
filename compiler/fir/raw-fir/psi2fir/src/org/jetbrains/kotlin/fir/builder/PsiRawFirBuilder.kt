@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.fir.types.impl.ResolvedImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -1480,10 +1481,12 @@ open class PsiRawFirBuilder(
 
                             val evalSymbol = FirNamedFunctionSymbol(callableIdForName(evalName))
                             val evalFunction = withContainerSymbol(evalSymbol) {
+                                val copiedDelegatedProperties = mutableMapOf<FirPropertySymbol, FirProperty>()
+
                                 // Extraction of REPL elements needs to happen within the eval function.
                                 // Temporary variables for property-destructing statements need to be
                                 // located within the eval function and not class members.
-                                val replElements = extractReplElements(script, classSymbol)
+                                val replElements = extractReplElements(script, classSymbol, copiedDelegatedProperties)
                                     .let { it.toMutableList().apply { statementsSetup() } }
                                     .map { convertReplElement(it) }
 
@@ -1500,7 +1503,13 @@ open class PsiRawFirBuilder(
                                     replClassMembers.add(member)
                                 }
 
-                                createEvalFunction(script, evalSymbol, replElements, functionBodySetup)
+                                createEvalFunction(script, evalSymbol, replElements, functionBodySetup).also { function ->
+                                    if (copiedDelegatedProperties.isNotEmpty()) {
+                                        // See documentation on `replSnippetDelegatedPropertyCopies` attribute for why this is needed.
+                                        @OptIn(FirImplementationDetail::class)
+                                        function.replSnippetDelegatedPropertyCopies = copiedDelegatedProperties
+                                    }
+                                }
                             }
 
                             val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
@@ -1559,7 +1568,7 @@ open class PsiRawFirBuilder(
                 symbol = evalSymbol
                 dispatchReceiverType = currentDispatchReceiverType()
                 status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
-                returnTypeRef = implicitUnitType
+                returnTypeRef = ResolvedImplicitTypeRef(implicitUnitType)
                 isLocal = false
 
                 context.firFunctionTargets += evalTarget
@@ -1644,6 +1653,7 @@ open class PsiRawFirBuilder(
         private fun extractReplElements(
             script: KtScript,
             containingDeclarationSymbol: FirBasedSymbol<*>,
+            copiedDelegatedProperties: MutableMap<FirPropertySymbol, FirProperty>,
         ): List<FirElement> = buildList {
             val iter = script.declarations.iterator()
             while (iter.hasNext()) {
@@ -1693,6 +1703,16 @@ open class PsiRawFirBuilder(
                             ownerRegularOrAnonymousObjectSymbol = null,
                             context,
                         )
+
+                        // See documentation on `replSnippetDelegatedPropertyCopies` attribute for why this is needed.
+                        if (firProperty.delegate != null) {
+                            val firPropertyCopy = declaration.toFirProperty(
+                                ownerRegularOrAnonymousObjectSymbol = null,
+                                context,
+                            )
+                            copiedDelegatedProperties[firProperty.symbol] = firPropertyCopy
+                        }
+
                         add(firProperty)
                     }
                     else -> {

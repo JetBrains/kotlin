@@ -4,7 +4,7 @@ FILE: replSimple.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| {
+        public final fun $$eval(): <implicit> {
             <repl declaration reference>: /ReplSimple_repl.Builder
             <repl declaration reference>: /ReplSimple_repl.build
             <repl declaration reference>: /ReplSimple_repl.build2

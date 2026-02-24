@@ -4,7 +4,7 @@ FILE: replPropertyDelegated.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ReplPropertyCopy={/ReplPropertyDelegated_repl.foo=/ReplPropertyDelegated_repl.foo, /ReplPropertyDelegated_repl.bar=/ReplPropertyDelegated_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
 
         public final? [ContainingReplKey=FirReplSnippetSymbol ReplPropertyDelegated_repl, ReplSnippetTopLevelDeclaration=true] object Provider : R|kotlin/Any| {
             private [ContainingClassKey=Provider] constructor(): R|ReplPropertyDelegated_repl.Provider| {

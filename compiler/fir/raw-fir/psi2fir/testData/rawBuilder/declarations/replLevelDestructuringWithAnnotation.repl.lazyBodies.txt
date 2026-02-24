@@ -4,7 +4,7 @@ FILE: replLevelDestructuringWithAnnotation.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final fun $$eval(): <implicit> { LAZY_BLOCK }
 
         @LeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val a: <implicit> = REPL_EXPRESSION_REF
             public get(): <implicit>

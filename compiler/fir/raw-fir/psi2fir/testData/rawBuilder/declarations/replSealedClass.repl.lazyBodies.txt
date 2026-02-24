@@ -4,7 +4,7 @@ FILE: replSealedClass.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final fun $$eval(): <implicit> { LAZY_BLOCK }
 
         public sealed [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] class Base : R|kotlin/Any| {
             protected [ContainingClassKey=Base] constructor(): R|ReplSealedClass_repl.Base| {

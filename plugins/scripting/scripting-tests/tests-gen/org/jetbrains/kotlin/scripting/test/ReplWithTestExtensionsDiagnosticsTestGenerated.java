@@ -28,9 +28,27 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
+  @TestMetadata("cast_assignment.kts")
+  public void testCast_assignment() {
+    run("cast_assignment.kts");
+  }
+
+  @Test
   @TestMetadata("delegated_extension_property.repl.kts")
   public void testDelegated_extension_property_repl() {
     run("delegated_extension_property.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("delegated_self_reference.kts")
+  public void testDelegated_self_reference() {
+    run("delegated_self_reference.kts");
+  }
+
+  @Test
+  @TestMetadata("delegated_with_type_parameters.kts")
+  public void testDelegated_with_type_parameters() {
+    run("delegated_with_type_parameters.kts");
   }
 
   @Test
@@ -106,9 +124,27 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
-  @TestMetadata("unsafe_cast_assignment.kts")
-  public void testUnsafe_cast_assignment() {
-    run("unsafe_cast_assignment.kts");
+  @TestMetadata("unsafe_cast_assignment_within_class.kts")
+  public void testUnsafe_cast_assignment_within_class() {
+    run("unsafe_cast_assignment_within_class.kts");
+  }
+
+  @Test
+  @TestMetadata("unsafe_cast_assignment_within_function.kts")
+  public void testUnsafe_cast_assignment_within_function() {
+    run("unsafe_cast_assignment_within_function.kts");
+  }
+
+  @Test
+  @TestMetadata("unsafe_cast_assignment_within_property_getter.kts")
+  public void testUnsafe_cast_assignment_within_property_getter() {
+    run("unsafe_cast_assignment_within_property_getter.kts");
+  }
+
+  @Test
+  @TestMetadata("unsafe_cast_assignment_within_property_setter.kts")
+  public void testUnsafe_cast_assignment_within_property_setter() {
+    run("unsafe_cast_assignment_within_property_setter.kts");
   }
 
   @Test

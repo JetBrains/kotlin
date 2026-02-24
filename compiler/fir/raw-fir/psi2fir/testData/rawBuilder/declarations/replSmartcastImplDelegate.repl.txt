@@ -4,7 +4,7 @@ FILE: replSmartcastImplDelegate.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| {
+        public final fun $$eval(): <implicit> {
             <repl declaration reference>: /ReplSmartcastImplDelegate_repl.MyInterface
             <repl property initializer: /ReplSmartcastImplDelegate_repl.localProperty> = object : MyInterface {
                 private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {

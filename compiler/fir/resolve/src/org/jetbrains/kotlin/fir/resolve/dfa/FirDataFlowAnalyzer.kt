@@ -495,23 +495,12 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Property -----------------------------------
 
     fun enterProperty(property: FirProperty) {
-        // For REPL properties, the variable enter node helps include the initializer graph in the
-        // eval function body graph.
-        val (variableEnter, initializerEnter) = graphBuilder.enterProperty(property) ?: return
-        variableEnter?.mergeIncomingFlow()
-        initializerEnter.mergeIncomingFlow()
+        graphBuilder.enterProperty(property)?.mergeIncomingFlow()
     }
 
-    fun exitProperty(property: FirProperty, hadExplicitType: Boolean): ControlFlowGraph? {
-        // For REPL properties, the variable exit node helps include the initializer graph in the
-        // eval function body graph. It also provides a location to include data-flow information
-        // from the resolved initializer type.
-        val (initializerExit, variableExit, graph) = graphBuilder.exitProperty(property) ?: return null
-        initializerExit.mergeIncomingFlow()
-        variableExit?.mergeIncomingFlow { _, flow ->
-            val initializer = property.initializer ?: return@mergeIncomingFlow
-            exitVariableInitialization(flow, initializer, property, assignmentLhs = null, hadExplicitType)
-        }
+    fun exitProperty(property: FirProperty): ControlFlowGraph? {
+        val (node, graph) = graphBuilder.exitProperty(property) ?: return null
+        node.mergeIncomingFlow()
         graph.completePostponedNodes()
         return graph
     }
@@ -1934,7 +1923,7 @@ abstract class FirDataFlowAnalyzer(
             isImplicit = false,
             dispatchReceiver = dispatchReceiver,
             extensionReceiver = null,
-            originalType = symbol.resolvedReturnType
+            originalType = components.returnTypeCalculator.tryCalculateReturnType(symbol).coneType
         )
         return if (create) variableStorage.remember(prototype) else variableStorage.getKnown(prototype)
     }

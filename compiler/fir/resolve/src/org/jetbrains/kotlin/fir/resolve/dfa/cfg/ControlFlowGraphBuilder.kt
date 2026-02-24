@@ -915,39 +915,16 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Property -----------------------------------
 
-    fun enterProperty(property: FirProperty): Pair<VariableDeclarationEnterNode?, PropertyInitializerEnterNode>? {
+    fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
         if (!property.memberShouldHaveGraph) return null
-
-        // REPL property declarations need to be treated as local variable declarations.
-        val variableEnter = runIf(property.isReplSnippetDeclaration == true) {
-            createVariableDeclarationEnterNode(property).also { addNewSimpleNode(it) }
-        }
-
-        val initializerEnter = enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
+        return enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
             createPropertyInitializerEnterNode(it) to createPropertyInitializerExitNode(it)
-        }
-
-        when {
-            variableEnter != null -> addEdge(variableEnter, initializerEnter)
-            else -> addEdgeIfLocalClassMember(initializerEnter)
-        }
-
-        return variableEnter to initializerEnter
+        }.also { addEdgeIfLocalClassMember(it) }
     }
 
-    fun exitProperty(property: FirProperty): Triple<PropertyInitializerExitNode, VariableDeclarationExitNode?, ControlFlowGraph>? {
+    fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
         if (!property.memberShouldHaveGraph) return null
-        val (initializerExit, graph) = exitGraph<PropertyInitializerExitNode>()
-
-        // REPL property declarations need to be treated as local variable declarations.
-        if (property.isReplSnippetDeclaration == true) {
-            val variableExit = createVariableDeclarationExitNode(property)
-            addNewSimpleNode(variableExit)
-            addEdge(initializerExit, variableExit, propagateDeadness = false)
-            return Triple(initializerExit, variableExit, graph)
-        }
-
-        return Triple(initializerExit, null, graph)
+        return exitGraph()
     }
 
     // ----------------------------------- Field -----------------------------------

@@ -4,7 +4,7 @@ FILE: replPropertyDelegated.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| {
+        public final [ReplPropertyCopy={/ReplPropertyDelegated_repl.foo=/ReplPropertyDelegated_repl.foo, /ReplPropertyDelegated_repl.bar=/ReplPropertyDelegated_repl.bar}] fun $$eval(): <implicit> {
             <repl declaration reference>: /ReplPropertyDelegated_repl.Provider
             <repl property delegate: /ReplPropertyDelegated_repl.foo> = lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 String()

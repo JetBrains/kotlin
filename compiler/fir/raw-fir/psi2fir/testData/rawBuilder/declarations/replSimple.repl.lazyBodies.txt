@@ -4,7 +4,7 @@ FILE: replSimple.repl.kts
             super<R|kotlin/Any|>()
         }
 
-        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final fun $$eval(): <implicit> { LAZY_BLOCK }
 
         public final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl, ReplSnippetTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ContainingClassKey=Builder] constructor(): R|ReplSimple_repl.Builder| {
