@@ -623,10 +623,16 @@ class Fir2IrVisitor(
                 varargArgumentsExpression.resolvedType.toIrType(),
                 varargArgumentsExpression.coneElementTypeOrNull?.toIrType()
                     ?: error("Vararg expression has incorrect type: ${varargArgumentsExpression.render()}"),
-                varargArgumentsExpression.arguments.mapNotNull {
-                    if (isGetClassOfUnresolvedTypeInAnnotation(it)) null
-                    else it.convertToIrVarargElement()
-                }
+                varargArgumentsExpression.arguments
+                    .filter { !isGetClassOfUnresolvedTypeInAnnotation(it) }
+                    .flatMap {
+                        val varargElement = it.convertToIrVarargElement()
+                        if (!annotationMode) return@flatMap listOf(varargElement)
+                        when (val unwrapped = (varargElement as? IrSpreadElement)?.expression ?: varargElement) {
+                            is IrVararg -> unwrapped.elements
+                            else -> listOf(unwrapped)
+                        }
+                    }
             )
         }
     }
