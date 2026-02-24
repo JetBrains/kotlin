@@ -91,7 +91,13 @@ class WrongNumberOfTypeArguments(
 
 object UnsuccessfulCallableReferenceArgument : ResolutionDiagnostic(INAPPLICABLE)
 
-object UnsuccessfulCollectionLiteralArgument : ResolutionDiagnostic(INAPPLICABLE)
+/**
+ * Wrapper for [ResolutionDiagnostic]s coming from expansions of nested collection literals.
+ *
+ * They are skipped during reporting since they are reported for CL candidate itself already.
+ */
+class UnsuccessfulCollectionLiteralArgument(delegatedDiagnostic: ResolutionDiagnostic) :
+    ResolutionDiagnostic(delegatedDiagnostic.applicability)
 
 object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 

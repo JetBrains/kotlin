@@ -123,10 +123,6 @@ class FirCallResolver(
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
         candidate?.updateSourcesOfReceivers()
 
-        if (candidate?.isSuccessful != true) {
-            collectionLiteralContext?.checkerSink?.reportDiagnostic(UnsuccessfulCollectionLiteralArgument)
-        }
-
         // We need desugaring
         val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
             functionCall.copyAsImplicitInvokeCall {

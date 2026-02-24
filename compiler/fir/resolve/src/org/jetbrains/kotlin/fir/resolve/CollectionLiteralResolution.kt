@@ -16,11 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
-import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulCollectionLiteralArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.ImplicitInvokeMode
@@ -39,53 +38,39 @@ fun runCollectionLiteralResolution(
     precalculatedBounds: CollectionLiteralBounds?,
 ) {
     val originalExpression = atom.expression
+    val classForResolution = when (precalculatedBounds) {
+        is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
+        is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
+        // it means CL is here through regular resolve of postponed atoms with all input types known
+        null -> atom.expectedType?.getClassRepresentativeForCollectionLiteralResolution()
+        else -> null
+    }
 
-    val newExpression: FirFunctionCall = run {
-        val classForResolution = when (precalculatedBounds) {
-            is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
-            is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
-            // it means CL is here through regular resolve of postponed atoms with all input types known
-            null -> atom.expectedType?.getClassRepresentativeForCollectionLiteralResolution()
-            else -> null
+    val resolvedThroughRegularStrategies = tryAllCLResolutionStrategies {
+        val preparedCall = prepareRawCall(originalExpression, classForResolution) ?: return@tryAllCLResolutionStrategies null
+        resolveCollectionLiteralToPreparedCall(preparedCall)
+    }
+
+    val resolvedCall = when {
+        resolvedThroughRegularStrategies != null -> resolvedThroughRegularStrategies
+        precalculatedBounds is CollectionLiteralBounds.Ambiguity -> {
+            resolveCollectionLiteralToErrorCall(
+                precalculatedBounds.toConeDiagnostic(),
+                atom,
+            )
         }
-
-        val resolvedThroughRegularStrategies = tryAllCLResolutionStrategies {
-            val preparedCall = prepareRawCall(originalExpression, classForResolution) ?: return@tryAllCLResolutionStrategies null
-            resolveCollectionLiteralToPreparedCall(preparedCall, atom)
-        }
-
-        when {
-            resolvedThroughRegularStrategies != null -> resolvedThroughRegularStrategies
-            precalculatedBounds is CollectionLiteralBounds.Ambiguity -> {
-                resolveCollectionLiteralToErrorCall(
-                    precalculatedBounds.toConeDiagnostic(),
-                    atom,
-                )
-            }
-            else -> {
-                val preparedCall = prepareFunctionCallForFallback(originalExpression)
-                resolveCollectionLiteralToPreparedCall(preparedCall, atom)
-            }
+        else -> {
+            val preparedCall = prepareFunctionCallForFallback(originalExpression)
+            resolveCollectionLiteralToPreparedCall(preparedCall)
         }
     }
 
-    atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)
-
-    ArgumentCheckingProcessor.resolveArgumentExpression(
-        outerCallsContext.containingCandidate,
-        ConeResolutionAtom.createRawAtom(newExpression),
-        atom.expectedType,
-        outerCallsContext.checkerSink ?: CheckerSinkImpl(outerCallsContext.containingCandidate),
-        context = context,
-        isReceiver = false,
-        isDispatch = false,
-    )
+    postprocessCollectionLiteralCall(resolvedCall, atom)
 }
 
 context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
 private fun resolveCollectionLiteralToPreparedCall(
     preparedCall: FirFunctionCall,
-    collectionLiteralAtom: ConeCollectionLiteralAtom,
 ): FirFunctionCall {
     var call = preparedCall
     call =
@@ -96,9 +81,7 @@ private fun resolveCollectionLiteralToPreparedCall(
         skipEvenPartialCompletion = true,
     )
 
-    return call.also {
-        postprocessCollectionLiteralCall(it, outerCallsContext.containingCandidate, collectionLiteralAtom)
-    }
+    return call
 }
 
 context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
@@ -146,20 +129,64 @@ private fun resolveCollectionLiteralToErrorCall(
         skipEvenPartialCompletion = true,
     )
 
-    return call.also {
-        postprocessCollectionLiteralCall(it, outerCallsContext.containingCandidate, collectionLiteralAtom)
-    }
+    return call
 }
 
+context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
 private fun postprocessCollectionLiteralCall(
     replacementForCL: FirFunctionCall,
-    topLevelCandidate: Candidate,
     collectionLiteralAtom: ConeCollectionLiteralAtom,
 ) {
-    val calleeReference = replacementForCL.calleeReference as? FirNamedReferenceWithCandidate
+    val originalExpression = collectionLiteralAtom.expression
+    val candidateForCL = (replacementForCL.calleeReference as? FirNamedReferenceWithCandidate)?.candidate
         ?: error("Collection literal is expected to be resolved to a call with named candidate.")
-    topLevelCandidate.system.replaceContentWith(calleeReference.candidate.system.currentStorage())
-    collectionLiteralAtom.subAtom = ConeAtomWithCandidate(collectionLiteralAtom.expression, calleeReference.candidate)
+    val containingCandidate = outerCallsContext.containingCandidate
+    // 0. When entering the function, `candidateForCL` passed all the stages of `CallKind.CollectionLiteral`.
+    // Its system is not yet merged back to containing call's system.
+    // Constraint typeOf(replacementForCL) <: expectedType of CL is not added to either of the systems.
+
+    // 1. Set `subAtom`. It is used for traversal over the atom tree after CL has been resolved.
+    collectionLiteralAtom.subAtom = ConeAtomWithCandidate(replacementForCL, candidateForCL)
+
+    // 2. Store resolved version of CL. It is then used in the completion results writer to update FIR representation.
+    collectionLiteralAtom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, replacementForCL)
+
+    // 3. Add constraints from expected type.
+    // NB: note the candidate whose system we expand. It needs to be CL since its system is more precise at that point.
+    ArgumentCheckingProcessor.resolveArgumentExpression(
+        candidateForCL,
+        collectionLiteralAtom.subAtom!!,
+        collectionLiteralAtom.expectedType,
+        outerCallsContext.checkerSink ?: CheckerSinkImpl(containingCandidate),
+        context = context,
+        isReceiver = false,
+        isDispatch = false,
+    )
+
+    // 4. Run additional resolution stages for collection literals.
+    // Notably, they include eager resolve for nested collection literals.
+    // This is why it is important that we replace the containing call's system later --
+    // the system of CL candidate might be expanded even further during these stages.
+    if (candidateForCL.isSuccessful) {
+        context.bodyResolveComponents.resolutionStageRunner.processCandidate(
+            candidateForCL,
+            context,
+            runAdditionalStages = true,
+        )
+    }
+
+    // 5. All the diagnostics collected for CL candidate (both from additional stages and basic ones)
+    // need to be remapped. Remap preserves the exact applicability.
+    for (resolutionDiagnostic in candidateForCL.diagnostics) {
+        val remappedDiagnostic = when (resolutionDiagnostic) {
+            is UnsuccessfulCollectionLiteralArgument -> resolutionDiagnostic
+            else -> UnsuccessfulCollectionLiteralArgument(resolutionDiagnostic)
+        }
+        outerCallsContext.checkerSink?.reportDiagnostic(remappedDiagnostic)
+    }
+
+    // 6. Finally, the outer system can be updated.
+    containingCandidate.system.replaceContentWith(candidateForCL.system.currentStorage())
 }
 
 context(context: ResolutionContext)

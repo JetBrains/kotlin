@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
@@ -14,8 +14,8 @@ fun test() {
     f1([{}])
     f1([{ 42 }, { "42" }])
 
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>([{ 42 }])
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>([{ -> 42}])
+    f2([{ 42 }])
+    f2([{ -> 42}])
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, intersectionType, lambdaLiteral, nullableType, stringLiteral,

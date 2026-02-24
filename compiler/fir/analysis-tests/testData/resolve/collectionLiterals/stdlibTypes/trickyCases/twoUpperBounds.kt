@@ -12,7 +12,7 @@ fun test() {
     throughTwoLambdas([], { _: Set<Int> -> }, { _: MutableSet<Int> -> })
     throughTwoLambdas([], { _: Set<CharSequence> -> }, { _: MutableSet<String> -> })
     throughTwoLambdas(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>, { _: Set<Int> -> }, { _: MutableSet<String> -> })
-    throughTwoLambdas(<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>[]<!>, { _: Set<Int> -> }, { _: Set<String> -> })
+    throughTwoLambdas(<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING, INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>[]<!>, { _: Set<Int> -> }, { _: Set<String> -> })
     throughTwoLambdas([], { _: Set<Int> -> }, { _: Set<Int> -> })
     throughTwoLambdas(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>, { _: MutableSet<Int> -> }, { _: MutableSet<String> -> })
 

@@ -35,7 +35,7 @@ FILE: twoUpperBounds.kt
             ^@throughTwoLambdas Unit
         }
         ))
-        R|/throughTwoLambdas<CS errors: /throughTwoLambdas>#|<R|kotlin/collections/Set<it(kotlin/Int & kotlin/String)>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|it(kotlin/Int & kotlin/String)|>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+        R|/throughTwoLambdas<CS errors: /throughTwoLambdas>#|<R|kotlin/collections/Set<it(kotlin/Int & kotlin/String)>|>(Q|kotlin/collections|.R|kotlin/collections/setOf<Inapplicable(INAPPLICABLE): kotlin/collections/setOf>#|<R|it(kotlin/Int & kotlin/String)|>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughTwoLambdas Unit
         }
         , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {

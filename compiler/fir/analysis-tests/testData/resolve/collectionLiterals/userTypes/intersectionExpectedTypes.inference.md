@@ -33,11 +33,28 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-##### Continue Call Completion:
+### Call 2
+
+```
+Q|kotlin/collections|.listOf#(IntegerLiteral(42))
+```
+
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(IntegerLiteral(42))_
 2. __ConstrainingTypeIsError__
-3. Choose `TypeVariable(T)` with `Readiness(
+
+### Call 1
+
+```
+expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
+```
+
+#### Candidate 1: `FirNamedFunctionSymbol /expectThroughTV` --- `fun <T> expectThroughTV(x: T, y: T): Unit`
+##### Continue Call Completion:
+
+1. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -52,9 +69,9 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-4. `TypeVariable(T) == it(A & B)` _from Fix variable T_
+2. `TypeVariable(T) == it(A & B)` _from Fix variable T_
 
-### Call 2
+### Call 3
 
 ```
 expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
@@ -87,11 +104,28 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-##### Continue Call Completion:
+### Call 4
+
+```
+Q|kotlin/collections|.listOf#()
+```
+
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|()_
 2. __ConstrainingTypeIsError__
-3. Choose `TypeVariable(T)` with `Readiness(
+
+### Call 3
+
+```
+expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
+```
+
+#### Candidate 1: `FirNamedFunctionSymbol /expectThroughTV` --- `fun <T> expectThroughTV(x: T, y: T): Unit`
+##### Continue Call Completion:
+
+1. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -106,9 +140,9 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-4. `TypeVariable(T) == it(A & B)` _from Fix variable T_
+2. `TypeVariable(T) == it(A & B)` _from Fix variable T_
 
-### Call 3
+### Call 5
 
 ```
 when () {
@@ -162,7 +196,7 @@ when () {
    )`
 2. `TypeVariable(K) == it(A & B)` _from Fix variable K_
 
-### Call 4
+### Call 6
 
 ```
 expectThroughTV#(when () {
@@ -215,11 +249,48 @@ expectThroughTV#(when () {
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-##### Continue Call Completion:
+### Call 7
+
+```
+Q|kotlin/collections|.listOf#(String(42))
+```
+
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(String(42))_
 2. __ConstrainingTypeIsError__
-3. Choose `TypeVariable(T)` with `Readiness(
+
+### Call 6
+
+```
+expectThroughTV#(when () {
+    Boolean(true) ->  {
+        object : R|A|, R|B| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    else ->  {
+        object : R|B|, R|A| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+}
+, <collectionLiteralCall>(String(42)))
+```
+
+#### Candidate 1: `FirNamedFunctionSymbol /expectThroughTV` --- `fun <T> expectThroughTV(x: T, y: T): Unit`
+##### Continue Call Completion:
+
+1. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -234,9 +305,9 @@ expectThroughTV#(when () {
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-4. `TypeVariable(T) == it(A & B)` _from Fix variable T_
+2. `TypeVariable(T) == it(A & B)` _from Fix variable T_
 
-### Call 5
+### Call 8
 
 ```
 Null(null)!!
@@ -276,7 +347,7 @@ Null(null)!!
    )`
 2. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
 
-### Call 6
+### Call 9
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -330,7 +401,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 7
+### Call 10
 
 ```
 expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
@@ -364,7 +435,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 8
+### Call 11
 
 ```
 put#(Q|A|.R|/A.Companion.of|())
@@ -377,7 +448,7 @@ put#(Q|A|.R|/A.Companion.of|())
 2. Combine `A <: TypeVariable(X)` with `TypeVariable(X) <: TypeVariable(T)?`
     1. `A <: TypeVariable(T)`
 
-### Call 6
+### Call 9
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -424,7 +495,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
-### Call 9
+### Call 12
 
 ```
 Q|A.Companion|.of#(IntegerLiteral(42))
@@ -435,7 +506,11 @@ Q|A.Companion|.of#(IntegerLiteral(42))
 
 1. `ILT: 42 <: kotlin/Int` _from Argument IntegerLiteral(42)_
 
-### Call 6
+##### Resolution Stages > CheckLowPriorityInOverloadResolution:
+
+1. `A <: TypeVariable(T)` _from Argument Q|A.Companion|.R?C|/A.Companion.of|(IntegerLiteral(42))_
+
+### Call 9
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -450,8 +525,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
 #### Candidate 1: `FirNamedFunctionSymbol <local>/buildBox` --- `fun <X> buildBox(block: Box<X>.() -> Unit): Unit`
 ##### Continue Continue Call Completion:
 
-1. `A <: TypeVariable(T)` _from Argument Q|A.Companion|.R?C|/A.Companion.of|(IntegerLiteral(42))_
-2. Choose `TypeVariable(X)` with `Readiness(
+1. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -481,7 +555,9 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. `TypeVariable(X) == A` _from Fix variable X_
+2. `TypeVariable(X) == A` _from Fix variable X_
+3. Combine `TypeVariable(X) == A` with `TypeVariable(X) <: TypeVariable(T)?`
+    1. `A <: TypeVariable(T)`
 4. Combine `TypeVariable(X) == A` with `it(B & TypeVariable(X) & Any) <: TypeVariable(T)`
     1. `it(B & A) <: TypeVariable(T)`
 5. Choose `TypeVariable(T)` with `Readiness(
@@ -501,7 +577,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
 6. `TypeVariable(T) == A` _from Fix variable T_
 
-### Call 10
+### Call 13
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -555,7 +631,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 11
+### Call 14
 
 ```
 expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
@@ -589,7 +665,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 10
+### Call 13
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -636,11 +712,34 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
-##### Continue Continue Call Completion:
+### Call 15
+
+```
+Q|kotlin/collections|.listOf#(IntegerLiteral(42))
+```
+
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(IntegerLiteral(42))_
 2. __ConstrainingTypeIsError__
-3. Choose `TypeVariable(X)` with `Readiness(
+
+### Call 13
+
+```
+buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+    lval x: <implicit> = get#()
+    (x# as B)
+    expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), x#)
+    Unit#
+}
+)
+```
+
+#### Candidate 1: `FirNamedFunctionSymbol <local>/buildBox` --- `fun <X> buildBox(block: Box<X>.() -> Unit): Unit`
+##### Continue Continue Call Completion:
+
+1. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -670,7 +769,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-4. Choose `TypeVariable(X)` with `Readiness(
+2. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -700,9 +799,9 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-5. __NotEnoughInformationForTypeParameter__
-6. `TypeVariable(X) == ERROR CLASS: Cannot infer argument for type parameter X` _from Fix variable X_
-7. Choose `TypeVariable(T)` with `Readiness(
+3. __NotEnoughInformationForTypeParameter__
+4. `TypeVariable(X) == ERROR CLASS: Cannot infer argument for type parameter X` _from Fix variable X_
+5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -717,5 +816,5 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-8. __NotEnoughInformationForTypeParameter__
-9. `TypeVariable(T) == ERROR CLASS: Cannot infer argument for type parameter T` _from Fix variable T_
+6. __NotEnoughInformationForTypeParameter__
+7. `TypeVariable(T) == ERROR CLASS: Cannot infer argument for type parameter T` _from Fix variable T_
