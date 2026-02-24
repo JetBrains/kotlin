@@ -105,6 +105,6 @@ internal class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJs
         get() = IrBackendInput::WasmAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
-        return loadWasmLibraries(module, testServices, compilerConfiguration)
+        return loadWasmLibraries(compilerConfiguration)
     }
 }

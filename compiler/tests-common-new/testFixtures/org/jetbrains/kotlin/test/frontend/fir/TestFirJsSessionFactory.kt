@@ -23,8 +23,6 @@ object TestFirJsSessionFactory {
     fun createLibrarySession(
         mainModuleName: Name,
         moduleDataProvider: ModuleDataProvider,
-        module: TestModule,
-        testServices: TestServices,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {

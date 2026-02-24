@@ -34,7 +34,7 @@ object TestFirWasmSessionFactory {
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
-        val libraries = loadWasmLibraries(module, testServices, configuration)
+        val libraries = loadWasmLibraries(configuration)
         val factory = FirWasmSessionFactory.of(configuration.wasmTarget)
 
         val sharedLibrarySession = factory.createSharedLibrarySession(
@@ -71,8 +71,6 @@ object TestFirWasmSessionFactory {
 }
 
 fun loadWasmLibraries(
-    module: TestModule,
-    testServices: TestServices,
     configuration: CompilerConfiguration,
 ): List<KotlinLibrary> {
     return loadWebKlibs(
