@@ -32,6 +32,11 @@ interface JavaClassifierType : JavaType {
 
     val classifierQualifiedName: String
     val presentableText: String
+
+    val isResolved: Boolean
+        get() = true
+
+    fun resolve(tryResolve: (String) -> Boolean): String? = null
 }
 
 interface JavaPrimitiveType : JavaType {

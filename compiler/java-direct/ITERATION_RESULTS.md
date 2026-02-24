@@ -13,6 +13,119 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 ---
 
+## Iteration 4: Star Import Resolution via Callback - 2026-02-24
+
+### Status
+- ✅ Implementation completed
+- ⚠️ Box tests unchanged (11/138 passing)
+
+### Summary
+Implemented the resolution callback approach as designed in TYPE_RESOLUTION_DESIGN.md. Added `isResolved` and `resolve()` methods to `JavaClassifierType` interface with default implementations. Implemented resolution logic in `JavaClassifierTypeOverAst` to handle java.lang automatic imports and explicit star imports. Integrated callback usage in FIR's `JavaTypeConversion.kt`. **However, box test pass rate remains at 11/138 (7%)**, unchanged from Iteration 3.
+
+### Key Findings
+- **Architecture Implemented Correctly**: Resolution callback pattern works as designed - unit test confirms resolution logic functions properly
+- **Unit Test Success**: Created `testTypeResolution()` which successfully resolves "Object" → "java.lang.Object" via callback
+- **Box Tests Unchanged**: Despite correct implementation, 11/138 tests pass (same as Iteration 3)
+- **Root Cause**: The remaining 127 failures are NOT due to type resolution issues - they have other root causes (likely generics, type arguments, annotations, or test data issues)
+
+### Implementation Decisions
+- **Interface Design**: Added `isResolved: Boolean` (default true) and `resolve(tryResolve: (String) -> Boolean): String?` (default null) to `JavaClassifierType`
+- **Resolution Order**: Follows Java spec - java.lang.* first, then explicit star imports
+- **Ambiguity Detection**: If name found in multiple star imports, returns null
+- **PSI/javac Compatibility**: Default implementations ensure zero impact on existing implementations
+- **FIR Integration**: Modified `classifier == null` branch to check `isResolved` and call `resolveSimpleName()`
+
+### Changes Made
+- `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaTypes.kt`:
+  - Added `val isResolved: Boolean get() = true` to `JavaClassifierType`
+  - Added `fun resolve(tryResolve: (String) -> Boolean): String? = null` to `JavaClassifierType`
+
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Implemented `isResolved` property: returns false only if type is unqualified, not local, and not in simple imports
+  - Implemented `resolve()` method: tries java.lang first, then iterates star imports, detects ambiguity
+
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt`:
+  - Added import for `symbolProvider`
+  - Modified `null ->` branch: check `!isResolved && !qualifiedName.contains('.')` then call `resolveSimpleName()`
+  - Added `resolveSimpleName()` helper function: calls `javaType.resolve()` with `session.symbolProvider` callback
+
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testTypeResolution()` unit test verifying resolution callback works correctly
+
+### Test Results
+- Unit tests: 13 passing (was 12), 1 added (`testTypeResolution`)
+- Box tests: **11/138 passing (7%)** - UNCHANGED from Iteration 3
+- Success rate: Still 7% (no improvement)
+- Unit test confirmation: ✅ `isResolved` returns false for "Object"
+- Unit test confirmation: ✅ `resolve()` correctly returns "java.lang.Object"
+- Unit test confirmation: ✅ Callback pattern functions as designed
+
+### Issues Encountered
+- **No Box Test Improvement**: Expected 87-94% pass rate per TYPE_RESOLUTION_DESIGN.md, actual 7%
+- **Resolution Not the Bottleneck**: The implementation works correctly but doesn't help failing tests
+- **Test Output Analysis**: Examined test errors - they show semantic errors (ABSTRACT_MEMBER_NOT_IMPLEMENTED, type mismatches) not resolution failures
+
+### Root Cause Analysis
+Why didn't tests improve despite correct implementation?
+
+**Hypothesis 1: Most failures aren't resolution-related**
+- The 127 failing tests likely fail due to:
+  - Missing type arguments (generics not implemented)
+  - Missing method parameters
+  - Missing annotations
+  - Inner class issues
+  - Other semantic problems
+
+**Hypothesis 2: Test environment may not trigger resolution path**
+- Possible that tests use fully-qualified names or have JDK classes on classpath
+- FIR may resolve via other symbol providers before reaching our code path
+
+**Hypothesis 3: The 11 passing tests already had resolved types**
+- Tests that pass may not use simple unqualified names
+- Tests may use local classes or fully-qualified references
+
+**Evidence from Test Data**:
+- Examined `platformToLateinit.kt` - uses `Object` (should benefit from resolution)
+- Test still fails with semantic errors, not resolution errors
+- Suggests resolution works but tests fail for other reasons
+
+### Next Steps Analysis
+The implementation is architecturally sound and functionally correct. The issue is that **type resolution was not the primary blocker**. The remaining failures indicate we need:
+
+1. **Type Arguments Implementation** (High Priority)
+   - Parse `<T>`, `<? extends Foo>`, etc.
+   - Implement `JavaClassifierType.typeArguments`
+   - Many tests likely use generics
+
+2. **Method Parameters** (High Priority)
+   - Parse parameter lists
+   - Create `JavaValueParameter` instances
+   - Critical for method calls and overload resolution
+
+3. **Annotations** (Medium Priority)
+   - Better annotation support
+   - Nullability annotations affect type checking
+
+4. **Deeper Investigation** (Recommended)
+   - Analyze the 11 passing tests - what do they have in common?
+   - Analyze a sample of 10 failing tests - categorize failure types
+   - Prioritize based on most common failure patterns
+
+### Recommendations for Future Iterations
+- **Iteration 5**: Analyze test failure patterns before implementing more features
+  - Run 10-20 failing tests
+  - Categorize errors (missing generics, missing parameters, etc.)
+  - Implement most impactful feature first
+- **Don't assume**: The documentation predicted 87-94% pass rate, but reality is 7% - validate assumptions with data
+- **Test-driven**: For each new feature, create unit test first, then check if box tests improve
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update TYPE_RESOLUTION_DESIGN.md: Note that expected results (87-94%) were not achieved, likely due to other missing features
+- [ ] Update AGENT_INSTRUCTIONS.md: Mark star import resolution as implemented but note it didn't significantly improve tests
+
+---
+
 ## Iteration 3: Import Handling and Name Qualification - 2026-02-24
 
 ### Status

@@ -53,6 +53,38 @@ class JavaClassifierTypeOverAst(
     override val presentableText: String get() = node.text
     override val isRaw: Boolean get() = false
     override val typeArguments: List<JavaType> get() = emptyList()
+
+    override val isResolved: Boolean
+        get() {
+            val typeName = node.text
+            return classifier != null 
+                || typeName.contains('.')
+                || imports.simpleImports.containsKey(typeName)
+        }
+
+    override fun resolve(tryResolve: (String) -> Boolean): String? {
+        val simpleName = node.text
+
+        val javaLangFqn = "java.lang.$simpleName"
+        if (tryResolve(javaLangFqn)) {
+            return javaLangFqn
+        }
+
+        val starImports = imports.starImports
+        var foundFqn: String? = null
+
+        for (packageFqName in starImports) {
+            val candidateFqn = "${packageFqName.asString()}.$simpleName"
+            if (tryResolve(candidateFqn)) {
+                if (foundFqn != null) {
+                    return null
+                }
+                foundFqn = candidateFqn
+            }
+        }
+        
+        return foundFqn
+    }
 }
 
 class JavaPrimitiveTypeOverAst(

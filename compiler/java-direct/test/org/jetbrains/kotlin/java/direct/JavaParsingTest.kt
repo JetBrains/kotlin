@@ -353,4 +353,37 @@ class JavaParsingTest {
         assert(nonExistentClasses != null) { "Expected non-null (empty set) for non-existent package, got null" }
         assert(nonExistentClasses!!.isEmpty()) { "Expected empty set for non-existent package" }
     }
+
+    @Test
+    fun testTypeResolution() {
+        val source = """
+            public class MyClass {
+                public Object field;
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source)
+
+        assert(javaClass.fields.size == 1) { "Expected 1 field, got ${javaClass.fields.size}" }
+        val field = javaClass.fields.first()
+        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+
+        println("fieldType.classifierQualifiedName = '${fieldType.classifierQualifiedName}'")
+        println("fieldType.isResolved = ${fieldType.isResolved}")
+        println("fieldType.classifier = ${fieldType.classifier}")
+
+        assert(fieldType.classifierQualifiedName == "Object") { "Expected 'Object', got '${fieldType.classifierQualifiedName}'" }
+        assert(!fieldType.isResolved) { "Expected isResolved=false for unqualified Object" }
+        assert(fieldType.classifier == null) { "Expected classifier=null for external type" }
+
+        val resolved = fieldType.resolve { candidateFqn ->
+            println("  tryResolve called with: '$candidateFqn'")
+            candidateFqn == "java.lang.Object"
+        }
+
+        println("resolved = '$resolved'")
+        assert(resolved == "java.lang.Object") { "Expected resolution to 'java.lang.Object', got '$resolved'" }
+    }
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -246,11 +247,39 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+            val qualifiedName = this.classifierQualifiedName
+
+            val classId = if (!isResolved && !qualifiedName.contains('.')) {
+                resolveSimpleName(qualifiedName, this, session, source)
+            } else {
+                ClassId.topLevel(FqName(qualifiedName))
+            }
+
             classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
+    }
+}
+
+private fun resolveSimpleName(
+    simpleName: String,
+    javaType: JavaClassifierType,
+    session: FirSession,
+    source: KtSourceElement?
+): ClassId {
+    val resolvedFqn = javaType.resolve { candidateFqn ->
+        val classId = ClassId.topLevel(FqName(candidateFqn))
+        session.symbolProvider.getClassLikeSymbolByClassId(classId) != null
+    }
+
+    return when {
+        resolvedFqn != null -> {
+            ClassId.topLevel(FqName(resolvedFqn))
+        }
+        else -> {
+            ClassId.topLevel(FqName(simpleName))
+        }
     }
 }
 
