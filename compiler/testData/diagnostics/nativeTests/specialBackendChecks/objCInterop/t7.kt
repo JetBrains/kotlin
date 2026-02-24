@@ -3,5 +3,6 @@
 import platform.darwin.*
 import platform.Foundation.*
 
+fun baz(s: Array<Any?>) = NSLog("zzz")
 fun foo(s: Array<Any?>) = NSLog("zzz", <!VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF!>*s<!>)
 fun bar(s: Array<Any?>) = NSLog("zzz", *arrayOf(*arrayOf(<!VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF!>*s<!>)))

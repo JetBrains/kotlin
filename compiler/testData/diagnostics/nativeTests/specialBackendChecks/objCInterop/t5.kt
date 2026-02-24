@@ -3,4 +3,5 @@
 import platform.darwin.*
 import platform.Foundation.*
 
+fun baz() = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null)
 fun foo() = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, <!STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS!>"qzz"<!>)
