@@ -70,10 +70,10 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
-    konanNoDefaultLibs = arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty()
+    konanNoDefaultLibs = arguments.nodefaultlibs
     @Suppress("DEPRECATION")
-    konanNoEndorsedLibs = arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty()
-    konanNoStdlib = arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty()
+    konanNoEndorsedLibs = arguments.noendorsedlibs
+    konanNoStdlib = arguments.nostdlib
     konanDontCompressKlib = arguments.nopack
     put(NOMAIN, arguments.nomain)
     konanLibraries = arguments.libraries.toNonNullList()
