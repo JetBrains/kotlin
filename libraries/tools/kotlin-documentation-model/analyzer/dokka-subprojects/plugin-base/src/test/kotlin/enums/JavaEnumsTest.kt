@@ -45,7 +45,7 @@ class JavaEnumsTest : BaseAbstractTest() {
 
         testInline(
             """
-            |/src/main/java/basic/JavaEnum.java
+            |/src/main/java/testpackage/JavaEnum.java
             |package testpackage
             |
             |/**
@@ -66,7 +66,7 @@ class JavaEnumsTest : BaseAbstractTest() {
 
 
                 assertEquals(
-                    "https://github.com/user/repo/tree/master/src/main/java/basic/JavaEnum.java#L6",
+                    "https://github.com/user/repo/tree/master/src/main/java/testpackage/JavaEnum.java#L6",
                     sourceLink
                 )
             }

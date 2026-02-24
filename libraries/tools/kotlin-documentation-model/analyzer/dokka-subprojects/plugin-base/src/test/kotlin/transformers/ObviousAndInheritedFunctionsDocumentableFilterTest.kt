@@ -9,6 +9,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import testApi.testRunner.dokkaConfiguration
+import utils.OnlyJavaPsi
 import utils.withAllowKotlinPackage
 import kotlin.test.assertEquals
 
@@ -157,6 +158,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
+    @OnlyJavaPsi
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration", "suppressingInheritedConfiguration"])
     fun `should suppress toString, equals and hashcode but keep custom ones in Java`(suppressingConfiguration: DokkaConfigurationImpl) {
@@ -221,6 +223,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
+    @OnlyJavaPsi
     @ParameterizedTest
     @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
     fun `should not suppress toString, equals and hashcode if custom config is provided in Java`(

@@ -104,15 +104,15 @@ class IsExceptionKotlinTest : AbstractModelTest("/src/main/kotlin/classes/Test.k
     }
 }
 
-class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
+class IsExceptionJavaTest: AbstractModelTest("/src/main/java/javaPkg/MaybeException.java", "javaPkg") {
     @Test
     fun `isException should work for java exceptions`(){
         inlineModelTest(
             """
-            |public class ExampleException extends java.lang.Exception { }"""
+            |public class MaybeException extends java.lang.Exception { }"""
         ) {
-            with((this / "java" / "ExampleException").cast<DClass>()) {
-                name equals "ExampleException"
+            with((this / "javaPkg" / "MaybeException").cast<DClass>()) {
+                name equals "MaybeException"
                 isException equals true
             }
         }
@@ -122,10 +122,10 @@ class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", 
     fun `isException should work for RuntimeException`(){
         inlineModelTest(
             """
-            |public class ExampleException extends java.lang.RuntimeException"""
+            |public class MaybeException extends java.lang.RuntimeException { }"""
         ) {
-            with((this / "java" / "ExampleException").cast<DClass>()) {
-                name equals "ExampleException"
+            with((this / "javaPkg" / "MaybeException").cast<DClass>()) {
+                name equals "MaybeException"
                 isException equals true
             }
         }
@@ -135,10 +135,10 @@ class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", 
     fun `isException should return false for a basic class`(){
         inlineModelTest(
             """
-            |public class NotAnException extends Serializable"""
+            |public class MaybeException extends java.lang.Number { }"""
         ) {
-            with((this / "java" / "NotAnException").cast<DClass>()) {
-                name equals "NotAnException"
+            with((this / "javaPkg" / "MaybeException").cast<DClass>()) {
+                name equals "MaybeException"
                 isException equals false
             }
         }

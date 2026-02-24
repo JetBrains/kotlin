@@ -5,14 +5,16 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
 
+import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.PsiNamedElement
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.*
 import com.intellij.psi.util.PsiLiteralUtil
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.java.JavaAnalysisPlugin
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
+import org.jetbrains.dokka.analysis.java.util.PsiDocumentableSource
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.getGeneratedKDocDocumentationFrom
 import org.jetbrains.dokka.analysis.kotlin.symbols.services.KtPsiDocumentableSource
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.getJavaDocDocumentationFrom
@@ -87,27 +89,36 @@ internal class DokkaSymbolVisitor(
 
     private fun <T> T.toSourceSetDependent() = if (this != null) mapOf(sourceSet to this) else emptyMap()
 
-    private fun <T : KaSymbol> Sequence<T>.filterSymbolsInSourceSet(moduleFiles: Set<KtFile>): Sequence<T> = filter {
+    private fun <T : KaSymbol> Sequence<T>.filterSymbolsInSourceSet(moduleKtFiles: Set<KtFile>, moduleJavaFiles: Set<PsiJavaFile>): Sequence<T> = filter {
         when (val file = it.psi?.containingFile) {
-            is KtFile -> moduleFiles.contains(file)
+            is KtFile -> moduleKtFiles.contains(file) && file.containingDirectory?.name != "snippet-files"
+            is PsiJavaFile -> moduleJavaFiles.contains(file) && file.containingDirectory.name != "snippet-files"
             else -> false
         }
     }
 
     fun visitModule(): DModule {
         val sourceModule = analysisContext.getModule(sourceSet)
-        val ktFiles = analysisContext.modulesWithFiles[sourceModule]?.filterIsInstance<KtFile>()?.toSet()
-            ?: throw IllegalStateException("No source files for a source module ${sourceModule.name} of source set ${sourceSet.sourceSetID}")
+        val sourceFiles = analysisContext.modulesWithFiles[sourceModule] ?: throw IllegalStateException("No source files for a source module ${sourceModule.name} of source set ${sourceSet.sourceSetID}")
+
+        val ktFiles = sourceFiles.filterIsInstance<KtFile>().toSet()
+        val javaFiles = if (InternalConfiguration.enableExperimentalSymbolsJavaAnalysis) sourceFiles.filterIsInstance<PsiJavaFile>().toSet() else emptySet()
+
         val processedPackages: MutableSet<FqName> = mutableSetOf()
         return analyze(sourceModule) {
-            val packages = ktFiles.mapNotNull { file ->
-                if (processedPackages.contains(file.packageFqName))
-                    return@mapNotNull null
-                processedPackages.add(file.packageFqName)
-                findPackage(file.packageFqName)?.let { packageSymbol ->
-                    visitPackageSymbol(packageSymbol, ktFiles)
+            fun <T> Set<T>.collectPackages(getPackageFqName: (T) -> FqName): List<DPackage> =
+                this.mapNotNull { item ->
+                    val packageFqName = getPackageFqName(item)
+                    if (processedPackages.contains(packageFqName)) {
+                        return@mapNotNull null
+                    }
+                    processedPackages.add(packageFqName)
+                    findPackage(packageFqName)?.let { packageSymbol ->
+                        visitPackageSymbol(packageSymbol, ktFiles, javaFiles)
+                    }
                 }
-            }
+
+            val packages = ktFiles.collectPackages { it.packageFqName } + javaFiles.collectPackages { FqName(it.packageName) }
 
             DModule(
                 name = moduleName,
@@ -121,12 +132,13 @@ internal class DokkaSymbolVisitor(
 
     private fun KaSession.visitPackageSymbol(
         packageSymbol: KaPackageSymbol,
-        moduleFiles: Set<KtFile>
+        moduleKtFiles: Set<KtFile>,
+        moduleJavaFiles: Set<PsiJavaFile>
     ): DPackage {
         val dri = getDRIFromPackage(packageSymbol)
         val scope = packageSymbol.packageScope
-        val callables = scope.callables.filterSymbolsInSourceSet(moduleFiles).toList()
-        val classifiers = scope.classifiers.filterSymbolsInSourceSet(moduleFiles).toList()
+        val callables = scope.callables.filterSymbolsInSourceSet(moduleKtFiles, moduleJavaFiles).toList()
+        val classifiers = scope.classifiers.filterSymbolsInSourceSet(moduleKtFiles, moduleJavaFiles).toList()
 
         val functions = callables.filterIsInstance<KaNamedFunctionSymbol>().map { visitFunctionSymbol(it, dri) }
         val properties = callables.filterIsInstance<KaPropertySymbol>().map { visitPropertySymbol(it, dri) }
@@ -135,13 +147,20 @@ internal class DokkaSymbolVisitor(
                 .map { visitClassSymbol(it, dri) }
         val typealiases = classifiers.filterIsInstance<KaTypeAliasSymbol>().map { visitTypeAliasSymbol(it, dri) }
 
+        val packageInfo = moduleJavaFiles.singleOrNull { it.name == "package-info.java" }
+        val documentation = packageInfo?.let {
+            javadocParser?.parseDocumentation(it, sourceSet).toSourceSetDependent()
+        }.orEmpty()
+
+        // TODO annotations from `package-info.java`
+
         return DPackage(
             dri = dri,
             functions = functions,
             properties = properties,
             classlikes = classlikes,
             typealiases = typealiases,
-            documentation = emptyMap(),
+            documentation = documentation,
             sourceSets = setOf(sourceSet)
         )
     }
@@ -914,12 +933,14 @@ internal class DokkaSymbolVisitor(
         return documentation.removePropertyTag()
     }
 
-    private fun KaSession.getDocumentation(symbol: KaSymbol) =
-        if (symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED)
+    private fun KaSession.getDocumentation(symbol: KaSymbol) = when(symbol.origin) {
+        KaSymbolOrigin.SOURCE_MEMBER_GENERATED -> {
             // a primary (implicit default) constructor  can be generated, so we need KDoc from @constructor tag
             getGeneratedKDocDocumentationFrom(symbol) ?: if(symbol is KaConstructorSymbol) getKDocDocumentationFrom(symbol, logger, sourceSet) else null
-        else
-            getKDocDocumentationFrom(symbol, logger, sourceSet) ?: javadocParser?.let { getJavaDocDocumentationFrom(symbol, it, sourceSet) }
+        }
+        KaSymbolOrigin.JAVA_SOURCE, KaSymbolOrigin.JAVA_LIBRARY -> javadocParser?.let { getJavaDocDocumentationFrom(symbol, it, sourceSet) }
+        else -> getKDocDocumentationFrom(symbol, logger, sourceSet) ?: javadocParser?.let { getJavaDocDocumentationFrom(symbol, it, sourceSet) }
+    }
 
     /**
      * Unwrap the documentation for property accessors from the [Property] wrapper if its present.
@@ -932,6 +953,8 @@ internal class DokkaSymbolVisitor(
         is Property -> Description(root)
         else -> this
     }
+
+    private fun KaSymbol.isJavaSource() = origin == KaSymbolOrigin.JAVA_SOURCE || origin == KaSymbolOrigin.JAVA_LIBRARY
 
     private fun KaSession.isObvious(functionSymbol: KaFunctionSymbol, inheritedFrom: DRI?): Boolean {
         return functionSymbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED && !hasGeneratedKDocDocumentation(functionSymbol) ||
@@ -950,7 +973,10 @@ internal class DokkaSymbolVisitor(
             is KaPropertyAccessorSymbol -> symbol.containingSymbol?.psi
             else -> symbol.psi
         }
-        return KtPsiDocumentableSource(psi).toSourceSetDependent()
+
+        return if (symbol.isJavaSource())
+            (psi as? PsiNamedElement)?.let { PsiDocumentableSource(it) }?.toSourceSetDependent() ?: emptyMap()
+        else KtPsiDocumentableSource(psi).toSourceSetDependent()
     }
 
     private fun AncestryNode.exceptionInSupertypesOrNull(): ExceptionInSupertypes? =
@@ -990,25 +1016,38 @@ internal class DokkaSymbolVisitor(
         }
     }
 
-    private fun KaDeclarationSymbol.getDokkaModality(): KotlinModifier {
+    private fun KaDeclarationSymbol.getDokkaModality(): Modifier {
         val isInterface = this is KaClassSymbol && classKind == KaClassKind.INTERFACE
-        return if (isInterface) {
-            // only two modalities are possible for interfaces:
-            //  - `SEALED` - when it's declared as `sealed interface`
-            //  - `ABSTRACT` - when it's declared as `interface` or `abstract interface` (`abstract` is redundant but possible here)
-            when (modality) {
-                KaSymbolModality.SEALED -> KotlinModifier.Sealed
-                else -> KotlinModifier.Empty
+
+        return if (isJavaSource()) {
+            if (isInterface) {
+                // Java interface can't have modality modifiers except for "sealed", which is not supported yet in Dokka
+                JavaModifier.Empty
+            } else when (modality) {
+                KaSymbolModality.ABSTRACT -> JavaModifier.Abstract
+                KaSymbolModality.FINAL -> JavaModifier.Final
+                else -> JavaModifier.Empty
             }
         } else {
-            when (modality) {
-                KaSymbolModality.FINAL -> KotlinModifier.Final
-                KaSymbolModality.SEALED -> KotlinModifier.Sealed
-                KaSymbolModality.OPEN -> KotlinModifier.Open
-                KaSymbolModality.ABSTRACT -> KotlinModifier.Abstract
+            if (isInterface) {
+                // only two modalities are possible for interfaces:
+                //  - `SEALED` - when it's declared as `sealed interface`
+                //  - `ABSTRACT` - when it's declared as `interface` or `abstract interface` (`abstract` is redundant but possible here)
+                when (modality) {
+                    KaSymbolModality.SEALED -> KotlinModifier.Sealed
+                    else -> KotlinModifier.Empty
+                }
+            } else {
+                when (modality) {
+                    KaSymbolModality.FINAL -> KotlinModifier.Final
+                    KaSymbolModality.SEALED -> KotlinModifier.Sealed
+                    KaSymbolModality.OPEN -> KotlinModifier.Open
+                    KaSymbolModality.ABSTRACT -> KotlinModifier.Abstract
+                }
             }
         }
     }
+
     private fun KaDeclarationSymbol.getDokkaVisibility() = visibility.toDokkaVisibility()
     private fun KaValueParameterSymbol.additionalExtras() = listOfNotNull(
         ExtraModifiers.KotlinOnlyModifiers.NoInline.takeIf { isNoinline },

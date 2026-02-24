@@ -16,6 +16,7 @@ import org.jetbrains.dokka.model.doc.I
 import org.jetbrains.dokka.model.doc.Mark
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
+import utils.OnlyJavaPsi
 import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -1092,6 +1093,7 @@ class SnippetTest : BaseAbstractTest() {
         }
     }
 
+    @OnlyJavaPsi
     @Test
     fun `incorrect hybrid snippet`() {
         testInline(
@@ -1194,5 +1196,5 @@ class SnippetTest : BaseAbstractTest() {
     }
 
     private fun getFirstClassDocRoot(modules: List<DModule>) =
-        modules.first().packages.first().classlikes.single().documentation.values.first().children.first().root
+        modules.single { it.packages.any { pkg -> pkg.classlikes.isNotEmpty() } }.packages.single { it.classlikes.isNotEmpty() }.classlikes.single().documentation.values.first().children.first().root
 }
