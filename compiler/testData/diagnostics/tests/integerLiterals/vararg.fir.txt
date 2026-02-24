@@ -6,8 +6,8 @@ FILE: vararg.fir.kt
         ^arrayDataNoBound Null(null)!!
     }
     public final fun test(b: R|kotlin/Byte|): R|kotlin/Unit| {
-        R|/select|<R|kotlin/Byte|>(R|/arrayData|<R|kotlin/Byte|>(vararg(Byte(1))), R|<local>/b|)
-        R|/select|<R|kotlin/Byte|>(R|/id|<R|kotlin/Byte|>(Byte(1)), R|<local>/b|)
+        R|/select|<R|kotlin/Byte|>(R|/arrayData|<R|kotlin/Int|>(vararg(Int(1))), R|<local>/b|)
+        R|/select|<R|kotlin/Byte|>(R|/id|<R|kotlin/Int|>(Int(1)), R|<local>/b|)
         R|/select|<R|kotlin/Byte|>(R|/id|<R|kotlin/Byte|>(R|/arrayData|<R|kotlin/Byte|>(vararg(Byte(1)))), R|<local>/b|)
         R|/select|<R|kotlin/Byte|>(R|/arrayDataNoBound|<R|kotlin/Byte|>(vararg(Byte(1))), R|<local>/b|)
     }
