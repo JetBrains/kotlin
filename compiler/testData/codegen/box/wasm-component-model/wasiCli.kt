@@ -3,18 +3,18 @@ external interface Run {
   /**
   Run the program.
   */
-  fun run(): Result<Unit>
+  fun run(): Int
 }
 
 var x = 1
 
 @WitExport/*(TODO)*/
 object RunImpl : Run{
-  override fun run(): Result<Unit>{
+  override fun run(): Int{
     // no observable side effects yet sadge
     x = 42
 
-    return Result.success(Unit)
+    return 0
   }
 }
 

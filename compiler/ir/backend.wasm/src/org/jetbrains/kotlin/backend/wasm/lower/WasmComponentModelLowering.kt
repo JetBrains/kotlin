@@ -170,10 +170,9 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
                         val topLevelExportFunction = declareWitAdapterTopLevelFunction(implFunction, irFile, witIfaceName, false)
                         // doesn't have a body yet, so create it, and call the impl function
                         // TODO remove, this is just for the cli export
-                        topLevelExportFunction.returnType = context.irBuiltIns.intType
+//                        topLevelExportFunction.returnType = context.irBuiltIns.intType
                         topLevelExportFunction.body = context.createIrBuilder(topLevelExportFunction.symbol).irBlockBody {
                             // TODO deduplicate with the import case if possible
-                            /*
                             +irReturn(
                                 irCall(topLevelImplFunction.symbol).apply {
                                     // TODO check that this actually makes sense
@@ -182,14 +181,6 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
                                     }
                                 }
                             )
-                             */
-                            +irCall(topLevelImplFunction.symbol).apply {
-                                // TODO check that this actually makes sense
-                                topLevelExportFunction.parameters.forEach { param ->
-                                    arguments.add(irGet(param))
-                                }
-                            }
-                            +irReturn(IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, 0))
                         }
 
                         toAddToTopLevel += topLevelExportFunction
