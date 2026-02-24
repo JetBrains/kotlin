@@ -828,6 +828,7 @@ cacheableTargetNames.forEach { targetName ->
 
         this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
         this.target.set(targetName)
+        this.extraOpts.set(listOf("-nostdlib", "-no-default-libs")) // Don't try to load anything from the distribution.
         // This path is used in `:kotlin-native:${targetName}StdlibCache`
         this.outputDirectory.set(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC-system/$KOTLIN_NATIVE_STDLIB_NAME-cache"))
     }
